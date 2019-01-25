@@ -3,6 +3,7 @@ Makefile.local
 *.swp
 *tags
 *~
+compile_commands.json
 
 # OS X
 ####################
