@@ -30,28 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 uiStatic_t		uis;
 qboolean		m_entersound;		// after a frame, so caching won't disrupt the sound
 
-void QDECL Com_Error( int level, const char *error, ... ) {
-	va_list		argptr;
-	char		text[1024];
-
-	va_start (argptr, error);
-	Q_vsnprintf (text, sizeof(text), error, argptr);
-	va_end (argptr);
-
-	trap_Error( text );
-}
-
-void QDECL Com_Printf( const char *msg, ... ) {
-	va_list		argptr;
-	char		text[1024];
-
-	va_start (argptr, msg);
-	Q_vsnprintf (text, sizeof(text), msg, argptr);
-	va_end (argptr);
-
-	trap_Print( text );
-}
-
 /*
 =================
 UI_ClampCvar
