@@ -1051,7 +1051,7 @@ UI_SPLevelMenu_NextEvent
 =================
 */
 unsafe extern "C" fn UI_SPLevelMenu_NextEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut notification: libc::c_int,
 ) {
     if notification != 3i32 {
@@ -1071,7 +1071,7 @@ UI_SPLevelMenu_CustomEvent
 =================
 */
 unsafe extern "C" fn UI_SPLevelMenu_CustomEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut notification: libc::c_int,
 ) {
     if notification != 3i32 {
@@ -1079,7 +1079,7 @@ unsafe extern "C" fn UI_SPLevelMenu_CustomEvent(
     }
     UI_StartServerMenu(qfalse);
 }
-unsafe extern "C" fn UI_SPLevelMenu_ResetEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
+unsafe extern "C" fn UI_SPLevelMenu_ResetEvent(mut _ptr: *mut libc::c_void, mut event: libc::c_int) {
     if event != 3i32 {
         return;
     }
@@ -1149,7 +1149,7 @@ UI_SPLevelMenu_BackEvent
 =================
 */
 unsafe extern "C" fn UI_SPLevelMenu_BackEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut notification: libc::c_int,
 ) {
     if notification != 3i32 {
@@ -1185,7 +1185,7 @@ UI_SPLevelMenu_PlayerEvent
 =================
 */
 unsafe extern "C" fn UI_SPLevelMenu_PlayerEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut notification: libc::c_int,
 ) {
     if notification != 3i32 {
@@ -1199,7 +1199,7 @@ UI_SPLevelMenu_RightArrowEvent
 =================
 */
 unsafe extern "C" fn UI_SPLevelMenu_RightArrowEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut notification: libc::c_int,
 ) {
     if notification != 3i32 {
@@ -1241,7 +1241,7 @@ UI_SPLevelMenu_LeftArrowEvent
 =================
 */
 unsafe extern "C" fn UI_SPLevelMenu_LeftArrowEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut notification: libc::c_int,
 ) {
     if notification != 3i32 {

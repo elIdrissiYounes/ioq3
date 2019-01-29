@@ -646,7 +646,7 @@ unsafe extern "C" fn StartServer_MenuInit() {
 StartServer_GametypeEvent
 =================
 */
-unsafe extern "C" fn StartServer_GametypeEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
+unsafe extern "C" fn StartServer_GametypeEvent(mut _ptr: *mut libc::c_void, mut event: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut count: libc::c_int = 0;
     let mut gamebits: libc::c_int = 0;
@@ -2969,7 +2969,7 @@ UI_BotSelectMenu_SelectEvent
 =================
 */
 unsafe extern "C" fn UI_BotSelectMenu_SelectEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -2989,7 +2989,7 @@ UI_BotSelectMenu_BackEvent
 =================
 */
 unsafe extern "C" fn UI_BotSelectMenu_BackEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -3003,7 +3003,7 @@ UI_BotSelectMenu_RightEvent
 =================
 */
 unsafe extern "C" fn UI_BotSelectMenu_RightEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -3021,7 +3021,7 @@ UI_BotSelectMenu_LeftEvent
 =================
 */
 unsafe extern "C" fn UI_BotSelectMenu_LeftEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {

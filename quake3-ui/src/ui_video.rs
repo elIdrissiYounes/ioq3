@@ -1234,7 +1234,7 @@ GraphicsOptions_ApplyChanges
 =================
 */
 unsafe extern "C" fn GraphicsOptions_ApplyChanges(
-    mut unused: *mut libc::c_void,
+    mut _unused: *mut libc::c_void,
     mut notification: libc::c_int,
 ) {
     if notification != 3i32 {
@@ -1937,7 +1937,7 @@ static mut ratioToRes: [libc::c_int; 32] = [0; 32];
 GraphicsOptions_TQEvent
 ================
 */
-unsafe extern "C" fn GraphicsOptions_TQEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
+unsafe extern "C" fn GraphicsOptions_TQEvent(mut _ptr: *mut libc::c_void, mut event: libc::c_int) {
     if event != 3i32 {
         return;
     }

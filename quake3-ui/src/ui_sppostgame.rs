@@ -570,7 +570,7 @@ UI_SPPostgameMenu_NextEvent
 =================
 */
 unsafe extern "C" fn UI_SPPostgameMenu_NextEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     let mut currentSet: libc::c_int = 0;
@@ -608,7 +608,7 @@ UI_SPPostgameMenu_AgainEvent
 =================
 */
 unsafe extern "C" fn UI_SPPostgameMenu_AgainEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -626,7 +626,7 @@ UI_SPPostgameMenu_MenuEvent
 =================
 */
 unsafe extern "C" fn UI_SPPostgameMenu_MenuEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {

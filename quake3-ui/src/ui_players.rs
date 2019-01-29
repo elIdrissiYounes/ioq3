@@ -529,7 +529,7 @@ UI_PlayerFloatSprite
 ===============
 */
 unsafe extern "C" fn UI_PlayerFloatSprite(
-    mut pi: *mut playerInfo_t,
+    mut _pi: *mut playerInfo_t,
     mut origin: *mut vec_t,
     mut shader: qhandle_t,
 ) {

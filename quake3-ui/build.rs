@@ -17,9 +17,6 @@ fn main() {
     file_paths.push(cargo_dir.join("../code/game/bg_lib.c"));
     file_paths.push(cargo_dir.join("../code/game/bg_misc.c"));
     file_paths.push(cargo_dir.join("../code/q3_ui/ui_variadic.c"));
-    for file_path in &file_paths {
-        compile_files(file_path.clone(), &lib_dir, &cargo_dir)
-    }
 
     println!("cargo:rustc-link-search=native=SDL2");
     println!("cargo:rustc-link-search=native=dl");
@@ -30,6 +27,10 @@ fn main() {
 
     if !lib_dir.is_dir() {
         create_dir(&lib_dir).unwrap();
+    }
+
+    for file_path in &file_paths {
+        compile_files(file_path.clone(), &lib_dir, &cargo_dir)
     }
 }
 

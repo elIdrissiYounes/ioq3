@@ -315,7 +315,7 @@ UI_SaveConfigMenu_SaveEvent
 ===============
 */
 unsafe extern "C" fn UI_SaveConfigMenu_SaveEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     let mut configname: [libc::c_char; 64] = [0; 64];
@@ -345,7 +345,7 @@ UI_SaveConfigMenu_BackEvent
 ===============
 */
 unsafe extern "C" fn UI_SaveConfigMenu_BackEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {

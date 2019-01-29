@@ -6,7 +6,8 @@ publish = false
 
 [lib]
 path = "lib.rs"
-crate-type = ["cdylib"]
+crate-type = ["dylib"]
+name = "uix86_64"
 
 [build-dependencies]
 cc = "1.0"

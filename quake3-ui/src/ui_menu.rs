@@ -417,8 +417,8 @@ pub unsafe extern "C" fn UI_MainMenu() {
     s_main.exit.generic.y = y;
     s_main.exit.generic.id = 17i32;
     s_main.exit.generic.callback = Some(Main_MenuEvent);
-    s_main.exit.string = b"EXIT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-    s_main.exit.color = color_red.as_mut_ptr();
+    s_main.exit.string = b"EXIT QUAKE-RS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    s_main.exit.color = color_orange.as_mut_ptr();
     s_main.exit.style = style;
     Menu_AddItem(
         &mut s_main.menu,
@@ -715,7 +715,7 @@ static mut s_errorMessage: errorMessage_t = errorMessage_t {
     errorMessage: [0; 4096],
 };
 #[no_mangle]
-pub unsafe extern "C" fn ErrorMessage_Key(mut key: libc::c_int) -> sfxHandle_t {
+pub unsafe extern "C" fn ErrorMessage_Key(mut _key: libc::c_int) -> sfxHandle_t {
     trap_Cvar_Set(
         b"com_errorMessage\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,

@@ -2741,7 +2741,7 @@ unsafe extern "C" fn Controls_InitCvars() {
 Controls_StatusBar
 =================
 */
-unsafe extern "C" fn Controls_StatusBar(mut self_0: *mut libc::c_void) {
+unsafe extern "C" fn Controls_StatusBar(mut _self_0: *mut libc::c_void) {
     UI_DrawString(
         (640i32 as libc::c_double * 0.50f64) as libc::c_int,
         (480i32 as libc::c_double * 0.80f64) as libc::c_int,

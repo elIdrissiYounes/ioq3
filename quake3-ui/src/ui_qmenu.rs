@@ -937,7 +937,7 @@ unsafe extern "C" fn RadioButton_Draw(mut rb: *mut menuradiobutton_s) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn Menu_ActivateItem(
-    mut s: *mut menuframework_s,
+    mut _s: *mut menuframework_s,
     mut item: *mut menucommon_s,
 ) -> sfxHandle_t {
     if (*item).callback.is_some() {

@@ -458,7 +458,7 @@ UI_RemoveAddBotsMenu_BackEvent
 =================
 */
 unsafe extern "C" fn UI_RemoveBotsMenu_BackEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -472,7 +472,7 @@ UI_RemoveBotsMenu_DeleteEvent
 =================
 */
 unsafe extern "C" fn UI_RemoveBotsMenu_DeleteEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -511,7 +511,7 @@ UI_RemoveBotsMenu_DownEvent
 =================
 */
 unsafe extern "C" fn UI_RemoveBotsMenu_DownEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -557,7 +557,7 @@ unsafe extern "C" fn UI_RemoveBotsMenu_SetBotNames() {
 UI_RemoveBotsMenu_UpEvent
 =================
 */
-unsafe extern "C" fn UI_RemoveBotsMenu_UpEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
+unsafe extern "C" fn UI_RemoveBotsMenu_UpEvent(mut _ptr: *mut libc::c_void, mut event: libc::c_int) {
     if event != 3i32 {
         return;
     }

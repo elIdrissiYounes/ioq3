@@ -4,6 +4,7 @@ Makefile.local
 *tags
 *~
 compile_commands.json
+quake3-ui/lib/*
 
 # OS X
 ####################

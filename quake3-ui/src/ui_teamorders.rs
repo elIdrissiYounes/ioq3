@@ -364,7 +364,7 @@ UI_TeamOrdersMenu_BackEvent
 ===============
 */
 unsafe extern "C" fn UI_TeamOrdersMenu_BackEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {

@@ -548,7 +548,7 @@ UI_SPSkillMenu_FightEvent
 =================
 */
 unsafe extern "C" fn UI_SPSkillMenu_FightEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut notification: libc::c_int,
 ) {
     if notification != 3i32 {
@@ -562,7 +562,7 @@ UI_SPSkillMenu_BackEvent
 =================
 */
 unsafe extern "C" fn UI_SPSkillMenu_BackEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut notification: libc::c_int,
 ) {
     if notification != 3i32 {
