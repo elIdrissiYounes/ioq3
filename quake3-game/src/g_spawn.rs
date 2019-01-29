@@ -795,7 +795,8 @@ pub unsafe extern "C" fn SP_worldspawn() {
     trap_SetConfigstring(4i32, g_motd.string.as_mut_ptr());
     G_SpawnString(
         b"gravity\x00" as *const u8 as *const libc::c_char,
-        b"800\x00" as *const u8 as *const libc::c_char,
+        // Changed from 800 just for fun - MGS
+        b"100\x00" as *const u8 as *const libc::c_char,
         &mut s,
     );
     trap_Cvar_Set(b"g_gravity\x00" as *const u8 as *const libc::c_char, s);
