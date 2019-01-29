@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 
 #include "g_local.h"
+#include "g_variadic.h"
 
 
 typedef struct teamgame_s {
@@ -91,24 +92,6 @@ const char *TeamColorString(int team) {
 	return S_COLOR_WHITE;
 }
 
-// NULL for everyone
-static __attribute__ ((format (printf, 2, 3))) void QDECL PrintMsg( gentity_t *ent, const char *fmt, ... ) {
-	char		msg[1024];
-	va_list		argptr;
-	char		*p;
-	
-	va_start (argptr,fmt);
-	if (Q_vsnprintf (msg, sizeof(msg), fmt, argptr) >= sizeof(msg)) {
-		G_Error ( "PrintMsg overrun" );
-	}
-	va_end (argptr);
-
-	// double quotes are bad
-	while ((p = strchr(msg, '"')) != NULL)
-		*p = '\'';
-
-	trap_SendServerCommand ( ( (ent == NULL) ? -1 : ent-g_entities ), va("print \"%s\"", msg ));
-}
 
 /*
 ==============

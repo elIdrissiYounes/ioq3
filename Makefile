@@ -2464,6 +2464,7 @@ Q3GOBJ_ = \
   $(B)/$(BASEGAME)/game/ai_main.o \
   $(B)/$(BASEGAME)/game/ai_team.o \
   $(B)/$(BASEGAME)/game/ai_vcmd.o \
+  $(B)/$(BASEGAME)/game/ai_variadic.o \
   $(B)/$(BASEGAME)/game/bg_misc.o \
   $(B)/$(BASEGAME)/game/bg_pmove.o \
   $(B)/$(BASEGAME)/game/bg_slidemove.o \
@@ -2487,6 +2488,7 @@ Q3GOBJ_ = \
   $(B)/$(BASEGAME)/game/g_trigger.o \
   $(B)/$(BASEGAME)/game/g_utils.o \
   $(B)/$(BASEGAME)/game/g_weapon.o \
+  $(B)/$(BASEGAME)/game/g_variadic.o \
   \
   $(B)/$(BASEGAME)/qcommon/q_math.o \
   $(B)/$(BASEGAME)/qcommon/q_shared.o
@@ -2515,6 +2517,7 @@ MPGOBJ_ = \
   $(B)/$(MISSIONPACK)/game/ai_main.o \
   $(B)/$(MISSIONPACK)/game/ai_team.o \
   $(B)/$(MISSIONPACK)/game/ai_vcmd.o \
+  $(B)/$(MISSIONPACK)/game/ai_variadic.o \
   $(B)/$(MISSIONPACK)/game/bg_misc.o \
   $(B)/$(MISSIONPACK)/game/bg_pmove.o \
   $(B)/$(MISSIONPACK)/game/bg_slidemove.o \
@@ -2538,6 +2541,7 @@ MPGOBJ_ = \
   $(B)/$(MISSIONPACK)/game/g_trigger.o \
   $(B)/$(MISSIONPACK)/game/g_utils.o \
   $(B)/$(MISSIONPACK)/game/g_weapon.o \
+  $(B)/$(MISSIONPACK)/game/g_variadic.o \
   \
   $(B)/$(MISSIONPACK)/qcommon/q_math.o \
   $(B)/$(MISSIONPACK)/qcommon/q_shared.o
