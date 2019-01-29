@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // processed entities, like smoke puffs, gibs, shells, etc.
 
 #include "cg_local.h"
+#include "cg_variadic.h"
 
 #define	MAX_LOCAL_ENTITIES	512
 localEntity_t	cg_localEntities[MAX_LOCAL_ENTITIES];

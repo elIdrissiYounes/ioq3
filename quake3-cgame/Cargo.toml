@@ -1,0 +1,13 @@
+[package]
+name = "quake3-cgame"
+authors = ["C2Rust"]
+version = "0.0.0"
+publish = false
+
+[lib]
+path = "lib.rs"
+crate-type = ["dylib"]
+
+[build-dependencies]
+cc = "1.0"
+

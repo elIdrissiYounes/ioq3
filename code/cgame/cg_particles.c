@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // cg_particles.c  
 
 #include "cg_local.h"
+#include "cg_variadic.h"
 
 //#define WOLF_PARTICLES
 

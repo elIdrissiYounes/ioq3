@@ -5,6 +5,7 @@ Makefile.local
 *~
 compile_commands.json
 quake3-ui/lib/*
+quake3-cgame/lib/*
 
 # OS X
 ####################
