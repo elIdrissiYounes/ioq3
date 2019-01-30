@@ -20,11 +20,6 @@ fn main() {
     file_paths.push(cargo_dir.join("../code/game/bg_pmove.c"));
     file_paths.push(cargo_dir.join("../code/game/bg_slidemove.c"));
 
-    println!("cargo:rustc-link-search=native=SDL2");
-    println!("cargo:rustc-link-search=native=dl");
-    println!("cargo:rustc-link-search=native=m");
-    println!("cargo:rustc-link-search=native=z");
-    println!("cargo:rustc-link-search=native=rt");
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
 
     if !lib_dir.is_dir() {
@@ -37,9 +32,6 @@ fn main() {
 }
 
 fn compile_files(file_path: PathBuf, lib_dir: &PathBuf, cargo_dir: &Path) {
-    let zlib = cargo_dir.join("../code/zlib");
-    let jpeg = cargo_dir.join("../code/jpeg-8c");
-
     let file = file_path.clone();
     let file_name = file_path.file_name().expect("File name should be here!");
 
@@ -51,17 +43,12 @@ fn compile_files(file_path: PathBuf, lib_dir: &PathBuf, cargo_dir: &Path) {
     cc::Build::new()
         .flag("-c")
         .file(file)
-        .flag("-DUI")
+        .flag("-DCGAME")
         .flag("-fPIC")
         .flag("-pipe")
         .flag("-DUSE_ICON")
-        .flag("-DNO_GZIP")
-        .flag("-DUSE_INTERNAL_JPEG")
-        .flag("-DUSE_LOCAL_HEADERS")
         .flag("-DARCH_STRING=\"x86_64\"")
         .flag("-w") // Hide warnings; cc will pass them to cargo annoyingly
-        .include(zlib)
-        .include(jpeg)
         .out_dir(lib_dir)
         .compile(file_name.to_str().expect("String"));
 }

@@ -21,11 +21,6 @@ fn main() {
     file_paths.push(cargo_dir.join("../code/game/ai_variadic.c"));
     file_paths.push(cargo_dir.join("../code/game/g_variadic.c"));
 
-    println!("cargo:rustc-link-search=native=SDL2");
-    println!("cargo:rustc-link-search=native=dl");
-    println!("cargo:rustc-link-search=native=m");
-    println!("cargo:rustc-link-search=native=z");
-    println!("cargo:rustc-link-search=native=rt");
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
 
     if !lib_dir.is_dir() {
@@ -52,13 +47,10 @@ fn compile_files(file_path: PathBuf, lib_dir: &PathBuf, cargo_dir: &Path) {
     cc::Build::new()
         .flag("-c")
         .file(file)
-        .flag("-DUI")
+        .flag("-DQAGAME")
         .flag("-fPIC")
         .flag("-pipe")
         .flag("-DUSE_ICON")
-        .flag("-DNO_GZIP")
-        .flag("-DUSE_INTERNAL_JPEG")
-        .flag("-DUSE_LOCAL_HEADERS")
         .flag("-DARCH_STRING=\"x86_64\"")
         .flag("-w") // Hide warnings; cc will pass them to cargo annoyingly
         .include(zlib)
