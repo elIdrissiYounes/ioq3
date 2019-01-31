@@ -4,10 +4,10 @@ Makefile.local
 *tags
 *~
 compile_commands.json
-quake3-ui/lib/*
-quake3-cgame/lib/*
-quake3-client/lib/*
-quake3-game/lib/*
+quake3-ui/lib/
+quake3-cgame/lib/
+quake3-client/lib/
+quake3-game/lib/
 
 # OS X
 ####################

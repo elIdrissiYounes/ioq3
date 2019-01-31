@@ -27,12 +27,6 @@ fn main() {
     file_paths.push(cargo_dir.join("../code/botlib/l_log.c"));
     file_paths.push(cargo_dir.join("../code/botlib/be_variadic.c"));
 
-    // These 4 cause a bad AI
-    file_paths.push(cargo_dir.join("../code/server/sv_client.c"));
-    file_paths.push(cargo_dir.join("../code/server/sv_game.c"));
-    file_paths.push(cargo_dir.join("../code/server/sv_bot.c"));
-    file_paths.push(cargo_dir.join("../code/server/sv_init.c"));
-
     file_paths.push(cargo_dir.join("../code/server/sv_variadic.c"));
 
     file_paths.push(cargo_dir.join("../code/sys/sys_variadic.c"));

@@ -67,12 +67,14 @@ pub mod sv_snapshot;
 pub mod sv_net_chan;
 #[path = "src/sv_main.rs"]
 pub mod sv_main;
-/*
 #[path = "src/sv_init.rs"]
 pub mod sv_init;
 #[path = "src/sv_bot.rs"]
 pub mod sv_bot;
-*/
+#[path = "src/sv_client.rs"]
+pub mod sv_client;
+#[path = "src/sv_game.rs"]
+pub mod sv_game;
 
 #[path = "src/l_crc.rs"]
 pub mod l_crc;

@@ -1319,9 +1319,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub static mut svs: serverStatic_t;
         #[no_mangle]
         pub static mut sv_maxclients: *mut cvar_t;
-        #[no_mangle]
-        pub fn SV_SendServerCommand(cl: *mut client_t,
-                                    fmt: *const libc::c_char, ...);
         //
 // sv_init.c
 //
@@ -2156,6 +2153,17 @@ pub mod sv_game_c {
     use super::q_shared_h::{usercmd_t, qboolean, vec_t, playerState_t};
     use super::g_public_h::{sharedEntity_t};
 }
+#[header_src =
+      "/home/miguelsaldivar/workspace/ioq3/code/server/sv_variadic.h"]
+pub mod sv_variadic_h {
+    use super::server_h::{client_t};
+    use super::{libc};
+    extern "C" {
+        #[no_mangle]
+        pub fn SV_SendServerCommand(cl: *mut client_t,
+                                    fmt: *const libc::c_char, ...);
+    }
+}
 use self::stdint_h::{intptr_t};
 use self::q_shared_h::{byte, qboolean, qtrue, qfalse, floatint_t,
                        fileHandle_t, clipHandle_t, unnamed, ERR_NEED_CD,
@@ -2309,9 +2317,9 @@ use self::server_h::{SS_GAME, serverState_t, SS_LOADING, SS_DEAD, server_t,
                      CS_ACTIVE, CS_PRIMED, CS_CONNECTED, CS_ZOMBIE, CS_FREE,
                      netchan_buffer_s, netchan_buffer_t, client_s, client_t,
                      challenge_t, serverStatic_t, worldSector_s, gvm, sv, svs,
-                     sv_maxclients, SV_SendServerCommand, SV_SetConfigstring,
-                     SV_GetConfigstring, SV_SetUserinfo, SV_GetUserinfo,
-                     SV_DropClient, SV_ClientThink, SV_BotGetConsoleMessage,
+                     sv_maxclients, SV_SetConfigstring, SV_GetConfigstring,
+                     SV_SetUserinfo, SV_GetUserinfo, SV_DropClient,
+                     SV_ClientThink, SV_BotGetConsoleMessage,
                      SV_BotGetSnapshotEntity, SV_BotLibShutdown,
                      SV_BotLibSetup, BotImport_DebugPolygonDelete,
                      BotImport_DebugPolygonCreate, SV_BotFreeClient,
@@ -2333,6 +2341,7 @@ use self::cm_public_h::{CM_InlineModel, CM_ModelBounds, CM_EntityString,
                         CM_TransformedBoxTrace, CM_ClusterPVS,
                         CM_PointLeafnum, CM_LeafCluster, CM_LeafArea,
                         CM_AdjustAreaPortalState, CM_AreasConnected};
+use self::sv_variadic_h::{SV_SendServerCommand};
 unsafe extern "C" fn _vmf(mut x: intptr_t) -> libc::c_float {
     let mut fi: floatint_t = floatint_t{f: 0.,};
     fi.i = x as libc::c_int;
