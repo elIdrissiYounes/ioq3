@@ -187,6 +187,7 @@ struct vm_s {
 
 
 extern	vm_t	*currentVM;
+extern	vm_t	*lastVM;
 extern	int		vm_debugLevel;
 
 void VM_Compile( vm_t *vm, vmHeader_t *header );

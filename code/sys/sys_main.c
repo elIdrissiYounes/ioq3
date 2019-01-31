@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "sys_local.h"
 #include "sys_loadlib.h"
+#include "sys_variadic.h"
 
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
@@ -280,7 +281,7 @@ Sys_Exit
 Single exit point (regular exit or in case of error)
 =================
 */
-static __attribute__ ((noreturn)) void Sys_Exit( int exitCode )
+void Sys_Exit( int exitCode )
 {
 	CON_Shutdown( );
 
@@ -424,43 +425,7 @@ void Sys_Print( const char *msg )
 	CON_Print( msg );
 }
 
-/*
-=================
-Sys_Error
-=================
-*/
-void Sys_Error( const char *error, ... )
-{
-	va_list argptr;
-	char    string[1024];
 
-	va_start (argptr,error);
-	Q_vsnprintf (string, sizeof(string), error, argptr);
-	va_end (argptr);
-
-	Sys_ErrorDialog( string );
-
-	Sys_Exit( 3 );
-}
-
-#if 0
-/*
-=================
-Sys_Warn
-=================
-*/
-static __attribute__ ((format (printf, 1, 2))) void Sys_Warn( char *warning, ... )
-{
-	va_list argptr;
-	char    string[1024];
-
-	va_start (argptr,warning);
-	Q_vsnprintf (string, sizeof(string), warning, argptr);
-	va_end (argptr);
-
-	CON_Print( va( "Warning: %s", string ) );
-}
-#endif
 
 /*
 ============
@@ -571,53 +536,6 @@ void *Sys_LoadDll(const char *name, qboolean useSystemLib)
 	return dllhandle;
 }
 
-/*
-=================
-Sys_LoadGameDll
-
-Used to load a development dll instead of a virtual machine
-=================
-*/
-void *Sys_LoadGameDll(const char *name,
-	intptr_t (QDECL **entryPoint)(int, ...),
-	intptr_t (*systemcalls)(intptr_t, ...))
-{
-	void *libHandle;
-	void (*dllEntry)(intptr_t (*syscallptr)(intptr_t, ...));
-
-	assert(name);
-
-	if(!Sys_DllExtension(name))
-	{
-		Com_Printf("Refusing to attempt to load library \"%s\": Extension not allowed.\n", name);
-		return NULL;
-	}
-
-	Com_Printf( "Loading DLL file: %s\n", name);
-	libHandle = Sys_LoadLibrary(name);
-
-	if(!libHandle)
-	{
-		Com_Printf("Sys_LoadGameDll(%s) failed:\n\"%s\"\n", name, Sys_LibraryError());
-		return NULL;
-	}
-
-	dllEntry = Sys_LoadFunction( libHandle, "dllEntry" );
-	*entryPoint = Sys_LoadFunction( libHandle, "vmMain" );
-
-	if ( !*entryPoint || !dllEntry )
-	{
-		Com_Printf ( "Sys_LoadGameDll(%s) failed to find vmMain function:\n\"%s\" !\n", name, Sys_LibraryError( ) );
-		Sys_UnloadLibrary(libHandle);
-
-		return NULL;
-	}
-
-	Com_Printf ( "Sys_LoadGameDll(%s) found vmMain function at %p\n", name, *entryPoint );
-	dllEntry( systemcalls );
-
-	return libHandle;
-}
 
 /*
 =================
@@ -691,8 +609,8 @@ int main( int argc, char **argv )
 	int   i;
 	char  commandLine[ MAX_STRING_CHARS ] = { 0 };
 
-	extern void Sys_LaunchAutoupdater(int argc, char **argv);
-	Sys_LaunchAutoupdater(argc, argv);
+	// extern void Sys_LaunchAutoupdater(int argc, char **argv);
+	// Sys_LaunchAutoupdater(argc, argv);
 
 #ifndef DEDICATED
 	// SDL version check
@@ -769,4 +687,5 @@ int main( int argc, char **argv )
 
 	return 0;
 }
+
 

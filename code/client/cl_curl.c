@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifdef USE_CURL_DLOPEN
 #include "../sys/sys_loadlib.h"
 
+#include "cl_variadic.h"
+
 cvar_t *cl_cURLLib;
 
 char* (*qcurl_version)(void);
@@ -215,32 +217,6 @@ static size_t CL_cURL_CallbackWrite(void *buffer, size_t size, size_t nmemb,
 {
 	FS_Write( buffer, size*nmemb, ((fileHandle_t*)stream)[0] );
 	return size*nmemb;
-}
-
-CURLcode qcurl_easy_setopt_warn(CURL *curl, CURLoption option, ...)
-{
-	CURLcode result;
-
-	va_list argp;
-	va_start(argp, option);
-
-	if(option < CURLOPTTYPE_OBJECTPOINT) {
-		long longValue = va_arg(argp, long);
-		result = qcurl_easy_setopt(curl, option, longValue);
-	} else if(option < CURLOPTTYPE_OFF_T) {
-		void *pointerValue = va_arg(argp, void *);
-		result = qcurl_easy_setopt(curl, option, pointerValue);
-	} else {
-		curl_off_t offsetValue = va_arg(argp, curl_off_t);
-		result = qcurl_easy_setopt(curl, option, offsetValue);
-	}
-
-	if(result != CURLE_OK) {
-		Com_DPrintf("qcurl_easy_setopt failed: %s\n", qcurl_easy_strerror(result));
-	}
-	va_end(argp);
-
-	return result;
 }
 
 void CL_cURL_BeginDownload( const char *localName, const char *remoteURL )

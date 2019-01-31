@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // sv_bot.c
 
 #include "server.h"
+#include "sv_variadic.h"
 #include "../botlib/botlib.h"
 
 typedef struct bot_debugpoly_s
@@ -128,47 +129,6 @@ void BotDrawDebugPolygons(void (*drawPoly)(int color, int numPoints, float *poin
 	}
 }
 
-/*
-==================
-BotImport_Print
-==================
-*/
-static __attribute__ ((format (printf, 2, 3))) void QDECL BotImport_Print(int type, char *fmt, ...)
-{
-	char str[2048];
-	va_list ap;
-
-	va_start(ap, fmt);
-	Q_vsnprintf(str, sizeof(str), fmt, ap);
-	va_end(ap);
-
-	switch(type) {
-		case PRT_MESSAGE: {
-			Com_Printf("%s", str);
-			break;
-		}
-		case PRT_WARNING: {
-			Com_Printf(S_COLOR_YELLOW "Warning: %s", str);
-			break;
-		}
-		case PRT_ERROR: {
-			Com_Printf(S_COLOR_RED "Error: %s", str);
-			break;
-		}
-		case PRT_FATAL: {
-			Com_Printf(S_COLOR_RED "Fatal: %s", str);
-			break;
-		}
-		case PRT_EXIT: {
-			Com_Error(ERR_DROP, S_COLOR_RED "Exit: %s", str);
-			break;
-		}
-		default: {
-			Com_Printf("unknown print type\n");
-			break;
-		}
-	}
-}
 
 /*
 ==================

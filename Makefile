@@ -1672,6 +1672,7 @@ Q3OBJ = \
   $(B)/client/cl_scrn.o \
   $(B)/client/cl_ui.o \
   $(B)/client/cl_avi.o \
+  $(B)/client/cl_variadic.o \
   \
   $(B)/client/cm_load.o \
   $(B)/client/cm_patch.o \
@@ -1716,6 +1717,7 @@ Q3OBJ = \
   $(B)/client/sv_main.o \
   $(B)/client/sv_net_chan.o \
   $(B)/client/sv_snapshot.o \
+  $(B)/client/sv_variadic.o \
   $(B)/client/sv_world.o \
   \
   $(B)/client/q_math.o \
@@ -1725,6 +1727,7 @@ Q3OBJ = \
   $(B)/client/ioapi.o \
   $(B)/client/puff.o \
   $(B)/client/vm.o \
+  $(B)/client/vm_variadic.o \
   $(B)/client/vm_interpreted.o \
   \
   $(B)/client/be_aas_bspq3.o \
@@ -1748,11 +1751,13 @@ Q3OBJ = \
   $(B)/client/be_ai_weight.o \
   $(B)/client/be_ea.o \
   $(B)/client/be_interface.o \
+  $(B)/client/be_variadic.o \
   $(B)/client/l_crc.o \
   $(B)/client/l_libvar.o \
   $(B)/client/l_log.o \
   $(B)/client/l_memory.o \
   $(B)/client/l_precomp.o \
+  $(B)/client/l_variadic.o \
   $(B)/client/l_script.o \
   $(B)/client/l_struct.o \
   \
@@ -1761,6 +1766,7 @@ Q3OBJ = \
   \
   $(B)/client/con_log.o \
   $(B)/client/sys_autoupdater.o \
+  $(B)/client/sys_variadic.o \
   $(B)/client/sys_main.o
 
 ifdef MINGW
@@ -2237,6 +2243,7 @@ Q3DOBJ = \
   $(B)/ded/sv_main.o \
   $(B)/ded/sv_net_chan.o \
   $(B)/ded/sv_snapshot.o \
+  $(B)/ded/sv_variadic.o \
   $(B)/ded/sv_world.o \
   \
   $(B)/ded/cm_load.o \
@@ -2260,10 +2267,12 @@ Q3DOBJ = \
   $(B)/ded/unzip.o \
   $(B)/ded/ioapi.o \
   $(B)/ded/vm.o \
+  $(B)/ded/vm_variadic.o \
   $(B)/ded/vm_interpreted.o \
   \
   $(B)/ded/be_aas_bspq3.o \
   $(B)/ded/be_aas_cluster.o \
+  $(B)/ded/be_variadic.o \
   $(B)/ded/be_aas_debug.o \
   $(B)/ded/be_aas_entity.o \
   $(B)/ded/be_aas_file.o \
@@ -2288,6 +2297,7 @@ Q3DOBJ = \
   $(B)/ded/l_log.o \
   $(B)/ded/l_memory.o \
   $(B)/ded/l_precomp.o \
+  $(B)/ded/l_variadic.o \
   $(B)/ded/l_script.o \
   $(B)/ded/l_struct.o \
   \
@@ -2297,6 +2307,7 @@ Q3DOBJ = \
   \
   $(B)/ded/con_log.o \
   $(B)/ded/sys_autoupdater.o \
+  $(B)/ded/sys_variadic.o \
   $(B)/ded/sys_main.o
 
 ifeq ($(ARCH),x86)

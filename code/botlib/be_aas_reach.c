@@ -36,11 +36,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "l_libvar.h"
 #include "l_precomp.h"
 #include "l_struct.h"
+#include "l_variadic.h"
 #include "aasfile.h"
 #include "botlib.h"
 #include "be_aas.h"
 #include "be_aas_funcs.h"
 #include "be_aas_def.h"
+#include "be_variadic.h"
 
 extern int Sys_MilliSeconds(void);
 

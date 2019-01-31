@@ -136,7 +136,7 @@ typedef struct aas_routingcache_s
 	struct aas_routingcache_s *prev, *next;
 	struct aas_routingcache_s *time_prev, *time_next;
 	unsigned char *reachabilities;				//reachabilities used for routing
-	unsigned short int traveltimes[1];			//travel time for every area (variable sized)
+	unsigned short int traveltimes[];			//travel time for every area (variable sized)
 } aas_routingcache_t;
 
 //fields for the routing algorithm

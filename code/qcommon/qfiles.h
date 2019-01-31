@@ -212,7 +212,7 @@ typedef struct {
 	vec3_t		normal;
 	vec2_t		texCoords;
 	int			numWeights;
-	mdrWeight_t	weights[1];		// variable sized
+	mdrWeight_t	weights[];		// variable sized
 } mdrVertex_t;
 
 typedef struct {
@@ -254,7 +254,7 @@ typedef struct {
 	vec3_t		localOrigin;		// midpoint of bounds, used for sphere cull
 	float		radius;			// dist from localOrigin to corner
 	char		name[16];
-	mdrBone_t	bones[1];		// [numBones]
+	mdrBone_t	bones[];		// [numBones]
 } mdrFrame_t;
 
 typedef struct {
@@ -265,7 +265,7 @@ typedef struct {
         vec3_t          bounds[2];		// bounds of all surfaces of all LOD's for this frame
         vec3_t          localOrigin;		// midpoint of bounds, used for sphere cull
         float           radius;			// dist from localOrigin to corner
-        mdrCompBone_t   bones[1];		// [numBones]
+        mdrCompBone_t   bones[];		// [numBones]
 } mdrCompFrame_t;
 
 typedef struct {

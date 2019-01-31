@@ -1707,3 +1707,29 @@ void NET_Restart_f(void)
 {
 	NET_Config(qtrue);
 }
+
+/*
+===============
+NET_OutOfBandPrint
+
+Sends a text message in an out-of-band datagram
+================
+*/
+void QDECL NET_OutOfBandPrint( netsrc_t sock, netadr_t adr, const char *format, ... ) {
+	va_list		argptr;
+	char		string[MAX_MSGLEN];
+
+
+	// set the header
+	string[0] = -1;
+	string[1] = -1;
+	string[2] = -1;
+	string[3] = -1;
+
+	va_start( argptr, format );
+	Q_vsnprintf( string+4, sizeof(string)-4, format, argptr );
+	va_end( argptr );
+
+	// send the datagram
+	NET_SendPacket( sock, strlen( string ), string, adr );
+}

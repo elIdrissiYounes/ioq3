@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "l_precomp.h"
 #include "l_struct.h"
 #include "l_libvar.h"
+#include "l_variadic.h"
 #include "aasfile.h"
 #include "botlib.h"
 #include "be_aas.h"
@@ -71,7 +72,7 @@ typedef struct bot_character_s
 {
 	char filename[MAX_QPATH];
 	float skill;
-	bot_characteristic_t c[1];		//variable sized
+	bot_characteristic_t c[];		//variable sized
 } bot_character_t;
 
 bot_character_t *botcharacters[MAX_CLIENTS + 1];

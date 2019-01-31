@@ -43,7 +43,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // Console
 void CON_Shutdown( void );
 void CON_Init( void );
-char *CON_Input( void );
+void CON_Hide( void );
+void CON_Show( void );
+void CON_Back( void );
+void Hist_Add(field_t *field);
+field_t *Hist_Prev( void );
+field_t *Hist_Next( void );
 void CON_Print( const char *message );
 
 unsigned int CON_LogSize( void );
@@ -59,6 +64,7 @@ void Sys_GLimpInit( void );
 void Sys_PlatformInit( void );
 void Sys_PlatformExit( void );
 void Sys_SigHandler( int signal ) __attribute__ ((noreturn));
+void Sys_Exit( int exitCode ) __attribute__ ((noreturn));
 void Sys_ErrorDialog( const char *error );
 void Sys_AnsiColorPrint( const char *msg );
 

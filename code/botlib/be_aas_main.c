@@ -47,23 +47,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 aas_t aasworld;
 
 libvar_t *saveroutingcache;
-
-//===========================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//===========================================================================
-void QDECL AAS_Error(char *fmt, ...)
-{
-	char str[1024];
-	va_list arglist;
-
-	va_start(arglist, fmt);
-	Q_vsnprintf(str, sizeof(str), fmt, arglist);
-	va_end(arglist);
-	botimport.Print(PRT_FATAL, "%s", str);
-} //end of the function AAS_Error
 //===========================================================================
 //
 // Parameter:				-

@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // vm_x86.c -- load time compiler and execution environment for x86
 
 #include "vm_local.h"
+#include "vm_variadic.h"
 
 #ifdef _WIN32
   #include <windows.h>
@@ -1701,109 +1702,3 @@ void VM_Destroy_Compiled(vm_t* self)
 #endif
 }
 
-/*
-==============
-VM_CallCompiled
-
-This function is called directly by the generated code
-==============
-*/
-
-#if defined(_MSC_VER) && defined(idx64)
-extern uint8_t qvmcall64(int *programStack, int *opStack, intptr_t *instructionPointers, byte *dataBase);
-#endif
-
-int VM_CallCompiled(vm_t *vm, int *args)
-{
-	byte	stack[OPSTACK_SIZE + 15];
-	void	*entryPoint;
-	int		programStack, stackOnEntry;
-	byte	*image;
-	int	*opStack;
-	int		opStackOfs;
-	int		arg;
-
-	currentVM = vm;
-
-	// interpret the code
-	vm->currentlyInterpreting = qtrue;
-
-	// we might be called recursively, so this might not be the very top
-	programStack = stackOnEntry = vm->programStack;
-
-	// set up the stack frame 
-	image = vm->dataBase;
-
-	programStack -= ( 8 + 4 * MAX_VMMAIN_ARGS );
-
-	for ( arg = 0; arg < MAX_VMMAIN_ARGS; arg++ )
-		*(int *)&image[ programStack + 8 + arg * 4 ] = args[ arg ];
-
-	*(int *)&image[ programStack + 4 ] = 0;	// return stack
-	*(int *)&image[ programStack ] = -1;	// will terminate the loop on return
-
-	// off we go into generated code...
-	entryPoint = vm->codeBase + vm->entryOfs;
-	opStack = PADP(stack, 16);
-	*opStack = 0xDEADBEEF;
-	opStackOfs = 0;
-
-#ifdef _MSC_VER
-  #if idx64
-	opStackOfs = qvmcall64(&programStack, opStack, vm->instructionPointers, vm->dataBase);
-  #else
-	__asm
-	{
-		pushad
-
-		mov	esi, dword ptr programStack
-		mov	edi, dword ptr opStack
-		mov	ebx, dword ptr opStackOfs
-
-		call	entryPoint
-
-		mov	dword ptr opStackOfs, ebx
-		mov	dword ptr opStack, edi
-		mov	dword ptr programStack, esi
-		
-		popad
-	}
-  #endif		
-#elif idx64
-	__asm__ volatile(
-		"movq %5, %%rax\n"
-		"movq %3, %%r8\n"
-		"movq %4, %%r9\n"
-		"push %%r15\n"
-		"push %%r14\n"
-		"push %%r13\n"
-		"push %%r12\n"
-		"callq *%%rax\n"
-		"pop %%r12\n"
-		"pop %%r13\n"
-		"pop %%r14\n"
-		"pop %%r15\n"
-		: "+S" (programStack), "+D" (opStack), "+b" (opStackOfs)
-		: "g" (vm->instructionPointers), "g" (vm->dataBase), "g" (entryPoint)
-		: "cc", "memory", "%rax", "%rcx", "%rdx", "%r8", "%r9", "%r10", "%r11"
-	);
-#else
-	__asm__ volatile(
-		"calll *%3\n"
-		: "+S" (programStack), "+D" (opStack), "+b" (opStackOfs)
-		: "g" (entryPoint)
-		: "cc", "memory", "%eax", "%ecx", "%edx"
-	);
-#endif
-
-	if(opStackOfs != 1 || *opStack != 0xDEADBEEF)
-	{
-		Com_Error(ERR_DROP, "opStack corrupted in compiled code");
-	}
-	if(programStack != stackOnEntry - (8 + 4 * MAX_VMMAIN_ARGS))
-		Com_Error(ERR_DROP, "programStack corrupted in compiled code");
-
-	vm->programStack = stackOnEntry;
-
-	return opStack[opStackOfs];
-}

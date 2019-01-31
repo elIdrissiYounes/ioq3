@@ -38,12 +38,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_struct.h"
+#include "l_variadic.h"
 #include "aasfile.h"
 #include "botlib.h"
 #include "be_aas.h"
 #include "be_aas_funcs.h"
 #include "be_interface.h"
 #include "be_aas_def.h"
+#include "be_variadic.h"
 
 #define ROUTING_DEBUG
 
