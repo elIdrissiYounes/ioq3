@@ -1626,17 +1626,6 @@ int FS_Write( const void *buffer, int len, fileHandle_t h ) {
 	return len;
 }
 
-void QDECL FS_Printf( fileHandle_t h, const char *fmt, ... ) {
-	va_list		argptr;
-	char		msg[MAXPRINTMSG];
-
-	va_start (argptr,fmt);
-	Q_vsnprintf (msg, sizeof(msg), fmt, argptr);
-	va_end (argptr);
-
-	FS_Write(msg, strlen(msg), h);
-}
-
 #define PK3_SEEK_BUFFER_SIZE 65536
 
 /*

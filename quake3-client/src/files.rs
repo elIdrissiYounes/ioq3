@@ -1,18 +1,4 @@
 use libc;
-#[header_src = "vararg"]
-pub mod vararg {
-    pub type __builtin_va_list = [__va_list_tag; 1];
-    #[derive
-    ( Copy , Clone )]
-    #[repr(C)]
-    pub struct __va_list_tag {
-        pub gp_offset: libc::c_uint,
-        pub fp_offset: libc::c_uint,
-        pub overflow_arg_area: *mut libc::c_void,
-        pub reg_save_area: *mut libc::c_void,
-    }
-    use super::{libc};
-}
 #[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
 pub mod types_h {
     pub type __off_t = libc::c_long;
@@ -78,11 +64,6 @@ pub mod FILE_h {
     pub type FILE = _IO_FILE;
     use super::libio_h::{_IO_FILE};
 }
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stdarg.h"]
-pub mod stdarg_h {
-    pub type va_list = __builtin_va_list;
-    use super::vararg::{__builtin_va_list};
-}
 #[header_src = "/usr/include/stdio.h"]
 pub mod stdio_h {
     pub type off_t = __off_t;
@@ -90,7 +71,6 @@ pub mod stdio_h {
     use super::{libc};
     use super::FILE_h::{FILE};
     use super::stddef_h::{size_t};
-    use super::vararg::{__va_list_tag};
     extern "C" {
         #[no_mangle]
         pub fn remove(__filename: *const libc::c_char) -> libc::c_int;
@@ -104,10 +84,6 @@ pub mod stdio_h {
         #[no_mangle]
         pub fn setvbuf(__stream: *mut FILE, __buf: *mut libc::c_char,
                        __modes: libc::c_int, __n: size_t) -> libc::c_int;
-        #[no_mangle]
-        pub fn vsnprintf(_: *mut libc::c_char, _: libc::c_ulong,
-                         _: *const libc::c_char, _: *mut __va_list_tag)
-         -> libc::c_int;
         #[no_mangle]
         pub fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t,
                      __stream: *mut FILE) -> size_t;
@@ -854,14 +830,12 @@ pub mod ctype_h {
         pub fn tolower(_: libc::c_int) -> libc::c_int;
     }
 }
-use self::vararg::{__builtin_va_list, __va_list_tag};
 use self::types_h::{__off_t, __off64_t};
 use self::stddef_h::{size_t};
 use self::libio_h::{_IO_FILE, _IO_lock_t, _IO_marker};
 use self::FILE_h::{FILE};
-use self::stdarg_h::{va_list};
-use self::stdio_h::{off_t, remove, rename, fclose, fflush, setvbuf, vsnprintf,
-                    fread, fwrite, fseek, ftell};
+use self::stdio_h::{off_t, remove, rename, fclose, fflush, setvbuf, fread,
+                    fwrite, fseek, ftell};
 use self::stdlib_h::{__compar_fn_t, atoi, qsort};
 use self::q_shared_h::{byte, qboolean, qtrue, qfalse, fileHandle_t, unnamed,
                        ERR_NEED_CD, ERR_DISCONNECT, ERR_SERVERDISCONNECT,
@@ -1737,7 +1711,7 @@ pub unsafe extern "C" fn FS_FOpenFileRead(mut filename: *const libc::c_char,
              ||
              0 ==
                  strcmp(filename,
-                        b"q3config.cfg\x00" as *const u8 as
+                        b"q3config_server.cfg\x00" as *const u8 as
                             *const libc::c_char)) as libc::c_int as qboolean;
     search = fs_searchpaths;
     while !search.is_null() {
@@ -2525,7 +2499,7 @@ pub unsafe extern "C" fn FS_SortFileList(mut filelist: *mut *mut libc::c_char,
                           *const u8 as *const libc::c_char as
                           *mut libc::c_char,
                       b"code/qcommon/files.c\x00" as *const u8 as
-                          *const libc::c_char as *mut libc::c_char, 2717i32)
+                          *const libc::c_char as *mut libc::c_char, 2706i32)
             as *mut *mut libc::c_char;
     let ref mut fresh2 = *sortedlist.offset(0isize);
     *fresh2 = 0 as *mut libc::c_char;
@@ -2732,7 +2706,7 @@ pub unsafe extern "C" fn FS_ListFilteredFiles(mut path: *const libc::c_char,
                       b"( nfiles + 1 ) * sizeof( *listCopy )\x00" as *const u8
                           as *const libc::c_char as *mut libc::c_char,
                       b"code/qcommon/files.c\x00" as *const u8 as
-                          *const libc::c_char as *mut libc::c_char, 2344i32)
+                          *const libc::c_char as *mut libc::c_char, 2333i32)
             as *mut *mut libc::c_char;
     i = 0i32;
     while i < nfiles {
@@ -2941,7 +2915,7 @@ pub unsafe extern "C" fn FS_AddGameDirectory(mut path: *const libc::c_char,
                                       *mut libc::c_char,
                                   b"code/qcommon/files.c\x00" as *const u8 as
                                       *const libc::c_char as
-                                      *mut libc::c_char, 2984i32) as
+                                      *mut libc::c_char, 2973i32) as
                         *mut searchpath_t;
                 (*search).pack = pak;
                 (*search).next = fs_searchpaths;
@@ -2967,7 +2941,7 @@ pub unsafe extern "C" fn FS_AddGameDirectory(mut path: *const libc::c_char,
                                       *mut libc::c_char,
                                   b"code/qcommon/files.c\x00" as *const u8 as
                                       *const libc::c_char as
-                                      *mut libc::c_char, 3004i32) as
+                                      *mut libc::c_char, 2993i32) as
                         *mut searchpath_t;
                 (*search).dir =
                     Z_MallocDebug(::std::mem::size_of::<directory_t>() as
@@ -2977,7 +2951,7 @@ pub unsafe extern "C" fn FS_AddGameDirectory(mut path: *const libc::c_char,
                                       *mut libc::c_char,
                                   b"code/qcommon/files.c\x00" as *const u8 as
                                       *const libc::c_char as
-                                      *mut libc::c_char, 3005i32) as
+                                      *mut libc::c_char, 2994i32) as
                         *mut directory_t;
                 Q_strncpyz((*(*search).dir).path.as_mut_ptr(),
                            curpath.as_mut_ptr(),
@@ -3004,7 +2978,7 @@ pub unsafe extern "C" fn FS_AddGameDirectory(mut path: *const libc::c_char,
                       b"sizeof(searchpath_t)\x00" as *const u8 as
                           *const libc::c_char as *mut libc::c_char,
                       b"code/qcommon/files.c\x00" as *const u8 as
-                          *const libc::c_char as *mut libc::c_char, 3025i32)
+                          *const libc::c_char as *mut libc::c_char, 3014i32)
             as *mut searchpath_t;
     (*search).dir =
         Z_MallocDebug(::std::mem::size_of::<directory_t>() as libc::c_ulong as
@@ -3012,7 +2986,7 @@ pub unsafe extern "C" fn FS_AddGameDirectory(mut path: *const libc::c_char,
                       b"sizeof( *search->dir )\x00" as *const u8 as
                           *const libc::c_char as *mut libc::c_char,
                       b"code/qcommon/files.c\x00" as *const u8 as
-                          *const libc::c_char as *mut libc::c_char, 3026i32)
+                          *const libc::c_char as *mut libc::c_char, 3015i32)
             as *mut directory_t;
     Q_strncpyz((*(*search).dir).path.as_mut_ptr(), path,
                ::std::mem::size_of::<[libc::c_char; 4096]>() as libc::c_ulong
@@ -3115,7 +3089,7 @@ unsafe extern "C" fn FS_LoadZipFile(mut zipfile: *const libc::c_char,
                           as *const u8 as *const libc::c_char as
                           *mut libc::c_char,
                       b"code/qcommon/files.c\x00" as *const u8 as
-                          *const libc::c_char as *mut libc::c_char, 2054i32)
+                          *const libc::c_char as *mut libc::c_char, 2043i32)
             as *mut fileInPack_t;
     namePtr =
         (buildBuffer as
@@ -3133,7 +3107,7 @@ unsafe extern "C" fn FS_LoadZipFile(mut zipfile: *const libc::c_char,
                           *const u8 as *const libc::c_char as
                           *mut libc::c_char,
                       b"code/qcommon/files.c\x00" as *const u8 as
-                          *const libc::c_char as *mut libc::c_char, 2056i32)
+                          *const libc::c_char as *mut libc::c_char, 2045i32)
             as *mut libc::c_int;
     let fresh10 = fs_numHeaderLongs;
     fs_numHeaderLongs = fs_numHeaderLongs + 1;
@@ -3154,7 +3128,7 @@ unsafe extern "C" fn FS_LoadZipFile(mut zipfile: *const libc::c_char,
                           *const u8 as *const libc::c_char as
                           *mut libc::c_char,
                       b"code/qcommon/files.c\x00" as *const u8 as
-                          *const libc::c_char as *mut libc::c_char, 2067i32)
+                          *const libc::c_char as *mut libc::c_char, 2056i32)
             as *mut pack_t;
     (*pack).hashSize = i;
     (*pack).hashTable =
@@ -3412,7 +3386,7 @@ pub unsafe extern "C" fn FS_Restart(mut checksumFeed: libc::c_int) {
         Sys_RemovePIDFile(lastGameDir);
         Sys_InitPIDFile(FS_GetCurrentGameDir());
         if 0 == Com_SafeMode() as u64 {
-            Cbuf_AddText(b"exec q3config.cfg\n\x00" as *const u8 as
+            Cbuf_AddText(b"exec q3config_server.cfg\n\x00" as *const u8 as
                              *const libc::c_char);
         }
     }
@@ -3961,7 +3935,7 @@ unsafe extern "C" fn Sys_ConcatenateFileLists(mut list0:
                           *const u8 as *const libc::c_char as
                           *mut libc::c_char,
                       b"code/qcommon/files.c\x00" as *const u8 as
-                          *const libc::c_char as *mut libc::c_char, 2458i32)
+                          *const libc::c_char as *mut libc::c_char, 2447i32)
             as *mut *mut libc::c_char;
     dst = cat;
     if !list0.is_null() {
@@ -4316,16 +4290,6 @@ pub unsafe extern "C" fn FS_FTell(mut f: fileHandle_t) -> libc::c_int {
     } else { pos = ftell(fsh[f as usize].handleFiles.file.o) as libc::c_int }
     return pos;
 }
-#[no_mangle]
-pub unsafe extern "C" fn FS_Printf(mut h: fileHandle_t,
-                                   mut fmt: *const libc::c_char, ...) {
-    let mut msg: [libc::c_char; 4096] = [0; 4096];
-    vsnprintf(msg.as_mut_ptr(),
-              ::std::mem::size_of::<[libc::c_char; 4096]>() as libc::c_ulong,
-              fmt, argptr);
-    FS_Write(msg.as_mut_ptr() as *const libc::c_void,
-             strlen(msg.as_mut_ptr()) as libc::c_int, h);
-}
 // like fprintf
 #[no_mangle]
 pub unsafe extern "C" fn FS_FOpenFileByMode(mut qpath: *const libc::c_char,
@@ -4347,8 +4311,8 @@ pub unsafe extern "C" fn FS_FOpenFileByMode(mut qpath: *const libc::c_char,
             if *f == 0i32 { r = -1i32 }
             current_block_14 = 17833034027772472439;
         }
-        3 => { sync = qtrue; current_block_14 = 13094840349067953292; }
-        2 => { current_block_14 = 13094840349067953292; }
+        3 => { sync = qtrue; current_block_14 = 13579035420138614331; }
+        2 => { current_block_14 = 13579035420138614331; }
         _ => {
             Com_Error(ERR_FATAL as libc::c_int,
                       b"FS_FOpenFileByMode: bad mode\x00" as *const u8 as
@@ -4356,7 +4320,7 @@ pub unsafe extern "C" fn FS_FOpenFileByMode(mut qpath: *const libc::c_char,
         }
     }
     match current_block_14 {
-        13094840349067953292 => {
+        13579035420138614331 => {
             *f = FS_FOpenFileAppend(qpath);
             r = 0i32;
             if *f == 0i32 { r = -1i32 }

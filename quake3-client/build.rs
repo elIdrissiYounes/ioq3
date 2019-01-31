@@ -11,12 +11,13 @@ fn main() {
 
     let mut file_paths = Vec::new();
 
+    // Files that need to be linked, due to untranslatable code
+    // E.g.: Variadic functions, inline, assembly, etc..
     file_paths.push(cargo_dir.join("../code/asm/ftola.c"));
     file_paths.push(cargo_dir.join("../code/asm/snapvector.c"));
 
     file_paths.push(cargo_dir.join("../code/qcommon/common.c"));
     file_paths.push(cargo_dir.join("../code/qcommon/q_shared.c"));
-    file_paths.push(cargo_dir.join("../code/qcommon/files.c"));
     file_paths.push(cargo_dir.join("../code/qcommon/vm_variadic.c"));
     file_paths.push(cargo_dir.join("../code/qcommon/net_ip.c"));
     file_paths.push(cargo_dir.join("../code/qcommon/ioapi.c"));

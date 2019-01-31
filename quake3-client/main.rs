@@ -41,6 +41,9 @@ pub mod cl_avi;
 #[path = "src/cl_keys.rs"]
 pub mod cl_keys;
 
+#[path = "src/files.rs"]
+pub mod files;
+
 #[path = "src/cm_load.rs"]
 pub mod cm_load;
 #[path = "src/cm_trace.rs"]
