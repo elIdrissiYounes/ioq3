@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "quake3-client",
+    "quake3-cgame",
+    "quake3-game",
+    "quake3-ui",
+]
+
