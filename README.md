@@ -535,7 +535,7 @@ Dependencies needed to build the project:
 * `libopenal-dev`
 * Rust nightly version: `nightly-2018-12-03`
 
-To build:
+To build without build script:
 
     $ make debug # Build the C project
     $ cd $IOQ3/quake3-rs/
@@ -548,6 +548,23 @@ To build:
     $ cp $QUAKE3-RS/target/release/libquake3_ui.so uix86_64.so
     $ cd ..
     $ LD_LIBRARY_PATH=`rustc --print=sysroot`/lib ./ioquake3.x86_64 +set sv_pure 0 +set vm_game 0 +set vm_cgame 0 +set vm_ui 0
+
+Build script:
+```
+$ ./build-quake3-rs.py -h # or python3 build-quake3-rs.py
+Build, copy, and run quake3-rs
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --all       Build, copy, and run quake3-rs
+  --build     Build quake3-rs
+  --copy      Copy all the binaries to the necessary locations
+  --run       Run quake3-rs
+```
+
+The only necessary packages for the script is `plumbum`.
+
+    $ pip3 install plumbum
 
 # Credits
 
