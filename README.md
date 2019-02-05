@@ -524,6 +524,33 @@ but we have some general guidelines:
   * Your installer will be mirrored to an "official" directory, thus making it
     a done deal.
 
+# `c2rust` Instructions
+
+Dependencies needed to build the project:
+
+* libopus-dev
+* libopusfile-dev
+* libjpeg-dev
+* libvorbis-dev
+* libopenal-dev
+
+To build:
+
+    $ make debug # Build the C project
+    $ cd $IOQ3/quake3-rs/
+    $ cargo build --release
+    $ cd $IOQ3/build/debug-linux-x86_64/
+    $ cp $QUAKE3-RS/target/release/ioquake3 ioquake3.x86_64
+    $ cd baseq3
+    $ cp $QUAKE3-RS/target/release/libquake3_game.so qagamex86_64.so
+    $ cp $QUAKE3-RS/target/release/libquake3_cgame.so cgamex86_64.so
+    $ cp $QUAKE3-RS/target/release/libquake3_ui.so uix86_64.so
+    $ cd ..
+    $ LD_LIBRARY_PATH=`rustc --print=sysroot`/lib ./ioquake3.x86_64 +set sv_pure 0 +set vm_game 0 +set vm_cgame 0 +set vm_ui 0
+
+
+
+
 
 # Credits
 
