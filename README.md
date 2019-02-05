@@ -528,11 +528,12 @@ but we have some general guidelines:
 
 Dependencies needed to build the project:
 
-* libopus-dev
-* libopusfile-dev
-* libjpeg-dev
-* libvorbis-dev
-* libopenal-dev
+* `libopus-dev`
+* `libopusfile-dev`
+* `libjpeg-dev`
+* `libvorbis-dev`
+* `libopenal-dev`
+* Rust nightly version: `nightly-2018-12-03`
 
 To build:
 
@@ -547,10 +548,6 @@ To build:
     $ cp $QUAKE3-RS/target/release/libquake3_ui.so uix86_64.so
     $ cd ..
     $ LD_LIBRARY_PATH=`rustc --print=sysroot`/lib ./ioquake3.x86_64 +set sv_pure 0 +set vm_game 0 +set vm_cgame 0 +set vm_ui 0
-
-
-
-
 
 # Credits
 
