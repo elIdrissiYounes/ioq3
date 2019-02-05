@@ -74,7 +74,6 @@ Links the rust binaries to ioq3 build directory
 """
 def _copy():
     print("Copying...")
-    make = pb.local['make']
     assert_build_directory()
     ln = pb.local['ln']
     ioquake3_rs = get_binary(TARGET_DIR, 'ioquake3')
@@ -104,7 +103,7 @@ def _build():
     make = pb.local['make']
     cargo = pb.local['cargo']
 
-    make['debug', '-j{}'.format(NUM_JOBS)]()
+    make['debug', '-j{}'.format(NUM_JOBS), 'USE_INTERNAL_LIBS=0']()
 
     with pb.local.cwd(QUAKE3_RS):
         cargo['build', '--release', '-j{}'.format(NUM_JOBS)]()

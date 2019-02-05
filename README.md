@@ -551,7 +551,11 @@ To build without build script:
 
 Build script:
 ```
-$ ./build-quake3-rs.py -h # or python3 build-quake3-rs.py
+$ ./build-quake3-rs.py # or python3 build-quake3-rs.py
+$ ./build-quake3-rs.py --all # runs all the steps
+$ ./build-quake3-rs.py --build # only build 
+$ ./build-quake3-rs.py --copy --run # only copy and run, but will fail if the build files are not there
+
 Build, copy, and run quake3-rs
 
 optional arguments:
@@ -562,7 +566,7 @@ optional arguments:
   --run       Run quake3-rs
 ```
 
-The only necessary packages for the script is `plumbum`.
+The only necessary package for the script is `plumbum`.
 
     $ pip3 install plumbum
 
