@@ -570,6 +570,12 @@ The only necessary package for the script is `plumbum`.
 
     $ pip3 install plumbum
 
+Some fun changes made to `ioquake3`:
+![ioq3 changes](misc/c2rust/quake3-rs-ui-change.png "ioq3 changes")
+
+
+The gravity was also changed for a comical effect, [here in the source code.](https://github.com/immunant/ioq3/blob/quake3-rs/quake3-rs/quake3-game/src/g_spawn.rs#L799)
+
 # Credits
 
 Maintainers
