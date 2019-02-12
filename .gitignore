@@ -4,8 +4,7 @@ Makefile.local
 *tags
 *~
 compile_commands.json
-quake3-rs/*/lib
-
+*.a
 # OS X
 ####################
 .Spotlight-V100/

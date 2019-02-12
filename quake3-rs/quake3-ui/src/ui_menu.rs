@@ -417,7 +417,7 @@ pub unsafe extern "C" fn UI_MainMenu() {
     s_main.exit.generic.y = y;
     s_main.exit.generic.id = 17i32;
     s_main.exit.generic.callback = Some(Main_MenuEvent);
-    s_main.exit.string = b"EXIT QUAKE-RS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    s_main.exit.string = b"EXIT QUAKE3-RS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     s_main.exit.color = color_orange.as_mut_ptr();
     s_main.exit.style = style;
     Menu_AddItem(
