@@ -1,3 +1,4 @@
+use bg_misc::bg_itemlist;
 use keycodes_h::{
     unnamed_0, K_ALT, K_AUX1, K_AUX10, K_AUX11, K_AUX12, K_AUX13, K_AUX14, K_AUX15, K_AUX16,
     K_AUX2, K_AUX3, K_AUX4, K_AUX5, K_AUX6, K_AUX7, K_AUX8, K_AUX9, K_BACKSPACE, K_BREAK,
@@ -31,6 +32,11 @@ use keycodes_h::{
     K_WORLD_9, K_WORLD_90, K_WORLD_91, K_WORLD_92, K_WORLD_93, K_WORLD_94, K_WORLD_95, MAX_KEYS,
 };
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
     qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, vec4_t, vec_t, Com_Clamp,
     CHAN_ANNOUNCER, CHAN_AUTO, CHAN_BODY, CHAN_ITEM, CHAN_LOCAL, CHAN_LOCAL_SOUND, CHAN_VOICE,
@@ -41,8 +47,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -548,7 +554,7 @@ UI_SPSkillMenu_FightEvent
 =================
 */
 unsafe extern "C" fn UI_SPSkillMenu_FightEvent(
-    mut _ptr: *mut libc::c_void,
+    mut ptr: *mut libc::c_void,
     mut notification: libc::c_int,
 ) {
     if notification != 3i32 {
@@ -562,7 +568,7 @@ UI_SPSkillMenu_BackEvent
 =================
 */
 unsafe extern "C" fn UI_SPSkillMenu_BackEvent(
-    mut _ptr: *mut libc::c_void,
+    mut ptr: *mut libc::c_void,
     mut notification: libc::c_int,
 ) {
     if notification != 3i32 {

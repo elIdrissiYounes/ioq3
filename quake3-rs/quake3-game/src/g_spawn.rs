@@ -2,14 +2,22 @@ use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
 };
-use bg_public_h::{
-    bg_itemlist, gitem_s, gitem_t, itemType_t, team_t, unnamed, unnamed_0, ET_BEAM, ET_EVENTS,
-    ET_GENERAL, ET_GRAPPLE, ET_INVISIBLE, ET_ITEM, ET_MISSILE, ET_MOVER, ET_PLAYER, ET_PORTAL,
-    ET_PUSH_TRIGGER, ET_SPEAKER, ET_TEAM, ET_TELEPORT_TRIGGER, GT_1FCTF, GT_CTF, GT_FFA,
-    GT_HARVESTER, GT_MAX_GAME_TYPE, GT_OBELISK, GT_SINGLE_PLAYER, GT_TEAM, GT_TOURNAMENT, IT_AMMO,
-    IT_ARMOR, IT_BAD, IT_HEALTH, IT_HOLDABLE, IT_PERSISTANT_POWERUP, IT_POWERUP, IT_TEAM,
-    IT_WEAPON, TEAM_BLUE, TEAM_FREE, TEAM_NUM_TEAMS, TEAM_RED, TEAM_SPECTATOR,
+use bg_misc::{
+    bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
+    BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItem, BG_FindItemForPowerup,
+    BG_FindItemForWeapon, BG_PlayerStateToEntityState, BG_PlayerStateToEntityStateExtraPolate,
+    BG_PlayerTouchesItem, BG_TouchJumpPad,
 };
+use bg_pmove::{c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, Pmove};
+use bg_public_h::{
+    gitem_s, gitem_t, itemType_t, team_t, unnamed, unnamed_0, ET_BEAM, ET_EVENTS, ET_GENERAL,
+    ET_GRAPPLE, ET_INVISIBLE, ET_ITEM, ET_MISSILE, ET_MOVER, ET_PLAYER, ET_PORTAL, ET_PUSH_TRIGGER,
+    ET_SPEAKER, ET_TEAM, ET_TELEPORT_TRIGGER, GT_1FCTF, GT_CTF, GT_FFA, GT_HARVESTER,
+    GT_MAX_GAME_TYPE, GT_OBELISK, GT_SINGLE_PLAYER, GT_TEAM, GT_TOURNAMENT, IT_AMMO, IT_ARMOR,
+    IT_BAD, IT_HEALTH, IT_HOLDABLE, IT_PERSISTANT_POWERUP, IT_POWERUP, IT_TEAM, IT_WEAPON,
+    TEAM_BLUE, TEAM_FREE, TEAM_NUM_TEAMS, TEAM_RED, TEAM_SPECTATOR,
+};
+use bg_slidemove::{PM_SlideMove, PM_StepSlideMove};
 use g_active::{ClientEndFrame, ClientThink, G_RunClient};
 use g_arenas::{
     podium1, podium2, podium3, SpawnModelsOnVictoryPads, Svcmd_AbortPodium_f, UpdateTournamentInfo,
@@ -89,6 +97,10 @@ use g_weapon::{
     Weapon_HookThink,
 };
 use libc;
+use q_math::{
+    vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
+    DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
+};
 use q_shared_h::{
     byte, cplane_s, cplane_t, cvarHandle_t, entityState_s, entityState_t, fileHandle_t,
     playerState_s, playerState_t, qboolean, qfalse, qtrue, trType_t, trace_t, trajectory_t,
@@ -795,7 +807,7 @@ pub unsafe extern "C" fn SP_worldspawn() {
     trap_SetConfigstring(4i32, g_motd.string.as_mut_ptr());
     G_SpawnString(
         b"gravity\x00" as *const u8 as *const libc::c_char,
-        // Changed from 800 just for fun - MGS
+        // The default is "800", but changed just for fun - MGS
         b"100\x00" as *const u8 as *const libc::c_char,
         &mut s,
     );
@@ -951,13 +963,7 @@ unsafe extern "C" fn run_static_initializers() {
 #[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
 static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];
 pub const F_INT: fieldtype_t = 0;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct spawn_t {
-    pub name: *mut libc::c_char,
-    pub spawn: Option<unsafe extern "C" fn(_: *mut gentity_t) -> ()>,
-}
-pub type fieldtype_t = libc::c_uint;
+pub const F_ANGLEHACK: fieldtype_t = 4;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct field_t {
@@ -966,6 +972,12 @@ pub struct field_t {
     pub type_0: fieldtype_t,
 }
 pub const F_FLOAT: fieldtype_t = 1;
-pub const F_ANGLEHACK: fieldtype_t = 4;
 pub const F_STRING: fieldtype_t = 2;
 pub const F_VECTOR: fieldtype_t = 3;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct spawn_t {
+    pub name: *mut libc::c_char,
+    pub spawn: Option<unsafe extern "C" fn(_: *mut gentity_t) -> ()>,
+}
+pub type fieldtype_t = libc::c_uint;

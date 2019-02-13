@@ -1,15 +1,21 @@
+use bg_misc::bg_itemlist;
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
     qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, va, vec4_t, vec_t, Info_ValueForKey,
     Q_CleanStr, Q_strncpyz, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
 };
-use stdlib::{atoi, memset};
+use stdlib::{memset, strtol};
 use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -70,6 +76,13 @@ use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
 
+unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
+    return strtol(
+        __nptr,
+        0 as *mut libc::c_void as *mut *mut libc::c_char,
+        10i32,
+    ) as libc::c_int;
+}
 //
 // ui_removebots.c
 //
@@ -458,7 +471,7 @@ UI_RemoveAddBotsMenu_BackEvent
 =================
 */
 unsafe extern "C" fn UI_RemoveBotsMenu_BackEvent(
-    mut _ptr: *mut libc::c_void,
+    mut ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -472,7 +485,7 @@ UI_RemoveBotsMenu_DeleteEvent
 =================
 */
 unsafe extern "C" fn UI_RemoveBotsMenu_DeleteEvent(
-    mut _ptr: *mut libc::c_void,
+    mut ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -511,7 +524,7 @@ UI_RemoveBotsMenu_DownEvent
 =================
 */
 unsafe extern "C" fn UI_RemoveBotsMenu_DownEvent(
-    mut _ptr: *mut libc::c_void,
+    mut ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -557,7 +570,7 @@ unsafe extern "C" fn UI_RemoveBotsMenu_SetBotNames() {
 UI_RemoveBotsMenu_UpEvent
 =================
 */
-unsafe extern "C" fn UI_RemoveBotsMenu_UpEvent(mut _ptr: *mut libc::c_void, mut event: libc::c_int) {
+unsafe extern "C" fn UI_RemoveBotsMenu_UpEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
     if event != 3i32 {
         return;
     }

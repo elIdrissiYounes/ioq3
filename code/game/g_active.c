@@ -195,22 +195,22 @@ void G_SetClientSound( gentity_t *ent ) {
 ClientImpacts
 ==============
 */
-void ClientImpacts( gentity_t *ent, pmove_t *pm ) {
+void ClientImpacts( gentity_t *ent, pmove_t *pm1 ) {
 	int		i, j;
 	trace_t	trace;
 	gentity_t	*other;
 
 	memset( &trace, 0, sizeof( trace ) );
-	for (i=0 ; i<pm->numtouch ; i++) {
+	for (i=0 ; i<pm1->numtouch ; i++) {
 		for (j=0 ; j<i ; j++) {
-			if (pm->touchents[j] == pm->touchents[i] ) {
+			if (pm1->touchents[j] == pm1->touchents[i] ) {
 				break;
 			}
 		}
 		if (j != i) {
 			continue;	// duplicated
 		}
-		other = &g_entities[ pm->touchents[i] ];
+		other = &g_entities[ pm1->touchents[i] ];
 
 		if ( ( ent->r.svFlags & SVF_BOT ) && ( ent->touch ) ) {
 			ent->touch( ent, other, &trace );
@@ -315,7 +315,7 @@ SpectatorThink
 =================
 */
 void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
-	pmove_t	pm;
+	pmove_t	pm1;
 	gclient_t	*client;
 
 	client = ent->client;
@@ -334,15 +334,15 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
 		client->ps.speed = 400;	// faster than normal
 
 		// set up for pmove
-		memset (&pm, 0, sizeof(pm));
-		pm.ps = &client->ps;
-		pm.cmd = *ucmd;
-		pm.tracemask = MASK_PLAYERSOLID & ~CONTENTS_BODY;	// spectators can fly through bodies
-		pm.trace = trap_Trace;
-		pm.pointcontents = trap_PointContents;
+		memset (&pm1, 0, sizeof(pm1));
+		pm1.ps = &client->ps;
+		pm1.cmd = *ucmd;
+		pm1.tracemask = MASK_PLAYERSOLID & ~CONTENTS_BODY;	// spectators can fly through bodies
+		pm1.trace = trap_Trace;
+		pm1.pointcontents = trap_PointContents;
 
 		// perform a pmove
-		Pmove (&pm);
+		Pmove (&pm1);
 		// save results of pmove
 		VectorCopy( client->ps.origin, ent->s.origin );
 
@@ -753,7 +753,7 @@ once for each server frame, which makes for smooth demo recording.
 */
 void ClientThink_real( gentity_t *ent ) {
 	gclient_t	*client;
-	pmove_t		pm;
+	pmove_t		pm1;
 	int			oldEventSequence;
 	int			msec;
 	usercmd_t	*ucmd;
@@ -861,13 +861,13 @@ void ClientThink_real( gentity_t *ent ) {
 	// set up for pmove
 	oldEventSequence = client->ps.eventSequence;
 
-	memset (&pm, 0, sizeof(pm));
+	memset (&pm1, 0, sizeof(pm1));
 
 	// check for the hit-scan gauntlet, don't let the action
 	// go through as an attack unless it actually hits something
 	if ( client->ps.weapon == WP_GAUNTLET && !( ucmd->buttons & BUTTON_TALK ) &&
 		( ucmd->buttons & BUTTON_ATTACK ) && client->ps.weaponTime <= 0 ) {
-		pm.gauntletHit = CheckGauntletAttack( ent );
+		pm1.gauntletHit = CheckGauntletAttack( ent );
 	}
 
 	if ( ent->flags & FL_FORCE_GESTURE ) {
@@ -902,43 +902,43 @@ void ClientThink_real( gentity_t *ent ) {
 	}
 #endif
 
-	pm.ps = &client->ps;
-	pm.cmd = *ucmd;
-	if ( pm.ps->pm_type == PM_DEAD ) {
-		pm.tracemask = MASK_PLAYERSOLID & ~CONTENTS_BODY;
+	pm1.ps = &client->ps;
+	pm1.cmd = *ucmd;
+	if ( pm1.ps->pm_type == PM_DEAD ) {
+		pm1.tracemask = MASK_PLAYERSOLID & ~CONTENTS_BODY;
 	}
 	else if ( ent->r.svFlags & SVF_BOT ) {
-		pm.tracemask = MASK_PLAYERSOLID | CONTENTS_BOTCLIP;
+		pm1.tracemask = MASK_PLAYERSOLID | CONTENTS_BOTCLIP;
 	}
 	else {
-		pm.tracemask = MASK_PLAYERSOLID;
+		pm1.tracemask = MASK_PLAYERSOLID;
 	}
-	pm.trace = trap_Trace;
-	pm.pointcontents = trap_PointContents;
-	pm.debugLevel = g_debugMove.integer;
-	pm.noFootsteps = ( g_dmflags.integer & DF_NO_FOOTSTEPS ) > 0;
+	pm1.trace = trap_Trace;
+	pm1.pointcontents = trap_PointContents;
+	pm1.debugLevel = g_debugMove.integer;
+	pm1.noFootsteps = ( g_dmflags.integer & DF_NO_FOOTSTEPS ) > 0;
 
-	pm.pmove_fixed = pmove_fixed.integer | client->pers.pmoveFixed;
-	pm.pmove_msec = pmove_msec.integer;
+	pm1.pmove_fixed = pmove_fixed.integer | client->pers.pmoveFixed;
+	pm1.pmove_msec = pmove_msec.integer;
 
 	VectorCopy( client->ps.origin, client->oldOrigin );
 
 #ifdef MISSIONPACK
 		if (level.intermissionQueued != 0 && g_singlePlayer.integer) {
 			if ( level.time - level.intermissionQueued >= 1000  ) {
-				pm.cmd.buttons = 0;
-				pm.cmd.forwardmove = 0;
-				pm.cmd.rightmove = 0;
-				pm.cmd.upmove = 0;
+				pm1.cmd.buttons = 0;
+				pm1.cmd.forwardmove = 0;
+				pm1.cmd.rightmove = 0;
+				pm1.cmd.upmove = 0;
 				if ( level.time - level.intermissionQueued >= 2000 && level.time - level.intermissionQueued <= 2500 ) {
 					trap_SendConsoleCommand( EXEC_APPEND, "centerview\n");
 				}
 				ent->client->ps.pm_type = PM_SPINTERMISSION;
 			}
 		}
-		Pmove (&pm);
+		Pmove (&pm1);
 #else
-		Pmove (&pm);
+		Pmove (&pm1);
 #endif
 
 	// save results of pmove
@@ -960,11 +960,11 @@ void ClientThink_real( gentity_t *ent ) {
 	// use the snapped origin for linking so it matches client predicted versions
 	VectorCopy( ent->s.pos.trBase, ent->r.currentOrigin );
 
-	VectorCopy (pm.mins, ent->r.mins);
-	VectorCopy (pm.maxs, ent->r.maxs);
+	VectorCopy (pm1.mins, ent->r.mins);
+	VectorCopy (pm1.maxs, ent->r.maxs);
 
-	ent->waterlevel = pm.waterlevel;
-	ent->watertype = pm.watertype;
+	ent->waterlevel = pm1.waterlevel;
+	ent->watertype = pm1.watertype;
 
 	// execute client events
 	ClientEvents( ent, oldEventSequence );
@@ -982,7 +982,7 @@ void ClientThink_real( gentity_t *ent ) {
 	BotTestAAS(ent->r.currentOrigin);
 
 	// touch other objects
-	ClientImpacts( ent, &pm );
+	ClientImpacts( ent, &pm1 );
 
 	// save results of triggers and client events
 	if (ent->client->ps.eventSequence != oldEventSequence) {

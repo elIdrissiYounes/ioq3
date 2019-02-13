@@ -2,6 +2,13 @@ use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
 };
+use bg_misc::{
+    bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
+    BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItem, BG_FindItemForPowerup,
+    BG_FindItemForWeapon, BG_PlayerStateToEntityState, BG_PlayerStateToEntityStateExtraPolate,
+    BG_PlayerTouchesItem, BG_TouchJumpPad,
+};
+use bg_pmove::{c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, Pmove};
 use bg_public_h::{
     gitem_s, gitem_t, itemType_t, team_t, unnamed, unnamed_0, unnamed_1, unnamed_2, unnamed_3,
     unnamed_4, unnamed_5, EV_BULLET, EV_BULLET_HIT_FLESH, EV_BULLET_HIT_WALL, EV_CHANGE_WEAPON,
@@ -35,6 +42,7 @@ use bg_public_h::{
     WP_BFG, WP_GAUNTLET, WP_GRAPPLING_HOOK, WP_GRENADE_LAUNCHER, WP_LIGHTNING, WP_MACHINEGUN,
     WP_NONE, WP_NUM_WEAPONS, WP_PLASMAGUN, WP_RAILGUN, WP_ROCKET_LAUNCHER, WP_SHOTGUN,
 };
+use bg_slidemove::{PM_SlideMove, PM_StepSlideMove};
 use g_active::{ClientEndFrame, ClientThink, G_RunClient};
 use g_arenas::{
     podium1, podium2, podium3, SpawnModelsOnVictoryPads, Svcmd_AbortPodium_f, UpdateTournamentInfo,
@@ -109,11 +117,14 @@ use g_utils::{
     G_Spawn, G_TeamCommand, G_TempEntity, G_UseTargets,
 };
 use libc;
+use q_math::{
+    vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
+    DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
+};
 use q_shared_h::{
     byte, cplane_s, cplane_t, cvarHandle_t, entityState_s, entityState_t, fileHandle_t,
     playerState_s, playerState_t, qboolean, qfalse, qtrue, trType_t, trace_t, trajectory_t,
-    usercmd_s, usercmd_t, vec3_t, vec_t, vmCvar_t, AngleVectors, DirToByte, PerpendicularVector,
-    Q_crandom, VectorNormalize, VectorNormalize2, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR,
+    usercmd_s, usercmd_t, vec3_t, vec_t, vmCvar_t, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR,
     TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{ceil, cos, floor, rand, sin};

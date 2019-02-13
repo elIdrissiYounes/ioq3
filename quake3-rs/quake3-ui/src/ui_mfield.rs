@@ -1,3 +1,4 @@
+use bg_misc::bg_itemlist;
 use keycodes_h::{
     unnamed, K_ALT, K_AUX1, K_AUX10, K_AUX11, K_AUX12, K_AUX13, K_AUX14, K_AUX15, K_AUX16, K_AUX2,
     K_AUX3, K_AUX4, K_AUX5, K_AUX6, K_AUX7, K_AUX8, K_AUX9, K_BACKSPACE, K_BREAK, K_CAPSLOCK,
@@ -31,16 +32,21 @@ use keycodes_h::{
     K_WORLD_91, K_WORLD_92, K_WORLD_93, K_WORLD_94, K_WORLD_95, MAX_KEYS,
 };
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
     qboolean, qfalse, qtrue, sfxHandle_t, vec4_t, vec_t, Q_isalpha, Q_islower, Q_isupper,
 };
-use stdlib::{memcpy, memmove, strlen, tolower};
+use stdlib::{__ctype_tolower_loc, __int32_t, memcpy, memmove, strlen};
 use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -101,6 +107,13 @@ use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
 
+unsafe extern "C" fn tolower(mut __c: libc::c_int) -> libc::c_int {
+    return if __c >= -128i32 && __c < 256i32 {
+        *(*__ctype_tolower_loc()).offset(__c as isize)
+    } else {
+        __c
+    };
+}
 //
 // ui_mfield.c
 //
@@ -154,7 +167,25 @@ pub unsafe extern "C" fn MField_KeyDownEvent(mut edit: *mut mfield_t, mut key: l
     }
     if key == K_HOME as libc::c_int
         || key == K_KP_HOME as libc::c_int
-        || tolower(key) == 'a' as i32 && 0 != trap_Key_IsDown(K_CTRL as libc::c_int) as libc::c_uint
+        || {
+            let mut __res: libc::c_int = 0;
+            if ::std::mem::size_of::<libc::c_int>() as libc::c_ulong > 1i32 as libc::c_ulong {
+                if 0 != 0 {
+                    let mut __c: libc::c_int = key;
+                    __res = if __c < -128i32 || __c > 255i32 {
+                        __c
+                    } else {
+                        *(*__ctype_tolower_loc()).offset(__c as isize)
+                    }
+                } else {
+                    __res = tolower(key)
+                }
+            } else {
+                __res = *(*__ctype_tolower_loc()).offset(key as isize)
+            }
+            __res
+        } == 'a' as i32
+            && 0 != trap_Key_IsDown(K_CTRL as libc::c_int) as libc::c_uint
     {
         (*edit).cursor = 0i32;
         (*edit).scroll = 0i32;
@@ -162,7 +193,25 @@ pub unsafe extern "C" fn MField_KeyDownEvent(mut edit: *mut mfield_t, mut key: l
     }
     if key == K_END as libc::c_int
         || key == K_KP_END as libc::c_int
-        || tolower(key) == 'e' as i32 && 0 != trap_Key_IsDown(K_CTRL as libc::c_int) as libc::c_uint
+        || {
+            let mut __res: libc::c_int = 0;
+            if ::std::mem::size_of::<libc::c_int>() as libc::c_ulong > 1i32 as libc::c_ulong {
+                if 0 != 0 {
+                    let mut __c: libc::c_int = key;
+                    __res = if __c < -128i32 || __c > 255i32 {
+                        __c
+                    } else {
+                        *(*__ctype_tolower_loc()).offset(__c as isize)
+                    }
+                } else {
+                    __res = tolower(key)
+                }
+            } else {
+                __res = *(*__ctype_tolower_loc()).offset(key as isize)
+            }
+            __res
+        } == 'e' as i32
+            && 0 != trap_Key_IsDown(K_CTRL as libc::c_int) as libc::c_uint
     {
         (*edit).cursor = len;
         (*edit).scroll = len - (*edit).widthInChars + 1i32;

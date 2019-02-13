@@ -2,6 +2,13 @@ use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
 };
+use bg_misc::{
+    bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
+    BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItem, BG_FindItemForPowerup,
+    BG_FindItemForWeapon, BG_PlayerStateToEntityState, BG_PlayerStateToEntityStateExtraPolate,
+    BG_PlayerTouchesItem, BG_TouchJumpPad,
+};
+use bg_pmove::{c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, Pmove};
 use bg_public_h::{
     gitem_s, gitem_t, itemType_t, team_t, unnamed_0, unnamed_1, unnamed_2, unnamed_3, unnamed_4,
     unnamed_5, BOTH_DEAD1, BOTH_DEAD2, BOTH_DEAD3, BOTH_DEATH1, BOTH_DEATH2, BOTH_DEATH3, ET_BEAM,
@@ -36,6 +43,7 @@ use bg_public_h::{
     WP_GRENADE_LAUNCHER, WP_LIGHTNING, WP_MACHINEGUN, WP_NONE, WP_NUM_WEAPONS, WP_PLASMAGUN,
     WP_RAILGUN, WP_ROCKET_LAUNCHER, WP_SHOTGUN,
 };
+use bg_slidemove::{PM_SlideMove, PM_StepSlideMove};
 use g_active::{ClientEndFrame, ClientThink, G_RunClient};
 use g_bot::{
     G_BotConnect, G_CheckBotSpawn, G_InitBots, G_RemoveQueuedBotBegin, Svcmd_AddBot_f,
@@ -112,12 +120,15 @@ use g_weapon::{
     Weapon_HookThink,
 };
 use libc;
+use q_math::{
+    vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
+    DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
+};
 use q_shared_h::{
     byte, cplane_s, cplane_t, cvarHandle_t, entityState_s, entityState_t, fileHandle_t,
     playerState_s, playerState_t, qboolean, qfalse, qtrue, trType_t, trace_t, trajectory_t,
-    unnamed, usercmd_s, usercmd_t, vec3_t, vec_t, vectoangles, vmCvar_t, AngleVectors, Com_sprintf,
-    EXEC_APPEND, EXEC_INSERT, EXEC_NOW, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR, TR_LINEAR_STOP,
-    TR_SINE, TR_STATIONARY,
+    unnamed, usercmd_s, usercmd_t, vec3_t, vec_t, vmCvar_t, Com_sprintf, EXEC_APPEND, EXEC_INSERT,
+    EXEC_NOW, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{strcat, strlen};
 

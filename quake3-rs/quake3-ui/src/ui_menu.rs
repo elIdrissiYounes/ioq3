@@ -1,7 +1,13 @@
+use bg_misc::bg_itemlist;
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
     byte, cvarHandle_t, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, vec3_t, vec4_t,
-    vec_t, vmCvar_t, AnglesToAxis, AxisClear, Q_stricmp, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
+    vec_t, vmCvar_t, Q_stricmp, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
 };
 use stdlib::{memset, sin, strlen};
 use tr_types_h::{
@@ -15,8 +21,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -715,19 +721,13 @@ static mut s_errorMessage: errorMessage_t = errorMessage_t {
     errorMessage: [0; 4096],
 };
 #[no_mangle]
-pub unsafe extern "C" fn ErrorMessage_Key(mut _key: libc::c_int) -> sfxHandle_t {
+pub unsafe extern "C" fn ErrorMessage_Key(mut key: libc::c_int) -> sfxHandle_t {
     trap_Cvar_Set(
         b"com_errorMessage\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
     );
     UI_MainMenu();
     return menu_null_sound;
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct errorMessage_t {
-    pub menu: menuframework_s,
-    pub errorMessage: [libc::c_char; 4096],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -742,4 +742,10 @@ pub struct mainmenu_t {
     pub mods: menutext_s,
     pub exit: menutext_s,
     pub bannerModel: qhandle_t,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct errorMessage_t {
+    pub menu: menuframework_s,
+    pub errorMessage: [libc::c_char; 4096],
 }

@@ -1,4 +1,10 @@
+use bg_misc::bg_itemlist;
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
     qboolean, qfalse, qtrue, sfxHandle_t, unnamed, vec4_t, vec_t, EXEC_APPEND, EXEC_INSERT,
     EXEC_NOW,
@@ -8,8 +14,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };

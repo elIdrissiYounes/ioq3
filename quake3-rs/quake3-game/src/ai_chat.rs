@@ -11,6 +11,13 @@ use ai_main::{
 use ai_variadic_h::BotAI_BotInitialChat;
 use be_aas_h::{aas_entityinfo_s, aas_entityinfo_t};
 use be_ai_goal_h::{bot_goal_s, bot_goal_t};
+use bg_misc::{
+    bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
+    BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItem, BG_FindItemForPowerup,
+    BG_FindItemForWeapon, BG_PlayerStateToEntityState, BG_PlayerStateToEntityStateExtraPolate,
+    BG_PlayerTouchesItem, BG_TouchJumpPad,
+};
+use bg_pmove::{c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, Pmove};
 use bg_public_h::{
     gitem_s, gitem_t, itemType_t, team_t, unnamed, unnamed_0, unnamed_1, GT_1FCTF, GT_CTF, GT_FFA,
     GT_HARVESTER, GT_MAX_GAME_TYPE, GT_OBELISK, GT_SINGLE_PLAYER, GT_TEAM, GT_TOURNAMENT, IT_AMMO,
@@ -24,6 +31,7 @@ use bg_public_h::{
     PERS_PLAYEREVENTS, PERS_RANK, PERS_SCORE, PERS_SPAWN_COUNT, PERS_TEAM, TEAM_BLUE, TEAM_FREE,
     TEAM_NUM_TEAMS, TEAM_RED, TEAM_SPECTATOR,
 };
+use bg_slidemove::{PM_SlideMove, PM_StepSlideMove};
 use botlib_h::{bsp_surface_s, bsp_surface_t, bsp_trace_s, bsp_trace_t};
 use g_active::{ClientEndFrame, ClientThink, G_RunClient};
 use g_arenas::{
@@ -105,6 +113,10 @@ use g_weapon::{
     Weapon_HookThink,
 };
 use libc;
+use q_math::{
+    vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
+    DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
+};
 use q_shared_h::{
     byte, cplane_s, cplane_t, cvarHandle_t, entityState_s, entityState_t, fileHandle_t,
     playerState_s, playerState_t, qboolean, qfalse, qtrue, trType_t, trace_t, trajectory_t,
@@ -2240,22 +2252,6 @@ pub unsafe extern "C" fn BotChatTest(mut bs: *mut bot_state_t) {
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct bot_matchvariable_s {
-    pub offset: libc::c_char,
-    pub length: libc::c_int,
-}
-pub type bot_consolemessage_t = bot_consolemessage_s;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct bot_match_s {
-    pub string: [libc::c_char; 256],
-    pub type_0: libc::c_int,
-    pub subtype: libc::c_int,
-    pub variables: [bot_matchvariable_t; 8],
-}
-pub type bot_match_t = bot_match_s;
-#[repr(C)]
-#[derive(Copy, Clone)]
 pub struct bot_consolemessage_s {
     pub handle: libc::c_int,
     pub time: libc::c_float,
@@ -2264,4 +2260,20 @@ pub struct bot_consolemessage_s {
     pub prev: *mut bot_consolemessage_s,
     pub next: *mut bot_consolemessage_s,
 }
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct bot_match_s {
+    pub string: [libc::c_char; 256],
+    pub type_0: libc::c_int,
+    pub subtype: libc::c_int,
+    pub variables: [bot_matchvariable_t; 8],
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct bot_matchvariable_s {
+    pub offset: libc::c_char,
+    pub length: libc::c_int,
+}
 pub type bot_matchvariable_t = bot_matchvariable_s;
+pub type bot_consolemessage_t = bot_consolemessage_s;
+pub type bot_match_t = bot_match_s;

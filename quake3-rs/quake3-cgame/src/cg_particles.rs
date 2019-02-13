@@ -1,9 +1,18 @@
+use bg_misc::{
+    bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
+    BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItemForHoldable,
+    BG_FindItemForPowerup, BG_PlayerStateToEntityState, BG_PlayerTouchesItem, BG_TouchJumpPad,
+};
+use bg_pmove::{
+    c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, PM_UpdateViewAngles, Pmove,
+};
 use bg_public_h::{
     animation_s, animation_t, gametype_t, gender_t, team_t, GENDER_FEMALE, GENDER_MALE,
     GENDER_NEUTER, GT_1FCTF, GT_CTF, GT_FFA, GT_HARVESTER, GT_MAX_GAME_TYPE, GT_OBELISK,
     GT_SINGLE_PLAYER, GT_TEAM, GT_TOURNAMENT, TEAM_BLUE, TEAM_FREE, TEAM_NUM_TEAMS, TEAM_RED,
     TEAM_SPECTATOR,
 };
+use bg_slidemove::{PM_SlideMove, PM_StepSlideMove};
 use cg_consolecmds::{CG_ConsoleCommand, CG_InitConsoleCommands};
 use cg_draw::{
     drawTeamOverlayModificationCount, numSortedTeamPlayers, sortedTeamPlayers,
@@ -79,11 +88,17 @@ use cg_weapons::{
     CG_PrevWeapon_f, CG_RailTrail, CG_RegisterItemVisuals, CG_ShotgunFire, CG_Weapon_f,
 };
 use libc;
+use q_math::{
+    axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
+    AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
+    LerpAngle, MatrixMultiply, PerpendicularVector, Q_crandom, Q_random, RotateAroundDirection,
+    RotatePointAroundVector, VectorNormalize, VectorNormalize2,
+};
 use q_shared_h::{
     byte, cplane_s, cplane_t, entityState_s, entityState_t, gameState_t, playerState_s,
     playerState_t, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, trType_t, trace_t,
-    trajectory_t, va, vec3_t, vec_t, vectoangles, AngleVectors, COM_Parse, Q_stricmp, TR_GRAVITY,
-    TR_INTERPOLATE, TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
+    trajectory_t, va, vec3_t, vec_t, COM_Parse, Q_stricmp, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR,
+    TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{atof, atoi, cos, floor, memset, rand, sin, sqrt};
 use tr_types_h::{
@@ -2413,23 +2428,11 @@ pub unsafe extern "C" fn CG_ParticleBloodCloud(
         i += 1
     }
 }
-pub const P_SMOKE_IMPACT: unnamed = 12;
-pub type cparticle_t = particle_s;
-pub const P_BLEED: unnamed = 8;
-pub const P_WEATHER_FLURRY: unnamed = 11;
-pub const P_ANIM: unnamed = 6;
-pub const P_BAT: unnamed = 7;
-pub const P_BUBBLE_TURBULENT: unnamed = 14;
-pub const P_FLAT_SCALEUP: unnamed = 9;
-pub const P_FLAT_SCALEUP_FADE: unnamed = 10;
-pub const P_BUBBLE: unnamed = 13;
-pub const P_WEATHER: unnamed = 1;
+pub const P_ROTATE: unnamed = 4;
 pub const P_FLAT: unnamed = 2;
-pub type unnamed = libc::c_uint;
-pub const P_SMOKE: unnamed = 3;
-pub const P_NONE: unnamed = 0;
-pub const P_WEATHER_TURBULENT: unnamed = 5;
-pub const P_SPRITE: unnamed = 15;
+pub const P_WEATHER_FLURRY: unnamed = 11;
+pub const P_BUBBLE: unnamed = 13;
+pub const P_SMOKE_IMPACT: unnamed = 12;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct particle_s {
@@ -2459,4 +2462,16 @@ pub struct particle_s {
     pub roll: libc::c_int,
     pub accumroll: libc::c_int,
 }
-pub const P_ROTATE: unnamed = 4;
+pub const P_ANIM: unnamed = 6;
+pub const P_WEATHER: unnamed = 1;
+pub type cparticle_t = particle_s;
+pub const P_FLAT_SCALEUP_FADE: unnamed = 10;
+pub const P_SPRITE: unnamed = 15;
+pub const P_BLEED: unnamed = 8;
+pub const P_WEATHER_TURBULENT: unnamed = 5;
+pub const P_SMOKE: unnamed = 3;
+pub const P_NONE: unnamed = 0;
+pub const P_BUBBLE_TURBULENT: unnamed = 14;
+pub const P_BAT: unnamed = 7;
+pub type unnamed = libc::c_uint;
+pub const P_FLAT_SCALEUP: unnamed = 9;

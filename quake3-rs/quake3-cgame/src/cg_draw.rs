@@ -1,19 +1,28 @@
-use bg_public_h::{
-    animation_s, animation_t, bg_itemlist, gametype_t, gender_t, gitem_s, gitem_t, itemType_t,
-    powerup_t, team_t, unnamed_0, unnamed_1, unnamed_2, unnamed_3, BG_FindItemForPowerup,
-    GENDER_FEMALE, GENDER_MALE, GENDER_NEUTER, GT_1FCTF, GT_CTF, GT_FFA, GT_HARVESTER,
-    GT_MAX_GAME_TYPE, GT_OBELISK, GT_SINGLE_PLAYER, GT_TEAM, GT_TOURNAMENT, IT_AMMO, IT_ARMOR,
-    IT_BAD, IT_HEALTH, IT_HOLDABLE, IT_PERSISTANT_POWERUP, IT_POWERUP, IT_TEAM, IT_WEAPON,
-    PERS_ASSIST_COUNT, PERS_ATTACKEE_ARMOR, PERS_ATTACKER, PERS_CAPTURES, PERS_DEFEND_COUNT,
-    PERS_EXCELLENT_COUNT, PERS_GAUNTLET_FRAG_COUNT, PERS_HITS, PERS_IMPRESSIVE_COUNT, PERS_KILLED,
-    PERS_PLAYEREVENTS, PERS_RANK, PERS_SCORE, PERS_SPAWN_COUNT, PERS_TEAM, PM_DEAD, PM_FREEZE,
-    PM_INTERMISSION, PM_NOCLIP, PM_NORMAL, PM_SPECTATOR, PM_SPINTERMISSION, PW_AMMOREGEN,
-    PW_BATTLESUIT, PW_BLUEFLAG, PW_DOUBLER, PW_FLIGHT, PW_GUARD, PW_HASTE, PW_INVIS,
-    PW_INVULNERABILITY, PW_NEUTRALFLAG, PW_NONE, PW_NUM_POWERUPS, PW_QUAD, PW_REDFLAG, PW_REGEN,
-    PW_SCOUT, STAT_ARMOR, STAT_CLIENTS_READY, STAT_DEAD_YAW, STAT_HEALTH, STAT_HOLDABLE_ITEM,
-    STAT_MAX_HEALTH, STAT_WEAPONS, TEAM_BLUE, TEAM_FREE, TEAM_NUM_TEAMS, TEAM_RED, TEAM_SPECTATOR,
-    WEAPON_DROPPING, WEAPON_FIRING, WEAPON_RAISING, WEAPON_READY,
+use bg_misc::{
+    bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
+    BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItemForHoldable,
+    BG_FindItemForPowerup, BG_PlayerStateToEntityState, BG_PlayerTouchesItem, BG_TouchJumpPad,
 };
+use bg_pmove::{
+    c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, PM_UpdateViewAngles, Pmove,
+};
+use bg_public_h::{
+    animation_s, animation_t, gametype_t, gender_t, gitem_s, gitem_t, itemType_t, powerup_t,
+    team_t, unnamed_0, unnamed_1, unnamed_2, unnamed_3, GENDER_FEMALE, GENDER_MALE, GENDER_NEUTER,
+    GT_1FCTF, GT_CTF, GT_FFA, GT_HARVESTER, GT_MAX_GAME_TYPE, GT_OBELISK, GT_SINGLE_PLAYER,
+    GT_TEAM, GT_TOURNAMENT, IT_AMMO, IT_ARMOR, IT_BAD, IT_HEALTH, IT_HOLDABLE,
+    IT_PERSISTANT_POWERUP, IT_POWERUP, IT_TEAM, IT_WEAPON, PERS_ASSIST_COUNT, PERS_ATTACKEE_ARMOR,
+    PERS_ATTACKER, PERS_CAPTURES, PERS_DEFEND_COUNT, PERS_EXCELLENT_COUNT,
+    PERS_GAUNTLET_FRAG_COUNT, PERS_HITS, PERS_IMPRESSIVE_COUNT, PERS_KILLED, PERS_PLAYEREVENTS,
+    PERS_RANK, PERS_SCORE, PERS_SPAWN_COUNT, PERS_TEAM, PM_DEAD, PM_FREEZE, PM_INTERMISSION,
+    PM_NOCLIP, PM_NORMAL, PM_SPECTATOR, PM_SPINTERMISSION, PW_AMMOREGEN, PW_BATTLESUIT,
+    PW_BLUEFLAG, PW_DOUBLER, PW_FLIGHT, PW_GUARD, PW_HASTE, PW_INVIS, PW_INVULNERABILITY,
+    PW_NEUTRALFLAG, PW_NONE, PW_NUM_POWERUPS, PW_QUAD, PW_REDFLAG, PW_REGEN, PW_SCOUT, STAT_ARMOR,
+    STAT_CLIENTS_READY, STAT_DEAD_YAW, STAT_HEALTH, STAT_HOLDABLE_ITEM, STAT_MAX_HEALTH,
+    STAT_WEAPONS, TEAM_BLUE, TEAM_FREE, TEAM_NUM_TEAMS, TEAM_RED, TEAM_SPECTATOR, WEAPON_DROPPING,
+    WEAPON_FIRING, WEAPON_RAISING, WEAPON_READY,
+};
+use bg_slidemove::{PM_SlideMove, PM_StepSlideMove};
 use cg_consolecmds::{CG_ConsoleCommand, CG_InitConsoleCommands};
 use cg_drawtools::{
     CG_AdjustFrom640, CG_ColorForHealth, CG_DrawBigString, CG_DrawBigStringColor, CG_DrawPic,
@@ -84,14 +93,19 @@ use cg_weapons::{
     CG_PrevWeapon_f, CG_RailTrail, CG_RegisterItemVisuals, CG_ShotgunFire, CG_Weapon_f,
 };
 use libc;
+use q_math::{
+    axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
+    AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
+    LerpAngle, MatrixMultiply, PerpendicularVector, Q_crandom, Q_random, RotateAroundDirection,
+    RotatePointAroundVector, VectorNormalize, VectorNormalize2,
+};
 use q_shared_h::{
-    byte, clipHandle_t, colorWhite, cplane_s, cplane_t, cvarHandle_t, entityState_s, entityState_t,
-    g_color_table, gameState_t, playerState_s, playerState_t, qboolean, qfalse, qhandle_t, qtrue,
-    sfxHandle_t, trType_t, trace_t, trajectory_t, unnamed, usercmd_s, usercmd_t, va, vec3_origin,
-    vec3_t, vec4_t, vec_t, vmCvar_t, AnglesToAxis, AxisClear, Com_sprintf, Info_ValueForKey,
-    Q_PrintStrlen, Q_strncpyz, CHAN_ANNOUNCER, CHAN_AUTO, CHAN_BODY, CHAN_ITEM, CHAN_LOCAL,
-    CHAN_LOCAL_SOUND, CHAN_VOICE, CHAN_WEAPON, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR,
-    TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
+    byte, clipHandle_t, cplane_s, cplane_t, cvarHandle_t, entityState_s, entityState_t,
+    gameState_t, playerState_s, playerState_t, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t,
+    trType_t, trace_t, trajectory_t, unnamed, usercmd_s, usercmd_t, va, vec3_t, vec4_t, vec_t,
+    vmCvar_t, Com_sprintf, Info_ValueForKey, Q_PrintStrlen, Q_strncpyz, CHAN_ANNOUNCER, CHAN_AUTO,
+    CHAN_BODY, CHAN_ITEM, CHAN_LOCAL, CHAN_LOCAL_SOUND, CHAN_VOICE, CHAN_WEAPON, TR_GRAVITY,
+    TR_INTERPOLATE, TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{atof, cos, memset, rand, sin, strlen, tan};
 use tr_types_h::{

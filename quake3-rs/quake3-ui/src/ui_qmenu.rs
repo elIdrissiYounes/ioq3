@@ -1,39 +1,44 @@
+use bg_misc::bg_itemlist;
 use keycodes_h::{
-    unnamed_0, K_ALT, K_AUX1, K_AUX10, K_AUX11, K_AUX12, K_AUX13, K_AUX14, K_AUX15, K_AUX16,
-    K_AUX2, K_AUX3, K_AUX4, K_AUX5, K_AUX6, K_AUX7, K_AUX8, K_AUX9, K_BACKSPACE, K_BREAK,
-    K_CAPSLOCK, K_COMMAND, K_COMPOSE, K_CONSOLE, K_CTRL, K_DEL, K_DOWNARROW, K_END, K_ENTER,
-    K_ESCAPE, K_EURO, K_F1, K_F10, K_F11, K_F12, K_F13, K_F14, K_F15, K_F2, K_F3, K_F4, K_F5, K_F6,
-    K_F7, K_F8, K_F9, K_HELP, K_HOME, K_INS, K_JOY1, K_JOY10, K_JOY11, K_JOY12, K_JOY13, K_JOY14,
-    K_JOY15, K_JOY16, K_JOY17, K_JOY18, K_JOY19, K_JOY2, K_JOY20, K_JOY21, K_JOY22, K_JOY23,
-    K_JOY24, K_JOY25, K_JOY26, K_JOY27, K_JOY28, K_JOY29, K_JOY3, K_JOY30, K_JOY31, K_JOY32,
-    K_JOY4, K_JOY5, K_JOY6, K_JOY7, K_JOY8, K_JOY9, K_KP_5, K_KP_DEL, K_KP_DOWNARROW, K_KP_END,
-    K_KP_ENTER, K_KP_EQUALS, K_KP_HOME, K_KP_INS, K_KP_LEFTARROW, K_KP_MINUS, K_KP_NUMLOCK,
-    K_KP_PGDN, K_KP_PGUP, K_KP_PLUS, K_KP_RIGHTARROW, K_KP_SLASH, K_KP_STAR, K_KP_UPARROW,
-    K_LEFTARROW, K_MENU, K_MODE, K_MOUSE1, K_MOUSE2, K_MOUSE3, K_MOUSE4, K_MOUSE5, K_MWHEELDOWN,
-    K_MWHEELUP, K_PAD0_A, K_PAD0_B, K_PAD0_BACK, K_PAD0_DPAD_DOWN, K_PAD0_DPAD_LEFT,
-    K_PAD0_DPAD_RIGHT, K_PAD0_DPAD_UP, K_PAD0_GUIDE, K_PAD0_LEFTSHOULDER, K_PAD0_LEFTSTICK_CLICK,
-    K_PAD0_LEFTSTICK_DOWN, K_PAD0_LEFTSTICK_LEFT, K_PAD0_LEFTSTICK_RIGHT, K_PAD0_LEFTSTICK_UP,
-    K_PAD0_LEFTTRIGGER, K_PAD0_RIGHTSHOULDER, K_PAD0_RIGHTSTICK_CLICK, K_PAD0_RIGHTSTICK_DOWN,
-    K_PAD0_RIGHTSTICK_LEFT, K_PAD0_RIGHTSTICK_RIGHT, K_PAD0_RIGHTSTICK_UP, K_PAD0_RIGHTTRIGGER,
-    K_PAD0_START, K_PAD0_X, K_PAD0_Y, K_PAUSE, K_PGDN, K_PGUP, K_POWER, K_PRINT, K_RIGHTARROW,
-    K_SCROLLOCK, K_SHIFT, K_SPACE, K_SUPER, K_SYSREQ, K_TAB, K_UNDO, K_UPARROW, K_WORLD_0,
-    K_WORLD_1, K_WORLD_10, K_WORLD_11, K_WORLD_12, K_WORLD_13, K_WORLD_14, K_WORLD_15, K_WORLD_16,
-    K_WORLD_17, K_WORLD_18, K_WORLD_19, K_WORLD_2, K_WORLD_20, K_WORLD_21, K_WORLD_22, K_WORLD_23,
-    K_WORLD_24, K_WORLD_25, K_WORLD_26, K_WORLD_27, K_WORLD_28, K_WORLD_29, K_WORLD_3, K_WORLD_30,
-    K_WORLD_31, K_WORLD_32, K_WORLD_33, K_WORLD_34, K_WORLD_35, K_WORLD_36, K_WORLD_37, K_WORLD_38,
-    K_WORLD_39, K_WORLD_4, K_WORLD_40, K_WORLD_41, K_WORLD_42, K_WORLD_43, K_WORLD_44, K_WORLD_45,
-    K_WORLD_46, K_WORLD_47, K_WORLD_48, K_WORLD_49, K_WORLD_5, K_WORLD_50, K_WORLD_51, K_WORLD_52,
-    K_WORLD_53, K_WORLD_54, K_WORLD_55, K_WORLD_56, K_WORLD_57, K_WORLD_58, K_WORLD_59, K_WORLD_6,
-    K_WORLD_60, K_WORLD_61, K_WORLD_62, K_WORLD_63, K_WORLD_64, K_WORLD_65, K_WORLD_66, K_WORLD_67,
-    K_WORLD_68, K_WORLD_69, K_WORLD_7, K_WORLD_70, K_WORLD_71, K_WORLD_72, K_WORLD_73, K_WORLD_74,
-    K_WORLD_75, K_WORLD_76, K_WORLD_77, K_WORLD_78, K_WORLD_79, K_WORLD_8, K_WORLD_80, K_WORLD_81,
-    K_WORLD_82, K_WORLD_83, K_WORLD_84, K_WORLD_85, K_WORLD_86, K_WORLD_87, K_WORLD_88, K_WORLD_89,
-    K_WORLD_9, K_WORLD_90, K_WORLD_91, K_WORLD_92, K_WORLD_93, K_WORLD_94, K_WORLD_95, MAX_KEYS,
+    unnamed, K_ALT, K_AUX1, K_AUX10, K_AUX11, K_AUX12, K_AUX13, K_AUX14, K_AUX15, K_AUX16, K_AUX2,
+    K_AUX3, K_AUX4, K_AUX5, K_AUX6, K_AUX7, K_AUX8, K_AUX9, K_BACKSPACE, K_BREAK, K_CAPSLOCK,
+    K_COMMAND, K_COMPOSE, K_CONSOLE, K_CTRL, K_DEL, K_DOWNARROW, K_END, K_ENTER, K_ESCAPE, K_EURO,
+    K_F1, K_F10, K_F11, K_F12, K_F13, K_F14, K_F15, K_F2, K_F3, K_F4, K_F5, K_F6, K_F7, K_F8, K_F9,
+    K_HELP, K_HOME, K_INS, K_JOY1, K_JOY10, K_JOY11, K_JOY12, K_JOY13, K_JOY14, K_JOY15, K_JOY16,
+    K_JOY17, K_JOY18, K_JOY19, K_JOY2, K_JOY20, K_JOY21, K_JOY22, K_JOY23, K_JOY24, K_JOY25,
+    K_JOY26, K_JOY27, K_JOY28, K_JOY29, K_JOY3, K_JOY30, K_JOY31, K_JOY32, K_JOY4, K_JOY5, K_JOY6,
+    K_JOY7, K_JOY8, K_JOY9, K_KP_5, K_KP_DEL, K_KP_DOWNARROW, K_KP_END, K_KP_ENTER, K_KP_EQUALS,
+    K_KP_HOME, K_KP_INS, K_KP_LEFTARROW, K_KP_MINUS, K_KP_NUMLOCK, K_KP_PGDN, K_KP_PGUP, K_KP_PLUS,
+    K_KP_RIGHTARROW, K_KP_SLASH, K_KP_STAR, K_KP_UPARROW, K_LEFTARROW, K_MENU, K_MODE, K_MOUSE1,
+    K_MOUSE2, K_MOUSE3, K_MOUSE4, K_MOUSE5, K_MWHEELDOWN, K_MWHEELUP, K_PAD0_A, K_PAD0_B,
+    K_PAD0_BACK, K_PAD0_DPAD_DOWN, K_PAD0_DPAD_LEFT, K_PAD0_DPAD_RIGHT, K_PAD0_DPAD_UP,
+    K_PAD0_GUIDE, K_PAD0_LEFTSHOULDER, K_PAD0_LEFTSTICK_CLICK, K_PAD0_LEFTSTICK_DOWN,
+    K_PAD0_LEFTSTICK_LEFT, K_PAD0_LEFTSTICK_RIGHT, K_PAD0_LEFTSTICK_UP, K_PAD0_LEFTTRIGGER,
+    K_PAD0_RIGHTSHOULDER, K_PAD0_RIGHTSTICK_CLICK, K_PAD0_RIGHTSTICK_DOWN, K_PAD0_RIGHTSTICK_LEFT,
+    K_PAD0_RIGHTSTICK_RIGHT, K_PAD0_RIGHTSTICK_UP, K_PAD0_RIGHTTRIGGER, K_PAD0_START, K_PAD0_X,
+    K_PAD0_Y, K_PAUSE, K_PGDN, K_PGUP, K_POWER, K_PRINT, K_RIGHTARROW, K_SCROLLOCK, K_SHIFT,
+    K_SPACE, K_SUPER, K_SYSREQ, K_TAB, K_UNDO, K_UPARROW, K_WORLD_0, K_WORLD_1, K_WORLD_10,
+    K_WORLD_11, K_WORLD_12, K_WORLD_13, K_WORLD_14, K_WORLD_15, K_WORLD_16, K_WORLD_17, K_WORLD_18,
+    K_WORLD_19, K_WORLD_2, K_WORLD_20, K_WORLD_21, K_WORLD_22, K_WORLD_23, K_WORLD_24, K_WORLD_25,
+    K_WORLD_26, K_WORLD_27, K_WORLD_28, K_WORLD_29, K_WORLD_3, K_WORLD_30, K_WORLD_31, K_WORLD_32,
+    K_WORLD_33, K_WORLD_34, K_WORLD_35, K_WORLD_36, K_WORLD_37, K_WORLD_38, K_WORLD_39, K_WORLD_4,
+    K_WORLD_40, K_WORLD_41, K_WORLD_42, K_WORLD_43, K_WORLD_44, K_WORLD_45, K_WORLD_46, K_WORLD_47,
+    K_WORLD_48, K_WORLD_49, K_WORLD_5, K_WORLD_50, K_WORLD_51, K_WORLD_52, K_WORLD_53, K_WORLD_54,
+    K_WORLD_55, K_WORLD_56, K_WORLD_57, K_WORLD_58, K_WORLD_59, K_WORLD_6, K_WORLD_60, K_WORLD_61,
+    K_WORLD_62, K_WORLD_63, K_WORLD_64, K_WORLD_65, K_WORLD_66, K_WORLD_67, K_WORLD_68, K_WORLD_69,
+    K_WORLD_7, K_WORLD_70, K_WORLD_71, K_WORLD_72, K_WORLD_73, K_WORLD_74, K_WORLD_75, K_WORLD_76,
+    K_WORLD_77, K_WORLD_78, K_WORLD_79, K_WORLD_8, K_WORLD_80, K_WORLD_81, K_WORLD_82, K_WORLD_83,
+    K_WORLD_84, K_WORLD_85, K_WORLD_86, K_WORLD_87, K_WORLD_88, K_WORLD_89, K_WORLD_9, K_WORLD_90,
+    K_WORLD_91, K_WORLD_92, K_WORLD_93, K_WORLD_94, K_WORLD_95, MAX_KEYS,
 };
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
-    colorMdGrey, colorWhite, colorYellow, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed,
-    va, vec4_t, vec_t, Q_isprint, Q_isupper, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
+    qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, va, vec4_t, vec_t, Q_isprint, Q_isupper,
 };
 use stdlib::{sin, strcat, strcpy, strlen};
 use tr_types_h::{
@@ -45,8 +50,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -68,8 +73,8 @@ use ui_gameinfo::{
 use ui_ingame::{InGame_Cache, UI_InGameMenu};
 use ui_local_h::{
     _tag_menuframework, menuaction_s, menubitmap_s, menucommon_s, menufield_s, menuframework_s,
-    menulist_s, menuradiobutton_s, menuslider_s, menutext_s, mfield_t, trap_Cmd_ExecuteText,
-    trap_Error, trap_R_RegisterShaderNoMip, trap_R_SetColor, trap_S_RegisterSound, uiStatic_t,
+    menulist_s, menuradiobutton_s, menuslider_s, menutext_s, mfield_t, trap_Error,
+    trap_R_RegisterShaderNoMip, trap_R_SetColor, trap_S_RegisterSound, uiStatic_t,
 };
 use ui_main::{
     ui_browserGameType, ui_browserMaster, ui_browserShowEmpty, ui_browserShowFull,
@@ -510,35 +515,6 @@ pub unsafe extern "C" fn Menu_Draw(mut menu: *mut menuframework_s) {
                     }
                 }
             }
-            if 0 != uis.debug as u64 {
-                let mut x: libc::c_int = 0;
-                let mut y: libc::c_int = 0;
-                let mut w: libc::c_int = 0;
-                let mut h: libc::c_int = 0;
-                if 0 == (*itemptr).flags & 0x4000i32 as libc::c_uint {
-                    x = (*itemptr).left;
-                    y = (*itemptr).top;
-                    w = (*itemptr).right - (*itemptr).left + 1i32;
-                    h = (*itemptr).bottom - (*itemptr).top + 1i32;
-                    if 0 != (*itemptr).flags & 0x200i32 as libc::c_uint {
-                        UI_DrawRect(
-                            x as libc::c_float,
-                            y as libc::c_float,
-                            w as libc::c_float,
-                            h as libc::c_float,
-                            colorYellow.as_mut_ptr(),
-                        );
-                    } else {
-                        UI_DrawRect(
-                            x as libc::c_float,
-                            y as libc::c_float,
-                            w as libc::c_float,
-                            h as libc::c_float,
-                            colorWhite.as_mut_ptr(),
-                        );
-                    }
-                }
-            }
         }
         i += 1
     }
@@ -937,7 +913,7 @@ unsafe extern "C" fn RadioButton_Draw(mut rb: *mut menuradiobutton_s) {
 }
 #[no_mangle]
 pub unsafe extern "C" fn Menu_ActivateItem(
-    mut _s: *mut menuframework_s,
+    mut s: *mut menuframework_s,
     mut item: *mut menucommon_s,
 ) -> sfxHandle_t {
     if (*item).callback.is_some() {
@@ -1037,17 +1013,6 @@ pub unsafe extern "C" fn Menu_DefaultKey(
         }
     }
     match key {
-        155 => {
-            uis.debug = ::std::mem::transmute::<libc::c_uint, qboolean>(
-                uis.debug as libc::c_uint ^ 1i32 as libc::c_uint,
-            )
-        }
-        156 => {
-            trap_Cmd_ExecuteText(
-                EXEC_APPEND as libc::c_int,
-                b"screenshot\n\x00" as *const u8 as *const libc::c_char,
-            );
-        }
         161 | 132 => {
             cursor_prev = (*m).cursor;
             (*m).cursor_prev = (*m).cursor;
@@ -1435,11 +1400,11 @@ unsafe extern "C" fn RadioButton_Key(
             if 0 == (*rb).generic.flags & 0x200i32 as libc::c_uint {
                 current_block_3 = 3640593987805443782;
             } else {
-                current_block_3 = 9343145072321788094;
+                current_block_3 = 10390490688672115458;
             }
         }
         185 | 186 | 187 | 188 | 13 | 169 | 163 | 134 | 165 | 135 => {
-            current_block_3 = 9343145072321788094;
+            current_block_3 = 10390490688672115458;
         }
         _ => {
             current_block_3 = 3640593987805443782;

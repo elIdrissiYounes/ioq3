@@ -2,40 +2,46 @@ use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
 };
+use bg_misc::{
+    bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
+    BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItem, BG_FindItemForPowerup,
+    BG_FindItemForWeapon, BG_PlayerStateToEntityState, BG_PlayerStateToEntityStateExtraPolate,
+    BG_PlayerTouchesItem, BG_TouchJumpPad,
+};
+use bg_pmove::{c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, Pmove};
 use bg_public_h::{
     gitem_s, gitem_t, itemType_t, pmove_t, powerup_t, team_t, unnamed, unnamed_0, unnamed_1,
-    unnamed_2, unnamed_3, unnamed_4, BG_FindItemForPowerup, BG_PlayerStateToEntityState,
-    BG_PlayerStateToEntityStateExtraPolate, BG_PlayerTouchesItem, Pmove, ET_BEAM, ET_EVENTS,
-    ET_GENERAL, ET_GRAPPLE, ET_INVISIBLE, ET_ITEM, ET_MISSILE, ET_MOVER, ET_PLAYER, ET_PORTAL,
-    ET_PUSH_TRIGGER, ET_SPEAKER, ET_TEAM, ET_TELEPORT_TRIGGER, EV_BULLET, EV_BULLET_HIT_FLESH,
-    EV_BULLET_HIT_WALL, EV_CHANGE_WEAPON, EV_DEATH1, EV_DEATH2, EV_DEATH3, EV_DEBUG_LINE,
-    EV_FALL_FAR, EV_FALL_MEDIUM, EV_FALL_SHORT, EV_FIRE_WEAPON, EV_FOOTSPLASH, EV_FOOTSTEP,
-    EV_FOOTSTEP_METAL, EV_FOOTWADE, EV_GENERAL_SOUND, EV_GIB_PLAYER, EV_GLOBAL_ITEM_PICKUP,
-    EV_GLOBAL_SOUND, EV_GLOBAL_TEAM_SOUND, EV_GRENADE_BOUNCE, EV_INVUL_IMPACT, EV_ITEM_PICKUP,
-    EV_ITEM_POP, EV_ITEM_RESPAWN, EV_JUICED, EV_JUMP, EV_JUMP_PAD, EV_KAMIKAZE, EV_LIGHTNINGBOLT,
-    EV_MISSILE_HIT, EV_MISSILE_MISS, EV_MISSILE_MISS_METAL, EV_NOAMMO, EV_NONE, EV_OBELISKEXPLODE,
-    EV_OBELISKPAIN, EV_OBITUARY, EV_PAIN, EV_PLAYER_TELEPORT_IN, EV_PLAYER_TELEPORT_OUT,
-    EV_POWERUP_BATTLESUIT, EV_POWERUP_QUAD, EV_POWERUP_REGEN, EV_PROXIMITY_MINE_STICK,
-    EV_PROXIMITY_MINE_TRIGGER, EV_RAILTRAIL, EV_SCOREPLUM, EV_SHOTGUN, EV_STEP_12, EV_STEP_16,
-    EV_STEP_4, EV_STEP_8, EV_STOPLOOPINGSOUND, EV_SWIM, EV_TAUNT, EV_TAUNT_FOLLOWME,
-    EV_TAUNT_GETFLAG, EV_TAUNT_GUARDBASE, EV_TAUNT_NO, EV_TAUNT_PATROL, EV_TAUNT_YES, EV_USE_ITEM0,
-    EV_USE_ITEM1, EV_USE_ITEM10, EV_USE_ITEM11, EV_USE_ITEM12, EV_USE_ITEM13, EV_USE_ITEM14,
-    EV_USE_ITEM15, EV_USE_ITEM2, EV_USE_ITEM3, EV_USE_ITEM4, EV_USE_ITEM5, EV_USE_ITEM6,
-    EV_USE_ITEM7, EV_USE_ITEM8, EV_USE_ITEM9, EV_WATER_CLEAR, EV_WATER_LEAVE, EV_WATER_TOUCH,
-    EV_WATER_UNDER, IT_AMMO, IT_ARMOR, IT_BAD, IT_HEALTH, IT_HOLDABLE, IT_PERSISTANT_POWERUP,
-    IT_POWERUP, IT_TEAM, IT_WEAPON, MOD_BFG, MOD_BFG_SPLASH, MOD_CRUSH, MOD_FALLING, MOD_GAUNTLET,
-    MOD_GRAPPLE, MOD_GRENADE, MOD_GRENADE_SPLASH, MOD_LAVA, MOD_LIGHTNING, MOD_MACHINEGUN,
-    MOD_PLASMA, MOD_PLASMA_SPLASH, MOD_RAILGUN, MOD_ROCKET, MOD_ROCKET_SPLASH, MOD_SHOTGUN,
-    MOD_SLIME, MOD_SUICIDE, MOD_TARGET_LASER, MOD_TELEFRAG, MOD_TRIGGER_HURT, MOD_UNKNOWN,
-    MOD_WATER, PM_DEAD, PM_FREEZE, PM_INTERMISSION, PM_NOCLIP, PM_NORMAL, PM_SPECTATOR,
-    PM_SPINTERMISSION, PW_AMMOREGEN, PW_BATTLESUIT, PW_BLUEFLAG, PW_DOUBLER, PW_FLIGHT, PW_GUARD,
-    PW_HASTE, PW_INVIS, PW_INVULNERABILITY, PW_NEUTRALFLAG, PW_NONE, PW_NUM_POWERUPS, PW_QUAD,
-    PW_REDFLAG, PW_REGEN, PW_SCOUT, STAT_ARMOR, STAT_CLIENTS_READY, STAT_DEAD_YAW, STAT_HEALTH,
-    STAT_HOLDABLE_ITEM, STAT_MAX_HEALTH, STAT_WEAPONS, TEAM_BLUE, TEAM_FREE, TEAM_NUM_TEAMS,
-    TEAM_RED, TEAM_SPECTATOR, WP_BFG, WP_GAUNTLET, WP_GRAPPLING_HOOK, WP_GRENADE_LAUNCHER,
-    WP_LIGHTNING, WP_MACHINEGUN, WP_NONE, WP_NUM_WEAPONS, WP_PLASMAGUN, WP_RAILGUN,
-    WP_ROCKET_LAUNCHER, WP_SHOTGUN,
+    unnamed_2, unnamed_3, unnamed_4, ET_BEAM, ET_EVENTS, ET_GENERAL, ET_GRAPPLE, ET_INVISIBLE,
+    ET_ITEM, ET_MISSILE, ET_MOVER, ET_PLAYER, ET_PORTAL, ET_PUSH_TRIGGER, ET_SPEAKER, ET_TEAM,
+    ET_TELEPORT_TRIGGER, EV_BULLET, EV_BULLET_HIT_FLESH, EV_BULLET_HIT_WALL, EV_CHANGE_WEAPON,
+    EV_DEATH1, EV_DEATH2, EV_DEATH3, EV_DEBUG_LINE, EV_FALL_FAR, EV_FALL_MEDIUM, EV_FALL_SHORT,
+    EV_FIRE_WEAPON, EV_FOOTSPLASH, EV_FOOTSTEP, EV_FOOTSTEP_METAL, EV_FOOTWADE, EV_GENERAL_SOUND,
+    EV_GIB_PLAYER, EV_GLOBAL_ITEM_PICKUP, EV_GLOBAL_SOUND, EV_GLOBAL_TEAM_SOUND, EV_GRENADE_BOUNCE,
+    EV_INVUL_IMPACT, EV_ITEM_PICKUP, EV_ITEM_POP, EV_ITEM_RESPAWN, EV_JUICED, EV_JUMP, EV_JUMP_PAD,
+    EV_KAMIKAZE, EV_LIGHTNINGBOLT, EV_MISSILE_HIT, EV_MISSILE_MISS, EV_MISSILE_MISS_METAL,
+    EV_NOAMMO, EV_NONE, EV_OBELISKEXPLODE, EV_OBELISKPAIN, EV_OBITUARY, EV_PAIN,
+    EV_PLAYER_TELEPORT_IN, EV_PLAYER_TELEPORT_OUT, EV_POWERUP_BATTLESUIT, EV_POWERUP_QUAD,
+    EV_POWERUP_REGEN, EV_PROXIMITY_MINE_STICK, EV_PROXIMITY_MINE_TRIGGER, EV_RAILTRAIL,
+    EV_SCOREPLUM, EV_SHOTGUN, EV_STEP_12, EV_STEP_16, EV_STEP_4, EV_STEP_8, EV_STOPLOOPINGSOUND,
+    EV_SWIM, EV_TAUNT, EV_TAUNT_FOLLOWME, EV_TAUNT_GETFLAG, EV_TAUNT_GUARDBASE, EV_TAUNT_NO,
+    EV_TAUNT_PATROL, EV_TAUNT_YES, EV_USE_ITEM0, EV_USE_ITEM1, EV_USE_ITEM10, EV_USE_ITEM11,
+    EV_USE_ITEM12, EV_USE_ITEM13, EV_USE_ITEM14, EV_USE_ITEM15, EV_USE_ITEM2, EV_USE_ITEM3,
+    EV_USE_ITEM4, EV_USE_ITEM5, EV_USE_ITEM6, EV_USE_ITEM7, EV_USE_ITEM8, EV_USE_ITEM9,
+    EV_WATER_CLEAR, EV_WATER_LEAVE, EV_WATER_TOUCH, EV_WATER_UNDER, IT_AMMO, IT_ARMOR, IT_BAD,
+    IT_HEALTH, IT_HOLDABLE, IT_PERSISTANT_POWERUP, IT_POWERUP, IT_TEAM, IT_WEAPON, MOD_BFG,
+    MOD_BFG_SPLASH, MOD_CRUSH, MOD_FALLING, MOD_GAUNTLET, MOD_GRAPPLE, MOD_GRENADE,
+    MOD_GRENADE_SPLASH, MOD_LAVA, MOD_LIGHTNING, MOD_MACHINEGUN, MOD_PLASMA, MOD_PLASMA_SPLASH,
+    MOD_RAILGUN, MOD_ROCKET, MOD_ROCKET_SPLASH, MOD_SHOTGUN, MOD_SLIME, MOD_SUICIDE,
+    MOD_TARGET_LASER, MOD_TELEFRAG, MOD_TRIGGER_HURT, MOD_UNKNOWN, MOD_WATER, PM_DEAD, PM_FREEZE,
+    PM_INTERMISSION, PM_NOCLIP, PM_NORMAL, PM_SPECTATOR, PM_SPINTERMISSION, PW_AMMOREGEN,
+    PW_BATTLESUIT, PW_BLUEFLAG, PW_DOUBLER, PW_FLIGHT, PW_GUARD, PW_HASTE, PW_INVIS,
+    PW_INVULNERABILITY, PW_NEUTRALFLAG, PW_NONE, PW_NUM_POWERUPS, PW_QUAD, PW_REDFLAG, PW_REGEN,
+    PW_SCOUT, STAT_ARMOR, STAT_CLIENTS_READY, STAT_DEAD_YAW, STAT_HEALTH, STAT_HOLDABLE_ITEM,
+    STAT_MAX_HEALTH, STAT_WEAPONS, TEAM_BLUE, TEAM_FREE, TEAM_NUM_TEAMS, TEAM_RED, TEAM_SPECTATOR,
+    WP_BFG, WP_GAUNTLET, WP_GRAPPLING_HOOK, WP_GRENADE_LAUNCHER, WP_LIGHTNING, WP_MACHINEGUN,
+    WP_NONE, WP_NUM_WEAPONS, WP_PLASMAGUN, WP_RAILGUN, WP_ROCKET_LAUNCHER, WP_SHOTGUN,
 };
+use bg_slidemove::{PM_SlideMove, PM_StepSlideMove};
 use g_arenas::{
     podium1, podium2, podium3, SpawnModelsOnVictoryPads, Svcmd_AbortPodium_f, UpdateTournamentInfo,
 };
@@ -115,11 +121,15 @@ use g_weapon::{
     Weapon_HookThink,
 };
 use libc;
+use q_math::{
+    vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
+    DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
+};
 use q_shared_h::{
     byte, cplane_s, cplane_t, cvarHandle_t, entityState_s, entityState_t, fileHandle_t,
     playerState_s, playerState_t, qboolean, qfalse, qtrue, trType_t, trace_t, trajectory_t,
-    usercmd_s, usercmd_t, vec3_t, vec_t, vectoangles, vmCvar_t, TR_GRAVITY, TR_INTERPOLATE,
-    TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
+    usercmd_s, usercmd_t, vec3_t, vec_t, vmCvar_t, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR,
+    TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::memset;
 
@@ -279,7 +289,7 @@ once for each server frame, which makes for smooth demo recording.
 #[no_mangle]
 pub unsafe extern "C" fn ClientThink_real(mut ent: *mut gentity_t) {
     let mut client: *mut gclient_t = 0 as *mut gclient_t;
-    let mut pm: pmove_t = pmove_t {
+    let mut pm1: pmove_t = pmove_t {
         ps: 0 as *mut playerState_t,
         cmd: usercmd_s {
             serverTime: 0,
@@ -387,7 +397,7 @@ pub unsafe extern "C" fn ClientThink_real(mut ent: *mut gentity_t) {
     }
     oldEventSequence = (*client).ps.eventSequence;
     memset(
-        &mut pm as *mut pmove_t as *mut libc::c_void,
+        &mut pm1 as *mut pmove_t as *mut libc::c_void,
         0i32,
         ::std::mem::size_of::<pmove_t>() as libc::c_ulong,
     );
@@ -396,32 +406,32 @@ pub unsafe extern "C" fn ClientThink_real(mut ent: *mut gentity_t) {
         && 0 != (*ucmd).buttons & 1i32
         && (*client).ps.weaponTime <= 0i32
     {
-        pm.gauntletHit = CheckGauntletAttack(ent)
+        pm1.gauntletHit = CheckGauntletAttack(ent)
     }
     if 0 != (*ent).flags & 0x8000i32 {
         (*ent).flags &= !0x8000i32;
         (*(*ent).client).pers.cmd.buttons |= 8i32
     }
-    pm.ps = &mut (*client).ps;
-    pm.cmd = *ucmd;
-    if (*pm.ps).pm_type == PM_DEAD as libc::c_int {
-        pm.tracemask = (1i32 | 0x10000i32 | 0x2000000i32) & !0x2000000i32
+    pm1.ps = &mut (*client).ps;
+    pm1.cmd = *ucmd;
+    if (*pm1.ps).pm_type == PM_DEAD as libc::c_int {
+        pm1.tracemask = (1i32 | 0x10000i32 | 0x2000000i32) & !0x2000000i32
     } else if 0 != (*ent).r.svFlags & 0x8i32 {
-        pm.tracemask = 1i32 | 0x10000i32 | 0x2000000i32 | 0x400000i32
+        pm1.tracemask = 1i32 | 0x10000i32 | 0x2000000i32 | 0x400000i32
     } else {
-        pm.tracemask = 1i32 | 0x10000i32 | 0x2000000i32
+        pm1.tracemask = 1i32 | 0x10000i32 | 0x2000000i32
     }
-    pm.trace = Some(trap_Trace);
-    pm.pointcontents = Some(trap_PointContents);
-    pm.debugLevel = g_debugMove.integer;
-    pm.noFootsteps = (g_dmflags.integer & 32i32 > 0i32) as libc::c_int as qboolean;
-    pm.pmove_fixed = (pmove_fixed.integer as libc::c_uint
+    pm1.trace = Some(trap_Trace);
+    pm1.pointcontents = Some(trap_PointContents);
+    pm1.debugLevel = g_debugMove.integer;
+    pm1.noFootsteps = (g_dmflags.integer & 32i32 > 0i32) as libc::c_int as qboolean;
+    pm1.pmove_fixed = (pmove_fixed.integer as libc::c_uint
         | (*client).pers.pmoveFixed as libc::c_uint) as libc::c_int;
-    pm.pmove_msec = pmove_msec.integer;
+    pm1.pmove_msec = pmove_msec.integer;
     (*client).oldOrigin[0usize] = (*client).ps.origin[0usize];
     (*client).oldOrigin[1usize] = (*client).ps.origin[1usize];
     (*client).oldOrigin[2usize] = (*client).ps.origin[2usize];
-    Pmove(&mut pm);
+    Pmove(&mut pm1);
     if (*(*ent).client).ps.eventSequence != oldEventSequence {
         (*ent).eventTime = level.time
     }
@@ -442,14 +452,14 @@ pub unsafe extern "C" fn ClientThink_real(mut ent: *mut gentity_t) {
     (*ent).r.currentOrigin[0usize] = (*ent).s.pos.trBase[0usize];
     (*ent).r.currentOrigin[1usize] = (*ent).s.pos.trBase[1usize];
     (*ent).r.currentOrigin[2usize] = (*ent).s.pos.trBase[2usize];
-    (*ent).r.mins[0usize] = pm.mins[0usize];
-    (*ent).r.mins[1usize] = pm.mins[1usize];
-    (*ent).r.mins[2usize] = pm.mins[2usize];
-    (*ent).r.maxs[0usize] = pm.maxs[0usize];
-    (*ent).r.maxs[1usize] = pm.maxs[1usize];
-    (*ent).r.maxs[2usize] = pm.maxs[2usize];
-    (*ent).waterlevel = pm.waterlevel;
-    (*ent).watertype = pm.watertype;
+    (*ent).r.mins[0usize] = pm1.mins[0usize];
+    (*ent).r.mins[1usize] = pm1.mins[1usize];
+    (*ent).r.mins[2usize] = pm1.mins[2usize];
+    (*ent).r.maxs[0usize] = pm1.maxs[0usize];
+    (*ent).r.maxs[1usize] = pm1.maxs[1usize];
+    (*ent).r.maxs[2usize] = pm1.maxs[2usize];
+    (*ent).waterlevel = pm1.waterlevel;
+    (*ent).watertype = pm1.watertype;
     ClientEvents(ent, oldEventSequence);
     trap_LinkEntity(ent);
     if 0 == (*(*ent).client).noclip as u64 {
@@ -459,7 +469,7 @@ pub unsafe extern "C" fn ClientThink_real(mut ent: *mut gentity_t) {
     (*ent).r.currentOrigin[1usize] = (*(*ent).client).ps.origin[1usize];
     (*ent).r.currentOrigin[2usize] = (*(*ent).client).ps.origin[2usize];
     BotTestAAS((*ent).r.currentOrigin.as_mut_ptr());
-    ClientImpacts(ent, &mut pm);
+    ClientImpacts(ent, &mut pm1);
     if (*(*ent).client).ps.eventSequence != oldEventSequence {
         (*ent).eventTime = level.time
     }
@@ -537,7 +547,7 @@ ClientImpacts
 ==============
 */
 #[no_mangle]
-pub unsafe extern "C" fn ClientImpacts(mut ent: *mut gentity_t, mut pm: *mut pmove_t) {
+pub unsafe extern "C" fn ClientImpacts(mut ent: *mut gentity_t, mut pm1: *mut pmove_t) {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     let mut trace: trace_t = trace_t {
@@ -563,17 +573,17 @@ pub unsafe extern "C" fn ClientImpacts(mut ent: *mut gentity_t, mut pm: *mut pmo
         ::std::mem::size_of::<trace_t>() as libc::c_ulong,
     );
     i = 0i32;
-    while i < (*pm).numtouch {
+    while i < (*pm1).numtouch {
         j = 0i32;
         while j < i {
-            if (*pm).touchents[j as usize] == (*pm).touchents[i as usize] {
+            if (*pm1).touchents[j as usize] == (*pm1).touchents[i as usize] {
                 break;
             }
             j += 1
         }
         if !(j != i) {
             // duplicated
-            other = &mut g_entities[(*pm).touchents[i as usize] as usize] as *mut gentity_t;
+            other = &mut g_entities[(*pm1).touchents[i as usize] as usize] as *mut gentity_t;
             if 0 != (*ent).r.svFlags & 0x8i32 && (*ent).touch.is_some() {
                 (*ent).touch.expect("non-null function pointer")(ent, other, &mut trace);
             }
@@ -754,7 +764,7 @@ SpectatorThink
 */
 #[no_mangle]
 pub unsafe extern "C" fn SpectatorThink(mut ent: *mut gentity_t, mut ucmd: *mut usercmd_t) {
-    let mut pm: pmove_t = pmove_t {
+    let mut pm1: pmove_t = pmove_t {
         ps: 0 as *mut playerState_t,
         cmd: usercmd_s {
             serverTime: 0,
@@ -801,16 +811,16 @@ pub unsafe extern "C" fn SpectatorThink(mut ent: *mut gentity_t, mut ucmd: *mut 
         }
         (*client).ps.speed = 400i32;
         memset(
-            &mut pm as *mut pmove_t as *mut libc::c_void,
+            &mut pm1 as *mut pmove_t as *mut libc::c_void,
             0i32,
             ::std::mem::size_of::<pmove_t>() as libc::c_ulong,
         );
-        pm.ps = &mut (*client).ps;
-        pm.cmd = *ucmd;
-        pm.tracemask = (1i32 | 0x10000i32 | 0x2000000i32) & !0x2000000i32;
-        pm.trace = Some(trap_Trace);
-        pm.pointcontents = Some(trap_PointContents);
-        Pmove(&mut pm);
+        pm1.ps = &mut (*client).ps;
+        pm1.cmd = *ucmd;
+        pm1.tracemask = (1i32 | 0x10000i32 | 0x2000000i32) & !0x2000000i32;
+        pm1.trace = Some(trap_Trace);
+        pm1.pointcontents = Some(trap_PointContents);
+        Pmove(&mut pm1);
         (*ent).s.origin[0usize] = (*client).ps.origin[0usize];
         (*ent).s.origin[1usize] = (*client).ps.origin[1usize];
         (*ent).s.origin[2usize] = (*client).ps.origin[2usize];

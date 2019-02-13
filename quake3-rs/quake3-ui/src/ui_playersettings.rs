@@ -1,3 +1,4 @@
+use bg_misc::bg_itemlist;
 use bg_public_h::{
     animation_s, animation_t, unnamed_0, weapon_t, BOTH_DEAD1, BOTH_DEAD2, BOTH_DEAD3, BOTH_DEATH1,
     BOTH_DEATH2, BOTH_DEATH3, FLAG_RUN, FLAG_STAND, FLAG_STAND2RUN, LEGS_BACK, LEGS_BACKCR,
@@ -42,9 +43,14 @@ use keycodes_h::{
     K_WORLD_91, K_WORLD_92, K_WORLD_93, K_WORLD_94, K_WORLD_95, MAX_KEYS,
 };
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
-    byte, g_color_table, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, va, vec3_origin, vec3_t,
-    vec4_t, vec_t, Com_Clamp, Q_CleanStr, Q_IsColorString, Q_strncpyz,
+    byte, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, va, vec3_t, vec4_t, vec_t, Com_Clamp,
+    Q_CleanStr, Q_IsColorString, Q_strncpyz,
 };
 use stdlib::{memset, strcmp, strcpy};
 use tr_types_h::{
@@ -56,8 +62,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -92,7 +98,7 @@ use ui_mfield::{MField_Draw, MenuField_Draw, MenuField_Init, MenuField_Key};
 use ui_mods::{UI_ModsMenu, UI_ModsMenu_Cache};
 use ui_network::{UI_NetworkOptionsMenu, UI_NetworkOptionsMenu_Cache};
 use ui_playermodel::{PlayerModel_Cache, UI_PlayerModelMenu};
-use ui_players::{UI_DrawPlayer, UI_PlayerInfo_SetInfo, UI_PlayerInfo_SetModel};
+use ui_players::{playersettings_t, UI_DrawPlayer, UI_PlayerInfo_SetInfo, UI_PlayerInfo_SetModel};
 use ui_preferences::{Preferences_Cache, UI_PreferencesMenu};
 use ui_qmenu::{
     color_black, color_orange, color_red, color_white, color_yellow, listbar_color,
@@ -991,24 +997,4 @@ pub unsafe extern "C" fn PlayerSettings_Cache() {
         trap_R_RegisterShaderNoMip(b"menu/art/fx_cyan\x00" as *const u8 as *const libc::c_char);
     s_playersettings.fxPic[6usize] =
         trap_R_RegisterShaderNoMip(b"menu/art/fx_white\x00" as *const u8 as *const libc::c_char);
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct playersettings_t {
-    pub menu: menuframework_s,
-    pub banner: menutext_s,
-    pub framel: menubitmap_s,
-    pub framer: menubitmap_s,
-    pub player: menubitmap_s,
-    pub name: menufield_s,
-    pub handicap: menulist_s,
-    pub effects: menulist_s,
-    pub back: menubitmap_s,
-    pub model: menubitmap_s,
-    pub item_null: menubitmap_s,
-    pub fxBasePic: qhandle_t,
-    pub fxPic: [qhandle_t; 7],
-    pub playerinfo: playerInfo_t,
-    pub current_fx: libc::c_int,
-    pub playerModel: [libc::c_char; 64],
 }

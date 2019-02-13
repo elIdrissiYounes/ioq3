@@ -1,3 +1,4 @@
+use bg_misc::bg_itemlist;
 use bg_public_h::{
     unnamed_1, GT_1FCTF, GT_CTF, GT_FFA, GT_HARVESTER, GT_MAX_GAME_TYPE, GT_OBELISK,
     GT_SINGLE_PLAYER, GT_TEAM, GT_TOURNAMENT,
@@ -35,13 +36,18 @@ use keycodes_h::{
     K_WORLD_9, K_WORLD_90, K_WORLD_91, K_WORLD_92, K_WORLD_93, K_WORLD_94, K_WORLD_95, MAX_KEYS,
 };
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
     cvarHandle_t, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, va, vec4_t, vec_t,
     vmCvar_t, Com_Clamp, Com_sprintf, Info_SetValueForKey, Info_ValueForKey, Q_CleanStr, Q_stricmp,
     Q_strncpyz, Q_strupr, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
 };
 use stddef_h::size_t;
-use stdlib::{__compar_fn_t, atoi, memcpy, memset, qsort, strcat, strcpy, strlen};
+use stdlib::{__compar_fn_t, memcpy, memset, qsort, strcat, strcpy, strlen, strtol};
 use tr_types_h::{
     glDriverType_t, glHardwareType_t, glconfig_t, textureCompression_t, GLDRV_ICD,
     GLDRV_STANDALONE, GLDRV_VOODOO, GLHW_3DFX_2D3D, GLHW_GENERIC, GLHW_PERMEDIA2, GLHW_RAGEPRO,
@@ -51,8 +57,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -116,6 +122,13 @@ use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
 
+unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
+    return strtol(
+        __nptr,
+        0 as *mut libc::c_void as *mut *mut libc::c_char,
+        10i32,
+    ) as libc::c_int;
+}
 //
 // ui_servers2.c
 //
@@ -2390,6 +2403,13 @@ pub unsafe extern "C" fn ArenaServers_Cache() {
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
+pub struct pinglist_t {
+    pub adrstr: [libc::c_char; 64],
+    pub start: libc::c_int,
+}
+pub type servernode_t = servernode_s;
+#[repr(C)]
+#[derive(Copy, Clone)]
 pub struct servernode_s {
     pub adrstr: [libc::c_char; 64],
     pub hostname: [libc::c_char; 25],
@@ -2403,6 +2423,12 @@ pub struct servernode_s {
     pub minPing: libc::c_int,
     pub maxPing: libc::c_int,
     pub bPB: qboolean,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct table_t {
+    pub buff: [libc::c_char; 68],
+    pub servernode: *mut servernode_t,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -2443,16 +2469,3 @@ pub struct arenaservers_t {
     pub punkbuster: menulist_s,
     pub pblogo: menubitmap_s,
 }
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct pinglist_t {
-    pub adrstr: [libc::c_char; 64],
-    pub start: libc::c_int,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct table_t {
-    pub buff: [libc::c_char; 68],
-    pub servernode: *mut servernode_t,
-}
-pub type servernode_t = servernode_s;

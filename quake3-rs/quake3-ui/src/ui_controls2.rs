@@ -1,14 +1,15 @@
+use bg_misc::bg_itemlist;
 use bg_public_h::{
-    animation_s, animation_t, bg_itemlist, gitem_s, gitem_t, itemType_t, unnamed_1, weapon_t,
-    BOTH_DEAD1, BOTH_DEAD2, BOTH_DEAD3, BOTH_DEATH1, BOTH_DEATH2, BOTH_DEATH3, FLAG_RUN,
-    FLAG_STAND, FLAG_STAND2RUN, IT_AMMO, IT_ARMOR, IT_BAD, IT_HEALTH, IT_HOLDABLE,
-    IT_PERSISTANT_POWERUP, IT_POWERUP, IT_TEAM, IT_WEAPON, LEGS_BACK, LEGS_BACKCR, LEGS_BACKWALK,
-    LEGS_IDLE, LEGS_IDLECR, LEGS_JUMP, LEGS_JUMPB, LEGS_LAND, LEGS_LANDB, LEGS_RUN, LEGS_SWIM,
-    LEGS_TURN, LEGS_WALK, LEGS_WALKCR, MAX_ANIMATIONS, MAX_TOTALANIMATIONS, TORSO_AFFIRMATIVE,
-    TORSO_ATTACK, TORSO_ATTACK2, TORSO_DROP, TORSO_FOLLOWME, TORSO_GESTURE, TORSO_GETFLAG,
-    TORSO_GUARDBASE, TORSO_NEGATIVE, TORSO_PATROL, TORSO_RAISE, TORSO_STAND, TORSO_STAND2, WP_BFG,
-    WP_GAUNTLET, WP_GRAPPLING_HOOK, WP_GRENADE_LAUNCHER, WP_LIGHTNING, WP_MACHINEGUN, WP_NONE,
-    WP_NUM_WEAPONS, WP_PLASMAGUN, WP_RAILGUN, WP_ROCKET_LAUNCHER, WP_SHOTGUN,
+    animation_s, animation_t, gitem_s, gitem_t, itemType_t, unnamed_1, weapon_t, BOTH_DEAD1,
+    BOTH_DEAD2, BOTH_DEAD3, BOTH_DEATH1, BOTH_DEATH2, BOTH_DEATH3, FLAG_RUN, FLAG_STAND,
+    FLAG_STAND2RUN, IT_AMMO, IT_ARMOR, IT_BAD, IT_HEALTH, IT_HOLDABLE, IT_PERSISTANT_POWERUP,
+    IT_POWERUP, IT_TEAM, IT_WEAPON, LEGS_BACK, LEGS_BACKCR, LEGS_BACKWALK, LEGS_IDLE, LEGS_IDLECR,
+    LEGS_JUMP, LEGS_JUMPB, LEGS_LAND, LEGS_LANDB, LEGS_RUN, LEGS_SWIM, LEGS_TURN, LEGS_WALK,
+    LEGS_WALKCR, MAX_ANIMATIONS, MAX_TOTALANIMATIONS, TORSO_AFFIRMATIVE, TORSO_ATTACK,
+    TORSO_ATTACK2, TORSO_DROP, TORSO_FOLLOWME, TORSO_GESTURE, TORSO_GETFLAG, TORSO_GUARDBASE,
+    TORSO_NEGATIVE, TORSO_PATROL, TORSO_RAISE, TORSO_STAND, TORSO_STAND2, WP_BFG, WP_GAUNTLET,
+    WP_GRAPPLING_HOOK, WP_GRENADE_LAUNCHER, WP_LIGHTNING, WP_MACHINEGUN, WP_NONE, WP_NUM_WEAPONS,
+    WP_PLASMAGUN, WP_RAILGUN, WP_ROCKET_LAUNCHER, WP_SHOTGUN,
 };
 use keycodes_h::{
     unnamed_0, K_ALT, K_AUX1, K_AUX10, K_AUX11, K_AUX12, K_AUX13, K_AUX14, K_AUX15, K_AUX16,
@@ -43,9 +44,14 @@ use keycodes_h::{
     K_WORLD_9, K_WORLD_90, K_WORLD_91, K_WORLD_92, K_WORLD_93, K_WORLD_94, K_WORLD_95, MAX_KEYS,
 };
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
-    byte, colorWhite, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, vec3_t, vec4_t,
-    vec_t, Q_CleanStr, Q_stricmp, Q_strupr, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
+    byte, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, vec3_t, vec4_t, vec_t,
+    Q_CleanStr, Q_stricmp, Q_strupr, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
 };
 use stdlib::{fabs, memset, strcat, strcmp, strcpy};
 use tr_types_h::{
@@ -57,8 +63,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -2741,7 +2747,7 @@ unsafe extern "C" fn Controls_InitCvars() {
 Controls_StatusBar
 =================
 */
-unsafe extern "C" fn Controls_StatusBar(mut _self_0: *mut libc::c_void) {
+unsafe extern "C" fn Controls_StatusBar(mut self_0: *mut libc::c_void) {
     UI_DrawString(
         (640i32 as libc::c_double * 0.50f64) as libc::c_int,
         (480i32 as libc::c_double * 0.80f64) as libc::c_int,
@@ -3174,13 +3180,13 @@ unsafe extern "C" fn Controls_MenuKey(mut key: libc::c_int) -> sfxHandle_t {
     if 0 == s_controls.waitingforkey as u64 {
         match key {
             127 | 140 | 171 => {
-                current_block = 2905725322067095232;
+                current_block = 4462129297499890814;
                 match current_block {
-                    14600208599415517630 => {
+                    6907856289669576624 => {
                         if 0 != s_controls.changesmade as u64 {
                             Controls_SetConfig();
                         }
-                        current_block = 3002389269805436602;
+                        current_block = 5613623880076979716;
                     }
                     _ => {
                         key = -1i32;
@@ -3189,13 +3195,13 @@ unsafe extern "C" fn Controls_MenuKey(mut key: libc::c_int) -> sfxHandle_t {
                 }
             }
             179 | 27 => {
-                current_block = 14600208599415517630;
+                current_block = 6907856289669576624;
                 match current_block {
-                    14600208599415517630 => {
+                    6907856289669576624 => {
                         if 0 != s_controls.changesmade as u64 {
                             Controls_SetConfig();
                         }
-                        current_block = 3002389269805436602;
+                        current_block = 5613623880076979716;
                     }
                     _ => {
                         key = -1i32;
@@ -3204,11 +3210,11 @@ unsafe extern "C" fn Controls_MenuKey(mut key: libc::c_int) -> sfxHandle_t {
                 }
             }
             _ => {
-                current_block = 3002389269805436602;
+                current_block = 5613623880076979716;
             }
         }
     } else if 0 != key & 1024i32 {
-        current_block = 3002389269805436602;
+        current_block = 5613623880076979716;
     } else {
         match key {
             27 => {
@@ -3217,7 +3223,7 @@ unsafe extern "C" fn Controls_MenuKey(mut key: libc::c_int) -> sfxHandle_t {
                 return menu_out_sound;
             }
             96 => {
-                current_block = 3002389269805436602;
+                current_block = 5613623880076979716;
             }
             _ => {
                 current_block = 15904375183555213903;
@@ -3374,13 +3380,6 @@ unsafe extern "C" fn run_static_initializers() {
 static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct configcvar_t {
-    pub name: *mut libc::c_char,
-    pub defaultvalue: libc::c_float,
-    pub value: libc::c_float,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
 pub struct controls_t {
     pub menu: menuframework_s,
     pub banner: menutext_s,
@@ -3447,6 +3446,13 @@ pub struct controls_t {
     pub playerChat: qboolean,
     pub back: menubitmap_s,
     pub name: menutext_s,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct configcvar_t {
+    pub name: *mut libc::c_char,
+    pub defaultvalue: libc::c_float,
+    pub value: libc::c_float,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]

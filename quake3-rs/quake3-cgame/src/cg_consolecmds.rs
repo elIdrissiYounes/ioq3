@@ -1,4 +1,13 @@
+use bg_misc::{
+    bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
+    BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItemForHoldable,
+    BG_FindItemForPowerup, BG_PlayerStateToEntityState, BG_PlayerTouchesItem, BG_TouchJumpPad,
+};
+use bg_pmove::{
+    c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, PM_UpdateViewAngles, Pmove,
+};
 use bg_public_h::{animation_s, animation_t};
+use bg_slidemove::{PM_SlideMove, PM_StepSlideMove};
 use cg_draw::{
     drawTeamOverlayModificationCount, numSortedTeamPlayers, sortedTeamPlayers,
     CG_AddLagometerFrameInfo, CG_AddLagometerSnapshotInfo, CG_CenterPrint, CG_DrawActive,
@@ -69,6 +78,12 @@ use cg_weapons::{
     CG_PrevWeapon_f, CG_RailTrail, CG_RegisterItemVisuals, CG_ShotgunFire, CG_Weapon_f,
 };
 use libc;
+use q_math::{
+    axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
+    AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
+    LerpAngle, MatrixMultiply, PerpendicularVector, Q_crandom, Q_random, RotateAroundDirection,
+    RotatePointAroundVector, VectorNormalize, VectorNormalize2,
+};
 use q_shared_h::{
     byte, cvarHandle_t, entityState_s, entityState_t, playerState_s, playerState_t, qboolean,
     qfalse, qhandle_t, qtrue, trType_t, trajectory_t, va, vec3_t, vec_t, vmCvar_t, Com_sprintf,

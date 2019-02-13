@@ -1,19 +1,25 @@
+use bg_misc::bg_itemlist;
 use bg_public_h::{
     unnamed_0, GT_1FCTF, GT_CTF, GT_FFA, GT_HARVESTER, GT_MAX_GAME_TYPE, GT_OBELISK,
     GT_SINGLE_PLAYER, GT_TEAM, GT_TOURNAMENT,
 };
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
     qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, va, vec4_t, vec_t, Com_Clamp,
     Info_ValueForKey, Q_stricmp, Q_strncpyz, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
 };
 use stddef_h::size_t;
-use stdlib::{__compar_fn_t, atoi, memset, qsort};
+use stdlib::{__compar_fn_t, memset, qsort, strtol};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -76,6 +82,13 @@ use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
 
+unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
+    return strtol(
+        __nptr,
+        0 as *mut libc::c_void as *mut *mut libc::c_char,
+        10i32,
+    ) as libc::c_int;
+}
 //
 // ui_addbots.c
 //
@@ -618,7 +631,7 @@ unsafe extern "C" fn UI_AddBotsMenu_SortCompare(
 UI_AddBotsMenu_BackEvent
 =================
 */
-unsafe extern "C" fn UI_AddBotsMenu_BackEvent(mut _ptr: *mut libc::c_void, mut event: libc::c_int) {
+unsafe extern "C" fn UI_AddBotsMenu_BackEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
     if event != 3i32 {
         return;
     }
@@ -629,7 +642,7 @@ unsafe extern "C" fn UI_AddBotsMenu_BackEvent(mut _ptr: *mut libc::c_void, mut e
 UI_AddBotsMenu_FightEvent
 =================
 */
-unsafe extern "C" fn UI_AddBotsMenu_FightEvent(mut _ptr: *mut libc::c_void, mut event: libc::c_int) {
+unsafe extern "C" fn UI_AddBotsMenu_FightEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
     let mut team: *const libc::c_char = 0 as *const libc::c_char;
     let mut skill: libc::c_int = 0;
     if event != 3i32 {
@@ -692,7 +705,7 @@ unsafe extern "C" fn UI_AddBotsMenu_BotEvent(mut ptr: *mut libc::c_void, mut eve
 UI_AddBotsMenu_DownEvent
 =================
 */
-unsafe extern "C" fn UI_AddBotsMenu_DownEvent(mut _ptr: *mut libc::c_void, mut event: libc::c_int) {
+unsafe extern "C" fn UI_AddBotsMenu_DownEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
     if event != 3i32 {
         return;
     }
@@ -706,7 +719,7 @@ unsafe extern "C" fn UI_AddBotsMenu_DownEvent(mut _ptr: *mut libc::c_void, mut e
 UI_AddBotsMenu_UpEvent
 =================
 */
-unsafe extern "C" fn UI_AddBotsMenu_UpEvent(mut _ptr: *mut libc::c_void, mut event: libc::c_int) {
+unsafe extern "C" fn UI_AddBotsMenu_UpEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
     if event != 3i32 {
         return;
     }

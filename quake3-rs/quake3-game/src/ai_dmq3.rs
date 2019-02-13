@@ -24,6 +24,13 @@ use be_aas_h::{
 use be_ai_goal_h::{bot_goal_s, bot_goal_t};
 use be_ai_move_h::{bot_initmove_s, bot_initmove_t, bot_moveresult_s, bot_moveresult_t};
 use be_ai_weap_h::{projectileinfo_s, projectileinfo_t, weaponinfo_s, weaponinfo_t};
+use bg_misc::{
+    bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
+    BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItem, BG_FindItemForPowerup,
+    BG_FindItemForWeapon, BG_PlayerStateToEntityState, BG_PlayerStateToEntityStateExtraPolate,
+    BG_PlayerTouchesItem, BG_TouchJumpPad,
+};
+use bg_pmove::{c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, Pmove};
 use bg_public_h::{
     gitem_s, gitem_t, itemType_t, team_t, unnamed, unnamed_0, unnamed_1, unnamed_2, unnamed_3,
     unnamed_4, unnamed_5, unnamed_6, unnamed_7, unnamed_8, unnamed_9, ET_BEAM, ET_EVENTS,
@@ -62,6 +69,7 @@ use bg_public_h::{
     WP_GAUNTLET, WP_GRAPPLING_HOOK, WP_GRENADE_LAUNCHER, WP_LIGHTNING, WP_MACHINEGUN, WP_NONE,
     WP_NUM_WEAPONS, WP_PLASMAGUN, WP_RAILGUN, WP_ROCKET_LAUNCHER, WP_SHOTGUN,
 };
+use bg_slidemove::{PM_SlideMove, PM_StepSlideMove};
 use botlib_h::{bsp_surface_s, bsp_surface_t, bsp_trace_s, bsp_trace_t};
 use g_active::{ClientEndFrame, ClientThink, G_RunClient};
 use g_arenas::{
@@ -157,13 +165,16 @@ use g_weapon::{
     Weapon_HookThink,
 };
 use libc;
+use q_math::{
+    vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
+    DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
+};
 use q_shared_h::{
     byte, cplane_s, cplane_t, cvarHandle_t, entityState_s, entityState_t, fileHandle_t,
     playerState_s, playerState_t, qboolean, qfalse, qtrue, trType_t, trace_t, trajectory_t,
-    usercmd_s, usercmd_t, va, vec3_origin, vec3_t, vec_t, vectoangles, vmCvar_t, AngleMod,
-    AngleVectors, Com_sprintf, Info_SetValueForKey, Info_ValueForKey, Q_CleanStr, Q_stricmp,
-    Q_strncpyz, VectorNormalize, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR, TR_LINEAR_STOP, TR_SINE,
-    TR_STATIONARY,
+    usercmd_s, usercmd_t, va, vec3_t, vec_t, vmCvar_t, Com_sprintf, Info_SetValueForKey,
+    Info_ValueForKey, Q_CleanStr, Q_stricmp, Q_strncpyz, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR,
+    TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{
     atoi, fabs, memcpy, memmove, memset, rand, sqrt, strcmp, strlen, strncpy, strstr, toupper,

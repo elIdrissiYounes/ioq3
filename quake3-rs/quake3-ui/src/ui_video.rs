@@ -1,9 +1,15 @@
+use bg_misc::bg_itemlist;
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
     qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, va, vec4_t, vec_t, Com_sprintf,
     Q_stricmp, Q_strncpyz, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
 };
-use stdlib::{atoi, memset, strchr, strlen};
+use stdlib::{memset, strchr, strlen, strtol};
 use tr_types_h::{
     glDriverType_t, glHardwareType_t, glconfig_t, textureCompression_t, GLDRV_ICD,
     GLDRV_STANDALONE, GLDRV_VOODOO, GLHW_3DFX_2D3D, GLHW_GENERIC, GLHW_PERMEDIA2, GLHW_RAGEPRO,
@@ -13,8 +19,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -77,6 +83,13 @@ use ui_startserver::{
 use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 
+unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
+    return strtol(
+        __nptr,
+        0 as *mut libc::c_void as *mut *mut libc::c_char,
+        10i32,
+    ) as libc::c_int;
+}
 //
 // ui_video.c
 //
@@ -1234,7 +1247,7 @@ GraphicsOptions_ApplyChanges
 =================
 */
 unsafe extern "C" fn GraphicsOptions_ApplyChanges(
-    mut _unused: *mut libc::c_void,
+    mut unused: *mut libc::c_void,
     mut notification: libc::c_int,
 ) {
     if notification != 3i32 {
@@ -1450,10 +1463,10 @@ unsafe extern "C" fn GraphicsOptions_Event(mut ptr: *mut libc::c_void, mut event
         110 => {
             s_graphicsoptions.mode.curvalue = ratioToRes[s_graphicsoptions.ratio.curvalue as usize];
             // fall through to apply mode constraints
-            current_block_28 = 15077432600037132814;
+            current_block_28 = 16640963930099419567;
         }
         104 => {
-            current_block_28 = 15077432600037132814;
+            current_block_28 = 16640963930099419567;
         }
         103 => {
             ivo = &mut s_ivo_templates[s_graphicsoptions.list.curvalue as usize]
@@ -1497,7 +1510,7 @@ unsafe extern "C" fn GraphicsOptions_Event(mut ptr: *mut libc::c_void, mut event
         }
     }
     match current_block_28 {
-        15077432600037132814 => {
+        16640963930099419567 => {
             if s_graphicsoptions.driver.curvalue == 1i32 {
                 if s_graphicsoptions.mode.curvalue < 2i32 {
                     s_graphicsoptions.mode.curvalue = 2i32
@@ -1937,7 +1950,7 @@ static mut ratioToRes: [libc::c_int; 32] = [0; 32];
 GraphicsOptions_TQEvent
 ================
 */
-unsafe extern "C" fn GraphicsOptions_TQEvent(mut _ptr: *mut libc::c_void, mut event: libc::c_int) {
+unsafe extern "C" fn GraphicsOptions_TQEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
     if event != 3i32 {
         return;
     }
@@ -2218,6 +2231,32 @@ unsafe extern "C" fn GraphicsOptions_GetResolutions() {
 static mut resbuf: [libc::c_char; 1024] = [0; 1024];
 #[repr(C)]
 #[derive(Copy, Clone)]
+pub struct driverinfo_t {
+    pub menu: menuframework_s,
+    pub banner: menutext_s,
+    pub back: menubitmap_s,
+    pub framel: menubitmap_s,
+    pub framer: menubitmap_s,
+    pub stringbuff: [libc::c_char; 1024],
+    pub strings: [*mut libc::c_char; 64],
+    pub numstrings: libc::c_int,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct InitialVideoOptions_s {
+    pub mode: libc::c_int,
+    pub fullscreen: qboolean,
+    pub tq: libc::c_int,
+    pub lighting: libc::c_int,
+    pub colordepth: libc::c_int,
+    pub texturebits: libc::c_int,
+    pub geometry: libc::c_int,
+    pub filter: libc::c_int,
+    pub driver: libc::c_int,
+    pub extensions: qboolean,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
 pub struct graphicsoptions_t {
     pub menu: menuframework_s,
     pub banner: menutext_s,
@@ -2242,30 +2281,4 @@ pub struct graphicsoptions_t {
     pub driverinfo: menutext_s,
     pub apply: menubitmap_s,
     pub back: menubitmap_s,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct InitialVideoOptions_s {
-    pub mode: libc::c_int,
-    pub fullscreen: qboolean,
-    pub tq: libc::c_int,
-    pub lighting: libc::c_int,
-    pub colordepth: libc::c_int,
-    pub texturebits: libc::c_int,
-    pub geometry: libc::c_int,
-    pub filter: libc::c_int,
-    pub driver: libc::c_int,
-    pub extensions: qboolean,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct driverinfo_t {
-    pub menu: menuframework_s,
-    pub banner: menutext_s,
-    pub back: menubitmap_s,
-    pub framel: menubitmap_s,
-    pub framer: menubitmap_s,
-    pub stringbuff: [libc::c_char; 1024],
-    pub strings: [*mut libc::c_char; 64],
-    pub numstrings: libc::c_int,
 }

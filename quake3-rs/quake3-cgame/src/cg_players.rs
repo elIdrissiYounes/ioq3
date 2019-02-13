@@ -1,14 +1,22 @@
+use bg_misc::{
+    bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
+    BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItemForHoldable,
+    BG_FindItemForPowerup, BG_PlayerStateToEntityState, BG_PlayerTouchesItem, BG_TouchJumpPad,
+};
+use bg_pmove::{
+    c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, PM_UpdateViewAngles, Pmove,
+};
 use bg_public_h::{
     animation_s, animation_t, gametype_t, gender_t, team_t, unnamed, unnamed_0, unnamed_1,
-    unnamed_2, BG_EvaluateTrajectory, BOTH_DEAD1, BOTH_DEAD2, BOTH_DEAD3, BOTH_DEATH1, BOTH_DEATH2,
-    BOTH_DEATH3, ET_BEAM, ET_EVENTS, ET_GENERAL, ET_GRAPPLE, ET_INVISIBLE, ET_ITEM, ET_MISSILE,
-    ET_MOVER, ET_PLAYER, ET_PORTAL, ET_PUSH_TRIGGER, ET_SPEAKER, ET_TEAM, ET_TELEPORT_TRIGGER,
-    FLAG_RUN, FLAG_STAND, FLAG_STAND2RUN, GENDER_FEMALE, GENDER_MALE, GENDER_NEUTER, GT_1FCTF,
-    GT_CTF, GT_FFA, GT_HARVESTER, GT_MAX_GAME_TYPE, GT_OBELISK, GT_SINGLE_PLAYER, GT_TEAM,
-    GT_TOURNAMENT, LEGS_BACK, LEGS_BACKCR, LEGS_BACKWALK, LEGS_IDLE, LEGS_IDLECR, LEGS_JUMP,
-    LEGS_JUMPB, LEGS_LAND, LEGS_LANDB, LEGS_RUN, LEGS_SWIM, LEGS_TURN, LEGS_WALK, LEGS_WALKCR,
-    MAX_ANIMATIONS, MAX_TOTALANIMATIONS, PERS_ASSIST_COUNT, PERS_ATTACKEE_ARMOR, PERS_ATTACKER,
-    PERS_CAPTURES, PERS_DEFEND_COUNT, PERS_EXCELLENT_COUNT, PERS_GAUNTLET_FRAG_COUNT, PERS_HITS,
+    unnamed_2, BOTH_DEAD1, BOTH_DEAD2, BOTH_DEAD3, BOTH_DEATH1, BOTH_DEATH2, BOTH_DEATH3, ET_BEAM,
+    ET_EVENTS, ET_GENERAL, ET_GRAPPLE, ET_INVISIBLE, ET_ITEM, ET_MISSILE, ET_MOVER, ET_PLAYER,
+    ET_PORTAL, ET_PUSH_TRIGGER, ET_SPEAKER, ET_TEAM, ET_TELEPORT_TRIGGER, FLAG_RUN, FLAG_STAND,
+    FLAG_STAND2RUN, GENDER_FEMALE, GENDER_MALE, GENDER_NEUTER, GT_1FCTF, GT_CTF, GT_FFA,
+    GT_HARVESTER, GT_MAX_GAME_TYPE, GT_OBELISK, GT_SINGLE_PLAYER, GT_TEAM, GT_TOURNAMENT,
+    LEGS_BACK, LEGS_BACKCR, LEGS_BACKWALK, LEGS_IDLE, LEGS_IDLECR, LEGS_JUMP, LEGS_JUMPB,
+    LEGS_LAND, LEGS_LANDB, LEGS_RUN, LEGS_SWIM, LEGS_TURN, LEGS_WALK, LEGS_WALKCR, MAX_ANIMATIONS,
+    MAX_TOTALANIMATIONS, PERS_ASSIST_COUNT, PERS_ATTACKEE_ARMOR, PERS_ATTACKER, PERS_CAPTURES,
+    PERS_DEFEND_COUNT, PERS_EXCELLENT_COUNT, PERS_GAUNTLET_FRAG_COUNT, PERS_HITS,
     PERS_IMPRESSIVE_COUNT, PERS_KILLED, PERS_PLAYEREVENTS, PERS_RANK, PERS_SCORE, PERS_SPAWN_COUNT,
     PERS_TEAM, PW_AMMOREGEN, PW_BATTLESUIT, PW_BLUEFLAG, PW_DOUBLER, PW_FLIGHT, PW_GUARD, PW_HASTE,
     PW_INVIS, PW_INVULNERABILITY, PW_NEUTRALFLAG, PW_NONE, PW_NUM_POWERUPS, PW_QUAD, PW_REDFLAG,
@@ -17,6 +25,7 @@ use bg_public_h::{
     TORSO_GETFLAG, TORSO_GUARDBASE, TORSO_NEGATIVE, TORSO_PATROL, TORSO_RAISE, TORSO_STAND,
     TORSO_STAND2,
 };
+use bg_slidemove::{PM_SlideMove, PM_StepSlideMove};
 use cg_consolecmds::{CG_ConsoleCommand, CG_InitConsoleCommands};
 use cg_draw::{
     drawTeamOverlayModificationCount, numSortedTeamPlayers, sortedTeamPlayers,
@@ -92,14 +101,19 @@ use cg_weapons::{
     CG_PrevWeapon_f, CG_RailTrail, CG_RegisterItemVisuals, CG_ShotgunFire, CG_Weapon_f,
 };
 use libc;
+use q_math::{
+    axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
+    AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
+    LerpAngle, MatrixMultiply, PerpendicularVector, Q_crandom, Q_random, RotateAroundDirection,
+    RotatePointAroundVector, VectorNormalize, VectorNormalize2,
+};
 use q_shared_h::{
     byte, clipHandle_t, cplane_s, cplane_t, cvarHandle_t, entityState_s, entityState_t,
     fileHandle_t, fsMode_t, gameState_t, orientation_t, playerState_s, playerState_t, qboolean,
-    qfalse, qhandle_t, qtrue, sfxHandle_t, trType_t, trace_t, trajectory_t, va, vec3_origin,
-    vec3_t, vec_t, vmCvar_t, AngleMod, AngleSubtract, AnglesSubtract, AnglesToAxis, COM_Parse,
-    Com_Printf, Com_sprintf, Info_ValueForKey, Q_stricmp, Q_strncpyz, VectorNormalize, FS_APPEND,
-    FS_APPEND_SYNC, FS_READ, FS_WRITE, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR, TR_LINEAR_STOP,
-    TR_SINE, TR_STATIONARY,
+    qfalse, qhandle_t, qtrue, sfxHandle_t, trType_t, trace_t, trajectory_t, va, vec3_t, vec_t,
+    vmCvar_t, COM_Parse, Com_Printf, Com_sprintf, Info_ValueForKey, Q_stricmp, Q_strncpyz,
+    FS_APPEND, FS_APPEND_SYNC, FS_READ, FS_WRITE, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR,
+    TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{acos, atof, atoi, fabs, memcpy, memset, rand, strchr, strcmp};
 use tr_types_h::{

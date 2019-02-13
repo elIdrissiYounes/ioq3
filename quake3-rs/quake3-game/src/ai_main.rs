@@ -10,6 +10,13 @@ use be_aas_h::{
     SOLID_BSP, SOLID_NOT, SOLID_TRIGGER,
 };
 use be_ai_goal_h::{bot_goal_s, bot_goal_t};
+use bg_misc::{
+    bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
+    BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItem, BG_FindItemForPowerup,
+    BG_FindItemForWeapon, BG_PlayerStateToEntityState, BG_PlayerStateToEntityStateExtraPolate,
+    BG_PlayerTouchesItem, BG_TouchJumpPad,
+};
+use bg_pmove::{c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, Pmove};
 use bg_public_h::{
     gitem_s, gitem_t, itemType_t, team_t, unnamed_0, unnamed_1, unnamed_2, ET_BEAM, ET_EVENTS,
     ET_GENERAL, ET_GRAPPLE, ET_INVISIBLE, ET_ITEM, ET_MISSILE, ET_MOVER, ET_PLAYER, ET_PORTAL,
@@ -20,6 +27,7 @@ use bg_public_h::{
     WP_GRAPPLING_HOOK, WP_GRENADE_LAUNCHER, WP_LIGHTNING, WP_MACHINEGUN, WP_NONE, WP_NUM_WEAPONS,
     WP_PLASMAGUN, WP_RAILGUN, WP_ROCKET_LAUNCHER, WP_SHOTGUN,
 };
+use bg_slidemove::{PM_SlideMove, PM_StepSlideMove};
 use botlib_h::{
     bot_entitystate_s, bot_entitystate_t, bot_input_s, bot_input_t, bsp_surface_s, bsp_surface_t,
     bsp_trace_s, bsp_trace_t,
@@ -117,12 +125,16 @@ use g_weapon::{
     Weapon_HookThink,
 };
 use libc;
+use q_math::{
+    vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
+    DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
+};
 use q_shared_h::{
     byte, cplane_s, cplane_t, cvarHandle_t, entityState_s, entityState_t, fileHandle_t,
     playerState_s, playerState_t, qboolean, qfalse, qtrue, trType_t, trace_t, trajectory_t,
-    unnamed, usercmd_s, usercmd_t, va, vec3_t, vec_t, vmCvar_t, AngleMod, AngleVectors,
-    Com_sprintf, Info_ValueForKey, Q_IsColorString, Q_stricmp, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
-    TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
+    unnamed, usercmd_s, usercmd_t, va, vec3_t, vec_t, vmCvar_t, Com_sprintf, Info_ValueForKey,
+    Q_IsColorString, Q_stricmp, EXEC_APPEND, EXEC_INSERT, EXEC_NOW, TR_GRAVITY, TR_INTERPOLATE,
+    TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{atoi, fabs, memcpy, memmove, memset, sscanf, strchr, strcpy, strlen};
 
@@ -2597,9 +2609,25 @@ pub unsafe extern "C" fn BotTeamplayReport() {
         i += 1
     }
 }
-pub type bot_waypoint_t = bot_waypoint_s;
-pub type bot_state_t = bot_state_s;
 pub type bot_activategoal_t = bot_activategoal_s;
+pub type bot_waypoint_t = bot_waypoint_s;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct bot_activategoal_s {
+    pub inuse: libc::c_int,
+    pub goal: bot_goal_t,
+    pub time: libc::c_float,
+    pub start_time: libc::c_float,
+    pub justused_time: libc::c_float,
+    pub shoot: libc::c_int,
+    pub weapon: libc::c_int,
+    pub target: vec3_t,
+    pub origin: vec3_t,
+    pub areas: [libc::c_int; 32],
+    pub numareas: libc::c_int,
+    pub areasdisabled: libc::c_int,
+    pub next: *mut bot_activategoal_s,
+}
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct bot_state_s {
@@ -2752,20 +2780,4 @@ pub struct bot_waypoint_s {
     pub next: *mut bot_waypoint_s,
     pub prev: *mut bot_waypoint_s,
 }
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct bot_activategoal_s {
-    pub inuse: libc::c_int,
-    pub goal: bot_goal_t,
-    pub time: libc::c_float,
-    pub start_time: libc::c_float,
-    pub justused_time: libc::c_float,
-    pub shoot: libc::c_int,
-    pub weapon: libc::c_int,
-    pub target: vec3_t,
-    pub origin: vec3_t,
-    pub areas: [libc::c_int; 32],
-    pub numareas: libc::c_int,
-    pub areasdisabled: libc::c_int,
-    pub next: *mut bot_activategoal_s,
-}
+pub type bot_state_t = bot_state_s;

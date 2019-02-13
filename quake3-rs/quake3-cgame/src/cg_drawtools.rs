@@ -1,3 +1,11 @@
+use bg_misc::{
+    bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
+    BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItemForHoldable,
+    BG_FindItemForPowerup, BG_PlayerStateToEntityState, BG_PlayerTouchesItem, BG_TouchJumpPad,
+};
+use bg_pmove::{
+    c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, PM_UpdateViewAngles, Pmove,
+};
 use bg_public_h::{
     animation_s, animation_t, gametype_t, gender_t, team_t, unnamed, GENDER_FEMALE, GENDER_MALE,
     GENDER_NEUTER, GT_1FCTF, GT_CTF, GT_FFA, GT_HARVESTER, GT_MAX_GAME_TYPE, GT_OBELISK,
@@ -5,6 +13,7 @@ use bg_public_h::{
     STAT_HEALTH, STAT_HOLDABLE_ITEM, STAT_MAX_HEALTH, STAT_WEAPONS, TEAM_BLUE, TEAM_FREE,
     TEAM_NUM_TEAMS, TEAM_RED, TEAM_SPECTATOR,
 };
+use bg_slidemove::{PM_SlideMove, PM_StepSlideMove};
 use cg_consolecmds::{CG_ConsoleCommand, CG_InitConsoleCommands};
 use cg_draw::{
     drawTeamOverlayModificationCount, numSortedTeamPlayers, sortedTeamPlayers,
@@ -72,9 +81,15 @@ use cg_weapons::{
     CG_PrevWeapon_f, CG_RailTrail, CG_RegisterItemVisuals, CG_ShotgunFire, CG_Weapon_f,
 };
 use libc;
+use q_math::{
+    axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
+    AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
+    LerpAngle, MatrixMultiply, PerpendicularVector, Q_crandom, Q_random, RotateAroundDirection,
+    RotatePointAroundVector, VectorNormalize, VectorNormalize2,
+};
 use q_shared_h::{
-    byte, entityState_s, entityState_t, g_color_table, gameState_t, playerState_s, playerState_t,
-    qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, trType_t, trajectory_t, vec3_t, vec4_t, vec_t,
+    byte, entityState_s, entityState_t, gameState_t, playerState_s, playerState_t, qboolean,
+    qfalse, qhandle_t, qtrue, sfxHandle_t, trType_t, trajectory_t, vec3_t, vec4_t, vec_t,
     Q_IsColorString, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{memcpy, sin};

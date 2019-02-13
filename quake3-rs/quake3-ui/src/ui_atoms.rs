@@ -1,9 +1,14 @@
+use bg_misc::bg_itemlist;
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
-    colorBlack, colorRed, colorWhite, g_color_table, qboolean, qfalse, qhandle_t, qtrue,
-    sfxHandle_t, unnamed, unnamed_0, va, vec4_t, vec_t, Com_Printf, Q_IsColorString, Q_stricmp,
-    Q_strncpyz, CHAN_ANNOUNCER, CHAN_AUTO, CHAN_BODY, CHAN_ITEM, CHAN_LOCAL, CHAN_LOCAL_SOUND,
-    CHAN_VOICE, CHAN_WEAPON, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
+    qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, unnamed_0, vec4_t, vec_t,
+    Q_IsColorString, Q_stricmp, Q_strncpyz, CHAN_ANNOUNCER, CHAN_AUTO, CHAN_BODY, CHAN_ITEM,
+    CHAN_LOCAL, CHAN_LOCAL_SOUND, CHAN_VOICE, CHAN_WEAPON, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
 };
 use stdlib::{memcpy, sin, strlen};
 use tr_types_h::{
@@ -269,19 +274,6 @@ pub unsafe extern "C" fn UI_Refresh(mut realtime: libc::c_int) {
         32i32 as libc::c_float,
         uis.cursor,
     );
-    if 0 != uis.debug as u64 {
-        UI_DrawString(
-            0i32,
-            0i32,
-            va(
-                b"(%d,%d)\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-                uis.cursorx,
-                uis.cursory,
-            ),
-            0i32 | 0x10i32,
-            colorRed.as_mut_ptr(),
-        );
-    }
     if 0 != m_entersound as u64 {
         trap_S_StartLocalSound(menu_in_sound, CHAN_LOCAL_SOUND as libc::c_int);
         m_entersound = qfalse
@@ -289,168 +281,6 @@ pub unsafe extern "C" fn UI_Refresh(mut realtime: libc::c_int) {
 }
 #[no_mangle]
 pub static mut m_entersound: qboolean = qfalse;
-#[no_mangle]
-pub unsafe extern "C" fn UI_DrawString(
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut str: *const libc::c_char,
-    mut style: libc::c_int,
-    mut color: *mut vec_t,
-) {
-    let mut len: libc::c_int = 0;
-    let mut charw: libc::c_int = 0;
-    let mut charh: libc::c_int = 0;
-    let mut newcolor: vec4_t = [0.; 4];
-    let mut lowlight: vec4_t = [0.; 4];
-    let mut drawcolor: *mut libc::c_float = 0 as *mut libc::c_float;
-    let mut dropcolor: vec4_t = [0.; 4];
-    if str.is_null() {
-        return;
-    }
-    if 0 != style & 0x1000i32 && 0 != uis.realtime / 200i32 & 1i32 {
-        return;
-    }
-    if 0 != style & 0x10i32 {
-        charw = 8i32;
-        charh = 16i32
-    } else if 0 != style & 0x40i32 {
-        charw = 32i32;
-        charh = 48i32
-    } else {
-        charw = 16i32;
-        charh = 16i32
-    }
-    if 0 != style & 0x4000i32 {
-        lowlight[0usize] = (0.8f64 * *color.offset(0isize) as libc::c_double) as vec_t;
-        lowlight[1usize] = (0.8f64 * *color.offset(1isize) as libc::c_double) as vec_t;
-        lowlight[2usize] = (0.8f64 * *color.offset(2isize) as libc::c_double) as vec_t;
-        lowlight[3usize] = (0.8f64 * *color.offset(3isize) as libc::c_double) as vec_t;
-        UI_LerpColor(
-            color,
-            lowlight.as_mut_ptr(),
-            newcolor.as_mut_ptr(),
-            (0.5f64 + 0.5f64 * sin((uis.realtime / 75i32) as libc::c_double)) as libc::c_float,
-        );
-        drawcolor = newcolor.as_mut_ptr()
-    } else {
-        drawcolor = color
-    }
-    match style & 0x7i32 {
-        1 => {
-            len = strlen(str) as libc::c_int;
-            x = x - len * charw / 2i32
-        }
-        2 => {
-            len = strlen(str) as libc::c_int;
-            x = x - len * charw
-        }
-        _ => {}
-    }
-    if 0 != style & 0x800i32 {
-        dropcolor[2usize] = 0i32 as vec_t;
-        dropcolor[1usize] = dropcolor[2usize];
-        dropcolor[0usize] = dropcolor[1usize];
-        dropcolor[3usize] = *drawcolor.offset(3isize);
-        UI_DrawString2(
-            x + 2i32,
-            y + 2i32,
-            str,
-            dropcolor.as_mut_ptr(),
-            charw,
-            charh,
-        );
-    }
-    UI_DrawString2(x, y, str, drawcolor, charw, charh);
-}
-/*
-=================
-UI_DrawString2
-=================
-*/
-unsafe extern "C" fn UI_DrawString2(
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut str: *const libc::c_char,
-    mut color: *mut vec_t,
-    mut charw: libc::c_int,
-    mut charh: libc::c_int,
-) {
-    let mut s: *const libc::c_char = 0 as *const libc::c_char;
-    let mut ch: libc::c_char = 0;
-    //APSFIXME;
-    let mut forceColor: libc::c_int = qfalse as libc::c_int;
-    let mut tempcolor: vec4_t = [0.; 4];
-    let mut ax: libc::c_float = 0.;
-    let mut ay: libc::c_float = 0.;
-    let mut aw: libc::c_float = 0.;
-    let mut ah: libc::c_float = 0.;
-    let mut frow: libc::c_float = 0.;
-    let mut fcol: libc::c_float = 0.;
-    if y < -charh {
-        return;
-    }
-    trap_R_SetColor(color as *const libc::c_float);
-    ax = x as libc::c_float * uis.xscale + uis.bias;
-    ay = y as libc::c_float * uis.yscale;
-    aw = charw as libc::c_float * uis.xscale;
-    ah = charh as libc::c_float * uis.yscale;
-    s = str;
-    while 0 != *s {
-        if 0 != Q_IsColorString(s) as u64 {
-            if 0 == forceColor {
-                memcpy(
-                    tempcolor.as_mut_ptr() as *mut libc::c_void,
-                    g_color_table[(*s.offset(1isize) as libc::c_int - '0' as i32 & 0x7i32) as usize]
-                        .as_mut_ptr() as *const libc::c_void,
-                    ::std::mem::size_of::<vec4_t>() as libc::c_ulong,
-                );
-                tempcolor[3usize] = *color.offset(3isize);
-                trap_R_SetColor(tempcolor.as_mut_ptr());
-            }
-            s = s.offset(2isize)
-        } else {
-            ch = (*s as libc::c_int & 255i32) as libc::c_char;
-            if ch as libc::c_int != ' ' as i32 {
-                frow = ((ch as libc::c_int >> 4i32) as libc::c_double * 0.0625f64) as libc::c_float;
-                fcol = ((ch as libc::c_int & 15i32) as libc::c_double * 0.0625f64) as libc::c_float;
-                trap_R_DrawStretchPic(
-                    ax,
-                    ay,
-                    aw,
-                    ah,
-                    fcol,
-                    frow,
-                    (fcol as libc::c_double + 0.0625f64) as libc::c_float,
-                    (frow as libc::c_double + 0.0625f64) as libc::c_float,
-                    uis.charset,
-                );
-            }
-            ax += aw;
-            s = s.offset(1isize)
-        }
-    }
-    trap_R_SetColor(0 as *const libc::c_float);
-}
-#[no_mangle]
-pub unsafe extern "C" fn UI_LerpColor(
-    mut a: *mut vec_t,
-    mut b: *mut vec_t,
-    mut c: *mut vec_t,
-    mut t: libc::c_float,
-) {
-    let mut i: libc::c_int = 0;
-    i = 0i32;
-    while i < 4i32 {
-        *c.offset(i as isize) =
-            *a.offset(i as isize) + t * (*b.offset(i as isize) - *a.offset(i as isize));
-        if *c.offset(i as isize) < 0i32 as libc::c_float {
-            *c.offset(i as isize) = 0i32 as vec_t
-        } else if *c.offset(i as isize) as libc::c_double > 1.0f64 {
-            *c.offset(i as isize) = 1.0f64 as vec_t
-        }
-        i += 1
-    }
-}
 #[no_mangle]
 pub unsafe extern "C" fn UI_DrawHandlePic(
     mut x: libc::c_float,
@@ -713,6 +543,26 @@ pub unsafe extern "C" fn UI_DrawRect(
 #[no_mangle]
 pub unsafe extern "C" fn UI_UpdateScreen() {
     trap_UpdateScreen();
+}
+#[no_mangle]
+pub unsafe extern "C" fn UI_LerpColor(
+    mut a: *mut vec_t,
+    mut b: *mut vec_t,
+    mut c: *mut vec_t,
+    mut t: libc::c_float,
+) {
+    let mut i: libc::c_int = 0;
+    i = 0i32;
+    while i < 4i32 {
+        *c.offset(i as isize) =
+            *a.offset(i as isize) + t * (*b.offset(i as isize) - *a.offset(i as isize));
+        if *c.offset(i as isize) < 0i32 as libc::c_float {
+            *c.offset(i as isize) = 0i32 as vec_t
+        } else if *c.offset(i as isize) as libc::c_double > 1.0f64 {
+            *c.offset(i as isize) = 1.0f64 as vec_t
+        }
+        i += 1
+    }
 }
 #[no_mangle]
 pub unsafe extern "C" fn UI_DrawBannerString(
@@ -1290,6 +1140,148 @@ pub unsafe extern "C" fn UI_DrawProportionalString_AutoWrapped(
     }
 }
 #[no_mangle]
+pub unsafe extern "C" fn UI_DrawString(
+    mut x: libc::c_int,
+    mut y: libc::c_int,
+    mut str: *const libc::c_char,
+    mut style: libc::c_int,
+    mut color: *mut vec_t,
+) {
+    let mut len: libc::c_int = 0;
+    let mut charw: libc::c_int = 0;
+    let mut charh: libc::c_int = 0;
+    let mut newcolor: vec4_t = [0.; 4];
+    let mut lowlight: vec4_t = [0.; 4];
+    let mut drawcolor: *mut libc::c_float = 0 as *mut libc::c_float;
+    let mut dropcolor: vec4_t = [0.; 4];
+    if str.is_null() {
+        return;
+    }
+    if 0 != style & 0x1000i32 && 0 != uis.realtime / 200i32 & 1i32 {
+        return;
+    }
+    if 0 != style & 0x10i32 {
+        charw = 8i32;
+        charh = 16i32
+    } else if 0 != style & 0x40i32 {
+        charw = 32i32;
+        charh = 48i32
+    } else {
+        charw = 16i32;
+        charh = 16i32
+    }
+    if 0 != style & 0x4000i32 {
+        lowlight[0usize] = (0.8f64 * *color.offset(0isize) as libc::c_double) as vec_t;
+        lowlight[1usize] = (0.8f64 * *color.offset(1isize) as libc::c_double) as vec_t;
+        lowlight[2usize] = (0.8f64 * *color.offset(2isize) as libc::c_double) as vec_t;
+        lowlight[3usize] = (0.8f64 * *color.offset(3isize) as libc::c_double) as vec_t;
+        UI_LerpColor(
+            color,
+            lowlight.as_mut_ptr(),
+            newcolor.as_mut_ptr(),
+            (0.5f64 + 0.5f64 * sin((uis.realtime / 75i32) as libc::c_double)) as libc::c_float,
+        );
+        drawcolor = newcolor.as_mut_ptr()
+    } else {
+        drawcolor = color
+    }
+    match style & 0x7i32 {
+        1 => {
+            len = strlen(str) as libc::c_int;
+            x = x - len * charw / 2i32
+        }
+        2 => {
+            len = strlen(str) as libc::c_int;
+            x = x - len * charw
+        }
+        _ => {}
+    }
+    if 0 != style & 0x800i32 {
+        dropcolor[2usize] = 0i32 as vec_t;
+        dropcolor[1usize] = dropcolor[2usize];
+        dropcolor[0usize] = dropcolor[1usize];
+        dropcolor[3usize] = *drawcolor.offset(3isize);
+        UI_DrawString2(
+            x + 2i32,
+            y + 2i32,
+            str,
+            dropcolor.as_mut_ptr(),
+            charw,
+            charh,
+        );
+    }
+    UI_DrawString2(x, y, str, drawcolor, charw, charh);
+}
+/*
+=================
+UI_DrawString2
+=================
+*/
+unsafe extern "C" fn UI_DrawString2(
+    mut x: libc::c_int,
+    mut y: libc::c_int,
+    mut str: *const libc::c_char,
+    mut color: *mut vec_t,
+    mut charw: libc::c_int,
+    mut charh: libc::c_int,
+) {
+    let mut s: *const libc::c_char = 0 as *const libc::c_char;
+    let mut ch: libc::c_char = 0;
+    //APSFIXME;
+    let mut forceColor: libc::c_int = qfalse as libc::c_int;
+    let mut tempcolor: vec4_t = [0.; 4];
+    let mut ax: libc::c_float = 0.;
+    let mut ay: libc::c_float = 0.;
+    let mut aw: libc::c_float = 0.;
+    let mut ah: libc::c_float = 0.;
+    let mut frow: libc::c_float = 0.;
+    let mut fcol: libc::c_float = 0.;
+    if y < -charh {
+        return;
+    }
+    trap_R_SetColor(color as *const libc::c_float);
+    ax = x as libc::c_float * uis.xscale + uis.bias;
+    ay = y as libc::c_float * uis.yscale;
+    aw = charw as libc::c_float * uis.xscale;
+    ah = charh as libc::c_float * uis.yscale;
+    s = str;
+    while 0 != *s {
+        if 0 != Q_IsColorString(s) as u64 {
+            if 0 == forceColor {
+                memcpy(
+                    tempcolor.as_mut_ptr() as *mut libc::c_void,
+                    g_color_table[(*s.offset(1isize) as libc::c_int - '0' as i32 & 0x7i32) as usize]
+                        .as_mut_ptr() as *const libc::c_void,
+                    ::std::mem::size_of::<vec4_t>() as libc::c_ulong,
+                );
+                tempcolor[3usize] = *color.offset(3isize);
+                trap_R_SetColor(tempcolor.as_mut_ptr());
+            }
+            s = s.offset(2isize)
+        } else {
+            ch = (*s as libc::c_int & 255i32) as libc::c_char;
+            if ch as libc::c_int != ' ' as i32 {
+                frow = ((ch as libc::c_int >> 4i32) as libc::c_double * 0.0625f64) as libc::c_float;
+                fcol = ((ch as libc::c_int & 15i32) as libc::c_double * 0.0625f64) as libc::c_float;
+                trap_R_DrawStretchPic(
+                    ax,
+                    ay,
+                    aw,
+                    ah,
+                    fcol,
+                    frow,
+                    (fcol as libc::c_double + 0.0625f64) as libc::c_float,
+                    (frow as libc::c_double + 0.0625f64) as libc::c_float,
+                    uis.charset,
+                );
+            }
+            ax += aw;
+            s = s.offset(1isize)
+        }
+    }
+    trap_R_SetColor(0 as *const libc::c_float);
+}
+#[no_mangle]
 pub unsafe extern "C" fn UI_DrawChar(
     mut x: libc::c_int,
     mut y: libc::c_int,
@@ -1379,12 +1371,7 @@ pub unsafe extern "C" fn UI_SetActiveMenu(mut menu: uiMenuCommand_t) {
             UI_InGameMenu();
             return;
         }
-        5 | 6 | _ => {
-            Com_Printf(
-                b"UI_SetActiveMenu: bad enum %d\n\x00" as *const u8 as *const libc::c_char,
-                menu as libc::c_uint,
-            );
-        }
+        5 | 6 | _ => {}
     };
 }
 unsafe extern "C" fn NeedCDKeyAction(mut result: qboolean) {

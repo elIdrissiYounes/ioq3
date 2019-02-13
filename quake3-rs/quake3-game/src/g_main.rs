@@ -2,6 +2,13 @@ use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
 };
+use bg_misc::{
+    bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
+    BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItem, BG_FindItemForPowerup,
+    BG_FindItemForWeapon, BG_PlayerStateToEntityState, BG_PlayerStateToEntityStateExtraPolate,
+    BG_PlayerTouchesItem, BG_TouchJumpPad,
+};
+use bg_pmove::{c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, Pmove};
 use bg_public_h::{
     gitem_s, gitem_t, itemType_t, team_t, unnamed_0, unnamed_1, unnamed_2, unnamed_3, unnamed_4,
     ET_BEAM, ET_EVENTS, ET_GENERAL, ET_GRAPPLE, ET_INVISIBLE, ET_ITEM, ET_MISSILE, ET_MOVER,
@@ -16,6 +23,7 @@ use bg_public_h::{
     STAT_HOLDABLE_ITEM, STAT_MAX_HEALTH, STAT_WEAPONS, TEAM_BLUE, TEAM_FREE, TEAM_NUM_TEAMS,
     TEAM_RED, TEAM_SPECTATOR,
 };
+use bg_slidemove::{PM_SlideMove, PM_StepSlideMove};
 use g_active::{ClientEndFrame, ClientThink, G_RunClient};
 use g_arenas::{
     podium1, podium2, podium3, SpawnModelsOnVictoryPads, Svcmd_AbortPodium_f, UpdateTournamentInfo,
@@ -92,12 +100,16 @@ use g_weapon::{
     Weapon_HookThink,
 };
 use libc;
+use q_math::{
+    vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
+    DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
+};
 use q_shared_h::{
     byte, cplane_s, cplane_t, cvarHandle_t, entityState_s, entityState_t, fileHandle_t, fsMode_t,
     playerState_s, playerState_t, qboolean, qfalse, qtrue, trType_t, trace_t, trajectory_t,
-    unnamed, usercmd_s, usercmd_t, va, vec3_origin, vec3_t, vec_t, vectoangles, vmCvar_t,
-    Q_stricmp, Q_strncmp, EXEC_APPEND, EXEC_INSERT, EXEC_NOW, FS_APPEND, FS_APPEND_SYNC, FS_READ,
-    FS_WRITE, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
+    unnamed, usercmd_s, usercmd_t, va, vec3_t, vec_t, vmCvar_t, Q_stricmp, Q_strncmp, EXEC_APPEND,
+    EXEC_INSERT, EXEC_NOW, FS_APPEND, FS_APPEND_SYNC, FS_READ, FS_WRITE, TR_GRAVITY,
+    TR_INTERPOLATE, TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stddef_h::size_t;
 use stdlib::{__compar_fn_t, atoi, intptr_t, memset, qsort, srand, strcmp};
@@ -1772,7 +1784,7 @@ static mut gameCvarTable: [cvarTable_t; 46] = unsafe {
         cvarTable_t {
             vmCvar: 0 as *const vmCvar_t as *mut vmCvar_t,
             cvarName: b"gamedate\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            defaultString: b"Jan 29 2019\x00" as *const u8 as *const libc::c_char
+            defaultString: b"Feb 13 2019\x00" as *const u8 as *const libc::c_char
                 as *mut libc::c_char,
             cvarFlags: 0x40i32,
             modificationCount: 0i32,
@@ -2195,7 +2207,7 @@ pub unsafe extern "C" fn G_InitGame(
     );
     G_Printf(
         b"gamedate: %s\n\x00" as *const u8 as *const libc::c_char,
-        b"Jan 29 2019\x00" as *const u8 as *const libc::c_char,
+        b"Feb 13 2019\x00" as *const u8 as *const libc::c_char,
     );
     srand(randomSeed as libc::c_uint);
     G_RegisterCvars();

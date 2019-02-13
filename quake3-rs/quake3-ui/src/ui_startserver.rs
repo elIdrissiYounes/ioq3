@@ -1,21 +1,27 @@
+use bg_misc::bg_itemlist;
 use bg_public_h::{
     unnamed_0, GT_1FCTF, GT_CTF, GT_FFA, GT_HARVESTER, GT_MAX_GAME_TYPE, GT_OBELISK,
     GT_SINGLE_PLAYER, GT_TEAM, GT_TOURNAMENT,
 };
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
-    colorBlack, colorRed, colorWhite, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, va,
-    vec4_t, vec_t, COM_ParseExt, Com_Clamp, Com_sprintf, Info_ValueForKey, Q_CleanStr, Q_stricmp,
-    Q_strncpyz, Q_strupr, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
+    qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, va, vec4_t, vec_t, COM_ParseExt,
+    Com_Clamp, Com_sprintf, Info_ValueForKey, Q_CleanStr, Q_stricmp, Q_strncpyz, Q_strupr,
+    EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
 };
 use stddef_h::size_t;
-use stdlib::{__compar_fn_t, atoi, memset, qsort, strcpy, strlen, strrchr};
+use stdlib::{__compar_fn_t, memset, qsort, strcpy, strlen, strrchr, strtol};
 use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -76,6 +82,13 @@ use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
 
+unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
+    return strtol(
+        __nptr,
+        0 as *mut libc::c_void as *mut *mut libc::c_char,
+        10i32,
+    ) as libc::c_int;
+}
 //
 // ui_startserver.c
 //
@@ -646,7 +659,7 @@ unsafe extern "C" fn StartServer_MenuInit() {
 StartServer_GametypeEvent
 =================
 */
-unsafe extern "C" fn StartServer_GametypeEvent(mut _ptr: *mut libc::c_void, mut event: libc::c_int) {
+unsafe extern "C" fn StartServer_GametypeEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
     let mut i: libc::c_int = 0;
     let mut count: libc::c_int = 0;
     let mut gamebits: libc::c_int = 0;
@@ -2969,7 +2982,7 @@ UI_BotSelectMenu_SelectEvent
 =================
 */
 unsafe extern "C" fn UI_BotSelectMenu_SelectEvent(
-    mut _ptr: *mut libc::c_void,
+    mut ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -2989,7 +3002,7 @@ UI_BotSelectMenu_BackEvent
 =================
 */
 unsafe extern "C" fn UI_BotSelectMenu_BackEvent(
-    mut _ptr: *mut libc::c_void,
+    mut ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -3003,7 +3016,7 @@ UI_BotSelectMenu_RightEvent
 =================
 */
 unsafe extern "C" fn UI_BotSelectMenu_RightEvent(
-    mut _ptr: *mut libc::c_void,
+    mut ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -3021,7 +3034,7 @@ UI_BotSelectMenu_LeftEvent
 =================
 */
 unsafe extern "C" fn UI_BotSelectMenu_LeftEvent(
-    mut _ptr: *mut libc::c_void,
+    mut ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -3290,37 +3303,6 @@ pub unsafe extern "C" fn StartServer_Cache() {
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct serveroptions_t {
-    pub menu: menuframework_s,
-    pub banner: menutext_s,
-    pub mappic: menubitmap_s,
-    pub picframe: menubitmap_s,
-    pub dedicated: menulist_s,
-    pub timelimit: menufield_s,
-    pub fraglimit: menufield_s,
-    pub flaglimit: menufield_s,
-    pub friendlyfire: menuradiobutton_s,
-    pub hostname: menufield_s,
-    pub pure_0: menuradiobutton_s,
-    pub botSkill: menulist_s,
-    pub player0: menutext_s,
-    pub playerType: [menulist_s; 12],
-    pub playerName: [menutext_s; 12],
-    pub playerTeam: [menulist_s; 12],
-    pub go: menubitmap_s,
-    pub next: menubitmap_s,
-    pub back: menubitmap_s,
-    pub multiplayer: qboolean,
-    pub gametype: libc::c_int,
-    pub mapnamebuffer: [libc::c_char; 32],
-    pub playerNameBuffers: [[libc::c_char; 16]; 12],
-    pub newBot: qboolean,
-    pub newBotIndex: libc::c_int,
-    pub newBotName: [libc::c_char; 16],
-    pub punkbuster: menulist_s,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
 pub struct startserver_t {
     pub menu: menuframework_s,
     pub banner: menutext_s,
@@ -3363,4 +3345,35 @@ pub struct botSelectInfo_t {
     pub sortedBotNums: [libc::c_int; 1024],
     pub boticons: [[libc::c_char; 64]; 16],
     pub botnames: [[libc::c_char; 16]; 16],
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct serveroptions_t {
+    pub menu: menuframework_s,
+    pub banner: menutext_s,
+    pub mappic: menubitmap_s,
+    pub picframe: menubitmap_s,
+    pub dedicated: menulist_s,
+    pub timelimit: menufield_s,
+    pub fraglimit: menufield_s,
+    pub flaglimit: menufield_s,
+    pub friendlyfire: menuradiobutton_s,
+    pub hostname: menufield_s,
+    pub pure_0: menuradiobutton_s,
+    pub botSkill: menulist_s,
+    pub player0: menutext_s,
+    pub playerType: [menulist_s; 12],
+    pub playerName: [menutext_s; 12],
+    pub playerTeam: [menulist_s; 12],
+    pub go: menubitmap_s,
+    pub next: menubitmap_s,
+    pub back: menubitmap_s,
+    pub multiplayer: qboolean,
+    pub gametype: libc::c_int,
+    pub mapnamebuffer: [libc::c_char; 32],
+    pub playerNameBuffers: [[libc::c_char; 16]; 12],
+    pub newBot: qboolean,
+    pub newBotIndex: libc::c_int,
+    pub newBotName: [libc::c_char; 16],
+    pub punkbuster: menulist_s,
 }

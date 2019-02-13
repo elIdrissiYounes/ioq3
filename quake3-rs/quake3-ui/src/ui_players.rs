@@ -1,25 +1,30 @@
+use bg_misc::bg_itemlist;
 use bg_public_h::{
-    animation_s, animation_t, bg_itemlist, gitem_s, gitem_t, itemType_t, unnamed_0, weapon_t,
-    BOTH_DEAD1, BOTH_DEAD2, BOTH_DEAD3, BOTH_DEATH1, BOTH_DEATH2, BOTH_DEATH3, FLAG_RUN,
-    FLAG_STAND, FLAG_STAND2RUN, IT_AMMO, IT_ARMOR, IT_BAD, IT_HEALTH, IT_HOLDABLE,
-    IT_PERSISTANT_POWERUP, IT_POWERUP, IT_TEAM, IT_WEAPON, LEGS_BACK, LEGS_BACKCR, LEGS_BACKWALK,
-    LEGS_IDLE, LEGS_IDLECR, LEGS_JUMP, LEGS_JUMPB, LEGS_LAND, LEGS_LANDB, LEGS_RUN, LEGS_SWIM,
-    LEGS_TURN, LEGS_WALK, LEGS_WALKCR, MAX_ANIMATIONS, MAX_TOTALANIMATIONS, TORSO_AFFIRMATIVE,
-    TORSO_ATTACK, TORSO_ATTACK2, TORSO_DROP, TORSO_FOLLOWME, TORSO_GESTURE, TORSO_GETFLAG,
-    TORSO_GUARDBASE, TORSO_NEGATIVE, TORSO_PATROL, TORSO_RAISE, TORSO_STAND, TORSO_STAND2, WP_BFG,
-    WP_GAUNTLET, WP_GRAPPLING_HOOK, WP_GRENADE_LAUNCHER, WP_LIGHTNING, WP_MACHINEGUN, WP_NONE,
-    WP_NUM_WEAPONS, WP_PLASMAGUN, WP_RAILGUN, WP_ROCKET_LAUNCHER, WP_SHOTGUN,
+    animation_s, animation_t, gitem_s, gitem_t, itemType_t, unnamed_0, weapon_t, BOTH_DEAD1,
+    BOTH_DEAD2, BOTH_DEAD3, BOTH_DEATH1, BOTH_DEATH2, BOTH_DEATH3, FLAG_RUN, FLAG_STAND,
+    FLAG_STAND2RUN, IT_AMMO, IT_ARMOR, IT_BAD, IT_HEALTH, IT_HOLDABLE, IT_PERSISTANT_POWERUP,
+    IT_POWERUP, IT_TEAM, IT_WEAPON, LEGS_BACK, LEGS_BACKCR, LEGS_BACKWALK, LEGS_IDLE, LEGS_IDLECR,
+    LEGS_JUMP, LEGS_JUMPB, LEGS_LAND, LEGS_LANDB, LEGS_RUN, LEGS_SWIM, LEGS_TURN, LEGS_WALK,
+    LEGS_WALKCR, MAX_ANIMATIONS, MAX_TOTALANIMATIONS, TORSO_AFFIRMATIVE, TORSO_ATTACK,
+    TORSO_ATTACK2, TORSO_DROP, TORSO_FOLLOWME, TORSO_GESTURE, TORSO_GETFLAG, TORSO_GUARDBASE,
+    TORSO_NEGATIVE, TORSO_PATROL, TORSO_RAISE, TORSO_STAND, TORSO_STAND2, WP_BFG, WP_GAUNTLET,
+    WP_GRAPPLING_HOOK, WP_GRENADE_LAUNCHER, WP_LIGHTNING, WP_MACHINEGUN, WP_NONE, WP_NUM_WEAPONS,
+    WP_PLASMAGUN, WP_RAILGUN, WP_ROCKET_LAUNCHER, WP_SHOTGUN,
 };
 use libc;
-use q_shared_h::{
-    byte, clipHandle_t, colorWhite, fileHandle_t, fsMode_t, orientation_t, qboolean, qfalse,
-    qhandle_t, qtrue, sfxHandle_t, unnamed, va, vec3_t, vec4_t, vec_t, AngleMod, AngleSubtract,
-    AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, COM_Parse, COM_StripExtension,
-    Com_Printf, Com_sprintf, MatrixMultiply, Q_fabs, Q_strcat, Q_stricmp, Q_strncpyz,
-    CHAN_ANNOUNCER, CHAN_AUTO, CHAN_BODY, CHAN_ITEM, CHAN_LOCAL, CHAN_LOCAL_SOUND, CHAN_VOICE,
-    CHAN_WEAPON, FS_APPEND, FS_APPEND_SYNC, FS_READ, FS_WRITE,
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
 };
-use stdlib::{atan2, atof, atoi, fabs, memset, rand, sin, strchr, tan};
+use q_shared_h::{
+    byte, clipHandle_t, fileHandle_t, fsMode_t, orientation_t, qboolean, qfalse, qhandle_t, qtrue,
+    sfxHandle_t, unnamed, va, vec3_t, vec4_t, vec_t, COM_Parse, COM_StripExtension, Com_Printf,
+    Com_sprintf, Q_strcat, Q_stricmp, Q_strncpyz, CHAN_ANNOUNCER, CHAN_AUTO, CHAN_BODY, CHAN_ITEM,
+    CHAN_LOCAL, CHAN_LOCAL_SOUND, CHAN_VOICE, CHAN_WEAPON, FS_APPEND, FS_APPEND_SYNC, FS_READ,
+    FS_WRITE,
+};
+use stdlib::{atan2, fabs, memset, rand, sin, strchr, strtod, strtol, tan};
 use tr_types_h::{
     glDriverType_t, glHardwareType_t, glconfig_t, refEntityType_t, refEntity_t, refdef_t,
     textureCompression_t, GLDRV_ICD, GLDRV_STANDALONE, GLDRV_VOODOO, GLHW_3DFX_2D3D, GLHW_GENERIC,
@@ -31,8 +36,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -53,9 +58,10 @@ use ui_gameinfo::{
 };
 use ui_ingame::{InGame_Cache, UI_InGameMenu};
 use ui_local_h::{
-    _tag_menuframework, lerpFrame_t, menuframework_s, playerInfo_t, trap_CM_LerpTag,
-    trap_Cvar_VariableValue, trap_Error, trap_FS_FCloseFile, trap_FS_FOpenFile, trap_FS_Read,
-    trap_R_AddLightToScene, trap_R_AddRefEntityToScene, trap_R_ClearScene, trap_R_RegisterModel,
+    _tag_menuframework, lerpFrame_t, menubitmap_s, menufield_s, menuframework_s, menulist_s,
+    menutext_s, playerInfo_t, trap_CM_LerpTag, trap_Cvar_VariableValue, trap_Error,
+    trap_FS_FCloseFile, trap_FS_FOpenFile, trap_FS_Read, trap_R_AddLightToScene,
+    trap_R_AddRefEntityToScene, trap_R_ClearScene, trap_R_RegisterModel,
     trap_R_RegisterShaderNoMip, trap_R_RegisterSkin, trap_R_RenderScene, trap_S_StartLocalSound,
     uiStatic_t,
 };
@@ -96,6 +102,16 @@ use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
 
+unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
+    return strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+}
+unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
+    return strtol(
+        __nptr,
+        0 as *mut libc::c_void as *mut *mut libc::c_char,
+        10i32,
+    ) as libc::c_int;
+}
 #[no_mangle]
 pub unsafe extern "C" fn UI_DrawPlayer(
     mut x: libc::c_float,
@@ -529,7 +545,7 @@ UI_PlayerFloatSprite
 ===============
 */
 unsafe extern "C" fn UI_PlayerFloatSprite(
-    mut _pi: *mut playerInfo_t,
+    mut pi: *mut playerInfo_t,
     mut origin: *mut vec_t,
     mut shader: qhandle_t,
 ) {
@@ -1741,4 +1757,24 @@ pub unsafe extern "C" fn UI_PlayerInfo_SetInfo(
         (*pi).pendingTorsoAnim = 0i32;
         UI_ForceTorsoAnim(pi, torsoAnim);
     };
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct playersettings_t {
+    pub menu: menuframework_s,
+    pub banner: menutext_s,
+    pub framel: menubitmap_s,
+    pub framer: menubitmap_s,
+    pub player: menubitmap_s,
+    pub name: menufield_s,
+    pub handicap: menulist_s,
+    pub effects: menulist_s,
+    pub back: menubitmap_s,
+    pub model: menubitmap_s,
+    pub item_null: menubitmap_s,
+    pub fxBasePic: qhandle_t,
+    pub fxPic: [qhandle_t; 7],
+    pub playerinfo: playerInfo_t,
+    pub current_fx: libc::c_int,
+    pub playerModel: [libc::c_char; 64],
 }

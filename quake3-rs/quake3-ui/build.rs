@@ -11,12 +11,9 @@ fn main() {
 
     let mut file_paths = Vec::new();
 
-    file_paths.push(cargo_dir.join("../../code/qcommon/q_math.c"));
     file_paths.push(cargo_dir.join("../../code/qcommon/q_shared.c"));
-    file_paths.push(cargo_dir.join("../../code/ui/ui_syscalls.c"));
-    file_paths.push(cargo_dir.join("../../code/game/bg_lib.c"));
-    file_paths.push(cargo_dir.join("../../code/game/bg_misc.c"));
     file_paths.push(cargo_dir.join("../../code/q3_ui/ui_variadic.c"));
+    file_paths.push(cargo_dir.join("../../code/ui/ui_syscalls.c"));
 
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
 

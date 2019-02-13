@@ -1,3 +1,4 @@
+use bg_misc::bg_itemlist;
 use bg_public_h::{
     animation_s, animation_t, unnamed_0, weapon_t, BOTH_DEAD1, BOTH_DEAD2, BOTH_DEAD3, BOTH_DEATH1,
     BOTH_DEATH2, BOTH_DEATH3, FLAG_RUN, FLAG_STAND, FLAG_STAND2RUN, LEGS_BACK, LEGS_BACKCR,
@@ -42,8 +43,13 @@ use keycodes_h::{
     K_WORLD_91, K_WORLD_92, K_WORLD_93, K_WORLD_94, K_WORLD_95, MAX_KEYS,
 };
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
-    byte, colorRed, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, va, vec3_t, vec4_t, vec_t,
+    byte, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, va, vec3_t, vec4_t, vec_t,
     COM_StripExtension, Com_sprintf, Q_CleanStr, Q_strcat, Q_stricmp, Q_stricmpn, Q_strncpyz,
     Q_strupr,
 };
@@ -57,8 +63,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };

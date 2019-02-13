@@ -1,3 +1,4 @@
+use bg_misc::bg_itemlist;
 use keycodes_h::{
     unnamed_1, K_ALT, K_AUX1, K_AUX10, K_AUX11, K_AUX12, K_AUX13, K_AUX14, K_AUX15, K_AUX16,
     K_AUX2, K_AUX3, K_AUX4, K_AUX5, K_AUX6, K_AUX7, K_AUX8, K_AUX9, K_BACKSPACE, K_BREAK,
@@ -31,13 +32,18 @@ use keycodes_h::{
     K_WORLD_9, K_WORLD_90, K_WORLD_91, K_WORLD_92, K_WORLD_93, K_WORLD_94, K_WORLD_95, MAX_KEYS,
 };
 use libc;
+use q_math::{
+    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
+    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
+    AxisClear, MatrixMultiply, Q_fabs,
+};
 use q_shared_h::{
     qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, unnamed_0, va, vec4_t, vec_t,
     Com_sprintf, Info_ValueForKey, Q_CleanStr, Q_strncpyz, CHAN_ANNOUNCER, CHAN_AUTO, CHAN_BODY,
     CHAN_ITEM, CHAN_LOCAL, CHAN_LOCAL_SOUND, CHAN_VOICE, CHAN_WEAPON, EXEC_APPEND, EXEC_INSERT,
     EXEC_NOW,
 };
-use stdlib::{atoi, memset, strlen};
+use stdlib::{memset, strlen, strtol};
 use tr_types_h::{
     glDriverType_t, glHardwareType_t, glconfig_t, textureCompression_t, GLDRV_ICD,
     GLDRV_STANDALONE, GLDRV_VOODOO, GLHW_3DFX_2D3D, GLHW_GENERIC, GLHW_PERMEDIA2, GLHW_RAGEPRO,
@@ -47,8 +53,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
-    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
+    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -110,6 +116,13 @@ use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
 
+unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
+    return strtol(
+        __nptr,
+        0 as *mut libc::c_void as *mut *mut libc::c_char,
+        10i32,
+    ) as libc::c_int;
+}
 #[no_mangle]
 pub static mut ui_medalNames: [*mut libc::c_char; 6] = [
     b"Accuracy\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
@@ -570,7 +583,7 @@ UI_SPPostgameMenu_NextEvent
 =================
 */
 unsafe extern "C" fn UI_SPPostgameMenu_NextEvent(
-    mut _ptr: *mut libc::c_void,
+    mut ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     let mut currentSet: libc::c_int = 0;
@@ -608,7 +621,7 @@ UI_SPPostgameMenu_AgainEvent
 =================
 */
 unsafe extern "C" fn UI_SPPostgameMenu_AgainEvent(
-    mut _ptr: *mut libc::c_void,
+    mut ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
@@ -626,7 +639,7 @@ UI_SPPostgameMenu_MenuEvent
 =================
 */
 unsafe extern "C" fn UI_SPPostgameMenu_MenuEvent(
-    mut _ptr: *mut libc::c_void,
+    mut ptr: *mut libc::c_void,
     mut event: libc::c_int,
 ) {
     if event != 3i32 {
