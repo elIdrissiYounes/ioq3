@@ -45,6 +45,87 @@ If you've got issues that you aren't sure are worth filing as bugs, or just
 want to chat, please visit our forums:
 http://discourse.ioquake.org
 
+# `c2rust` Instructions
+
+This is the repo of `Quake3-rs`, a `C2Rust` translated version of ioquake3
+
+Dependencies needed on Ubuntu 18.04 needed to build the project:
+
+* `libopus-dev`
+* `libopusfile-dev`
+* `libjpeg-dev`
+* `libvorbis-dev`
+* `libopenal-dev`
+
+### Translating From Scratch
+
+How to translate from scratch:
+
+    # Translating the shared objects:
+    $ intercept-build make USE_INTERNAL_LIBS=0 BUILD_{UI,CGAME,QAGAME}=1 debug
+    $ c2rust transpile compile_commands.json --emit-build-files --build-directory-contents full --build-directory-name quake3-{ui,cgame,qagame}
+
+    # Translating the executable:
+    $ intercept-build make USE_INTERNAL_LIBS=0 BUILD_CLIENT=1 debug
+    $ c2rust transpile compile_commands.json --emit-build-files --build-directory-contents full --build-directory-name quake3-client --main sys_main
+
+After translation it is necessary to remove some modules from `lib/main.rs`, and
+delete the translated file. The reason is because, functions that are within
+the scope of the known limitations of `C2Rust` were moved to separate files, but
+are still part of the build process; thus get translated. But after those are removed, the correlating `C` file needs
+to be linked in via the `cc` crate like [so.](https://github.com/immunant/ioq3/blob/quake3-rs/quake3-rs/quake3-game/build.rs)
+This will then allow the crates to be built!
+
+Build the crates:
+    # Shared objects:
+    $ RUSTFLAGS="-Awarnings -C link-dead-code" cargo build --release -j16
+
+    # Executable:
+    $ cargo build --release -j16
+
+### Using the pre-transpiled `quake3-rs`
+
+No build script:
+
+    $ make USE_INTERNAL_LIBS=0 debug # Build the C project
+    $ cd $IOQ3/quake3-rs/
+    $ cargo build --release
+    $ cd $IOQ3/build/debug-linux-x86_64/
+    $ cp $QUAKE3-RS/target/release/ioquake3 ioquake3.x86_64
+    $ cd baseq3
+    $ cp $QUAKE3-RS/target/release/libquake3_game.so qagamex86_64.so
+    $ cp $QUAKE3-RS/target/release/libquake3_cgame.so cgamex86_64.so
+    $ cp $QUAKE3-RS/target/release/libquake3_ui.so uix86_64.so
+    $ cd ..
+    $ LD_LIBRARY_PATH=`rustc --print=sysroot`/lib ./ioquake3.x86_64 +set sv_pure 0 +set vm_game 0 +set vm_cgame 0 +set vm_ui 0
+
+Using the build script:
+```
+$ ./build-quake3-rs.py # or python3 build-quake3-rs.py
+$ ./build-quake3-rs.py --all # runs all the steps
+$ ./build-quake3-rs.py --build # only build
+$ ./build-quake3-rs.py --copy --run # only copy and run, but will fail if the build files are not there
+
+Build, copy, and run quake3-rs
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --all       Build, copy, and run quake3-rs
+  --build     Build quake3-rs
+  --copy      Copy all the binaries to the necessary locations
+  --run       Run quake3-rs
+```
+
+The only necessary package for the script is `plumbum`.
+
+    $ pip3 install plumbum
+
+Some fun changes made to `ioquake3`:
+
+![ioq3 changes](misc/c2rust/quake3-rs-ui-change.png "ioq3 changes")
+
+The gravity was changed for a comical effect, [here in the source code.](https://github.com/immunant/ioq3/blob/quake3-rs/quake3-rs/quake3-game/src/g_spawn.rs#L799)
+
 # Compilation and installation
 
 For *nix
@@ -523,58 +604,6 @@ but we have some general guidelines:
 
   * Your installer will be mirrored to an "official" directory, thus making it
     a done deal.
-
-# `c2rust` Instructions
-
-Dependencies needed to build the project:
-
-* `libopus-dev`
-* `libopusfile-dev`
-* `libjpeg-dev`
-* `libvorbis-dev`
-* `libopenal-dev`
-* Rust nightly version: `nightly-2018-12-03`
-
-To build without build script:
-
-    $ make debug # Build the C project
-    $ cd $IOQ3/quake3-rs/
-    $ cargo build --release
-    $ cd $IOQ3/build/debug-linux-x86_64/
-    $ cp $QUAKE3-RS/target/release/ioquake3 ioquake3.x86_64
-    $ cd baseq3
-    $ cp $QUAKE3-RS/target/release/libquake3_game.so qagamex86_64.so
-    $ cp $QUAKE3-RS/target/release/libquake3_cgame.so cgamex86_64.so
-    $ cp $QUAKE3-RS/target/release/libquake3_ui.so uix86_64.so
-    $ cd ..
-    $ LD_LIBRARY_PATH=`rustc --print=sysroot`/lib ./ioquake3.x86_64 +set sv_pure 0 +set vm_game 0 +set vm_cgame 0 +set vm_ui 0
-
-Build script:
-```
-$ ./build-quake3-rs.py # or python3 build-quake3-rs.py
-$ ./build-quake3-rs.py --all # runs all the steps
-$ ./build-quake3-rs.py --build # only build 
-$ ./build-quake3-rs.py --copy --run # only copy and run, but will fail if the build files are not there
-
-Build, copy, and run quake3-rs
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --all       Build, copy, and run quake3-rs
-  --build     Build quake3-rs
-  --copy      Copy all the binaries to the necessary locations
-  --run       Run quake3-rs
-```
-
-The only necessary package for the script is `plumbum`.
-
-    $ pip3 install plumbum
-
-Some fun changes made to `ioquake3`:
-![ioq3 changes](misc/c2rust/quake3-rs-ui-change.png "ioq3 changes")
-
-
-The gravity was also changed for a comical effect, [here in the source code.](https://github.com/immunant/ioq3/blob/quake3-rs/quake3-rs/quake3-game/src/g_spawn.rs#L799)
 
 # Credits
 
