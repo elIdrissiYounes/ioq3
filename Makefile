@@ -1302,16 +1302,16 @@ endef
 
 # Build only the ui, cgame, qagame, or ioquake3 binary
 # Mainly used to get the correct `compile_commands.json`
-ifeq ($(BUILD_UI),1)
+ifeq ($(BUILD_ONLY_UI),1)
   TARGETS = $(B)/$(BASEGAME)/ui$(SHLIBNAME)
 endif
-ifeq ($(BUILD_CGAME),1)
+ifeq ($(BUILD_ONLY_CGAME),1)
   TARGETS = $(B)/$(BASEGAME)/cgame$(SHLIBNAME)
 endif
-ifeq ($(BUILD_QAGAME),1)
+ifeq ($(BUILD_ONLY_QAGAME),1)
   TARGETS = $(B)/$(BASEGAME)/qagame$(SHLIBNAME)
 endif
-ifeq ($(BUILD_CLIENT),1)
+ifeq ($(BUILD_ONLY_CLIENT),1)
   TARGETS = $(B)/$(CLIENTBIN)$(FULLBINEXT)
 endif
 
