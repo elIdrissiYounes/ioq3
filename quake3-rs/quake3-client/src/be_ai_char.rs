@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -108,7 +116,8 @@ PlaneTypeForNormal
     pub type cplane_t = cplane_s;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_script.h"]
+#[header_src =
+      "ioq3/code/botlib/l_script.h"]
 pub mod l_script_h {
     /*
 ===========================================================================
@@ -229,7 +238,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn StripDoubleQuotes(string: *mut libc::c_char);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_precomp.h"]
+#[header_src =
+      "ioq3/code/botlib/l_precomp.h"]
 pub mod l_precomp_h {
     /*
 ===========================================================================
@@ -336,7 +346,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn FreeSource(source: *mut source_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/botlib.h"]
+#[header_src =
+      "ioq3/code/botlib/botlib.h"]
 pub mod botlib_h {
     //bsp_trace_t hit surface
     #[derive
@@ -447,7 +458,8 @@ pub mod botlib_h {
     use super::q_shared_h::{qboolean, vec3_t, cplane_t, vec_t, fileHandle_t,
                             fsMode_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ai_char.c"]
+#[header_src =
+      "ioq3/code/botlib/be_ai_char.c"]
 pub mod be_ai_char_c {
     pub type bot_character_t = bot_character_s;
     //a bot character
@@ -509,7 +521,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     }
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -534,7 +546,8 @@ pub mod string_h {
         pub fn strlen(_: *const libc::c_char) -> libc::c_ulong;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_log.h"]
+#[header_src =
+      "ioq3/code/botlib/l_log.h"]
 pub mod l_log_h {
     use super::{libc};
     extern "C" {
@@ -543,7 +556,8 @@ pub mod l_log_h {
         pub fn Log_Write(fmt: *mut libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_memory.h"]
+#[header_src =
+      "ioq3/code/botlib/l_memory.h"]
 pub mod l_memory_h {
     use super::{libc};
     extern "C" {
@@ -588,7 +602,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn FreeMemory(ptr: *mut libc::c_void);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_libvar.h"]
+#[header_src =
+      "ioq3/code/botlib/l_libvar.h"]
 pub mod l_libvar_h {
     use super::{libc};
     extern "C" {
@@ -597,7 +612,8 @@ pub mod l_libvar_h {
         pub fn LibVarGetValue(var_name: *const libc::c_char) -> libc::c_float;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_variadic.h"]
+#[header_src =
+      "ioq3/code/botlib/l_variadic.h"]
 pub mod l_variadic_h {
     use super::l_precomp_h::{source_t};
     use super::{libc};
@@ -609,7 +625,7 @@ pub mod l_variadic_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_interface.h"]
+      "ioq3/code/botlib/be_interface.h"]
 pub mod be_interface_h {
     use super::botlib_h::{botlib_import_t};
     extern "C" {
@@ -617,7 +633,8 @@ pub mod be_interface_h {
         pub static mut botimport: botlib_import_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ai_char.h"]
+#[header_src =
+      "ioq3/code/botlib/be_ai_char.h"]
 pub mod be_ai_char_h {
     use super::{libc};
 }

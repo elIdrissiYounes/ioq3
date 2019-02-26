@@ -1,5 +1,12 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     pub type __uint32_t = libc::c_uint;
@@ -17,7 +24,7 @@ pub mod types_h {
     pub type __syscall_slong_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h"]
+#[header_src = "/usr/include/bits/types/struct_timespec.h"]
 pub mod struct_timespec_h {
     #[derive
     ( Copy , Clone )]
@@ -40,13 +47,13 @@ pub mod signal_h {
          -> __sighandler_t;
     }
 }
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/libio.h"]
-pub mod libio_h {
+#[header_src = "/usr/include/bits/types/struct_FILE.h"]
+pub mod struct_FILE_h {
     #[derive
     ( Copy , Clone )]
     #[repr(C)]
@@ -73,33 +80,30 @@ pub mod libio_h {
         pub _shortbuf: [libc::c_char; 1],
         pub _lock: *mut libc::c_void,
         pub _offset: __off64_t,
-        pub __pad1: *mut libc::c_void,
-        pub __pad2: *mut libc::c_void,
-        pub __pad3: *mut libc::c_void,
-        pub __pad4: *mut libc::c_void,
+        pub _codecvt: *mut _IO_codecvt,
+        pub _wide_data: *mut _IO_wide_data,
+        pub _freeres_list: *mut _IO_FILE,
+        pub _freeres_buf: *mut libc::c_void,
         pub __pad5: size_t,
         pub _mode: libc::c_int,
         pub _unused2: [libc::c_char; 20],
     }
     pub type _IO_lock_t = ();
-    #[derive
-    ( Copy , Clone )]
-    #[repr(C)]
-    pub struct _IO_marker {
-        pub _next: *mut _IO_marker,
-        pub _sbuf: *mut _IO_FILE,
-        pub _pos: libc::c_int,
-    }
     use super::{libc};
     use super::types_h::{__off_t, __off64_t};
     use super::stddef_h::{size_t};
+    extern "C" {
+        pub type _IO_wide_data;
+        pub type _IO_codecvt;
+        pub type _IO_marker;
+    }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types/FILE.h"]
+#[header_src = "/usr/include/bits/types/FILE.h"]
 pub mod FILE_h {
     pub type FILE = _IO_FILE;
-    use super::libio_h::{_IO_FILE};
+    use super::struct_FILE_h::{_IO_FILE};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stat.h"]
+#[header_src = "/usr/include/bits/stat.h"]
 pub mod stat_h {
     #[derive
     ( Copy , Clone )]
@@ -127,7 +131,7 @@ pub mod stat_h {
     use super::{libc};
     use super::struct_timespec_h::{timespec};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     pub type uint32_t = __uint32_t;
@@ -313,7 +317,8 @@ pub mod SDL_version_h {
         pub fn SDL_GetVersion(ver: *mut SDL_version);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     pub type qboolean = libc::c_uint;
     pub const qtrue: qboolean = 1;
@@ -354,7 +359,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     // Pulls off \n terminated lines of text from the command buffer and sends
 // them through Cmd_ExecuteString.  Stops when the buffer is empty.
@@ -470,22 +476,20 @@ pub mod stdlib_h {
 }
 #[header_src = "/usr/include/stdio.h"]
 pub mod stdio_h {
-    use super::libio_h::{_IO_FILE};
-    use super::{libc};
     use super::FILE_h::{FILE};
-    use super::stddef_h::{size_t};
+    use super::{libc};
     extern "C" {
         #[no_mangle]
-        pub static mut stdout: *mut _IO_FILE;
+        pub static mut stdout: *mut FILE;
         #[no_mangle]
-        pub static mut stderr: *mut _IO_FILE;
+        pub static mut stderr: *mut FILE;
         #[no_mangle]
         pub fn remove(__filename: *const libc::c_char) -> libc::c_int;
         #[no_mangle]
         pub fn fclose(__stream: *mut FILE) -> libc::c_int;
         #[no_mangle]
-        pub fn fopen(__filename: *const libc::c_char,
-                     __modes: *const libc::c_char) -> *mut FILE;
+        pub fn fopen(_: *const libc::c_char, _: *const libc::c_char)
+         -> *mut FILE;
         #[no_mangle]
         pub fn fprintf(_: *mut FILE, _: *const libc::c_char, ...)
          -> libc::c_int;
@@ -493,11 +497,11 @@ pub mod stdio_h {
         pub fn fputs(__s: *const libc::c_char, __stream: *mut FILE)
          -> libc::c_int;
         #[no_mangle]
-        pub fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t,
-                     __stream: *mut FILE) -> size_t;
+        pub fn fread(_: *mut libc::c_void, _: libc::c_ulong, _: libc::c_ulong,
+                     _: *mut FILE) -> libc::c_ulong;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/sys/stat.h"]
+#[header_src = "/usr/include/sys/stat.h"]
 pub mod sys_stat_h {
     use super::{libc};
     use super::stat_h::{stat};
@@ -651,11 +655,13 @@ pub mod SDL_h {
         pub fn SDL_Quit();
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/sys/sys_main.c"]
+#[header_src =
+      "ioq3/code/sys/sys_main.c"]
 pub mod sys_main_c {
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/sys/sys_local.h"]
+#[header_src =
+      "ioq3/code/sys/sys_local.h"]
 pub mod sys_local_h {
     use super::{libc};
     use super::q_shared_h::{qboolean};
@@ -692,8 +698,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         #[no_mangle]
         pub fn CON_LogWrite(in_0: *const libc::c_char) -> libc::c_uint;
         #[no_mangle]
-        pub fn CON_Input() -> *mut libc::c_char;
-        #[no_mangle]
         pub fn Sys_PID() -> libc::c_int;
         #[no_mangle]
         pub fn Sys_PIDIsRunning(pid: libc::c_int) -> qboolean;
@@ -703,7 +707,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn Sys_PlatformInit();
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/sys/sys_loadlib.h"]
+#[header_src =
+      "ioq3/code/sys/sys_variadic.h"]
+pub mod sys_variadic_h {
+    use super::{libc};
+    extern "C" {
+        #[no_mangle]
+        pub fn CON_Input() -> *mut libc::c_char;
+    }
+}
+#[header_src =
+      "ioq3/code/sys/sys_loadlib.h"]
 pub mod sys_loadlib_h {
     use super::{libc};
     use super::q_shared_h::{qboolean};
@@ -714,7 +728,8 @@ use self::types_h::{__uint8_t, __uint32_t, __dev_t, __uid_t, __gid_t, __ino_t,
 use self::struct_timespec_h::{timespec};
 use self::signal_h::{__sighandler_t, signal};
 use self::stddef_h::{size_t};
-use self::libio_h::{_IO_FILE, _IO_lock_t, _IO_marker};
+use self::struct_FILE_h::{_IO_FILE, _IO_lock_t, _IO_wide_data, _IO_codecvt,
+                          _IO_marker};
 use self::FILE_h::{FILE};
 use self::stat_h::{stat};
 use self::stdint_uintn_h::{uint8_t, uint32_t};
@@ -747,8 +762,9 @@ use self::SDL_cpuinfo_h::{SDL_HasRDTSC, SDL_HasAltiVec, SDL_HasMMX,
 use self::SDL_loadso_h::{SDL_LoadObject, SDL_UnloadObject};
 use self::SDL_h::{SDL_WasInit, SDL_Quit};
 use self::sys_local_h::{Sys_PlatformExit, CON_Shutdown, CON_Print,
-                        CON_LogWrite, CON_Input, Sys_PID, Sys_PIDIsRunning,
-                        CON_Init, Sys_PlatformInit};
+                        CON_LogWrite, Sys_PID, Sys_PIDIsRunning, CON_Init,
+                        Sys_PlatformInit};
+use self::sys_variadic_h::{CON_Input};
 /*
 ==============================================================
 
@@ -1586,9 +1602,9 @@ pub unsafe extern "C" fn Sys_ParseArgs(mut argc: libc::c_int,
                    strcmp(*argv.offset(1isize),
                           b"-v\x00" as *const u8 as *const libc::c_char) {
             let mut date: *const libc::c_char =
-                b"Jan 30 2019\x00" as *const u8 as *const libc::c_char;
+                b"Feb 25 2019\x00" as *const u8 as *const libc::c_char;
             fprintf(stdout,
-                    b"ioq3 1.36_GIT_3db749c8-2019-01-29 client (%s)\n\x00" as
+                    b"ioq3 1.36_GIT_363a9303-2019-02-25 client (%s)\n\x00" as
                         *const u8 as *const libc::c_char, date);
             Sys_Exit(0i32);
         }

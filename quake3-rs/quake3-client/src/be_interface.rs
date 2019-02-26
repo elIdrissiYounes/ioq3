@@ -1,15 +1,23 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(custom_attribute, label_break_value, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __clock_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types/clock_t.h"]
+#[header_src = "/usr/include/bits/types/clock_t.h"]
 pub mod clock_t_h {
     pub type clock_t = __clock_t;
     use super::types_h::{__clock_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -136,7 +144,8 @@ PlaneTypeForNormal
     pub type cplane_t = cplane_s;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas.h"]
+#[header_src =
+      "ioq3/code/botlib/be_aas.h"]
 pub mod be_aas_h {
     // client movement prediction stop events, stop as soon as:
     // the ground is hit
@@ -282,7 +291,8 @@ typedef struct bsp_trace_s
     use super::q_shared_h::{vec3_t, qboolean};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ai_chat.h"]
+#[header_src =
+      "ioq3/code/botlib/be_ai_chat.h"]
 pub mod be_ai_chat_h {
     /*
 ===========================================================================
@@ -449,7 +459,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn BotAllocChatState() -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ai_goal.h"]
+#[header_src =
+      "ioq3/code/botlib/be_ai_goal.h"]
 pub mod be_ai_goal_h {
     /*
 ===========================================================================
@@ -625,7 +636,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn BotResetGoalState(goalstate: libc::c_int);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ai_move.h"]
+#[header_src =
+      "ioq3/code/botlib/be_ai_move.h"]
 pub mod be_ai_move_h {
     //NOTE: the ideal_viewangles are only valid if MFL_MOVEMENTVIEW is set
     #[derive
@@ -788,7 +800,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn BotResetMoveState(movestate: libc::c_int);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ai_weap.h"]
+#[header_src =
+      "ioq3/code/botlib/be_ai_weap.h"]
 pub mod be_ai_weap_h {
     #[derive
     ( Copy , Clone )]
@@ -913,7 +926,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
          -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/botlib.h"]
+#[header_src =
+      "ioq3/code/botlib/botlib.h"]
 pub mod botlib_h {
     /*
 ===========================================================================
@@ -1684,7 +1698,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::be_ai_weap_h::{weaponinfo_s};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_interface.h"]
+      "ioq3/code/botlib/be_interface.h"]
 pub mod be_interface_h {
     pub type botlib_globals_t = botlib_globals_s;
     /*
@@ -1762,7 +1776,8 @@ pub mod time_h {
         pub fn clock() -> clock_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_log.h"]
+#[header_src =
+      "ioq3/code/botlib/l_log.h"]
 pub mod l_log_h {
     use super::{libc};
     extern "C" {
@@ -1803,7 +1818,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn Log_Shutdown();
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_libvar.h"]
+#[header_src =
+      "ioq3/code/botlib/l_libvar.h"]
 pub mod l_libvar_h {
     use super::{libc};
     extern "C" {
@@ -1827,7 +1843,8 @@ pub mod l_libvar_h {
                          value: *const libc::c_char);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_precomp.h"]
+#[header_src =
+      "ioq3/code/botlib/l_precomp.h"]
 pub mod l_precomp_h {
     use super::{libc};
     use super::q_shared_h::{pc_token_t};
@@ -1857,14 +1874,14 @@ pub mod l_precomp_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_interface.c"]
+      "ioq3/code/botlib/be_interface.c"]
 pub mod be_interface_c {
     use super::botlib_h::{botlib_export_t, bot_entitystate_t};
     use super::{libc};
     use super::q_shared_h::{vec_t, qboolean};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_entity.h"]
+      "ioq3/code/botlib/be_aas_entity.h"]
 pub mod be_aas_entity_h {
     use super::{libc};
     use super::botlib_h::{bot_entitystate_t};
@@ -1881,7 +1898,7 @@ pub mod be_aas_entity_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_main.h"]
+      "ioq3/code/botlib/be_aas_main.h"]
 pub mod be_aas_main_h {
     use super::{libc};
     extern "C" {
@@ -1906,7 +1923,8 @@ pub mod be_aas_main_h {
         pub fn AAS_Initialized() -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ea.h"]
+#[header_src =
+      "ioq3/code/botlib/be_ea.h"]
 pub mod be_ea_h {
     use super::{libc};
     use super::botlib_h::{bot_input_t};
@@ -2002,7 +2020,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn EA_Command(client: libc::c_int, command: *mut libc::c_char);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ai_char.h"]
+#[header_src =
+      "ioq3/code/botlib/be_ai_char.h"]
 pub mod be_ai_char_h {
     use super::{libc};
     extern "C" {
@@ -2073,7 +2092,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ai_weight.h"]
+      "ioq3/code/botlib/be_ai_weight.h"]
 pub mod be_ai_weight_h {
     extern "C" {
         //frees cached weight configurations
@@ -2081,7 +2100,8 @@ pub mod be_ai_weight_h {
         pub fn BotShutdownWeights();
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ai_gen.h"]
+#[header_src =
+      "ioq3/code/botlib/be_ai_gen.h"]
 pub mod be_ai_gen_h {
     use super::{libc};
     extern "C" {
@@ -2125,7 +2145,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_move.h"]
+      "ioq3/code/botlib/be_aas_move.h"]
 pub mod be_aas_move_h {
     use super::{libc};
     use super::be_aas_h::{aas_clientmove_s};
@@ -2154,7 +2174,7 @@ pub mod be_aas_move_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_routealt.h"]
+      "ioq3/code/botlib/be_aas_routealt.h"]
 pub mod be_aas_routealt_h {
     use super::{libc};
     use super::q_shared_h::{vec_t};
@@ -2174,7 +2194,7 @@ pub mod be_aas_routealt_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_route.h"]
+      "ioq3/code/botlib/be_aas_route.h"]
 pub mod be_aas_route_h {
     use super::{libc};
     use super::be_aas_h::{aas_predictroute_s};
@@ -2205,7 +2225,7 @@ pub mod be_aas_route_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_reach.h"]
+      "ioq3/code/botlib/be_aas_reach.h"]
 pub mod be_aas_reach_h {
     use super::{libc};
     extern "C" {
@@ -2215,7 +2235,8 @@ pub mod be_aas_reach_h {
         pub fn AAS_AreaReachability(areanum: libc::c_int) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_bsp.h"]
+#[header_src =
+      "ioq3/code/botlib/be_aas_bsp.h"]
 pub mod be_aas_bsp_h {
     use super::{libc};
     use super::q_shared_h::{vec_t};
@@ -2250,7 +2271,7 @@ pub mod be_aas_bsp_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_sample.h"]
+      "ioq3/code/botlib/be_aas_sample.h"]
 pub mod be_aas_sample_h {
     use super::{libc};
     use super::be_aas_h::{aas_areainfo_t};

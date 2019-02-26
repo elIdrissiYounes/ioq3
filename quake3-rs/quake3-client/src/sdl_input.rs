@@ -1,5 +1,12 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     pub type __int16_t = libc::c_short;
@@ -9,14 +16,14 @@ pub mod types_h {
     pub type __int64_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"]
+#[header_src = "/usr/include/bits/stdint-intn.h"]
 pub mod stdint_intn_h {
     pub type int16_t = __int16_t;
     pub type int32_t = __int32_t;
     pub type int64_t = __int64_t;
     use super::types_h::{__int16_t, __int32_t, __int64_t};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     pub type uint16_t = __uint16_t;
@@ -1533,6 +1540,9 @@ pub mod SDL_events_h {
     /* Render events */
     /* *< The render targets have been reset and their contents need to be updated */
     pub const SDL_RENDER_TARGETS_RESET: unnamed_3 = 8192;
+    /* Sensor events */
+    /* *< A sensor was updated */
+    pub const SDL_SENSORUPDATE: unnamed_3 = 4608;
     /* *< An audio device has been removed. */
     pub const SDL_AUDIODEVICEREMOVED: unnamed_3 = 4353;
     /* Audio hotplug events */
@@ -1613,6 +1623,9 @@ pub mod SDL_events_h {
     /* Window events */
     /* *< Window state change */
     pub const SDL_WINDOWEVENT: unnamed_3 = 512;
+    /* Display events */
+    /* *< Display state change */
+    pub const SDL_DISPLAYEVENT: unnamed_3 = 336;
     /* *< The application is now interactive
                                      Called on iOS in applicationDidBecomeActive()
                                      Called on Android in onResume()
@@ -1658,6 +1671,22 @@ pub mod SDL_events_h {
     pub struct SDL_CommonEvent {
         pub type_0: Uint32,
         pub timestamp: Uint32,
+    }
+    /* *
+ *  \brief Display state change event data (event.display.*)
+ */
+    #[derive
+    ( Copy , Clone )]
+    #[repr(C)]
+    pub struct SDL_DisplayEvent {
+        pub type_0: Uint32,
+        pub timestamp: Uint32,
+        pub display: Uint32,
+        pub event: Uint8,
+        pub padding1: Uint8,
+        pub padding2: Uint8,
+        pub padding3: Uint8,
+        pub data1: Sint32,
     }
     /* *
  *  \brief Window state change event data (event.window.*)
@@ -1966,6 +1995,18 @@ pub mod SDL_events_h {
         pub windowID: Uint32,
     }
     /* *
+ *  \brief Sensor event structure (event.sensor.*)
+ */
+    #[derive
+    ( Copy , Clone )]
+    #[repr(C)]
+    pub struct SDL_SensorEvent {
+        pub type_0: Uint32,
+        pub timestamp: Uint32,
+        pub which: Sint32,
+        pub data: [libc::c_float; 6],
+    }
+    /* *
  *  \brief The "quit requested" event
  */
     #[derive
@@ -2013,6 +2054,7 @@ pub mod SDL_events_h {
     pub union SDL_Event {
         pub type_0: Uint32,
         pub common: SDL_CommonEvent,
+        pub display: SDL_DisplayEvent,
         pub window: SDL_WindowEvent,
         pub key: SDL_KeyboardEvent,
         pub edit: SDL_TextEditingEvent,
@@ -2029,6 +2071,7 @@ pub mod SDL_events_h {
         pub cbutton: SDL_ControllerButtonEvent,
         pub cdevice: SDL_ControllerDeviceEvent,
         pub adevice: SDL_AudioDeviceEvent,
+        pub sensor: SDL_SensorEvent,
         pub quit: SDL_QuitEvent,
         pub user: SDL_UserEvent,
         pub syswm: SDL_SysWMEvent,
@@ -2095,7 +2138,8 @@ pub mod SDL_events_h {
         pub fn SDL_PollEvent(event: *mut SDL_Event) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -2284,7 +2328,8 @@ default values.
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     //============================================================================
     /*
@@ -2433,7 +2478,8 @@ modules of the program.
         pub fn Sys_Milliseconds() -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/sdl/sdl_input.c"]
+#[header_src =
+      "ioq3/code/sdl/sdl_input.c"]
 pub mod sdl_input_c {
     #[derive
     ( Copy , Clone )]
@@ -2468,7 +2514,7 @@ pub mod sdl_input_c {
     use super::keycodes_h::{keyNum_t};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_types.h"]
+      "ioq3/code/renderercommon/tr_types.h"]
 pub mod tr_types_h {
     #[derive
     ( Copy , Clone )]
@@ -2536,7 +2582,8 @@ pub mod tr_types_h {
     use super::{libc};
     use super::q_shared_h::{qboolean};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     #[derive
     ( Copy , Clone )]
@@ -2721,7 +2768,8 @@ demo through a file.
         pub static mut j_forward_axis: *mut cvar_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/keycodes.h"]
+#[header_src =
+      "ioq3/code/client/keycodes.h"]
 pub mod keycodes_h {
     pub const K_MWHEELDOWN: keyNum_t = 183;
     pub const K_MWHEELUP: keyNum_t = 184;
@@ -3000,7 +3048,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     pub const K_TAB: keyNum_t = 9;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/keys.h"]
+#[header_src =
+      "ioq3/code/client/keys.h"]
 pub mod keys_h {
     /*
 ===========================================================================
@@ -3174,7 +3223,7 @@ pub mod opus_h {
   *
   * opus_encode() and opus_encode_float() return the number of bytes actually written to the packet.
   * The return value <b>can be negative</b>, which indicates that an error has occurred. If the return value
-  * is 1 byte, then the packet does not need to be transmitted (DTX).
+  * is 2 bytes or less, then the packet does not need to be transmitted (DTX).
   *
   * Once the encoder state if no longer needed, it can be destroyed with
   *
@@ -3264,12 +3313,12 @@ pub mod opus_h {
         pub type OpusDecoder;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/multi.h"]
+#[header_src = "/usr/include/curl/multi.h"]
 pub mod multi_h {
     pub type CURLM = ();
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/curl.h"]
+#[header_src = "/usr/include/curl/curl.h"]
 pub mod curl_h {
     pub type CURL = ();
     use super::{libc};
@@ -3690,9 +3739,10 @@ use self::SDL_touch_h::{SDL_TouchID, SDL_FingerID};
 use self::SDL_gesture_h::{SDL_GestureID};
 use self::SDL_events_h::{unnamed_3, SDL_LASTEVENT, SDL_USEREVENT,
                          SDL_RENDER_DEVICE_RESET, SDL_RENDER_TARGETS_RESET,
-                         SDL_AUDIODEVICEREMOVED, SDL_AUDIODEVICEADDED,
-                         SDL_DROPCOMPLETE, SDL_DROPBEGIN, SDL_DROPTEXT,
-                         SDL_DROPFILE, SDL_CLIPBOARDUPDATE, SDL_MULTIGESTURE,
+                         SDL_SENSORUPDATE, SDL_AUDIODEVICEREMOVED,
+                         SDL_AUDIODEVICEADDED, SDL_DROPCOMPLETE,
+                         SDL_DROPBEGIN, SDL_DROPTEXT, SDL_DROPFILE,
+                         SDL_CLIPBOARDUPDATE, SDL_MULTIGESTURE,
                          SDL_DOLLARRECORD, SDL_DOLLARGESTURE,
                          SDL_FINGERMOTION, SDL_FINGERUP, SDL_FINGERDOWN,
                          SDL_CONTROLLERDEVICEREMAPPED,
@@ -3705,26 +3755,27 @@ use self::SDL_events_h::{unnamed_3, SDL_LASTEVENT, SDL_USEREVENT,
                          SDL_MOUSEBUTTONUP, SDL_MOUSEBUTTONDOWN,
                          SDL_MOUSEMOTION, SDL_KEYMAPCHANGED, SDL_TEXTINPUT,
                          SDL_TEXTEDITING, SDL_KEYUP, SDL_KEYDOWN,
-                         SDL_SYSWMEVENT, SDL_WINDOWEVENT,
+                         SDL_SYSWMEVENT, SDL_WINDOWEVENT, SDL_DISPLAYEVENT,
                          SDL_APP_DIDENTERFOREGROUND,
                          SDL_APP_WILLENTERFOREGROUND,
                          SDL_APP_DIDENTERBACKGROUND,
                          SDL_APP_WILLENTERBACKGROUND, SDL_APP_LOWMEMORY,
                          SDL_APP_TERMINATING, SDL_QUIT, SDL_FIRSTEVENT,
-                         SDL_CommonEvent, SDL_WindowEvent, SDL_KeyboardEvent,
-                         SDL_TextEditingEvent, SDL_TextInputEvent,
-                         SDL_MouseMotionEvent, SDL_MouseButtonEvent,
-                         SDL_MouseWheelEvent, SDL_JoyAxisEvent,
-                         SDL_JoyBallEvent, SDL_JoyHatEvent,
+                         SDL_CommonEvent, SDL_DisplayEvent, SDL_WindowEvent,
+                         SDL_KeyboardEvent, SDL_TextEditingEvent,
+                         SDL_TextInputEvent, SDL_MouseMotionEvent,
+                         SDL_MouseButtonEvent, SDL_MouseWheelEvent,
+                         SDL_JoyAxisEvent, SDL_JoyBallEvent, SDL_JoyHatEvent,
                          SDL_JoyButtonEvent, SDL_JoyDeviceEvent,
                          SDL_ControllerAxisEvent, SDL_ControllerButtonEvent,
                          SDL_ControllerDeviceEvent, SDL_AudioDeviceEvent,
                          SDL_TouchFingerEvent, SDL_MultiGestureEvent,
-                         SDL_DollarGestureEvent, SDL_DropEvent, SDL_QuitEvent,
-                         SDL_UserEvent, SDL_SysWMEvent, SDL_Event,
-                         SDL_eventaction, SDL_GETEVENT, SDL_PEEKEVENT,
-                         SDL_ADDEVENT, SDL_SysWMmsg, SDL_PumpEvents,
-                         SDL_PeepEvents, SDL_PollEvent};
+                         SDL_DollarGestureEvent, SDL_DropEvent,
+                         SDL_SensorEvent, SDL_QuitEvent, SDL_UserEvent,
+                         SDL_SysWMEvent, SDL_Event, SDL_eventaction,
+                         SDL_GETEVENT, SDL_PEEKEVENT, SDL_ADDEVENT,
+                         SDL_SysWMmsg, SDL_PumpEvents, SDL_PeepEvents,
+                         SDL_PollEvent};
 use self::q_shared_h::{byte, qboolean, qtrue, qfalse, qhandle_t, fileHandle_t,
                        unnamed_4, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
                        unnamed_5, ERR_NEED_CD, ERR_DISCONNECT,
@@ -4368,8 +4419,8 @@ unsafe extern "C" fn IN_IsConsoleKey(mut key: keyNum_t,
         numConsoleKeys = 0i32;
         while numConsoleKeys < 16i32 {
             let mut c: *mut consoleKey_t =
-                &mut consoleKeys[numConsoleKeys as usize] as
-                    *mut consoleKey_t;
+                &mut *consoleKeys.as_mut_ptr().offset(numConsoleKeys as isize)
+                    as *mut consoleKey_t;
             let mut charCode: libc::c_int = 0i32;
             token = COM_Parse(&mut text_p);
             if 0 == *token.offset(0isize) { break ; }
@@ -4394,7 +4445,8 @@ unsafe extern "C" fn IN_IsConsoleKey(mut key: keyNum_t,
     i = 0i32;
     while i < numConsoleKeys {
         let mut c_0: *mut consoleKey_t =
-            &mut consoleKeys[i as usize] as *mut consoleKey_t;
+            &mut *consoleKeys.as_mut_ptr().offset(i as isize) as
+                *mut consoleKey_t;
         match (*c_0).type_0 as libc::c_uint {
             0 => {
                 if 0 != key as libc::c_uint &&

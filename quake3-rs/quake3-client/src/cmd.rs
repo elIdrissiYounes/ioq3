@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -182,7 +190,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cmd.c"]
+#[header_src =
+      "ioq3/code/qcommon/cmd.c"]
 pub mod cmd_c {
     /*
 ===========================================================================
@@ -243,7 +252,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::{libc};
     use super::qcommon_h::{xcommand_t, completionFunc_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     // Pulls off \n terminated lines of text from the command buffer and sends
 // them through Cmd_ExecuteString.  Stops when the buffer is empty.

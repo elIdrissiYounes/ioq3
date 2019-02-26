@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -117,7 +125,8 @@ default values.
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_local.h"]
+#[header_src =
+      "ioq3/code/client/snd_local.h"]
 pub mod snd_local_h {
     #[derive
     ( Copy , Clone )]
@@ -179,7 +188,8 @@ pub mod snd_local_h {
                                   samples: *mut libc::c_short);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_codec.h"]
+#[header_src =
+      "ioq3/code/client/snd_codec.h"]
 pub mod snd_codec_h {
     pub type snd_info_t = snd_info_s;
     /*
@@ -232,7 +242,8 @@ pub mod stdlib_h {
         pub fn free(__ptr: *mut libc::c_void);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     use super::q_shared_h::{cvar_t};
     use super::{libc};
@@ -280,9 +291,11 @@ modules of the program.
         pub fn Hunk_FreeTempMemory(buf: *mut libc::c_void);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_public.h"]
+#[header_src =
+      "ioq3/code/client/snd_public.h"]
 pub mod snd_public_h { }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_mem.c"]
+#[header_src =
+      "ioq3/code/client/snd_mem.c"]
 pub mod snd_mem_c { }
 use self::q_shared_h::{byte, qboolean, qtrue, qfalse, cvar_s, cvar_t,
                        Com_Printf};

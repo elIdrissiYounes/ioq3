@@ -1,10 +1,17 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/setjmp.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_slice_as_ptr, custom_attribute, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/setjmp.h"]
 pub mod setjmp_h {
     pub type __jmp_buf = [libc::c_long; 8];
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h"]
+#[header_src = "/usr/include/bits/types/__sigset_t.h"]
 pub mod __sigset_t_h {
     #[derive
     ( Copy , Clone )]
@@ -35,7 +42,7 @@ pub mod include_setjmp_h {
         pub fn longjmp(_: *mut __jmp_buf_tag, _: libc::c_int) -> !;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     pub type __int16_t = libc::c_short;
@@ -43,19 +50,20 @@ pub mod types_h {
     pub type __uint32_t = libc::c_uint;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"]
+#[header_src = "/usr/include/bits/stdint-intn.h"]
 pub mod stdint_intn_h {
     pub type int16_t = __int16_t;
     pub type int32_t = __int32_t;
     use super::types_h::{__int16_t, __int32_t};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     pub type uint32_t = __uint32_t;
     use super::types_h::{__uint8_t, __uint32_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/puff.c"]
+#[header_src =
+      "ioq3/code/qcommon/puff.c"]
 pub mod puff_c {
     /*
  *  This is a modified version of Mark Adlers work,
@@ -169,7 +177,8 @@ pub mod puff_c {
     use super::stdint_intn_h::{int32_t, int16_t};
     use super::include_setjmp_h::{jmp_buf};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/puff.h"]
+#[header_src =
+      "ioq3/code/qcommon/puff.h"]
 pub mod puff_h {
     use super::stdint_intn_h::{int32_t};
     use super::stdint_uintn_h::{uint8_t, uint32_t};

@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -186,7 +194,8 @@ default values.
          -> !;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qfiles.h"]
+#[header_src =
+      "ioq3/code/qcommon/qfiles.h"]
 pub mod qfiles_h {
     #[derive
     ( Copy , Clone )]
@@ -198,7 +207,8 @@ pub mod qfiles_h {
     }
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_local.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_local.h"]
 pub mod cm_local_h {
     #[derive
     ( Copy , Clone )]
@@ -361,12 +371,14 @@ pub mod string_h {
          -> *mut libc::c_void;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_public.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_public.h"]
 pub mod cm_public_h {
     use super::{libc};
     use super::q_shared_h::{vec_t, clipHandle_t, byte, qboolean};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_test.c"]
+#[header_src =
+      "ioq3/code/qcommon/cm_test.c"]
 pub mod cm_test_c {
     use super::{libc};
     use super::q_shared_h::{vec_t};

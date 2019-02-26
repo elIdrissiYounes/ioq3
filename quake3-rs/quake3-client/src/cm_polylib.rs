@@ -1,10 +1,18 @@
-use libc;
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(custom_attribute, libc)]
+extern crate libc;
 #[header_src = "/usr/include/stdint.h"]
 pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     pub type qboolean = libc::c_uint;
     pub const qtrue: qboolean = 1;
@@ -43,7 +51,7 @@ MATHLIB
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_polylib.h"]
+      "ioq3/code/qcommon/cm_polylib.h"]
 pub mod cm_polylib_h {
     /*
 ===========================================================================
@@ -72,12 +80,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     #[repr(C)]
     pub struct winding_t {
         pub numpoints: libc::c_int,
-        pub p: [vec3_t; 4],
+        pub p: [vec3_t; 0],
     }
     use super::{libc};
     use super::q_shared_h::{vec3_t, vec_t};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -107,7 +115,8 @@ pub mod string_h {
          -> *mut libc::c_void;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     use super::{libc};
     extern "C" {
@@ -120,7 +129,7 @@ pub mod qcommon_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_polylib.c"]
+      "ioq3/code/qcommon/cm_polylib.c"]
 pub mod cm_polylib_c {
     use super::{libc};
 }
@@ -226,14 +235,23 @@ pub unsafe extern "C" fn WindingArea(mut w: *mut winding_t) -> vec_t {
     i = 2i32;
     while i < (*w).numpoints {
         d1[0usize] =
-            (*w).p[(i - 1i32) as usize][0usize] - (*w).p[0usize][0usize];
+            (*(*w).p.as_mut_ptr().offset((i - 1i32) as isize))[0usize] -
+                (*(*w).p.as_mut_ptr().offset(0isize))[0usize];
         d1[1usize] =
-            (*w).p[(i - 1i32) as usize][1usize] - (*w).p[0usize][1usize];
+            (*(*w).p.as_mut_ptr().offset((i - 1i32) as isize))[1usize] -
+                (*(*w).p.as_mut_ptr().offset(0isize))[1usize];
         d1[2usize] =
-            (*w).p[(i - 1i32) as usize][2usize] - (*w).p[0usize][2usize];
-        d2[0usize] = (*w).p[i as usize][0usize] - (*w).p[0usize][0usize];
-        d2[1usize] = (*w).p[i as usize][1usize] - (*w).p[0usize][1usize];
-        d2[2usize] = (*w).p[i as usize][2usize] - (*w).p[0usize][2usize];
+            (*(*w).p.as_mut_ptr().offset((i - 1i32) as isize))[2usize] -
+                (*(*w).p.as_mut_ptr().offset(0isize))[2usize];
+        d2[0usize] =
+            (*(*w).p.as_mut_ptr().offset(i as isize))[0usize] -
+                (*(*w).p.as_mut_ptr().offset(0isize))[0usize];
+        d2[1usize] =
+            (*(*w).p.as_mut_ptr().offset(i as isize))[1usize] -
+                (*(*w).p.as_mut_ptr().offset(0isize))[1usize];
+        d2[2usize] =
+            (*(*w).p.as_mut_ptr().offset(i as isize))[2usize] -
+                (*(*w).p.as_mut_ptr().offset(0isize))[2usize];
         CrossProduct(d1.as_mut_ptr() as *const vec_t,
                      d2.as_mut_ptr() as *const vec_t, cross.as_mut_ptr());
         total =
@@ -256,11 +274,14 @@ pub unsafe extern "C" fn WindingCenter(mut w: *mut winding_t,
     i = 0i32;
     while i < (*w).numpoints {
         *center.offset(0isize) =
-            (*w).p[i as usize][0usize] + *center.offset(0isize);
+            (*(*w).p.as_mut_ptr().offset(i as isize))[0usize] +
+                *center.offset(0isize);
         *center.offset(1isize) =
-            (*w).p[i as usize][1usize] + *center.offset(1isize);
+            (*(*w).p.as_mut_ptr().offset(i as isize))[1usize] +
+                *center.offset(1isize);
         *center.offset(2isize) =
-            (*w).p[i as usize][2usize] + *center.offset(2isize);
+            (*(*w).p.as_mut_ptr().offset(i as isize))[2usize] +
+                *center.offset(2isize);
         i += 1
     }
     scale = (1.0f64 / (*w).numpoints as libc::c_double) as libc::c_float;
@@ -302,9 +323,12 @@ pub unsafe extern "C" fn ClipWindingEpsilon(mut in_0: *mut winding_t,
     i = 0i32;
     while i < (*in_0).numpoints {
         dot =
-            (*in_0).p[i as usize][0usize] * *normal.offset(0isize) +
-                (*in_0).p[i as usize][1usize] * *normal.offset(1isize) +
-                (*in_0).p[i as usize][2usize] * *normal.offset(2isize);
+            (*(*in_0).p.as_mut_ptr().offset(i as isize))[0usize] *
+                *normal.offset(0isize) +
+                (*(*in_0).p.as_mut_ptr().offset(i as isize))[1usize] *
+                    *normal.offset(1isize) +
+                (*(*in_0).p.as_mut_ptr().offset(i as isize))[2usize] *
+                    *normal.offset(2isize);
         dot -= dist;
         dists[i as usize] = dot;
         if dot > epsilon {
@@ -328,34 +352,47 @@ pub unsafe extern "C" fn ClipWindingEpsilon(mut in_0: *mut winding_t,
     *back = b;
     i = 0i32;
     while i < (*in_0).numpoints {
-        p1 = (*in_0).p[i as usize].as_mut_ptr();
+        p1 = (*(*in_0).p.as_mut_ptr().offset(i as isize)).as_mut_ptr();
         if sides[i as usize] == 2i32 {
-            (*f).p[(*f).numpoints as usize][0usize] = *p1.offset(0isize);
-            (*f).p[(*f).numpoints as usize][1usize] = *p1.offset(1isize);
-            (*f).p[(*f).numpoints as usize][2usize] = *p1.offset(2isize);
+            (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[0usize] =
+                *p1.offset(0isize);
+            (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[1usize] =
+                *p1.offset(1isize);
+            (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[2usize] =
+                *p1.offset(2isize);
             (*f).numpoints += 1;
-            (*b).p[(*b).numpoints as usize][0usize] = *p1.offset(0isize);
-            (*b).p[(*b).numpoints as usize][1usize] = *p1.offset(1isize);
-            (*b).p[(*b).numpoints as usize][2usize] = *p1.offset(2isize);
+            (*(*b).p.as_mut_ptr().offset((*b).numpoints as isize))[0usize] =
+                *p1.offset(0isize);
+            (*(*b).p.as_mut_ptr().offset((*b).numpoints as isize))[1usize] =
+                *p1.offset(1isize);
+            (*(*b).p.as_mut_ptr().offset((*b).numpoints as isize))[2usize] =
+                *p1.offset(2isize);
             (*b).numpoints += 1
         } else {
             if sides[i as usize] == 0i32 {
-                (*f).p[(*f).numpoints as usize][0usize] = *p1.offset(0isize);
-                (*f).p[(*f).numpoints as usize][1usize] = *p1.offset(1isize);
-                (*f).p[(*f).numpoints as usize][2usize] = *p1.offset(2isize);
+                (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[0usize]
+                    = *p1.offset(0isize);
+                (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[1usize]
+                    = *p1.offset(1isize);
+                (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[2usize]
+                    = *p1.offset(2isize);
                 (*f).numpoints += 1
             }
             if sides[i as usize] == 1i32 {
-                (*b).p[(*b).numpoints as usize][0usize] = *p1.offset(0isize);
-                (*b).p[(*b).numpoints as usize][1usize] = *p1.offset(1isize);
-                (*b).p[(*b).numpoints as usize][2usize] = *p1.offset(2isize);
+                (*(*b).p.as_mut_ptr().offset((*b).numpoints as isize))[0usize]
+                    = *p1.offset(0isize);
+                (*(*b).p.as_mut_ptr().offset((*b).numpoints as isize))[1usize]
+                    = *p1.offset(1isize);
+                (*(*b).p.as_mut_ptr().offset((*b).numpoints as isize))[2usize]
+                    = *p1.offset(2isize);
                 (*b).numpoints += 1
             }
             if !(sides[(i + 1i32) as usize] == 2i32 ||
                      sides[(i + 1i32) as usize] == sides[i as usize]) {
                 p2 =
-                    (*in_0).p[((i + 1i32) % (*in_0).numpoints) as
-                                  usize].as_mut_ptr();
+                    (*(*in_0).p.as_mut_ptr().offset(((i + 1i32) %
+                                                         (*in_0).numpoints) as
+                                                        isize)).as_mut_ptr();
                 dot =
                     dists[i as usize] /
                         (dists[i as usize] - dists[(i + 1i32) as usize]);
@@ -375,13 +412,19 @@ pub unsafe extern "C" fn ClipWindingEpsilon(mut in_0: *mut winding_t,
                     }
                     j += 1
                 }
-                (*f).p[(*f).numpoints as usize][0usize] = mid[0usize];
-                (*f).p[(*f).numpoints as usize][1usize] = mid[1usize];
-                (*f).p[(*f).numpoints as usize][2usize] = mid[2usize];
+                (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[0usize]
+                    = mid[0usize];
+                (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[1usize]
+                    = mid[1usize];
+                (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[2usize]
+                    = mid[2usize];
                 (*f).numpoints += 1;
-                (*b).p[(*b).numpoints as usize][0usize] = mid[0usize];
-                (*b).p[(*b).numpoints as usize][1usize] = mid[1usize];
-                (*b).p[(*b).numpoints as usize][2usize] = mid[2usize];
+                (*(*b).p.as_mut_ptr().offset((*b).numpoints as isize))[0usize]
+                    = mid[0usize];
+                (*(*b).p.as_mut_ptr().offset((*b).numpoints as isize))[1usize]
+                    = mid[1usize];
+                (*(*b).p.as_mut_ptr().offset((*b).numpoints as isize))[2usize]
+                    = mid[2usize];
                 (*b).numpoints += 1
             }
         }
@@ -405,8 +448,8 @@ pub unsafe extern "C" fn CopyWinding(mut w: *mut winding_t)
     let mut c: *mut winding_t = 0 as *mut winding_t;
     c = AllocWinding((*w).numpoints);
     size =
-        &mut (*w).p[((*w).numpoints as usize) - 1] as *mut vec3_t as intptr_t -
-            w as intptr_t;
+        &mut *(*w).p.as_mut_ptr().offset((*w).numpoints as isize) as
+            *mut vec3_t as intptr_t - w as intptr_t;
     memcpy(c as *mut libc::c_void, w as *const libc::c_void,
            size as libc::c_ulong);
     return c;
@@ -441,12 +484,15 @@ pub unsafe extern "C" fn ReverseWinding(mut w: *mut winding_t)
     c = AllocWinding((*w).numpoints);
     i = 0i32;
     while i < (*w).numpoints {
-        (*c).p[i as usize][0usize] =
-            (*w).p[((*w).numpoints - 1i32 - i) as usize][0usize];
-        (*c).p[i as usize][1usize] =
-            (*w).p[((*w).numpoints - 1i32 - i) as usize][1usize];
-        (*c).p[i as usize][2usize] =
-            (*w).p[((*w).numpoints - 1i32 - i) as usize][2usize];
+        (*(*c).p.as_mut_ptr().offset(i as isize))[0usize] =
+            (*(*w).p.as_mut_ptr().offset(((*w).numpoints - 1i32 - i) as
+                                             isize))[0usize];
+        (*(*c).p.as_mut_ptr().offset(i as isize))[1usize] =
+            (*(*w).p.as_mut_ptr().offset(((*w).numpoints - 1i32 - i) as
+                                             isize))[1usize];
+        (*(*c).p.as_mut_ptr().offset(i as isize))[2usize] =
+            (*(*w).p.as_mut_ptr().offset(((*w).numpoints - 1i32 - i) as
+                                             isize))[2usize];
         i += 1
     }
     (*c).numpoints = (*w).numpoints;
@@ -505,30 +551,54 @@ pub unsafe extern "C" fn BaseWindingForPlane(mut normal: *mut vec_t,
     vright[1usize] = vright[1usize] * 65535i32 as libc::c_float;
     vright[2usize] = vright[2usize] * 65535i32 as libc::c_float;
     w = AllocWinding(4i32);
-    (*w).p[0usize][0usize] = org[0usize] - vright[0usize];
-    (*w).p[0usize][1usize] = org[1usize] - vright[1usize];
-    (*w).p[0usize][2usize] = org[2usize] - vright[2usize];
-    (*w).p[0usize][0usize] = (*w).p[0usize][0usize] + vup[0usize];
-    (*w).p[0usize][1usize] = (*w).p[0usize][1usize] + vup[1usize];
-    (*w).p[0usize][2usize] = (*w).p[0usize][2usize] + vup[2usize];
-    (*w).p[1usize][0usize] = org[0usize] + vright[0usize];
-    (*w).p[1usize][1usize] = org[1usize] + vright[1usize];
-    (*w).p[1usize][2usize] = org[2usize] + vright[2usize];
-    (*w).p[1usize][0usize] = (*w).p[1usize][0usize] + vup[0usize];
-    (*w).p[1usize][1usize] = (*w).p[1usize][1usize] + vup[1usize];
-    (*w).p[1usize][2usize] = (*w).p[1usize][2usize] + vup[2usize];
-    (*w).p[2usize][0usize] = org[0usize] + vright[0usize];
-    (*w).p[2usize][1usize] = org[1usize] + vright[1usize];
-    (*w).p[2usize][2usize] = org[2usize] + vright[2usize];
-    (*w).p[2usize][0usize] = (*w).p[2usize][0usize] - vup[0usize];
-    (*w).p[2usize][1usize] = (*w).p[2usize][1usize] - vup[1usize];
-    (*w).p[2usize][2usize] = (*w).p[2usize][2usize] - vup[2usize];
-    (*w).p[3usize][0usize] = org[0usize] - vright[0usize];
-    (*w).p[3usize][1usize] = org[1usize] - vright[1usize];
-    (*w).p[3usize][2usize] = org[2usize] - vright[2usize];
-    (*w).p[3usize][0usize] = (*w).p[3usize][0usize] - vup[0usize];
-    (*w).p[3usize][1usize] = (*w).p[3usize][1usize] - vup[1usize];
-    (*w).p[3usize][2usize] = (*w).p[3usize][2usize] - vup[2usize];
+    (*(*w).p.as_mut_ptr().offset(0isize))[0usize] =
+        org[0usize] - vright[0usize];
+    (*(*w).p.as_mut_ptr().offset(0isize))[1usize] =
+        org[1usize] - vright[1usize];
+    (*(*w).p.as_mut_ptr().offset(0isize))[2usize] =
+        org[2usize] - vright[2usize];
+    (*(*w).p.as_mut_ptr().offset(0isize))[0usize] =
+        (*(*w).p.as_mut_ptr().offset(0isize))[0usize] + vup[0usize];
+    (*(*w).p.as_mut_ptr().offset(0isize))[1usize] =
+        (*(*w).p.as_mut_ptr().offset(0isize))[1usize] + vup[1usize];
+    (*(*w).p.as_mut_ptr().offset(0isize))[2usize] =
+        (*(*w).p.as_mut_ptr().offset(0isize))[2usize] + vup[2usize];
+    (*(*w).p.as_mut_ptr().offset(1isize))[0usize] =
+        org[0usize] + vright[0usize];
+    (*(*w).p.as_mut_ptr().offset(1isize))[1usize] =
+        org[1usize] + vright[1usize];
+    (*(*w).p.as_mut_ptr().offset(1isize))[2usize] =
+        org[2usize] + vright[2usize];
+    (*(*w).p.as_mut_ptr().offset(1isize))[0usize] =
+        (*(*w).p.as_mut_ptr().offset(1isize))[0usize] + vup[0usize];
+    (*(*w).p.as_mut_ptr().offset(1isize))[1usize] =
+        (*(*w).p.as_mut_ptr().offset(1isize))[1usize] + vup[1usize];
+    (*(*w).p.as_mut_ptr().offset(1isize))[2usize] =
+        (*(*w).p.as_mut_ptr().offset(1isize))[2usize] + vup[2usize];
+    (*(*w).p.as_mut_ptr().offset(2isize))[0usize] =
+        org[0usize] + vright[0usize];
+    (*(*w).p.as_mut_ptr().offset(2isize))[1usize] =
+        org[1usize] + vright[1usize];
+    (*(*w).p.as_mut_ptr().offset(2isize))[2usize] =
+        org[2usize] + vright[2usize];
+    (*(*w).p.as_mut_ptr().offset(2isize))[0usize] =
+        (*(*w).p.as_mut_ptr().offset(2isize))[0usize] - vup[0usize];
+    (*(*w).p.as_mut_ptr().offset(2isize))[1usize] =
+        (*(*w).p.as_mut_ptr().offset(2isize))[1usize] - vup[1usize];
+    (*(*w).p.as_mut_ptr().offset(2isize))[2usize] =
+        (*(*w).p.as_mut_ptr().offset(2isize))[2usize] - vup[2usize];
+    (*(*w).p.as_mut_ptr().offset(3isize))[0usize] =
+        org[0usize] - vright[0usize];
+    (*(*w).p.as_mut_ptr().offset(3isize))[1usize] =
+        org[1usize] - vright[1usize];
+    (*(*w).p.as_mut_ptr().offset(3isize))[2usize] =
+        org[2usize] - vright[2usize];
+    (*(*w).p.as_mut_ptr().offset(3isize))[0usize] =
+        (*(*w).p.as_mut_ptr().offset(3isize))[0usize] - vup[0usize];
+    (*(*w).p.as_mut_ptr().offset(3isize))[1usize] =
+        (*(*w).p.as_mut_ptr().offset(3isize))[1usize] - vup[1usize];
+    (*(*w).p.as_mut_ptr().offset(3isize))[2usize] =
+        (*(*w).p.as_mut_ptr().offset(3isize))[2usize] - vup[2usize];
     (*w).numpoints = 4i32;
     return w;
 }
@@ -559,7 +629,7 @@ pub unsafe extern "C" fn CheckWinding(mut w: *mut winding_t) {
     WindingPlane(w, facenormal.as_mut_ptr(), &mut facedist);
     i = 0i32;
     while i < (*w).numpoints {
-        p1 = (*w).p[i as usize].as_mut_ptr();
+        p1 = (*(*w).p.as_mut_ptr().offset(i as isize)).as_mut_ptr();
         j = 0i32;
         while j < 3i32 {
             if *p1.offset(j as isize) > 65535i32 as libc::c_float ||
@@ -581,7 +651,7 @@ pub unsafe extern "C" fn CheckWinding(mut w: *mut winding_t) {
                       b"CheckWinding: point off plane\x00" as *const u8 as
                           *const libc::c_char);
         }
-        p2 = (*w).p[j as usize].as_mut_ptr();
+        p2 = (*(*w).p.as_mut_ptr().offset(j as isize)).as_mut_ptr();
         dir[0usize] = *p2.offset(0isize) - *p1.offset(0isize);
         dir[1usize] = *p2.offset(1isize) - *p1.offset(1isize);
         dir[2usize] = *p2.offset(2isize) - *p1.offset(2isize);
@@ -604,9 +674,12 @@ pub unsafe extern "C" fn CheckWinding(mut w: *mut winding_t) {
         while j < (*w).numpoints {
             if !(j == i) {
                 d =
-                    (*w).p[j as usize][0usize] * edgenormal[0usize] +
-                        (*w).p[j as usize][1usize] * edgenormal[1usize] +
-                        (*w).p[j as usize][2usize] * edgenormal[2usize];
+                    (*(*w).p.as_mut_ptr().offset(j as isize))[0usize] *
+                        edgenormal[0usize] +
+                        (*(*w).p.as_mut_ptr().offset(j as isize))[1usize] *
+                            edgenormal[1usize] +
+                        (*(*w).p.as_mut_ptr().offset(j as isize))[2usize] *
+                            edgenormal[2usize];
                 if d > edgedist {
                     Com_Error(ERR_DROP as libc::c_int,
                               b"CheckWinding: non-convex\x00" as *const u8 as
@@ -624,19 +697,34 @@ pub unsafe extern "C" fn WindingPlane(mut w: *mut winding_t,
                                       mut dist: *mut vec_t) {
     let mut v1: vec3_t = [0.; 3];
     let mut v2: vec3_t = [0.; 3];
-    v1[0usize] = (*w).p[1usize][0usize] - (*w).p[0usize][0usize];
-    v1[1usize] = (*w).p[1usize][1usize] - (*w).p[0usize][1usize];
-    v1[2usize] = (*w).p[1usize][2usize] - (*w).p[0usize][2usize];
-    v2[0usize] = (*w).p[2usize][0usize] - (*w).p[0usize][0usize];
-    v2[1usize] = (*w).p[2usize][1usize] - (*w).p[0usize][1usize];
-    v2[2usize] = (*w).p[2usize][2usize] - (*w).p[0usize][2usize];
+    v1[0usize] =
+        (*(*w).p.as_mut_ptr().offset(1isize))[0usize] -
+            (*(*w).p.as_mut_ptr().offset(0isize))[0usize];
+    v1[1usize] =
+        (*(*w).p.as_mut_ptr().offset(1isize))[1usize] -
+            (*(*w).p.as_mut_ptr().offset(0isize))[1usize];
+    v1[2usize] =
+        (*(*w).p.as_mut_ptr().offset(1isize))[2usize] -
+            (*(*w).p.as_mut_ptr().offset(0isize))[2usize];
+    v2[0usize] =
+        (*(*w).p.as_mut_ptr().offset(2isize))[0usize] -
+            (*(*w).p.as_mut_ptr().offset(0isize))[0usize];
+    v2[1usize] =
+        (*(*w).p.as_mut_ptr().offset(2isize))[1usize] -
+            (*(*w).p.as_mut_ptr().offset(0isize))[1usize];
+    v2[2usize] =
+        (*(*w).p.as_mut_ptr().offset(2isize))[2usize] -
+            (*(*w).p.as_mut_ptr().offset(0isize))[2usize];
     CrossProduct(v2.as_mut_ptr() as *const vec_t,
                  v1.as_mut_ptr() as *const vec_t, normal);
     VectorNormalize2(normal as *const vec_t, normal);
     *dist =
-        (*w).p[0usize][0usize] * *normal.offset(0isize) +
-            (*w).p[0usize][1usize] * *normal.offset(1isize) +
-            (*w).p[0usize][2usize] * *normal.offset(2isize);
+        (*(*w).p.as_mut_ptr().offset(0isize))[0usize] * *normal.offset(0isize)
+            +
+            (*(*w).p.as_mut_ptr().offset(0isize))[1usize] *
+                *normal.offset(1isize) +
+            (*(*w).p.as_mut_ptr().offset(0isize))[2usize] *
+                *normal.offset(2isize);
 }
 #[no_mangle]
 pub unsafe extern "C" fn RemoveColinearPoints(mut w: *mut winding_t) {
@@ -652,19 +740,34 @@ pub unsafe extern "C" fn RemoveColinearPoints(mut w: *mut winding_t) {
     while i < (*w).numpoints {
         j = (i + 1i32) % (*w).numpoints;
         k = (i + (*w).numpoints - 1i32) % (*w).numpoints;
-        v1[0usize] = (*w).p[j as usize][0usize] - (*w).p[i as usize][0usize];
-        v1[1usize] = (*w).p[j as usize][1usize] - (*w).p[i as usize][1usize];
-        v1[2usize] = (*w).p[j as usize][2usize] - (*w).p[i as usize][2usize];
-        v2[0usize] = (*w).p[i as usize][0usize] - (*w).p[k as usize][0usize];
-        v2[1usize] = (*w).p[i as usize][1usize] - (*w).p[k as usize][1usize];
-        v2[2usize] = (*w).p[i as usize][2usize] - (*w).p[k as usize][2usize];
+        v1[0usize] =
+            (*(*w).p.as_mut_ptr().offset(j as isize))[0usize] -
+                (*(*w).p.as_mut_ptr().offset(i as isize))[0usize];
+        v1[1usize] =
+            (*(*w).p.as_mut_ptr().offset(j as isize))[1usize] -
+                (*(*w).p.as_mut_ptr().offset(i as isize))[1usize];
+        v1[2usize] =
+            (*(*w).p.as_mut_ptr().offset(j as isize))[2usize] -
+                (*(*w).p.as_mut_ptr().offset(i as isize))[2usize];
+        v2[0usize] =
+            (*(*w).p.as_mut_ptr().offset(i as isize))[0usize] -
+                (*(*w).p.as_mut_ptr().offset(k as isize))[0usize];
+        v2[1usize] =
+            (*(*w).p.as_mut_ptr().offset(i as isize))[1usize] -
+                (*(*w).p.as_mut_ptr().offset(k as isize))[1usize];
+        v2[2usize] =
+            (*(*w).p.as_mut_ptr().offset(i as isize))[2usize] -
+                (*(*w).p.as_mut_ptr().offset(k as isize))[2usize];
         VectorNormalize2(v1.as_mut_ptr() as *const vec_t, v1.as_mut_ptr());
         VectorNormalize2(v2.as_mut_ptr() as *const vec_t, v2.as_mut_ptr());
         if ((v1[0usize] * v2[0usize] + v1[1usize] * v2[1usize] +
                  v1[2usize] * v2[2usize]) as libc::c_double) < 0.999f64 {
-            p[nump as usize][0usize] = (*w).p[i as usize][0usize];
-            p[nump as usize][1usize] = (*w).p[i as usize][1usize];
-            p[nump as usize][2usize] = (*w).p[i as usize][2usize];
+            p[nump as usize][0usize] =
+                (*(*w).p.as_mut_ptr().offset(i as isize))[0usize];
+            p[nump as usize][1usize] =
+                (*(*w).p.as_mut_ptr().offset(i as isize))[1usize];
+            p[nump as usize][2usize] =
+                (*(*w).p.as_mut_ptr().offset(i as isize))[2usize];
             nump += 1
         }
         i += 1
@@ -698,9 +801,12 @@ pub unsafe extern "C" fn WindingOnPlaneSide(mut w: *mut winding_t,
     i = 0i32;
     while i < (*w).numpoints {
         d =
-            (*w).p[i as usize][0usize] * *normal.offset(0isize) +
-                (*w).p[i as usize][1usize] * *normal.offset(1isize) +
-                (*w).p[i as usize][2usize] * *normal.offset(2isize) - dist;
+            (*(*w).p.as_mut_ptr().offset(i as isize))[0usize] *
+                *normal.offset(0isize) +
+                (*(*w).p.as_mut_ptr().offset(i as isize))[1usize] *
+                    *normal.offset(1isize) +
+                (*(*w).p.as_mut_ptr().offset(i as isize))[2usize] *
+                    *normal.offset(2isize) - dist;
         if d < -0.1f32 {
             if 0 != front as u64 { return 3i32 }
             back = qtrue
@@ -735,7 +841,7 @@ pub unsafe extern "C" fn WindingBounds(mut w: *mut winding_t,
     while i < (*w).numpoints {
         j = 0i32;
         while j < 3i32 {
-            v = (*w).p[i as usize][j as usize];
+            v = (*(*w).p.as_mut_ptr().offset(i as isize))[j as usize];
             if v < *mins.offset(j as isize) { *mins.offset(j as isize) = v }
             if v > *maxs.offset(j as isize) { *maxs.offset(j as isize) = v }
             j += 1
@@ -770,7 +876,7 @@ pub unsafe extern "C" fn AddWindingToConvexHull(mut w: *mut winding_t,
                                                 libc::c_ulong));
     i = 0i32;
     while i < (*w).numpoints {
-        p = (*w).p[i as usize].as_mut_ptr();
+        p = (*(*w).p.as_mut_ptr().offset(i as isize)).as_mut_ptr();
         j = 0i32;
         while j < numHullPoints {
             k = (j + 1i32) % numHullPoints;
@@ -899,9 +1005,12 @@ pub unsafe extern "C" fn ChopWindingInPlace(mut inout: *mut *mut winding_t,
     i = 0i32;
     while i < (*in_0).numpoints {
         dot =
-            (*in_0).p[i as usize][0usize] * *normal.offset(0isize) +
-                (*in_0).p[i as usize][1usize] * *normal.offset(1isize) +
-                (*in_0).p[i as usize][2usize] * *normal.offset(2isize);
+            (*(*in_0).p.as_mut_ptr().offset(i as isize))[0usize] *
+                *normal.offset(0isize) +
+                (*(*in_0).p.as_mut_ptr().offset(i as isize))[1usize] *
+                    *normal.offset(1isize) +
+                (*(*in_0).p.as_mut_ptr().offset(i as isize))[2usize] *
+                    *normal.offset(2isize);
         dot -= dist;
         dists[i as usize] = dot;
         if dot > epsilon {
@@ -923,25 +1032,32 @@ pub unsafe extern "C" fn ChopWindingInPlace(mut inout: *mut *mut winding_t,
     maxpts = (*in_0).numpoints + 4i32;
     f = AllocWinding(maxpts);
     i = 0i32;
-    while i < (*in_0).numpoints - 1 {
-        p1 = (*in_0).p[i as usize].as_mut_ptr();
+    while i < (*in_0).numpoints {
+        p1 = (*(*in_0).p.as_mut_ptr().offset(i as isize)).as_mut_ptr();
         if sides[i as usize] == 2i32 {
-            (*f).p[(*f).numpoints as usize][0usize] = *p1.offset(0isize);
-            (*f).p[(*f).numpoints as usize][1usize] = *p1.offset(1isize);
-            (*f).p[(*f).numpoints as usize][2usize] = *p1.offset(2isize);
+            (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[0usize] =
+                *p1.offset(0isize);
+            (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[1usize] =
+                *p1.offset(1isize);
+            (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[2usize] =
+                *p1.offset(2isize);
             (*f).numpoints += 1
         } else {
             if sides[i as usize] == 0i32 {
-                (*f).p[(*f).numpoints as usize][0usize] = *p1.offset(0isize);
-                (*f).p[(*f).numpoints as usize][1usize] = *p1.offset(1isize);
-                (*f).p[(*f).numpoints as usize][2usize] = *p1.offset(2isize);
+                (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[0usize]
+                    = *p1.offset(0isize);
+                (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[1usize]
+                    = *p1.offset(1isize);
+                (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[2usize]
+                    = *p1.offset(2isize);
                 (*f).numpoints += 1
             }
             if !(sides[(i + 1i32) as usize] == 2i32 ||
                      sides[(i + 1i32) as usize] == sides[i as usize]) {
                 p2 =
-                    (*in_0).p[((i + 1i32) % (*in_0).numpoints) as
-                                  usize].as_mut_ptr();
+                    (*(*in_0).p.as_mut_ptr().offset(((i + 1i32) %
+                                                         (*in_0).numpoints) as
+                                                        isize)).as_mut_ptr();
                 dot =
                     dists[i as usize] /
                         (dists[i as usize] - dists[(i + 1i32) as usize]);
@@ -961,9 +1077,12 @@ pub unsafe extern "C" fn ChopWindingInPlace(mut inout: *mut *mut winding_t,
                     }
                     j += 1
                 }
-                (*f).p[(*f).numpoints as usize][0usize] = mid[0usize];
-                (*f).p[(*f).numpoints as usize][1usize] = mid[1usize];
-                (*f).p[(*f).numpoints as usize][2usize] = mid[2usize];
+                (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[0usize]
+                    = mid[0usize];
+                (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[1usize]
+                    = mid[1usize];
+                (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[2usize]
+                    = mid[2usize];
                 (*f).numpoints += 1
             }
         }
@@ -990,9 +1109,12 @@ pub unsafe extern "C" fn pw(mut w: *mut winding_t) {
     while i < (*w).numpoints {
         printf(b"(%5.1f, %5.1f, %5.1f)\n\x00" as *const u8 as
                    *const libc::c_char,
-               (*w).p[i as usize][0usize] as libc::c_double,
-               (*w).p[i as usize][1usize] as libc::c_double,
-               (*w).p[i as usize][2usize] as libc::c_double);
+               (*(*w).p.as_mut_ptr().offset(i as isize))[0usize] as
+                   libc::c_double,
+               (*(*w).p.as_mut_ptr().offset(i as isize))[1usize] as
+                   libc::c_double,
+               (*(*w).p.as_mut_ptr().offset(i as isize))[2usize] as
+                   libc::c_double);
         i += 1
     };
 }

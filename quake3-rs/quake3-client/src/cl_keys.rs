@@ -1,5 +1,16 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           extern_types,
+           libc,
+           ptr_wrapping_offset_from)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     use super::{libc};
@@ -27,7 +38,7 @@ pub mod ctype_h {
         pub fn tolower(_: libc::c_int) -> libc::c_int;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     use super::types_h::{__uint8_t};
@@ -37,7 +48,8 @@ pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -229,7 +241,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     //============================================================================
     /*
@@ -417,7 +430,8 @@ VIRTUAL MACHINE
         pub fn Sys_GetClipboardData() -> *mut libc::c_char;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/keys.h"]
+#[header_src =
+      "ioq3/code/client/keys.h"]
 pub mod keys_h {
     /*
 ===========================================================================
@@ -452,7 +466,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::{libc};
     use super::qcommon_h::{field_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/cl_keys.c"]
+#[header_src =
+      "ioq3/code/client/cl_keys.c"]
 pub mod cl_keys_c {
     // will be <= nextHistoryLine
     #[derive
@@ -466,7 +481,8 @@ pub mod cl_keys_c {
     use super::q_shared_h::{qboolean};
     use super::qcommon_h::{field_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/keycodes.h"]
+#[header_src =
+      "ioq3/code/client/keycodes.h"]
 pub mod keycodes_h {
     pub const K_PAD0_RIGHTTRIGGER: unnamed_3 = 364;
     pub const K_PAD0_LEFTTRIGGER: unnamed_3 = 363;
@@ -745,7 +761,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     pub type unnamed_3 = libc::c_uint;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/cgame/cg_public.h"]
+#[header_src =
+      "ioq3/code/cgame/cg_public.h"]
 pub mod cg_public_h {
     //	int (*CG_LastAttacker)( void );
     pub const CG_KEY_EVENT: unnamed_5 = 6;
@@ -792,7 +809,8 @@ functions exported to the main executable
     pub const CG_INIT: unnamed_5 = 0;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/ui/ui_public.h"]
+#[header_src =
+      "ioq3/code/ui/ui_public.h"]
 pub mod ui_public_h {
     //	void	UI_Shutdown( void );
     pub const UI_KEY_EVENT: unnamed_2 = 3;
@@ -826,7 +844,8 @@ pub mod ui_public_h {
     pub const UI_GETAPIVERSION: unnamed_2 = 0;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     /*
 =============================================================================
@@ -1165,7 +1184,7 @@ pub mod opus_h {
   *
   * opus_encode() and opus_encode_float() return the number of bytes actually written to the packet.
   * The return value <b>can be negative</b>, which indicates that an error has occurred. If the return value
-  * is 1 byte, then the packet does not need to be transmitted (DTX).
+  * is 2 bytes or less, then the packet does not need to be transmitted (DTX).
   *
   * Once the encoder state if no longer needed, it can be destroyed with
   *
@@ -1255,18 +1274,18 @@ pub mod opus_h {
         pub type OpusDecoder;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/multi.h"]
+#[header_src = "/usr/include/curl/multi.h"]
 pub mod multi_h {
     pub type CURLM = ();
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/curl.h"]
+#[header_src = "/usr/include/curl/curl.h"]
 pub mod curl_h {
     pub type CURL = ();
     use super::{libc};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_types.h"]
+      "ioq3/code/renderercommon/tr_types.h"]
 pub mod tr_types_h {
     /*
 ** glconfig_t
@@ -1362,7 +1381,8 @@ pub mod stdlib_h {
         pub fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_public.h"]
+#[header_src =
+      "ioq3/code/client/snd_public.h"]
 pub mod snd_public_h {
     extern "C" {
         // stop all sounds and the background track
@@ -3583,16 +3603,18 @@ pub unsafe extern "C" fn CL_LoadConsoleHistory() {
                 i -= 1
             }
         }
-        memmove(&mut historyEditLines[0usize] as *mut field_t as
-                    *mut libc::c_void,
-                &mut historyEditLines[(i + 1i32) as usize] as *mut field_t as
-                    *const libc::c_void,
+        memmove(&mut *historyEditLines.as_mut_ptr().offset(0isize) as
+                    *mut field_t as *mut libc::c_void,
+                &mut *historyEditLines.as_mut_ptr().offset((i + 1i32) as
+                                                               isize) as
+                    *mut field_t as *const libc::c_void,
                 (numLines as
                      libc::c_ulong).wrapping_mul(::std::mem::size_of::<field_t>()
                                                      as libc::c_ulong));
         i = numLines;
         while i < 32i32 {
-            Field_Clear(&mut historyEditLines[i as usize]);
+            Field_Clear(&mut *historyEditLines.as_mut_ptr().offset(i as
+                                                                       isize));
             i += 1
         }
         nextHistoryLine = numLines;

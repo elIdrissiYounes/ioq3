@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -115,7 +123,8 @@ PlaneTypeForNormal
                             right: *mut vec_t, up: *mut vec_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/aasfile.h"]
+#[header_src =
+      "ioq3/code/botlib/aasfile.h"]
 pub mod aasfile_h {
     /*
 ===========================================================================
@@ -307,7 +316,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::{libc};
     use super::q_shared_h::{vec3_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas.h"]
+#[header_src =
+      "ioq3/code/botlib/be_aas.h"]
 pub mod be_aas_h {
     // client movement prediction stop events, stop as soon as:
     // the ground is hit
@@ -411,7 +421,8 @@ typedef struct bsp_trace_s
     use super::q_shared_h::{vec3_t, qboolean};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/botlib.h"]
+#[header_src =
+      "ioq3/code/botlib/botlib.h"]
 pub mod botlib_h {
     //bsp_trace_t hit surface
     #[derive
@@ -522,7 +533,8 @@ pub mod botlib_h {
     use super::q_shared_h::{qboolean, vec3_t, cplane_t, vec_t, fileHandle_t,
                             fsMode_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_def.h"]
+#[header_src =
+      "ioq3/code/botlib/be_aas_def.h"]
 pub mod be_aas_def_h {
     pub type aas_t = aas_s;
     #[derive
@@ -617,7 +629,7 @@ pub mod be_aas_def_h {
         pub time_prev: *mut aas_routingcache_s,
         pub time_next: *mut aas_routingcache_s,
         pub reachabilities: *mut libc::c_uchar,
-        pub traveltimes: [libc::c_ushort; 1],
+        pub traveltimes: [libc::c_ushort; 0],
     }
     pub type aas_reversedreachability_t = aas_reversedreachability_s;
     //reversed area reachability
@@ -772,7 +784,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::be_aas_h::{aas_entityinfo_t};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_reach.c"]
+      "ioq3/code/botlib/be_aas_reach.c"]
 pub mod be_aas_reach_c {
     pub type aas_lreachability_t = aas_lreachability_s;
     //linked reachability
@@ -829,7 +841,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn Sys_MilliSeconds() -> libc::c_int;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -865,7 +877,8 @@ pub mod stdlib_h {
         pub fn abs(_: libc::c_int) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_log.h"]
+#[header_src =
+      "ioq3/code/botlib/l_log.h"]
 pub mod l_log_h {
     use super::{libc};
     extern "C" {
@@ -874,7 +887,8 @@ pub mod l_log_h {
         pub fn Log_Write(fmt: *mut libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_memory.h"]
+#[header_src =
+      "ioq3/code/botlib/l_memory.h"]
 pub mod l_memory_h {
     use super::{libc};
     extern "C" {
@@ -886,7 +900,8 @@ pub mod l_memory_h {
         pub fn FreeMemory(ptr: *mut libc::c_void);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_libvar.h"]
+#[header_src =
+      "ioq3/code/botlib/l_libvar.h"]
 pub mod l_libvar_h {
     use super::{libc};
     extern "C" {
@@ -900,7 +915,7 @@ pub mod l_libvar_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_sample.h"]
+      "ioq3/code/botlib/be_aas_sample.h"]
 pub mod be_aas_sample_h {
     use super::{libc};
     use super::be_aas_h::{aas_trace_t};
@@ -937,14 +952,14 @@ pub mod be_aas_sample_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_reach.h"]
+      "ioq3/code/botlib/be_aas_reach.h"]
 pub mod be_aas_reach_h {
     use super::{libc};
     use super::q_shared_h::{vec_t};
     use super::be_aas_def_h::{aas_link_t};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_main.h"]
+      "ioq3/code/botlib/be_aas_main.h"]
 pub mod be_aas_main_h {
     use super::be_aas_def_h::{aas_t};
     extern "C" {
@@ -982,7 +997,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_variadic.h"]
+      "ioq3/code/botlib/be_variadic.h"]
 pub mod be_variadic_h {
     use super::{libc};
     extern "C" {
@@ -992,7 +1007,7 @@ pub mod be_variadic_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_move.h"]
+      "ioq3/code/botlib/be_aas_move.h"]
 pub mod be_aas_move_h {
     use super::{libc};
     use super::be_aas_h::{aas_clientmove_s};
@@ -1081,7 +1096,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                                maxs: *mut vec_t) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_bsp.h"]
+#[header_src =
+      "ioq3/code/botlib/be_aas_bsp.h"]
 pub mod be_aas_bsp_h {
     use super::{libc};
     use super::q_shared_h::{vec_t};
@@ -1131,7 +1147,7 @@ pub mod be_aas_bsp_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_debug.h"]
+      "ioq3/code/botlib/be_aas_debug.h"]
 pub mod be_aas_debug_h {
     use super::q_shared_h::{vec_t};
     use super::{libc};

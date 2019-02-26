@@ -1,16 +1,27 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           extern_types,
+           label_break_value,
+           libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     pub type __int32_t = libc::c_int;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"]
+#[header_src = "/usr/include/bits/stdint-intn.h"]
 pub mod stdint_intn_h {
     pub type int32_t = __int32_t;
     use super::types_h::{__int32_t};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     use super::types_h::{__uint8_t};
@@ -20,7 +31,8 @@ pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -557,7 +569,8 @@ default values.
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     //============================================================================
     /*
@@ -769,7 +782,8 @@ VIRTUAL MACHINE
         pub fn Sys_LowPhysicalMemory() -> qboolean;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/cgame/cg_public.h"]
+#[header_src =
+      "ioq3/code/cgame/cg_public.h"]
 pub mod cg_public_h {
     //	void (*CG_Shutdown)( void );
 	// opportunity to flush and close any open files
@@ -972,7 +986,7 @@ functions exported to the main executable
     use super::q_shared_h::{byte, playerState_t, entityState_t};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_types.h"]
+      "ioq3/code/renderercommon/tr_types.h"]
 pub mod tr_types_h {
     /*
 ===========================================================================
@@ -1152,7 +1166,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::{libc};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_public.h"]
+      "ioq3/code/renderercommon/tr_public.h"]
 pub mod tr_public_h {
     /*
 ===========================================================================
@@ -1305,12 +1319,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                             stereoFrame_t};
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/curl.h"]
+#[header_src = "/usr/include/curl/curl.h"]
 pub mod curl_h {
     pub type CURL = ();
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/multi.h"]
+#[header_src = "/usr/include/curl/multi.h"]
 pub mod multi_h {
     pub type CURLM = ();
     use super::{libc};
@@ -1456,7 +1470,7 @@ pub mod opus_h {
   *
   * opus_encode() and opus_encode_float() return the number of bytes actually written to the packet.
   * The return value <b>can be negative</b>, which indicates that an error has occurred. If the return value
-  * is 1 byte, then the packet does not need to be transmitted (DTX).
+  * is 2 bytes or less, then the packet does not need to be transmitted (DTX).
   *
   * Once the encoder state if no longer needed, it can be destroyed with
   *
@@ -1604,7 +1618,8 @@ pub mod opus_h {
          -> *mut OpusDecoder;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     /*
 ===========================================================================
@@ -1921,7 +1936,8 @@ demo through a file.
         pub fn Key_SetCatcher(catcher: libc::c_int);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/botlib.h"]
+#[header_src =
+      "ioq3/code/botlib/botlib.h"]
 pub mod botlib_h {
     pub type botlib_export_t = botlib_export_s;
     //bot AI library imported functions
@@ -2602,7 +2618,7 @@ pub mod assert_h {
                              __function: *const libc::c_char) -> !;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -2653,7 +2669,8 @@ pub mod stdlib_h {
         pub fn abs(_: libc::c_int) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_public.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_public.h"]
 pub mod cm_public_h {
     use super::{libc};
     use super::q_shared_h::{qboolean, clipHandle_t, vec_t, trace_t};
@@ -2715,7 +2732,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                                       capsule: libc::c_int);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/keys.h"]
+#[header_src =
+      "ioq3/code/client/keys.h"]
 pub mod keys_h {
     use super::q_shared_h::{qboolean};
     use super::{libc};
@@ -2726,7 +2744,8 @@ pub mod keys_h {
         pub fn Key_GetKey(binding: *const libc::c_char) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_public.h"]
+#[header_src =
+      "ioq3/code/client/snd_public.h"]
 pub mod snd_public_h {
     use super::q_shared_h::{vec_t, sfxHandle_t, qboolean, vec3_t};
     use super::{libc};
@@ -2772,7 +2791,8 @@ pub mod snd_public_h {
                                compressed: qboolean) -> sfxHandle_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/cl_cgame.c"]
+#[header_src =
+      "ioq3/code/client/cl_cgame.c"]
 pub mod cl_cgame_c {
     use super::stdint_h::{intptr_t};
     use super::botlib_h::{botlib_export_t};
@@ -2808,7 +2828,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/client/libmumblelink.h"]
+      "ioq3/code/client/libmumblelink.h"]
 pub mod libmumblelink_h {
     use super::{libc};
     extern "C" {
@@ -3971,7 +3991,8 @@ pub unsafe extern "C" fn CL_GetSnapshot(mut snapshotNumber: libc::c_int,
     }
     if cl.snap.messageNum - snapshotNumber >= 32i32 { return qfalse }
     clSnap =
-        &mut cl.snapshots[(snapshotNumber & 32i32 - 1i32) as usize] as
+        &mut *cl.snapshots.as_mut_ptr().offset((snapshotNumber & 32i32 - 1i32)
+                                                   as isize) as
             *mut clSnapshot_t;
     if 0 == (*clSnap).valid as u64 { return qfalse }
     if cl.parseEntitiesNum - (*clSnap).parseEntitiesNum >= 32i32 * 256i32 {

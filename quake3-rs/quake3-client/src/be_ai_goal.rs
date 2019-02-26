@@ -1,10 +1,21 @@
-use libc;
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           const_slice_as_ptr,
+           custom_attribute,
+           libc)]
+extern crate libc;
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -123,7 +134,8 @@ PlaneTypeForNormal
                           destsize: libc::c_int);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_libvar.h"]
+#[header_src =
+      "ioq3/code/botlib/l_libvar.h"]
 pub mod l_libvar_h {
     /*
 ===========================================================================
@@ -188,7 +200,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                          value: *const libc::c_char);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_script.h"]
+#[header_src =
+      "ioq3/code/botlib/l_script.h"]
 pub mod l_script_h {
     /*
 ===========================================================================
@@ -309,7 +322,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn StripDoubleQuotes(string: *mut libc::c_char);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_precomp.h"]
+#[header_src =
+      "ioq3/code/botlib/l_precomp.h"]
 pub mod l_precomp_h {
     /*
 ===========================================================================
@@ -408,7 +422,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn FreeSource(source: *mut source_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_struct.h"]
+#[header_src =
+      "ioq3/code/botlib/l_struct.h"]
 pub mod l_struct_h {
     /*
 ===========================================================================
@@ -482,7 +497,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                              structure: *mut libc::c_char) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas.h"]
+#[header_src =
+      "ioq3/code/botlib/be_aas.h"]
 pub mod be_aas_h {
     /* Defined in botlib.h
 
@@ -543,7 +559,8 @@ typedef struct bsp_trace_s
     use super::{libc};
     use super::q_shared_h::{vec3_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ai_goal.h"]
+#[header_src =
+      "ioq3/code/botlib/be_ai_goal.h"]
 pub mod be_ai_goal_h {
     /*
 ===========================================================================
@@ -593,7 +610,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::q_shared_h::{vec3_t, vec_t};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/botlib.h"]
+#[header_src =
+      "ioq3/code/botlib/botlib.h"]
 pub mod botlib_h {
     //bsp_trace_t hit surface
     #[derive
@@ -705,7 +723,7 @@ pub mod botlib_h {
                             fsMode_t};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ai_weight.h"]
+      "ioq3/code/botlib/be_ai_weight.h"]
 pub mod be_ai_weight_h {
     /*
 ===========================================================================
@@ -796,7 +814,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                                        configout: *mut weightconfig_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ai_goal.c"]
+#[header_src =
+      "ioq3/code/botlib/be_ai_goal.c"]
 pub mod be_ai_goal_c {
     pub type bot_goalstate_t = bot_goalstate_s;
     //goal state
@@ -942,7 +961,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::l_libvar_h::{libvar_t};
     use super::l_struct_h::{structdef_t, fielddef_t};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -968,7 +987,8 @@ pub mod string_h {
          -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_memory.h"]
+#[header_src =
+      "ioq3/code/botlib/l_memory.h"]
 pub mod l_memory_h {
     use super::{libc};
     extern "C" {
@@ -983,7 +1003,8 @@ pub mod l_memory_h {
         pub fn FreeMemory(ptr: *mut libc::c_void);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_log.h"]
+#[header_src =
+      "ioq3/code/botlib/l_log.h"]
 pub mod l_log_h {
     use super::{libc};
     extern "C" {
@@ -992,7 +1013,8 @@ pub mod l_log_h {
         pub fn Log_Write(fmt: *mut libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_variadic.h"]
+#[header_src =
+      "ioq3/code/botlib/l_variadic.h"]
 pub mod l_variadic_h {
     use super::l_precomp_h::{source_t};
     use super::{libc};
@@ -1004,7 +1026,7 @@ pub mod l_variadic_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_main.h"]
+      "ioq3/code/botlib/be_aas_main.h"]
 pub mod be_aas_main_h {
     use super::{libc};
     extern "C" {
@@ -1017,7 +1039,7 @@ pub mod be_aas_main_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_entity.h"]
+      "ioq3/code/botlib/be_aas_entity.h"]
 pub mod be_aas_entity_h {
     use super::{libc};
     use super::be_aas_h::{aas_entityinfo_t};
@@ -1038,7 +1060,7 @@ pub mod be_aas_entity_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_sample.h"]
+      "ioq3/code/botlib/be_aas_sample.h"]
 pub mod be_aas_sample_h {
     use super::{libc};
     use super::q_shared_h::{vec_t};
@@ -1084,7 +1106,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_reach.h"]
+      "ioq3/code/botlib/be_aas_reach.h"]
 pub mod be_aas_reach_h {
     use super::{libc};
     use super::q_shared_h::{vec_t};
@@ -1139,7 +1161,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_route.h"]
+      "ioq3/code/botlib/be_aas_route.h"]
 pub mod be_aas_route_h {
     use super::{libc};
     use super::q_shared_h::{vec_t};
@@ -1153,7 +1175,8 @@ pub mod be_aas_route_h {
          -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_bsp.h"]
+#[header_src =
+      "ioq3/code/botlib/be_aas_bsp.h"]
 pub mod be_aas_bsp_h {
     use super::botlib_h::{bsp_trace_t};
     use super::q_shared_h::{vec_t};
@@ -1225,7 +1248,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_move.h"]
+      "ioq3/code/botlib/be_aas_move.h"]
 pub mod be_aas_move_h {
     use super::{libc};
     use super::q_shared_h::{vec_t};
@@ -1237,7 +1260,7 @@ pub mod be_aas_move_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_interface.h"]
+      "ioq3/code/botlib/be_interface.h"]
 pub mod be_interface_h {
     use super::botlib_h::{botlib_import_t};
     use super::{libc};
@@ -1249,7 +1272,8 @@ pub mod be_interface_h {
         pub static mut botDeveloper: libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ai_move.h"]
+#[header_src =
+      "ioq3/code/botlib/be_ai_move.h"]
 pub mod be_ai_move_h {
     use super::{libc};
     use super::q_shared_h::{vec_t};
@@ -1413,7 +1437,8 @@ pub unsafe extern "C" fn BotPushGoal(mut goalstate: libc::c_int,
         return
     }
     (*gs).goalstacktop += 1;
-    memcpy(&mut (*gs).goalstack[(*gs).goalstacktop as usize] as
+    memcpy(&mut *(*gs).goalstack.as_mut_ptr().offset((*gs).goalstacktop as
+                                                         isize) as
                *mut bot_goal_t as *mut libc::c_void,
            goal as *const libc::c_void,
            ::std::mem::size_of::<bot_goal_t>() as libc::c_ulong);
@@ -1511,7 +1536,8 @@ pub unsafe extern "C" fn BotGetTopGoal(mut goalstate: libc::c_int,
     if gs.is_null() { return qfalse as libc::c_int }
     if 0 == (*gs).goalstacktop { return qfalse as libc::c_int }
     memcpy(goal as *mut libc::c_void,
-           &mut (*gs).goalstack[(*gs).goalstacktop as usize] as
+           &mut *(*gs).goalstack.as_mut_ptr().offset((*gs).goalstacktop as
+                                                         isize) as
                *mut bot_goal_t as *const libc::c_void,
            ::std::mem::size_of::<bot_goal_t>() as libc::c_ulong);
     return qtrue as libc::c_int;
@@ -1526,7 +1552,8 @@ pub unsafe extern "C" fn BotGetSecondGoal(mut goalstate: libc::c_int,
     if gs.is_null() { return qfalse as libc::c_int }
     if (*gs).goalstacktop <= 1i32 { return qfalse as libc::c_int }
     memcpy(goal as *mut libc::c_void,
-           &mut (*gs).goalstack[((*gs).goalstacktop - 1i32) as usize] as
+           &mut *(*gs).goalstack.as_mut_ptr().offset(((*gs).goalstacktop -
+                                                          1i32) as isize) as
                *mut bot_goal_t as *const libc::c_void,
            ::std::mem::size_of::<bot_goal_t>() as libc::c_ulong);
     return qtrue as libc::c_int;

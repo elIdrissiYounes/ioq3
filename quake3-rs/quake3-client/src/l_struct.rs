@@ -1,17 +1,24 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __off_t = libc::c_long;
     pub type __off64_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/libio.h"]
-pub mod libio_h {
+#[header_src = "/usr/include/bits/types/struct_FILE.h"]
+pub mod struct_FILE_h {
     #[derive
     ( Copy , Clone )]
     #[repr(C)]
@@ -38,33 +45,31 @@ pub mod libio_h {
         pub _shortbuf: [libc::c_char; 1],
         pub _lock: *mut libc::c_void,
         pub _offset: __off64_t,
-        pub __pad1: *mut libc::c_void,
-        pub __pad2: *mut libc::c_void,
-        pub __pad3: *mut libc::c_void,
-        pub __pad4: *mut libc::c_void,
+        pub _codecvt: *mut _IO_codecvt,
+        pub _wide_data: *mut _IO_wide_data,
+        pub _freeres_list: *mut _IO_FILE,
+        pub _freeres_buf: *mut libc::c_void,
         pub __pad5: size_t,
         pub _mode: libc::c_int,
         pub _unused2: [libc::c_char; 20],
     }
     pub type _IO_lock_t = ();
-    #[derive
-    ( Copy , Clone )]
-    #[repr(C)]
-    pub struct _IO_marker {
-        pub _next: *mut _IO_marker,
-        pub _sbuf: *mut _IO_FILE,
-        pub _pos: libc::c_int,
-    }
     use super::{libc};
     use super::types_h::{__off_t, __off64_t};
     use super::stddef_h::{size_t};
+    extern "C" {
+        pub type _IO_wide_data;
+        pub type _IO_codecvt;
+        pub type _IO_marker;
+    }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types/FILE.h"]
+#[header_src = "/usr/include/bits/types/FILE.h"]
 pub mod FILE_h {
     pub type FILE = _IO_FILE;
-    use super::libio_h::{_IO_FILE};
+    use super::struct_FILE_h::{_IO_FILE};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     pub type qboolean = libc::c_uint;
     pub const qtrue: qboolean = 1;
@@ -76,7 +81,8 @@ pub mod q_shared_h {
                            fmt: *const libc::c_char, ...) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_script.h"]
+#[header_src =
+      "ioq3/code/botlib/l_script.h"]
 pub mod l_script_h {
     /*
 ===========================================================================
@@ -200,7 +206,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn StripSingleQuotes(string: *mut libc::c_char);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_precomp.h"]
+#[header_src =
+      "ioq3/code/botlib/l_precomp.h"]
 pub mod l_precomp_h {
     /*
 ===========================================================================
@@ -301,7 +308,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn PC_UnreadLastToken(source: *mut source_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_struct.h"]
+#[header_src =
+      "ioq3/code/botlib/l_struct.h"]
 pub mod l_struct_h {
     /*
 ===========================================================================
@@ -394,7 +402,8 @@ pub mod string_h {
         pub fn strlen(_: *const libc::c_char) -> libc::c_ulong;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_variadic.h"]
+#[header_src =
+      "ioq3/code/botlib/l_variadic.h"]
 pub mod l_variadic_h {
     use super::l_precomp_h::{source_t};
     use super::{libc};
@@ -405,7 +414,8 @@ pub mod l_variadic_h {
                            str: *mut libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_struct.c"]
+#[header_src =
+      "ioq3/code/botlib/l_struct.c"]
 pub mod l_struct_c {
     use super::{libc};
     use super::l_precomp_h::{source_t};
@@ -415,7 +425,8 @@ pub mod l_struct_c {
 }
 use self::types_h::{__off_t, __off64_t};
 use self::stddef_h::{size_t};
-use self::libio_h::{_IO_FILE, _IO_lock_t, _IO_marker};
+use self::struct_FILE_h::{_IO_FILE, _IO_lock_t, _IO_wide_data, _IO_codecvt,
+                          _IO_marker};
 use self::FILE_h::{FILE};
 use self::q_shared_h::{qboolean, qtrue, qfalse, Com_sprintf};
 use self::l_script_h::{punctuation_s, punctuation_t, token_s, token_t,

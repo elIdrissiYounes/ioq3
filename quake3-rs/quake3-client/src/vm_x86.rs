@@ -1,22 +1,29 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     pub type __int32_t = libc::c_int;
     pub type __off_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"]
+#[header_src = "/usr/include/bits/stdint-intn.h"]
 pub mod stdint_intn_h {
     pub type int32_t = __int32_t;
     use super::types_h::{__int32_t};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     use super::types_h::{__uint8_t};
@@ -26,7 +33,8 @@ pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -103,7 +111,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qfiles.h"]
+#[header_src =
+      "ioq3/code/qcommon/qfiles.h"]
 pub mod qfiles_h {
     /*
 ===========================================================================
@@ -156,7 +165,8 @@ QVM files
     }
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/vm_local.h"]
+#[header_src =
+      "ioq3/code/qcommon/vm_local.h"]
 pub mod vm_local_h {
     #[derive
     ( Copy , Clone )]
@@ -197,7 +207,7 @@ pub mod vm_local_h {
         pub next: *mut vmSymbol_s,
         pub symValue: libc::c_int,
         pub profileCount: libc::c_int,
-        pub symName: [libc::c_char; 1],
+        pub symName: [libc::c_char; 0],
     }
     /*
 ===========================================================================
@@ -306,7 +316,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn VM_BlockCopy(dest: libc::c_uint, src: libc::c_uint, n: size_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ==============================================================
@@ -327,7 +338,8 @@ VIRTUAL MACHINE
         pub fn Z_Free(ptr: *mut libc::c_void);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/vm_x86.c"]
+#[header_src =
+      "ioq3/code/qcommon/vm_x86.c"]
 pub mod vm_x86_c {
     pub type ELastCommand = libc::c_uint;
     pub const LAST_COMMAND_SUB_BL_2: ELastCommand = 3;
@@ -355,7 +367,7 @@ pub mod string_h {
          -> *mut libc::c_void;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/sys/mman.h"]
+#[header_src = "/usr/include/sys/mman.h"]
 pub mod mman_h {
     use super::{libc};
     use super::stddef_h::{size_t};

@@ -1,5 +1,16 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           extern_types,
+           label_break_value,
+           libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     pub type __int16_t = libc::c_short;
@@ -7,19 +18,20 @@ pub mod types_h {
     pub type __int32_t = libc::c_int;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"]
+#[header_src = "/usr/include/bits/stdint-intn.h"]
 pub mod stdint_intn_h {
     pub type int16_t = __int16_t;
     pub type int32_t = __int32_t;
     use super::types_h::{__int16_t, __int32_t};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     pub type uint16_t = __uint16_t;
     use super::types_h::{__uint8_t, __uint16_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -401,7 +413,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ===========================================================================
@@ -663,7 +676,7 @@ modules of the program.
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_types.h"]
+      "ioq3/code/renderercommon/tr_types.h"]
 pub mod tr_types_h {
     /*
 ** glconfig_t
@@ -731,50 +744,18 @@ pub mod tr_types_h {
     use super::{libc};
     use super::q_shared_h::{qboolean};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/curl.h"]
+#[header_src = "/usr/include/curl/curl.h"]
 pub mod curl_h {
     pub type CURL = ();
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/multi.h"]
+#[header_src = "/usr/include/curl/multi.h"]
 pub mod multi_h {
     pub type CURLM = ();
     use super::{libc};
 }
 #[header_src = "/usr/include/opus/opus_types.h"]
 pub mod opus_types_h {
-    /* (C) COPYRIGHT 1994-2002 Xiph.Org Foundation */
-/* Modified by Jean-Marc Valin */
-/*
-   Redistribution and use in source and binary forms, with or without
-   modification, are permitted provided that the following conditions
-   are met:
-
-   - Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-
-   - Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-
-   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
-   OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-/* opus_types.h based on ogg_types.h from libogg */
-    /* *
-   @file opus_types.h
-   @brief Opus reference implementation types
-*/
-    /* Use the real stdint.h if it's there (taken from Paul Hsieh's pstdint.h) */
     pub type opus_int16 = int16_t;
     pub type opus_int32 = int32_t;
     use super::stdint_intn_h::{int16_t, int32_t};
@@ -915,7 +896,7 @@ pub mod opus_h {
   *
   * opus_encode() and opus_encode_float() return the number of bytes actually written to the packet.
   * The return value <b>can be negative</b>, which indicates that an error has occurred. If the return value
-  * is 1 byte, then the packet does not need to be transmitted (DTX).
+  * is 2 bytes or less, then the packet does not need to be transmitted (DTX).
   *
   * Once the encoder state if no longer needed, it can be destroyed with
   *
@@ -1040,7 +1021,8 @@ pub mod opus_h {
                                 request: libc::c_int, ...) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     /*
 ===========================================================================
@@ -1353,7 +1335,8 @@ pub mod stdlib_h {
         pub fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_public.h"]
+#[header_src =
+      "ioq3/code/client/snd_public.h"]
 pub mod snd_public_h {
     use super::{libc};
     use super::q_shared_h::{byte};
@@ -1367,7 +1350,8 @@ pub mod snd_public_h {
                             volume: libc::c_float, entityNum: libc::c_int);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/cl_parse.c"]
+#[header_src =
+      "ioq3/code/client/cl_parse.c"]
 pub mod cl_parse_c {
     use super::qcommon_h::{msg_t};
     use super::client_h::{clSnapshot_t};
@@ -1965,7 +1949,9 @@ pub unsafe extern "C" fn CL_ParseSnapshot(mut msg: *mut msg_t) {
         clc.demowaiting = qfalse
     } else {
         old =
-            &mut cl.snapshots[(newSnap.deltaNum & 32i32 - 1i32) as usize] as
+            &mut *cl.snapshots.as_mut_ptr().offset((newSnap.deltaNum &
+                                                        32i32 - 1i32) as
+                                                       isize) as
                 *mut clSnapshot_t;
         if 0 == (*old).valid as u64 {
             Com_Printf(b"Delta from invalid frame (not supposed to happen!).\n\x00"
@@ -2057,8 +2043,11 @@ pub unsafe extern "C" fn CL_ParsePacketEntities(mut msg: *mut msg_t,
         oldnum = 99999i32
     } else {
         oldstate =
-            &mut cl.parseEntities[((*oldframe).parseEntitiesNum + oldindex &
-                                       32i32 * 256i32 - 1i32) as usize] as
+            &mut *cl.parseEntities.as_mut_ptr().offset(((*oldframe).parseEntitiesNum
+                                                            + oldindex &
+                                                            32i32 * 256i32 -
+                                                                1i32) as
+                                                           isize) as
                 *mut entityState_t;
         oldnum = (*oldstate).number
     }
@@ -2081,10 +2070,15 @@ pub unsafe extern "C" fn CL_ParsePacketEntities(mut msg: *mut msg_t,
                 oldnum = 99999i32
             } else {
                 oldstate =
-                    &mut cl.parseEntities[((*oldframe).parseEntitiesNum +
-                                               oldindex &
-                                               32i32 * 256i32 - 1i32) as
-                                              usize] as *mut entityState_t;
+                    &mut *cl.parseEntities.as_mut_ptr().offset(((*oldframe).parseEntitiesNum
+                                                                    + oldindex
+                                                                    &
+                                                                    32i32 *
+                                                                        256i32
+                                                                        -
+                                                                        1i32)
+                                                                   as isize)
+                        as *mut entityState_t;
                 oldnum = (*oldstate).number
             }
         }
@@ -2099,10 +2093,15 @@ pub unsafe extern "C" fn CL_ParsePacketEntities(mut msg: *mut msg_t,
                 oldnum = 99999i32
             } else {
                 oldstate =
-                    &mut cl.parseEntities[((*oldframe).parseEntitiesNum +
-                                               oldindex &
-                                               32i32 * 256i32 - 1i32) as
-                                              usize] as *mut entityState_t;
+                    &mut *cl.parseEntities.as_mut_ptr().offset(((*oldframe).parseEntitiesNum
+                                                                    + oldindex
+                                                                    &
+                                                                    32i32 *
+                                                                        256i32
+                                                                        -
+                                                                        1i32)
+                                                                   as isize)
+                        as *mut entityState_t;
                 oldnum = (*oldstate).number
             }
         } else {
@@ -2112,7 +2111,10 @@ pub unsafe extern "C" fn CL_ParsePacketEntities(mut msg: *mut msg_t,
                                *const libc::c_char, (*msg).readcount, newnum);
             }
             CL_DeltaEntity(msg, newframe, newnum,
-                           &mut cl.entityBaselines[newnum as usize], qfalse);
+                           &mut *cl.entityBaselines.as_mut_ptr().offset(newnum
+                                                                            as
+                                                                            isize),
+                           qfalse);
         }
     }
     while oldnum != 99999i32 {
@@ -2126,9 +2128,12 @@ pub unsafe extern "C" fn CL_ParsePacketEntities(mut msg: *mut msg_t,
             oldnum = 99999i32
         } else {
             oldstate =
-                &mut cl.parseEntities[((*oldframe).parseEntitiesNum + oldindex
-                                           & 32i32 * 256i32 - 1i32) as usize]
-                    as *mut entityState_t;
+                &mut *cl.parseEntities.as_mut_ptr().offset(((*oldframe).parseEntitiesNum
+                                                                + oldindex &
+                                                                32i32 * 256i32
+                                                                    - 1i32) as
+                                                               isize) as
+                    *mut entityState_t;
             oldnum = (*oldstate).number
         }
     };
@@ -2156,8 +2161,10 @@ pub unsafe extern "C" fn CL_DeltaEntity(mut msg: *mut msg_t,
                                         mut unchanged: qboolean) {
     let mut state: *mut entityState_t = 0 as *mut entityState_t;
     state =
-        &mut cl.parseEntities[(cl.parseEntitiesNum & 32i32 * 256i32 - 1i32) as
-                                  usize] as *mut entityState_t;
+        &mut *cl.parseEntities.as_mut_ptr().offset((cl.parseEntitiesNum &
+                                                        32i32 * 256i32 - 1i32)
+                                                       as isize) as
+            *mut entityState_t;
     if 0 != unchanged as u64 {
         *state = *old
     } else { MSG_ReadDeltaEntity(msg, old, state, newnum); }
@@ -2265,8 +2272,8 @@ pub unsafe extern "C" fn CL_ParseGamestate(mut msg: *mut msg_t) {
                    0i32,
                    ::std::mem::size_of::<entityState_t>() as libc::c_ulong);
             es =
-                &mut cl.entityBaselines[newnum as usize] as
-                    *mut entityState_t;
+                &mut *cl.entityBaselines.as_mut_ptr().offset(newnum as isize)
+                    as *mut entityState_t;
             MSG_ReadDeltaEntity(msg, &mut nullstate, es, newnum);
         } else {
             Com_Error(ERR_DROP as libc::c_int,

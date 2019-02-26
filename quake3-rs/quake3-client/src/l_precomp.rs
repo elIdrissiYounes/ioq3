@@ -1,20 +1,31 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __time_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types/time_t.h"]
+#[header_src = "/usr/include/bits/types/time_t.h"]
 pub mod time_t_h {
     pub type time_t = __time_t;
     use super::types_h::{__time_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -170,7 +181,8 @@ PlaneTypeForNormal
          -> !;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/botlib.h"]
+#[header_src =
+      "ioq3/code/botlib/botlib.h"]
 pub mod botlib_h {
     //bsp_trace_t hit surface
     #[derive
@@ -281,7 +293,8 @@ pub mod botlib_h {
     use super::q_shared_h::{qboolean, vec3_t, cplane_t, vec_t, fileHandle_t,
                             fsMode_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_script.h"]
+#[header_src =
+      "ioq3/code/botlib/l_script.h"]
 pub mod l_script_h {
     /*
 ===========================================================================
@@ -422,7 +435,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn PS_SetBaseFolder(path: *mut libc::c_char);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_precomp.h"]
+#[header_src =
+      "ioq3/code/botlib/l_precomp.h"]
 pub mod l_precomp_h {
     /*
 ===========================================================================
@@ -502,7 +516,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::l_script_h::{token_t, script_t, punctuation_t};
     use super::q_shared_h::{pc_token_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_precomp.c"]
+#[header_src =
+      "ioq3/code/botlib/l_precomp.c"]
 pub mod l_precomp_c {
     pub type directive_t = directive_s;
     /*
@@ -596,7 +611,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::l_precomp_h::{source_t, define_t};
     use super::l_script_h::{token_t, script_t};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -664,7 +679,7 @@ pub mod time_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_interface.h"]
+      "ioq3/code/botlib/be_interface.h"]
 pub mod be_interface_h {
     use super::botlib_h::{botlib_import_t};
     extern "C" {
@@ -672,7 +687,8 @@ pub mod be_interface_h {
         pub static mut botimport: botlib_import_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_memory.h"]
+#[header_src =
+      "ioq3/code/botlib/l_memory.h"]
 pub mod l_memory_h {
     use super::{libc};
     extern "C" {
@@ -717,7 +733,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn FreeMemory(ptr: *mut libc::c_void);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_variadic.h"]
+#[header_src =
+      "ioq3/code/botlib/l_variadic.h"]
 pub mod l_variadic_h {
     use super::l_precomp_h::{source_t};
     use super::{libc};
@@ -732,7 +749,8 @@ pub mod l_variadic_h {
                              str: *mut libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_log.h"]
+#[header_src =
+      "ioq3/code/botlib/l_log.h"]
 pub mod l_log_h {
     use super::{libc};
     extern "C" {
@@ -1110,7 +1128,8 @@ pub unsafe extern "C" fn PC_MergeTokens(mut t1: *mut token_t,
         (*t1).string[strlen((*t1).string.as_mut_ptr()).wrapping_sub(1i32 as
                                                                         libc::c_ulong)
                          as usize] = '\u{0}' as i32 as libc::c_char;
-        strcat((*t1).string.as_mut_ptr(), &mut (*t2).string[1usize]);
+        strcat((*t1).string.as_mut_ptr(),
+               &mut *(*t2).string.as_mut_ptr().offset(1isize));
         return qtrue as libc::c_int
     }
     return qfalse as libc::c_int;
@@ -1968,7 +1987,10 @@ pub unsafe extern "C" fn PC_EvaluateTokens(mut source: *mut source_t,
                     } else {
                         let fresh3 = numvalues;
                         numvalues = numvalues + 1;
-                        v = &mut value_heap[fresh3 as usize] as *mut value_t;
+                        v =
+                            &mut *value_heap.as_mut_ptr().offset(fresh3 as
+                                                                     isize) as
+                                *mut value_t;
                         if !PC_FindHashedDefine((*source).definehash,
                                                 (*t).string.as_mut_ptr()).is_null()
                            {
@@ -2026,7 +2048,9 @@ pub unsafe extern "C" fn PC_EvaluateTokens(mut source: *mut source_t,
                 } else {
                     let fresh4 = numvalues;
                     numvalues = numvalues + 1;
-                    v = &mut value_heap[fresh4 as usize] as *mut value_t;
+                    v =
+                        &mut *value_heap.as_mut_ptr().offset(fresh4 as isize)
+                            as *mut value_t;
                     if 0 != negativevalue {
                         (*v).intvalue =
                             -((*t).intvalue as libc::c_int) as libc::c_long;
@@ -2167,8 +2191,10 @@ pub unsafe extern "C" fn PC_EvaluateTokens(mut source: *mut source_t,
                                     let fresh5 = numoperators;
                                     numoperators = numoperators + 1;
                                     o =
-                                        &mut operator_heap[fresh5 as usize] as
-                                            *mut operator_t;
+                                        &mut *operator_heap.as_mut_ptr().offset(fresh5
+                                                                                    as
+                                                                                    isize)
+                                            as *mut operator_t;
                                     (*o).operator = (*t).subtype;
                                     (*o).priority =
                                         PC_OperatorPriority((*t).subtype);

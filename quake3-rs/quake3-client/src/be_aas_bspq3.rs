@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -108,7 +116,8 @@ PlaneTypeForNormal
     pub type cplane_t = cplane_s;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_script.h"]
+#[header_src =
+      "ioq3/code/botlib/l_script.h"]
 pub mod l_script_h {
     /*
 ===========================================================================
@@ -248,7 +257,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn FreeScript(script: *mut script_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/botlib.h"]
+#[header_src =
+      "ioq3/code/botlib/botlib.h"]
 pub mod botlib_h {
     //bsp_trace_t hit surface
     #[derive
@@ -360,7 +370,7 @@ pub mod botlib_h {
                             fsMode_t};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_bspq3.c"]
+      "ioq3/code/botlib/be_aas_bspq3.c"]
 pub mod be_aas_bspq3_c {
     pub type bsp_t = bsp_s;
     //id Software BSP data
@@ -429,7 +439,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub static mut botimport: botlib_import_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_def.h"]
+#[header_src =
+      "ioq3/code/botlib/be_aas_def.h"]
 pub mod be_aas_def_h {
     //structure to link entities to leaves and leaves to entities
     #[derive
@@ -488,7 +499,8 @@ pub mod stdlib_h {
         pub fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_memory.h"]
+#[header_src =
+      "ioq3/code/botlib/l_memory.h"]
 pub mod l_memory_h {
     use super::{libc};
     extern "C" {
@@ -504,7 +516,8 @@ pub mod l_memory_h {
         pub fn FreeMemory(ptr: *mut libc::c_void);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_variadic.h"]
+#[header_src =
+      "ioq3/code/botlib/l_variadic.h"]
 pub mod l_variadic_h {
     use super::l_script_h::{script_t};
     use super::{libc};
@@ -515,7 +528,8 @@ pub mod l_variadic_h {
                            str: *mut libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_aas_bsp.h"]
+#[header_src =
+      "ioq3/code/botlib/be_aas_bsp.h"]
 pub mod be_aas_bsp_h {
     use super::botlib_h::{bsp_trace_t};
     use super::q_shared_h::{vec_t, qboolean};
@@ -835,7 +849,8 @@ pub unsafe extern "C" fn AAS_ParseBSPEntities() {
             break ;
         } else {
             ent =
-                &mut bspworld.entities[bspworld.numentities as usize] as
+                &mut *bspworld.entities.as_mut_ptr().offset(bspworld.numentities
+                                                                as isize) as
                     *mut bsp_entity_t;
             bspworld.numentities += 1;
             (*ent).epairs = 0 as *mut bsp_epair_t;
@@ -909,7 +924,9 @@ pub unsafe extern "C" fn AAS_FreeBSPEntities() {
     let mut nextepair: *mut bsp_epair_t = 0 as *mut bsp_epair_t;
     i = 1i32;
     while i < bspworld.numentities {
-        ent = &mut bspworld.entities[i as usize] as *mut bsp_entity_t;
+        ent =
+            &mut *bspworld.entities.as_mut_ptr().offset(i as isize) as
+                *mut bsp_entity_t;
         epair = (*ent).epairs;
         while !epair.is_null() {
             nextepair = (*epair).next;

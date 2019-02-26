@@ -1,5 +1,17 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           label_break_value,
+           libc,
+           ptr_wrapping_offset_from)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     pub type qboolean = libc::c_uint;
     pub const qtrue: qboolean = 1;
@@ -141,7 +153,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     // Pulls off \n terminated lines of text from the command buffer and sends
 // them through Cmd_ExecuteString.  Stops when the buffer is empty.
@@ -243,7 +256,8 @@ pub mod ctype_h {
         pub fn tolower(_: libc::c_int) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cvar.c"]
+#[header_src =
+      "ioq3/code/qcommon/cvar.c"]
 pub mod cvar_c {
     use super::q_shared_h::{cvar_t};
     use super::{libc};
@@ -363,7 +377,8 @@ pub unsafe extern "C" fn Cvar_Get(mut var_name: *const libc::c_char,
         }
         return 0 as *mut cvar_t
     }
-    var = &mut cvar_indexes[index as usize] as *mut cvar_t;
+    var =
+        &mut *cvar_indexes.as_mut_ptr().offset(index as isize) as *mut cvar_t;
     if index >= cvar_numIndexes { cvar_numIndexes = index + 1i32 }
     (*var).name = CopyString(var_name);
     (*var).string = CopyString(var_value);

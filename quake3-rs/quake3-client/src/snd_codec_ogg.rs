@@ -1,20 +1,28 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __int64_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"]
+#[header_src = "/usr/include/bits/stdint-intn.h"]
 pub mod stdint_intn_h {
     pub type int64_t = __int64_t;
     use super::types_h::{__int64_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -70,7 +78,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     pub const FS_SEEK_CUR: unnamed = 0;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_codec.h"]
+#[header_src =
+      "ioq3/code/client/snd_codec.h"]
 pub mod snd_codec_h {
     /*
 ===========================================================================
@@ -377,7 +386,8 @@ pub mod ogg_h {
     use super::{libc};
     use super::config_types_h::{ogg_int64_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     use super::{libc};
     use super::q_shared_h::{fileHandle_t};
@@ -406,7 +416,7 @@ pub mod qcommon_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/client/snd_codec_ogg.c"]
+      "ioq3/code/client/snd_codec_ogg.c"]
 pub mod snd_codec_ogg_c {
     use super::vorbisfile_h::{ov_callbacks};
     use super::{libc};

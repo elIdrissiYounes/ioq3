@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     pub type qboolean = libc::c_uint;
     pub const qtrue: qboolean = 1;
@@ -270,7 +278,8 @@ pub mod alc_h {
         pub type ALCcontext_struct;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     use super::{libc};
     extern "C" {
@@ -278,7 +287,8 @@ pub mod qcommon_h {
         pub fn Com_DPrintf(fmt: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/qal.h"]
+#[header_src =
+      "ioq3/code/client/qal.h"]
 pub mod qal_h {
     use super::al_h::{LPALENABLE, LPALDISABLE, LPALISENABLED, LPALGETSTRING,
                       LPALGETBOOLEANV, LPALGETINTEGERV, LPALGETFLOATV,
@@ -311,7 +321,8 @@ pub mod qal_h {
     use super::q_shared_h::{qboolean};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/qal.c"]
+#[header_src =
+      "ioq3/code/client/qal.c"]
 pub mod qal_c { }
 #[header_src = "/usr/include/SDL2/SDL_loadso.h"]
 pub mod SDL_loadso_h {
@@ -333,7 +344,8 @@ pub mod SDL_loadso_h {
          -> *mut libc::c_void;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/sys/sys_loadlib.h"]
+#[header_src =
+      "ioq3/code/sys/sys_loadlib.h"]
 pub mod sys_loadlib_h {
     use super::{libc};
     use super::q_shared_h::{qboolean};

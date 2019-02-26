@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -156,7 +164,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ===========================================================================
@@ -345,7 +354,8 @@ modules of the program.
          -> *mut cvar_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/net_chan.c"]
+#[header_src =
+      "ioq3/code/qcommon/net_chan.c"]
 pub mod net_chan_c {
     pub type packetQueue_t = packetQueue_s;
     //=============================================================================
@@ -415,7 +425,7 @@ pub mod stdlib_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_platform.h"]
+      "ioq3/code/qcommon/q_platform.h"]
 pub mod q_platform_h {
     use super::{libc};
     extern "C" {
@@ -530,8 +540,9 @@ pub unsafe extern "C" fn NET_SendLoopPacket(mut sock: netsrc_t,
     let mut i: libc::c_int = 0;
     let mut loop_0: *mut loopback_t = 0 as *mut loopback_t;
     loop_0 =
-        &mut loopbacks[(sock as libc::c_uint ^ 1i32 as libc::c_uint) as usize]
-            as *mut loopback_t;
+        &mut *loopbacks.as_mut_ptr().offset((sock as libc::c_uint ^
+                                                 1i32 as libc::c_uint) as
+                                                isize) as *mut loopback_t;
     i = (*loop_0).send & 16i32 - 1i32;
     (*loop_0).send += 1;
     memcpy((*loop_0).msgs[i as usize].data.as_mut_ptr() as *mut libc::c_void,
@@ -677,7 +688,8 @@ pub unsafe extern "C" fn NET_GetLoopPacket(mut sock: netsrc_t,
  -> qboolean {
     let mut i: libc::c_int = 0;
     let mut loop_0: *mut loopback_t = 0 as *mut loopback_t;
-    loop_0 = &mut loopbacks[sock as usize] as *mut loopback_t;
+    loop_0 =
+        &mut *loopbacks.as_mut_ptr().offset(sock as isize) as *mut loopback_t;
     if (*loop_0).send - (*loop_0).get > 16i32 {
         (*loop_0).get = (*loop_0).send - 16i32
     }

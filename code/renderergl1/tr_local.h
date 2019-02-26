@@ -547,7 +547,7 @@ typedef struct srfGridMesh_s {
 	int				width, height;
 	float			*widthLodError;
 	float			*heightLodError;
-	drawVert_t		verts[1];		// variable sized
+	drawVert_t		verts[];		// variable sized
 } srfGridMesh_t;
 
 
@@ -564,7 +564,7 @@ typedef struct {
 	int			numPoints;
 	int			numIndices;
 	int			ofsIndices;
-	float		points[1][VERTEXSIZE];	// variable sized
+	float		points[][VERTEXSIZE];	// variable sized
 										// there is a variable length list of indices here also
 } srfSurfaceFace_t;
 

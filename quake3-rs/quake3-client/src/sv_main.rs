@@ -1,5 +1,12 @@
-use libc;
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
@@ -9,7 +16,8 @@ pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -323,7 +331,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ===========================================================================
@@ -551,7 +560,8 @@ VIRTUAL MACHINE
         pub fn Huff_Decompress(buf: *mut msg_t, offset: libc::c_int);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/server.h"]
+#[header_src =
+      "ioq3/code/server/server.h"]
 pub mod server_h {
     // this structure will be cleared only when the game dll changes
     #[derive
@@ -899,7 +909,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn SV_SendQueuedMessages() -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/game/g_public.h"]
+#[header_src =
+      "ioq3/code/game/g_public.h"]
 pub mod g_public_h {
     #[derive
     ( Copy , Clone )]
@@ -956,7 +967,8 @@ pub mod g_public_h {
     use super::q_shared_h::{entityState_t, qboolean, vec3_t};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/game/bg_public.h"]
+#[header_src =
+      "ioq3/code/game/bg_public.h"]
 pub mod bg_public_h {
     // single player ffa
     pub const GT_SINGLE_PLAYER: unnamed_1 = 2;
@@ -1040,7 +1052,7 @@ pub mod string_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_platform.h"]
+      "ioq3/code/qcommon/q_platform.h"]
 pub mod q_platform_h {
     use super::{libc};
     extern "C" {
@@ -1048,7 +1060,8 @@ pub mod q_platform_h {
         pub fn ShortSwap(l: libc::c_short) -> libc::c_short;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/sv_main.c"]
+#[header_src =
+      "ioq3/code/server/sv_main.c"]
 pub mod sv_main_c {
     use super::{libc};
     use super::qcommon_h::{netadr_t};
@@ -1245,7 +1258,9 @@ pub unsafe extern "C" fn SV_MasterHeartbeat(mut message:
                                (*sv_master[i as usize]).string);
                     res =
                         NET_StringToAdr((*sv_master[i as usize]).string,
-                                        &mut adr[i as usize][0usize], NA_IP);
+                                        &mut *(*adr.as_mut_ptr().offset(i as
+                                                                            isize)).as_mut_ptr().offset(0isize),
+                                        NA_IP);
                     if res == 2i32 {
                         adr[i as usize][0usize].port =
                             ShortSwap(27950i32 as libc::c_short) as
@@ -1269,7 +1284,9 @@ pub unsafe extern "C" fn SV_MasterHeartbeat(mut message:
                                (*sv_master[i as usize]).string);
                     res =
                         NET_StringToAdr((*sv_master[i as usize]).string,
-                                        &mut adr[i as usize][1usize], NA_IP6);
+                                        &mut *(*adr.as_mut_ptr().offset(i as
+                                                                            isize)).as_mut_ptr().offset(1isize),
+                                        NA_IP6);
                     if res == 2i32 {
                         adr[i as usize][1usize].port =
                             ShortSwap(27950i32 as libc::c_short) as
@@ -1856,7 +1873,9 @@ unsafe extern "C" fn SVC_BucketForAddress(mut address: netadr_t,
     i = 0i32;
     while i < 16384i32 {
         let mut interval: libc::c_int = 0;
-        bucket = &mut buckets[i as usize] as *mut leakyBucket_t;
+        bucket =
+            &mut *buckets.as_mut_ptr().offset(i as isize) as
+                *mut leakyBucket_t;
         interval = now - (*bucket).lastTime;
         if (*bucket).lastTime > 0i32 &&
                (interval > burst * period || interval < 0i32) {

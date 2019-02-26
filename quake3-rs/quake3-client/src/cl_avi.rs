@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -215,7 +223,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     //============================================================================
     /*
@@ -293,7 +302,7 @@ NET
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_types.h"]
+      "ioq3/code/renderercommon/tr_types.h"]
 pub mod tr_types_h {
     /*
 ===========================================================================
@@ -473,7 +482,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::{libc};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_public.h"]
+      "ioq3/code/renderercommon/tr_public.h"]
 pub mod tr_public_h {
     /*
 ===========================================================================
@@ -626,7 +635,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                             stereoFrame_t};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     #[derive
     ( Copy , Clone )]
@@ -698,7 +708,8 @@ pub mod client_h {
         pub static mut cl_aviMotionJpeg: *mut cvar_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/cl_avi.c"]
+#[header_src =
+      "ioq3/code/client/cl_avi.c"]
 pub mod cl_avi_c {
     pub type aviFileData_t = aviFileData_s;
     #[derive
@@ -764,7 +775,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::q_shared_h::{qboolean, fileHandle_t, byte};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_local.h"]
+#[header_src =
+      "ioq3/code/client/snd_local.h"]
 pub mod snd_local_h {
     #[derive
     ( Copy , Clone )]
@@ -786,7 +798,7 @@ pub mod snd_local_h {
         pub static mut dma: dma_t;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -1010,8 +1022,8 @@ WRITE_STRING
 ===============
 */
 unsafe extern "C" fn WRITE_STRING(mut s: *const libc::c_char) {
-    memcpy(&mut buffer[bufIndex as usize] as *mut byte as *mut libc::c_void,
-           s as *const libc::c_void, strlen(s));
+    memcpy(&mut *buffer.as_mut_ptr().offset(bufIndex as isize) as *mut byte as
+               *mut libc::c_void, s as *const libc::c_void, strlen(s));
     bufIndex =
         (bufIndex as libc::c_ulong).wrapping_add(strlen(s)) as libc::c_int as
             libc::c_int;
@@ -3193,9 +3205,9 @@ pub unsafe extern "C" fn CL_WriteAVIAudioFrame(mut pcmBuffer: *const byte,
                        as *const u8 as *const libc::c_char);
         size = 44100i32 - bytesInBuffer
     }
-    memcpy(&mut pcmCaptureBuffer[bytesInBuffer as usize] as *mut byte as
-               *mut libc::c_void, pcmBuffer as *const libc::c_void,
-           size as libc::c_ulong);
+    memcpy(&mut *pcmCaptureBuffer.as_mut_ptr().offset(bytesInBuffer as isize)
+               as *mut byte as *mut libc::c_void,
+           pcmBuffer as *const libc::c_void, size as libc::c_ulong);
     bytesInBuffer += size;
     if bytesInBuffer >=
            ceil((afd.a.rate as libc::c_float / afd.frameRate as libc::c_float)

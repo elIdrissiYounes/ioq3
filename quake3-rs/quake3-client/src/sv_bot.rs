@@ -1,10 +1,22 @@
-use libc;
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           extern_types,
+           label_break_value,
+           libc)]
+extern crate libc;
 #[header_src = "/usr/include/stdint.h"]
 pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -397,7 +409,8 @@ default values.
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ===========================================================================
@@ -620,7 +633,8 @@ temp file loading
         pub fn Hunk_CheckMark() -> qboolean;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/game/g_public.h"]
+#[header_src =
+      "ioq3/code/game/g_public.h"]
 pub mod g_public_h {
     /*
 ===========================================================================
@@ -730,7 +744,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::q_shared_h::{entityState_t, qboolean, vec3_t};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/server.h"]
+#[header_src =
+      "ioq3/code/server/server.h"]
 pub mod server_h {
     /*
 ===========================================================================
@@ -953,7 +968,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                         capsule: libc::c_int);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/botlib.h"]
+#[header_src =
+      "ioq3/code/botlib/botlib.h"]
 pub mod botlib_h {
     pub type botlib_export_t = botlib_export_s;
     //bot AI library imported functions
@@ -1734,7 +1750,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
          -> *mut botlib_export_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/sv_bot.c"]
+#[header_src =
+      "ioq3/code/server/sv_bot.c"]
 pub mod sv_bot_c {
     pub type bot_debugpoly_t = bot_debugpoly_s;
     /*
@@ -1796,7 +1813,8 @@ pub mod string_h {
                       _: libc::c_ulong) -> *mut libc::c_void;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_public.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_public.h"]
 pub mod cm_public_h {
     use super::q_shared_h::{clipHandle_t, vec_t};
     use super::{libc};
@@ -1811,7 +1829,7 @@ pub mod cm_public_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/server/sv_variadic.h"]
+      "ioq3/code/server/sv_variadic.h"]
 pub mod sv_variadic_h {
     use super::{libc};
     extern "C" {
@@ -2020,8 +2038,9 @@ pub unsafe extern "C" fn SV_BotGetSnapshotEntity(mut client: libc::c_int,
     let mut frame: *mut clientSnapshot_t = 0 as *mut clientSnapshot_t;
     cl = &mut *svs.clients.offset(client as isize) as *mut client_t;
     frame =
-        &mut (*cl).frames[((*cl).netchan.outgoingSequence & 32i32 - 1i32) as
-                              usize] as *mut clientSnapshot_t;
+        &mut *(*cl).frames.as_mut_ptr().offset(((*cl).netchan.outgoingSequence
+                                                    & 32i32 - 1i32) as isize)
+            as *mut clientSnapshot_t;
     if sequence < 0i32 || sequence >= (*frame).num_entities { return -1i32 }
     return (*svs.snapshotEntities.offset((((*frame).first_entity + sequence) %
                                               svs.numSnapshotEntities) as

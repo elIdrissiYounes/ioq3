@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -117,7 +125,8 @@ PlaneTypeForNormal
                           destsize: libc::c_int);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/botlib.h"]
+#[header_src =
+      "ioq3/code/botlib/botlib.h"]
 pub mod botlib_h {
     //bsp_trace_t hit surface
     #[derive
@@ -228,7 +237,8 @@ pub mod botlib_h {
     use super::q_shared_h::{qboolean, vec3_t, cplane_t, vec_t, fileHandle_t,
                             fsMode_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_script.h"]
+#[header_src =
+      "ioq3/code/botlib/l_script.h"]
 pub mod l_script_h {
     /*
 ===========================================================================
@@ -374,7 +384,7 @@ pub mod string_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_interface.h"]
+      "ioq3/code/botlib/be_interface.h"]
 pub mod be_interface_h {
     use super::botlib_h::{botlib_import_t};
     extern "C" {
@@ -382,7 +392,8 @@ pub mod be_interface_h {
         pub static mut botimport: botlib_import_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_variadic.h"]
+#[header_src =
+      "ioq3/code/botlib/l_variadic.h"]
 pub mod l_variadic_h {
     use super::l_script_h::{script_t};
     use super::{libc};
@@ -397,12 +408,14 @@ pub mod l_variadic_h {
                              str: *mut libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_script.c"]
+#[header_src =
+      "ioq3/code/botlib/l_script.c"]
 pub mod l_script_c {
     use super::{libc};
     use super::l_script_h::{script_t, token_t, punctuation_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_memory.h"]
+#[header_src =
+      "ioq3/code/botlib/l_memory.h"]
 pub mod l_memory_h {
     use super::{libc};
     extern "C" {
@@ -912,7 +925,9 @@ pub unsafe extern "C" fn PS_ReadString(mut script: *mut script_t,
                0 == (*script).flags & 0x8i32 {
             if 0 ==
                    PS_ReadEscapeCharacter(script,
-                                          &mut (*token).string[len as usize])
+                                          &mut *(*token).string.as_mut_ptr().offset(len
+                                                                                        as
+                                                                                        isize))
                {
                 (*token).string[len as usize] = 0i32 as libc::c_char;
                 return 0i32
@@ -2040,7 +2055,10 @@ pub unsafe extern "C" fn PS_ReadLiteral(mut script: *mut script_t,
         return 0i32
     }
     if *(*script).script_p as libc::c_int == '\\' as i32 {
-        if 0 == PS_ReadEscapeCharacter(script, &mut (*token).string[1usize]) {
+        if 0 ==
+               PS_ReadEscapeCharacter(script,
+                                      &mut *(*token).string.as_mut_ptr().offset(1isize))
+           {
             return 0i32
         }
     } else {

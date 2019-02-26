@@ -1,28 +1,36 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __int16_t = libc::c_short;
     pub type __uint32_t = libc::c_uint;
     pub type __int64_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"]
+#[header_src = "/usr/include/bits/stdint-intn.h"]
 pub mod stdint_intn_h {
     pub type int16_t = __int16_t;
     pub type int64_t = __int64_t;
     use super::types_h::{__int16_t, __int64_t};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint32_t = __uint32_t;
     use super::types_h::{__uint32_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -84,44 +92,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 }
 #[header_src = "/usr/include/opus/opus_types.h"]
 pub mod opus_types_h {
-    /* (C) COPYRIGHT 1994-2002 Xiph.Org Foundation */
-/* Modified by Jean-Marc Valin */
-/*
-   Redistribution and use in source and binary forms, with or without
-   modification, are permitted provided that the following conditions
-   are met:
-
-   - Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-
-   - Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-
-   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
-   OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-/* opus_types.h based on ogg_types.h from libogg */
-    /* *
-   @file opus_types.h
-   @brief Opus reference implementation types
-*/
-    /* Use the real stdint.h if it's there (taken from Paul Hsieh's pstdint.h) */
     pub type opus_int16 = int16_t;
     pub type opus_uint32 = uint32_t;
-    use super::stdint_intn_h::{int16_t};
+    pub type opus_int64 = int64_t;
+    use super::stdint_intn_h::{int16_t, int64_t};
     use super::stdint_uintn_h::{uint32_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_codec.h"]
+#[header_src =
+      "ioq3/code/client/snd_codec.h"]
 pub mod snd_codec_h {
     /*
 ===========================================================================
@@ -301,8 +279,7 @@ pub mod opusfile_h {
    \return The current position indicator.*/
     pub type op_tell_func
         =
-        Option<unsafe extern "C" fn(_: *mut libc::c_void)
-                   -> libc::c_longlong>;
+        Option<unsafe extern "C" fn(_: *mut libc::c_void) -> opus_int64>;
     /* *Sets the position indicator for \a _stream.
    The new position, measured in bytes, is obtained by adding \a _offset
     bytes to the position specified by \a _whence.
@@ -314,7 +291,7 @@ pub mod opusfile_h {
               <code>errno</code> need not be set.*/
     pub type op_seek_func
         =
-        Option<unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_longlong,
+        Option<unsafe extern "C" fn(_: *mut libc::c_void, _: opus_int64,
                                     _: libc::c_int) -> libc::c_int>;
     /* *Skip the certificate check when connecting via TLS/SSL (https).
    \param _b <code>opus_int32</code>: Whether or not to skip the certificate
@@ -405,7 +382,7 @@ pub mod opusfile_h {
                                     _: *mut libc::c_uchar, _: libc::c_int)
                    -> libc::c_int>;
     use super::{libc};
-    use super::opus_types_h::{opus_uint32, opus_int16};
+    use super::opus_types_h::{opus_uint32, opus_int64, opus_int16};
     use super::config_types_h::{ogg_int64_t};
     use super::stddef_h::{size_t};
     extern "C" {
@@ -662,7 +639,8 @@ pub mod config_types_h {
     pub type ogg_int64_t = int64_t;
     use super::stdint_intn_h::{int64_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     use super::{libc};
     use super::q_shared_h::{fileHandle_t};
@@ -685,10 +663,11 @@ pub mod qcommon_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/client/snd_codec_opus.c"]
+      "ioq3/code/client/snd_codec_opus.c"]
 pub mod snd_codec_opus_c {
     use super::opusfile_h::{OpusFileCallbacks};
     use super::{libc};
+    use super::opus_types_h::{opus_int64};
 }
 #[header_src = "/usr/include/errno.h"]
 pub mod errno_h {
@@ -704,7 +683,7 @@ use self::stdint_intn_h::{int16_t, int64_t};
 use self::stdint_uintn_h::{uint32_t};
 use self::q_shared_h::{byte, fileHandle_t, unnamed, FS_SEEK_SET, FS_SEEK_END,
                        FS_SEEK_CUR, Com_Printf};
-use self::opus_types_h::{opus_int16, opus_uint32};
+use self::opus_types_h::{opus_int16, opus_uint32, opus_int64};
 use self::snd_codec_h::{snd_info_s, snd_info_t, snd_codec_s, snd_codec_t,
                         CODEC_CLOSE, snd_stream_t, snd_stream_s, CODEC_READ,
                         CODEC_OPEN, CODEC_LOAD, S_CodecUtilOpen,
@@ -848,20 +827,20 @@ pub unsafe extern "C" fn S_OggOpus_Callback_close(mut datasource:
 #[no_mangle]
 pub unsafe extern "C" fn S_OggOpus_Callback_tell(mut datasource:
                                                      *mut libc::c_void)
- -> libc::c_longlong {
+ -> opus_int64 {
     let mut stream: *mut snd_stream_t = 0 as *mut snd_stream_t;
     if datasource.is_null() {
         *__errno_location() = 9i32;
-        return -1i32 as libc::c_longlong
+        return -1i32 as opus_int64
     }
     stream = datasource as *mut snd_stream_t;
-    return FS_FTell((*stream).file) as libc::c_longlong;
+    return FS_FTell((*stream).file) as opus_int64;
 }
 // fseek() replacement
 #[no_mangle]
 pub unsafe extern "C" fn S_OggOpus_Callback_seek(mut datasource:
                                                      *mut libc::c_void,
-                                                 mut offset: libc::c_longlong,
+                                                 mut offset: opus_int64,
                                                  mut whence: libc::c_int)
  -> libc::c_int {
     let mut stream: *mut snd_stream_t = 0 as *mut snd_stream_t;
@@ -871,22 +850,19 @@ pub unsafe extern "C" fn S_OggOpus_Callback_seek(mut datasource:
     match whence {
         0 => {
             retVal =
-                FS_Seek((*stream).file, offset as libc::c_long,
-                        FS_SEEK_SET as libc::c_int);
+                FS_Seek((*stream).file, offset, FS_SEEK_SET as libc::c_int);
             if retVal < 0i32 { return retVal }
             (*stream).pos = offset as libc::c_int
         }
         1 => {
             retVal =
-                FS_Seek((*stream).file, offset as libc::c_long,
-                        FS_SEEK_CUR as libc::c_int);
+                FS_Seek((*stream).file, offset, FS_SEEK_CUR as libc::c_int);
             if retVal < 0i32 { return retVal }
             (*stream).pos += offset as libc::c_int
         }
         2 => {
             retVal =
-                FS_Seek((*stream).file, offset as libc::c_long,
-                        FS_SEEK_END as libc::c_int);
+                FS_Seek((*stream).file, offset, FS_SEEK_END as libc::c_int);
             if retVal < 0i32 { return retVal }
             (*stream).pos = (*stream).length + offset as libc::c_int
         }

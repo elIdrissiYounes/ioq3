@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -50,12 +58,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     pub type byte = libc::c_uchar;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_crc.h"]
+#[header_src =
+      "ioq3/code/botlib/l_crc.h"]
 pub mod l_crc_h {
     use super::{libc};
     use super::q_shared_h::{byte};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_crc.c"]
+#[header_src =
+      "ioq3/code/botlib/l_crc.c"]
 pub mod l_crc_c {
     use super::{libc};
 }

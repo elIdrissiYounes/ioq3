@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -53,7 +61,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     pub const qfalse: qboolean = 0;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ===========================================================================
@@ -151,7 +160,8 @@ pub mod string_h {
          -> *mut libc::c_void;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/huffman.c"]
+#[header_src =
+      "ioq3/code/qcommon/huffman.c"]
 pub mod huffman_c { }
 use self::q_shared_h::{byte, qboolean, qtrue, qfalse};
 use self::qcommon_h::{msg_t, nodetype, node_t, huff_t, huffman_t};
@@ -189,7 +199,9 @@ pub unsafe extern "C" fn Huff_Compress(mut mbuf: *mut msg_t,
            ::std::mem::size_of::<huff_t>() as libc::c_ulong);
     let fresh0 = huff.blocNode;
     huff.blocNode = huff.blocNode + 1;
-    huff.loc[256usize] = &mut huff.nodeList[fresh0 as usize] as *mut node_t;
+    huff.loc[256usize] =
+        &mut *huff.nodeList.as_mut_ptr().offset(fresh0 as isize) as
+            *mut node_t;
     huff.lhead = huff.loc[256usize];
     huff.tree = huff.lhead;
     (*huff.tree).symbol = 256i32;
@@ -247,10 +259,14 @@ pub unsafe extern "C" fn Huff_addRef(mut huff: *mut huff_t, mut ch: byte) {
     if (*huff).loc[ch as usize].is_null() {
         let fresh1 = (*huff).blocNode;
         (*huff).blocNode = (*huff).blocNode + 1;
-        tnode = &mut (*huff).nodeList[fresh1 as usize] as *mut node_t;
+        tnode =
+            &mut *(*huff).nodeList.as_mut_ptr().offset(fresh1 as isize) as
+                *mut node_t;
         let fresh2 = (*huff).blocNode;
         (*huff).blocNode = (*huff).blocNode + 1;
-        tnode2 = &mut (*huff).nodeList[fresh2 as usize] as *mut node_t;
+        tnode2 =
+            &mut *(*huff).nodeList.as_mut_ptr().offset(fresh2 as isize) as
+                *mut node_t;
         (*tnode2).symbol = 256i32 + 1i32;
         (*tnode2).weight = 1i32;
         (*tnode2).next = (*(*huff).lhead).next;
@@ -344,7 +360,8 @@ unsafe extern "C" fn get_ppnode(mut huff: *mut huff_t) -> *mut *mut node_t {
     if (*huff).freelist.is_null() {
         let fresh3 = (*huff).blocPtrs;
         (*huff).blocPtrs = (*huff).blocPtrs + 1;
-        return &mut (*huff).nodePtrs[fresh3 as usize] as *mut *mut node_t
+        return &mut *(*huff).nodePtrs.as_mut_ptr().offset(fresh3 as isize) as
+                   *mut *mut node_t
     } else {
         tppnode = (*huff).freelist;
         (*huff).freelist = *tppnode as *mut *mut node_t;
@@ -452,7 +469,9 @@ pub unsafe extern "C" fn Huff_Decompress(mut mbuf: *mut msg_t,
            ::std::mem::size_of::<huff_t>() as libc::c_ulong);
     let fresh5 = huff.blocNode;
     huff.blocNode = huff.blocNode + 1;
-    huff.loc[256usize] = &mut huff.nodeList[fresh5 as usize] as *mut node_t;
+    huff.loc[256usize] =
+        &mut *huff.nodeList.as_mut_ptr().offset(fresh5 as isize) as
+            *mut node_t;
     huff.ltail = huff.loc[256usize];
     huff.lhead = huff.ltail;
     huff.tree = huff.lhead;
@@ -523,7 +542,9 @@ pub unsafe extern "C" fn Huff_Init(mut huff: *mut huffman_t) {
     let fresh6 = (*huff).decompressor.blocNode;
     (*huff).decompressor.blocNode = (*huff).decompressor.blocNode + 1;
     (*huff).decompressor.loc[256usize] =
-        &mut (*huff).decompressor.nodeList[fresh6 as usize] as *mut node_t;
+        &mut *(*huff).decompressor.nodeList.as_mut_ptr().offset(fresh6 as
+                                                                    isize) as
+            *mut node_t;
     (*huff).decompressor.ltail = (*huff).decompressor.loc[256usize];
     (*huff).decompressor.lhead = (*huff).decompressor.ltail;
     (*huff).decompressor.tree = (*huff).decompressor.lhead;
@@ -537,7 +558,8 @@ pub unsafe extern "C" fn Huff_Init(mut huff: *mut huffman_t) {
     let fresh7 = (*huff).compressor.blocNode;
     (*huff).compressor.blocNode = (*huff).compressor.blocNode + 1;
     (*huff).compressor.loc[256usize] =
-        &mut (*huff).compressor.nodeList[fresh7 as usize] as *mut node_t;
+        &mut *(*huff).compressor.nodeList.as_mut_ptr().offset(fresh7 as isize)
+            as *mut node_t;
     (*huff).compressor.lhead = (*huff).compressor.loc[256usize];
     (*huff).compressor.tree = (*huff).compressor.lhead;
     (*(*huff).compressor.tree).symbol = 256i32;

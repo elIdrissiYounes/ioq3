@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -65,7 +73,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_codec.h"]
+#[header_src =
+      "ioq3/code/client/snd_codec.h"]
 pub mod snd_codec_h {
     /*
 ===========================================================================
@@ -153,7 +162,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn S_CodecUtilClose(stream: *mut *mut snd_stream_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     use super::{libc};
     use super::q_shared_h::{fileHandle_t, qboolean};
@@ -178,7 +188,7 @@ pub mod qcommon_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/client/snd_codec_wav.c"]
+      "ioq3/code/client/snd_codec_wav.c"]
 pub mod snd_codec_wav_c { }
 use self::q_shared_h::{byte, qboolean, qtrue, qfalse, fileHandle_t, unnamed,
                        FS_SEEK_SET, FS_SEEK_END, FS_SEEK_CUR, Q_strncmp,

@@ -1,5 +1,16 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -247,7 +258,8 @@ PlaneTypeForNormal
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/game/g_public.h"]
+#[header_src =
+      "ioq3/code/game/g_public.h"]
 pub mod g_public_h {
     /*
 ===========================================================================
@@ -322,7 +334,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::q_shared_h::{entityState_t, qboolean, vec3_t};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/server.h"]
+#[header_src =
+      "ioq3/code/server/server.h"]
 pub mod server_h {
     #[derive
     ( Copy , Clone )]
@@ -389,7 +402,8 @@ pub mod server_h {
          -> *mut sharedEntity_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/sv_world.c"]
+#[header_src =
+      "ioq3/code/server/sv_world.c"]
 pub mod sv_world_c {
     /*
 ===============================================================================
@@ -461,7 +475,8 @@ pub mod string_h {
          -> *mut libc::c_void;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_public.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_public.h"]
 pub mod cm_public_h {
     use super::q_shared_h::{clipHandle_t, vec_t, trace_t};
     use super::{libc};
@@ -510,7 +525,8 @@ pub mod cm_public_h {
         pub fn CM_LeafArea(leafnum: libc::c_int) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     use super::{libc};
     extern "C" {
@@ -570,8 +586,8 @@ unsafe extern "C" fn SV_CreateworldSector(mut depth: libc::c_int,
     let mut mins2: vec3_t = [0.; 3];
     let mut maxs2: vec3_t = [0.; 3];
     anode =
-        &mut sv_worldSectors[sv_numworldSectors as usize] as
-            *mut worldSector_t;
+        &mut *sv_worldSectors.as_mut_ptr().offset(sv_numworldSectors as isize)
+            as *mut worldSector_t;
     sv_numworldSectors += 1;
     if depth == 4i32 {
         (*anode).axis = -1i32;
@@ -800,7 +816,9 @@ pub unsafe extern "C" fn SV_SectorList_f() {
     let mut ent: *mut svEntity_t = 0 as *mut svEntity_t;
     i = 0i32;
     while i < 64i32 {
-        sec = &mut sv_worldSectors[i as usize] as *mut worldSector_t;
+        sec =
+            &mut *sv_worldSectors.as_mut_ptr().offset(i as isize) as
+                *mut worldSector_t;
         c = 0i32;
         ent = (*sec).entities;
         while !ent.is_null() { c += 1; ent = (*ent).nextEntityInWorldSector }

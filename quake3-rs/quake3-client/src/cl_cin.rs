@@ -1,10 +1,17 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     use super::types_h::{__uint8_t};
@@ -14,7 +21,8 @@ pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -280,7 +288,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     //============================================================================
     /*
@@ -399,7 +408,7 @@ VIRTUAL MACHINE
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_types.h"]
+      "ioq3/code/renderercommon/tr_types.h"]
 pub mod tr_types_h {
     /*
 ===========================================================================
@@ -579,7 +588,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::{libc};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_public.h"]
+      "ioq3/code/renderercommon/tr_public.h"]
 pub mod tr_public_h {
     /*
 ===========================================================================
@@ -732,7 +741,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                             stereoFrame_t};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/ui/ui_public.h"]
+#[header_src =
+      "ioq3/code/ui/ui_public.h"]
 pub mod ui_public_h {
     pub type unnamed_1 = libc::c_uint;
     pub const UIMENU_POSTGAME: unnamed_1 = 6;
@@ -766,12 +776,12 @@ pub mod ui_public_h {
     pub const UI_GETAPIVERSION: unnamed_2 = 0;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/curl.h"]
+#[header_src = "/usr/include/curl/curl.h"]
 pub mod curl_h {
     pub type CURL = ();
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/multi.h"]
+#[header_src = "/usr/include/curl/multi.h"]
 pub mod multi_h {
     pub type CURLM = ();
     use super::{libc};
@@ -910,7 +920,7 @@ pub mod opus_h {
   *
   * opus_encode() and opus_encode_float() return the number of bytes actually written to the packet.
   * The return value <b>can be negative</b>, which indicates that an error has occurred. If the return value
-  * is 1 byte, then the packet does not need to be transmitted (DTX).
+  * is 2 bytes or less, then the packet does not need to be transmitted (DTX).
   *
   * Once the encoder state if no longer needed, it can be destroyed with
   *
@@ -1000,7 +1010,8 @@ pub mod opus_h {
         pub type OpusDecoder;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     /*
 =============================================================================
@@ -1172,7 +1183,8 @@ demo through a file.
                                  h: *mut libc::c_float);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/cl_cin.c"]
+#[header_src =
+      "ioq3/code/client/cl_cin.c"]
 pub mod cl_cin_c {
     #[derive
     ( Copy , Clone )]
@@ -1299,7 +1311,8 @@ pub mod stdlib_h {
         pub fn abs(_: libc::c_int) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_public.h"]
+#[header_src =
+      "ioq3/code/client/snd_public.h"]
 pub mod snd_public_h {
     use super::{libc};
     use super::q_shared_h::{byte};
@@ -1318,7 +1331,8 @@ pub mod snd_public_h {
         pub fn S_Update();
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_local.h"]
+#[header_src =
+      "ioq3/code/client/snd_local.h"]
 pub mod snd_local_h {
     use super::{libc};
     extern "C" {
@@ -1610,7 +1624,9 @@ unsafe extern "C" fn RoQReset() {
     if currentHandle < 0i32 { return }
     FS_FCloseFile(cinTable[currentHandle as usize].iFile);
     FS_FOpenFileRead(cinTable[currentHandle as usize].fileName.as_mut_ptr(),
-                     &mut cinTable[currentHandle as usize].iFile, qtrue);
+                     &mut (*cinTable.as_mut_ptr().offset(currentHandle as
+                                                             isize)).iFile,
+                     qtrue);
     FS_Read(cin.file.as_mut_ptr() as *mut libc::c_void, 16i32,
             cinTable[currentHandle as usize].iFile);
     RoQ_init();
@@ -3584,7 +3600,9 @@ pub unsafe extern "C" fn CIN_PlayCinematic(mut arg: *const libc::c_char,
     cinTable[currentHandle as usize].ROQSize =
         FS_FOpenFileRead(cinTable[currentHandle as
                                       usize].fileName.as_mut_ptr(),
-                         &mut cinTable[currentHandle as usize].iFile, qtrue);
+                         &mut (*cinTable.as_mut_ptr().offset(currentHandle as
+                                                                 isize)).iFile,
+                         qtrue);
     if cinTable[currentHandle as usize].ROQSize <= 0i32 as libc::c_long {
         Com_DPrintf(b"play(%s), ROQSize<=0\n\x00" as *const u8 as
                         *const libc::c_char, arg);
@@ -3756,8 +3774,9 @@ unsafe extern "C" fn blitVQQuad32fs(mut status: *mut *mut byte,
         celdata = ((celdata as libc::c_int) << 2i32) as libc::c_ushort;
         match code as libc::c_int {
             32768 => {
-                blit8_32(&mut vq8[(*data as libc::c_int * 128i32) as usize] as
-                             *mut libc::c_ushort as *mut byte,
+                blit8_32(&mut *vq8.as_mut_ptr().offset((*data as libc::c_int *
+                                                            128i32) as isize)
+                             as *mut libc::c_ushort as *mut byte,
                          *status.offset(index as isize), spl);
                 data = data.offset(1isize);
                 index = index.wrapping_add(5i32 as libc::c_uint)
@@ -3781,28 +3800,44 @@ unsafe extern "C" fn blitVQQuad32fs(mut status: *mut *mut byte,
                         ((celdata as libc::c_int) << 2i32) as libc::c_ushort;
                     match code as libc::c_int {
                         32768 => {
-                            blit4_32(&mut vq4[(*data as libc::c_int * 32i32)
-                                                  as usize] as
-                                         *mut libc::c_ushort as *mut byte,
+                            blit4_32(&mut *vq4.as_mut_ptr().offset((*data as
+                                                                        libc::c_int
+                                                                        *
+                                                                        32i32)
+                                                                       as
+                                                                       isize)
+                                         as *mut libc::c_ushort as *mut byte,
                                      *status.offset(index as isize), spl);
                             data = data.offset(1isize)
                         }
                         49152 => {
-                            blit2_32(&mut vq2[(*data as libc::c_int * 8i32) as
-                                                  usize] as
-                                         *mut libc::c_ushort as *mut byte,
+                            blit2_32(&mut *vq2.as_mut_ptr().offset((*data as
+                                                                        libc::c_int
+                                                                        *
+                                                                        8i32)
+                                                                       as
+                                                                       isize)
+                                         as *mut libc::c_ushort as *mut byte,
                                      *status.offset(index as isize), spl);
                             data = data.offset(1isize);
-                            blit2_32(&mut vq2[(*data as libc::c_int * 8i32) as
-                                                  usize] as
-                                         *mut libc::c_ushort as *mut byte,
+                            blit2_32(&mut *vq2.as_mut_ptr().offset((*data as
+                                                                        libc::c_int
+                                                                        *
+                                                                        8i32)
+                                                                       as
+                                                                       isize)
+                                         as *mut libc::c_ushort as *mut byte,
                                      (*status.offset(index as
                                                          isize)).offset(8isize),
                                      spl);
                             data = data.offset(1isize);
-                            blit2_32(&mut vq2[(*data as libc::c_int * 8i32) as
-                                                  usize] as
-                                         *mut libc::c_ushort as *mut byte,
+                            blit2_32(&mut *vq2.as_mut_ptr().offset((*data as
+                                                                        libc::c_int
+                                                                        *
+                                                                        8i32)
+                                                                       as
+                                                                       isize)
+                                         as *mut libc::c_ushort as *mut byte,
                                      (*status.offset(index as
                                                          isize)).offset((spl *
                                                                              2i32)
@@ -3810,9 +3845,13 @@ unsafe extern "C" fn blitVQQuad32fs(mut status: *mut *mut byte,
                                                                             isize),
                                      spl);
                             data = data.offset(1isize);
-                            blit2_32(&mut vq2[(*data as libc::c_int * 8i32) as
-                                                  usize] as
-                                         *mut libc::c_ushort as *mut byte,
+                            blit2_32(&mut *vq2.as_mut_ptr().offset((*data as
+                                                                        libc::c_int
+                                                                        *
+                                                                        8i32)
+                                                                       as
+                                                                       isize)
+                                         as *mut libc::c_ushort as *mut byte,
                                      (*status.offset(index as
                                                          isize)).offset((spl *
                                                                              2i32)

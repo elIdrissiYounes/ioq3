@@ -1,4 +1,11 @@
-use libc;
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(custom_attribute, libc)]
+extern crate libc;
 #[header_src = "/usr/include/string.h"]
 pub mod string_h {
     use super::{libc};
@@ -10,11 +17,13 @@ pub mod string_h {
         pub fn strlen(_: *const libc::c_char) -> libc::c_ulong;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/sys/sys_local.h"]
+#[header_src =
+      "ioq3/code/sys/sys_local.h"]
 pub mod sys_local_h {
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/sys/con_log.c"]
+#[header_src =
+      "ioq3/code/sys/con_log.c"]
 pub mod con_log_c { }
 use self::string_h::{memcpy, strlen};
 #[no_mangle]

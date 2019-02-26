@@ -1,5 +1,17 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           extern_types,
+           label_break_value,
+           libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -194,7 +206,8 @@ default values.
                             right: *mut vec_t, up: *mut vec_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qfiles.h"]
+#[header_src =
+      "ioq3/code/qcommon/qfiles.h"]
 pub mod qfiles_h {
     #[derive
     ( Copy , Clone )]
@@ -206,7 +219,8 @@ pub mod qfiles_h {
     }
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_local.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_local.h"]
 pub mod cm_local_h {
     // cm_test.c
     // Used for oriented capsule collision detection
@@ -418,7 +432,7 @@ pub mod assert_h {
                              __function: *const libc::c_char) -> !;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -435,7 +449,8 @@ pub mod string_h {
          -> *mut libc::c_void;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_public.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_public.h"]
 pub mod cm_public_h {
     use super::q_shared_h::{clipHandle_t, vec_t, trace_t};
     use super::{libc};
@@ -448,7 +463,8 @@ pub mod cm_public_h {
                               maxs: *mut vec_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_trace.c"]
+#[header_src =
+      "ioq3/code/qcommon/cm_trace.c"]
 pub mod cm_trace_c {
     use super::q_shared_h::{trace_t, vec_t, clipHandle_t, vec3_t};
     use super::{libc};
@@ -1615,7 +1631,10 @@ pub unsafe extern "C" fn CM_PositionTest(mut tw: *mut traceWork_t) {
     cm.checkcount += 1;
     i = 0i32;
     while i < ll.count {
-        CM_TestInLeaf(tw, &mut *cm.leafs.offset(leafs[i as usize] as isize));
+        CM_TestInLeaf(tw,
+                      &mut *cm.leafs.offset(*leafs.as_mut_ptr().offset(i as
+                                                                           isize)
+                                                as isize));
         if 0 != (*tw).trace.allsolid as u64 { break ; }
         i += 1
     };

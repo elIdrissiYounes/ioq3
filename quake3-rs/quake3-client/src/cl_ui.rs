@@ -1,10 +1,17 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     use super::types_h::{__uint8_t};
@@ -14,7 +21,8 @@ pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -471,7 +479,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     //============================================================================
     /*
@@ -689,7 +698,8 @@ MISC
         pub fn Sys_Milliseconds() -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     #[derive
     ( Copy , Clone )]
@@ -1000,7 +1010,7 @@ demo through a file.
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_types.h"]
+      "ioq3/code/renderercommon/tr_types.h"]
 pub mod tr_types_h {
     #[derive
     ( Copy , Clone )]
@@ -1168,7 +1178,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::{libc};
     use super::q_shared_h::{qboolean, vec3_t, byte, qhandle_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/ui/ui_public.h"]
+#[header_src =
+      "ioq3/code/ui/ui_public.h"]
 pub mod ui_public_h {
     //	void	UI_SetActiveMenu( uiMenuCommand_t menu );
     pub const UI_CONSOLE_COMMAND: unnamed_2 = 8;
@@ -1328,7 +1339,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::{libc};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_public.h"]
+      "ioq3/code/renderercommon/tr_public.h"]
 pub mod tr_public_h {
     /*
 ===========================================================================
@@ -1481,12 +1492,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                             stereoFrame_t};
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/curl.h"]
+#[header_src = "/usr/include/curl/curl.h"]
 pub mod curl_h {
     pub type CURL = ();
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/multi.h"]
+#[header_src = "/usr/include/curl/multi.h"]
 pub mod multi_h {
     pub type CURLM = ();
     use super::{libc};
@@ -1625,7 +1636,7 @@ pub mod opus_h {
   *
   * opus_encode() and opus_encode_float() return the number of bytes actually written to the packet.
   * The return value <b>can be negative</b>, which indicates that an error has occurred. If the return value
-  * is 1 byte, then the packet does not need to be transmitted (DTX).
+  * is 2 bytes or less, then the packet does not need to be transmitted (DTX).
   *
   * Once the encoder state if no longer needed, it can be destroyed with
   *
@@ -1715,7 +1726,8 @@ pub mod opus_h {
         pub type OpusDecoder;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/botlib.h"]
+#[header_src =
+      "ioq3/code/botlib/botlib.h"]
 pub mod botlib_h {
     pub type botlib_export_t = botlib_export_s;
     //bot AI library imported functions
@@ -2385,7 +2397,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub type aas_entityinfo_s;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -2421,7 +2433,8 @@ pub mod string_h {
                        _: libc::c_ulong) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/keys.h"]
+#[header_src =
+      "ioq3/code/client/keys.h"]
 pub mod keys_h {
     use super::{libc};
     use super::q_shared_h::{qboolean};
@@ -2441,7 +2454,8 @@ pub mod keys_h {
         pub fn Key_ClearStates();
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_public.h"]
+#[header_src =
+      "ioq3/code/client/snd_public.h"]
 pub mod snd_public_h {
     use super::q_shared_h::{sfxHandle_t, qboolean};
     use super::{libc};
@@ -2461,7 +2475,8 @@ pub mod snd_public_h {
                                compressed: qboolean) -> sfxHandle_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/cl_ui.c"]
+#[header_src =
+      "ioq3/code/client/cl_ui.c"]
 pub mod cl_ui_c {
     use super::stdint_h::{intptr_t};
     use super::botlib_h::{botlib_export_t};
@@ -3324,9 +3339,9 @@ unsafe extern "C" fn CLUI_SetCDKey(mut buf: *mut libc::c_char) {
                                 *const libc::c_char);
     if 0 != UI_usesUniqueCDKey() as libc::c_uint &&
            *gamedir.offset(0isize) as libc::c_int != 0i32 {
-        memcpy(&mut cl_cdkey[16usize] as *mut libc::c_char as
-                   *mut libc::c_void, buf as *const libc::c_void,
-               16i32 as libc::c_ulong);
+        memcpy(&mut *cl_cdkey.as_mut_ptr().offset(16isize) as
+                   *mut libc::c_char as *mut libc::c_void,
+               buf as *const libc::c_void, 16i32 as libc::c_ulong);
         cl_cdkey[32usize] = 0i32 as libc::c_char;
         cvar_modifiedFlags |= 0x1i32
     } else {
@@ -3349,8 +3364,9 @@ unsafe extern "C" fn CLUI_GetCDKey(mut buf: *mut libc::c_char,
     if 0 != UI_usesUniqueCDKey() as libc::c_uint &&
            *gamedir.offset(0isize) as libc::c_int != 0i32 {
         memcpy(buf as *mut libc::c_void,
-               &mut cl_cdkey[16usize] as *mut libc::c_char as
-                   *const libc::c_void, 16i32 as libc::c_ulong);
+               &mut *cl_cdkey.as_mut_ptr().offset(16isize) as
+                   *mut libc::c_char as *const libc::c_void,
+               16i32 as libc::c_ulong);
         *buf.offset(16isize) = 0i32 as libc::c_char
     } else {
         memcpy(buf as *mut libc::c_void,
@@ -3435,18 +3451,21 @@ unsafe extern "C" fn LAN_GetServerPtr(mut source: libc::c_int,
     match source {
         0 => {
             if n >= 0i32 && n < 128i32 {
-                return &mut cls.localServers[n as usize] as *mut serverInfo_t
+                return &mut *cls.localServers.as_mut_ptr().offset(n as isize)
+                           as *mut serverInfo_t
             }
         }
         1 | 2 => {
             if n >= 0i32 && n < 4096i32 {
-                return &mut cls.globalServers[n as usize] as *mut serverInfo_t
+                return &mut *cls.globalServers.as_mut_ptr().offset(n as isize)
+                           as *mut serverInfo_t
             }
         }
         3 => {
             if n >= 0i32 && n < 128i32 {
-                return &mut cls.favoriteServers[n as usize] as
-                           *mut serverInfo_t
+                return &mut *cls.favoriteServers.as_mut_ptr().offset(n as
+                                                                         isize)
+                           as *mut serverInfo_t
             }
         }
         _ => { }
@@ -3479,15 +3498,21 @@ unsafe extern "C" fn LAN_ResetPings(mut source: libc::c_int) {
     count = 0i32;
     match source {
         0 => {
-            servers = &mut cls.localServers[0usize] as *mut serverInfo_t;
+            servers =
+                &mut *cls.localServers.as_mut_ptr().offset(0isize) as
+                    *mut serverInfo_t;
             count = 128i32
         }
         1 | 2 => {
-            servers = &mut cls.globalServers[0usize] as *mut serverInfo_t;
+            servers =
+                &mut *cls.globalServers.as_mut_ptr().offset(0isize) as
+                    *mut serverInfo_t;
             count = 4096i32
         }
         3 => {
-            servers = &mut cls.favoriteServers[0usize] as *mut serverInfo_t;
+            servers =
+                &mut *cls.favoriteServers.as_mut_ptr().offset(0isize) as
+                    *mut serverInfo_t;
             count = 128i32
         }
         _ => { }
@@ -3547,14 +3572,20 @@ unsafe extern "C" fn LAN_MarkServerVisible(mut source: libc::c_int,
         let mut server: *mut serverInfo_t = 0 as *mut serverInfo_t;
         match source {
             0 => {
-                server = &mut cls.localServers[0usize] as *mut serverInfo_t
+                server =
+                    &mut *cls.localServers.as_mut_ptr().offset(0isize) as
+                        *mut serverInfo_t
             }
             1 | 2 => {
-                server = &mut cls.globalServers[0usize] as *mut serverInfo_t;
+                server =
+                    &mut *cls.globalServers.as_mut_ptr().offset(0isize) as
+                        *mut serverInfo_t;
                 count = 4096i32
             }
             3 => {
-                server = &mut cls.favoriteServers[0usize] as *mut serverInfo_t
+                server =
+                    &mut *cls.favoriteServers.as_mut_ptr().offset(0isize) as
+                        *mut serverInfo_t
             }
             _ => { }
         }
@@ -3598,19 +3629,22 @@ unsafe extern "C" fn LAN_GetServerPing(mut source: libc::c_int,
         0 => {
             if n >= 0i32 && n < 128i32 {
                 server =
-                    &mut cls.localServers[n as usize] as *mut serverInfo_t
+                    &mut *cls.localServers.as_mut_ptr().offset(n as isize) as
+                        *mut serverInfo_t
             }
         }
         1 | 2 => {
             if n >= 0i32 && n < 4096i32 {
                 server =
-                    &mut cls.globalServers[n as usize] as *mut serverInfo_t
+                    &mut *cls.globalServers.as_mut_ptr().offset(n as isize) as
+                        *mut serverInfo_t
             }
         }
         3 => {
             if n >= 0i32 && n < 128i32 {
                 server =
-                    &mut cls.favoriteServers[n as usize] as *mut serverInfo_t
+                    &mut *cls.favoriteServers.as_mut_ptr().offset(n as isize)
+                        as *mut serverInfo_t
             }
         }
         _ => { }
@@ -3634,19 +3668,22 @@ unsafe extern "C" fn LAN_GetServerInfo(mut source: libc::c_int,
         0 => {
             if n >= 0i32 && n < 128i32 {
                 server =
-                    &mut cls.localServers[n as usize] as *mut serverInfo_t
+                    &mut *cls.localServers.as_mut_ptr().offset(n as isize) as
+                        *mut serverInfo_t
             }
         }
         1 | 2 => {
             if n >= 0i32 && n < 4096i32 {
                 server =
-                    &mut cls.globalServers[n as usize] as *mut serverInfo_t
+                    &mut *cls.globalServers.as_mut_ptr().offset(n as isize) as
+                        *mut serverInfo_t
             }
         }
         3 => {
             if n >= 0i32 && n < 128i32 {
                 server =
-                    &mut cls.favoriteServers[n as usize] as *mut serverInfo_t
+                    &mut *cls.favoriteServers.as_mut_ptr().offset(n as isize)
+                        as *mut serverInfo_t
             }
         }
         _ => { }
@@ -3830,15 +3867,21 @@ unsafe extern "C" fn LAN_RemoveServer(mut source: libc::c_int,
     match source {
         0 => {
             count = &mut cls.numlocalservers;
-            servers = &mut cls.localServers[0usize] as *mut serverInfo_t
+            servers =
+                &mut *cls.localServers.as_mut_ptr().offset(0isize) as
+                    *mut serverInfo_t
         }
         1 | 2 => {
             count = &mut cls.numglobalservers;
-            servers = &mut cls.globalServers[0usize] as *mut serverInfo_t
+            servers =
+                &mut *cls.globalServers.as_mut_ptr().offset(0isize) as
+                    *mut serverInfo_t
         }
         3 => {
             count = &mut cls.numfavoriteservers;
-            servers = &mut cls.favoriteServers[0usize] as *mut serverInfo_t
+            servers =
+                &mut *cls.favoriteServers.as_mut_ptr().offset(0isize) as
+                    *mut serverInfo_t
         }
         _ => { }
     }
@@ -3895,16 +3938,22 @@ unsafe extern "C" fn LAN_AddServer(mut source: libc::c_int,
     match source {
         0 => {
             count = &mut cls.numlocalservers;
-            servers = &mut cls.localServers[0usize] as *mut serverInfo_t
+            servers =
+                &mut *cls.localServers.as_mut_ptr().offset(0isize) as
+                    *mut serverInfo_t
         }
         1 | 2 => {
             max = 4096i32;
             count = &mut cls.numglobalservers;
-            servers = &mut cls.globalServers[0usize] as *mut serverInfo_t
+            servers =
+                &mut *cls.globalServers.as_mut_ptr().offset(0isize) as
+                    *mut serverInfo_t
         }
         3 => {
             count = &mut cls.numfavoriteservers;
-            servers = &mut cls.favoriteServers[0usize] as *mut serverInfo_t
+            servers =
+                &mut *cls.favoriteServers.as_mut_ptr().offset(0isize) as
+                    *mut serverInfo_t
         }
         _ => { }
     }

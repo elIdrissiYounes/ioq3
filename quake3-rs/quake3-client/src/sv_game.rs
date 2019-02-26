@@ -1,10 +1,22 @@
-use libc;
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           extern_types,
+           libc,
+           ptr_wrapping_offset_from)]
+extern crate libc;
 #[header_src = "/usr/include/stdint.h"]
 pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -436,7 +448,8 @@ default values.
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ===========================================================================
@@ -699,7 +712,8 @@ modules of the program.
         pub fn Sys_Milliseconds() -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/game/g_public.h"]
+#[header_src =
+      "ioq3/code/game/g_public.h"]
 pub mod g_public_h {
     // ( void );
     pub const GAME_CONSOLE_COMMAND: unnamed_2 = 9;
@@ -1083,7 +1097,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::q_shared_h::{entityState_t, qboolean, vec3_t};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/server.h"]
+#[header_src =
+      "ioq3/code/server/server.h"]
 pub mod server_h {
     // actively running
     pub const SS_GAME: serverState_t = 2;
@@ -1397,7 +1412,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn SV_UnlinkEntity(ent: *mut sharedEntity_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/botlib.h"]
+#[header_src =
+      "ioq3/code/botlib/botlib.h"]
 pub mod botlib_h {
     pub type ai_export_t = ai_export_s;
     #[derive
@@ -2067,7 +2083,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub type aas_entityinfo_s;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -2108,7 +2124,8 @@ pub mod stdlib_h {
         pub fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_public.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_public.h"]
 pub mod cm_public_h {
     use super::q_shared_h::{clipHandle_t, vec_t, trace_t, byte, qboolean};
     use super::{libc};
@@ -2145,7 +2162,8 @@ pub mod cm_public_h {
          -> qboolean;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/sv_game.c"]
+#[header_src =
+      "ioq3/code/server/sv_game.c"]
 pub mod sv_game_c {
     use super::stdint_h::{intptr_t};
     use super::botlib_h::{botlib_export_t};
@@ -2154,7 +2172,7 @@ pub mod sv_game_c {
     use super::g_public_h::{sharedEntity_t};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/server/sv_variadic.h"]
+      "ioq3/code/server/sv_variadic.h"]
 pub mod sv_variadic_h {
     use super::server_h::{client_t};
     use super::{libc};
@@ -2394,7 +2412,8 @@ pub unsafe extern "C" fn SV_SvEntityForGentity(mut gEnt: *mut sharedEntity_t)
                   b"SV_SvEntityForGentity: bad gEnt\x00" as *const u8 as
                       *const libc::c_char);
     }
-    return &mut sv.svEntities[(*gEnt).s.number as usize] as *mut svEntity_t;
+    return &mut *sv.svEntities.as_mut_ptr().offset((*gEnt).s.number as isize)
+               as *mut svEntity_t;
 }
 #[no_mangle]
 pub unsafe extern "C" fn SV_GEntityForSvEntity(mut svEnt: *mut svEntity_t)

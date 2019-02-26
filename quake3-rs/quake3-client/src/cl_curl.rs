@@ -1,15 +1,22 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     use super::{libc};
 }
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/sys/select.h"]
+#[header_src = "/usr/include/sys/select.h"]
 pub mod select_h {
     pub type __fd_mask = libc::c_long;
     #[derive
@@ -20,12 +27,13 @@ pub mod select_h {
     }
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     use super::types_h::{__uint8_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -203,7 +211,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     //============================================================================
     /*
@@ -307,7 +316,7 @@ Netchan handles packet fragmentation and out of order / duplicate suppression
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_types.h"]
+      "ioq3/code/renderercommon/tr_types.h"]
 pub mod tr_types_h {
     /*
 ** glconfig_t
@@ -375,11 +384,12 @@ pub mod tr_types_h {
     use super::{libc};
     use super::q_shared_h::{qboolean};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/curl.h"]
+#[header_src = "/usr/include/curl/curl.h"]
 pub mod curl_h {
     pub type CURL = ();
     pub type CURLcode = libc::c_uint;
-    pub const CURL_LAST: CURLcode = 93;
+    pub const CURL_LAST: CURLcode = 94;
+    pub const CURLE_RECURSIVE_API_CALL: CURLcode = 93;
     pub const CURLE_HTTP2_STREAM: CURLcode = 92;
     pub const CURLE_SSL_INVALIDCERTSTATUS: CURLcode = 91;
     pub const CURLE_SSL_PINNEDPUBKEYNOTMATCH: CURLcode = 90;
@@ -412,7 +422,7 @@ pub mod curl_h {
     pub const CURLE_FILESIZE_EXCEEDED: CURLcode = 63;
     pub const CURLE_LDAP_INVALID_URL: CURLcode = 62;
     pub const CURLE_BAD_CONTENT_ENCODING: CURLcode = 61;
-    pub const CURLE_SSL_CACERT: CURLcode = 60;
+    pub const CURLE_PEER_FAILED_VERIFICATION: CURLcode = 60;
     pub const CURLE_SSL_CIPHER: CURLcode = 59;
     pub const CURLE_SSL_CERTPROBLEM: CURLcode = 58;
     pub const CURLE_OBSOLETE57: CURLcode = 57;
@@ -421,7 +431,7 @@ pub mod curl_h {
     pub const CURLE_SSL_ENGINE_SETFAILED: CURLcode = 54;
     pub const CURLE_SSL_ENGINE_NOTFOUND: CURLcode = 53;
     pub const CURLE_GOT_NOTHING: CURLcode = 52;
-    pub const CURLE_PEER_FAILED_VERIFICATION: CURLcode = 51;
+    pub const CURLE_OBSOLETE51: CURLcode = 51;
     pub const CURLE_OBSOLETE50: CURLcode = 50;
     pub const CURLE_TELNET_OPTION_SYNTAX: CURLcode = 49;
     pub const CURLE_UNKNOWN_OPTION: CURLcode = 48;
@@ -474,7 +484,20 @@ pub mod curl_h {
     pub const CURLE_UNSUPPORTED_PROTOCOL: CURLcode = 1;
     pub const CURLE_OK: CURLcode = 0;
     pub type CURLoption = libc::c_uint;
-    pub const CURLOPT_LASTENTRY: CURLoption = 10270;
+    pub const CURLOPT_LASTENTRY: CURLoption = 10283;
+    pub const CURLOPT_CURLU: CURLoption = 10282;
+    pub const CURLOPT_UPKEEP_INTERVAL_MS: CURLoption = 281;
+    pub const CURLOPT_UPLOAD_BUFFERSIZE: CURLoption = 280;
+    pub const CURLOPT_DOH_URL: CURLoption = 10279;
+    pub const CURLOPT_DISALLOW_USERNAME_IN_URL: CURLoption = 278;
+    pub const CURLOPT_PROXY_TLS13_CIPHERS: CURLoption = 10277;
+    pub const CURLOPT_TLS13_CIPHERS: CURLoption = 10276;
+    pub const CURLOPT_DNS_SHUFFLE_ADDRESSES: CURLoption = 275;
+    pub const CURLOPT_HAPROXYPROTOCOL: CURLoption = 274;
+    pub const CURLOPT_RESOLVER_START_DATA: CURLoption = 10273;
+    pub const CURLOPT_RESOLVER_START_FUNCTION: CURLoption = 20272;
+    pub const CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS: CURLoption = 271;
+    pub const CURLOPT_TIMEVALUE_LARGE: CURLoption = 30270;
     pub const CURLOPT_MIMEPOST: CURLoption = 10269;
     pub const CURLOPT_SSH_COMPRESSION: CURLoption = 268;
     pub const CURLOPT_SOCKS5_AUTH: CURLoption = 267;
@@ -727,7 +750,14 @@ pub mod curl_h {
     pub const CURLOPT_URL: CURLoption = 10002;
     pub const CURLOPT_WRITEDATA: CURLoption = 10001;
     pub type CURLINFO = libc::c_uint;
-    pub const CURLINFO_LASTONE: CURLINFO = 49;
+    pub const CURLINFO_LASTONE: CURLINFO = 56;
+    pub const CURLINFO_APPCONNECT_TIME_T: CURLINFO = 6291512;
+    pub const CURLINFO_REDIRECT_TIME_T: CURLINFO = 6291511;
+    pub const CURLINFO_STARTTRANSFER_TIME_T: CURLINFO = 6291510;
+    pub const CURLINFO_PRETRANSFER_TIME_T: CURLINFO = 6291509;
+    pub const CURLINFO_CONNECT_TIME_T: CURLINFO = 6291508;
+    pub const CURLINFO_NAMELOOKUP_TIME_T: CURLINFO = 6291507;
+    pub const CURLINFO_TOTAL_TIME_T: CURLINFO = 6291506;
     pub const CURLINFO_SCHEME: CURLINFO = 1048625;
     pub const CURLINFO_PROTOCOL: CURLINFO = 2097200;
     pub const CURLINFO_PROXY_SSL_VERIFYRESULT: CURLINFO = 2097199;
@@ -765,6 +795,7 @@ pub mod curl_h {
     pub const CURLINFO_CONTENT_LENGTH_UPLOAD: CURLINFO = 3145744;
     pub const CURLINFO_CONTENT_LENGTH_DOWNLOAD_T: CURLINFO = 6291471;
     pub const CURLINFO_CONTENT_LENGTH_DOWNLOAD: CURLINFO = 3145743;
+    pub const CURLINFO_FILETIME_T: CURLINFO = 6291470;
     pub const CURLINFO_FILETIME: CURLINFO = 2097166;
     pub const CURLINFO_SSL_VERIFYRESULT: CURLINFO = 2097165;
     pub const CURLINFO_REQUEST_SIZE: CURLINFO = 2097164;
@@ -786,11 +817,12 @@ pub mod curl_h {
     pub const CURLINFO_NONE: CURLINFO = 0;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/multi.h"]
+#[header_src = "/usr/include/curl/multi.h"]
 pub mod multi_h {
     pub type CURLM = ();
     pub type CURLMcode = libc::c_int;
-    pub const CURLM_LAST: CURLMcode = 8;
+    pub const CURLM_LAST: CURLMcode = 9;
+    pub const CURLM_RECURSIVE_API_CALL: CURLMcode = 8;
     pub const CURLM_ADDED_ALREADY: CURLMcode = 7;
     pub const CURLM_UNKNOWN_OPTION: CURLMcode = 6;
     pub const CURLM_BAD_SOCKET: CURLMcode = 5;
@@ -823,7 +855,8 @@ pub mod multi_h {
     use super::{libc};
     use super::curl_h::{CURL, CURLcode};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     /*
 =============================================================================
@@ -1127,7 +1160,7 @@ pub mod opus_h {
   *
   * opus_encode() and opus_encode_float() return the number of bytes actually written to the packet.
   * The return value <b>can be negative</b>, which indicates that an error has occurred. If the return value
-  * is 1 byte, then the packet does not need to be transmitted (DTX).
+  * is 2 bytes or less, then the packet does not need to be transmitted (DTX).
   *
   * Once the encoder state if no longer needed, it can be destroyed with
   *
@@ -1217,7 +1250,8 @@ pub mod opus_h {
         pub type OpusDecoder;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/cl_curl.h"]
+#[header_src =
+      "ioq3/code/client/cl_curl.h"]
 pub mod cl_curl_h {
     use super::q_shared_h::{cvar_t, qboolean};
     use super::{libc};
@@ -1225,7 +1259,8 @@ pub mod cl_curl_h {
     use super::multi_h::{CURLM, CURLMcode, CURLMsg};
     use super::select_h::{fd_set};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/cl_curl.c"]
+#[header_src =
+      "ioq3/code/client/cl_curl.c"]
 pub mod cl_curl_c {
     use super::curl_h::{CURL};
 }
@@ -1249,7 +1284,8 @@ pub mod SDL_loadso_h {
          -> *mut libc::c_void;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/sys/sys_loadlib.h"]
+#[header_src =
+      "ioq3/code/sys/sys_loadlib.h"]
 pub mod sys_loadlib_h {
     use super::{libc};
     use super::q_shared_h::{qboolean};
@@ -1281,7 +1317,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/client/cl_variadic.h"]
+      "ioq3/code/client/cl_variadic.h"]
 pub mod cl_variadic_h {
     use super::curl_h::{CURLcode, CURL, CURLoption};
     extern "C" {
@@ -1313,8 +1349,8 @@ use self::tr_types_h::{textureCompression_t, TC_S3TC_ARB, TC_S3TC, TC_NONE,
                        GLDRV_ICD, glHardwareType_t, GLHW_PERMEDIA2,
                        GLHW_RAGEPRO, GLHW_RIVA128, GLHW_3DFX_2D3D,
                        GLHW_GENERIC, glconfig_t};
-use self::curl_h::{CURL, CURLcode, CURL_LAST, CURLE_HTTP2_STREAM,
-                   CURLE_SSL_INVALIDCERTSTATUS,
+use self::curl_h::{CURL, CURLcode, CURL_LAST, CURLE_RECURSIVE_API_CALL,
+                   CURLE_HTTP2_STREAM, CURLE_SSL_INVALIDCERTSTATUS,
                    CURLE_SSL_PINNEDPUBKEYNOTMATCH,
                    CURLE_NO_CONNECTION_AVAILABLE, CURLE_CHUNK_FAILED,
                    CURLE_FTP_BAD_FILE_LIST, CURLE_RTSP_SESSION_ERROR,
@@ -1329,13 +1365,14 @@ use self::curl_h::{CURL, CURLcode, CURL_LAST, CURLE_HTTP2_STREAM,
                    CURLE_SSL_ENGINE_INITFAILED, CURLE_SEND_FAIL_REWIND,
                    CURLE_USE_SSL_FAILED, CURLE_FILESIZE_EXCEEDED,
                    CURLE_LDAP_INVALID_URL, CURLE_BAD_CONTENT_ENCODING,
-                   CURLE_SSL_CACERT, CURLE_SSL_CIPHER, CURLE_SSL_CERTPROBLEM,
-                   CURLE_OBSOLETE57, CURLE_RECV_ERROR, CURLE_SEND_ERROR,
-                   CURLE_SSL_ENGINE_SETFAILED, CURLE_SSL_ENGINE_NOTFOUND,
-                   CURLE_GOT_NOTHING, CURLE_PEER_FAILED_VERIFICATION,
-                   CURLE_OBSOLETE50, CURLE_TELNET_OPTION_SYNTAX,
-                   CURLE_UNKNOWN_OPTION, CURLE_TOO_MANY_REDIRECTS,
-                   CURLE_OBSOLETE46, CURLE_INTERFACE_FAILED, CURLE_OBSOLETE44,
+                   CURLE_PEER_FAILED_VERIFICATION, CURLE_SSL_CIPHER,
+                   CURLE_SSL_CERTPROBLEM, CURLE_OBSOLETE57, CURLE_RECV_ERROR,
+                   CURLE_SEND_ERROR, CURLE_SSL_ENGINE_SETFAILED,
+                   CURLE_SSL_ENGINE_NOTFOUND, CURLE_GOT_NOTHING,
+                   CURLE_OBSOLETE51, CURLE_OBSOLETE50,
+                   CURLE_TELNET_OPTION_SYNTAX, CURLE_UNKNOWN_OPTION,
+                   CURLE_TOO_MANY_REDIRECTS, CURLE_OBSOLETE46,
+                   CURLE_INTERFACE_FAILED, CURLE_OBSOLETE44,
                    CURLE_BAD_FUNCTION_ARGUMENT, CURLE_ABORTED_BY_CALLBACK,
                    CURLE_FUNCTION_NOT_FOUND, CURLE_OBSOLETE40,
                    CURLE_LDAP_SEARCH_FAILED, CURLE_LDAP_CANNOT_BIND,
@@ -1357,9 +1394,17 @@ use self::curl_h::{CURL, CURLcode, CURL_LAST, CURLE_HTTP2_STREAM,
                    CURLE_COULDNT_RESOLVE_HOST, CURLE_COULDNT_RESOLVE_PROXY,
                    CURLE_NOT_BUILT_IN, CURLE_URL_MALFORMAT, CURLE_FAILED_INIT,
                    CURLE_UNSUPPORTED_PROTOCOL, CURLE_OK, CURLoption,
-                   CURLOPT_LASTENTRY, CURLOPT_MIMEPOST,
-                   CURLOPT_SSH_COMPRESSION, CURLOPT_SOCKS5_AUTH,
-                   CURLOPT_REQUEST_TARGET, CURLOPT_SUPPRESS_CONNECT_HEADERS,
+                   CURLOPT_LASTENTRY, CURLOPT_CURLU,
+                   CURLOPT_UPKEEP_INTERVAL_MS, CURLOPT_UPLOAD_BUFFERSIZE,
+                   CURLOPT_DOH_URL, CURLOPT_DISALLOW_USERNAME_IN_URL,
+                   CURLOPT_PROXY_TLS13_CIPHERS, CURLOPT_TLS13_CIPHERS,
+                   CURLOPT_DNS_SHUFFLE_ADDRESSES, CURLOPT_HAPROXYPROTOCOL,
+                   CURLOPT_RESOLVER_START_DATA,
+                   CURLOPT_RESOLVER_START_FUNCTION,
+                   CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS, CURLOPT_TIMEVALUE_LARGE,
+                   CURLOPT_MIMEPOST, CURLOPT_SSH_COMPRESSION,
+                   CURLOPT_SOCKS5_AUTH, CURLOPT_REQUEST_TARGET,
+                   CURLOPT_SUPPRESS_CONNECT_HEADERS,
                    CURLOPT_ABSTRACT_UNIX_SOCKET,
                    CURLOPT_PROXY_PINNEDPUBLICKEY, CURLOPT_PRE_PROXY,
                    CURLOPT_PROXY_SSL_OPTIONS, CURLOPT_PROXY_CRLFILE,
@@ -1475,7 +1520,10 @@ use self::curl_h::{CURL, CURLcode, CURL_LAST, CURLE_HTTP2_STREAM,
                    CURLOPT_READDATA, CURLOPT_RANGE, CURLOPT_PROXYUSERPWD,
                    CURLOPT_USERPWD, CURLOPT_PROXY, CURLOPT_PORT, CURLOPT_URL,
                    CURLOPT_WRITEDATA, CURLINFO, CURLINFO_LASTONE,
-                   CURLINFO_SCHEME, CURLINFO_PROTOCOL,
+                   CURLINFO_APPCONNECT_TIME_T, CURLINFO_REDIRECT_TIME_T,
+                   CURLINFO_STARTTRANSFER_TIME_T, CURLINFO_PRETRANSFER_TIME_T,
+                   CURLINFO_CONNECT_TIME_T, CURLINFO_NAMELOOKUP_TIME_T,
+                   CURLINFO_TOTAL_TIME_T, CURLINFO_SCHEME, CURLINFO_PROTOCOL,
                    CURLINFO_PROXY_SSL_VERIFYRESULT, CURLINFO_HTTP_VERSION,
                    CURLINFO_TLS_SSL_PTR, CURLINFO_ACTIVESOCKET,
                    CURLINFO_TLS_SESSION, CURLINFO_LOCAL_PORT,
@@ -1495,22 +1543,24 @@ use self::curl_h::{CURL, CURLcode, CURL_LAST, CURLE_HTTP2_STREAM,
                    CURLINFO_CONTENT_LENGTH_UPLOAD_T,
                    CURLINFO_CONTENT_LENGTH_UPLOAD,
                    CURLINFO_CONTENT_LENGTH_DOWNLOAD_T,
-                   CURLINFO_CONTENT_LENGTH_DOWNLOAD, CURLINFO_FILETIME,
-                   CURLINFO_SSL_VERIFYRESULT, CURLINFO_REQUEST_SIZE,
-                   CURLINFO_HEADER_SIZE, CURLINFO_SPEED_UPLOAD_T,
-                   CURLINFO_SPEED_UPLOAD, CURLINFO_SPEED_DOWNLOAD_T,
-                   CURLINFO_SPEED_DOWNLOAD, CURLINFO_SIZE_DOWNLOAD_T,
-                   CURLINFO_SIZE_DOWNLOAD, CURLINFO_SIZE_UPLOAD_T,
-                   CURLINFO_SIZE_UPLOAD, CURLINFO_PRETRANSFER_TIME,
-                   CURLINFO_CONNECT_TIME, CURLINFO_NAMELOOKUP_TIME,
-                   CURLINFO_TOTAL_TIME, CURLINFO_RESPONSE_CODE,
-                   CURLINFO_EFFECTIVE_URL, CURLINFO_NONE};
-use self::multi_h::{CURLM, CURLMcode, CURLM_LAST, CURLM_ADDED_ALREADY,
-                    CURLM_UNKNOWN_OPTION, CURLM_BAD_SOCKET,
-                    CURLM_INTERNAL_ERROR, CURLM_OUT_OF_MEMORY,
-                    CURLM_BAD_EASY_HANDLE, CURLM_BAD_HANDLE, CURLM_OK,
-                    CURLM_CALL_MULTI_PERFORM, CURLMSG, CURLMSG_LAST,
-                    CURLMSG_DONE, CURLMSG_NONE, CURLMsg, unnamed_0};
+                   CURLINFO_CONTENT_LENGTH_DOWNLOAD, CURLINFO_FILETIME_T,
+                   CURLINFO_FILETIME, CURLINFO_SSL_VERIFYRESULT,
+                   CURLINFO_REQUEST_SIZE, CURLINFO_HEADER_SIZE,
+                   CURLINFO_SPEED_UPLOAD_T, CURLINFO_SPEED_UPLOAD,
+                   CURLINFO_SPEED_DOWNLOAD_T, CURLINFO_SPEED_DOWNLOAD,
+                   CURLINFO_SIZE_DOWNLOAD_T, CURLINFO_SIZE_DOWNLOAD,
+                   CURLINFO_SIZE_UPLOAD_T, CURLINFO_SIZE_UPLOAD,
+                   CURLINFO_PRETRANSFER_TIME, CURLINFO_CONNECT_TIME,
+                   CURLINFO_NAMELOOKUP_TIME, CURLINFO_TOTAL_TIME,
+                   CURLINFO_RESPONSE_CODE, CURLINFO_EFFECTIVE_URL,
+                   CURLINFO_NONE};
+use self::multi_h::{CURLM, CURLMcode, CURLM_LAST, CURLM_RECURSIVE_API_CALL,
+                    CURLM_ADDED_ALREADY, CURLM_UNKNOWN_OPTION,
+                    CURLM_BAD_SOCKET, CURLM_INTERNAL_ERROR,
+                    CURLM_OUT_OF_MEMORY, CURLM_BAD_EASY_HANDLE,
+                    CURLM_BAD_HANDLE, CURLM_OK, CURLM_CALL_MULTI_PERFORM,
+                    CURLMSG, CURLMSG_LAST, CURLMSG_DONE, CURLMSG_NONE,
+                    CURLMsg, unnamed_0};
 use self::client_h::{clientConnection_t, clientStatic_t, serverInfo_t, clc,
                      CL_WritePacket, CL_AddReliableCommand, cls,
                      CL_NextDownload};
@@ -2001,7 +2051,7 @@ pub unsafe extern "C" fn CL_cURL_BeginDownload(mut localName:
     qcurl_easy_setopt_warn(clc.downloadCURL, CURLOPT_USERAGENT,
                            va(b"%s %s\x00" as *const u8 as *const libc::c_char
                                   as *mut libc::c_char,
-                              b"ioq3 1.36_GIT_3db749c8-2019-01-29\x00" as
+                              b"ioq3 1.36_GIT_363a9303-2019-02-25\x00" as
                                   *const u8 as *const libc::c_char,
                               qcurl_version.expect("non-null function pointer")()));
     qcurl_easy_setopt_warn(clc.downloadCURL, CURLOPT_WRITEFUNCTION,

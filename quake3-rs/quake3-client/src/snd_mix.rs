@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -122,7 +130,8 @@ default values.
     pub type cvar_t = cvar_s;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_local.h"]
+#[header_src =
+      "ioq3/code/client/snd_local.h"]
 pub mod snd_local_h {
     /*
 ===========================================================================
@@ -263,7 +272,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                                  to: *mut libc::c_short);
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -280,7 +289,8 @@ pub mod string_h {
          -> *mut libc::c_void;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     use super::q_shared_h::{byte, qboolean};
     use super::{libc};
@@ -292,7 +302,8 @@ pub mod client_h {
         pub fn CL_VideoRecording() -> qboolean;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_mix.c"]
+#[header_src =
+      "ioq3/code/client/snd_mix.c"]
 pub mod snd_mix_c {
     use super::{libc};
     use super::snd_local_h::{channel_t, sfx_t};
@@ -636,7 +647,8 @@ unsafe extern "C" fn S_PaintChannelFrom16_scalar(mut ch: *mut channel_t,
     let mut frightvol: libc::c_float = 0.;
     if (*sc).soundChannels <= 0i32 { return }
     samp =
-        &mut paintbuffer[bufferOffset as usize] as *mut portable_samplepair_t;
+        &mut *paintbuffer.as_mut_ptr().offset(bufferOffset as isize) as
+            *mut portable_samplepair_t;
     if 0 != (*ch).doppler as u64 {
         sampleOffset =
             (sampleOffset as libc::c_float * (*ch).oldDopplerScale) as
@@ -750,7 +762,8 @@ pub unsafe extern "C" fn S_PaintChannelFromMuLaw(mut ch: *mut channel_t,
     leftvol = (*ch).leftvol * snd_vol;
     rightvol = (*ch).rightvol * snd_vol;
     samp =
-        &mut paintbuffer[bufferOffset as usize] as *mut portable_samplepair_t;
+        &mut *paintbuffer.as_mut_ptr().offset(bufferOffset as isize) as
+            *mut portable_samplepair_t;
     chunk = (*sc).soundData;
     while sampleOffset >= 1024i32 * 2i32 {
         chunk = (*chunk).next;
@@ -817,7 +830,8 @@ pub unsafe extern "C" fn S_PaintChannelFromWavelet(mut ch: *mut channel_t,
     rightvol = (*ch).rightvol * snd_vol;
     i = 0i32;
     samp =
-        &mut paintbuffer[bufferOffset as usize] as *mut portable_samplepair_t;
+        &mut *paintbuffer.as_mut_ptr().offset(bufferOffset as isize) as
+            *mut portable_samplepair_t;
     chunk = (*sc).soundData;
     while sampleOffset >= 1024i32 / 2i32 * 4i32 {
         chunk = (*chunk).next;
@@ -866,7 +880,8 @@ pub unsafe extern "C" fn S_PaintChannelFromADPCM(mut ch: *mut channel_t,
     rightvol = (*ch).rightvol * snd_vol;
     i = 0i32;
     samp =
-        &mut paintbuffer[bufferOffset as usize] as *mut portable_samplepair_t;
+        &mut *paintbuffer.as_mut_ptr().offset(bufferOffset as isize) as
+            *mut portable_samplepair_t;
     chunk = (*sc).soundData;
     if 0 != (*ch).doppler as u64 {
         sampleOffset =

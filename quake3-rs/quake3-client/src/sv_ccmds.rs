@@ -1,5 +1,12 @@
-use libc;
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
@@ -25,7 +32,8 @@ pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -337,7 +345,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ===========================================================================
@@ -621,7 +630,8 @@ modules of the program.
         pub fn SV_Shutdown(finalmsg: *mut libc::c_char);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/game/g_public.h"]
+#[header_src =
+      "ioq3/code/game/g_public.h"]
 pub mod g_public_h {
     /*
 ===========================================================================
@@ -731,7 +741,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::q_shared_h::{entityState_t, qboolean, vec3_t};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/game/bg_public.h"]
+#[header_src =
+      "ioq3/code/game/bg_public.h"]
 pub mod bg_public_h {
     /*
 ===========================================================================
@@ -791,7 +802,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     pub const GT_FFA: unnamed_0 = 0;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/server.h"]
+#[header_src =
+      "ioq3/code/server/server.h"]
 pub mod server_h {
     /*
 ===========================================================================
@@ -1046,9 +1058,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         #[no_mangle]
         pub static mut serverBansCount: libc::c_int;
         #[no_mangle]
-        pub fn SV_SendServerCommand(cl: *mut client_t,
-                                    fmt: *const libc::c_char, ...);
-        #[no_mangle]
         pub fn SV_SpawnServer(server: *mut libc::c_char, killBots: qboolean);
         #[no_mangle]
         pub fn SV_SectorList_f();
@@ -1097,7 +1106,7 @@ pub mod string_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_platform.h"]
+      "ioq3/code/qcommon/q_platform.h"]
 pub mod q_platform_h {
     use super::{libc};
     extern "C" {
@@ -1105,8 +1114,20 @@ pub mod q_platform_h {
         pub fn ShortSwap(l: libc::c_short) -> libc::c_short;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/sv_ccmds.c"]
+#[header_src =
+      "ioq3/code/server/sv_ccmds.c"]
 pub mod sv_ccmds_c { }
+#[header_src =
+      "ioq3/code/server/sv_variadic.h"]
+pub mod sv_variadic_h {
+    use super::server_h::{client_t};
+    use super::{libc};
+    extern "C" {
+        #[no_mangle]
+        pub fn SV_SendServerCommand(cl: *mut client_t,
+                                    fmt: *const libc::c_char, ...);
+    }
+}
 use self::stddef_h::{size_t};
 use self::stdlib_h::{__compar_fn_t, atoi, qsort};
 use self::stdint_h::{intptr_t};
@@ -1151,13 +1172,13 @@ use self::server_h::{voipServerPacket_s, voipServerPacket_t, svEntity_s,
                      netchan_buffer_s, netchan_buffer_t, client_s, client_t,
                      challenge_t, serverStatic_t, serverBan_t, worldSector_s,
                      svs, sv, gvm, sv_maxclients, sv_mapname, sv_gametype,
-                     sv_banFile, serverBans, serverBansCount,
-                     SV_SendServerCommand, SV_SpawnServer, SV_SectorList_f,
-                     SV_ClientEnterWorld, SV_DropClient, SV_AddServerCommand,
-                     SV_RestartGameProgs, SV_SetConfigstring,
-                     SV_GameClientNum};
+                     sv_banFile, serverBans, serverBansCount, SV_SpawnServer,
+                     SV_SectorList_f, SV_ClientEnterWorld, SV_DropClient,
+                     SV_AddServerCommand, SV_RestartGameProgs,
+                     SV_SetConfigstring, SV_GameClientNum};
 use self::string_h::{memmove, strcpy, strcat, strchr, strlen};
 use self::q_platform_h::{ShortSwap};
+use self::sv_variadic_h::{SV_SendServerCommand};
 #[no_mangle]
 pub unsafe extern "C" fn SV_AddOperatorCommands() {
     static mut initialized: qboolean = qfalse;
@@ -1282,7 +1303,9 @@ unsafe extern "C" fn SV_WriteBans() {
         let mut curban: *mut serverBan_t = 0 as *mut serverBan_t;
         index = 0i32;
         while index < serverBansCount {
-            curban = &mut serverBans[index as usize] as *mut serverBan_t;
+            curban =
+                &mut *serverBans.as_mut_ptr().offset(index as isize) as
+                    *mut serverBan_t;
             Com_sprintf(writebuf.as_mut_ptr(),
                         ::std::mem::size_of::<[libc::c_char; 128]>() as
                             libc::c_ulong as libc::c_int,
@@ -1337,7 +1360,9 @@ unsafe extern "C" fn SV_DelBanFromList(mut isexception: qboolean) {
         }
         index = 0i32;
         while index < serverBansCount {
-            curban = &mut serverBans[index as usize] as *mut serverBan_t;
+            curban =
+                &mut *serverBans.as_mut_ptr().offset(index as isize) as
+                    *mut serverBan_t;
             if (*curban).isexception as libc::c_uint ==
                    isexception as libc::c_uint && (*curban).subnet >= mask &&
                    0 !=
@@ -1529,7 +1554,9 @@ unsafe extern "C" fn SV_AddBanToList(mut isexception: qboolean) {
     }
     index = 0i32;
     while index < serverBansCount {
-        curban = &mut serverBans[index as usize] as *mut serverBan_t;
+        curban =
+            &mut *serverBans.as_mut_ptr().offset(index as isize) as
+                *mut serverBan_t;
         if (*curban).subnet <= mask {
             if (0 != (*curban).isexception as libc::c_uint ||
                     0 == isexception as u64) &&
@@ -1587,7 +1614,9 @@ unsafe extern "C" fn SV_AddBanToList(mut isexception: qboolean) {
     }
     index = 0i32;
     while index < serverBansCount {
-        curban = &mut serverBans[index as usize] as *mut serverBan_t;
+        curban =
+            &mut *serverBans.as_mut_ptr().offset(index as isize) as
+                *mut serverBan_t;
         if (*curban).subnet > mask &&
                (0 == (*curban).isexception as u64 ||
                     0 != isexception as libc::c_uint) &&
@@ -1671,7 +1700,9 @@ unsafe extern "C" fn SV_ListBans_f() {
     count = 0i32;
     index = count;
     while index < serverBansCount {
-        ban = &mut serverBans[index as usize] as *mut serverBan_t;
+        ban =
+            &mut *serverBans.as_mut_ptr().offset(index as isize) as
+                *mut serverBan_t;
         if 0 == (*ban).isexception as u64 {
             count += 1;
             Com_Printf(b"Ban #%d: %s/%d\n\x00" as *const u8 as
@@ -1683,7 +1714,9 @@ unsafe extern "C" fn SV_ListBans_f() {
     count = 0i32;
     index = count;
     while index < serverBansCount {
-        ban = &mut serverBans[index as usize] as *mut serverBan_t;
+        ban =
+            &mut *serverBans.as_mut_ptr().offset(index as isize) as
+                *mut serverBan_t;
         if 0 != (*ban).isexception as u64 {
             count += 1;
             Com_Printf(b"Except #%d: %s/%d\n\x00" as *const u8 as
@@ -1729,7 +1762,7 @@ unsafe extern "C" fn SV_RehashBans_f() {
                               as *mut libc::c_char,
                           b"code/server/sv_ccmds.c\x00" as *const u8 as
                               *const libc::c_char as *mut libc::c_char,
-                          663i32) as *mut libc::c_char;
+                          664i32) as *mut libc::c_char;
         curpos = textbuf;
         filelen = FS_Read(textbuf as *mut libc::c_void, filelen, readfrom);
         FS_FCloseFile(readfrom);
@@ -1752,7 +1785,9 @@ unsafe extern "C" fn SV_RehashBans_f() {
             *newlinepos = '\u{0}' as i32 as libc::c_char;
             if 0 !=
                    NET_StringToAdr(curpos.offset(2isize),
-                                   &mut serverBans[index as usize].ip,
+                                   &mut (*serverBans.as_mut_ptr().offset(index
+                                                                             as
+                                                                             isize)).ip,
                                    NA_UNSPEC) {
                 serverBans[index as usize].isexception =
                     (*curpos.offset(0isize) as libc::c_int != '0' as i32) as

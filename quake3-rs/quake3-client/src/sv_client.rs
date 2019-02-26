@@ -1,10 +1,21 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           extern_types,
+           libc,
+           ptr_wrapping_offset_from)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     use super::types_h::{__uint8_t};
@@ -14,7 +25,8 @@ pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -331,7 +343,8 @@ default values.
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ===========================================================================
@@ -647,7 +660,8 @@ VIRTUAL MACHINE
         pub fn Sys_IsLANAddress(adr: netadr_t) -> qboolean;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/game/g_public.h"]
+#[header_src =
+      "ioq3/code/game/g_public.h"]
 pub mod g_public_h {
     /*
 ===========================================================================
@@ -757,7 +771,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::q_shared_h::{entityState_t, qboolean, vec3_t};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/game/bg_public.h"]
+#[header_src =
+      "ioq3/code/game/bg_public.h"]
 pub mod bg_public_h {
     /*
 ===========================================================================
@@ -817,7 +832,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     pub const GT_FFA: unnamed_1 = 0;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/server.h"]
+#[header_src =
+      "ioq3/code/server/server.h"]
 pub mod server_h {
     /*
 ===========================================================================
@@ -1157,7 +1173,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
          -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/sv_client.c"]
+#[header_src =
+      "ioq3/code/server/sv_client.c"]
 pub mod sv_client_c {
     #[derive
     ( Copy , Clone )]
@@ -1203,7 +1220,7 @@ pub mod stdlib_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_platform.h"]
+      "ioq3/code/qcommon/q_platform.h"]
 pub mod q_platform_h {
     use super::{libc};
     extern "C" {
@@ -1212,7 +1229,7 @@ pub mod q_platform_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/server/sv_variadic.h"]
+      "ioq3/code/server/sv_variadic.h"]
 pub mod sv_variadic_h {
     use super::server_h::{client_t};
     use super::{libc};
@@ -1346,7 +1363,8 @@ pub unsafe extern "C" fn SV_GetChallenge(mut from: netadr_t) {
     oldest = 0i32;
     oldestTime = 0x7fffffffi32;
     oldestClientTime = oldestTime;
-    challenge = &mut svs.challenges[0usize] as *mut challenge_t;
+    challenge =
+        &mut *svs.challenges.as_mut_ptr().offset(0isize) as *mut challenge_t;
     clientChallenge = atoi(Cmd_Argv(1i32));
     i = 0i32;
     while i < 2048i32 {
@@ -1370,7 +1388,9 @@ pub unsafe extern "C" fn SV_GetChallenge(mut from: netadr_t) {
         }
     }
     if i == 2048i32 {
-        challenge = &mut svs.challenges[oldest as usize] as *mut challenge_t;
+        challenge =
+            &mut *svs.challenges.as_mut_ptr().offset(oldest as isize) as
+                *mut challenge_t;
         (*challenge).clientChallenge = clientChallenge;
         (*challenge).adr = from;
         (*challenge).firstTime = svs.time;
@@ -1692,7 +1712,9 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: netadr_t) {
                                    as *const u8 as *const libc::c_char);
             return
         }
-        challengeptr = &mut svs.challenges[i as usize] as *mut challenge_t;
+        challengeptr =
+            &mut *svs.challenges.as_mut_ptr().offset(i as isize) as
+                *mut challenge_t;
         if 0 != (*challengeptr).wasrefused as u64 { return }
         ping = svs.time - (*challengeptr).pingTime;
         if 0 == Sys_IsLANAddress(from) as u64 {
@@ -1748,7 +1770,7 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: netadr_t) {
 //			// player might have are dropped
 //			VM_Call( gvm, GAME_CLIENT_DISCONNECT, newcl - svs.clients );
 			//
-                current_block = 414540557241433404;
+                current_block = 9151610738645949512;
                 break ;
             }
         }
@@ -1984,7 +2006,9 @@ pub unsafe extern "C" fn SV_DropClient(mut drop_0: *mut client_t,
         return
     }
     if 0 == isBot as u64 {
-        challenge = &mut svs.challenges[0usize] as *mut challenge_t;
+        challenge =
+            &mut *svs.challenges.as_mut_ptr().offset(0isize) as
+                *mut challenge_t;
         i = 0i32;
         while i < 2048i32 {
             if 0 !=
@@ -2100,7 +2124,9 @@ unsafe extern "C" fn SV_IsBanned(mut from: *mut netadr_t,
     }
     index = 0i32;
     while index < serverBansCount {
-        curban = &mut serverBans[index as usize] as *mut serverBan_t;
+        curban =
+            &mut *serverBans.as_mut_ptr().offset(index as isize) as
+                *mut serverBan_t;
         if (*curban).isexception as libc::c_uint ==
                isexception as libc::c_uint {
             if 0 !=
@@ -2136,7 +2162,9 @@ pub unsafe extern "C" fn SV_AuthorizeIpPacket(mut from: netadr_t) {
                        *const u8 as *const libc::c_char);
         return
     }
-    challengeptr = &mut svs.challenges[i as usize] as *mut challenge_t;
+    challengeptr =
+        &mut *svs.challenges.as_mut_ptr().offset(i as isize) as
+            *mut challenge_t;
     (*challengeptr).pingTime = svs.time;
     s = Cmd_Argv(2i32);
     r = Cmd_Argv(3i32);
@@ -2317,7 +2345,7 @@ unsafe extern "C" fn SV_UserMove(mut cl: *mut client_t, mut msg: *mut msg_t,
     oldcmd = &mut nullcmd;
     i = 0i32;
     while i < cmdCount {
-        cmd = &mut cmds[i as usize] as *mut usercmd_t;
+        cmd = &mut *cmds.as_mut_ptr().offset(i as isize) as *mut usercmd_t;
         MSG_ReadDeltaUsercmdKey(msg, key, oldcmd, cmd);
         oldcmd = cmd;
         i += 1
@@ -2337,7 +2365,7 @@ unsafe extern "C" fn SV_UserMove(mut cl: *mut client_t, mut msg: *mut msg_t,
     }
     if (*cl).state as libc::c_uint == CS_PRIMED as libc::c_int as libc::c_uint
        {
-        SV_ClientEnterWorld(cl, &mut cmds[0usize]);
+        SV_ClientEnterWorld(cl, &mut *cmds.as_mut_ptr().offset(0isize));
     }
     if (*sv_pure).integer != 0i32 && (*cl).pureAuthentic == 0i32 {
         SV_DropClient(cl,
@@ -2363,7 +2391,8 @@ unsafe extern "C" fn SV_UserMove(mut cl: *mut client_t, mut msg: *mut msg_t,
 		// these old cmds are included when cl_packetdup > 0
             if !(cmds[i as usize].serverTime <= (*cl).lastUsercmd.serverTime)
                {
-                SV_ClientThink(cl, &mut cmds[i as usize]);
+                SV_ClientThink(cl,
+                               &mut *cmds.as_mut_ptr().offset(i as isize));
             }
         }
         i += 1
@@ -2501,7 +2530,9 @@ unsafe extern "C" fn SV_SendClientGameState(mut client: *mut client_t) {
            ::std::mem::size_of::<entityState_t>() as libc::c_ulong);
     start = 0i32;
     while start < 1i32 << 10i32 {
-        base = &mut sv.svEntities[start as usize].baseline;
+        base =
+            &mut (*sv.svEntities.as_mut_ptr().offset(start as
+                                                         isize)).baseline;
         if !(0 == (*base).number) {
             MSG_WriteByte(&mut msg, svc_baseline as libc::c_int);
             MSG_WriteDeltaEntity(&mut msg, &mut nullstate, base, qtrue);

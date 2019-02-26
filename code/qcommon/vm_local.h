@@ -135,7 +135,7 @@ typedef struct vmSymbol_s {
 	struct vmSymbol_s	*next;
 	int		symValue;
 	int		profileCount;
-	char	symName[1];		// variable sized
+	char	symName[];		// variable sized
 } vmSymbol_t;
 
 #define	VM_OFFSET_PROGRAM_STACK		0

@@ -1,10 +1,17 @@
-use libc;
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     pub type __int16_t = libc::c_short;
@@ -12,12 +19,12 @@ pub mod types_h {
     pub type __uint32_t = libc::c_uint;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"]
+#[header_src = "/usr/include/bits/stdint-intn.h"]
 pub mod stdint_intn_h {
     pub type int16_t = __int16_t;
     use super::types_h::{__int16_t};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     pub type uint16_t = __uint16_t;
@@ -419,7 +426,8 @@ pub mod SDL_audio_h {
         pub fn SDL_CloseAudioDevice(dev: SDL_AudioDeviceID);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -541,7 +549,8 @@ default values.
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_local.h"]
+#[header_src =
+      "ioq3/code/client/snd_local.h"]
 pub mod snd_local_h {
     #[derive
     ( Copy , Clone )]
@@ -563,7 +572,8 @@ pub mod snd_local_h {
         pub static mut dma: dma_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/sdl/sdl_snd.c"]
+#[header_src =
+      "ioq3/code/sdl/sdl_snd.c"]
 pub mod sdl_snd_c {
     #[derive
     ( Copy , Clone )]
@@ -663,7 +673,8 @@ pub mod SDL_h {
         pub fn SDL_QuitSubSystem(flags: Uint32);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     use super::q_shared_h::{cvar_t};
     use super::{libc};
@@ -701,7 +712,8 @@ modules of the program.
          -> *mut cvar_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     use super::q_shared_h::{cvar_t};
     extern "C" {
@@ -816,7 +828,7 @@ pub unsafe extern "C" fn SNDDMA_Init() -> qboolean {
     sdlPlaybackDevice =
         SDL_OpenAudioDevice(0 as *const libc::c_char,
                             SDL_FALSE as libc::c_int, &mut desired,
-                            &mut obtained, 0x1i32 | 0x2i32 | 0x4i32);
+                            &mut obtained, 0x1i32 | 0x2i32 | 0x4i32 | 0x8i32);
     if sdlPlaybackDevice == 0i32 as libc::c_uint {
         Com_Printf(b"SDL_OpenAudioDevice() failed: %s\n\x00" as *const u8 as
                        *const libc::c_char, SDL_GetError());

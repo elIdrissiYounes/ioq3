@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     pub type qboolean = libc::c_uint;
     pub const qtrue: qboolean = 1;
@@ -29,7 +37,8 @@ pub mod q_shared_h {
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_codec.h"]
+#[header_src =
+      "ioq3/code/client/snd_codec.h"]
 pub mod snd_codec_h {
     /*
 ===========================================================================
@@ -121,7 +130,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub static mut opus_codec: snd_codec_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     use super::{libc};
     use super::q_shared_h::{fileHandle_t, qboolean};
@@ -143,7 +153,8 @@ pub mod qcommon_h {
         pub fn Z_Free(ptr: *mut libc::c_void);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_codec.c"]
+#[header_src =
+      "ioq3/code/client/snd_codec.c"]
 pub mod snd_codec_c { }
 use self::q_shared_h::{qboolean, qtrue, qfalse, fileHandle_t,
                        COM_GetExtension, COM_StripExtension, Com_sprintf,

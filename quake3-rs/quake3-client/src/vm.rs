@@ -1,17 +1,28 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           extern_types,
+           libc,
+           ptr_wrapping_offset_from)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __off_t = libc::c_long;
     pub type __off64_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/libio.h"]
-pub mod libio_h {
+#[header_src = "/usr/include/bits/types/struct_FILE.h"]
+pub mod struct_FILE_h {
     #[derive
     ( Copy , Clone )]
     #[repr(C)]
@@ -38,31 +49,28 @@ pub mod libio_h {
         pub _shortbuf: [libc::c_char; 1],
         pub _lock: *mut libc::c_void,
         pub _offset: __off64_t,
-        pub __pad1: *mut libc::c_void,
-        pub __pad2: *mut libc::c_void,
-        pub __pad3: *mut libc::c_void,
-        pub __pad4: *mut libc::c_void,
+        pub _codecvt: *mut _IO_codecvt,
+        pub _wide_data: *mut _IO_wide_data,
+        pub _freeres_list: *mut _IO_FILE,
+        pub _freeres_buf: *mut libc::c_void,
         pub __pad5: size_t,
         pub _mode: libc::c_int,
         pub _unused2: [libc::c_char; 20],
     }
     pub type _IO_lock_t = ();
-    #[derive
-    ( Copy , Clone )]
-    #[repr(C)]
-    pub struct _IO_marker {
-        pub _next: *mut _IO_marker,
-        pub _sbuf: *mut _IO_FILE,
-        pub _pos: libc::c_int,
-    }
     use super::{libc};
     use super::types_h::{__off_t, __off64_t};
     use super::stddef_h::{size_t};
+    extern "C" {
+        pub type _IO_wide_data;
+        pub type _IO_codecvt;
+        pub type _IO_marker;
+    }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types/FILE.h"]
+#[header_src = "/usr/include/bits/types/FILE.h"]
 pub mod FILE_h {
     pub type FILE = _IO_FILE;
-    use super::libio_h::{_IO_FILE};
+    use super::struct_FILE_h::{_IO_FILE};
 }
 #[header_src = "/usr/include/stdlib.h"]
 pub mod stdlib_h {
@@ -83,7 +91,8 @@ pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -246,7 +255,8 @@ default values.
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qfiles.h"]
+#[header_src =
+      "ioq3/code/qcommon/qfiles.h"]
 pub mod qfiles_h {
     /*
 ===========================================================================
@@ -299,7 +309,8 @@ QVM files
     }
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/vm_local.h"]
+#[header_src =
+      "ioq3/code/qcommon/vm_local.h"]
 pub mod vm_local_h {
     #[derive
     ( Copy , Clone )]
@@ -340,7 +351,7 @@ pub mod vm_local_h {
         pub next: *mut vmSymbol_s,
         pub symValue: libc::c_int,
         pub profileCount: libc::c_int,
-        pub symName: [libc::c_char; 1],
+        pub symName: [libc::c_char; 0],
     }
     pub type vmSymbol_t = vmSymbol_s;
     use super::{libc};
@@ -356,7 +367,8 @@ pub mod vm_local_h {
         pub fn VM_Compile(vm: *mut vm_t, header: *mut vmHeader_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ==============================================================
@@ -466,7 +478,8 @@ modules of the program.
          -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/vm.c"]
+#[header_src =
+      "ioq3/code/qcommon/vm.c"]
 pub mod vm_c {
     #[derive
     ( Copy , Clone )]
@@ -495,8 +508,8 @@ pub mod stdio_h {
     use super::{libc};
     extern "C" {
         #[no_mangle]
-        pub fn fopen(__filename: *const libc::c_char,
-                     __modes: *const libc::c_char) -> *mut FILE;
+        pub fn fopen(_: *const libc::c_char, _: *const libc::c_char)
+         -> *mut FILE;
         #[no_mangle]
         pub fn fprintf(_: *mut FILE, _: *const libc::c_char, ...)
          -> libc::c_int;
@@ -520,7 +533,7 @@ pub mod string_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/qcommon/vm_variadic.h"]
+      "ioq3/code/qcommon/vm_variadic.h"]
 pub mod vm_variadic_h {
     use super::stdint_h::{intptr_t};
     extern "C" {
@@ -530,7 +543,8 @@ pub mod vm_variadic_h {
 }
 use self::types_h::{__off_t, __off64_t};
 use self::stddef_h::{size_t};
-use self::libio_h::{_IO_FILE, _IO_lock_t, _IO_marker};
+use self::struct_FILE_h::{_IO_FILE, _IO_lock_t, _IO_wide_data, _IO_codecvt,
+                          _IO_marker};
 use self::FILE_h::{FILE};
 use self::stdlib_h::{__compar_fn_t, qsort};
 use self::stdint_h::{intptr_t};
@@ -602,7 +616,7 @@ pub unsafe extern "C" fn VM_VmInfo_f() {
                    *const libc::c_char);
     i = 0i32;
     while i < 3i32 {
-        vm = &mut vmTable[i as usize] as *mut vm_t;
+        vm = &mut *vmTable.as_mut_ptr().offset(i as isize) as *mut vm_t;
         if 0 == (*vm).name[0usize] { break ; }
         Com_Printf(b"%s : \x00" as *const u8 as *const libc::c_char,
                    (*vm).name.as_mut_ptr());
@@ -715,7 +729,7 @@ pub unsafe extern "C" fn VM_Create(mut module: *const libc::c_char,
     i = 0i32;
     while i < 3i32 {
         if 0 == Q_stricmp(vmTable[i as usize].name.as_mut_ptr(), module) {
-            vm = &mut vmTable[i as usize] as *mut vm_t;
+            vm = &mut *vmTable.as_mut_ptr().offset(i as isize) as *mut vm_t;
             return vm
         }
         i += 1
@@ -730,7 +744,7 @@ pub unsafe extern "C" fn VM_Create(mut module: *const libc::c_char,
                   b"VM_Create: no free vm_t\x00" as *const u8 as
                       *const libc::c_char);
     }
-    vm = &mut vmTable[i as usize] as *mut vm_t;
+    vm = &mut *vmTable.as_mut_ptr().offset(i as isize) as *mut vm_t;
     Q_strncpyz((*vm).name.as_mut_ptr(), module,
                ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as
                    libc::c_int);
@@ -1159,7 +1173,10 @@ static mut forced_unload: libc::c_int = 0;
 pub unsafe extern "C" fn VM_Clear() {
     let mut i: libc::c_int = 0;
     i = 0i32;
-    while i < 3i32 { VM_Free(&mut vmTable[i as usize]); i += 1 };
+    while i < 3i32 {
+        VM_Free(&mut *vmTable.as_mut_ptr().offset(i as isize));
+        i += 1
+    };
 }
 #[no_mangle]
 pub unsafe extern "C" fn VM_Forced_Unload_Start() { forced_unload = 1i32; }
@@ -1236,7 +1253,7 @@ pub unsafe extern "C" fn VM_ValueToFunctionSymbol(mut vm: *mut vm_t,
         vmSymbol_s{next: 0 as *const vmSymbol_s as *mut vmSymbol_s,
                    symValue: 0,
                    profileCount: 0,
-                   symName: [0; 1],};
+                   symName: [],};
     sym = (*vm).symbols;
     if sym.is_null() { return &mut nullSym }
     while !(*sym).next.is_null() && (*(*sym).next).symValue <= value {

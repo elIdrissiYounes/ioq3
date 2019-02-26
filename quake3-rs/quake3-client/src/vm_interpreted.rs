@@ -1,15 +1,22 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(custom_attribute, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     use super::{libc};
 }
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     use super::types_h::{__uint8_t};
@@ -19,7 +26,8 @@ pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -107,7 +115,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qfiles.h"]
+#[header_src =
+      "ioq3/code/qcommon/qfiles.h"]
 pub mod qfiles_h {
     /*
 ===========================================================================
@@ -160,7 +169,8 @@ QVM files
     }
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/vm_local.h"]
+#[header_src =
+      "ioq3/code/qcommon/vm_local.h"]
 pub mod vm_local_h {
     #[derive
     ( Copy , Clone )]
@@ -201,7 +211,7 @@ pub mod vm_local_h {
         pub next: *mut vmSymbol_s,
         pub symValue: libc::c_int,
         pub profileCount: libc::c_int,
-        pub symName: [libc::c_char; 1],
+        pub symName: [libc::c_char; 0],
     }
     /*
 ===========================================================================
@@ -311,7 +321,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
          -> *const libc::c_char;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ==============================================================
@@ -338,7 +349,7 @@ pub mod string_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/qcommon/vm_interpreted.c"]
+      "ioq3/code/qcommon/vm_interpreted.c"]
 pub mod vm_interpreted_c {
     use super::{libc};
     use super::qcommon_h::{vm_t};
@@ -525,7 +536,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
             let mut r0: libc::c_int = 0;
             let mut r1: libc::c_int = 0;
             //		unsigned int	r2;
-            'c_6474:
+            'c_6530:
                 loop  {
                     r0 = *opStack.offset(opStackOfs as isize);
                     r1 =
@@ -592,7 +603,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                 opStackOfs =
                                     (opStackOfs as libc::c_int - 2i32) as
                                         uint8_t;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             31 => {
                                 *(&mut *image.offset((r1 & dataMask) as isize)
@@ -601,7 +612,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                 opStackOfs =
                                     (opStackOfs as libc::c_int - 2i32) as
                                         uint8_t;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             30 => {
                                 *image.offset((r1 & dataMask) as isize) =
@@ -609,7 +620,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                 opStackOfs =
                                     (opStackOfs as libc::c_int - 2i32) as
                                         uint8_t;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             33 => {
                                 *(&mut *image.offset((*codeImage.offset(programCounter
@@ -620,7 +631,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                       as *mut byte as *mut libc::c_int) = r0;
                                 opStackOfs = opStackOfs.wrapping_sub(1);
                                 programCounter += 1i32;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             34 => {
                                 VM_BlockCopy(r1 as libc::c_uint,
@@ -632,7 +643,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                 opStackOfs =
                                     (opStackOfs as libc::c_int - 2i32) as
                                         uint8_t;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             5 => {
                                 *(&mut *image.offset(programStack as isize) as
@@ -705,15 +716,15 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                                                               isize)
                                             as libc::c_int
                                 }
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             6 => {
                                 opStackOfs = opStackOfs.wrapping_add(1);
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             7 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             3 => {
                                 v1 =
@@ -721,7 +732,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                                           isize);
                                 programCounter += 1i32;
                                 programStack -= v1;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             4 => {
                                 v1 =
@@ -741,7 +752,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                                   as *const u8 as
                                                   *const libc::c_char);
                                 }
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             10 => {
                                 if r0 as libc::c_uint >=
@@ -757,7 +768,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                                                           isize)
                                         as libc::c_int;
                                 opStackOfs = opStackOfs.wrapping_sub(1);
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             11 => {
                                 opStackOfs =
@@ -1079,25 +1090,25 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                             }
                             37 => {
                                 *opStack.offset(opStackOfs as isize) = -r0;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             38 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
                                 *opStack.offset(opStackOfs as isize) =
                                     r1 + r0;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             39 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
                                 *opStack.offset(opStackOfs as isize) =
                                     r1 - r0;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             40 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
                                 *opStack.offset(opStackOfs as isize) =
                                     r1 / r0;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             41 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
@@ -1106,13 +1117,13 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                          libc::c_uint).wrapping_div(r0 as
                                                                         libc::c_uint)
                                         as libc::c_int;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             42 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
                                 *opStack.offset(opStackOfs as isize) =
                                     r1 % r0;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             43 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
@@ -1121,13 +1132,13 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                          libc::c_uint).wrapping_rem(r0 as
                                                                         libc::c_uint)
                                         as libc::c_int;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             44 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
                                 *opStack.offset(opStackOfs as isize) =
                                     r1 * r0;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             45 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
@@ -1136,51 +1147,51 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                          libc::c_uint).wrapping_mul(r0 as
                                                                         libc::c_uint)
                                         as libc::c_int;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             46 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
                                 *opStack.offset(opStackOfs as isize) =
                                     (r1 as libc::c_uint & r0 as libc::c_uint)
                                         as libc::c_int;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             47 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
                                 *opStack.offset(opStackOfs as isize) =
                                     (r1 as libc::c_uint | r0 as libc::c_uint)
                                         as libc::c_int;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             48 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
                                 *opStack.offset(opStackOfs as isize) =
                                     (r1 as libc::c_uint ^ r0 as libc::c_uint)
                                         as libc::c_int;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             49 => {
                                 *opStack.offset(opStackOfs as isize) =
                                     !(r0 as libc::c_uint) as libc::c_int;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             50 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
                                 *opStack.offset(opStackOfs as isize) =
                                     r1 << r0;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             51 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
                                 *opStack.offset(opStackOfs as isize) =
                                     r1 >> r0;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             52 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
                                 *opStack.offset(opStackOfs as isize) =
                                     (r1 as libc::c_uint >> r0) as libc::c_int;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             53 => {
                                 *(opStack as
@@ -1190,7 +1201,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                            *mut libc::c_float).offset(opStackOfs
                                                                           as
                                                                           isize);
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             54 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
@@ -1212,7 +1223,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                                                              uint8_t
                                                                              as
                                                                              isize);
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             55 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
@@ -1234,7 +1245,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                                                              uint8_t
                                                                              as
                                                                              isize);
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             56 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
@@ -1256,7 +1267,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                                                              uint8_t
                                                                              as
                                                                              isize);
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             57 => {
                                 opStackOfs = opStackOfs.wrapping_sub(1);
@@ -1278,7 +1289,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                                                              uint8_t
                                                                              as
                                                                              isize);
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             58 => {
                                 *(opStack as
@@ -1286,7 +1297,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                                                      isize) =
                                     *opStack.offset(opStackOfs as isize) as
                                         libc::c_float;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             59 => {
                                 *opStack.offset(opStackOfs as isize) =
@@ -1295,21 +1306,21 @@ pub unsafe extern "C" fn VM_CallInterpreted(mut vm: *mut vm_t,
                                                                                   as
                                                                                   isize))
                                         as libc::c_int;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             35 => {
                                 *opStack.offset(opStackOfs as isize) =
                                     *opStack.offset(opStackOfs as isize) as
                                         libc::c_schar as libc::c_int;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
                             36 => {
                                 *opStack.offset(opStackOfs as isize) =
                                     *opStack.offset(opStackOfs as isize) as
                                         libc::c_short as libc::c_int;
-                                continue 'c_6474 ;
+                                continue 'c_6530 ;
                             }
-                            _ => { break 'c_6474 ; }
+                            _ => { break 'c_6530 ; }
                         }
                     }
                     match current_block {

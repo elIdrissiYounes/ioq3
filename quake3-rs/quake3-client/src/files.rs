@@ -1,17 +1,28 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           extern_types,
+           libc,
+           ptr_wrapping_offset_from)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __off_t = libc::c_long;
     pub type __off64_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/libio.h"]
-pub mod libio_h {
+#[header_src = "/usr/include/bits/types/struct_FILE.h"]
+pub mod struct_FILE_h {
     #[derive
     ( Copy , Clone )]
     #[repr(C)]
@@ -38,31 +49,28 @@ pub mod libio_h {
         pub _shortbuf: [libc::c_char; 1],
         pub _lock: *mut libc::c_void,
         pub _offset: __off64_t,
-        pub __pad1: *mut libc::c_void,
-        pub __pad2: *mut libc::c_void,
-        pub __pad3: *mut libc::c_void,
-        pub __pad4: *mut libc::c_void,
+        pub _codecvt: *mut _IO_codecvt,
+        pub _wide_data: *mut _IO_wide_data,
+        pub _freeres_list: *mut _IO_FILE,
+        pub _freeres_buf: *mut libc::c_void,
         pub __pad5: size_t,
         pub _mode: libc::c_int,
         pub _unused2: [libc::c_char; 20],
     }
     pub type _IO_lock_t = ();
-    #[derive
-    ( Copy , Clone )]
-    #[repr(C)]
-    pub struct _IO_marker {
-        pub _next: *mut _IO_marker,
-        pub _sbuf: *mut _IO_FILE,
-        pub _pos: libc::c_int,
-    }
     use super::{libc};
     use super::types_h::{__off_t, __off64_t};
     use super::stddef_h::{size_t};
+    extern "C" {
+        pub type _IO_wide_data;
+        pub type _IO_codecvt;
+        pub type _IO_marker;
+    }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types/FILE.h"]
+#[header_src = "/usr/include/bits/types/FILE.h"]
 pub mod FILE_h {
     pub type FILE = _IO_FILE;
-    use super::libio_h::{_IO_FILE};
+    use super::struct_FILE_h::{_IO_FILE};
 }
 #[header_src = "/usr/include/stdio.h"]
 pub mod stdio_h {
@@ -85,11 +93,11 @@ pub mod stdio_h {
         pub fn setvbuf(__stream: *mut FILE, __buf: *mut libc::c_char,
                        __modes: libc::c_int, __n: size_t) -> libc::c_int;
         #[no_mangle]
-        pub fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t,
-                     __stream: *mut FILE) -> size_t;
+        pub fn fread(_: *mut libc::c_void, _: libc::c_ulong, _: libc::c_ulong,
+                     _: *mut FILE) -> libc::c_ulong;
         #[no_mangle]
-        pub fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t,
-                      __s: *mut FILE) -> size_t;
+        pub fn fwrite(_: *const libc::c_void, _: libc::c_ulong,
+                      _: libc::c_ulong, _: *mut FILE) -> libc::c_ulong;
         #[no_mangle]
         pub fn fseek(__stream: *mut FILE, __off: libc::c_long,
                      __whence: libc::c_int) -> libc::c_int;
@@ -113,7 +121,8 @@ pub mod stdlib_h {
                      __size: size_t, __compar: __compar_fn_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -302,7 +311,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     pub type unnamed_1 = libc::c_uint;
     pub const VMI_COMPILED: unnamed_1 = 2;
@@ -478,7 +488,8 @@ modules of the program.
         pub fn Hunk_FreeTempMemory(buf: *mut libc::c_void);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/files.c"]
+#[header_src =
+      "ioq3/code/qcommon/files.c"]
 pub mod files_c {
     pub type searchpath_t = searchpath_s;
     #[derive
@@ -571,7 +582,8 @@ pub mod files_c {
         pub fn Com_ReadCDKey(filename: *const libc::c_char);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/unzip.h"]
+#[header_src =
+      "ioq3/code/qcommon/unzip.h"]
 pub mod unzip_h {
     /* unzip.h -- IO for uncompress .zip files using zlib
    Version 1.01e, February 12th, 2005
@@ -832,7 +844,8 @@ pub mod ctype_h {
 }
 use self::types_h::{__off_t, __off64_t};
 use self::stddef_h::{size_t};
-use self::libio_h::{_IO_FILE, _IO_lock_t, _IO_marker};
+use self::struct_FILE_h::{_IO_FILE, _IO_lock_t, _IO_wide_data, _IO_codecvt,
+                          _IO_marker};
 use self::FILE_h::{FILE};
 use self::stdio_h::{off_t, remove, rename, fclose, fflush, setvbuf, fread,
                     fwrite, fseek, ftell};
@@ -1113,8 +1126,8 @@ pub unsafe extern "C" fn FS_Write(mut buffer: *const libc::c_void,
     while 0 != remaining {
         block = remaining;
         written =
-            fwrite(buf as *const libc::c_void, 1i32 as size_t,
-                   block as size_t, f) as libc::c_int;
+            fwrite(buf as *const libc::c_void, 1i32 as libc::c_ulong,
+                   block as libc::c_ulong, f) as libc::c_int;
         if written == 0i32 {
             if 0 == tries {
                 tries = 1i32
@@ -1168,16 +1181,17 @@ pub unsafe extern "C" fn FS_FCloseFile(mut f: fileHandle_t) {
         if 0 != fsh[f as usize].handleFiles.unique as u64 {
             unzClose(fsh[f as usize].handleFiles.file.z);
         }
-        memset(&mut fsh[f as usize] as *mut fileHandleData_t as
-                   *mut libc::c_void, 0i32,
+        memset(&mut *fsh.as_mut_ptr().offset(f as isize) as
+                   *mut fileHandleData_t as *mut libc::c_void, 0i32,
                ::std::mem::size_of::<fileHandleData_t>() as libc::c_ulong);
         return
     }
     if !fsh[f as usize].handleFiles.file.o.is_null() {
         fclose(fsh[f as usize].handleFiles.file.o);
     }
-    memset(&mut fsh[f as usize] as *mut fileHandleData_t as *mut libc::c_void,
-           0i32, ::std::mem::size_of::<fileHandleData_t>() as libc::c_ulong);
+    memset(&mut *fsh.as_mut_ptr().offset(f as isize) as *mut fileHandleData_t
+               as *mut libc::c_void, 0i32,
+           ::std::mem::size_of::<fileHandleData_t>() as libc::c_ulong);
 }
 #[no_mangle]
 pub unsafe extern "C" fn FS_Read(mut buffer: *mut libc::c_void,
@@ -1203,9 +1217,9 @@ pub unsafe extern "C" fn FS_Read(mut buffer: *mut libc::c_void,
         while 0 != remaining {
             block = remaining;
             read =
-                fread(buf as *mut libc::c_void, 1i32 as size_t,
-                      block as size_t, fsh[f as usize].handleFiles.file.o) as
-                    libc::c_int;
+                fread(buf as *mut libc::c_void, 1i32 as libc::c_ulong,
+                      block as libc::c_ulong,
+                      fsh[f as usize].handleFiles.file.o) as libc::c_int;
             if read == 0i32 {
                 if 0 == tries { tries = 1i32 } else { return len - remaining }
             }
@@ -1711,7 +1725,7 @@ pub unsafe extern "C" fn FS_FOpenFileRead(mut filename: *const libc::c_char,
              ||
              0 ==
                  strcmp(filename,
-                        b"q3config_server.cfg\x00" as *const u8 as
+                        b"q3config.cfg\x00" as *const u8 as
                             *const libc::c_char)) as libc::c_int as qboolean;
     search = fs_searchpaths;
     while !search.is_null() {
@@ -3386,7 +3400,7 @@ pub unsafe extern "C" fn FS_Restart(mut checksumFeed: libc::c_int) {
         Sys_RemovePIDFile(lastGameDir);
         Sys_InitPIDFile(FS_GetCurrentGameDir());
         if 0 == Com_SafeMode() as u64 {
-            Cbuf_AddText(b"exec q3config_server.cfg\n\x00" as *const u8 as
+            Cbuf_AddText(b"exec q3config.cfg\n\x00" as *const u8 as
                              *const libc::c_char);
         }
     }
@@ -3790,8 +3804,8 @@ pub unsafe extern "C" fn FS_GetModDescription(mut modDir: *const libc::c_char,
         memset(description as *mut libc::c_void, 0i32,
                descriptionLen as libc::c_ulong);
         nDescLen =
-            fread(description as *mut libc::c_void, 1i32 as size_t,
-                  descriptionLen as size_t, file) as libc::c_int;
+            fread(description as *mut libc::c_void, 1i32 as libc::c_ulong,
+                  descriptionLen as libc::c_ulong, file) as libc::c_int;
         if nDescLen >= 0i32 {
             *description.offset(nDescLen as isize) =
                 '\u{0}' as i32 as libc::c_char
@@ -4311,8 +4325,8 @@ pub unsafe extern "C" fn FS_FOpenFileByMode(mut qpath: *const libc::c_char,
             if *f == 0i32 { r = -1i32 }
             current_block_14 = 17833034027772472439;
         }
-        3 => { sync = qtrue; current_block_14 = 13579035420138614331; }
-        2 => { current_block_14 = 13579035420138614331; }
+        3 => { sync = qtrue; current_block_14 = 17569574545379342456; }
+        2 => { current_block_14 = 17569574545379342456; }
         _ => {
             Com_Error(ERR_FATAL as libc::c_int,
                       b"FS_FOpenFileByMode: bad mode\x00" as *const u8 as
@@ -4320,7 +4334,7 @@ pub unsafe extern "C" fn FS_FOpenFileByMode(mut qpath: *const libc::c_char,
         }
     }
     match current_block_14 {
-        13579035420138614331 => {
+        17569574545379342456 => {
             *f = FS_FOpenFileAppend(qpath);
             r = 0i32;
             if *f == 0i32 { r = -1i32 }

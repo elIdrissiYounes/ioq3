@@ -1,15 +1,27 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           extern_types,
+           libc,
+           ptr_wrapping_offset_from)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     use super::types_h::{__uint8_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -206,7 +218,8 @@ default values.
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     //============================================================================
     /*
@@ -324,7 +337,8 @@ modules of the program.
         pub fn Com_Milliseconds() -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_codec.h"]
+#[header_src =
+      "ioq3/code/client/snd_codec.h"]
 pub mod snd_codec_h {
     pub type snd_stream_t = snd_stream_s;
     #[derive
@@ -415,7 +429,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                                  buffer: *mut libc::c_void) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_local.h"]
+#[header_src =
+      "ioq3/code/client/snd_local.h"]
 pub mod snd_local_h {
     /*
 ===========================================================================
@@ -655,7 +670,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn S_PaintChannels(endtime: libc::c_int);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     /*
 =============================================================================
@@ -950,7 +966,7 @@ pub mod opus_h {
   *
   * opus_encode() and opus_encode_float() return the number of bytes actually written to the packet.
   * The return value <b>can be negative</b>, which indicates that an error has occurred. If the return value
-  * is 1 byte, then the packet does not need to be transmitted (DTX).
+  * is 2 bytes or less, then the packet does not need to be transmitted (DTX).
   *
   * Once the encoder state if no longer needed, it can be destroyed with
   *
@@ -1040,18 +1056,18 @@ pub mod opus_h {
         pub type OpusDecoder;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/multi.h"]
+#[header_src = "/usr/include/curl/multi.h"]
 pub mod multi_h {
     pub type CURLM = ();
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/curl.h"]
+#[header_src = "/usr/include/curl/curl.h"]
 pub mod curl_h {
     pub type CURL = ();
     use super::{libc};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_types.h"]
+      "ioq3/code/renderercommon/tr_types.h"]
 pub mod tr_types_h {
     #[derive
     ( Copy , Clone )]
@@ -1141,14 +1157,16 @@ pub mod ctype_h {
         pub fn tolower(_: libc::c_int) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_public.h"]
+#[header_src =
+      "ioq3/code/client/snd_public.h"]
 pub mod snd_public_h {
     extern "C" {
         #[no_mangle]
         pub fn S_DisplayFreeMemory();
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_dma.c"]
+#[header_src =
+      "ioq3/code/client/snd_dma.c"]
 pub mod snd_dma_c {
     use super::snd_codec_h::{snd_stream_t};
     use super::{libc};
@@ -1591,7 +1609,7 @@ pub unsafe extern "C" fn S_FreeOldestSound() {
     used = 0i32;
     i = 1i32;
     while i < s_numSfx {
-        sfx = &mut s_knownSfx[i as usize] as *mut sfx_t;
+        sfx = &mut *s_knownSfx.as_mut_ptr().offset(i as isize) as *mut sfx_t;
         if 0 != (*sfx).inMemory as libc::c_uint &&
                (*sfx).lastTimeUsed < oldest {
             used = i;
@@ -1599,7 +1617,7 @@ pub unsafe extern "C" fn S_FreeOldestSound() {
         }
         i += 1
     }
-    sfx = &mut s_knownSfx[used as usize] as *mut sfx_t;
+    sfx = &mut *s_knownSfx.as_mut_ptr().offset(used as isize) as *mut sfx_t;
     Com_DPrintf(b"S_FreeOldestSound: freeing sound %s\n\x00" as *const u8 as
                     *const libc::c_char, (*sfx).soundName.as_mut_ptr());
     buffer = (*sfx).soundData;
@@ -1918,7 +1936,7 @@ unsafe extern "C" fn S_FindName(mut name: *const libc::c_char) -> *mut sfx_t {
         }
         s_numSfx += 1
     }
-    sfx = &mut s_knownSfx[i as usize] as *mut sfx_t;
+    sfx = &mut *s_knownSfx.as_mut_ptr().offset(i as isize) as *mut sfx_t;
     memset(sfx as *mut libc::c_void, 0i32,
            ::std::mem::size_of::<sfx_t>() as libc::c_ulong);
     strcpy((*sfx).soundName.as_mut_ptr(), name);
@@ -2292,7 +2310,9 @@ pub unsafe extern "C" fn S_AddLoopSounds() {
     loopFrame += 1;
     i = 0i32;
     while i < 1i32 << 10i32 {
-        loop_0 = &mut loopSounds[i as usize] as *mut loopSound_t;
+        loop_0 =
+            &mut *loopSounds.as_mut_ptr().offset(i as isize) as
+                *mut loopSound_t;
         if !(0 == (*loop_0).active as u64 ||
                  (*loop_0).mergeFrame == loopFrame) {
             // already merged into an earlier sound
@@ -2306,7 +2326,9 @@ pub unsafe extern "C" fn S_AddLoopSounds() {
             (*(*loop_0).sfx).lastTimeUsed = time;
             j = i + 1i32;
             while j < 1i32 << 10i32 {
-                loop2 = &mut loopSounds[j as usize] as *mut loopSound_t;
+                loop2 =
+                    &mut *loopSounds.as_mut_ptr().offset(j as isize) as
+                        *mut loopSound_t;
                 if !(0 == (*loop2).active as u64 ||
                          0 != (*loop2).doppler as libc::c_uint ||
                          (*loop2).sfx != (*loop_0).sfx) {
@@ -2327,7 +2349,8 @@ pub unsafe extern "C" fn S_AddLoopSounds() {
             if !(left_total == 0i32 && right_total == 0i32) {
                 // not audible
                 ch =
-                    &mut loop_channels[numLoopChannels as usize] as
+                    &mut *loop_channels.as_mut_ptr().offset(numLoopChannels as
+                                                                isize) as
                         *mut channel_t;
                 if left_total > 255i32 { left_total = 255i32 }
                 if right_total > 255i32 { right_total = 255i32 }
@@ -2382,7 +2405,9 @@ pub unsafe extern "C" fn S_Base_AddRealLoopingSound(mut entityNum:
                        *const u8 as *const libc::c_char, sfxHandle);
         return
     }
-    sfx = &mut s_knownSfx[sfxHandle as usize] as *mut sfx_t;
+    sfx =
+        &mut *s_knownSfx.as_mut_ptr().offset(sfxHandle as isize) as
+            *mut sfx_t;
     if (*sfx).inMemory as libc::c_uint ==
            qfalse as libc::c_int as libc::c_uint {
         S_memoryLoad(sfx);
@@ -2426,7 +2451,9 @@ pub unsafe extern "C" fn S_Base_AddLoopingSound(mut entityNum: libc::c_int,
                        *const u8 as *const libc::c_char, sfxHandle);
         return
     }
-    sfx = &mut s_knownSfx[sfxHandle as usize] as *mut sfx_t;
+    sfx =
+        &mut *s_knownSfx.as_mut_ptr().offset(sfxHandle as isize) as
+            *mut sfx_t;
     if (*sfx).inMemory as libc::c_uint ==
            qfalse as libc::c_int as libc::c_uint {
         S_memoryLoad(sfx);
@@ -2588,7 +2615,9 @@ unsafe extern "C" fn S_Base_StartSoundEx(mut origin: *mut vec_t,
                        *const u8 as *const libc::c_char, sfxHandle);
         return
     }
-    sfx = &mut s_knownSfx[sfxHandle as usize] as *mut sfx_t;
+    sfx =
+        &mut *s_knownSfx.as_mut_ptr().offset(sfxHandle as isize) as
+            *mut sfx_t;
     if (*sfx).inMemory as libc::c_uint ==
            qfalse as libc::c_int as libc::c_uint {
         S_memoryLoad(sfx);
@@ -2667,7 +2696,9 @@ unsafe extern "C" fn S_Base_StartSoundEx(mut origin: *mut vec_t,
                 }
             }
         }
-        ch = &mut s_channels[chosen as usize] as *mut channel_t;
+        ch =
+            &mut *s_channels.as_mut_ptr().offset(chosen as isize) as
+                *mut channel_t;
         (*ch).allocTime = (*sfx).lastTimeUsed
     }
     if !origin.is_null() {

@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -125,7 +133,8 @@ void	Swap_Init (void);
         pub fn va(format: *mut libc::c_char, ...) -> *mut libc::c_char;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/botlib.h"]
+#[header_src =
+      "ioq3/code/botlib/botlib.h"]
 pub mod botlib_h {
     //debug line colors
     //0xf2f2f0f0L
@@ -273,7 +282,7 @@ pub mod botlib_h {
                             fsMode_t};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_interface.h"]
+      "ioq3/code/botlib/be_interface.h"]
 pub mod be_interface_h {
     /*
 ===========================================================================
@@ -335,7 +344,8 @@ pub mod string_h {
                       _: libc::c_ulong) -> *mut libc::c_void;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/l_memory.h"]
+#[header_src =
+      "ioq3/code/botlib/l_memory.h"]
 pub mod l_memory_h {
     use super::{libc};
     extern "C" {
@@ -347,13 +357,15 @@ pub mod l_memory_h {
         pub fn FreeMemory(ptr: *mut libc::c_void);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ea.h"]
+#[header_src =
+      "ioq3/code/botlib/be_ea.h"]
 pub mod be_ea_h {
     use super::{libc};
     use super::q_shared_h::{vec_t};
     use super::botlib_h::{bot_input_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/botlib/be_ea.c"]
+#[header_src =
+      "ioq3/code/botlib/be_ea.c"]
 pub mod be_ea_c {
     use super::botlib_h::{bot_input_t};
     use super::{libc};

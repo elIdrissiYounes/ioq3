@@ -1,5 +1,12 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __off_t = libc::c_long;
     use super::{libc};
@@ -64,7 +71,8 @@ pub mod zlib_h {
                              stream_size: libc::c_int) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/ioapi.h"]
+#[header_src =
+      "ioq3/code/qcommon/ioapi.h"]
 pub mod ioapi_h {
     /* ioapi.h -- IO base function header for compress/uncompress .zip
    files using zlib + zip or unzip API
@@ -121,7 +129,8 @@ pub mod ioapi_h {
                                        *mut zlib_filefunc_def);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/unzip.h"]
+#[header_src =
+      "ioq3/code/qcommon/unzip.h"]
 pub mod unzip_h {
     /* unzip.h -- IO for uncompress .zip files using zlib
    Version 1.01e, February 12th, 2005
@@ -240,7 +249,8 @@ pub mod unzip_h {
     use super::ioapi_h::{zlib_filefunc_def};
     use super::stdio_h::{off_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/unzip.c"]
+#[header_src =
+      "ioq3/code/qcommon/unzip.c"]
 pub mod unzip_c {
     #[derive
     ( Copy , Clone )]
@@ -306,7 +316,8 @@ pub mod string_h {
         pub fn strlen(_: *const libc::c_char) -> libc::c_ulong;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     use super::{libc};
     extern "C" {

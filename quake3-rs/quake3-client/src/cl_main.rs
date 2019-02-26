@@ -1,5 +1,16 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           extern_types,
+           libc,
+           ptr_wrapping_offset_from)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     pub type __int16_t = libc::c_short;
@@ -8,13 +19,13 @@ pub mod types_h {
     pub type __off64_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/libio.h"]
-pub mod libio_h {
+#[header_src = "/usr/include/bits/types/struct_FILE.h"]
+pub mod struct_FILE_h {
     #[derive
     ( Copy , Clone )]
     #[repr(C)]
@@ -41,33 +52,30 @@ pub mod libio_h {
         pub _shortbuf: [libc::c_char; 1],
         pub _lock: *mut libc::c_void,
         pub _offset: __off64_t,
-        pub __pad1: *mut libc::c_void,
-        pub __pad2: *mut libc::c_void,
-        pub __pad3: *mut libc::c_void,
-        pub __pad4: *mut libc::c_void,
+        pub _codecvt: *mut _IO_codecvt,
+        pub _wide_data: *mut _IO_wide_data,
+        pub _freeres_list: *mut _IO_FILE,
+        pub _freeres_buf: *mut libc::c_void,
         pub __pad5: size_t,
         pub _mode: libc::c_int,
         pub _unused2: [libc::c_char; 20],
     }
     pub type _IO_lock_t = ();
-    #[derive
-    ( Copy , Clone )]
-    #[repr(C)]
-    pub struct _IO_marker {
-        pub _next: *mut _IO_marker,
-        pub _sbuf: *mut _IO_FILE,
-        pub _pos: libc::c_int,
-    }
     use super::{libc};
     use super::types_h::{__off_t, __off64_t};
     use super::stddef_h::{size_t};
+    extern "C" {
+        pub type _IO_wide_data;
+        pub type _IO_codecvt;
+        pub type _IO_marker;
+    }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types/FILE.h"]
+#[header_src = "/usr/include/bits/types/FILE.h"]
 pub mod FILE_h {
     pub type FILE = _IO_FILE;
-    use super::libio_h::{_IO_FILE};
+    use super::struct_FILE_h::{_IO_FILE};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"]
+#[header_src = "/usr/include/bits/stdint-intn.h"]
 pub mod stdint_intn_h {
     pub type int16_t = __int16_t;
     pub type int32_t = __int32_t;
@@ -87,9 +95,8 @@ pub mod stdlib_h {
         #[no_mangle]
         pub fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
         #[no_mangle]
-        pub fn strtol(__nptr: *const libc::c_char,
-                      __endptr: *mut *mut libc::c_char, __base: libc::c_int)
-         -> libc::c_long;
+        pub fn strtol(_: *const libc::c_char, _: *mut *mut libc::c_char,
+                      _: libc::c_int) -> libc::c_long;
         #[no_mangle]
         pub fn rand() -> libc::c_int;
         #[no_mangle]
@@ -118,7 +125,7 @@ pub mod ctype_h {
         pub fn __ctype_b_loc() -> *mut *const libc::c_ushort;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     use super::types_h::{__uint8_t};
@@ -128,7 +135,8 @@ pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -655,7 +663,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ===========================================================================
@@ -1252,7 +1261,7 @@ temp file loading
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_public.h"]
+      "ioq3/code/renderercommon/tr_public.h"]
 pub mod tr_public_h {
     /*
 ===========================================================================
@@ -1541,7 +1550,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::{libc};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_types.h"]
+      "ioq3/code/renderercommon/tr_types.h"]
 pub mod tr_types_h {
     pub type stereoFrame_t = libc::c_uint;
     pub const STEREO_RIGHT: stereoFrame_t = 2;
@@ -1720,7 +1729,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::{libc};
     use super::q_shared_h::{vec3_t, byte, qhandle_t, qboolean};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     #[derive
     ( Copy , Clone )]
@@ -2222,7 +2232,7 @@ pub mod opus_h {
   *
   * opus_encode() and opus_encode_float() return the number of bytes actually written to the packet.
   * The return value <b>can be negative</b>, which indicates that an error has occurred. If the return value
-  * is 1 byte, then the packet does not need to be transmitted (DTX).
+  * is 2 bytes or less, then the packet does not need to be transmitted (DTX).
   *
   * Once the encoder state if no longer needed, it can be destroyed with
   *
@@ -2368,17 +2378,18 @@ pub mod opus_h {
                            max_data_bytes: opus_int32) -> opus_int32;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/multi.h"]
+#[header_src = "/usr/include/curl/multi.h"]
 pub mod multi_h {
     pub type CURLM = ();
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/curl.h"]
+#[header_src = "/usr/include/curl/curl.h"]
 pub mod curl_h {
     pub type CURL = ();
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/cl_main.c"]
+#[header_src =
+      "ioq3/code/client/cl_main.c"]
 pub mod cl_main_c {
     pub type serverStatus_t = serverStatus_s;
     #[derive
@@ -2398,7 +2409,8 @@ pub mod cl_main_c {
     use super::q_shared_h::{qboolean, cvar_t};
     use super::client_h::{ping_t, serverInfo_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/ui/ui_public.h"]
+#[header_src =
+      "ioq3/code/ui/ui_public.h"]
 pub mod ui_public_h {
     pub const UIMENU_NONE: unnamed_3 = 0;
     //	qboolean UI_IsFullscreen( void );
@@ -2435,42 +2447,11 @@ pub mod ui_public_h {
 #[header_src = "/usr/include/opus/opus_types.h"]
 pub mod opus_types_h {
     pub type opus_int32 = int32_t;
-    /* (C) COPYRIGHT 1994-2002 Xiph.Org Foundation */
-/* Modified by Jean-Marc Valin */
-/*
-   Redistribution and use in source and binary forms, with or without
-   modification, are permitted provided that the following conditions
-   are met:
-
-   - Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-
-   - Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-
-   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
-   OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-/* opus_types.h based on ogg_types.h from libogg */
-    /* *
-   @file opus_types.h
-   @brief Opus reference implementation types
-*/
-    /* Use the real stdint.h if it's there (taken from Paul Hsieh's pstdint.h) */
     pub type opus_int16 = int16_t;
     use super::stdint_intn_h::{int32_t, int16_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/cgame/cg_public.h"]
+#[header_src =
+      "ioq3/code/cgame/cg_public.h"]
 pub mod cg_public_h {
     //	void (*CG_DrawActiveFrame)( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback );
 	// Generates and draws a game scene and status information at the given time.
@@ -2512,7 +2493,8 @@ functions exported to the main executable
     pub const CG_INIT: unnamed_5 = 0;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/game/bg_public.h"]
+#[header_src =
+      "ioq3/code/game/bg_public.h"]
 pub mod bg_public_h {
     /*
 ===========================================================================
@@ -2572,7 +2554,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     pub const GT_FFA: unnamed_6 = 0;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -2584,12 +2566,11 @@ pub mod mathcalls_h {
 }
 #[header_src = "/usr/include/stdio.h"]
 pub mod stdio_h {
-    use super::libio_h::{_IO_FILE};
-    use super::{libc};
     use super::FILE_h::{FILE};
+    use super::{libc};
     extern "C" {
         #[no_mangle]
-        pub static mut stderr: *mut _IO_FILE;
+        pub static mut stderr: *mut FILE;
         #[no_mangle]
         pub fn fprintf(_: *mut FILE, _: *const libc::c_char, ...)
          -> libc::c_int;
@@ -2631,7 +2612,7 @@ pub mod string_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_platform.h"]
+      "ioq3/code/qcommon/q_platform.h"]
 pub mod q_platform_h {
     use super::{libc};
     extern "C" {
@@ -2639,7 +2620,8 @@ pub mod q_platform_h {
         pub fn ShortSwap(l: libc::c_short) -> libc::c_short;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_public.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_public.h"]
 pub mod cm_public_h {
     use super::q_shared_h::{byte};
     use super::{libc};
@@ -2660,7 +2642,8 @@ pub mod cm_public_h {
                                                   -> ()>);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/sys/sys_local.h"]
+#[header_src =
+      "ioq3/code/sys/sys_local.h"]
 pub mod sys_local_h {
     extern "C" {
         #[no_mangle]
@@ -2670,7 +2653,7 @@ pub mod sys_local_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/client/cl_variadic.h"]
+      "ioq3/code/client/cl_variadic.h"]
 pub mod cl_variadic_h {
     use super::{libc};
     extern "C" {
@@ -2707,7 +2690,8 @@ pub mod SDL_loadso_h {
         pub fn SDL_UnloadObject(handle: *mut libc::c_void);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/sys/sys_loadlib.h"]
+#[header_src =
+      "ioq3/code/sys/sys_loadlib.h"]
 pub mod sys_loadlib_h {
     use super::{libc};
     use super::q_shared_h::{qboolean};
@@ -2738,7 +2722,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
          -> *mut libc::c_void;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_public.h"]
+#[header_src =
+      "ioq3/code/client/snd_public.h"]
 pub mod snd_public_h {
     use super::{libc};
     use super::q_shared_h::{byte};
@@ -2790,7 +2775,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/client/libmumblelink.h"]
+      "ioq3/code/client/libmumblelink.h"]
 pub mod libmumblelink_h {
     use super::{libc};
     extern "C" {
@@ -2804,7 +2789,8 @@ pub mod libmumblelink_h {
                                          fTop: *mut libc::c_float);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/keys.h"]
+#[header_src =
+      "ioq3/code/client/keys.h"]
 pub mod keys_h {
     use super::qcommon_h::{field_t};
     extern "C" {
@@ -2812,7 +2798,8 @@ pub mod keys_h {
         pub static mut g_consoleField: field_t;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/cl_curl.h"]
+#[header_src =
+      "ioq3/code/client/cl_curl.h"]
 pub mod cl_curl_h {
     use super::q_shared_h::{cvar_t, qboolean};
     use super::{libc};
@@ -2853,7 +2840,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 }
 use self::types_h::{__uint8_t, __int16_t, __int32_t, __off_t, __off64_t};
 use self::stddef_h::{size_t};
-use self::libio_h::{_IO_FILE, _IO_lock_t, _IO_marker};
+use self::struct_FILE_h::{_IO_FILE, _IO_lock_t, _IO_wide_data, _IO_codecvt,
+                          _IO_marker};
 use self::FILE_h::{FILE};
 use self::stdint_intn_h::{int16_t, int32_t};
 use self::stdlib_h::{__compar_fn_t, atof, atoi, strtol, rand, qsort};
@@ -4286,14 +4274,16 @@ pub unsafe extern "C" fn CL_GetServerStatus(mut from: netadr_t)
         if 0 !=
                NET_CompareAdr(from, cl_serverStatusList[i as usize].address)
                    as u64 {
-            return &mut cl_serverStatusList[i as usize] as *mut serverStatus_t
+            return &mut *cl_serverStatusList.as_mut_ptr().offset(i as isize)
+                       as *mut serverStatus_t
         }
         i += 1
     }
     i = 0i32;
     while i < 16i32 {
         if 0 != cl_serverStatusList[i as usize].retrieved as u64 {
-            return &mut cl_serverStatusList[i as usize] as *mut serverStatus_t
+            return &mut *cl_serverStatusList.as_mut_ptr().offset(i as isize)
+                       as *mut serverStatus_t
         }
         i += 1
     }
@@ -4308,7 +4298,8 @@ pub unsafe extern "C" fn CL_GetServerStatus(mut from: netadr_t)
         }
         i += 1
     }
-    return &mut cl_serverStatusList[oldest as usize] as *mut serverStatus_t;
+    return &mut *cl_serverStatusList.as_mut_ptr().offset(oldest as isize) as
+               *mut serverStatus_t;
 }
 #[no_mangle]
 pub static mut cl_serverStatusList: [serverStatus_t; 16] =
@@ -4381,7 +4372,9 @@ unsafe extern "C" fn CL_SetServerInfoByAddress(mut from: netadr_t,
     while i < 128i32 {
         if 0 != NET_CompareAdr(from, cls.localServers[i as usize].adr) as u64
            {
-            CL_SetServerInfo(&mut cls.localServers[i as usize], info, ping);
+            CL_SetServerInfo(&mut *cls.localServers.as_mut_ptr().offset(i as
+                                                                            isize),
+                             info, ping);
         }
         i += 1
     }
@@ -4389,7 +4382,9 @@ unsafe extern "C" fn CL_SetServerInfoByAddress(mut from: netadr_t,
     while i < 4096i32 {
         if 0 != NET_CompareAdr(from, cls.globalServers[i as usize].adr) as u64
            {
-            CL_SetServerInfo(&mut cls.globalServers[i as usize], info, ping);
+            CL_SetServerInfo(&mut *cls.globalServers.as_mut_ptr().offset(i as
+                                                                             isize),
+                             info, ping);
         }
         i += 1
     }
@@ -4398,8 +4393,10 @@ unsafe extern "C" fn CL_SetServerInfoByAddress(mut from: netadr_t,
         if 0 !=
                NET_CompareAdr(from, cls.favoriteServers[i as usize].adr) as
                    u64 {
-            CL_SetServerInfo(&mut cls.favoriteServers[i as usize], info,
-                             ping);
+            CL_SetServerInfo(&mut *cls.favoriteServers.as_mut_ptr().offset(i
+                                                                               as
+                                                                               isize),
+                             info, ping);
         }
         i += 1
     };
@@ -4865,8 +4862,8 @@ pub unsafe extern "C" fn CL_LocalServers_f() {
     i = 0i32;
     while i < 128i32 {
         let mut b: qboolean = cls.localServers[i as usize].visible;
-        memset(&mut cls.localServers[i as usize] as *mut serverInfo_t as
-                   *mut libc::c_void, 0i32,
+        memset(&mut *cls.localServers.as_mut_ptr().offset(i as isize) as
+                   *mut serverInfo_t as *mut libc::c_void, 0i32,
                ::std::mem::size_of::<serverInfo_t>() as libc::c_ulong);
         cls.localServers[i as usize].visible = b;
         i += 1
@@ -5983,7 +5980,9 @@ pub unsafe extern "C" fn CL_Record_f() {
            ::std::mem::size_of::<entityState_t>() as libc::c_ulong);
     i = 0i32;
     while i < 1i32 << 10i32 {
-        ent = &mut cl.entityBaselines[i as usize] as *mut entityState_t;
+        ent =
+            &mut *cl.entityBaselines.as_mut_ptr().offset(i as isize) as
+                *mut entityState_t;
         if !(0 == (*ent).number) {
             MSG_WriteByte(&mut buf, svc_baseline as libc::c_int);
             MSG_WriteDeltaEntity(&mut buf, &mut nullstate, ent, qtrue);
@@ -7200,7 +7199,8 @@ pub unsafe extern "C" fn CL_ServersResponsePacket(mut from: *const netadr_t,
     while i < numservers && count < 4096i32 {
         // build net address
         let mut server: *mut serverInfo_t =
-            &mut cls.globalServers[count as usize] as *mut serverInfo_t;
+            &mut *cls.globalServers.as_mut_ptr().offset(count as isize) as
+                *mut serverInfo_t;
         j = 0i32;
         while j < count {
             if 0 !=
@@ -7211,7 +7211,9 @@ pub unsafe extern "C" fn CL_ServersResponsePacket(mut from: *const netadr_t,
             j += 1
         }
         if !(j < count) {
-            CL_InitServerInfo(server, &mut addresses[i as usize]);
+            CL_InitServerInfo(server,
+                              &mut *addresses.as_mut_ptr().offset(i as
+                                                                      isize));
             count += 1
         }
         i += 1
@@ -7297,15 +7299,16 @@ pub unsafe extern "C" fn CL_ServerStatusResponse(mut from: netadr_t,
                NET_CompareAdr(from, cl_serverStatusList[i as usize].address)
                    as u64 {
             serverStatus =
-                &mut cl_serverStatusList[i as usize] as *mut serverStatus_t;
+                &mut *cl_serverStatusList.as_mut_ptr().offset(i as isize) as
+                    *mut serverStatus_t;
             break ;
         } else { i += 1 }
     }
     if serverStatus.is_null() { return }
     s = MSG_ReadStringLine(msg);
     len = 0i32;
-    Com_sprintf(&mut (*serverStatus).string[len as usize] as
-                    *mut libc::c_char,
+    Com_sprintf(&mut *(*serverStatus).string.as_mut_ptr().offset(len as isize)
+                    as *mut libc::c_char,
                 (::std::mem::size_of::<[libc::c_char; 8192]>() as
                      libc::c_ulong).wrapping_sub(len as libc::c_ulong) as
                     libc::c_int,
@@ -7339,8 +7342,8 @@ pub unsafe extern "C" fn CL_ServerStatusResponse(mut from: netadr_t,
         }
     }
     len = strlen((*serverStatus).string.as_mut_ptr()) as libc::c_int;
-    Com_sprintf(&mut (*serverStatus).string[len as usize] as
-                    *mut libc::c_char,
+    Com_sprintf(&mut *(*serverStatus).string.as_mut_ptr().offset(len as isize)
+                    as *mut libc::c_char,
                 (::std::mem::size_of::<[libc::c_char; 8192]>() as
                      libc::c_ulong).wrapping_sub(len as libc::c_ulong) as
                     libc::c_int,
@@ -7354,8 +7357,9 @@ pub unsafe extern "C" fn CL_ServerStatusResponse(mut from: netadr_t,
     s = MSG_ReadStringLine(msg);
     while 0 != *s {
         len = strlen((*serverStatus).string.as_mut_ptr()) as libc::c_int;
-        Com_sprintf(&mut (*serverStatus).string[len as usize] as
-                        *mut libc::c_char,
+        Com_sprintf(&mut *(*serverStatus).string.as_mut_ptr().offset(len as
+                                                                         isize)
+                        as *mut libc::c_char,
                     (::std::mem::size_of::<[libc::c_char; 8192]>() as
                          libc::c_ulong).wrapping_sub(len as libc::c_ulong) as
                         libc::c_int,
@@ -7382,8 +7386,8 @@ pub unsafe extern "C" fn CL_ServerStatusResponse(mut from: netadr_t,
         i += 1
     }
     len = strlen((*serverStatus).string.as_mut_ptr()) as libc::c_int;
-    Com_sprintf(&mut (*serverStatus).string[len as usize] as
-                    *mut libc::c_char,
+    Com_sprintf(&mut *(*serverStatus).string.as_mut_ptr().offset(len as isize)
+                    as *mut libc::c_char,
                 (::std::mem::size_of::<[libc::c_char; 8192]>() as
                      libc::c_ulong).wrapping_sub(len as libc::c_ulong) as
                     libc::c_int,
@@ -7484,7 +7488,8 @@ pub unsafe extern "C" fn CL_ServerInfoPacket(mut from: netadr_t,
         return
     }
     cls.numlocalservers = i + 1i32;
-    CL_InitServerInfo(&mut cls.localServers[i as usize], &mut from);
+    CL_InitServerInfo(&mut *cls.localServers.as_mut_ptr().offset(i as isize),
+                      &mut from);
     Q_strncpyz(info.as_mut_ptr(), MSG_ReadString(msg), 1024i32);
     if 0 != strlen(info.as_mut_ptr()) {
         if info[strlen(info.as_mut_ptr()).wrapping_sub(1i32 as libc::c_ulong)
@@ -8093,16 +8098,21 @@ pub unsafe extern "C" fn CL_UpdateVisiblePings_f(mut source: libc::c_int)
         let mut server: *mut serverInfo_t = 0 as *mut serverInfo_t;
         match source {
             0 => {
-                server = &mut cls.localServers[0usize] as *mut serverInfo_t;
+                server =
+                    &mut *cls.localServers.as_mut_ptr().offset(0isize) as
+                        *mut serverInfo_t;
                 max = cls.numlocalservers
             }
             2 => {
-                server = &mut cls.globalServers[0usize] as *mut serverInfo_t;
+                server =
+                    &mut *cls.globalServers.as_mut_ptr().offset(0isize) as
+                        *mut serverInfo_t;
                 max = cls.numglobalservers
             }
             3 => {
                 server =
-                    &mut cls.favoriteServers[0usize] as *mut serverInfo_t;
+                    &mut *cls.favoriteServers.as_mut_ptr().offset(0isize) as
+                        *mut serverInfo_t;
                 max = cls.numfavoriteservers
             }
             _ => { return qfalse }
@@ -8136,8 +8146,9 @@ pub unsafe extern "C" fn CL_UpdateVisiblePings_f(mut source: libc::c_int)
                             }
                             j += 1
                         }
-                        memcpy(&mut cl_pinglist[j as usize].adr as
-                                   *mut netadr_t as *mut libc::c_void,
+                        memcpy(&mut (*cl_pinglist.as_mut_ptr().offset(j as
+                                                                          isize)).adr
+                                   as *mut netadr_t as *mut libc::c_void,
                                &mut (*server.offset(i as isize)).adr as
                                    *mut netadr_t as *const libc::c_void,
                                ::std::mem::size_of::<netadr_t>() as
@@ -8155,9 +8166,9 @@ pub unsafe extern "C" fn CL_UpdateVisiblePings_f(mut source: libc::c_int)
                         if cls.numGlobalServerAddresses > 0i32 {
                             cls.numGlobalServerAddresses -= 1;
                             CL_InitServerInfo(&mut *server.offset(i as isize),
-                                              &mut cls.globalServerAddresses[cls.numGlobalServerAddresses
-                                                                                 as
-                                                                                 usize]);
+                                              &mut *cls.globalServerAddresses.as_mut_ptr().offset(cls.numGlobalServerAddresses
+                                                                                                      as
+                                                                                                      isize));
                         }
                     }
                 }

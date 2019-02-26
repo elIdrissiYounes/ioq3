@@ -1,5 +1,12 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __int32_t = libc::c_int;
     pub type __uint32_t = libc::c_uint;
@@ -10,13 +17,13 @@ pub mod types_h {
     pub type __suseconds_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     pub type wchar_t = libc::c_int;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/sys/mman.h"]
+#[header_src = "/usr/include/sys/mman.h"]
 pub mod mman_h {
     pub type mode_t = __mode_t;
     use super::types_h::{__mode_t, __off_t};
@@ -36,12 +43,12 @@ pub mod mman_h {
                         __mode: mode_t) -> libc::c_int;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h"]
+#[header_src = "/usr/include/bits/stdint-intn.h"]
 pub mod stdint_intn_h {
     pub type int32_t = __int32_t;
     use super::types_h::{__int32_t};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h"]
+#[header_src = "/usr/include/bits/types/struct_timeval.h"]
 pub mod struct_timeval_h {
     #[derive
     ( Copy , Clone )]
@@ -52,7 +59,7 @@ pub mod struct_timeval_h {
     }
     use super::types_h::{__time_t, __suseconds_t};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/sys/time.h"]
+#[header_src = "/usr/include/sys/time.h"]
 pub mod time_h {
     #[derive
     ( Copy , Clone )]
@@ -70,13 +77,13 @@ pub mod time_h {
          -> libc::c_int;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint32_t = __uint32_t;
     use super::types_h::{__uint32_t};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/client/libmumblelink.c"]
+      "ioq3/code/client/libmumblelink.c"]
 pub mod libmumblelink_c {
     /* libmumblelink.c -- mumble link interface
 
@@ -166,7 +173,7 @@ pub mod stdio_h {
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/client/libmumblelink.h"]
+      "ioq3/code/client/libmumblelink.h"]
 pub mod libmumblelink_h {
     use super::{libc};
     use super::stddef_h::{size_t};

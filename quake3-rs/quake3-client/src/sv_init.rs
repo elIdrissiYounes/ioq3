@@ -1,10 +1,18 @@
-use libc;
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, extern_types, libc)]
+extern crate libc;
 #[header_src = "/usr/include/stdint.h"]
 pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -337,7 +345,8 @@ void	Swap_Init (void);
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ===========================================================================
@@ -586,7 +595,8 @@ modules of the program.
         pub fn CL_StartHunkUsers(rendererOnly: qboolean);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/server.h"]
+#[header_src =
+      "ioq3/code/server/server.h"]
 pub mod server_h {
     // this structure will be cleared only when the game dll changes
     #[derive
@@ -920,7 +930,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn SV_ClearWorld();
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/game/g_public.h"]
+#[header_src =
+      "ioq3/code/game/g_public.h"]
 pub mod g_public_h {
     // the server looks at a sharedEntity, which is the start of the game's gentity_t structure
     #[derive
@@ -1052,7 +1063,8 @@ pub mod stdlib_h {
         pub fn rand() -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_public.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_public.h"]
 pub mod cm_public_h {
     use super::{libc};
     use super::q_shared_h::{qboolean};
@@ -1085,10 +1097,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn CM_ClearMap();
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/sv_init.c"]
+#[header_src =
+      "ioq3/code/server/sv_init.c"]
 pub mod sv_init_c { }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/server/sv_variadic.h"]
+      "ioq3/code/server/sv_variadic.h"]
 pub mod sv_variadic_h {
     use super::server_h::{client_t};
     use super::{libc};
@@ -1480,9 +1493,10 @@ unsafe extern "C" fn SV_SendConfigstring(mut client: *mut client_t,
                         *mut libc::c_char
             }
             Q_strncpyz(buf.as_mut_ptr(),
-                       &mut *sv.configstrings[index as
-                                                  usize].offset(sent as
-                                                                    isize),
+                       &mut *(*sv.configstrings.as_mut_ptr().offset(index as
+                                                                        isize)).offset(sent
+                                                                                           as
+                                                                                           isize),
                        maxChunkSize);
             SV_SendServerCommand(client,
                                  b"%s %i \"%s\"\n\x00" as *const u8 as

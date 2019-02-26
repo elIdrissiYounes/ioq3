@@ -1,5 +1,17 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           extern_types,
+           libc,
+           ptr_wrapping_offset_from)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -198,7 +210,8 @@ default values.
          -> !;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qfiles.h"]
+#[header_src =
+      "ioq3/code/qcommon/qfiles.h"]
 pub mod qfiles_h {
     /*
 ==============================================================================
@@ -333,7 +346,8 @@ pub mod qfiles_h {
     use super::{libc};
     use super::q_shared_h::{vec3_t, byte};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_local.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_local.h"]
 pub mod cm_local_h {
     #[derive
     ( Copy , Clone )]
@@ -471,7 +485,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         pub fn CM_ClearLevelPatches();
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_load.c"]
+#[header_src =
+      "ioq3/code/qcommon/cm_load.c"]
 pub mod cm_load_c {
     #[derive
     ( Copy , Clone )]
@@ -505,12 +520,14 @@ pub mod string_h {
          -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_public.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_public.h"]
 pub mod cm_public_h {
     use super::{libc};
     use super::q_shared_h::{qboolean, clipHandle_t, vec_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     use super::{libc};
     use super::q_shared_h::{cvar_t};
@@ -676,18 +693,19 @@ pub unsafe extern "C" fn CM_LoadMap(mut name: *const libc::c_char,
                   header.version, 46i32);
     }
     cmod_base = buf.i as *mut byte;
-    CMod_LoadShaders(&mut header.lumps[1usize]);
-    CMod_LoadLeafs(&mut header.lumps[4usize]);
-    CMod_LoadLeafBrushes(&mut header.lumps[6usize]);
-    CMod_LoadLeafSurfaces(&mut header.lumps[5usize]);
-    CMod_LoadPlanes(&mut header.lumps[2usize]);
-    CMod_LoadBrushSides(&mut header.lumps[9usize]);
-    CMod_LoadBrushes(&mut header.lumps[8usize]);
-    CMod_LoadSubmodels(&mut header.lumps[7usize]);
-    CMod_LoadNodes(&mut header.lumps[3usize]);
-    CMod_LoadEntityString(&mut header.lumps[0usize]);
-    CMod_LoadVisibility(&mut header.lumps[16usize]);
-    CMod_LoadPatches(&mut header.lumps[13usize], &mut header.lumps[10usize]);
+    CMod_LoadShaders(&mut *header.lumps.as_mut_ptr().offset(1isize));
+    CMod_LoadLeafs(&mut *header.lumps.as_mut_ptr().offset(4isize));
+    CMod_LoadLeafBrushes(&mut *header.lumps.as_mut_ptr().offset(6isize));
+    CMod_LoadLeafSurfaces(&mut *header.lumps.as_mut_ptr().offset(5isize));
+    CMod_LoadPlanes(&mut *header.lumps.as_mut_ptr().offset(2isize));
+    CMod_LoadBrushSides(&mut *header.lumps.as_mut_ptr().offset(9isize));
+    CMod_LoadBrushes(&mut *header.lumps.as_mut_ptr().offset(8isize));
+    CMod_LoadSubmodels(&mut *header.lumps.as_mut_ptr().offset(7isize));
+    CMod_LoadNodes(&mut *header.lumps.as_mut_ptr().offset(3isize));
+    CMod_LoadEntityString(&mut *header.lumps.as_mut_ptr().offset(0isize));
+    CMod_LoadVisibility(&mut *header.lumps.as_mut_ptr().offset(16isize));
+    CMod_LoadPatches(&mut *header.lumps.as_mut_ptr().offset(13isize),
+                     &mut *header.lumps.as_mut_ptr().offset(10isize));
     FS_FreeFile(buf.v);
     CM_InitBoxHull();
     CM_FloodAreaConnections();
@@ -1724,17 +1742,28 @@ pub unsafe extern "C" fn CM_LumpChecksum(mut lump: *mut lump_t)
 pub unsafe extern "C" fn CM_Checksum(mut header: *mut dheader_t)
  -> libc::c_uint {
     let mut checksums: [libc::c_uint; 16] = [0; 16];
-    checksums[0usize] = CM_LumpChecksum(&mut (*header).lumps[1usize]);
-    checksums[1usize] = CM_LumpChecksum(&mut (*header).lumps[4usize]);
-    checksums[2usize] = CM_LumpChecksum(&mut (*header).lumps[6usize]);
-    checksums[3usize] = CM_LumpChecksum(&mut (*header).lumps[5usize]);
-    checksums[4usize] = CM_LumpChecksum(&mut (*header).lumps[2usize]);
-    checksums[5usize] = CM_LumpChecksum(&mut (*header).lumps[9usize]);
-    checksums[6usize] = CM_LumpChecksum(&mut (*header).lumps[8usize]);
-    checksums[7usize] = CM_LumpChecksum(&mut (*header).lumps[7usize]);
-    checksums[8usize] = CM_LumpChecksum(&mut (*header).lumps[3usize]);
-    checksums[9usize] = CM_LumpChecksum(&mut (*header).lumps[13usize]);
-    checksums[10usize] = CM_LumpChecksum(&mut (*header).lumps[10usize]);
+    checksums[0usize] =
+        CM_LumpChecksum(&mut *(*header).lumps.as_mut_ptr().offset(1isize));
+    checksums[1usize] =
+        CM_LumpChecksum(&mut *(*header).lumps.as_mut_ptr().offset(4isize));
+    checksums[2usize] =
+        CM_LumpChecksum(&mut *(*header).lumps.as_mut_ptr().offset(6isize));
+    checksums[3usize] =
+        CM_LumpChecksum(&mut *(*header).lumps.as_mut_ptr().offset(5isize));
+    checksums[4usize] =
+        CM_LumpChecksum(&mut *(*header).lumps.as_mut_ptr().offset(2isize));
+    checksums[5usize] =
+        CM_LumpChecksum(&mut *(*header).lumps.as_mut_ptr().offset(9isize));
+    checksums[6usize] =
+        CM_LumpChecksum(&mut *(*header).lumps.as_mut_ptr().offset(8isize));
+    checksums[7usize] =
+        CM_LumpChecksum(&mut *(*header).lumps.as_mut_ptr().offset(7isize));
+    checksums[8usize] =
+        CM_LumpChecksum(&mut *(*header).lumps.as_mut_ptr().offset(3isize));
+    checksums[9usize] =
+        CM_LumpChecksum(&mut *(*header).lumps.as_mut_ptr().offset(13isize));
+    checksums[10usize] =
+        CM_LumpChecksum(&mut *(*header).lumps.as_mut_ptr().offset(10isize));
     return Com_BlockChecksum(checksums.as_mut_ptr() as *const libc::c_void,
                              11i32 * 4i32);
 }

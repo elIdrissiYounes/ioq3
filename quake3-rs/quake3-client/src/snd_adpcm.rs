@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -53,7 +61,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     pub const qfalse: qboolean = 0;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_local.h"]
+#[header_src =
+      "ioq3/code/client/snd_local.h"]
 pub mod snd_local_h {
     #[derive
     ( Copy , Clone )]
@@ -122,7 +131,8 @@ pub mod snd_local_h {
         pub fn SND_malloc() -> *mut sndBuffer;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_adpcm.c"]
+#[header_src =
+      "ioq3/code/client/snd_adpcm.c"]
 pub mod snd_adpcm_c {
     use super::{libc};
     use super::snd_local_h::{adpcm_state};

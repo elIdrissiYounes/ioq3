@@ -1,10 +1,17 @@
-use libc;
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/types.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src = "/usr/include/bits/types.h"]
 pub mod types_h {
     pub type __uint8_t = libc::c_uchar;
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h"]
+#[header_src = "/usr/include/bits/stdint-uintn.h"]
 pub mod stdint_uintn_h {
     pub type uint8_t = __uint8_t;
     use super::types_h::{__uint8_t};
@@ -14,7 +21,8 @@ pub mod stdint_h {
     pub type intptr_t = libc::c_long;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -363,7 +371,8 @@ default values.
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ===========================================================================
@@ -641,7 +650,8 @@ modules of the program.
         pub fn Sys_IsLANAddress(adr: netadr_t) -> qboolean;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     #[derive
     ( Copy , Clone )]
@@ -1024,7 +1034,8 @@ functions exported to the main executable
         pub fn CL_WriteDemoMessage(msg: *mut msg_t, headerBytes: libc::c_int);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/cgame/cg_public.h"]
+#[header_src =
+      "ioq3/code/cgame/cg_public.h"]
 pub mod cg_public_h {
     pub const CG_MOUSE_EVENT: unnamed_1 = 7;
     pub type unnamed_1 = libc::c_uint;
@@ -1038,7 +1049,8 @@ pub mod cg_public_h {
     pub const CG_INIT: unnamed_1 = 0;
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/ui/ui_public.h"]
+#[header_src =
+      "ioq3/code/ui/ui_public.h"]
 pub mod ui_public_h {
     pub const UI_MOUSE_EVENT: unnamed_0 = 4;
     pub type unnamed_0 = libc::c_uint;
@@ -1055,7 +1067,7 @@ pub mod ui_public_h {
     use super::{libc};
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/renderercommon/tr_types.h"]
+      "ioq3/code/renderercommon/tr_types.h"]
 pub mod tr_types_h {
     pub type textureCompression_t = libc::c_uint;
     // this is for the GL_EXT_texture_compression_s3tc extension.
@@ -1116,12 +1128,12 @@ pub mod tr_types_h {
     use super::{libc};
     use super::q_shared_h::{qboolean};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/curl.h"]
+#[header_src = "/usr/include/curl/curl.h"]
 pub mod curl_h {
     pub type CURL = ();
     use super::{libc};
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/curl/multi.h"]
+#[header_src = "/usr/include/curl/multi.h"]
 pub mod multi_h {
     pub type CURLM = ();
     use super::{libc};
@@ -1260,7 +1272,7 @@ pub mod opus_h {
   *
   * opus_encode() and opus_encode_float() return the number of bytes actually written to the packet.
   * The return value <b>can be negative</b>, which indicates that an error has occurred. If the return value
-  * is 1 byte, then the packet does not need to be transmitted (DTX).
+  * is 2 bytes or less, then the packet does not need to be transmitted (DTX).
   *
   * Once the encoder state if no longer needed, it can be destroyed with
   *
@@ -1350,7 +1362,7 @@ pub mod opus_h {
         pub type OpusDecoder;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -1379,7 +1391,8 @@ pub mod stdlib_h {
         pub fn atoi(__nptr: *const libc::c_char) -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/keys.h"]
+#[header_src =
+      "ioq3/code/client/keys.h"]
 pub mod keys_h {
     use super::{libc};
     extern "C" {
@@ -1387,7 +1400,8 @@ pub mod keys_h {
         pub static mut anykeydown: libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/cl_input.c"]
+#[header_src =
+      "ioq3/code/client/cl_input.c"]
 pub mod cl_input_c {
     use super::client_h::{kbutton_t};
     use super::{libc};
@@ -1734,7 +1748,7 @@ pub static mut in_mlooking: qboolean = qfalse;
 pub unsafe extern "C" fn IN_MLookDown() { in_mlooking = qtrue; }
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button14Up() {
-    IN_KeyUp(&mut in_buttons[14usize]);
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(14isize));
 }
 #[no_mangle]
 pub static mut in_buttons: [kbutton_t; 16] =
@@ -1745,99 +1759,119 @@ pub static mut in_buttons: [kbutton_t; 16] =
                wasPressed: qfalse,}; 16];
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button14Down() {
-    IN_KeyDown(&mut in_buttons[14usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(14isize));
 }
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button13Up() {
-    IN_KeyUp(&mut in_buttons[13usize]);
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(13isize));
 }
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button13Down() {
-    IN_KeyDown(&mut in_buttons[13usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(13isize));
 }
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button12Up() {
-    IN_KeyUp(&mut in_buttons[12usize]);
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(12isize));
 }
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button12Down() {
-    IN_KeyDown(&mut in_buttons[12usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(12isize));
 }
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button11Up() {
-    IN_KeyUp(&mut in_buttons[11usize]);
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(11isize));
 }
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button11Down() {
-    IN_KeyDown(&mut in_buttons[11usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(11isize));
 }
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button10Up() {
-    IN_KeyUp(&mut in_buttons[10usize]);
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(10isize));
 }
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button10Down() {
-    IN_KeyDown(&mut in_buttons[10usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(10isize));
 }
 #[no_mangle]
-pub unsafe extern "C" fn IN_Button9Up() { IN_KeyUp(&mut in_buttons[9usize]); }
+pub unsafe extern "C" fn IN_Button9Up() {
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(9isize));
+}
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button9Down() {
-    IN_KeyDown(&mut in_buttons[9usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(9isize));
 }
 #[no_mangle]
-pub unsafe extern "C" fn IN_Button8Up() { IN_KeyUp(&mut in_buttons[8usize]); }
+pub unsafe extern "C" fn IN_Button8Up() {
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(8isize));
+}
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button8Down() {
-    IN_KeyDown(&mut in_buttons[8usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(8isize));
 }
 #[no_mangle]
-pub unsafe extern "C" fn IN_Button7Up() { IN_KeyUp(&mut in_buttons[7usize]); }
+pub unsafe extern "C" fn IN_Button7Up() {
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(7isize));
+}
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button7Down() {
-    IN_KeyDown(&mut in_buttons[7usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(7isize));
 }
 #[no_mangle]
-pub unsafe extern "C" fn IN_Button6Up() { IN_KeyUp(&mut in_buttons[6usize]); }
+pub unsafe extern "C" fn IN_Button6Up() {
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(6isize));
+}
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button6Down() {
-    IN_KeyDown(&mut in_buttons[6usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(6isize));
 }
 #[no_mangle]
-pub unsafe extern "C" fn IN_Button5Up() { IN_KeyUp(&mut in_buttons[5usize]); }
+pub unsafe extern "C" fn IN_Button5Up() {
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(5isize));
+}
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button5Down() {
-    IN_KeyDown(&mut in_buttons[5usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(5isize));
 }
 #[no_mangle]
-pub unsafe extern "C" fn IN_Button4Up() { IN_KeyUp(&mut in_buttons[4usize]); }
+pub unsafe extern "C" fn IN_Button4Up() {
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(4isize));
+}
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button4Down() {
-    IN_KeyDown(&mut in_buttons[4usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(4isize));
 }
 #[no_mangle]
-pub unsafe extern "C" fn IN_Button3Up() { IN_KeyUp(&mut in_buttons[3usize]); }
+pub unsafe extern "C" fn IN_Button3Up() {
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(3isize));
+}
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button3Down() {
-    IN_KeyDown(&mut in_buttons[3usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(3isize));
 }
 #[no_mangle]
-pub unsafe extern "C" fn IN_Button2Up() { IN_KeyUp(&mut in_buttons[2usize]); }
+pub unsafe extern "C" fn IN_Button2Up() {
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(2isize));
+}
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button2Down() {
-    IN_KeyDown(&mut in_buttons[2usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(2isize));
 }
 #[no_mangle]
-pub unsafe extern "C" fn IN_Button1Up() { IN_KeyUp(&mut in_buttons[1usize]); }
+pub unsafe extern "C" fn IN_Button1Up() {
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(1isize));
+}
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button1Down() {
-    IN_KeyDown(&mut in_buttons[1usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(1isize));
 }
 #[no_mangle]
-pub unsafe extern "C" fn IN_Button0Up() { IN_KeyUp(&mut in_buttons[0usize]); }
+pub unsafe extern "C" fn IN_Button0Up() {
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(0isize));
+}
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button0Down() {
-    IN_KeyDown(&mut in_buttons[0usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(0isize));
 }
 #[no_mangle]
 pub unsafe extern "C" fn IN_SpeedUp() { IN_KeyUp(&mut in_speed); }
@@ -2223,7 +2257,9 @@ pub unsafe extern "C" fn CL_WritePacket() {
         i = 0i32;
         while i < count {
             j = cl.cmdNumber - count + i + 1i32 & 64i32 - 1i32;
-            cmd = &mut cl.cmds[j as usize] as *mut usercmd_t;
+            cmd =
+                &mut *cl.cmds.as_mut_ptr().offset(j as isize) as
+                    *mut usercmd_t;
             MSG_WriteDeltaUsercmdKey(&mut buf, key, oldcmd, cmd);
             oldcmd = cmd;
             i += 1
@@ -2678,9 +2714,9 @@ pub unsafe extern "C" fn CL_AdjustAngles() {
 pub static mut old_com_frameTime: libc::c_int = 0;
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button15Down() {
-    IN_KeyDown(&mut in_buttons[15usize]);
+    IN_KeyDown(&mut *in_buttons.as_mut_ptr().offset(15isize));
 }
 #[no_mangle]
 pub unsafe extern "C" fn IN_Button15Up() {
-    IN_KeyUp(&mut in_buttons[15usize]);
+    IN_KeyUp(&mut *in_buttons.as_mut_ptr().offset(15isize));
 }

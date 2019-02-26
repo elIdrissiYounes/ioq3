@@ -1,5 +1,16 @@
-use libc;
-#[header_src = "/usr/lib/llvm-6.0/lib/clang/6.0.0/include/stddef.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           extern_types,
+           libc,
+           ptr_wrapping_offset_from)]
+extern crate libc;
+#[header_src = "/usr/lib/clang/7.0.1/include/stddef.h"]
 pub mod stddef_h {
     pub type size_t = libc::c_ulong;
     use super::{libc};
@@ -18,7 +29,8 @@ pub mod stdlib_h {
                      __size: size_t, __compar: __compar_fn_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -312,7 +324,8 @@ default values.
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     /*
 ===========================================================================
@@ -491,7 +504,8 @@ Netchan handles packet fragmentation and out of order / duplicate suppression
         pub fn Sys_IsLANAddress(adr: netadr_t) -> qboolean;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/game/g_public.h"]
+#[header_src =
+      "ioq3/code/game/g_public.h"]
 pub mod g_public_h {
     /*
 ===========================================================================
@@ -566,7 +580,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     use super::q_shared_h::{entityState_t, qboolean, vec3_t};
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/server/server.h"]
+#[header_src =
+      "ioq3/code/server/server.h"]
 pub mod server_h {
     /*
 ===========================================================================
@@ -820,7 +835,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/server/sv_snapshot.c"]
+      "ioq3/code/server/sv_snapshot.c"]
 pub mod sv_snapshot_c {
     /*
 =============================================================================
@@ -847,7 +862,8 @@ pub mod string_h {
          -> *mut libc::c_void;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_public.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_public.h"]
 pub mod cm_public_h {
     use super::q_shared_h::{byte, vec_t, qboolean};
     use super::{libc};
@@ -1084,8 +1100,9 @@ unsafe extern "C" fn SV_WriteSnapshotToClient(mut client: *mut client_t,
     let mut i: libc::c_int = 0;
     let mut snapFlags: libc::c_int = 0;
     frame =
-        &mut (*client).frames[((*client).netchan.outgoingSequence &
-                                   32i32 - 1i32) as usize] as
+        &mut *(*client).frames.as_mut_ptr().offset(((*client).netchan.outgoingSequence
+                                                        & 32i32 - 1i32) as
+                                                       isize) as
             *mut clientSnapshot_t;
     if (*client).deltaMessage <= 0i32 ||
            (*client).state as libc::c_uint !=
@@ -1101,8 +1118,10 @@ unsafe extern "C" fn SV_WriteSnapshotToClient(mut client: *mut client_t,
         lastframe = 0i32
     } else {
         oldframe =
-            &mut (*client).frames[((*client).deltaMessage & 32i32 - 1i32) as
-                                      usize] as *mut clientSnapshot_t;
+            &mut *(*client).frames.as_mut_ptr().offset(((*client).deltaMessage
+                                                            & 32i32 - 1i32) as
+                                                           isize) as
+                *mut clientSnapshot_t;
         lastframe =
             (*client).netchan.outgoingSequence - (*client).deltaMessage;
         if (*oldframe).first_entity <=
@@ -1239,7 +1258,9 @@ unsafe extern "C" fn SV_EmitPacketEntities(mut from: *mut clientSnapshot_t,
             newindex += 1
         } else if newnum < oldnum {
             MSG_WriteDeltaEntity(msg,
-                                 &mut sv.svEntities[newnum as usize].baseline,
+                                 &mut (*sv.svEntities.as_mut_ptr().offset(newnum
+                                                                              as
+                                                                              isize)).baseline,
                                  newent, qtrue);
             newindex += 1
         } else {
@@ -1278,8 +1299,9 @@ unsafe extern "C" fn SV_BuildClientSnapshot(mut client: *mut client_t) {
     let mut ps: *mut playerState_t = 0 as *mut playerState_t;
     sv.snapshotCounter += 1;
     frame =
-        &mut (*client).frames[((*client).netchan.outgoingSequence &
-                                   32i32 - 1i32) as usize] as
+        &mut *(*client).frames.as_mut_ptr().offset(((*client).netchan.outgoingSequence
+                                                        & 32i32 - 1i32) as
+                                                       isize) as
             *mut clientSnapshot_t;
     entityNumbers.numSnapshotEntities = 0i32;
     memset((*frame).areabits.as_mut_ptr() as *mut libc::c_void, 0i32,
@@ -1301,7 +1323,9 @@ unsafe extern "C" fn SV_BuildClientSnapshot(mut client: *mut client_t) {
                   b"SV_SvEntityForGentity: bad gEnt\x00" as *const u8 as
                       *const libc::c_char);
     }
-    svEnt = &mut sv.svEntities[clientNum as usize] as *mut svEntity_t;
+    svEnt =
+        &mut *sv.svEntities.as_mut_ptr().offset(clientNum as isize) as
+            *mut svEntity_t;
     (*svEnt).snapshotCounter = sv.snapshotCounter;
     org[0usize] = (*ps).origin[0usize];
     org[1usize] = (*ps).origin[1usize];

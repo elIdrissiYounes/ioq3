@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -217,7 +225,7 @@ default values.
     }
 }
 #[header_src =
-      "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_polylib.h"]
+      "ioq3/code/qcommon/cm_polylib.h"]
 pub mod cm_polylib_h {
     /*
 ===========================================================================
@@ -246,7 +254,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     #[repr(C)]
     pub struct winding_t {
         pub numpoints: libc::c_int,
-        pub p: [vec3_t; 4],
+        pub p: [vec3_t; 0],
     }
     use super::{libc};
     use super::q_shared_h::{vec3_t, vec_t};
@@ -266,7 +274,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                              maxs: *mut vec_t);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_patch.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_patch.h"]
 pub mod cm_patch_h {
     #[derive
     ( Copy , Clone )]
@@ -367,7 +376,8 @@ properly.
     use super::{libc};
     use super::q_shared_h::{qboolean, vec3_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_local.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_local.h"]
 pub mod cm_local_h {
     // cm_test.c
     // Used for oriented capsule collision detection
@@ -409,7 +419,8 @@ pub mod cm_local_h {
          -> qboolean;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_patch.c"]
+#[header_src =
+      "ioq3/code/qcommon/cm_patch.c"]
 pub mod cm_patch_c {
     pub const EN_TOP: unnamed_0 = 0;
     pub const EN_LEFT: unnamed_0 = 3;
@@ -448,7 +459,7 @@ Called from the renderer
                                     value: libc::c_int);
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -470,11 +481,13 @@ pub mod string_h {
          -> *mut libc::c_void;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/cm_public.h"]
+#[header_src =
+      "ioq3/code/qcommon/cm_public.h"]
 pub mod cm_public_h {
     use super::{libc};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     use super::q_shared_h::{cvar_t};
     use super::{libc};
@@ -696,11 +709,11 @@ pub unsafe extern "C" fn CM_DrawDebugSurface(mut drawPoly:
                 if facet == debugFacet as *mut facet_t {
                     drawPoly.expect("non-null function pointer")(4i32,
                                                                  (*w).numpoints,
-                                                                 (*w).p[0usize].as_mut_ptr());
+                                                                 (*(*w).p.as_mut_ptr().offset(0isize)).as_mut_ptr());
                 } else {
                     drawPoly.expect("non-null function pointer")(1i32,
                                                                  (*w).numpoints,
-                                                                 (*w).p[0usize].as_mut_ptr());
+                                                                 (*(*w).p.as_mut_ptr().offset(0isize)).as_mut_ptr());
                 }
                 FreeWinding(w);
             } else {
@@ -948,7 +961,9 @@ unsafe extern "C" fn CM_PatchCollideFromGrid(mut grid: *mut cGrid_t,
                           b"MAX_FACETS\x00" as *const u8 as
                               *const libc::c_char);
             }
-            facet = &mut facets[numFacets as usize] as *mut facet_t;
+            facet =
+                &mut *facets.as_mut_ptr().offset(numFacets as isize) as
+                    *mut facet_t;
             memset(facet as *mut libc::c_void, 0i32,
                    ::std::mem::size_of::<facet_t>() as libc::c_ulong);
             if gridPlanes[i as usize][j as usize][0usize] ==
@@ -1017,7 +1032,9 @@ unsafe extern "C" fn CM_PatchCollideFromGrid(mut grid: *mut cGrid_t,
                               b"MAX_FACETS\x00" as *const u8 as
                                   *const libc::c_char);
                 }
-                facet = &mut facets[numFacets as usize] as *mut facet_t;
+                facet =
+                    &mut *facets.as_mut_ptr().offset(numFacets as isize) as
+                        *mut facet_t;
                 memset(facet as *mut libc::c_void, 0i32,
                        ::std::mem::size_of::<facet_t>() as libc::c_ulong);
                 (*facet).surfacePlane =
@@ -1172,16 +1189,18 @@ pub unsafe extern "C" fn CM_AddFacetBevels(mut facet: *mut facet_t) {
             } else { plane[3usize] = -mins[axis as usize] }
             //if it's the surface plane
             if !(0 !=
-                     CM_PlaneEqual(&mut planes[(*facet).surfacePlane as
-                                                   usize], plane.as_mut_ptr(),
-                                   &mut flipped)) {
+                     CM_PlaneEqual(&mut *planes.as_mut_ptr().offset((*facet).surfacePlane
+                                                                        as
+                                                                        isize),
+                                   plane.as_mut_ptr(), &mut flipped)) {
                 i = 0i32;
                 while i < (*facet).numBorders {
                     if 0 !=
-                           CM_PlaneEqual(&mut planes[(*facet).borderPlanes[i
-                                                                               as
-                                                                               usize]
-                                                         as usize],
+                           CM_PlaneEqual(&mut *planes.as_mut_ptr().offset(*(*facet).borderPlanes.as_mut_ptr().offset(i
+                                                                                                                         as
+                                                                                                                         isize)
+                                                                              as
+                                                                              isize),
                                          plane.as_mut_ptr(), &mut flipped) {
                         break ;
                     }
@@ -1209,9 +1228,15 @@ pub unsafe extern "C" fn CM_AddFacetBevels(mut facet: *mut facet_t) {
     j = 0i32;
     while j < (*w).numpoints {
         k = (j + 1i32) % (*w).numpoints;
-        vec[0usize] = (*w).p[j as usize][0usize] - (*w).p[k as usize][0usize];
-        vec[1usize] = (*w).p[j as usize][1usize] - (*w).p[k as usize][1usize];
-        vec[2usize] = (*w).p[j as usize][2usize] - (*w).p[k as usize][2usize];
+        vec[0usize] =
+            (*(*w).p.as_mut_ptr().offset(j as isize))[0usize] -
+                (*(*w).p.as_mut_ptr().offset(k as isize))[0usize];
+        vec[1usize] =
+            (*(*w).p.as_mut_ptr().offset(j as isize))[1usize] -
+                (*(*w).p.as_mut_ptr().offset(k as isize))[1usize];
+        vec[2usize] =
+            (*(*w).p.as_mut_ptr().offset(j as isize))[2usize] -
+                (*(*w).p.as_mut_ptr().offset(k as isize))[2usize];
         //if it's a degenerate edge
         if !((VectorNormalize(vec.as_mut_ptr()) as libc::c_double) < 0.5f64) {
             CM_SnapVector(vec.as_mut_ptr());
@@ -1239,20 +1264,27 @@ pub unsafe extern "C" fn CM_AddFacetBevels(mut facet: *mut facet_t) {
                         if !((VectorNormalize(plane.as_mut_ptr()) as
                                   libc::c_double) < 0.5f64) {
                             plane[3usize] =
-                                (*w).p[j as usize][0usize] * plane[0usize] +
-                                    (*w).p[j as usize][1usize] * plane[1usize]
-                                    +
-                                    (*w).p[j as usize][2usize] *
-                                        plane[2usize];
+                                (*(*w).p.as_mut_ptr().offset(j as
+                                                                 isize))[0usize]
+                                    * plane[0usize] +
+                                    (*(*w).p.as_mut_ptr().offset(j as
+                                                                     isize))[1usize]
+                                        * plane[1usize] +
+                                    (*(*w).p.as_mut_ptr().offset(j as
+                                                                     isize))[2usize]
+                                        * plane[2usize];
                             l = 0i32;
                             while l < (*w).numpoints {
                                 d =
-                                    (*w).p[l as usize][0usize] * plane[0usize]
-                                        +
-                                        (*w).p[l as usize][1usize] *
-                                            plane[1usize] +
-                                        (*w).p[l as usize][2usize] *
-                                            plane[2usize] - plane[3usize];
+                                    (*(*w).p.as_mut_ptr().offset(l as
+                                                                     isize))[0usize]
+                                        * plane[0usize] +
+                                        (*(*w).p.as_mut_ptr().offset(l as
+                                                                         isize))[1usize]
+                                            * plane[1usize] +
+                                        (*(*w).p.as_mut_ptr().offset(l as
+                                                                         isize))[2usize]
+                                            * plane[2usize] - plane[3usize];
                                 if d as libc::c_double > 0.1f64 {
                                     // point in front
                                     break ;
@@ -1261,19 +1293,19 @@ pub unsafe extern "C" fn CM_AddFacetBevels(mut facet: *mut facet_t) {
                             if !(l < (*w).numpoints) {
                                 //if it's the surface plane
                                 if !(0 !=
-                                         CM_PlaneEqual(&mut planes[(*facet).surfacePlane
-                                                                       as
-                                                                       usize],
+                                         CM_PlaneEqual(&mut *planes.as_mut_ptr().offset((*facet).surfacePlane
+                                                                                            as
+                                                                                            isize),
                                                        plane.as_mut_ptr(),
                                                        &mut flipped)) {
                                     i = 0i32;
                                     while i < (*facet).numBorders {
                                         if 0 !=
-                                               CM_PlaneEqual(&mut planes[(*facet).borderPlanes[i
-                                                                                                   as
-                                                                                                   usize]
-                                                                             as
-                                                                             usize],
+                                               CM_PlaneEqual(&mut *planes.as_mut_ptr().offset(*(*facet).borderPlanes.as_mut_ptr().offset(i
+                                                                                                                                             as
+                                                                                                                                             isize)
+                                                                                                  as
+                                                                                                  isize),
                                                              plane.as_mut_ptr(),
                                                              &mut flipped) {
                                             break ;
@@ -1408,7 +1440,9 @@ pub unsafe extern "C" fn CM_FindPlane2(mut plane: *mut libc::c_float,
     let mut i: libc::c_int = 0;
     i = 0i32;
     while i < numPlanes {
-        if 0 != CM_PlaneEqual(&mut planes[i as usize], plane, flipped) {
+        if 0 !=
+               CM_PlaneEqual(&mut *planes.as_mut_ptr().offset(i as isize),
+                             plane, flipped) {
             return i
         }
         i += 1
@@ -2514,8 +2548,9 @@ pub unsafe extern "C" fn CM_TraceThroughPatchCollide(mut tw: *mut traceWork_t,
             j = 0i32;
             while j < (*facet).numBorders {
                 planes_0 =
-                    &mut *(*pc).planes.offset((*facet).borderPlanes[j as
-                                                                        usize]
+                    &mut *(*pc).planes.offset(*(*facet).borderPlanes.as_mut_ptr().offset(j
+                                                                                             as
+                                                                                             isize)
                                                   as isize) as
                         *mut patchPlane_t;
                 if 0 != (*facet).borderInward[j as usize] {
@@ -2900,8 +2935,9 @@ pub unsafe extern "C" fn CM_PositionTestInPatchCollide(mut tw:
             j = 0i32;
             while j < (*facet).numBorders {
                 planes_0 =
-                    &mut *(*pc).planes.offset((*facet).borderPlanes[j as
-                                                                        usize]
+                    &mut *(*pc).planes.offset(*(*facet).borderPlanes.as_mut_ptr().offset(j
+                                                                                             as
+                                                                                             isize)
                                                   as isize) as
                         *mut patchPlane_t;
                 if 0 != (*facet).borderInward[j as usize] {

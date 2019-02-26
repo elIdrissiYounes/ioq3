@@ -1,5 +1,13 @@
-use libc;
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/q_shared.h"]
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, extern_types, libc)]
+extern crate libc;
+#[header_src =
+      "ioq3/code/qcommon/q_shared.h"]
 pub mod q_shared_h {
     /*
 ===========================================================================
@@ -159,7 +167,8 @@ default values.
         pub fn Com_Printf(msg: *const libc::c_char, ...);
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_local.h"]
+#[header_src =
+      "ioq3/code/client/snd_local.h"]
 pub mod snd_local_h {
     // Interface between Q3 sound "api" and the sound backend
     #[derive
@@ -395,7 +404,8 @@ pub mod alc_h {
         pub type ALCcontext_struct;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_openal.c"]
+#[header_src =
+      "ioq3/code/client/snd_openal.c"]
 pub mod snd_openal_c {
     pub type alSfx_t = alSfx_s;
     //===========================================================================
@@ -459,7 +469,8 @@ pub mod snd_openal_c {
     use super::q_shared_h::{qboolean, sfxHandle_t, vec3_t, cvar_t};
     use super::snd_local_h::{alSrcPriority_t};
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/snd_codec.h"]
+#[header_src =
+      "ioq3/code/client/snd_codec.h"]
 pub mod snd_codec_h {
     pub type snd_info_t = snd_info_s;
     /*
@@ -553,7 +564,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
          -> *mut snd_stream_t;
     }
 }
-#[header_src = "/usr/include/x86_64-linux-gnu/bits/mathcalls.h"]
+#[header_src = "/usr/include/bits/mathcalls.h"]
 pub mod mathcalls_h {
     use super::{libc};
     extern "C" {
@@ -583,7 +594,8 @@ pub mod string_h {
         pub fn strlen(_: *const libc::c_char) -> libc::c_ulong;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/qcommon/qcommon.h"]
+#[header_src =
+      "ioq3/code/qcommon/qcommon.h"]
 pub mod qcommon_h {
     use super::q_shared_h::{cvar_t};
     use super::{libc};
@@ -632,7 +644,8 @@ modules of the program.
         pub fn Sys_Milliseconds() -> libc::c_int;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/qal.h"]
+#[header_src =
+      "ioq3/code/client/qal.h"]
 pub mod qal_h {
     use super::al_h::{LPALLISTENERF, LPALGETSTRING, LPALDELETEBUFFERS,
                       LPALGETERROR, LPALBUFFERDATA, LPALGENBUFFERS,
@@ -727,7 +740,8 @@ pub mod qal_h {
         pub fn QAL_Init(libname: *const libc::c_char) -> qboolean;
     }
 }
-#[header_src = "/home/miguelsaldivar/workspace/ioq3/code/client/client.h"]
+#[header_src =
+      "ioq3/code/client/client.h"]
 pub mod client_h {
     use super::q_shared_h::{cvar_t};
     extern "C" {
@@ -1276,7 +1290,8 @@ unsafe extern "C" fn S_AL_BufferFind(mut filename: *const libc::c_char)
     if sfx == -1i32 {
         let mut ptr: *mut alSfx_t = 0 as *mut alSfx_t;
         sfx = S_AL_BufferFindFree();
-        ptr = &mut knownSfx[sfx as usize] as *mut alSfx_t;
+        ptr =
+            &mut *knownSfx.as_mut_ptr().offset(sfx as isize) as *mut alSfx_t;
         memset(ptr as *mut libc::c_void, 0i32,
                ::std::mem::size_of::<alSfx_t>() as libc::c_ulong);
         (*ptr).masterLoopSrc = -1i32;
@@ -1369,7 +1384,7 @@ unsafe extern "C" fn S_AL_BufferLoad(mut sfx: sfxHandle_t,
                    size: 0,
                    dataofs: 0,};
     let mut curSfx: *mut alSfx_t =
-        &mut knownSfx[sfx as usize] as *mut alSfx_t;
+        &mut *knownSfx.as_mut_ptr().offset(sfx as isize) as *mut alSfx_t;
     if (*curSfx).filename[0usize] as libc::c_int == '\u{0}' as i32 { return }
     if 0 != (*curSfx).inMemory as libc::c_uint ||
            0 != (*curSfx).isDefault as libc::c_uint ||
@@ -1523,8 +1538,9 @@ unsafe extern "C" fn S_AL_BufferUnload(mut sfx: sfxHandle_t) {
     if 0 == knownSfx[sfx as usize].inMemory as u64 { return }
     S_AL_ClearError(qfalse);
     qalDeleteBuffers.expect("non-null function pointer")(1i32,
-                                                         &mut knownSfx[sfx as
-                                                                           usize].buffer);
+                                                         &mut (*knownSfx.as_mut_ptr().offset(sfx
+                                                                                                 as
+                                                                                                 isize)).buffer);
     if qalGetError.expect("non-null function pointer")() != 0i32 {
         Com_Printf(b"^1ERROR: Can\'t delete sound buffer for %s\n\x00" as
                        *const u8 as *const libc::c_char,
@@ -1705,13 +1721,15 @@ S_AL_SrcKill
 =================
 */
 unsafe extern "C" fn S_AL_SrcKill(mut src: srcHandle_t) {
-    let mut curSource: *mut src_t = &mut srcList[src as usize] as *mut src_t;
+    let mut curSource: *mut src_t =
+        &mut *srcList.as_mut_ptr().offset(src as isize) as *mut src_t;
     if 0 != (*curSource).isLocked as u64 { return }
     if 0 != (*curSource).isLooping as u64 {
         (*curSource).isLooping = qfalse;
         if (*curSource).entity != -1i32 {
             let mut curEnt: *mut sentity_t =
-                &mut entityList[(*curSource).entity as usize] as
+                &mut *entityList.as_mut_ptr().offset((*curSource).entity as
+                                                         isize) as
                     *mut sentity_t;
             (*curEnt).srcAllocated = qfalse;
             (*curEnt).srcIndex = -1i32;
@@ -1770,7 +1788,9 @@ unsafe extern "C" fn S_AL_NewLoopMaster(mut rmSource: *mut src_t,
     let mut index: libc::c_int = 0;
     let mut curSource: *mut src_t = 0 as *mut src_t;
     let mut curSfx: *mut alSfx_t = 0 as *mut alSfx_t;
-    curSfx = &mut knownSfx[(*rmSource).sfx as usize] as *mut alSfx_t;
+    curSfx =
+        &mut *knownSfx.as_mut_ptr().offset((*rmSource).sfx as isize) as
+            *mut alSfx_t;
     if 0 != (*rmSource).isPlaying as u64 { (*curSfx).loopActiveCnt -= 1 }
     if 0 != iskilled as u64 { (*curSfx).loopCnt -= 1 }
     if 0 != (*curSfx).loopCnt {
@@ -1782,13 +1802,16 @@ unsafe extern "C" fn S_AL_NewLoopMaster(mut rmSource: *mut src_t,
             }
         } else if (*curSfx).masterLoopSrc != -1i32 &&
                       rmSource ==
-                          &mut srcList[(*curSfx).masterLoopSrc as usize] as
+                          &mut *srcList.as_mut_ptr().offset((*curSfx).masterLoopSrc
+                                                                as isize) as
                               *mut src_t {
             let mut firstInactive: libc::c_int = -1i32;
             if 0 != iskilled as libc::c_uint || 0 != (*curSfx).loopActiveCnt {
                 index = 0i32;
                 while index < srcCount {
-                    curSource = &mut srcList[index as usize] as *mut src_t;
+                    curSource =
+                        &mut *srcList.as_mut_ptr().offset(index as isize) as
+                            *mut src_t;
                     if (*curSource).sfx == (*rmSource).sfx &&
                            curSource != rmSource &&
                            0 != (*curSource).isActive as libc::c_uint &&
@@ -1813,7 +1836,9 @@ unsafe extern "C" fn S_AL_NewLoopMaster(mut rmSource: *mut src_t,
                     } else { curSource = rmSource }
                 } else {
                     curSource =
-                        &mut srcList[firstInactive as usize] as *mut src_t
+                        &mut *srcList.as_mut_ptr().offset(firstInactive as
+                                                              isize) as
+                            *mut src_t
                 }
                 if 0 != (*rmSource).isPlaying as u64 {
                     S_AL_SaveLoopPos(curSource, (*rmSource).alSource);
@@ -2155,7 +2180,8 @@ unsafe extern "C" fn S_AL_SrcUpdate() {
     i = 0i32;
     while i < srcCount {
         entityNum = srcList[i as usize].entity;
-        curSource = &mut srcList[i as usize] as *mut src_t;
+        curSource =
+            &mut *srcList.as_mut_ptr().offset(i as isize) as *mut src_t;
         if !(0 != (*curSource).isLocked as u64) {
             if !(0 == (*curSource).isActive as u64) {
                 if 0 != (*s_alGain).modified as libc::c_uint ||
@@ -2176,7 +2202,9 @@ unsafe extern "C" fn S_AL_SrcUpdate() {
                 }
                 if 0 != (*curSource).isLooping as u64 {
                     let mut sent: *mut sentity_t =
-                        &mut entityList[entityNum as usize] as *mut sentity_t;
+                        &mut *entityList.as_mut_ptr().offset(entityNum as
+                                                                 isize) as
+                            *mut sentity_t;
                     // If a looping effect hasn't been touched this frame, pause or kill it
                     if 0 != (*sent).loopAddedThisFrame as u64 {
                         let mut curSfx: *mut alSfx_t = 0 as *mut alSfx_t;
@@ -2200,8 +2228,9 @@ unsafe extern "C" fn S_AL_SrcUpdate() {
                             (*sent).startLoopingSound = qfalse
                         }
                         curSfx =
-                            &mut knownSfx[(*curSource).sfx as usize] as
-                                *mut alSfx_t;
+                            &mut *knownSfx.as_mut_ptr().offset((*curSource).sfx
+                                                                   as isize)
+                                as *mut alSfx_t;
                         S_AL_ScaleGain(curSource,
                                        (*curSource).loopSpeakerPos.as_mut_ptr());
                         if 0. == (*curSource).scaleGain {
@@ -2252,9 +2281,10 @@ unsafe extern "C" fn S_AL_SrcUpdate() {
                                                       0i32 {
                                         let mut secofs: libc::c_float = 0.;
                                         let mut master: *mut src_t =
-                                            &mut srcList[(*curSfx).masterLoopSrc
-                                                             as usize] as
-                                                *mut src_t;
+                                            &mut *srcList.as_mut_ptr().offset((*curSfx).masterLoopSrc
+                                                                                  as
+                                                                                  isize)
+                                                as *mut src_t;
                                         if (*master).lastTimePos >=
                                                0i32 as libc::c_float {
                                             secofs =
@@ -2410,7 +2440,7 @@ unsafe extern "C" fn S_AL_SrcSetup(mut src: srcHandle_t, mut sfx: sfxHandle_t,
                                    mut channel: libc::c_int,
                                    mut local: qboolean) {
     let mut curSource: *mut src_t = 0 as *mut src_t;
-    curSource = &mut srcList[src as usize] as *mut src_t;
+    curSource = &mut *srcList.as_mut_ptr().offset(src as isize) as *mut src_t;
     (*curSource).lastUsedTime = Sys_Milliseconds();
     (*curSource).sfx = sfx;
     (*curSource).priority = priority;
@@ -2578,7 +2608,8 @@ unsafe extern "C" fn S_AL_SrcLoop(mut priority: alSrcPriority_t,
                                   mut entityNum: libc::c_int) {
     let mut src: libc::c_int = 0;
     let mut sent: *mut sentity_t =
-        &mut entityList[entityNum as usize] as *mut sentity_t;
+        &mut *entityList.as_mut_ptr().offset(entityNum as isize) as
+            *mut sentity_t;
     let mut curSource: *mut src_t = 0 as *mut src_t;
     let mut sorigin: vec3_t = [0.; 3];
     let mut svelocity: vec3_t = [0.; 3];
@@ -2591,13 +2622,15 @@ unsafe extern "C" fn S_AL_SrcLoop(mut priority: alSrcPriority_t,
                         entityNum);
             return
         }
-        curSource = &mut srcList[src as usize] as *mut src_t;
+        curSource =
+            &mut *srcList.as_mut_ptr().offset(src as isize) as *mut src_t;
         (*sent).startLoopingSound = qtrue;
         (*curSource).lastTimePos = -1.0f64 as libc::c_float;
         (*curSource).lastSampleTime = Sys_Milliseconds()
     } else {
         src = (*sent).srcIndex;
-        curSource = &mut srcList[src as usize] as *mut src_t
+        curSource =
+            &mut *srcList.as_mut_ptr().offset(src as isize) as *mut src_t
     }
     (*sent).srcAllocated = qtrue;
     (*sent).srcIndex = src;
@@ -2689,7 +2722,8 @@ unsafe extern "C" fn S_AL_SrcAlloc(mut priority: alSrcPriority_t,
     let mut curSource: *mut src_t = 0 as *mut src_t;
     i = 0i32;
     while i < srcCount {
-        curSource = &mut srcList[i as usize] as *mut src_t;
+        curSource =
+            &mut *srcList.as_mut_ptr().offset(i as isize) as *mut src_t;
         // If it's locked, we aren't even going to look at it
         if !(0 != (*curSource).isLocked as u64) {
             // Is it empty or not?
@@ -2831,8 +2865,8 @@ unsafe extern "C" fn S_AL_RawSamples(mut stream: libc::c_int,
             return
         }
         memcpy(oldBuffers.as_mut_ptr() as *mut libc::c_void,
-               &mut streamBuffers[stream as usize] as *mut [ALuint; 20] as
-                   *const libc::c_void,
+               &mut *streamBuffers.as_mut_ptr().offset(stream as isize) as
+                   *mut [ALuint; 20] as *const libc::c_void,
                ::std::mem::size_of::<[ALuint; 20]>() as libc::c_ulong);
         i = 0i32;
         while i < streamNumBuffers[stream as usize] {
@@ -3087,7 +3121,7 @@ unsafe extern "C" fn S_AL_StartSound(mut origin: *mut vec_t,
     src = S_AL_SrcAlloc(SRCPRI_ONESHOT, entnum, entchannel);
     if src == -1i32 { return }
     S_AL_SrcSetup(src, sfx, SRCPRI_ONESHOT, entnum, entchannel, qfalse);
-    curSource = &mut srcList[src as usize] as *mut src_t;
+    curSource = &mut *srcList.as_mut_ptr().offset(src as isize) as *mut src_t;
     if origin.is_null() { (*curSource).isTracking = qtrue }
     qalSourcefv.expect("non-null function pointer")((*curSource).alSource,
                                                     0x1004i32,
@@ -3154,7 +3188,8 @@ unsafe extern "C" fn S_AL_SrcShutdown() {
     if 0 == alSourcesInitialised as u64 { return }
     i = 0i32;
     while i < srcCount {
-        curSource = &mut srcList[i as usize] as *mut src_t;
+        curSource =
+            &mut *srcList.as_mut_ptr().offset(i as isize) as *mut src_t;
         if 0 != (*curSource).isLocked as u64 {
             Com_DPrintf(b"^3WARNING: Source %d is locked\n\x00" as *const u8
                             as *const libc::c_char, i);
@@ -3165,8 +3200,9 @@ unsafe extern "C" fn S_AL_SrcShutdown() {
         qalSourceStop.expect("non-null function pointer")(srcList[i as
                                                                       usize].alSource);
         qalDeleteSources.expect("non-null function pointer")(1i32,
-                                                             &mut srcList[i as
-                                                                              usize].alSource);
+                                                             &mut (*srcList.as_mut_ptr().offset(i
+                                                                                                    as
+                                                                                                    isize)).alSource);
         i += 1
     }
     memset(srcList.as_mut_ptr() as *mut libc::c_void, 0i32,
@@ -3195,8 +3231,9 @@ unsafe extern "C" fn S_AL_SrcInit() -> qboolean {
     i = 0i32;
     while i < limit {
         qalGenSources.expect("non-null function pointer")(1i32,
-                                                          &mut srcList[i as
-                                                                           usize].alSource);
+                                                          &mut (*srcList.as_mut_ptr().offset(i
+                                                                                                 as
+                                                                                                 isize)).alSource);
         if qalGetError.expect("non-null function pointer")() != 0i32 {
             break ;
         }
