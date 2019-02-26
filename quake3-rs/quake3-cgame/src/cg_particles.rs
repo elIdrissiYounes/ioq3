@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use bg_misc::{
     bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
     BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItemForHoldable,
@@ -87,7 +94,6 @@ use cg_weapons::{
     CG_GrappleTrail, CG_MissileHitPlayer, CG_MissileHitWall, CG_NextWeapon_f, CG_OutOfAmmoChange,
     CG_PrevWeapon_f, CG_RailTrail, CG_RegisterItemVisuals, CG_ShotgunFire, CG_Weapon_f,
 };
-use libc;
 use q_math::{
     axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
     AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
@@ -108,6 +114,7 @@ use tr_types_h::{
     RT_MAX_REF_ENTITY_TYPE, RT_MODEL, RT_POLY, RT_PORTALSURFACE, RT_RAIL_CORE, RT_RAIL_RINGS,
     RT_SPRITE, TC_NONE, TC_S3TC, TC_S3TC_ARB,
 };
+extern crate libc;
 
 unsafe extern "C" fn VectorLength(mut v: *const vec_t) -> vec_t {
     return sqrt(
@@ -131,11 +138,12 @@ pub unsafe extern "C" fn CG_ClearParticles() {
         0i32,
         ::std::mem::size_of::<[cparticle_t; 1024]>() as libc::c_ulong,
     );
-    free_particles = &mut particles[0usize] as *mut cparticle_t;
+    free_particles = &mut *particles.as_mut_ptr().offset(0isize) as *mut cparticle_t;
     active_particles = 0 as *mut cparticle_t;
     i = 0i32;
-    while i < cl_numparticles - 1 {
-        particles[i as usize].next = &mut particles[(i + 1i32) as usize] as *mut cparticle_t;
+    while i < cl_numparticles {
+        particles[i as usize].next =
+            &mut *particles.as_mut_ptr().offset((i + 1i32) as isize) as *mut cparticle_t;
         particles[i as usize].type_0 = 0i32;
         i += 1
     }
@@ -2428,11 +2436,19 @@ pub unsafe extern "C" fn CG_ParticleBloodCloud(
         i += 1
     }
 }
-pub const P_ROTATE: unnamed = 4;
+pub const P_WEATHER_TURBULENT: unnamed = 5;
+pub type unnamed = libc::c_uint;
+pub const P_WEATHER: unnamed = 1;
+pub const P_SMOKE: unnamed = 3;
+pub const P_NONE: unnamed = 0;
+pub const P_SPRITE: unnamed = 15;
+pub const P_FLAT_SCALEUP_FADE: unnamed = 10;
 pub const P_FLAT: unnamed = 2;
-pub const P_WEATHER_FLURRY: unnamed = 11;
+pub const P_ANIM: unnamed = 6;
 pub const P_BUBBLE: unnamed = 13;
-pub const P_SMOKE_IMPACT: unnamed = 12;
+pub const P_BLEED: unnamed = 8;
+pub const P_BAT: unnamed = 7;
+pub const P_FLAT_SCALEUP: unnamed = 9;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct particle_s {
@@ -2462,16 +2478,8 @@ pub struct particle_s {
     pub roll: libc::c_int,
     pub accumroll: libc::c_int,
 }
-pub const P_ANIM: unnamed = 6;
-pub const P_WEATHER: unnamed = 1;
-pub type cparticle_t = particle_s;
-pub const P_FLAT_SCALEUP_FADE: unnamed = 10;
-pub const P_SPRITE: unnamed = 15;
-pub const P_BLEED: unnamed = 8;
-pub const P_WEATHER_TURBULENT: unnamed = 5;
-pub const P_SMOKE: unnamed = 3;
-pub const P_NONE: unnamed = 0;
+pub const P_ROTATE: unnamed = 4;
 pub const P_BUBBLE_TURBULENT: unnamed = 14;
-pub const P_BAT: unnamed = 7;
-pub type unnamed = libc::c_uint;
-pub const P_FLAT_SCALEUP: unnamed = 9;
+pub const P_SMOKE_IMPACT: unnamed = 12;
+pub const P_WEATHER_FLURRY: unnamed = 11;
+pub type cparticle_t = particle_s;

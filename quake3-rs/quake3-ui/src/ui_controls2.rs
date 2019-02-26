@@ -1,3 +1,13 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           const_slice_as_ptr,
+           custom_attribute,
+           libc)]
 use bg_misc::bg_itemlist;
 use bg_public_h::{
     animation_s, animation_t, gitem_s, gitem_t, itemType_t, unnamed_1, weapon_t, BOTH_DEAD1,
@@ -43,11 +53,10 @@ use keycodes_h::{
     K_WORLD_82, K_WORLD_83, K_WORLD_84, K_WORLD_85, K_WORLD_86, K_WORLD_87, K_WORLD_88, K_WORLD_89,
     K_WORLD_9, K_WORLD_90, K_WORLD_91, K_WORLD_92, K_WORLD_93, K_WORLD_94, K_WORLD_95, MAX_KEYS,
 };
-use libc;
 use q_math::{
-    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
-    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
-    AxisClear, MatrixMultiply, Q_fabs,
+    colorBlack, colorMdGrey, colorRed, colorWhite, colorYellow, g_color_table, vec3_origin,
+    vectoangles, AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract,
+    AnglesToAxis, AxisClear, MatrixMultiply, Q_fabs,
 };
 use q_shared_h::{
     byte, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, vec3_t, vec4_t, vec_t,
@@ -63,8 +72,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
-    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
+    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -127,6 +136,7 @@ use ui_startserver::{
 use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
+extern crate libc;
 
 //
 // ui_controls2.c
@@ -3180,13 +3190,13 @@ unsafe extern "C" fn Controls_MenuKey(mut key: libc::c_int) -> sfxHandle_t {
     if 0 == s_controls.waitingforkey as u64 {
         match key {
             127 | 140 | 171 => {
-                current_block = 4462129297499890814;
+                current_block = 9425871678145569277;
                 match current_block {
-                    6907856289669576624 => {
+                    14966271813643266636 => {
                         if 0 != s_controls.changesmade as u64 {
                             Controls_SetConfig();
                         }
-                        current_block = 5613623880076979716;
+                        current_block = 4922766380042557446;
                     }
                     _ => {
                         key = -1i32;
@@ -3195,13 +3205,13 @@ unsafe extern "C" fn Controls_MenuKey(mut key: libc::c_int) -> sfxHandle_t {
                 }
             }
             179 | 27 => {
-                current_block = 6907856289669576624;
+                current_block = 14966271813643266636;
                 match current_block {
-                    6907856289669576624 => {
+                    14966271813643266636 => {
                         if 0 != s_controls.changesmade as u64 {
                             Controls_SetConfig();
                         }
-                        current_block = 5613623880076979716;
+                        current_block = 4922766380042557446;
                     }
                     _ => {
                         key = -1i32;
@@ -3210,11 +3220,11 @@ unsafe extern "C" fn Controls_MenuKey(mut key: libc::c_int) -> sfxHandle_t {
                 }
             }
             _ => {
-                current_block = 5613623880076979716;
+                current_block = 4922766380042557446;
             }
         }
     } else if 0 != key & 1024i32 {
-        current_block = 5613623880076979716;
+        current_block = 4922766380042557446;
     } else {
         match key {
             27 => {
@@ -3223,7 +3233,7 @@ unsafe extern "C" fn Controls_MenuKey(mut key: libc::c_int) -> sfxHandle_t {
                 return menu_out_sound;
             }
             96 => {
-                current_block = 5613623880076979716;
+                current_block = 4922766380042557446;
             }
             _ => {
                 current_block = 15904375183555213903;

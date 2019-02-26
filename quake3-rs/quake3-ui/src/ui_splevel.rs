@@ -1,16 +1,22 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use bg_misc::bg_itemlist;
-use libc;
 use q_math::{
-    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
-    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
-    AxisClear, MatrixMultiply, Q_fabs,
+    colorBlack, colorMdGrey, colorRed, colorWhite, colorYellow, g_color_table, vec3_origin,
+    vectoangles, AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract,
+    AnglesToAxis, AxisClear, MatrixMultiply, Q_fabs,
 };
 use q_shared_h::{
     qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, va, vec4_t, vec_t, Com_sprintf,
     Info_ValueForKey, Q_CleanStr, Q_stricmp, Q_strncpyz, Q_strupr, CHAN_ANNOUNCER, CHAN_AUTO,
     CHAN_BODY, CHAN_ITEM, CHAN_LOCAL, CHAN_LOCAL_SOUND, CHAN_VOICE, CHAN_WEAPON,
 };
-use stdlib::{memset, sin, strcpy, strrchr, strtol};
+use stdlib::{atoi, memset, sin, strcpy, strrchr};
 use tr_types_h::{
     glDriverType_t, glHardwareType_t, glconfig_t, textureCompression_t, GLDRV_ICD,
     GLDRV_STANDALONE, GLDRV_VOODOO, GLHW_3DFX_2D3D, GLHW_GENERIC, GLHW_PERMEDIA2, GLHW_RAGEPRO,
@@ -20,8 +26,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
-    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
+    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -84,14 +90,8 @@ use ui_startserver::{
 use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
+extern crate libc;
 
-unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-    return strtol(
-        __nptr,
-        0 as *mut libc::c_void as *mut *mut libc::c_char,
-        10i32,
-    ) as libc::c_int;
-}
 //
 // ui_spLevel.c
 //
@@ -717,19 +717,23 @@ unsafe extern "C" fn UI_SPLevelMenu_Init() {
     );
     Menu_AddItem(
         &mut levelMenuInfo.menu,
-        &mut levelMenuInfo.item_maps[0usize] as *mut menubitmap_s as *mut libc::c_void,
+        &mut *levelMenuInfo.item_maps.as_mut_ptr().offset(0isize) as *mut menubitmap_s
+            as *mut libc::c_void,
     );
     Menu_AddItem(
         &mut levelMenuInfo.menu,
-        &mut levelMenuInfo.item_maps[1usize] as *mut menubitmap_s as *mut libc::c_void,
+        &mut *levelMenuInfo.item_maps.as_mut_ptr().offset(1isize) as *mut menubitmap_s
+            as *mut libc::c_void,
     );
     Menu_AddItem(
         &mut levelMenuInfo.menu,
-        &mut levelMenuInfo.item_maps[2usize] as *mut menubitmap_s as *mut libc::c_void,
+        &mut *levelMenuInfo.item_maps.as_mut_ptr().offset(2isize) as *mut menubitmap_s
+            as *mut libc::c_void,
     );
     Menu_AddItem(
         &mut levelMenuInfo.menu,
-        &mut levelMenuInfo.item_maps[3usize] as *mut menubitmap_s as *mut libc::c_void,
+        &mut *levelMenuInfo.item_maps.as_mut_ptr().offset(3isize) as *mut menubitmap_s
+            as *mut libc::c_void,
     );
     levelMenuInfo.item_maps[0usize].generic.bottom += 18i32;
     levelMenuInfo.item_maps[1usize].generic.bottom += 18i32;
@@ -747,7 +751,8 @@ unsafe extern "C" fn UI_SPLevelMenu_Init() {
     while n < count {
         Menu_AddItem(
             &mut levelMenuInfo.menu,
-            &mut levelMenuInfo.item_awards[n as usize] as *mut menubitmap_s as *mut libc::c_void,
+            &mut *levelMenuInfo.item_awards.as_mut_ptr().offset(n as isize) as *mut menubitmap_s
+                as *mut libc::c_void,
         );
         n += 1
     }
@@ -813,7 +818,7 @@ unsafe extern "C" fn UI_SPLevelMenu_SetMenuItems() {
         UI_SPLevelMenu_SetMenuArena(0i32, level, arenaInfo);
         levelMenuInfo.selectedArenaInfo = arenaInfo;
         levelMenuInfo.item_maps[0usize].generic.x = 256i32;
-        Bitmap_Init(&mut levelMenuInfo.item_maps[0usize]);
+        Bitmap_Init(&mut *levelMenuInfo.item_maps.as_mut_ptr().offset(0isize));
         levelMenuInfo.item_maps[0usize].generic.bottom += 32i32;
         levelMenuInfo.numMaps = 1i32;
         levelMenuInfo.item_maps[1usize].generic.flags |= 0x4000i32 as libc::c_uint;
@@ -834,7 +839,7 @@ unsafe extern "C" fn UI_SPLevelMenu_SetMenuItems() {
         UI_SPLevelMenu_SetMenuArena(0i32, level, arenaInfo);
         levelMenuInfo.selectedArenaInfo = arenaInfo;
         levelMenuInfo.item_maps[0usize].generic.x = 256i32;
-        Bitmap_Init(&mut levelMenuInfo.item_maps[0usize]);
+        Bitmap_Init(&mut *levelMenuInfo.item_maps.as_mut_ptr().offset(0isize));
         levelMenuInfo.item_maps[0usize].generic.bottom += 32i32;
         levelMenuInfo.numMaps = 1i32;
         levelMenuInfo.item_maps[1usize].generic.flags |= 0x4000i32 as libc::c_uint;
@@ -848,7 +853,7 @@ unsafe extern "C" fn UI_SPLevelMenu_SetMenuItems() {
         levelMenuInfo.item_maps[3usize].shader = 0i32
     } else {
         levelMenuInfo.item_maps[0usize].generic.x = 46i32;
-        Bitmap_Init(&mut levelMenuInfo.item_maps[0usize]);
+        Bitmap_Init(&mut *levelMenuInfo.item_maps.as_mut_ptr().offset(0isize));
         levelMenuInfo.item_maps[0usize].generic.bottom += 18i32;
         levelMenuInfo.numMaps = 4i32;
         n = 0i32;
@@ -901,7 +906,7 @@ unsafe extern "C" fn UI_SPLevelMenu_SetBots() {
         ),
         ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
     );
-    p = &mut bots[0usize] as *mut libc::c_char;
+    p = &mut *bots.as_mut_ptr().offset(0isize) as *mut libc::c_char;
     while 0 != *p as libc::c_int && levelMenuInfo.numBots < 7i32 {
         while 0 != *p as libc::c_int && *p as libc::c_int == ' ' as i32 {
             p = p.offset(1isize)
@@ -1029,8 +1034,11 @@ unsafe extern "C" fn UI_SPLevelMenu_SetMenuArena(
     Q_strupr(levelMenuInfo.levelNames[n as usize].as_mut_ptr());
     UI_GetBestScore(
         level,
-        &mut levelMenuInfo.levelScores[n as usize],
-        &mut levelMenuInfo.levelScoresSkill[n as usize],
+        &mut *levelMenuInfo.levelScores.as_mut_ptr().offset(n as isize),
+        &mut *levelMenuInfo
+            .levelScoresSkill
+            .as_mut_ptr()
+            .offset(n as isize),
     );
     if levelMenuInfo.levelScores[n as usize] > 8i32 {
         levelMenuInfo.levelScores[n as usize] = 8i32
@@ -1426,8 +1434,8 @@ unsafe extern "C" fn UI_SPLevelMenu_MenuDraw() {
         }
         if n == selectedArena {
             if Menu_ItemAtCursor(&mut levelMenuInfo.menu)
-                == &mut levelMenuInfo.item_maps[n as usize] as *mut menubitmap_s
-                    as *mut libc::c_void
+                == &mut *levelMenuInfo.item_maps.as_mut_ptr().offset(n as isize)
+                    as *mut menubitmap_s as *mut libc::c_void
             {
                 trap_R_SetColor(color.as_mut_ptr());
             }
@@ -1440,7 +1448,8 @@ unsafe extern "C" fn UI_SPLevelMenu_MenuDraw() {
             );
             trap_R_SetColor(0 as *const libc::c_float);
         } else if Menu_ItemAtCursor(&mut levelMenuInfo.menu)
-            == &mut levelMenuInfo.item_maps[n as usize] as *mut menubitmap_s as *mut libc::c_void
+            == &mut *levelMenuInfo.item_maps.as_mut_ptr().offset(n as isize) as *mut menubitmap_s
+                as *mut libc::c_void
         {
             trap_R_SetColor(color.as_mut_ptr());
             UI_DrawHandlePic(

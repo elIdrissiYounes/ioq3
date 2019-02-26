@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use ai_chat::{BotChatTest, BotChat_ExitGame};
 use ai_dmq3::{
     bot_challenge, bot_fastchat, bot_grapple, bot_nochat, bot_rocketjump, bot_testrchat, gametype,
@@ -124,7 +131,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -137,6 +143,7 @@ use q_shared_h::{
     TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{atoi, fabs, memcpy, memmove, memset, sscanf, strchr, strcpy, strlen};
+extern crate libc;
 
 #[no_mangle]
 pub unsafe extern "C" fn BotInterbreedEndMatch() {
@@ -1096,15 +1103,15 @@ pub unsafe extern "C" fn BotReadSessionData(mut bs: *mut bot_state_t) {
         &mut (*bs).lastgoal_teamgoal.flags as *mut libc::c_int,
         &mut (*bs).lastgoal_teamgoal.iteminfo as *mut libc::c_int,
         &mut (*bs).lastgoal_teamgoal.number as *mut libc::c_int,
-        &mut (*bs).lastgoal_teamgoal.origin[0usize] as *mut vec_t,
-        &mut (*bs).lastgoal_teamgoal.origin[1usize] as *mut vec_t,
-        &mut (*bs).lastgoal_teamgoal.origin[2usize] as *mut vec_t,
-        &mut (*bs).lastgoal_teamgoal.mins[0usize] as *mut vec_t,
-        &mut (*bs).lastgoal_teamgoal.mins[1usize] as *mut vec_t,
-        &mut (*bs).lastgoal_teamgoal.mins[2usize] as *mut vec_t,
-        &mut (*bs).lastgoal_teamgoal.maxs[0usize] as *mut vec_t,
-        &mut (*bs).lastgoal_teamgoal.maxs[1usize] as *mut vec_t,
-        &mut (*bs).lastgoal_teamgoal.maxs[2usize] as *mut vec_t,
+        &mut *(*bs).lastgoal_teamgoal.origin.as_mut_ptr().offset(0isize) as *mut vec_t,
+        &mut *(*bs).lastgoal_teamgoal.origin.as_mut_ptr().offset(1isize) as *mut vec_t,
+        &mut *(*bs).lastgoal_teamgoal.origin.as_mut_ptr().offset(2isize) as *mut vec_t,
+        &mut *(*bs).lastgoal_teamgoal.mins.as_mut_ptr().offset(0isize) as *mut vec_t,
+        &mut *(*bs).lastgoal_teamgoal.mins.as_mut_ptr().offset(1isize) as *mut vec_t,
+        &mut *(*bs).lastgoal_teamgoal.mins.as_mut_ptr().offset(2isize) as *mut vec_t,
+        &mut *(*bs).lastgoal_teamgoal.maxs.as_mut_ptr().offset(0isize) as *mut vec_t,
+        &mut *(*bs).lastgoal_teamgoal.maxs.as_mut_ptr().offset(1isize) as *mut vec_t,
+        &mut *(*bs).lastgoal_teamgoal.maxs.as_mut_ptr().offset(2isize) as *mut vec_t,
         &mut (*bs).formation_dist as *mut libc::c_float,
     );
 }
@@ -1186,7 +1193,7 @@ pub unsafe extern "C" fn BotAIStartFrame(mut time: libc::c_int) -> libc::c_int {
                     (*botstates[i as usize]).lastucmd.serverTime = time;
                     trap_BotUserCommand(
                         (*botstates[i as usize]).client,
-                        &mut (*botstates[i as usize]).lastucmd,
+                        &mut (**botstates.as_mut_ptr().offset(i as isize)).lastucmd,
                     );
                 }
             }
@@ -1241,7 +1248,7 @@ pub unsafe extern "C" fn BotAIStartFrame(mut time: libc::c_int) -> libc::c_int {
         }
         i = 0i32;
         while i < 1i32 << 10i32 {
-            ent = &mut g_entities[i as usize] as *mut gentity_t;
+            ent = &mut *g_entities.as_mut_ptr().offset(i as isize) as *mut gentity_t;
             if 0 == (*ent).inuse as u64 {
                 trap_BotLibUpdateEntity(i, 0 as *mut libc::c_void);
             } else if 0 == (*ent).r.linked as u64 {
@@ -1335,7 +1342,7 @@ pub unsafe extern "C" fn BotAIStartFrame(mut time: libc::c_int) -> libc::c_int {
                 BotUpdateInput(botstates[i as usize], time, elapsed_time);
                 trap_BotUserCommand(
                     (*botstates[i as usize]).client,
-                    &mut (*botstates[i as usize]).lastucmd,
+                    &mut (**botstates.as_mut_ptr().offset(i as isize)).lastucmd,
                 );
             }
         }
@@ -1855,7 +1862,7 @@ pub unsafe extern "C" fn BotAI_GetClientState(
     mut state: *mut playerState_t,
 ) -> libc::c_int {
     let mut ent: *mut gentity_t = 0 as *mut gentity_t;
-    ent = &mut g_entities[clientNum as usize] as *mut gentity_t;
+    ent = &mut *g_entities.as_mut_ptr().offset(clientNum as isize) as *mut gentity_t;
     if 0 == (*ent).inuse as u64 {
         return qfalse as libc::c_int;
     }
@@ -2281,7 +2288,7 @@ pub unsafe extern "C" fn BotAI_GetEntityState(
     mut state: *mut entityState_t,
 ) -> libc::c_int {
     let mut ent: *mut gentity_t = 0 as *mut gentity_t;
-    ent = &mut g_entities[entityNum as usize] as *mut gentity_t;
+    ent = &mut *g_entities.as_mut_ptr().offset(entityNum as isize) as *mut gentity_t;
     memset(
         state as *mut libc::c_void,
         0i32,
@@ -2610,7 +2617,6 @@ pub unsafe extern "C" fn BotTeamplayReport() {
     }
 }
 pub type bot_activategoal_t = bot_activategoal_s;
-pub type bot_waypoint_t = bot_waypoint_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct bot_activategoal_s {
@@ -2628,6 +2634,17 @@ pub struct bot_activategoal_s {
     pub areasdisabled: libc::c_int,
     pub next: *mut bot_activategoal_s,
 }
+pub type bot_state_t = bot_state_s;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct bot_waypoint_s {
+    pub inuse: libc::c_int,
+    pub name: [libc::c_char; 32],
+    pub goal: bot_goal_t,
+    pub next: *mut bot_waypoint_s,
+    pub prev: *mut bot_waypoint_s,
+}
+pub type bot_waypoint_t = bot_waypoint_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct bot_state_s {
@@ -2771,13 +2788,3 @@ pub struct bot_state_s {
     pub curpatrolpoint: *mut bot_waypoint_t,
     pub patrolflags: libc::c_int,
 }
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct bot_waypoint_s {
-    pub inuse: libc::c_int,
-    pub name: [libc::c_char; 32],
-    pub goal: bot_goal_t,
-    pub next: *mut bot_waypoint_s,
-    pub prev: *mut bot_waypoint_s,
-}
-pub type bot_state_t = bot_state_s;

@@ -1,3 +1,13 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -119,7 +129,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -131,6 +140,7 @@ use q_shared_h::{
     EXEC_NOW, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{strcat, strlen};
+extern crate libc;
 
 //
 // g_arenas.c
@@ -149,7 +159,7 @@ pub unsafe extern "C" fn UpdateTournamentInfo() {
     player = 0 as *mut gentity_t;
     i = 0i32;
     while i < level.maxclients {
-        player = &mut g_entities[i as usize] as *mut gentity_t;
+        player = &mut *g_entities.as_mut_ptr().offset(i as isize) as *mut gentity_t;
         if !(0 == (*player).inuse as u64) {
             if 0 == (*player).r.svFlags & 0x8i32 {
                 break;
@@ -239,7 +249,9 @@ pub unsafe extern "C" fn SpawnModelsOnVictoryPads() {
     player = SpawnModelOnVictoryPad(
         podium,
         offsetFirst.as_mut_ptr(),
-        &mut g_entities[level.sortedClients[0usize] as usize],
+        &mut *g_entities
+            .as_mut_ptr()
+            .offset(*level.sortedClients.as_mut_ptr().offset(0isize) as isize),
         (*level.clients.offset(level.sortedClients[0usize] as isize))
             .ps
             .persistant[PERS_RANK as libc::c_int as usize]
@@ -253,7 +265,9 @@ pub unsafe extern "C" fn SpawnModelsOnVictoryPads() {
     player = SpawnModelOnVictoryPad(
         podium,
         offsetSecond.as_mut_ptr(),
-        &mut g_entities[level.sortedClients[1usize] as usize],
+        &mut *g_entities
+            .as_mut_ptr()
+            .offset(*level.sortedClients.as_mut_ptr().offset(1isize) as isize),
         (*level.clients.offset(level.sortedClients[1usize] as isize))
             .ps
             .persistant[PERS_RANK as libc::c_int as usize]
@@ -266,7 +280,9 @@ pub unsafe extern "C" fn SpawnModelsOnVictoryPads() {
         player = SpawnModelOnVictoryPad(
             podium,
             offsetThird.as_mut_ptr(),
-            &mut g_entities[level.sortedClients[2usize] as usize],
+            &mut *g_entities
+                .as_mut_ptr()
+                .offset(*level.sortedClients.as_mut_ptr().offset(2isize) as isize),
             (*level.clients.offset(level.sortedClients[2usize] as isize))
                 .ps
                 .persistant[PERS_RANK as libc::c_int as usize]

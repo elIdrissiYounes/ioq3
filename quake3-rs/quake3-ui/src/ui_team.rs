@@ -1,25 +1,31 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use bg_misc::bg_itemlist;
 use bg_public_h::{
     unnamed_0, GT_1FCTF, GT_CTF, GT_FFA, GT_HARVESTER, GT_MAX_GAME_TYPE, GT_OBELISK,
     GT_SINGLE_PLAYER, GT_TEAM, GT_TOURNAMENT,
 };
-use libc;
 use q_math::{
-    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
-    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
-    AxisClear, MatrixMultiply, Q_fabs,
+    colorBlack, colorMdGrey, colorRed, colorWhite, colorYellow, g_color_table, vec3_origin,
+    vectoangles, AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract,
+    AnglesToAxis, AxisClear, MatrixMultiply, Q_fabs,
 };
 use q_shared_h::{
     qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, vec4_t, vec_t, Info_ValueForKey,
     EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
 };
-use stdlib::{memset, strtol};
+use stdlib::{atoi, memset};
 use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
-    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
+    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -79,14 +85,8 @@ use ui_startserver::{
 };
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
+extern crate libc;
 
-unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-    return strtol(
-        __nptr,
-        0 as *mut libc::c_void as *mut *mut libc::c_char,
-        10i32,
-    ) as libc::c_int;
-}
 //
 // ui_team.c
 //
@@ -371,6 +371,16 @@ pub unsafe extern "C" fn TeamMain_Cache() {
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
+pub struct teammain_t {
+    pub menu: menuframework_s,
+    pub frame: menubitmap_s,
+    pub joinred: menutext_s,
+    pub joinblue: menutext_s,
+    pub joingame: menutext_s,
+    pub spectate: menutext_s,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
 pub struct teamOrdersMenuInfo_t {
     pub menu: menuframework_s,
     pub banner: menutext_s,
@@ -382,14 +392,4 @@ pub struct teamOrdersMenuInfo_t {
     pub selectedBot: libc::c_int,
     pub bots: [*mut libc::c_char; 9],
     pub botNames: [[libc::c_char; 16]; 9],
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct teammain_t {
-    pub menu: menuframework_s,
-    pub frame: menubitmap_s,
-    pub joinred: menutext_s,
-    pub joinblue: menutext_s,
-    pub joingame: menutext_s,
-    pub spectate: menutext_s,
 }

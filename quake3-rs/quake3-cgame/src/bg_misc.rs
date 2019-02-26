@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use bg_pmove::{
     c_pmove, pm, pml, PM_AddEvent, PM_AddTouchEnt, PM_ClipVelocity, PM_UpdateViewAngles, Pmove,
 };
@@ -100,7 +107,6 @@ use cg_weapons::{
     CG_GrappleTrail, CG_MissileHitPlayer, CG_MissileHitWall, CG_NextWeapon_f, CG_OutOfAmmoChange,
     CG_PrevWeapon_f, CG_RailTrail, CG_RegisterItemVisuals, CG_ShotgunFire, CG_Weapon_f,
 };
-use libc;
 use q_math::{
     axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
     AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
@@ -114,6 +120,7 @@ use q_shared_h::{
     TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{cos, fabs, sin};
+extern crate libc;
 
 // included in both the game dll and the client
 #[no_mangle]
@@ -887,7 +894,7 @@ pub unsafe extern "C" fn BG_FindItemForPowerup(mut pw: powerup_t) -> *mut gitem_
                 == IT_PERSISTANT_POWERUP as libc::c_int as libc::c_uint)
             && bg_itemlist[i as usize].giTag as libc::c_uint == pw as libc::c_uint
         {
-            return &mut bg_itemlist[i as usize] as *mut gitem_t;
+            return &mut *bg_itemlist.as_mut_ptr().offset(i as isize) as *mut gitem_t;
         }
         i += 1
     }
@@ -902,7 +909,7 @@ pub unsafe extern "C" fn BG_FindItemForHoldable(mut pw: holdable_t) -> *mut gite
             == IT_HOLDABLE as libc::c_int as libc::c_uint
             && bg_itemlist[i as usize].giTag as libc::c_uint == pw as libc::c_uint
         {
-            return &mut bg_itemlist[i as usize] as *mut gitem_t;
+            return &mut *bg_itemlist.as_mut_ptr().offset(i as isize) as *mut gitem_t;
         }
         i += 1
     }
@@ -924,7 +931,7 @@ pub unsafe extern "C" fn BG_CanItemBeGrabbed(
             b"BG_CanItemBeGrabbed: index out of range\x00" as *const u8 as *const libc::c_char,
         );
     }
-    item = &mut bg_itemlist[(*ent).modelindex as usize] as *mut gitem_t;
+    item = &mut *bg_itemlist.as_mut_ptr().offset((*ent).modelindex as isize) as *mut gitem_t;
     match (*item).giType as libc::c_uint {
         1 => return qtrue,
         2 => {

@@ -1,3 +1,13 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -103,7 +113,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -120,6 +129,7 @@ use stdlib::{
     _ISspace, _ISupper, _ISxdigit, __ctype_b_loc, atof, atoi, memcpy, memset, strcat, strcpy,
     strlen, tolower, unnamed,
 };
+extern crate libc;
 
 //
 // g_cmds.c
@@ -155,7 +165,8 @@ pub unsafe extern "C" fn DeathmatchScoreboardMessage(mut ent: *mut gentity_t) {
         let mut ping: libc::c_int = 0;
         cl = &mut *level
             .clients
-            .offset(level.sortedClients[i as usize] as isize) as *mut gclient_s;
+            .offset(*level.sortedClients.as_mut_ptr().offset(i as isize) as isize)
+            as *mut gclient_s;
         if (*cl).pers.connected as libc::c_uint == CON_CONNECTING as libc::c_int as libc::c_uint {
             ping = -1i32
         } else {
@@ -757,7 +768,7 @@ pub unsafe extern "C" fn Cmd_GameCommand_f(mut ent: *mut gentity_t) {
     if targetNum == -1i32 {
         return;
     }
-    target = &mut g_entities[targetNum as usize] as *mut gentity_t;
+    target = &mut *g_entities.as_mut_ptr().offset(targetNum as isize) as *mut gentity_t;
     if 0 == (*target).inuse as u64 || (*target).client.is_null() {
         return;
     }
@@ -908,7 +919,7 @@ pub unsafe extern "C" fn G_Say(
     }
     j = 0i32;
     while j < level.maxclients {
-        other = &mut g_entities[j as usize] as *mut gentity_t;
+        other = &mut *g_entities.as_mut_ptr().offset(j as isize) as *mut gentity_t;
         G_SayTo(
             ent,
             other,
@@ -1209,7 +1220,7 @@ pub unsafe extern "C" fn Cmd_CallTeamVote_f(mut ent: *mut gentity_t) {
         }
         trap_Argv(
             i,
-            &mut arg2[strlen(arg2.as_mut_ptr()) as usize],
+            &mut *arg2.as_mut_ptr().offset(strlen(arg2.as_mut_ptr()) as isize),
             (::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong)
                 .wrapping_sub(strlen(arg2.as_mut_ptr())) as libc::c_int,
         );
@@ -2410,7 +2421,7 @@ unsafe extern "C" fn Cmd_Tell_f(mut ent: *mut gentity_t) {
     if targetNum == -1i32 {
         return;
     }
-    target = &mut g_entities[targetNum as usize] as *mut gentity_t;
+    target = &mut *g_entities.as_mut_ptr().offset(targetNum as isize) as *mut gentity_t;
     if 0 == (*target).inuse as u64 || (*target).client.is_null() {
         return;
     }

@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(custom_attribute, libc)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -79,12 +86,12 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
 };
 use q_shared_h::{cvarHandle_t, vmCvar_t};
+extern crate libc;
 
 //
 // g_mem.c
@@ -105,7 +112,7 @@ pub unsafe extern "C" fn G_Alloc(mut size: libc::c_int) -> *mut libc::c_void {
             size,
         );
     }
-    p = &mut memoryPool[allocPoint as usize] as *mut libc::c_char;
+    p = &mut *memoryPool.as_mut_ptr().offset(allocPoint as isize) as *mut libc::c_char;
     allocPoint += size + 31i32 & !31i32;
     return p as *mut libc::c_void;
 }

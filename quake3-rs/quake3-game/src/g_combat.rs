@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -132,7 +139,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -145,6 +151,7 @@ use q_shared_h::{
 };
 use stddef_h::size_t;
 use stdlib::{ceil, memset, sqrt, strcmp};
+extern crate libc;
 
 unsafe extern "C" fn VectorLength(mut v: *const vec_t) -> vec_t {
     return sqrt(
@@ -368,10 +375,14 @@ pub unsafe extern "C" fn G_Damage(
         return;
     }
     if inflictor.is_null() {
-        inflictor = &mut g_entities[((1i32 << 10i32) - 2i32) as usize] as *mut gentity_t
+        inflictor = &mut *g_entities
+            .as_mut_ptr()
+            .offset(((1i32 << 10i32) - 2i32) as isize) as *mut gentity_t
     }
     if attacker.is_null() {
-        attacker = &mut g_entities[((1i32 << 10i32) - 2i32) as usize] as *mut gentity_t
+        attacker = &mut *g_entities
+            .as_mut_ptr()
+            .offset(((1i32 << 10i32) - 2i32) as isize) as *mut gentity_t
     }
     if (*targ).s.eType == ET_MOVER as libc::c_int {
         if (*targ).use_0.is_some()
@@ -609,7 +620,10 @@ pub unsafe extern "C" fn G_RadiusDamage(
     );
     e = 0i32;
     while e < numListedEntities {
-        ent = &mut g_entities[entityList[e as usize] as usize] as *mut gentity_t;
+        ent = &mut *g_entities
+            .as_mut_ptr()
+            .offset(*entityList.as_mut_ptr().offset(e as isize) as isize)
+            as *mut gentity_t;
         if !(ent == ignore) {
             if !(0 == (*ent).takedamage as u64) {
                 i = 0i32;
@@ -683,7 +697,7 @@ pub unsafe extern "C" fn GibEntity(mut self_0: *mut gentity_t, mut killer: libc:
     if 0 != (*self_0).s.eFlags & 0x200i32 {
         i = 0i32;
         while i < level.num_entities {
-            ent = &mut g_entities[i as usize] as *mut gentity_t;
+            ent = &mut *g_entities.as_mut_ptr().offset(i as isize) as *mut gentity_t;
             if !(0 == (*ent).inuse as u64) {
                 if !((*ent).activator != self_0) {
                     if !(0

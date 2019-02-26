@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -112,7 +119,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -125,6 +131,7 @@ use q_shared_h::{
 };
 use stddef_h::size_t;
 use stdlib::{fabs, sqrt, strcmp};
+extern crate libc;
 
 unsafe extern "C" fn VectorLength(mut v: *const vec_t) -> vec_t {
     return sqrt(
@@ -309,7 +316,10 @@ pub unsafe extern "C" fn G_MoverPush(
     let mut current_block_46: u64;
     e = 0i32;
     while e < listedEntities {
-        check = &mut g_entities[entityList[e as usize] as usize] as *mut gentity_t;
+        check = &mut *g_entities
+            .as_mut_ptr()
+            .offset(*entityList.as_mut_ptr().offset(e as isize) as isize)
+            as *mut gentity_t;
         // only push items and players
         if !((*check).s.eType != ET_ITEM as libc::c_int
             && (*check).s.eType != ET_PLAYER as libc::c_int
@@ -418,7 +428,7 @@ pub unsafe extern "C" fn G_TryPushingEntity(
     if 0 != (*pusher).s.eFlags & 0x400i32 && (*check).s.groundEntityNum != (*pusher).s.number {
         return qfalse;
     }
-    if pushed_p > &mut pushed[((1i32 << 10i32) as usize) - 1] as *mut pushed_t {
+    if pushed_p > &mut *pushed.as_mut_ptr().offset((1i32 << 10i32) as isize) as *mut pushed_t {
         G_Error(b"pushed_p > &pushed[MAX_GENTITIES]\x00" as *const u8 as *const libc::c_char);
     }
     (*pushed_p).ent = check;
@@ -562,7 +572,7 @@ pub unsafe extern "C" fn G_TestEntityPosition(mut ent: *mut gentity_t) -> *mut g
         );
     }
     if 0 != tr.startsolid as u64 {
-        return &mut g_entities[tr.entityNum as usize] as *mut gentity_t;
+        return &mut *g_entities.as_mut_ptr().offset(tr.entityNum as isize) as *mut gentity_t;
     }
     return 0 as *mut gentity_t;
 }

@@ -1,3 +1,13 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -110,7 +120,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -123,6 +132,7 @@ use q_shared_h::{
 };
 use stddef_h::size_t;
 use stdlib::{atan2, memset, rand, strcmp, strcpy};
+extern crate libc;
 
 unsafe extern "C" fn VectorCompare(mut v1: *const vec_t, mut v2: *const vec_t) -> libc::c_int {
     if *v1.offset(0isize) != *v2.offset(0isize)
@@ -250,7 +260,10 @@ pub unsafe extern "C" fn G_KillBox(mut ent: *mut gentity_t) {
     );
     i = 0i32;
     while i < num {
-        hit = &mut g_entities[touch[i as usize] as usize] as *mut gentity_t;
+        hit = &mut *g_entities
+            .as_mut_ptr()
+            .offset(*touch.as_mut_ptr().offset(i as isize) as isize)
+            as *mut gentity_t;
         if !(*hit).client.is_null() {
             G_Damage(
                 hit,
@@ -278,7 +291,8 @@ pub unsafe extern "C" fn G_Find(
     } else {
         from = from.offset(1isize)
     }
-    while from < &mut g_entities[level.num_entities as usize] as *mut gentity_t {
+    while from < &mut *g_entities.as_mut_ptr().offset(level.num_entities as isize) as *mut gentity_t
+    {
         if !(0 == (*from).inuse as u64) {
             s = *((from as *mut byte).offset(fieldofs as isize) as *mut *mut libc::c_char);
             if !s.is_null() {
@@ -487,7 +501,7 @@ pub unsafe extern "C" fn G_Spawn() -> *mut gentity_t {
     e = 0 as *mut gentity_t;
     force = 0i32;
     while force < 2i32 {
-        e = &mut g_entities[64usize] as *mut gentity_t;
+        e = &mut *g_entities.as_mut_ptr().offset(64isize) as *mut gentity_t;
         i = 64i32;
         while i < level.num_entities {
             if !(0 != (*e).inuse as u64) {
@@ -604,7 +618,7 @@ pub unsafe extern "C" fn G_EntitiesFree() -> qboolean {
     if level.num_entities < (1i32 << 10i32) - 2i32 {
         return qtrue;
     }
-    e = &mut g_entities[64usize] as *mut gentity_t;
+    e = &mut *g_entities.as_mut_ptr().offset(64isize) as *mut gentity_t;
     i = 64i32;
     while i < level.num_entities {
         if 0 != (*e).inuse as u64 {

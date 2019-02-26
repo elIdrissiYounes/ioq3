@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use ai_cmd::notleader;
 use ai_dmq3::{
     ctf_blueflag, ctf_redflag, gametype, BotPointAreaNum, BotSameTeam, BotSetLastOrderedTask,
@@ -104,7 +111,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -116,6 +122,7 @@ use q_shared_h::{
     TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{atoi, memcpy, rand, strcpy, strlen, strncpy};
+extern crate libc;
 
 /*
 ===========================================================================
@@ -1765,17 +1772,21 @@ pub unsafe extern "C" fn BotTeamOrders(mut bs: *mut bot_state_t) {
         }
         4 => {
             BotCreateGroup(bs, teammates.as_mut_ptr(), 2i32);
-            BotCreateGroup(bs, &mut teammates[2usize], 2i32);
+            BotCreateGroup(bs, &mut *teammates.as_mut_ptr().offset(2isize), 2i32);
         }
         5 => {
             BotCreateGroup(bs, teammates.as_mut_ptr(), 2i32);
-            BotCreateGroup(bs, &mut teammates[2usize], 3i32);
+            BotCreateGroup(bs, &mut *teammates.as_mut_ptr().offset(2isize), 3i32);
         }
         _ => {
             if numteammates <= 10i32 {
                 i = 0i32;
                 while i < numteammates / 2i32 {
-                    BotCreateGroup(bs, &mut teammates[(i * 2i32) as usize], 2i32);
+                    BotCreateGroup(
+                        bs,
+                        &mut *teammates.as_mut_ptr().offset((i * 2i32) as isize),
+                        2i32,
+                    );
                     i += 1
                 }
             }
@@ -1947,10 +1958,10 @@ pub unsafe extern "C" fn BotVoiceChatOnly(
     mut voicechat: *mut libc::c_char,
 ) {
 }
-pub type bot_ctftaskpreference_t = bot_ctftaskpreference_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct bot_ctftaskpreference_s {
     pub name: [libc::c_char; 36],
     pub preference: libc::c_int,
 }
+pub type bot_ctftaskpreference_t = bot_ctftaskpreference_s;

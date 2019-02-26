@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use ai_cmd::notleader;
 use ai_dmq3::{
     ctf_blueflag, ctf_redflag, gametype, BotGetAlternateRouteGoal, BotOppositeTeam,
@@ -97,7 +104,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -107,6 +113,7 @@ use q_shared_h::{
     vec_t, Q_stricmp, Q_strncpyz,
 };
 use stdlib::{atoi, memcpy, rand};
+extern crate libc;
 
 /*
 ===========================================================================

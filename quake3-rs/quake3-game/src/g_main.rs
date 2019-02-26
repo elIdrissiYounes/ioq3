@@ -1,3 +1,13 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -99,7 +109,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -113,6 +122,7 @@ use q_shared_h::{
 };
 use stddef_h::size_t;
 use stdlib::{__compar_fn_t, atoi, intptr_t, memset, qsort, srand, strcmp};
+extern crate libc;
 
 #[no_mangle]
 pub unsafe extern "C" fn BeginIntermission() {
@@ -552,7 +562,7 @@ pub unsafe extern "C" fn CalculateRanks() {
         while i < level.numConnectedClients {
             cl = &mut *level
                 .clients
-                .offset(level.sortedClients[i as usize] as isize)
+                .offset(*level.sortedClients.as_mut_ptr().offset(i as isize) as isize)
                 as *mut gclient_s;
             if level.teamScores[TEAM_RED as libc::c_int as usize]
                 == level.teamScores[TEAM_BLUE as libc::c_int as usize]
@@ -574,7 +584,7 @@ pub unsafe extern "C" fn CalculateRanks() {
         while i < level.numPlayingClients {
             cl = &mut *level
                 .clients
-                .offset(level.sortedClients[i as usize] as isize)
+                .offset(*level.sortedClients.as_mut_ptr().offset(i as isize) as isize)
                 as *mut gclient_s;
             newScore = (*cl).ps.persistant[PERS_SCORE as libc::c_int as usize];
             if i == 0i32 || newScore != score {
@@ -844,7 +854,8 @@ pub unsafe extern "C" fn LogExit(mut string: *const libc::c_char) {
         let mut ping: libc::c_int = 0;
         cl = &mut *level
             .clients
-            .offset(level.sortedClients[i as usize] as isize) as *mut gclient_s;
+            .offset(*level.sortedClients.as_mut_ptr().offset(i as isize) as isize)
+            as *mut gclient_s;
         if !((*cl).sess.sessionTeam as libc::c_uint
             == TEAM_SPECTATOR as libc::c_int as libc::c_uint)
         {
@@ -1100,7 +1111,7 @@ pub unsafe extern "C" fn RemoveTournamentLoser() {
         return;
     }
     SetTeam(
-        &mut g_entities[clientNum as usize],
+        &mut *g_entities.as_mut_ptr().offset(clientNum as isize),
         b"s\x00" as *const u8 as *const libc::c_char,
     );
 }
@@ -1784,7 +1795,7 @@ static mut gameCvarTable: [cvarTable_t; 46] = unsafe {
         cvarTable_t {
             vmCvar: 0 as *const vmCvar_t as *mut vmCvar_t,
             cvarName: b"gamedate\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            defaultString: b"Feb 13 2019\x00" as *const u8 as *const libc::c_char
+            defaultString: b"Feb 25 2019\x00" as *const u8 as *const libc::c_char
                 as *mut libc::c_char,
             cvarFlags: 0x40i32,
             modificationCount: 0i32,
@@ -2207,7 +2218,7 @@ pub unsafe extern "C" fn G_InitGame(
     );
     G_Printf(
         b"gamedate: %s\n\x00" as *const u8 as *const libc::c_char,
-        b"Feb 13 2019\x00" as *const u8 as *const libc::c_char,
+        b"Feb 25 2019\x00" as *const u8 as *const libc::c_char,
     );
     srand(randomSeed as libc::c_uint);
     G_RegisterCvars();
@@ -2442,7 +2453,7 @@ pub unsafe extern "C" fn G_RunFrame(mut levelTime: libc::c_int) {
     level.previousTime = level.time;
     level.time = levelTime;
     G_UpdateCvars();
-    ent = &mut g_entities[0usize] as *mut gentity_t;
+    ent = &mut *g_entities.as_mut_ptr().offset(0isize) as *mut gentity_t;
     let mut current_block_24: u64;
     i = 0i32;
     while i < level.num_entities {
@@ -2498,7 +2509,7 @@ pub unsafe extern "C" fn G_RunFrame(mut levelTime: libc::c_int) {
         i += 1;
         ent = ent.offset(1isize)
     }
-    ent = &mut g_entities[0usize] as *mut gentity_t;
+    ent = &mut *g_entities.as_mut_ptr().offset(0isize) as *mut gentity_t;
     i = 0i32;
     while i < level.maxclients {
         if 0 != (*ent).inuse as u64 {
@@ -2864,7 +2875,9 @@ pub unsafe extern "C" fn AddTournamentPlayer() {
     }
     level.warmupTime = -1i32;
     SetTeam(
-        &mut g_entities[nextInLine.wrapping_offset_from(level.clients) as libc::c_long as usize],
+        &mut *g_entities
+            .as_mut_ptr()
+            .offset(nextInLine.wrapping_offset_from(level.clients) as libc::c_long as isize),
         b"f\x00" as *const u8 as *const libc::c_char,
     );
 }
@@ -3008,7 +3021,7 @@ pub unsafe extern "C" fn RemoveTournamentWinner() {
         return;
     }
     SetTeam(
-        &mut g_entities[clientNum as usize],
+        &mut *g_entities.as_mut_ptr().offset(clientNum as isize),
         b"s\x00" as *const u8 as *const libc::c_char,
     );
 }

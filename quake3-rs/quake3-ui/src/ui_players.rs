@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use bg_misc::bg_itemlist;
 use bg_public_h::{
     animation_s, animation_t, gitem_s, gitem_t, itemType_t, unnamed_0, weapon_t, BOTH_DEAD1,
@@ -11,11 +18,10 @@ use bg_public_h::{
     WP_GRAPPLING_HOOK, WP_GRENADE_LAUNCHER, WP_LIGHTNING, WP_MACHINEGUN, WP_NONE, WP_NUM_WEAPONS,
     WP_PLASMAGUN, WP_RAILGUN, WP_ROCKET_LAUNCHER, WP_SHOTGUN,
 };
-use libc;
 use q_math::{
-    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
-    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
-    AxisClear, MatrixMultiply, Q_fabs,
+    colorBlack, colorMdGrey, colorRed, colorWhite, colorYellow, g_color_table, vec3_origin,
+    vectoangles, AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract,
+    AnglesToAxis, AxisClear, MatrixMultiply, Q_fabs,
 };
 use q_shared_h::{
     byte, clipHandle_t, fileHandle_t, fsMode_t, orientation_t, qboolean, qfalse, qhandle_t, qtrue,
@@ -24,7 +30,7 @@ use q_shared_h::{
     CHAN_LOCAL, CHAN_LOCAL_SOUND, CHAN_VOICE, CHAN_WEAPON, FS_APPEND, FS_APPEND_SYNC, FS_READ,
     FS_WRITE,
 };
-use stdlib::{atan2, fabs, memset, rand, sin, strchr, strtod, strtol, tan};
+use stdlib::{atan2, atof, atoi, fabs, memset, rand, sin, strchr, tan};
 use tr_types_h::{
     glDriverType_t, glHardwareType_t, glconfig_t, refEntityType_t, refEntity_t, refdef_t,
     textureCompression_t, GLDRV_ICD, GLDRV_STANDALONE, GLDRV_VOODOO, GLHW_3DFX_2D3D, GLHW_GENERIC,
@@ -36,8 +42,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
-    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
+    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -101,17 +107,8 @@ use ui_startserver::{
 use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
+extern crate libc;
 
-unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-    return strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
-}
-unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-    return strtol(
-        __nptr,
-        0 as *mut libc::c_void as *mut *mut libc::c_char,
-        10i32,
-    ) as libc::c_int;
-}
 #[no_mangle]
 pub unsafe extern "C" fn UI_DrawPlayer(
     mut x: libc::c_float,
@@ -867,7 +864,7 @@ unsafe extern "C" fn UI_SetLerpFrameAnimation(
             newAnimation,
         ));
     }
-    anim = &mut (*ci).animations[newAnimation as usize] as *mut animation_t;
+    anim = &mut *(*ci).animations.as_mut_ptr().offset(newAnimation as isize) as *mut animation_t;
     (*lf).animation = anim;
     (*lf).animationTime = (*lf).frameTime + (*anim).initialLerp;
 }

@@ -1,3 +1,13 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -115,7 +125,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -129,6 +138,7 @@ use q_shared_h::{
 };
 use stddef_h::size_t;
 use stdlib::{__compar_fn_t, memset, qsort, rand, sqrt, strcmp, strcpy, strlen};
+extern crate libc;
 
 unsafe extern "C" fn VectorLength(mut v: *const vec_t) -> vec_t {
     return sqrt(
@@ -1156,7 +1166,7 @@ pub unsafe extern "C" fn Team_TouchOurFlag(
     Team_CaptureFlagSound(ent, team);
     i = 0i32;
     while i < g_maxclients.integer {
-        player = &mut g_entities[i as usize] as *mut gentity_t;
+        player = &mut *g_entities.as_mut_ptr().offset(i as isize) as *mut gentity_t;
         // also make sure we don't award assist bonuses to the flag carrier himself.
         if !(0 == (*player).inuse as u64 || player == other) {
             if (*(*player).client).sess.sessionTeam as libc::c_uint
@@ -1237,7 +1247,7 @@ pub unsafe extern "C" fn Team_ForceGesture(mut team: libc::c_int) {
     let mut ent: *mut gentity_t = 0 as *mut gentity_t;
     i = 0i32;
     while i < 64i32 {
-        ent = &mut g_entities[i as usize] as *mut gentity_t;
+        ent = &mut *g_entities.as_mut_ptr().offset(i as isize) as *mut gentity_t;
         if !(0 == (*ent).inuse as u64) {
             if !(*ent).client.is_null() {
                 if !((*(*ent).client).sess.sessionTeam as libc::c_uint != team as libc::c_uint) {
@@ -1273,6 +1283,7 @@ Targets will be fired when someone spawns in on them.
 */
 #[no_mangle]
 pub unsafe extern "C" fn SP_team_CTF_bluespawn(mut ent: *mut gentity_t) {}
+pub type teamgame_t = teamgame_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct teamgame_s {
@@ -1286,4 +1297,3 @@ pub struct teamgame_s {
     pub redObeliskAttackedTime: libc::c_int,
     pub blueObeliskAttackedTime: libc::c_int,
 }
-pub type teamgame_t = teamgame_s;

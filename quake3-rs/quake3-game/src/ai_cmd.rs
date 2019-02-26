@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use ai_chat::{bot_match_s, bot_match_t, bot_matchvariable_s, bot_matchvariable_t};
 use ai_dmq3::{
     ctf_blueflag, ctf_redflag, gametype, stristr, BotCreateWayPoint, BotFindWayPoint,
@@ -111,7 +118,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -123,6 +129,7 @@ use q_shared_h::{
     TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{atof, memcpy, rand, sqrt, sscanf, strcpy, strlen, strncpy};
+extern crate libc;
 
 unsafe extern "C" fn VectorLength(mut v: *const vec_t) -> vec_t {
     return sqrt(
@@ -1409,9 +1416,9 @@ pub unsafe extern "C" fn BotMatch_CheckPoint(
     sscanf(
         buf.as_mut_ptr(),
         b"%f %f %f\x00" as *const u8 as *const libc::c_char,
-        &mut position[0usize] as *mut vec_t,
-        &mut position[1usize] as *mut vec_t,
-        &mut position[2usize] as *mut vec_t,
+        &mut *position.as_mut_ptr().offset(0isize) as *mut vec_t,
+        &mut *position.as_mut_ptr().offset(1isize) as *mut vec_t,
+        &mut *position.as_mut_ptr().offset(2isize) as *mut vec_t,
     );
     position[2usize] = (position[2usize] as libc::c_double + 0.5f64) as vec_t;
     areanum = BotPointAreaNum(position.as_mut_ptr());

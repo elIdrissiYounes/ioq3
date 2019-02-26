@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use bg_public_h::{
     gitem_s, gitem_t, holdable_t, itemType_t, powerup_t, unnamed_0, unnamed_1, unnamed_2,
     unnamed_3, unnamed_4, unnamed_5, unnamed_6, weapon_t, ET_BEAM, ET_EVENTS, ET_GENERAL,
@@ -32,16 +39,15 @@ use bg_public_h::{
     WP_LIGHTNING, WP_MACHINEGUN, WP_NONE, WP_NUM_WEAPONS, WP_PLASMAGUN, WP_RAILGUN,
     WP_ROCKET_LAUNCHER, WP_SHOTGUN,
 };
-use libc;
 use q_math::{
-    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
-    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
-    AxisClear, MatrixMultiply, Q_fabs,
+    colorBlack, colorMdGrey, colorRed, colorWhite, colorYellow, g_color_table, vec3_origin,
+    vectoangles, AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract,
+    AnglesToAxis, AxisClear, MatrixMultiply, Q_fabs,
 };
 use q_shared_h::{
     entityState_s, entityState_t, playerState_s, playerState_t, qboolean, qfalse, qtrue, trType_t,
-    trajectory_t, unnamed, vec3_t, vec_t, Com_Error, Q_stricmp, ERR_DISCONNECT, ERR_DROP,
-    ERR_FATAL, ERR_NEED_CD, ERR_SERVERDISCONNECT, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR,
+    trajectory_t, unnamed, vec3_t, vec_t, Com_Error, Com_Printf, Q_stricmp, ERR_DISCONNECT,
+    ERR_DROP, ERR_FATAL, ERR_NEED_CD, ERR_SERVERDISCONNECT, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR,
     TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{cos, fabs, sin};
@@ -49,8 +55,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
-    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
+    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -107,6 +113,7 @@ use ui_startserver::{
 use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
+extern crate libc;
 
 // included in both the game dll and the client
 #[no_mangle]
@@ -880,7 +887,7 @@ pub unsafe extern "C" fn BG_FindItemForPowerup(mut pw: powerup_t) -> *mut gitem_
                 == IT_PERSISTANT_POWERUP as libc::c_int as libc::c_uint)
             && bg_itemlist[i as usize].giTag as libc::c_uint == pw as libc::c_uint
         {
-            return &mut bg_itemlist[i as usize] as *mut gitem_t;
+            return &mut *bg_itemlist.as_mut_ptr().offset(i as isize) as *mut gitem_t;
         }
         i += 1
     }
@@ -895,7 +902,7 @@ pub unsafe extern "C" fn BG_FindItemForHoldable(mut pw: holdable_t) -> *mut gite
             == IT_HOLDABLE as libc::c_int as libc::c_uint
             && bg_itemlist[i as usize].giTag as libc::c_uint == pw as libc::c_uint
         {
-            return &mut bg_itemlist[i as usize] as *mut gitem_t;
+            return &mut *bg_itemlist.as_mut_ptr().offset(i as isize) as *mut gitem_t;
         }
         i += 1
     }
@@ -917,7 +924,7 @@ pub unsafe extern "C" fn BG_CanItemBeGrabbed(
             b"BG_CanItemBeGrabbed: index out of range\x00" as *const u8 as *const libc::c_char,
         );
     }
-    item = &mut bg_itemlist[(*ent).modelindex as usize] as *mut gitem_t;
+    item = &mut *bg_itemlist.as_mut_ptr().offset((*ent).modelindex as isize) as *mut gitem_t;
     match (*item).giType as libc::c_uint {
         1 => return qtrue,
         2 => {
@@ -987,7 +994,12 @@ pub unsafe extern "C" fn BG_CanItemBeGrabbed(
                 b"BG_CanItemBeGrabbed: IT_BAD\x00" as *const u8 as *const libc::c_char,
             );
         }
-        _ => {}
+        _ => {
+            Com_Printf(
+                b"BG_CanItemBeGrabbed: unknown enum %d\n\x00" as *const u8 as *const libc::c_char,
+                (*item).giType as libc::c_uint,
+            );
+        }
     }
     return qfalse;
 }

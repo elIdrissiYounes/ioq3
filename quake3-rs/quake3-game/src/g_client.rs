@@ -1,3 +1,13 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -118,7 +128,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -132,6 +141,7 @@ use q_shared_h::{
 };
 use stddef_h::size_t;
 use stdlib::{atoi, memset, rand, sqrt, strcmp, strcpy};
+extern crate libc;
 
 unsafe extern "C" fn VectorLength(mut v: *const vec_t) -> vec_t {
     return sqrt(
@@ -361,7 +371,10 @@ pub unsafe extern "C" fn SpotWouldTelefrag(mut spot: *mut gentity_t) -> qboolean
     );
     i = 0i32;
     while i < num {
-        hit = &mut g_entities[touch[i as usize] as usize] as *mut gentity_t;
+        hit = &mut *g_entities
+            .as_mut_ptr()
+            .offset(*touch.as_mut_ptr().offset(i as isize) as isize)
+            as *mut gentity_t;
         if !(*hit).client.is_null() {
             return qtrue;
         }
@@ -844,7 +857,7 @@ pub unsafe extern "C" fn ClientConnect(
     let mut client: *mut gclient_t = 0 as *mut gclient_t;
     let mut userinfo: [libc::c_char; 1024] = [0; 1024];
     let mut ent: *mut gentity_t = 0 as *mut gentity_t;
-    ent = &mut g_entities[clientNum as usize] as *mut gentity_t;
+    ent = &mut *g_entities.as_mut_ptr().offset(clientNum as isize) as *mut gentity_t;
     trap_GetUserinfo(
         clientNum,
         userinfo.as_mut_ptr(),
@@ -1240,7 +1253,7 @@ pub unsafe extern "C" fn ClientDisconnect(mut clientNum: libc::c_int) {
                 == SPECTATOR_FOLLOW as libc::c_int as libc::c_uint
             && (*level.clients.offset(i as isize)).sess.spectatorClient == clientNum
         {
-            StopFollowing(&mut g_entities[i as usize]);
+            StopFollowing(&mut *g_entities.as_mut_ptr().offset(i as isize));
         }
         i += 1
     }

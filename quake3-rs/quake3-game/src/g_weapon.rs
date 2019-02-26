@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -116,7 +123,6 @@ use g_utils::{
     G_KillBox, G_ModelIndex, G_PickTarget, G_SetMovedir, G_SetOrigin, G_Sound, G_SoundIndex,
     G_Spawn, G_TeamCommand, G_TempEntity, G_UseTargets,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -128,6 +134,7 @@ use q_shared_h::{
     TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{ceil, cos, floor, rand, sin};
+extern crate libc;
 
 unsafe extern "C" fn CrossProduct(
     mut v1: *const vec_t,
@@ -258,7 +265,7 @@ pub unsafe extern "C" fn CheckGauntletAttack(mut ent: *mut gentity_t) -> qboolea
     if 0 != (*(*ent).client).noclip as u64 {
         return qfalse;
     }
-    traceEnt = &mut g_entities[tr.entityNum as usize] as *mut gentity_t;
+    traceEnt = &mut *g_entities.as_mut_ptr().offset(tr.entityNum as isize) as *mut gentity_t;
     if 0 != (*traceEnt).takedamage as libc::c_uint && !(*traceEnt).client.is_null() {
         tent = G_TempEntity(tr.endpos.as_mut_ptr(), EV_MISSILE_HIT as libc::c_int);
         (*tent).s.otherEntityNum = (*traceEnt).s.number;
@@ -511,7 +518,7 @@ pub unsafe extern "C" fn weapon_railgun_fire(mut ent: *mut gentity_t) {
         if trace.entityNum >= (1i32 << 10i32) - 2i32 {
             break;
         }
-        traceEnt = &mut g_entities[trace.entityNum as usize] as *mut gentity_t;
+        traceEnt = &mut *g_entities.as_mut_ptr().offset(trace.entityNum as isize) as *mut gentity_t;
         if 0 != (*traceEnt).takedamage as u64 {
             if 0 != LogAccuracyHit(traceEnt, ent) as u64 {
                 hits += 1
@@ -696,7 +703,7 @@ pub unsafe extern "C" fn Bullet_Fire(
         if 0 != tr.surfaceFlags & 0x10i32 {
             return;
         }
-        traceEnt = &mut g_entities[tr.entityNum as usize] as *mut gentity_t;
+        traceEnt = &mut *g_entities.as_mut_ptr().offset(tr.entityNum as isize) as *mut gentity_t;
         SnapVectorTowards(tr.endpos.as_mut_ptr(), muzzle.as_mut_ptr());
         if 0 != (*traceEnt).takedamage as libc::c_uint && !(*traceEnt).client.is_null() {
             tent = G_TempEntity(tr.endpos.as_mut_ptr(), EV_BULLET_HIT_FLESH as libc::c_int);
@@ -847,7 +854,7 @@ pub unsafe extern "C" fn ShotgunPellet(
             passent,
             1i32 | 0x2000000i32 | 0x4000000i32,
         );
-        traceEnt = &mut g_entities[tr.entityNum as usize] as *mut gentity_t;
+        traceEnt = &mut *g_entities.as_mut_ptr().offset(tr.entityNum as isize) as *mut gentity_t;
         if 0 != tr.surfaceFlags & 0x10i32 {
             return qfalse;
         }
@@ -922,7 +929,7 @@ pub unsafe extern "C" fn Weapon_LightningFire(mut ent: *mut gentity_t) {
         if tr.entityNum == (1i32 << 10i32) - 1i32 {
             return;
         }
-        traceEnt = &mut g_entities[tr.entityNum as usize] as *mut gentity_t;
+        traceEnt = &mut *g_entities.as_mut_ptr().offset(tr.entityNum as isize) as *mut gentity_t;
         if 0 != (*traceEnt).takedamage as u64 {
             if 0 != LogAccuracyHit(traceEnt, ent) as u64 {
                 (*(*ent).client).accuracy_hits += 1

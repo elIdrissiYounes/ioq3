@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use bg_misc::{
     bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
     BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItemForHoldable,
@@ -88,7 +95,6 @@ use cg_weapons::{
     CG_GrappleTrail, CG_MissileHitPlayer, CG_MissileHitWall, CG_NextWeapon_f, CG_OutOfAmmoChange,
     CG_PrevWeapon_f, CG_RailTrail, CG_RegisterItemVisuals, CG_ShotgunFire, CG_Weapon_f,
 };
-use libc;
 use q_math::{
     axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
     AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
@@ -110,6 +116,7 @@ use tr_types_h::{
     RT_MODEL, RT_POLY, RT_PORTALSURFACE, RT_RAIL_CORE, RT_RAIL_RINGS, RT_SPRITE, TC_NONE, TC_S3TC,
     TC_S3TC_ARB,
 };
+extern crate libc;
 
 unsafe extern "C" fn VectorInverse(mut v: *mut vec_t) {
     *v.offset(0isize) = -*v.offset(0isize);
@@ -185,11 +192,17 @@ pub unsafe extern "C" fn CG_AddPacketEntities() {
     ps = &mut cg.predictedPlayerState;
     BG_PlayerStateToEntityState(ps, &mut cg.predictedPlayerEntity.currentState, qfalse);
     CG_AddCEntity(&mut cg.predictedPlayerEntity);
-    CG_CalcEntityLerpPositions(&mut cg_entities[(*cg.snap).ps.clientNum as usize]);
+    CG_CalcEntityLerpPositions(
+        &mut *cg_entities
+            .as_mut_ptr()
+            .offset((*cg.snap).ps.clientNum as isize),
+    );
     num = 0i32;
     while num < (*cg.snap).numEntities {
-        cent =
-            &mut cg_entities[(*cg.snap).entities[num as usize].number as usize] as *mut centity_t;
+        cent = &mut *cg_entities
+            .as_mut_ptr()
+            .offset((*(*cg.snap).entities.as_mut_ptr().offset(num as isize)).number as isize)
+            as *mut centity_t;
         CG_AddCEntity(cent);
         num += 1
     }
@@ -337,7 +350,7 @@ unsafe extern "C" fn CG_Grapple(mut cent: *mut centity_t) {
     if (*s1).weapon >= WP_NUM_WEAPONS as libc::c_int {
         (*s1).weapon = 0i32
     }
-    weapon = &mut cg_weapons[(*s1).weapon as usize] as *mut weaponInfo_t;
+    weapon = &mut *cg_weapons.as_mut_ptr().offset((*s1).weapon as isize) as *mut weaponInfo_t;
     (*cent).lerpAngles[0usize] = (*s1).angles[0usize];
     (*cent).lerpAngles[1usize] = (*s1).angles[1usize];
     (*cent).lerpAngles[2usize] = (*s1).angles[2usize];
@@ -589,7 +602,7 @@ unsafe extern "C" fn CG_Missile(mut cent: *mut centity_t) {
     if (*s1).weapon >= WP_NUM_WEAPONS as libc::c_int {
         (*s1).weapon = 0i32
     }
-    weapon = &mut cg_weapons[(*s1).weapon as usize] as *mut weaponInfo_t;
+    weapon = &mut *cg_weapons.as_mut_ptr().offset((*s1).weapon as isize) as *mut weaponInfo_t;
     (*cent).lerpAngles[0usize] = (*s1).angles[0usize];
     (*cent).lerpAngles[1usize] = (*s1).angles[1usize];
     (*cent).lerpAngles[2usize] = (*s1).angles[2usize];
@@ -747,7 +760,7 @@ unsafe extern "C" fn CG_Item(mut cent: *mut centity_t) {
     }
     wi = 0 as *mut weaponInfo_t;
     if (*item).giType as libc::c_uint == IT_WEAPON as libc::c_int as libc::c_uint {
-        wi = &mut cg_weapons[(*item).giTag as usize] as *mut weaponInfo_t;
+        wi = &mut *cg_weapons.as_mut_ptr().offset((*item).giTag as isize) as *mut weaponInfo_t;
         (*cent).lerpOrigin[0usize] -= (*wi).weaponMidpoint[0usize] * ent.axis[0usize][0usize]
             + (*wi).weaponMidpoint[1usize] * ent.axis[1usize][0usize]
             + (*wi).weaponMidpoint[2usize] * ent.axis[2usize][0usize];
@@ -762,8 +775,11 @@ unsafe extern "C" fn CG_Item(mut cent: *mut centity_t) {
     if (*item).giType as libc::c_uint == IT_WEAPON as libc::c_int as libc::c_uint
         && (*item).giTag == WP_RAILGUN as libc::c_int
     {
-        let mut ci: *mut clientInfo_t =
-            &mut cgs.clientinfo[(*cg.snap).ps.clientNum as usize] as *mut clientInfo_t;
+        let mut ci: *mut clientInfo_t = &mut *cgs
+            .clientinfo
+            .as_mut_ptr()
+            .offset((*cg.snap).ps.clientNum as isize)
+            as *mut clientInfo_t;
         ent.shaderRGBA[0usize] = (*ci).c1RGBA[0usize];
         ent.shaderRGBA[1usize] = (*ci).c1RGBA[1usize];
         ent.shaderRGBA[2usize] = (*ci).c1RGBA[2usize];
@@ -1125,7 +1141,7 @@ pub unsafe extern "C" fn CG_AdjustPositionForMover(
         *angles_out.offset(2isize) = *angles_in.offset(2isize);
         return;
     }
-    cent = &mut cg_entities[moverNum as usize] as *mut centity_t;
+    cent = &mut *cg_entities.as_mut_ptr().offset(moverNum as isize) as *mut centity_t;
     if (*cent).currentState.eType != ET_MOVER as libc::c_int {
         *out.offset(0isize) = *in_0.offset(0isize);
         *out.offset(1isize) = *in_0.offset(1isize);

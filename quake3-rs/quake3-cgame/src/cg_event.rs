@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use bg_misc::{
     bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
     BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItemForHoldable,
@@ -128,7 +135,6 @@ use cg_weapons::{
     CG_GrappleTrail, CG_MissileHitPlayer, CG_MissileHitWall, CG_NextWeapon_f, CG_OutOfAmmoChange,
     CG_PrevWeapon_f, CG_RailTrail, CG_RegisterItemVisuals, CG_ShotgunFire, CG_Weapon_f,
 };
-use libc;
 use q_math::{
     axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
     AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
@@ -150,6 +156,7 @@ use tr_types_h::{
     RT_MODEL, RT_POLY, RT_PORTALSURFACE, RT_RAIL_CORE, RT_RAIL_RINGS, RT_SPRITE, TC_NONE, TC_S3TC,
     TC_S3TC_ARB,
 };
+extern crate libc;
 
 //
 // cg_events.c
@@ -209,7 +216,7 @@ pub unsafe extern "C" fn CG_EntityEvent(mut cent: *mut centity_t, mut position: 
     if clientNum < 0i32 || clientNum >= 64i32 {
         clientNum = 0i32
     }
-    ci = &mut cgs.clientinfo[clientNum as usize] as *mut clientInfo_t;
+    ci = &mut *cgs.clientinfo.as_mut_ptr().offset(clientNum as isize) as *mut clientInfo_t;
     let mut current_block_479: u64;
     match event {
         1 => {
@@ -343,10 +350,10 @@ pub unsafe extern "C" fn CG_EntityEvent(mut cent: *mut centity_t, mut position: 
         }
         6 | 7 | 8 => {
             // smooth out step up transitions
-            current_block_479 = 10326049763699356704;
+            current_block_479 = 13398720513672162894;
         }
         9 => {
-            current_block_479 = 10326049763699356704;
+            current_block_479 = 13398720513672162894;
         }
         13 => {
             if 0 != cg_debugEvents.integer {
@@ -1135,7 +1142,7 @@ pub unsafe extern "C" fn CG_EntityEvent(mut cent: *mut centity_t, mut position: 
         }
     }
     match current_block_479 {
-        10326049763699356704 => {
+        13398720513672162894 => {
             if 0 != cg_debugEvents.integer {
                 CG_Printf(b"EV_STEP\n\x00" as *const u8 as *const libc::c_char);
             }
@@ -1191,7 +1198,7 @@ unsafe extern "C" fn CG_Obituary(mut ent: *mut entityState_t) {
     if target < 0i32 || target >= 64i32 {
         CG_Error(b"CG_Obituary: target out of range\x00" as *const u8 as *const libc::c_char);
     }
-    ci = &mut cgs.clientinfo[target as usize] as *mut clientInfo_t;
+    ci = &mut *cgs.clientinfo.as_mut_ptr().offset(target as isize) as *mut clientInfo_t;
     if attacker < 0i32 || attacker >= 64i32 {
         attacker = (1i32 << 10i32) - 2i32;
         attackerInfo = 0 as *const libc::c_char
@@ -1629,7 +1636,8 @@ unsafe extern "C" fn CG_UseItem(mut cent: *mut centity_t) {
         2 => {
             clientNum = (*cent).currentState.clientNum;
             if clientNum >= 0i32 && clientNum < 64i32 {
-                ci = &mut cgs.clientinfo[clientNum as usize] as *mut clientInfo_t;
+                ci = &mut *cgs.clientinfo.as_mut_ptr().offset(clientNum as isize)
+                    as *mut clientInfo_t;
                 (*ci).medkitUsageTime = cg.time
             }
             trap_S_StartSound(

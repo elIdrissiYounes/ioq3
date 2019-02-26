@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use bg_misc::bg_itemlist;
 use bg_public_h::{
     unnamed_1, GT_1FCTF, GT_CTF, GT_FFA, GT_HARVESTER, GT_MAX_GAME_TYPE, GT_OBELISK,
@@ -35,11 +42,10 @@ use keycodes_h::{
     K_WORLD_82, K_WORLD_83, K_WORLD_84, K_WORLD_85, K_WORLD_86, K_WORLD_87, K_WORLD_88, K_WORLD_89,
     K_WORLD_9, K_WORLD_90, K_WORLD_91, K_WORLD_92, K_WORLD_93, K_WORLD_94, K_WORLD_95, MAX_KEYS,
 };
-use libc;
 use q_math::{
-    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
-    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
-    AxisClear, MatrixMultiply, Q_fabs,
+    colorBlack, colorMdGrey, colorRed, colorWhite, colorYellow, g_color_table, vec3_origin,
+    vectoangles, AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract,
+    AnglesToAxis, AxisClear, MatrixMultiply, Q_fabs,
 };
 use q_shared_h::{
     cvarHandle_t, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, va, vec4_t, vec_t,
@@ -47,7 +53,7 @@ use q_shared_h::{
     Q_strncpyz, Q_strupr, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
 };
 use stddef_h::size_t;
-use stdlib::{__compar_fn_t, memcpy, memset, qsort, strcat, strcpy, strlen, strtol};
+use stdlib::{__compar_fn_t, atoi, memcpy, memset, qsort, strcat, strcpy, strlen};
 use tr_types_h::{
     glDriverType_t, glHardwareType_t, glconfig_t, textureCompression_t, GLDRV_ICD,
     GLDRV_STANDALONE, GLDRV_VOODOO, GLHW_3DFX_2D3D, GLHW_GENERIC, GLHW_PERMEDIA2, GLHW_RAGEPRO,
@@ -57,8 +63,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
-    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
+    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -121,14 +127,8 @@ use ui_startserver::{
 use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
+extern crate libc;
 
-unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-    return strtol(
-        __nptr,
-        0 as *mut libc::c_void as *mut *mut libc::c_char,
-        10i32,
-    ) as libc::c_int;
-}
 //
 // ui_servers2.c
 //
@@ -1098,8 +1098,10 @@ pub unsafe extern "C" fn ArenaServers_SetType(mut type_0: libc::c_int) -> libc::
             g_arenaservers.remove.generic.flags |=
                 0x4000i32 as libc::c_uint | 0x1000i32 as libc::c_uint;
             g_arenaservers.serverlist = g_globalserverlist[(type_0 - 1i32) as usize].as_mut_ptr();
-            g_arenaservers.numservers =
-                &mut g_numglobalservers[(type_0 - 1i32) as usize] as *mut libc::c_int;
+            g_arenaservers.numservers = &mut *g_numglobalservers
+                .as_mut_ptr()
+                .offset((type_0 - 1i32) as isize)
+                as *mut libc::c_int;
             g_arenaservers.maxservers = 128i32
         }
         7 => {
@@ -1234,7 +1236,7 @@ unsafe extern "C" fn ArenaServers_UpdateMenu() {
     i = 0i32;
     j = 0i32;
     while i < count {
-        tableptr = &mut g_arenaservers.table[j as usize] as *mut table_t;
+        tableptr = &mut *g_arenaservers.table.as_mut_ptr().offset(j as isize) as *mut table_t;
         (*tableptr).servernode = servernodeptr;
         buff = (*tableptr).buff.as_mut_ptr();
         // can only cull valid results
@@ -1677,9 +1679,12 @@ pub unsafe extern "C" fn ArenaServers_LoadFavorites() {
             }
             if j < numtempitems {
                 memcpy(
-                    &mut g_favoriteserverlist[g_numfavoriteservers as usize] as *mut servernode_t
-                        as *mut libc::c_void,
-                    &mut templist[j as usize] as *mut servernode_t as *const libc::c_void,
+                    &mut *g_favoriteserverlist
+                        .as_mut_ptr()
+                        .offset(g_numfavoriteservers as isize)
+                        as *mut servernode_t as *mut libc::c_void,
+                    &mut *templist.as_mut_ptr().offset(j as isize) as *mut servernode_t
+                        as *const libc::c_void,
                     ::std::mem::size_of::<servernode_t>() as libc::c_ulong,
                 );
                 found = qtrue
@@ -1872,7 +1877,10 @@ unsafe extern "C" fn ArenaServers_Remove() {
     if 0 == g_arenaservers.list.numitems {
         return;
     }
-    tableptr = &mut g_arenaservers.table[g_arenaservers.list.curvalue as usize] as *mut table_t;
+    tableptr = &mut *g_arenaservers
+        .table
+        .as_mut_ptr()
+        .offset(g_arenaservers.list.curvalue as isize) as *mut table_t;
     servernodeptr = (*tableptr).servernode;
     i = 0i32;
     while i < g_arenaservers.numfavoriteaddresses {
@@ -1882,16 +1890,25 @@ unsafe extern "C" fn ArenaServers_Remove() {
         ) {
             if i < g_arenaservers.numfavoriteaddresses - 1i32 {
                 memcpy(
-                    &mut g_arenaservers.favoriteaddresses[i as usize] as *mut [libc::c_char; 64]
+                    &mut *g_arenaservers
+                        .favoriteaddresses
+                        .as_mut_ptr()
+                        .offset(i as isize) as *mut [libc::c_char; 64]
                         as *mut libc::c_void,
-                    &mut g_arenaservers.favoriteaddresses[(i + 1i32) as usize]
-                        as *mut [libc::c_char; 64] as *const libc::c_void,
+                    &mut *g_arenaservers
+                        .favoriteaddresses
+                        .as_mut_ptr()
+                        .offset((i + 1i32) as isize) as *mut [libc::c_char; 64]
+                        as *const libc::c_void,
                     ((g_arenaservers.numfavoriteaddresses - i - 1i32) * 64i32) as libc::c_ulong,
                 );
             }
             g_arenaservers.numfavoriteaddresses -= 1;
             memset(
-                &mut g_arenaservers.favoriteaddresses[g_arenaservers.numfavoriteaddresses as usize]
+                &mut *g_arenaservers
+                    .favoriteaddresses
+                    .as_mut_ptr()
+                    .offset(g_arenaservers.numfavoriteaddresses as isize)
                     as *mut [libc::c_char; 64] as *mut libc::c_void,
                 0i32,
                 64i32 as libc::c_ulong,
@@ -1903,11 +1920,16 @@ unsafe extern "C" fn ArenaServers_Remove() {
     }
     i = 0i32;
     while i < g_numfavoriteservers {
-        if &mut g_favoriteserverlist[i as usize] as *mut servernode_t == servernodeptr {
+        if &mut *g_favoriteserverlist.as_mut_ptr().offset(i as isize) as *mut servernode_t
+            == servernodeptr
+        {
             if i < g_numfavoriteservers - 1i32 {
                 memcpy(
-                    &mut g_favoriteserverlist[i as usize] as *mut servernode_t as *mut libc::c_void,
-                    &mut g_favoriteserverlist[(i + 1i32) as usize] as *mut servernode_t
+                    &mut *g_favoriteserverlist.as_mut_ptr().offset(i as isize) as *mut servernode_t
+                        as *mut libc::c_void,
+                    &mut *g_favoriteserverlist
+                        .as_mut_ptr()
+                        .offset((i + 1i32) as isize) as *mut servernode_t
                         as *const libc::c_void,
                     ((g_numfavoriteservers - i - 1i32) as libc::c_ulong)
                         .wrapping_mul(::std::mem::size_of::<servernode_t>() as libc::c_ulong),
@@ -1915,7 +1937,9 @@ unsafe extern "C" fn ArenaServers_Remove() {
             }
             g_numfavoriteservers -= 1;
             memset(
-                &mut g_favoriteserverlist[g_numfavoriteservers as usize] as *mut servernode_t
+                &mut *g_favoriteserverlist
+                    .as_mut_ptr()
+                    .offset(g_numfavoriteservers as isize) as *mut servernode_t
                     as *mut libc::c_void,
                 0i32,
                 ::std::mem::size_of::<servernode_t>() as libc::c_ulong,
@@ -2403,35 +2427,6 @@ pub unsafe extern "C" fn ArenaServers_Cache() {
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct pinglist_t {
-    pub adrstr: [libc::c_char; 64],
-    pub start: libc::c_int,
-}
-pub type servernode_t = servernode_s;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct servernode_s {
-    pub adrstr: [libc::c_char; 64],
-    pub hostname: [libc::c_char; 25],
-    pub mapname: [libc::c_char; 16],
-    pub numclients: libc::c_int,
-    pub maxclients: libc::c_int,
-    pub pingtime: libc::c_int,
-    pub gametype: libc::c_int,
-    pub gamename: [libc::c_char; 12],
-    pub nettype: libc::c_int,
-    pub minPing: libc::c_int,
-    pub maxPing: libc::c_int,
-    pub bPB: qboolean,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct table_t {
-    pub buff: [libc::c_char; 68],
-    pub servernode: *mut servernode_t,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
 pub struct arenaservers_t {
     pub menu: menuframework_s,
     pub banner: menutext_s,
@@ -2468,4 +2463,33 @@ pub struct arenaservers_t {
     pub numfavoriteaddresses: libc::c_int,
     pub punkbuster: menulist_s,
     pub pblogo: menubitmap_s,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct pinglist_t {
+    pub adrstr: [libc::c_char; 64],
+    pub start: libc::c_int,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct table_t {
+    pub buff: [libc::c_char; 68],
+    pub servernode: *mut servernode_t,
+}
+pub type servernode_t = servernode_s;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct servernode_s {
+    pub adrstr: [libc::c_char; 64],
+    pub hostname: [libc::c_char; 25],
+    pub mapname: [libc::c_char; 16],
+    pub numclients: libc::c_int,
+    pub maxclients: libc::c_int,
+    pub pingtime: libc::c_int,
+    pub gametype: libc::c_int,
+    pub gamename: [libc::c_char; 12],
+    pub nettype: libc::c_int,
+    pub minPing: libc::c_int,
+    pub maxPing: libc::c_int,
+    pub bPB: qboolean,
 }

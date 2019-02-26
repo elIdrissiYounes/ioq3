@@ -1,3 +1,13 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -95,7 +105,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -108,6 +117,7 @@ use q_shared_h::{
     TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{atoi, strchr, strlen};
+extern crate libc;
 
 //
 // g_svcmds.c
@@ -760,7 +770,7 @@ unsafe extern "C" fn AddIP(mut str: *mut libc::c_char) {
         }
         numIPFilters += 1
     }
-    if 0 == StringToFilter(str, &mut ipFilters[i as usize]) as u64 {
+    if 0 == StringToFilter(str, &mut *ipFilters.as_mut_ptr().offset(i as isize)) as u64 {
         ipFilters[i as usize].compare = 0xffffffffu32
     }
     UpdateIPBans();
@@ -795,7 +805,9 @@ pub unsafe extern "C" fn Svcmd_ForceTeam_f() {
         ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
     );
     SetTeam(
-        &mut g_entities[cl.wrapping_offset_from(level.clients) as libc::c_long as usize],
+        &mut *g_entities
+            .as_mut_ptr()
+            .offset(cl.wrapping_offset_from(level.clients) as libc::c_long as isize),
         str.as_mut_ptr(),
     );
 }
@@ -973,10 +985,10 @@ pub unsafe extern "C" fn G_FilterPacket(mut from: *mut libc::c_char) -> qboolean
     }
     return (g_filterBan.integer == 0i32) as libc::c_int as qboolean;
 }
-pub type ipFilter_t = ipFilter_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct ipFilter_s {
     pub mask: libc::c_uint,
     pub compare: libc::c_uint,
 }
+pub type ipFilter_t = ipFilter_s;

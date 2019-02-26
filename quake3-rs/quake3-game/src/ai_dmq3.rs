@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use ai_chat::{
     bot_consolemessage_s, bot_consolemessage_t, bot_match_s, bot_match_t, bot_matchvariable_s,
     bot_matchvariable_t, BotChatTime, BotChat_EnterGame, BotValidChatPosition,
@@ -164,7 +171,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -179,6 +185,7 @@ use q_shared_h::{
 use stdlib::{
     atoi, fabs, memcpy, memmove, memset, rand, sqrt, strcmp, strlen, strncpy, strstr, toupper,
 };
+extern crate libc;
 
 unsafe extern "C" fn VectorCompare(mut v1: *const vec_t, mut v2: *const vec_t) -> libc::c_int {
     if *v1.offset(0isize) != *v2.offset(0isize)
@@ -359,7 +366,8 @@ pub unsafe extern "C" fn BotInitWaypoints() {
     i = 0i32;
     while i < 128i32 {
         botai_waypoints[i as usize].next = botai_freewaypoints;
-        botai_freewaypoints = &mut botai_waypoints[i as usize] as *mut bot_waypoint_t;
+        botai_freewaypoints =
+            &mut *botai_waypoints.as_mut_ptr().offset(i as isize) as *mut bot_waypoint_t;
         i += 1
     }
 }
@@ -3977,7 +3985,7 @@ pub unsafe extern "C" fn BotRoamGoal(mut bs: *mut bot_state_t, mut goal: *mut ve
                 1i32,
             );
             if 0 == trace.startsolid as u64 {
-                trace.endpos[2usize] += 1.0;
+                trace.endpos[2usize] += 1.;
                 pc = trap_PointContents(trace.endpos.as_mut_ptr() as *const vec_t, (*bs).entitynum);
                 if 0 == pc & (8i32 | 16i32) {
                     *goal.offset(0isize) = bestorg[0usize];
@@ -5138,14 +5146,15 @@ pub unsafe extern "C" fn BotPushOntoActivateGoalStack(
     }
     if best != -1i32 {
         memcpy(
-            &mut (*bs).activategoalheap[best as usize] as *mut bot_activategoal_t
-                as *mut libc::c_void,
+            &mut *(*bs).activategoalheap.as_mut_ptr().offset(best as isize)
+                as *mut bot_activategoal_t as *mut libc::c_void,
             activategoal as *const libc::c_void,
             ::std::mem::size_of::<bot_activategoal_t>() as libc::c_ulong,
         );
         (*bs).activategoalheap[best as usize].inuse = qtrue as libc::c_int;
         (*bs).activategoalheap[best as usize].next = (*bs).activatestack;
-        (*bs).activatestack = &mut (*bs).activategoalheap[best as usize] as *mut bot_activategoal_t;
+        (*bs).activatestack = &mut *(*bs).activategoalheap.as_mut_ptr().offset(best as isize)
+            as *mut bot_activategoal_t;
         return qtrue as libc::c_int;
     }
     return qfalse as libc::c_int;
@@ -5690,7 +5699,7 @@ pub unsafe extern "C" fn BotModelMinsMaxs(
 ) -> libc::c_int {
     let mut ent: *mut gentity_t = 0 as *mut gentity_t;
     let mut i: libc::c_int = 0;
-    ent = &mut g_entities[0usize] as *mut gentity_t;
+    ent = &mut *g_entities.as_mut_ptr().offset(0isize) as *mut gentity_t;
     i = 0i32;
     while i < level.num_entities {
         if !(0 == (*ent).inuse as u64) {
@@ -6705,7 +6714,7 @@ pub unsafe extern "C" fn BotSetEntityNumForGoalWithModel(
     let mut modelindex: libc::c_int = 0;
     let mut dir: vec3_t = [0.; 3];
     modelindex = G_ModelIndex(modelname);
-    ent = &mut g_entities[0usize] as *mut gentity_t;
+    ent = &mut *g_entities.as_mut_ptr().offset(0isize) as *mut gentity_t;
     i = 0i32;
     while i < level.num_entities {
         if !(0 == (*ent).inuse as u64) {
@@ -6740,7 +6749,7 @@ pub unsafe extern "C" fn BotSetEntityNumForGoal(
     let mut ent: *mut gentity_t = 0 as *mut gentity_t;
     let mut i: libc::c_int = 0;
     let mut dir: vec3_t = [0.; 3];
-    ent = &mut g_entities[0usize] as *mut gentity_t;
+    ent = &mut *g_entities.as_mut_ptr().offset(0isize) as *mut gentity_t;
     i = 0i32;
     while i < level.num_entities {
         if !(0 == (*ent).inuse as u64) {
@@ -6773,7 +6782,7 @@ pub unsafe extern "C" fn BotSetEntityNumForGoalWithActivator(
     let mut ent: *mut gentity_t = 0 as *mut gentity_t;
     let mut i: libc::c_int = 0;
     let mut dir: vec3_t = [0.; 3];
-    ent = &mut g_entities[0usize] as *mut gentity_t;
+    ent = &mut *g_entities.as_mut_ptr().offset(0isize) as *mut gentity_t;
     i = 0i32;
     while i < level.num_entities {
         if !(0 == (*ent).inuse as u64 || (*ent).activator.is_null()) {

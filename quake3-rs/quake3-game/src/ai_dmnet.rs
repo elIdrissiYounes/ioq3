@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(custom_attribute, libc)]
 use ai_chat::{
     BotChatTime, BotChat_Death, BotChat_EndLevel, BotChat_EnemySuicide, BotChat_HitNoDeath,
     BotChat_HitNoKill, BotChat_HitTalking, BotChat_Kill, BotChat_Random, BotChat_StartLevel,
@@ -120,7 +127,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -132,6 +138,7 @@ use q_shared_h::{
     TR_STATIONARY,
 };
 use stdlib::{memcpy, memset, rand, sqrt, strcat, strcpy};
+extern crate libc;
 
 unsafe extern "C" fn VectorCompare(mut v1: *const vec_t, mut v2: *const vec_t) -> libc::c_int {
     if *v1.offset(0isize) != *v2.offset(0isize)

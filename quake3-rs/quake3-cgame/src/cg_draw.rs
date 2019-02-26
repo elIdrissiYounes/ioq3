@@ -1,3 +1,13 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
 use bg_misc::{
     bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
     BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItemForHoldable,
@@ -92,7 +102,6 @@ use cg_weapons::{
     CG_GrappleTrail, CG_MissileHitPlayer, CG_MissileHitWall, CG_NextWeapon_f, CG_OutOfAmmoChange,
     CG_PrevWeapon_f, CG_RailTrail, CG_RegisterItemVisuals, CG_ShotgunFire, CG_Weapon_f,
 };
-use libc;
 use q_math::{
     axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
     AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
@@ -115,6 +124,7 @@ use tr_types_h::{
     RT_MAX_REF_ENTITY_TYPE, RT_MODEL, RT_POLY, RT_PORTALSURFACE, RT_RAIL_CORE, RT_RAIL_RINGS,
     RT_SPRITE, STEREO_CENTER, STEREO_LEFT, STEREO_RIGHT, TC_NONE, TC_S3TC, TC_S3TC_ARB,
 };
+extern crate libc;
 
 //
 // cg_draw.c, cg_newDraw.c
@@ -196,7 +206,7 @@ pub unsafe extern "C" fn CG_DrawHead(
     let mut origin: vec3_t = [0.; 3];
     let mut mins: vec3_t = [0.; 3];
     let mut maxs: vec3_t = [0.; 3];
-    ci = &mut cgs.clientinfo[clientNum as usize] as *mut clientInfo_t;
+    ci = &mut *cgs.clientinfo.as_mut_ptr().offset(clientNum as isize) as *mut clientInfo_t;
     if 0 != cg_draw3dIcons.integer {
         cm = (*ci).headModel;
         if 0 == cm {
@@ -481,9 +491,9 @@ unsafe extern "C" fn CG_DrawWarmup() {
                     == TEAM_FREE as libc::c_int as libc::c_uint
             {
                 if ci1.is_null() {
-                    ci1 = &mut cgs.clientinfo[i as usize] as *mut clientInfo_t
+                    ci1 = &mut *cgs.clientinfo.as_mut_ptr().offset(i as isize) as *mut clientInfo_t
                 } else {
-                    ci2 = &mut cgs.clientinfo[i as usize] as *mut clientInfo_t
+                    ci2 = &mut *cgs.clientinfo.as_mut_ptr().offset(i as isize) as *mut clientInfo_t
                 }
             }
             i += 1
@@ -2216,7 +2226,9 @@ unsafe extern "C" fn CG_DrawStatusBar() {
         0.33f32,
         (*cg.snap).ps.persistant[PERS_TEAM as libc::c_int as usize],
     );
-    cent = &mut cg_entities[(*cg.snap).ps.clientNum as usize] as *mut centity_t;
+    cent = &mut *cg_entities
+        .as_mut_ptr()
+        .offset((*cg.snap).ps.clientNum as isize) as *mut centity_t;
     ps = &mut (*cg.snap).ps;
     angles[2usize] = 0i32 as vec_t;
     angles[1usize] = angles[2usize];

@@ -1,15 +1,25 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           const_slice_as_ptr,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
 use bg_misc::bg_itemlist;
-use libc;
 use q_math::{
-    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
-    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
-    AxisClear, MatrixMultiply, Q_fabs,
+    colorBlack, colorMdGrey, colorRed, colorWhite, colorYellow, g_color_table, vec3_origin,
+    vectoangles, AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract,
+    AnglesToAxis, AxisClear, MatrixMultiply, Q_fabs,
 };
 use q_shared_h::{
     qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, unnamed, va, vec4_t, vec_t, Com_sprintf,
     Q_stricmp, Q_strncpyz, EXEC_APPEND, EXEC_INSERT, EXEC_NOW,
 };
-use stdlib::{memset, strchr, strlen, strtol};
+use stdlib::{atoi, memset, strchr, strlen};
 use tr_types_h::{
     glDriverType_t, glHardwareType_t, glconfig_t, textureCompression_t, GLDRV_ICD,
     GLDRV_STANDALONE, GLDRV_VOODOO, GLHW_3DFX_2D3D, GLHW_GENERIC, GLHW_PERMEDIA2, GLHW_RAGEPRO,
@@ -19,8 +29,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
-    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
+    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -82,14 +92,8 @@ use ui_startserver::{
 };
 use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
+extern crate libc;
 
-unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-    return strtol(
-        __nptr,
-        0 as *mut libc::c_void as *mut *mut libc::c_char,
-        10i32,
-    ) as libc::c_int;
-}
 //
 // ui_video.c
 //
@@ -1463,13 +1467,15 @@ unsafe extern "C" fn GraphicsOptions_Event(mut ptr: *mut libc::c_void, mut event
         110 => {
             s_graphicsoptions.mode.curvalue = ratioToRes[s_graphicsoptions.ratio.curvalue as usize];
             // fall through to apply mode constraints
-            current_block_28 = 16640963930099419567;
+            current_block_28 = 6773285602156938959;
         }
         104 => {
-            current_block_28 = 16640963930099419567;
+            current_block_28 = 6773285602156938959;
         }
         103 => {
-            ivo = &mut s_ivo_templates[s_graphicsoptions.list.curvalue as usize]
+            ivo = &mut *s_ivo_templates
+                .as_mut_ptr()
+                .offset(s_graphicsoptions.list.curvalue as isize)
                 as *mut InitialVideoOptions_s;
             s_graphicsoptions.mode.curvalue = GraphicsOptions_FindDetectedResolution((*ivo).mode);
             s_graphicsoptions.ratio.curvalue = resToRatio[s_graphicsoptions.mode.curvalue as usize];
@@ -1510,7 +1516,7 @@ unsafe extern "C" fn GraphicsOptions_Event(mut ptr: *mut libc::c_void, mut event
         }
     }
     match current_block_28 {
-        16640963930099419567 => {
+        6773285602156938959 => {
             if s_graphicsoptions.driver.curvalue == 1i32 {
                 if s_graphicsoptions.mode.curvalue < 2i32 {
                     s_graphicsoptions.mode.curvalue = 2i32
@@ -2243,20 +2249,6 @@ pub struct driverinfo_t {
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct InitialVideoOptions_s {
-    pub mode: libc::c_int,
-    pub fullscreen: qboolean,
-    pub tq: libc::c_int,
-    pub lighting: libc::c_int,
-    pub colordepth: libc::c_int,
-    pub texturebits: libc::c_int,
-    pub geometry: libc::c_int,
-    pub filter: libc::c_int,
-    pub driver: libc::c_int,
-    pub extensions: qboolean,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
 pub struct graphicsoptions_t {
     pub menu: menuframework_s,
     pub banner: menutext_s,
@@ -2281,4 +2273,18 @@ pub struct graphicsoptions_t {
     pub driverinfo: menutext_s,
     pub apply: menubitmap_s,
     pub back: menubitmap_s,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct InitialVideoOptions_s {
+    pub mode: libc::c_int,
+    pub fullscreen: qboolean,
+    pub tq: libc::c_int,
+    pub lighting: libc::c_int,
+    pub colordepth: libc::c_int,
+    pub texturebits: libc::c_int,
+    pub geometry: libc::c_int,
+    pub filter: libc::c_int,
+    pub driver: libc::c_int,
+    pub extensions: qboolean,
 }

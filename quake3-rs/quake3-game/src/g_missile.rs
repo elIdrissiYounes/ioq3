@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -114,7 +121,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -125,6 +131,7 @@ use q_shared_h::{
     vec3_t, vec_t, TR_GRAVITY, TR_INTERPOLATE, TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{sqrt, strcmp};
+extern crate libc;
 
 unsafe extern "C" fn VectorLength(mut v: *const vec_t) -> vec_t {
     return sqrt(
@@ -220,7 +227,7 @@ G_MissileImpact
 pub unsafe extern "C" fn G_MissileImpact(mut ent: *mut gentity_t, mut trace: *mut trace_t) {
     let mut other: *mut gentity_t = 0 as *mut gentity_t;
     let mut hitClient: qboolean = qfalse;
-    other = &mut g_entities[(*trace).entityNum as usize] as *mut gentity_t;
+    other = &mut *g_entities.as_mut_ptr().offset((*trace).entityNum as isize) as *mut gentity_t;
     if 0 == (*other).takedamage as u64 && 0 != (*ent).s.eFlags & (0x10i32 | 0x20i32) {
         G_BounceMissile(ent, trace);
         G_AddEvent(ent, EV_GRENADE_BOUNCE as libc::c_int, 0i32);
@@ -229,7 +236,11 @@ pub unsafe extern "C" fn G_MissileImpact(mut ent: *mut gentity_t, mut trace: *mu
     if 0 != (*other).takedamage as u64 {
         if 0 != (*ent).damage {
             let mut velocity: vec3_t = [0.; 3];
-            if 0 != LogAccuracyHit(other, &mut g_entities[(*ent).r.ownerNum as usize]) as u64 {
+            if 0 != LogAccuracyHit(
+                other,
+                &mut *g_entities.as_mut_ptr().offset((*ent).r.ownerNum as isize),
+            ) as u64
+            {
                 (*g_entities[(*ent).r.ownerNum as usize].client).accuracy_hits += 1;
                 hitClient = qtrue
             }
@@ -240,7 +251,7 @@ pub unsafe extern "C" fn G_MissileImpact(mut ent: *mut gentity_t, mut trace: *mu
             G_Damage(
                 other,
                 ent,
-                &mut g_entities[(*ent).r.ownerNum as usize],
+                &mut *g_entities.as_mut_ptr().offset((*ent).r.ownerNum as isize),
                 velocity.as_mut_ptr(),
                 (*ent).s.origin.as_mut_ptr(),
                 (*ent).damage,

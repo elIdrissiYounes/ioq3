@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use bg_misc::{
     bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
     BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItemForHoldable,
@@ -100,7 +107,6 @@ use cg_weapons::{
     CG_GrappleTrail, CG_MissileHitPlayer, CG_MissileHitWall, CG_NextWeapon_f, CG_OutOfAmmoChange,
     CG_PrevWeapon_f, CG_RailTrail, CG_RegisterItemVisuals, CG_ShotgunFire, CG_Weapon_f,
 };
-use libc;
 use q_math::{
     axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
     AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
@@ -123,6 +129,7 @@ use tr_types_h::{
     RT_MAX_REF_ENTITY_TYPE, RT_MODEL, RT_POLY, RT_PORTALSURFACE, RT_RAIL_CORE, RT_RAIL_RINGS,
     RT_SPRITE, TC_NONE, TC_S3TC, TC_S3TC_ARB,
 };
+extern crate libc;
 
 //
 // cg_player.c
@@ -204,7 +211,7 @@ pub unsafe extern "C" fn CG_Player(mut cent: *mut centity_t) {
     if clientNum < 0i32 || clientNum >= 64i32 {
         CG_Error(b"Bad clientNum on player entity\x00" as *const u8 as *const libc::c_char);
     }
-    ci = &mut cgs.clientinfo[clientNum as usize] as *mut clientInfo_t;
+    ci = &mut *cgs.clientinfo.as_mut_ptr().offset(clientNum as isize) as *mut clientInfo_t;
     if 0 == (*ci).infoValid as u64 {
         return;
     }
@@ -353,7 +360,10 @@ unsafe extern "C" fn CG_PlayerPowerups(mut cent: *mut centity_t, mut torso: *mut
             cgs.media.flightSound,
         );
     }
-    ci = &mut cgs.clientinfo[(*cent).currentState.clientNum as usize] as *mut clientInfo_t;
+    ci = &mut *cgs
+        .clientinfo
+        .as_mut_ptr()
+        .offset((*cent).currentState.clientNum as isize) as *mut clientInfo_t;
     if 0 != powerups & 1i32 << PW_REDFLAG as libc::c_int {
         if 0 != (*ci).newAnims as u64 {
             CG_PlayerFlag(cent, cgs.media.redFlagFlapSkin, torso);
@@ -647,7 +657,10 @@ unsafe extern "C" fn CG_PlayerFlag(
         }
     }
     angles[1usize] = (*cent).pe.flag.yawAngle;
-    ci = &mut cgs.clientinfo[(*cent).currentState.clientNum as usize] as *mut clientInfo_t;
+    ci = &mut *cgs
+        .clientinfo
+        .as_mut_ptr()
+        .offset((*cent).currentState.clientNum as isize) as *mut clientInfo_t;
     CG_RunLerpFrame(ci, &mut (*cent).pe.flag, flagAnim, 1i32 as libc::c_float);
     flag.oldframe = (*cent).pe.flag.oldFrame;
     flag.frame = (*cent).pe.flag.frame;
@@ -773,7 +786,7 @@ unsafe extern "C" fn CG_SetLerpFrameAnimation(
             newAnimation,
         );
     }
-    anim = &mut (*ci).animations[newAnimation as usize] as *mut animation_t;
+    anim = &mut *(*ci).animations.as_mut_ptr().offset(newAnimation as isize) as *mut animation_t;
     (*lf).animation = anim;
     (*lf).animationTime = (*lf).frameTime + (*anim).initialLerp;
     if 0 != cg_debugAnim.integer {
@@ -1203,7 +1216,7 @@ unsafe extern "C" fn CG_PlayerAnimation(
     } else {
         speedScale = 1i32 as libc::c_float
     }
-    ci = &mut cgs.clientinfo[clientNum as usize] as *mut clientInfo_t;
+    ci = &mut *cgs.clientinfo.as_mut_ptr().offset(clientNum as isize) as *mut clientInfo_t;
     if 0 != (*cent).pe.legs.yawing as libc::c_uint
         && (*cent).currentState.legsAnim & !128i32 == LEGS_IDLE as libc::c_int
     {
@@ -1329,7 +1342,7 @@ unsafe extern "C" fn CG_PlayerAngles(
     torsoAngles[0usize] = (*cent).pe.torso.pitchAngle;
     clientNum = (*cent).currentState.clientNum;
     if clientNum >= 0i32 && clientNum < 64i32 {
-        ci = &mut cgs.clientinfo[clientNum as usize] as *mut clientInfo_t;
+        ci = &mut *cgs.clientinfo.as_mut_ptr().offset(clientNum as isize) as *mut clientInfo_t;
         if 0 != (*ci).fixedtorso as u64 {
             torsoAngles[0usize] = 0.0f32
         }
@@ -1356,7 +1369,7 @@ unsafe extern "C" fn CG_PlayerAngles(
     }
     clientNum = (*cent).currentState.clientNum;
     if clientNum >= 0i32 && clientNum < 64i32 {
-        ci = &mut cgs.clientinfo[clientNum as usize] as *mut clientInfo_t;
+        ci = &mut *cgs.clientinfo.as_mut_ptr().offset(clientNum as isize) as *mut clientInfo_t;
         if 0 != (*ci).fixedlegs as u64 {
             legsAngles[1usize] = torsoAngles[1usize];
             legsAngles[0usize] = 0.0f32;
@@ -1405,12 +1418,18 @@ pub unsafe extern "C" fn CG_ResetPlayerEntity(mut cent: *mut centity_t) {
     (*cent).errorTime = -99999i32;
     (*cent).extrapolated = qfalse;
     CG_ClearLerpFrame(
-        &mut cgs.clientinfo[(*cent).currentState.clientNum as usize],
+        &mut *cgs
+            .clientinfo
+            .as_mut_ptr()
+            .offset((*cent).currentState.clientNum as isize),
         &mut (*cent).pe.legs,
         (*cent).currentState.legsAnim,
     );
     CG_ClearLerpFrame(
-        &mut cgs.clientinfo[(*cent).currentState.clientNum as usize],
+        &mut *cgs
+            .clientinfo
+            .as_mut_ptr()
+            .offset((*cent).currentState.clientNum as isize),
         &mut (*cent).pe.torso,
         (*cent).currentState.torsoAnim,
     );
@@ -1533,7 +1552,7 @@ pub unsafe extern "C" fn CG_NewClientInfo(mut clientNum: libc::c_int) {
     let mut configstring: *const libc::c_char = 0 as *const libc::c_char;
     let mut v: *const libc::c_char = 0 as *const libc::c_char;
     let mut slash: *mut libc::c_char = 0 as *mut libc::c_char;
-    ci = &mut cgs.clientinfo[clientNum as usize] as *mut clientInfo_t;
+    ci = &mut *cgs.clientinfo.as_mut_ptr().offset(clientNum as isize) as *mut clientInfo_t;
     configstring = CG_ConfigString(clientNum + (32i32 + 256i32 + 256i32));
     if 0 == *configstring.offset(0isize) {
         memset(
@@ -1908,7 +1927,7 @@ unsafe extern "C" fn CG_LoadClientInfo(mut clientNum: libc::c_int, mut ci: *mut 
         if cg_entities[i as usize].currentState.clientNum == clientNum
             && cg_entities[i as usize].currentState.eType == ET_PLAYER as libc::c_int
         {
-            CG_ResetPlayerEntity(&mut cg_entities[i as usize]);
+            CG_ResetPlayerEntity(&mut *cg_entities.as_mut_ptr().offset(i as isize));
         }
         i += 1
     }
@@ -2775,7 +2794,7 @@ unsafe extern "C" fn CG_SetDeferredClientInfo(
     let mut match_0: *mut clientInfo_t = 0 as *mut clientInfo_t;
     i = 0i32;
     while i < cgs.maxclients {
-        match_0 = &mut cgs.clientinfo[i as usize] as *mut clientInfo_t;
+        match_0 = &mut *cgs.clientinfo.as_mut_ptr().offset(i as isize) as *mut clientInfo_t;
         if !(0 == (*match_0).infoValid as u64 || 0 != (*match_0).deferred as libc::c_uint) {
             if !(0
                 != Q_stricmp(
@@ -2800,7 +2819,7 @@ unsafe extern "C" fn CG_SetDeferredClientInfo(
     if cgs.gametype as libc::c_uint >= GT_TEAM as libc::c_int as libc::c_uint {
         i = 0i32;
         while i < cgs.maxclients {
-            match_0 = &mut cgs.clientinfo[i as usize] as *mut clientInfo_t;
+            match_0 = &mut *cgs.clientinfo.as_mut_ptr().offset(i as isize) as *mut clientInfo_t;
             if !(0 == (*match_0).infoValid as u64 || 0 != (*match_0).deferred as libc::c_uint) {
                 if !(0
                     != Q_stricmp(
@@ -2822,7 +2841,7 @@ unsafe extern "C" fn CG_SetDeferredClientInfo(
     }
     i = 0i32;
     while i < cgs.maxclients {
-        match_0 = &mut cgs.clientinfo[i as usize] as *mut clientInfo_t;
+        match_0 = &mut *cgs.clientinfo.as_mut_ptr().offset(i as isize) as *mut clientInfo_t;
         if 0 == (*match_0).infoValid as u64 {
             i += 1
         } else {
@@ -2879,7 +2898,7 @@ unsafe extern "C" fn CG_ScanForExistingClientInfo(mut ci: *mut clientInfo_t) -> 
     let mut match_0: *mut clientInfo_t = 0 as *mut clientInfo_t;
     i = 0i32;
     while i < cgs.maxclients {
-        match_0 = &mut cgs.clientinfo[i as usize] as *mut clientInfo_t;
+        match_0 = &mut *cgs.clientinfo.as_mut_ptr().offset(i as isize) as *mut clientInfo_t;
         if !(0 == (*match_0).infoValid as u64) {
             if !(0 != (*match_0).deferred as u64) {
                 if 0 == Q_stricmp(
@@ -2958,7 +2977,7 @@ pub unsafe extern "C" fn CG_CustomSound(
     if clientNum < 0i32 || clientNum >= 64i32 {
         clientNum = 0i32
     }
-    ci = &mut cgs.clientinfo[clientNum as usize] as *mut clientInfo_t;
+    ci = &mut *cgs.clientinfo.as_mut_ptr().offset(clientNum as isize) as *mut clientInfo_t;
     i = 0i32;
     while i < 32i32 && !cg_customSoundNames[i as usize].is_null() {
         if 0 == strcmp(soundName, cg_customSoundNames[i as usize]) {

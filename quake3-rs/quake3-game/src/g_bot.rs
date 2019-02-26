@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -95,7 +102,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -109,6 +115,7 @@ use q_shared_h::{
     TR_INTERPOLATE, TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{atof, atoi, rand, strcat, strcmp, strcpy, strlen, strrchr};
+extern crate libc;
 
 //
 // g_bot.c
@@ -242,7 +249,7 @@ unsafe extern "C" fn G_SpawnBots(mut botList: *mut libc::c_char, mut baseDelay: 
         botList,
         ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
     );
-    p = &mut bots[0usize] as *mut libc::c_char;
+    p = &mut *bots.as_mut_ptr().offset(0isize) as *mut libc::c_char;
     delay = baseDelay;
     while 0 != *p {
         while 0 != *p as libc::c_int && *p as libc::c_int == ' ' as i32 {
@@ -425,7 +432,7 @@ unsafe extern "C" fn G_LoadArenasFromFile(mut filename: *mut libc::c_char) {
     g_numArenas += G_ParseInfos(
         buf.as_mut_ptr(),
         1024i32 - g_numArenas,
-        &mut g_arenaInfos[g_numArenas as usize],
+        &mut *g_arenaInfos.as_mut_ptr().offset(g_numArenas as isize),
     );
 }
 /*
@@ -617,7 +624,7 @@ unsafe extern "C" fn G_LoadBotsFromFile(mut filename: *mut libc::c_char) {
     g_numBots += G_ParseInfos(
         buf.as_mut_ptr(),
         1024i32 - g_numBots,
-        &mut g_botInfos[g_numBots as usize],
+        &mut *g_botInfos.as_mut_ptr().offset(g_numBots as isize),
     );
 }
 static mut g_botInfos: [*mut libc::c_char; 1024] =

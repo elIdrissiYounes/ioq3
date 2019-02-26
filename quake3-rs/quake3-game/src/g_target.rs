@@ -1,3 +1,13 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -112,7 +122,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -125,6 +134,7 @@ use q_shared_h::{
 };
 use stddef_h::size_t;
 use stdlib::{memset, rand, strstr};
+extern crate libc;
 
 /*
 ===========================================================================
@@ -518,7 +528,7 @@ pub unsafe extern "C" fn target_laser_think(mut self_0: *mut gentity_t) {
     );
     if 0 != tr.entityNum {
         G_Damage(
-            &mut g_entities[tr.entityNum as usize],
+            &mut *g_entities.as_mut_ptr().offset(tr.entityNum as isize),
             self_0,
             (*self_0).activator,
             (*self_0).movedir.as_mut_ptr(),

@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use bg_misc::{
     bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
     BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItemForHoldable,
@@ -86,7 +93,6 @@ use cg_weapons::{
     CG_GrappleTrail, CG_MissileHitPlayer, CG_MissileHitWall, CG_NextWeapon_f, CG_OutOfAmmoChange,
     CG_PrevWeapon_f, CG_RailTrail, CG_RegisterItemVisuals, CG_ShotgunFire, CG_Weapon_f,
 };
-use libc;
 use q_math::{
     axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
     AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
@@ -106,6 +112,7 @@ use tr_types_h::{
     RT_MODEL, RT_POLY, RT_PORTALSURFACE, RT_RAIL_CORE, RT_RAIL_RINGS, RT_SPRITE, TC_NONE, TC_S3TC,
     TC_S3TC_ARB,
 };
+extern crate libc;
 
 //
 // cg_snapshot.c
@@ -192,7 +199,10 @@ unsafe extern "C" fn CG_TransitionSnapshot() {
     0 != cg.mapRestart as u64;
     i = 0i32;
     while i < (*cg.snap).numEntities {
-        cent = &mut cg_entities[(*cg.snap).entities[i as usize].number as usize] as *mut centity_t;
+        cent = &mut *cg_entities
+            .as_mut_ptr()
+            .offset((*(*cg.snap).entities.as_mut_ptr().offset(i as isize)).number as isize)
+            as *mut centity_t;
         (*cent).currentValid = qfalse;
         i += 1
     }
@@ -200,13 +210,19 @@ unsafe extern "C" fn CG_TransitionSnapshot() {
     cg.snap = cg.nextSnap;
     BG_PlayerStateToEntityState(
         &mut (*cg.snap).ps,
-        &mut cg_entities[(*cg.snap).ps.clientNum as usize].currentState,
+        &mut (*cg_entities
+            .as_mut_ptr()
+            .offset((*cg.snap).ps.clientNum as isize))
+        .currentState,
         qfalse,
     );
     cg_entities[(*cg.snap).ps.clientNum as usize].interpolate = qfalse;
     i = 0i32;
     while i < (*cg.snap).numEntities {
-        cent = &mut cg_entities[(*cg.snap).entities[i as usize].number as usize] as *mut centity_t;
+        cent = &mut *cg_entities
+            .as_mut_ptr()
+            .offset((*(*cg.snap).entities.as_mut_ptr().offset(i as isize)).number as isize)
+            as *mut centity_t;
         CG_TransitionEntity(cent);
         (*cent).snapShotTime = (*cg.snap).serverTime;
         i += 1
@@ -303,14 +319,17 @@ unsafe extern "C" fn CG_SetNextSnap(mut snap: *mut snapshot_t) {
     cg.nextSnap = snap;
     BG_PlayerStateToEntityState(
         &mut (*snap).ps,
-        &mut cg_entities[(*snap).ps.clientNum as usize].nextState,
+        &mut (*cg_entities
+            .as_mut_ptr()
+            .offset((*snap).ps.clientNum as isize))
+        .nextState,
         qfalse,
     );
     cg_entities[(*cg.snap).ps.clientNum as usize].interpolate = qtrue;
     num = 0i32;
     while num < (*snap).numEntities {
-        es = &mut (*snap).entities[num as usize] as *mut entityState_t;
-        cent = &mut cg_entities[(*es).number as usize] as *mut centity_t;
+        es = &mut *(*snap).entities.as_mut_ptr().offset(num as isize) as *mut entityState_t;
+        cent = &mut *cg_entities.as_mut_ptr().offset((*es).number as isize) as *mut centity_t;
         memcpy(
             &mut (*cent).nextState as *mut entityState_t as *mut libc::c_void,
             es as *const libc::c_void,
@@ -360,10 +379,10 @@ unsafe extern "C" fn CG_ReadNextSnapshot() -> *mut snapshot_t {
         );
     }
     while cgs.processedSnapshotNum < cg.latestSnapshotNum {
-        if cg.snap == &mut cg.activeSnapshots[0usize] as *mut snapshot_t {
-            dest = &mut cg.activeSnapshots[1usize] as *mut snapshot_t
+        if cg.snap == &mut *cg.activeSnapshots.as_mut_ptr().offset(0isize) as *mut snapshot_t {
+            dest = &mut *cg.activeSnapshots.as_mut_ptr().offset(1isize) as *mut snapshot_t
         } else {
-            dest = &mut cg.activeSnapshots[0usize] as *mut snapshot_t
+            dest = &mut *cg.activeSnapshots.as_mut_ptr().offset(0isize) as *mut snapshot_t
         }
         cgs.processedSnapshotNum += 1;
         r = trap_GetSnapshot(cgs.processedSnapshotNum, dest);
@@ -392,7 +411,10 @@ pub unsafe extern "C" fn CG_SetInitialSnapshot(mut snap: *mut snapshot_t) {
     cg.snap = snap;
     BG_PlayerStateToEntityState(
         &mut (*snap).ps,
-        &mut cg_entities[(*snap).ps.clientNum as usize].currentState,
+        &mut (*cg_entities
+            .as_mut_ptr()
+            .offset((*snap).ps.clientNum as isize))
+        .currentState,
         qfalse,
     );
     CG_BuildSolidList();
@@ -400,8 +422,8 @@ pub unsafe extern "C" fn CG_SetInitialSnapshot(mut snap: *mut snapshot_t) {
     CG_Respawn();
     i = 0i32;
     while i < (*cg.snap).numEntities {
-        state = &mut (*cg.snap).entities[i as usize] as *mut entityState_t;
-        cent = &mut cg_entities[(*state).number as usize] as *mut centity_t;
+        state = &mut *(*cg.snap).entities.as_mut_ptr().offset(i as isize) as *mut entityState_t;
+        cent = &mut *cg_entities.as_mut_ptr().offset((*state).number as isize) as *mut centity_t;
         memcpy(
             &mut (*cent).currentState as *mut entityState_t as *mut libc::c_void,
             state as *const libc::c_void,

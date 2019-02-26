@@ -1,3 +1,13 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
 use bg_misc::bg_itemlist;
 use bg_public_h::{
     animation_s, animation_t, unnamed_0, weapon_t, BOTH_DEAD1, BOTH_DEAD2, BOTH_DEAD3, BOTH_DEATH1,
@@ -42,11 +52,10 @@ use keycodes_h::{
     K_WORLD_84, K_WORLD_85, K_WORLD_86, K_WORLD_87, K_WORLD_88, K_WORLD_89, K_WORLD_9, K_WORLD_90,
     K_WORLD_91, K_WORLD_92, K_WORLD_93, K_WORLD_94, K_WORLD_95, MAX_KEYS,
 };
-use libc;
 use q_math::{
-    colorBlack, colorMdGrey, colorRed, colorWhite, g_color_table, vec3_origin, vectoangles,
-    AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis,
-    AxisClear, MatrixMultiply, Q_fabs,
+    colorBlack, colorMdGrey, colorRed, colorWhite, colorYellow, g_color_table, vec3_origin,
+    vectoangles, AngleMod, AngleNormalize180, AngleSubtract, AngleVectors, AnglesSubtract,
+    AnglesToAxis, AxisClear, MatrixMultiply, Q_fabs,
 };
 use q_shared_h::{
     byte, qboolean, qfalse, qhandle_t, qtrue, sfxHandle_t, va, vec3_t, vec4_t, vec_t,
@@ -63,8 +72,8 @@ use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
-    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
+    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -126,6 +135,7 @@ use ui_startserver::{
 use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
+extern crate libc;
 
 //
 // ui_playermodel.c
@@ -136,7 +146,10 @@ pub unsafe extern "C" fn UI_PlayerModelMenu() {
     UI_PushMenu(&mut s_playermodel.menu);
     Menu_SetCursorToItem(
         &mut s_playermodel.menu,
-        &mut s_playermodel.pics[(s_playermodel.selectedmodel % (4i32 * 4i32)) as usize]
+        &mut *s_playermodel
+            .pics
+            .as_mut_ptr()
+            .offset((s_playermodel.selectedmodel % (4i32 * 4i32)) as isize)
             as *mut menubitmap_s as *mut libc::c_void,
     );
 }
@@ -775,11 +788,13 @@ unsafe extern "C" fn PlayerModel_MenuInit() {
     while i < 4i32 * 4i32 {
         Menu_AddItem(
             &mut s_playermodel.menu,
-            &mut s_playermodel.pics[i as usize] as *mut menubitmap_s as *mut libc::c_void,
+            &mut *s_playermodel.pics.as_mut_ptr().offset(i as isize) as *mut menubitmap_s
+                as *mut libc::c_void,
         );
         Menu_AddItem(
             &mut s_playermodel.menu,
-            &mut s_playermodel.picbuttons[i as usize] as *mut menubitmap_s as *mut libc::c_void,
+            &mut *s_playermodel.picbuttons.as_mut_ptr().offset(i as isize) as *mut menubitmap_s
+                as *mut libc::c_void,
         );
         i += 1
     }

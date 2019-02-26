@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use bg_misc::{
     bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
     BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItemForHoldable,
@@ -90,7 +97,6 @@ use cg_weapons::{
     CG_GrappleTrail, CG_MissileHitPlayer, CG_MissileHitWall, CG_NextWeapon_f, CG_OutOfAmmoChange,
     CG_PrevWeapon_f, CG_RailTrail, CG_RegisterItemVisuals, CG_ShotgunFire, CG_Weapon_f,
 };
-use libc;
 use q_math::{
     axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
     AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
@@ -111,6 +117,7 @@ use tr_types_h::{
     RT_MODEL, RT_POLY, RT_PORTALSURFACE, RT_RAIL_CORE, RT_RAIL_RINGS, RT_SPRITE, TC_NONE, TC_S3TC,
     TC_S3TC_ARB,
 };
+extern crate libc;
 
 //
 // cg_scoreboard.c
@@ -312,7 +319,7 @@ pub unsafe extern "C" fn CG_DrawOldScoreboard() -> qboolean {
             if cg.scores[i as usize].client == (*cg.snap).ps.clientNum {
                 CG_DrawClientScore(
                     y,
-                    &mut cg.scores[i as usize],
+                    &mut *cg.scores.as_mut_ptr().offset(i as isize),
                     fadeColor,
                     fade,
                     (lineHeight == 40i32) as libc::c_int as qboolean,
@@ -353,7 +360,7 @@ unsafe extern "C" fn CG_DrawClientScore(
         );
         return;
     }
-    ci = &mut cgs.clientinfo[(*score).client as usize] as *mut clientInfo_t;
+    ci = &mut *cgs.clientinfo.as_mut_ptr().offset((*score).client as isize) as *mut clientInfo_t;
     iconx = 0i32 + 32i32 + 6i32 * 16i32 / 2i32;
     headx = 0i32 + 64i32 + 6i32 * 16i32 / 2i32;
     if 0 != (*ci).powerups & 1i32 << PW_NEUTRALFLAG as libc::c_int {
@@ -633,8 +640,9 @@ unsafe extern "C" fn CG_TeamScoreboard(
     count = 0i32;
     i = 0i32;
     while i < cg.numScores && count < maxClients {
-        score = &mut cg.scores[i as usize] as *mut score_t;
-        ci = &mut cgs.clientinfo[(*score).client as usize] as *mut clientInfo_t;
+        score = &mut *cg.scores.as_mut_ptr().offset(i as isize) as *mut score_t;
+        ci =
+            &mut *cgs.clientinfo.as_mut_ptr().offset((*score).client as isize) as *mut clientInfo_t;
         if !(team as libc::c_uint != (*ci).team as libc::c_uint) {
             CG_DrawClientScore(
                 y + lineHeight * count,
@@ -755,7 +763,7 @@ pub unsafe extern "C" fn CG_DrawTourneyScoreboard() {
     } else {
         i = 0i32;
         while i < 64i32 {
-            ci = &mut cgs.clientinfo[i as usize] as *mut clientInfo_t;
+            ci = &mut *cgs.clientinfo.as_mut_ptr().offset(i as isize) as *mut clientInfo_t;
             if !(0 == (*ci).infoValid as u64) {
                 if !((*ci).team as libc::c_uint != TEAM_FREE as libc::c_int as libc::c_uint) {
                     CG_DrawStringExt(

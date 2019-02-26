@@ -1,3 +1,13 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -120,7 +130,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -132,6 +141,7 @@ use q_shared_h::{
     TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::memset;
+extern crate libc;
 
 #[no_mangle]
 pub unsafe extern "C" fn G_TouchTriggers(mut ent: *mut gentity_t) {
@@ -185,7 +195,10 @@ pub unsafe extern "C" fn G_TouchTriggers(mut ent: *mut gentity_t) {
     let mut current_block_19: u64;
     i = 0i32;
     while i < num {
-        hit = &mut g_entities[touch[i as usize] as usize] as *mut gentity_t;
+        hit = &mut *g_entities
+            .as_mut_ptr()
+            .offset(*touch.as_mut_ptr().offset(i as isize) as isize)
+            as *mut gentity_t;
         if !((*hit).touch.is_none() && (*ent).touch.is_none()) {
             if !(0 == (*hit).r.contents & 0x40000000i32) {
                 // ignore most entities if a spectator
@@ -583,7 +596,10 @@ pub unsafe extern "C" fn ClientImpacts(mut ent: *mut gentity_t, mut pm1: *mut pm
         }
         if !(j != i) {
             // duplicated
-            other = &mut g_entities[(*pm1).touchents[i as usize] as usize] as *mut gentity_t;
+            other = &mut *g_entities
+                .as_mut_ptr()
+                .offset(*(*pm1).touchents.as_mut_ptr().offset(i as isize) as isize)
+                as *mut gentity_t;
             if 0 != (*ent).r.svFlags & 0x8i32 && (*ent).touch.is_some() {
                 (*ent).touch.expect("non-null function pointer")(ent, other, &mut trace);
             }

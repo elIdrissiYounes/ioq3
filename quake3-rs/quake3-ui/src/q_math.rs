@@ -1,15 +1,21 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(custom_attribute, label_break_value, libc)]
 use bg_misc::bg_itemlist;
-use libc;
 use q_shared_h::{
     byte, cplane_s, cplane_t, floatint_t, qboolean, qfalse, qtrue, vec3_t, vec4_t, vec_t,
 };
-use stdlib::{acos, atan2, cos, fabs, memcpy, memset, sin, sqrt};
+use stdlib::{__assert_fail, acos, atan2, cos, fabs, memcpy, memset, sin, sqrt};
 use ui_addbots::{UI_AddBotsMenu, UI_AddBots_Cache};
 use ui_atoms::{
     uis, UI_AdjustFrom640, UI_Argv, UI_ClampCvar, UI_ConsoleCommand, UI_CursorInRect,
     UI_Cvar_VariableString, UI_DrawBannerString, UI_DrawChar, UI_DrawHandlePic, UI_DrawNamedPic,
-    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawString, UI_FillRect,
-    UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
+    UI_DrawProportionalString, UI_DrawProportionalString_AutoWrapped, UI_DrawRect, UI_DrawString,
+    UI_FillRect, UI_ForceMenuOff, UI_Init, UI_IsFullscreen, UI_KeyEvent, UI_MouseEvent, UI_PopMenu,
     UI_ProportionalSizeScale, UI_ProportionalStringWidth, UI_PushMenu, UI_Refresh,
     UI_SetActiveMenu, UI_SetColor, UI_Shutdown,
 };
@@ -66,6 +72,7 @@ use ui_startserver::{
 use ui_team::{TeamMain_Cache, UI_TeamMainMenu};
 use ui_teamorders::{UI_TeamOrdersMenu, UI_TeamOrdersMenu_f};
 use ui_video::{DriverInfo_Cache, GraphicsOptions_Cache, UI_GraphicsOptionsMenu};
+extern crate libc;
 
 #[no_mangle]
 pub static mut bytedirs: [vec3_t; 162] = [
@@ -1077,6 +1084,18 @@ pub unsafe extern "C" fn ProjectPointOnPlane(
     inv_denom = *normal.offset(0isize) * *normal.offset(0isize)
         + *normal.offset(1isize) * *normal.offset(1isize)
         + *normal.offset(2isize) * *normal.offset(2isize);
+    if Q_fabs(inv_denom) != 0.0f32 {
+    } else {
+        __assert_fail(
+            b"Q_fabs(inv_denom) != 0.0f\x00" as *const u8 as *const libc::c_char,
+            b"code/qcommon/q_math.c\x00" as *const u8 as *const libc::c_char,
+            450i32 as libc::c_uint,
+            (*::std::mem::transmute::<&[u8; 64], &[libc::c_char; 64]>(
+                b"void ProjectPointOnPlane(vec_t *, const vec_t *, const vec_t *)\x00",
+            ))
+            .as_ptr(),
+        );
+    }
     inv_denom = 1.0f32 / inv_denom;
     d = (*normal.offset(0isize) * *p.offset(0isize)
         + *normal.offset(1isize) * *p.offset(1isize)

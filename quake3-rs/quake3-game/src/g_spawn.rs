@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -96,7 +103,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -109,6 +115,7 @@ use q_shared_h::{
 };
 use stddef_h::size_t;
 use stdlib::{atof, atoi, memcpy, sscanf, strcmp, strlen, strstr};
+extern crate libc;
 
 //
 // g_spawn.c
@@ -597,9 +604,9 @@ pub unsafe extern "C" fn G_ParseField(
                     sscanf(
                         value,
                         b"%f %f %f\x00" as *const u8 as *const libc::c_char,
-                        &mut vec[0usize] as *mut vec_t,
-                        &mut vec[1usize] as *mut vec_t,
-                        &mut vec[2usize] as *mut vec_t,
+                        &mut *vec.as_mut_ptr().offset(0isize) as *mut vec_t,
+                        &mut *vec.as_mut_ptr().offset(1isize) as *mut vec_t,
+                        &mut *vec.as_mut_ptr().offset(2isize) as *mut vec_t,
                     );
                     *(b.offset((*f).ofs as isize) as *mut libc::c_float).offset(0isize) =
                         vec[0usize];
@@ -962,8 +969,6 @@ unsafe extern "C" fn run_static_initializers() {
 #[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
 #[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
 static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];
-pub const F_INT: fieldtype_t = 0;
-pub const F_ANGLEHACK: fieldtype_t = 4;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct field_t {
@@ -971,8 +976,8 @@ pub struct field_t {
     pub ofs: size_t,
     pub type_0: fieldtype_t,
 }
-pub const F_FLOAT: fieldtype_t = 1;
-pub const F_STRING: fieldtype_t = 2;
+pub const F_INT: fieldtype_t = 0;
+pub const F_ANGLEHACK: fieldtype_t = 4;
 pub const F_VECTOR: fieldtype_t = 3;
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -981,3 +986,5 @@ pub struct spawn_t {
     pub spawn: Option<unsafe extern "C" fn(_: *mut gentity_t) -> ()>,
 }
 pub type fieldtype_t = libc::c_uint;
+pub const F_FLOAT: fieldtype_t = 1;
+pub const F_STRING: fieldtype_t = 2;

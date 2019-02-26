@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(custom_attribute, label_break_value, libc)]
 use ai_main::{
     bot_developer, BotAILoadMap, BotAISetup, BotAISetupClient, BotAIShutdown, BotAIShutdownClient,
     BotAIStartFrame, BotInterbreedEndMatch, BotTestAAS,
@@ -79,11 +86,11 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_shared_h::{
     byte, cplane_s, cplane_t, floatint_t, qboolean, qfalse, qtrue, vec3_t, vec4_t, vec_t,
 };
 use stdlib::{__assert_fail, acos, atan2, cos, fabs, memcpy, memset, sin, sqrt};
+extern crate libc;
 
 #[no_mangle]
 pub static mut bytedirs: [vec3_t; 162] = [

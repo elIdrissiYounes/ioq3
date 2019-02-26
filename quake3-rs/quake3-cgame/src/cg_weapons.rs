@@ -1,3 +1,13 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast,
+           custom_attribute,
+           libc,
+           ptr_wrapping_offset_from)]
 use bg_misc::{
     bg_itemlist, bg_numItems, BG_AddPredictableEventToPlayerstate, BG_CanItemBeGrabbed,
     BG_EvaluateTrajectory, BG_EvaluateTrajectoryDelta, BG_FindItemForHoldable,
@@ -106,7 +116,6 @@ use cg_view::{
     CG_TestModelNextSkin_f, CG_TestModelPrevFrame_f, CG_TestModelPrevSkin_f, CG_TestModel_f,
     CG_ZoomDown_f, CG_ZoomUp_f,
 };
-use libc;
 use q_math::{
     axisDefault, colorWhite, g_color_table, vec3_origin, vectoangles, AngleMod, AngleNormalize180,
     AngleSubtract, AngleVectors, AnglesSubtract, AnglesToAxis, AxisClear, AxisCopy, ByteToDir,
@@ -129,6 +138,7 @@ use tr_types_h::{
     RT_MAX_REF_ENTITY_TYPE, RT_MODEL, RT_POLY, RT_PORTALSURFACE, RT_RAIL_CORE, RT_RAIL_RINGS,
     RT_SPRITE, TC_NONE, TC_S3TC, TC_S3TC_ARB,
 };
+extern crate libc;
 
 unsafe extern "C" fn VectorLength(mut v: *const vec_t) -> vec_t {
     return sqrt(
@@ -261,7 +271,7 @@ pub unsafe extern "C" fn CG_RegisterWeapon(mut weaponNum: libc::c_int) {
     let mut mins: vec3_t = [0.; 3];
     let mut maxs: vec3_t = [0.; 3];
     let mut i: libc::c_int = 0;
-    weaponInfo = &mut cg_weapons[weaponNum as usize] as *mut weaponInfo_t;
+    weaponInfo = &mut *cg_weapons.as_mut_ptr().offset(weaponNum as isize) as *mut weaponInfo_t;
     if weaponNum == 0i32 {
         return;
     }
@@ -1072,7 +1082,7 @@ pub unsafe extern "C" fn CG_RegisterItemVisuals(mut itemNum: libc::c_int) {
             bg_numItems - 1i32,
         );
     }
-    itemInfo = &mut cg_items[itemNum as usize] as *mut itemInfo_t;
+    itemInfo = &mut *cg_items.as_mut_ptr().offset(itemNum as isize) as *mut itemInfo_t;
     if 0 != (*itemInfo).registered as u64 {
         return;
     }
@@ -1112,7 +1122,7 @@ pub unsafe extern "C" fn CG_FireWeapon(mut cent: *mut centity_t) {
             b"CG_FireWeapon: ent->weapon >= WP_NUM_WEAPONS\x00" as *const u8 as *const libc::c_char,
         );
     }
-    weap = &mut cg_weapons[(*ent).weapon as usize] as *mut weaponInfo_t;
+    weap = &mut *cg_weapons.as_mut_ptr().offset((*ent).weapon as isize) as *mut weaponInfo_t;
     (*cent).muzzleFlashTime = cg.time;
     if (*ent).weapon == WP_LIGHTNING as libc::c_int {
         if 0 != (*cent).pe.lightningFiring {
@@ -1804,7 +1814,7 @@ unsafe extern "C" fn CG_CalcMuzzlePoint(
         *muzzle.offset(2isize) = *muzzle.offset(2isize) + forward[2usize] * 14i32 as libc::c_float;
         return qtrue;
     }
-    cent = &mut cg_entities[entityNum as usize] as *mut centity_t;
+    cent = &mut *cg_entities.as_mut_ptr().offset(entityNum as isize) as *mut centity_t;
     if 0 == (*cent).currentValid as u64 {
         return qfalse;
     }
@@ -2005,7 +2015,7 @@ pub unsafe extern "C" fn CG_AddViewWeapon(mut ps: *mut playerState_t) {
             origin[2usize] =
                 origin[2usize] + cg.refdef.viewaxis[2usize][2usize] * -8i32 as libc::c_float;
             CG_LightningBolt(
-                &mut cg_entities[(*ps).clientNum as usize],
+                &mut *cg_entities.as_mut_ptr().offset((*ps).clientNum as isize),
                 origin.as_mut_ptr(),
             );
         }
@@ -2021,7 +2031,7 @@ pub unsafe extern "C" fn CG_AddViewWeapon(mut ps: *mut playerState_t) {
     }
     cent = &mut cg.predictedPlayerEntity;
     CG_RegisterWeapon((*ps).weapon);
-    weapon = &mut cg_weapons[(*ps).weapon as usize] as *mut weaponInfo_t;
+    weapon = &mut *cg_weapons.as_mut_ptr().offset((*ps).weapon as isize) as *mut weaponInfo_t;
     memset(
         &mut hand as *mut refEntity_t as *mut libc::c_void,
         0i32,
@@ -2046,7 +2056,10 @@ pub unsafe extern "C" fn CG_AddViewWeapon(mut ps: *mut playerState_t) {
         hand.frame = hand.oldframe;
         hand.backlerp = 0i32 as libc::c_float
     } else {
-        ci = &mut cgs.clientinfo[(*cent).currentState.clientNum as usize] as *mut clientInfo_t;
+        ci = &mut *cgs
+            .clientinfo
+            .as_mut_ptr()
+            .offset((*cent).currentState.clientNum as isize) as *mut clientInfo_t;
         hand.frame = CG_MapTorsoToWeaponFrame(ci, (*cent).pe.torso.frame);
         hand.oldframe = CG_MapTorsoToWeaponFrame(ci, (*cent).pe.torso.oldFrame);
         hand.backlerp = (*cent).pe.torso.backlerp
@@ -2143,7 +2156,7 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
     };
     weaponNum = (*cent).currentState.weapon as weapon_t;
     CG_RegisterWeapon(weaponNum as libc::c_int);
-    weapon = &mut cg_weapons[weaponNum as usize] as *mut weaponInfo_t;
+    weapon = &mut *cg_weapons.as_mut_ptr().offset(weaponNum as isize) as *mut weaponInfo_t;
     memset(
         &mut gun as *mut refEntity_t as *mut libc::c_void,
         0i32,
@@ -2155,8 +2168,11 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
     gun.shadowPlane = (*parent).shadowPlane;
     gun.renderfx = (*parent).renderfx;
     if weaponNum as libc::c_uint == WP_RAILGUN as libc::c_int as libc::c_uint {
-        let mut ci: *mut clientInfo_t =
-            &mut cgs.clientinfo[(*cent).currentState.clientNum as usize] as *mut clientInfo_t;
+        let mut ci: *mut clientInfo_t = &mut *cgs
+            .clientinfo
+            .as_mut_ptr()
+            .offset((*cent).currentState.clientNum as isize)
+            as *mut clientInfo_t;
         if (*cent).pe.railFireTime + 1500i32 > cg.time {
             let mut scale: libc::c_int = 255i32 * (cg.time - (*cent).pe.railFireTime) / 1500i32;
             gun.shaderRGBA[0usize] = ((*ci).c1RGBA[0usize] as libc::c_int * scale >> 8i32) as byte;
@@ -2265,7 +2281,9 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
         );
         CG_AddWeaponWithPowerups(&mut barrel, (*cent).currentState.powerups);
     }
-    nonPredictedCent = &mut cg_entities[(*cent).currentState.clientNum as usize] as *mut centity_t;
+    nonPredictedCent = &mut *cg_entities
+        .as_mut_ptr()
+        .offset((*cent).currentState.clientNum as isize) as *mut centity_t;
     if nonPredictedCent.wrapping_offset_from(cg_entities.as_mut_ptr()) as libc::c_long
         != (*cent).currentState.clientNum as libc::c_long
     {
@@ -2303,7 +2321,10 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
     AnglesToAxis(angles.as_mut_ptr() as *const vec_t, flash.axis.as_mut_ptr());
     if weaponNum as libc::c_uint == WP_RAILGUN as libc::c_int as libc::c_uint {
         let mut ci_0: *mut clientInfo_t = 0 as *mut clientInfo_t;
-        ci_0 = &mut cgs.clientinfo[(*cent).currentState.clientNum as usize] as *mut clientInfo_t;
+        ci_0 = &mut *cgs
+            .clientinfo
+            .as_mut_ptr()
+            .offset((*cent).currentState.clientNum as isize) as *mut clientInfo_t;
         flash.shaderRGBA[0usize] = (255i32 as libc::c_float * (*ci_0).color1[0usize]) as byte;
         flash.shaderRGBA[1usize] = (255i32 as libc::c_float * (*ci_0).color1[1usize]) as byte;
         flash.shaderRGBA[2usize] = (255i32 as libc::c_float * (*ci_0).color1[2usize]) as byte

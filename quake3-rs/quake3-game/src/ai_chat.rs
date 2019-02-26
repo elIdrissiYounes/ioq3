@@ -1,3 +1,10 @@
+#![allow(dead_code,
+         mutable_transmutes,
+         non_camel_case_types,
+         non_snake_case,
+         non_upper_case_globals,
+         unused_mut)]
+#![feature(const_raw_ptr_to_usize_cast, custom_attribute, libc)]
 use ai_dmq3::{
     bot_fastchat, bot_nochat, gametype, BotEntityVisible, BotIsDead, BotIsObserver, BotSameTeam,
     ClientName, EasyClientName, EntityIsDead, EntityIsInvisible, EntityIsShooting, TeamPlayIsOn,
@@ -112,7 +119,6 @@ use g_weapon::{
     CheckGauntletAttack, FireWeapon, LogAccuracyHit, SnapVectorTowards, Weapon_HookFree,
     Weapon_HookThink,
 };
-use libc;
 use q_math::{
     vec3_origin, vectoangles, AddPointToBounds, AngleMod, AngleNormalize180, AngleVectors,
     DirToByte, PerpendicularVector, Q_crandom, RadiusFromBounds, VectorNormalize, VectorNormalize2,
@@ -124,6 +130,7 @@ use q_shared_h::{
     TR_LINEAR, TR_LINEAR_STOP, TR_SINE, TR_STATIONARY,
 };
 use stdlib::{atoi, rand, strcpy, strlen, strncpy};
+extern crate libc;
 
 /*
 ===========================================================================
@@ -2250,6 +2257,9 @@ pub unsafe extern "C" fn BotChatTest(mut bs: *mut bot_state_t) {
         i += 1
     }
 }
+pub type bot_matchvariable_t = bot_matchvariable_s;
+pub type bot_match_t = bot_match_s;
+pub type bot_consolemessage_t = bot_consolemessage_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct bot_consolemessage_s {
@@ -2274,6 +2284,3 @@ pub struct bot_matchvariable_s {
     pub offset: libc::c_char,
     pub length: libc::c_int,
 }
-pub type bot_matchvariable_t = bot_matchvariable_s;
-pub type bot_consolemessage_t = bot_consolemessage_s;
-pub type bot_match_t = bot_match_s;
