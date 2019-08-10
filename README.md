@@ -62,11 +62,11 @@ Dependencies needed on Ubuntu 18.04 needed to build the project:
 How to translate from scratch:
 
     # Translating the shared objects:
-    $ intercept-build make USE_INTERNAL_LIBS=0 BUILD_{UI,CGAME,QAGAME}=1 debug
+    $ intercept-build make USE_INTERNAL_LIBS=0 BUILD_ONLY_{UI,CGAME,QAGAME}=1 debug
     $ c2rust transpile compile_commands.json --emit-build-files --build-directory-contents full --build-directory-name quake3-{ui,cgame,qagame}
 
     # Translating the executable:
-    $ intercept-build make USE_INTERNAL_LIBS=0 BUILD_CLIENT=1 debug
+    $ intercept-build make USE_INTERNAL_LIBS=0 BUILD_ONLY_CLIENT=1 debug
     $ c2rust transpile compile_commands.json --emit-build-files --build-directory-contents full --build-directory-name quake3-client --main sys_main
 
 After translation it is necessary to remove some modules from `lib/main.rs`, and
