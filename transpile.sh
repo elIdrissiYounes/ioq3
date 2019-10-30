@@ -23,9 +23,6 @@ make BUILD_MISSIONPACK=0 BUILD_SERVER=0 BUILD_GAME_SO=1 BUILD_GAME_QVM=0 BUILD_R
 $C2RUST/scripts/convert_build_commands.py $BUILD_COMMANDS_DIRECTORY $CC_DB
 $C2RUST/target/release/c2rust transpile $CC_DB -e -o $OUTPUT_DIR --overwrite-existing
 
-# Until we push c2rust-asm-casts to crates.io, we need to use the local version
-sed -i -e "s#c2rust-asm-casts = \"0.1\"#c2rust-asm-casts = { path = \"$C2RUST/c2rust-asm-casts\" }#" $OUTPUT_DIR/ioquake3/Cargo.toml
-
 # Until we implemented custom alignments for globals, we need to fix
 # asm/snapvector.rs manually
 patch -d $OUTPUT_DIR -p1 < $SCRIPT_DIR/asm-snapvector.patch
