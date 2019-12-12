@@ -25,4 +25,4 @@ $C2RUST/target/release/c2rust transpile $CC_DB -e -o $OUTPUT_DIR --overwrite-exi
 
 # Until we implemented custom alignments for globals, we need to fix
 # asm/snapvector.rs manually
-patch -d $OUTPUT_DIR -p1 < $SCRIPT_DIR/asm-snapvector.patch
+patch -d $OUTPUT_DIR -p2 < $SCRIPT_DIR/asm-snapvector.patch

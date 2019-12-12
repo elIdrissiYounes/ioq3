@@ -1,27 +1,27 @@
---- quake3-rs/ioquake3/src/asm/snapvector.rs	2019-10-22 15:20:33.954900536 -0700
-+++ quake3-rs-new/ioquake3/src/asm/snapvector.rs	2019-10-17 19:48:10.573082763 -0700
-@@ -25,8 +25,11 @@
-  * GNU inline asm version of qsnapvector
+diff --git a/quake3-rs/ioquake3/src/asm/snapvector.rs b/quake3-rs/ioquake3/src/asm/snapvector.rs
+index 6978b774..e0ef17b5 100644
+--- a/quake3-rs/ioquake3/src/asm/snapvector.rs
++++ b/quake3-rs/ioquake3/src/asm/snapvector.rs
+@@ -28,9 +28,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   * See MASM snapvector.asm for commentary
   */
--static mut ssemask: [libc::c_uchar; 16] =
--    [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0];
+ 
+-static mut ssemask: [libc::c_uchar; 16] = [
 +#[repr(C, align(16))]
 +struct SseMask([u8; 16]);
 +static mut ssemask: SseMask = SseMask([
-+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0,
+     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0,
+-];
 +]);
  /*
  ===========================================================================
  Copyright (C) 1999-2005 Id Software, Inc.
-@@ -119,8 +122,8 @@
- #[no_mangle]
- pub unsafe extern "C" fn qsnapvectorsse(mut vec: *mut vec_t) {
+@@ -124,7 +126,7 @@ MATHLIB
+ 
+ pub unsafe extern "C" fn qsnapvectorsse(mut vec: *mut crate::src::qcommon::q_shared::vec_t) {
      asm!("movaps ($0), %xmm1\nmovups ($1), %xmm0\nmovaps %xmm0, %xmm2\nandps %xmm1, %xmm0\nandnps %xmm2, %xmm1\ncvtps2dq %xmm0, %xmm0\ncvtdq2ps %xmm0, %xmm0\norps %xmm1, %xmm0\nmovups %xmm0, ($1)\n"
--         : : "r" (ssemask.as_mut_ptr()), "r" (vec) : "memory", "%xmm0",
--         "%xmm1", "%xmm2" : "volatile");
-+         : : "r" (ssemask.0.as_mut_ptr()) , "r" (vec) : "memory" , "%xmm0" ,
-+         "%xmm1" , "%xmm2" : "volatile");
+-     : : "r" (ssemask.as_mut_ptr()), "r" (vec) : "memory", "xmm0", "xmm1",
++     : : "r" (ssemask.0.as_mut_ptr()), "r" (vec) : "memory", "xmm0", "xmm1",
+      "xmm2" : "volatile");
  }
  #[no_mangle]
- pub unsafe extern "C" fn qsnapvectorx87(mut vec: *mut vec_t) {
