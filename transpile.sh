@@ -4,7 +4,7 @@ set -e
 
 SCRIPT_DIR=$(dirname $(readlink -f $0))
 
-if [[ ! -d "$1" ]]; then
+if [[ ! -d "$1" ]] || [[ ! -f "$2" ]] || [[ ! -x "$2" ]]; then
     echo -e "Usage: $0 <path/to/C2Rust repository> <path/to/c2rust binary>"
     exit 1
 fi
