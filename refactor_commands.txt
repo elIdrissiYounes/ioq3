@@ -1,0 +1,32 @@
+# These are valid for LP64 systems, e.g., Linux and Mac OS,
+# but not Windows which is LLP64 so these are always u32/i32
+rewrite_ty 'libc::c_ulong'     'usize' ;
+rewrite_ty 'libc::c_long'      'isize' ;
+type_fix_rules '*, u16, usize => __old as usize' '*, usize, u16 => __old as u16' ;
+type_fix_rules '*, u32, usize => __old as usize' '*, usize, u32 => __old as u32' ;
+type_fix_rules '*, u64, usize => __old as usize' '*, usize, u64 => __old as u64' ;
+type_fix_rules '*, i16, isize => __old as isize' '*, isize, i16 => __old as i16' ;
+type_fix_rules '*, i32, isize => __old as isize' '*, isize, i32 => __old as i32' ;
+type_fix_rules '*, i64, isize => __old as isize' '*, isize, i64 => __old as i64' ;
+commit ;
+
+# Replace libc types with Rust equivalents
+# These need to happen after the usize rewrites
+rewrite_ty 'libc::c_uchar'     'u8' ;
+rewrite_ty 'libc::c_schar'     'i8' ;
+rewrite_ty 'libc::c_ushort'    'u16' ;
+rewrite_ty 'libc::c_short'     'i16' ;
+rewrite_ty 'libc::c_uint'      'u32' ;
+rewrite_ty 'libc::c_int'       'i32' ;
+rewrite_ty 'libc::c_ulonglong' 'u64' ;
+rewrite_ty 'libc::c_longlong'  'i64' ;
+rewrite_ty 'libc::c_float'     'f32' ;
+rewrite_ty 'libc::c_double'    'f64' ;
+rewrite_ty 'libc::c_char'      'i8' ;
+commit ;
+
+remove_redundant_casts ;
+commit ;
+
+remove_literal_suffixes ;
+commit ;
