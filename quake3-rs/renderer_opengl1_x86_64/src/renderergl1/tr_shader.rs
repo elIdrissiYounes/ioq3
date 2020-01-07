@@ -3,8 +3,8 @@ use ::libc;
 pub mod stdlib_float_h {
     #[inline]
 
-    pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+    pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
+        return crate::stdlib::strtod(__nptr,  0 as *mut *mut i8);
     }
     use crate::stdlib::strtod;
 }
@@ -12,8 +12,8 @@ pub mod stdlib_float_h {
 pub mod ctype_h {
     #[inline]
 
-    pub unsafe extern "C" fn tolower(mut __c: libc::c_int) -> libc::c_int {
-        return if __c >= -(128 as libc::c_int) && __c < 256 as libc::c_int {
+    pub unsafe extern "C" fn tolower(mut __c: i32) -> i32 {
+        return if __c >= -(128) && __c < 256 {
             *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
         } else {
             __c
@@ -325,19 +325,19 @@ use crate::stdlib::sin;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct collapse_t {
-    pub blendA: libc::c_int,
-    pub blendB: libc::c_int,
-    pub multitextureEnv: libc::c_int,
-    pub multitextureBlend: libc::c_int,
+    pub blendA: i32,
+    pub blendB: i32,
+    pub multitextureEnv: i32,
+    pub multitextureBlend: i32,
 }
 
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct infoParm_t {
-    pub name: *mut libc::c_char,
-    pub clearSolid: libc::c_int,
-    pub surfaceFlags: libc::c_int,
-    pub contents: libc::c_int,
+    pub name: *mut i8,
+    pub clearSolid: i32,
+    pub surfaceFlags: i32,
+    pub contents: i32,
 }
 /*
 ===========================================================================
@@ -362,20 +362,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 // tr_shader.c -- this file deals with the parsing and definition of shaders
 
-static mut s_shaderText: *mut libc::c_char = 0 as *const libc::c_char as *mut libc::c_char;
+static mut s_shaderText: *mut i8 =  0 as *mut i8;
 // the shader is parsed into these global variables, then copied into
 // dynamically allocated memory if it is valid.
 
 static mut stages: [crate::tr_local_h::shaderStage_t; 8] = [crate::tr_local_h::shaderStage_t {
     active: crate::src::qcommon::q_shared::qfalse,
     bundle: [crate::tr_local_h::textureBundle_t {
-        image: [0 as *const crate::tr_common_h::image_t as *mut crate::tr_common_h::image_t; 8],
+        image: [0 as *mut crate::tr_common_h::image_t; 8],
         numImageAnimations: 0,
         imageAnimationSpeed: 0.,
         tcGen: crate::tr_local_h::TCGEN_BAD,
         tcGenVectors: [[0.; 3]; 2],
         numTexMods: 0,
-        texMods: 0 as *const crate::tr_local_h::texModInfo_t
+        texMods:  0
             as *mut crate::tr_local_h::texModInfo_t,
         videoMapHandle: 0,
         isLightmap: crate::src::qcommon::q_shared::qfalse,
@@ -417,8 +417,8 @@ static mut shader: crate::tr_local_h::shader_t = crate::tr_local_h::shader_t {
     isSky: crate::src::qcommon::q_shared::qfalse,
     sky: crate::tr_local_h::skyParms_t {
         cloudHeight: 0.,
-        outerbox: [0 as *const crate::tr_common_h::image_t as *mut crate::tr_common_h::image_t; 6],
-        innerbox: [0 as *const crate::tr_common_h::image_t as *mut crate::tr_common_h::image_t; 6],
+        outerbox: [0 as *mut crate::tr_common_h::image_t; 6],
+        innerbox: [0 as *mut crate::tr_common_h::image_t; 6],
     },
     fogParms: crate::tr_local_h::fogParms_t {
         color: [0.; 3],
@@ -452,13 +452,13 @@ static mut shader: crate::tr_local_h::shader_t = crate::tr_local_h::shader_t {
         bulgeSpeed: 0.,
     }; 3],
     numUnfoggedPasses: 0,
-    stages: [0 as *const crate::tr_local_h::shaderStage_t as *mut crate::tr_local_h::shaderStage_t;
+    stages: [0 as *mut crate::tr_local_h::shaderStage_t;
         8],
     optimalStageIteratorFunc: None,
     clampTime: 0.,
     timeOffset: 0.,
-    remappedShader: 0 as *const crate::tr_local_h::shader_s as *mut crate::tr_local_h::shader_s,
-    next: 0 as *const crate::tr_local_h::shader_s as *mut crate::tr_local_h::shader_s,
+    remappedShader:  0 as *mut crate::tr_local_h::shader_s,
+    next:  0 as *mut crate::tr_local_h::shader_s,
 };
 
 static mut texMods: [[crate::tr_local_h::texModInfo_t; 4]; 8] = [[crate::tr_local_h::texModInfo_t {
@@ -478,10 +478,10 @@ static mut texMods: [[crate::tr_local_h::texModInfo_t; 4]; 8] = [[crate::tr_loca
 }; 4]; 8];
 
 static mut hashTable: [*mut crate::tr_local_h::shader_t; 1024] =
-    [0 as *const crate::tr_local_h::shader_t as *mut crate::tr_local_h::shader_t; 1024];
+    [0 as *mut crate::tr_local_h::shader_t; 1024];
 
-static mut shaderTextHashTable: [*mut *mut libc::c_char; 2048] =
-    [0 as *const *mut libc::c_char as *mut *mut libc::c_char; 2048];
+static mut shaderTextHashTable: [*mut *mut i8; 2048] =
+    [0 as *mut *mut i8; 2048];
 /*
 ================
 return a hash value for the filename
@@ -489,92 +489,92 @@ return a hash value for the filename
 */
 
 unsafe extern "C" fn generateHashValue(
-    mut fname: *const libc::c_char,
-    size: libc::c_int,
-) -> libc::c_long {
-    let mut i: libc::c_int = 0; // don't include extension
-    let mut hash: libc::c_long = 0; // damn path names
-    let mut letter: libc::c_char = 0; // damn path names
-    hash = 0 as libc::c_int as libc::c_long;
-    i = 0 as libc::c_int;
-    while *fname.offset(i as isize) as libc::c_int != '\u{0}' as i32 {
+    mut fname: *const i8,
+    size: i32,
+) -> isize {
+    let mut i: i32 = 0; // don't include extension
+    let mut hash: isize = 0; // damn path names
+    let mut letter: i8 = 0; // damn path names
+    hash = 0;
+    i = 0;
+    while *fname.offset(i as isize) as i32 != '\u{0}' as i32 {
         letter = ({
-            let mut __res: libc::c_int = 0;
-            if ::std::mem::size_of::<libc::c_char>() as libc::c_ulong
-                > 1 as libc::c_int as libc::c_ulong
+            let mut __res: i32 = 0;
+            if  ::std::mem::size_of::<i8>()
+                > 1
             {
                 if 0 != 0 {
-                    let mut __c: libc::c_int = *fname.offset(i as isize) as libc::c_int;
-                    __res = if __c < -(128 as libc::c_int) || __c > 255 as libc::c_int {
+                    let mut __c: i32 = *fname.offset(i as isize) as i32;
+                    __res = if __c < -(128) || __c > 255 {
                         __c
                     } else {
                         *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
                     }
                 } else {
-                    __res = tolower(*fname.offset(i as isize) as libc::c_int)
+                    __res = tolower(*fname.offset(i as isize) as i32)
                 }
             } else {
                 __res = *(*crate::stdlib::__ctype_tolower_loc())
-                    .offset(*fname.offset(i as isize) as libc::c_int as isize)
+                    .offset(*fname.offset(i as isize) as i32 as isize)
             }
             __res
-        }) as libc::c_char;
-        if letter as libc::c_int == '.' as i32 {
+        }) as i8;
+        if letter as i32 == '.' as i32 {
             break;
         }
-        if letter as libc::c_int == '\\' as i32 {
-            letter = '/' as i32 as libc::c_char
+        if letter as i32 == '\\' as i32 {
+            letter =  '/' as i8
         }
-        if letter as libc::c_int == '/' as i32 {
-            letter = '/' as i32 as libc::c_char
+        if letter as i32 == '/' as i32 {
+            letter =  '/' as i8
         }
-        hash += letter as libc::c_long * (i + 119 as libc::c_int) as libc::c_long;
+        hash += letter as isize * (i + 119) as isize;
         i += 1
     }
-    hash = hash ^ hash >> 10 as libc::c_int ^ hash >> 20 as libc::c_int;
-    hash &= (size - 1 as libc::c_int) as libc::c_long;
+    hash = hash ^ hash >> 10 ^ hash >> 20;
+    hash &= (size - 1i32) as isize;
     return hash;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn R_RemapShader(
-    mut shaderName: *const libc::c_char,
-    mut newShaderName: *const libc::c_char,
-    mut timeOffset: *const libc::c_char,
+    mut shaderName: *const i8,
+    mut newShaderName: *const i8,
+    mut timeOffset: *const i8,
 ) {
-    let mut strippedName: [libc::c_char; 64] = [0; 64];
-    let mut hash: libc::c_int = 0;
+    let mut strippedName: [i8; 64] = [0; 64];
+    let mut hash: i32 = 0;
     let mut sh: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
     let mut sh2: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
     let mut h: crate::src::qcommon::q_shared::qhandle_t = 0;
     sh = R_FindShaderByName(shaderName);
     if sh.is_null() || sh == crate::src::renderergl1::tr_main::tr.defaultShader {
-        h = RE_RegisterShaderLightMap(shaderName, 0 as libc::c_int);
+        h = RE_RegisterShaderLightMap(shaderName, 0);
         sh = R_GetShaderByHandle(h)
     }
     if sh.is_null() || sh == crate::src::renderergl1::tr_main::tr.defaultShader {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: R_RemapShader: shader %s not found\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shaderName,
         );
         return;
     }
     sh2 = R_FindShaderByName(newShaderName);
     if sh2.is_null() || sh2 == crate::src::renderergl1::tr_main::tr.defaultShader {
-        h = RE_RegisterShaderLightMap(newShaderName, 0 as libc::c_int);
+        h = RE_RegisterShaderLightMap(newShaderName, 0);
         sh2 = R_GetShaderByHandle(h)
     }
     if sh2.is_null() || sh2 == crate::src::renderergl1::tr_main::tr.defaultShader {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: R_RemapShader: new shader %s not found\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             newShaderName,
         );
         return;
@@ -584,15 +584,16 @@ pub unsafe extern "C" fn R_RemapShader(
     crate::src::qcommon::q_shared::COM_StripExtension(
         shaderName,
         strippedName.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+        
+        ::std::mem::size_of::<[i8; 64]>() as i32,
     );
-    hash = generateHashValue(strippedName.as_mut_ptr(), 1024 as libc::c_int) as libc::c_int;
+    hash = generateHashValue(strippedName.as_mut_ptr(), 1024) as i32;
     sh = hashTable[hash as usize];
     while !sh.is_null() {
         if crate::src::qcommon::q_shared::Q_stricmp(
             (*sh).name.as_mut_ptr(),
             strippedName.as_mut_ptr(),
-        ) == 0 as libc::c_int
+        ) == 0
         {
             if sh != sh2 {
                 (*sh).remappedShader = sh2
@@ -613,55 +614,55 @@ ParseVector
 */
 
 unsafe extern "C" fn ParseVector(
-    mut text: *mut *mut libc::c_char,
-    mut count: libc::c_int,
-    mut v: *mut libc::c_float,
+    mut text: *mut *mut i8,
+    mut count: i32,
+    mut v: *mut f32,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut token: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut i: libc::c_int = 0;
+    let mut token: *mut i8 = 0 as *mut i8;
+    let mut i: i32 = 0;
     // FIXME: spaces are currently required after parens, should change parseext...
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if crate::stdlib::strcmp(token, b"(\x00" as *const u8 as *const libc::c_char) != 0 {
+    if crate::stdlib::strcmp(token, b"(\x00" as *const u8 as *const i8) != 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: missing parenthesis in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shader.name.as_mut_ptr(),
         );
         return crate::src::qcommon::q_shared::qfalse;
     }
-    i = 0 as libc::c_int;
+    i = 0;
     while i < count {
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) == 0 {
+        if *token.offset(0) == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing vector element in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return crate::src::qcommon::q_shared::qfalse;
         }
-        *v.offset(i as isize) = atof(token) as libc::c_float;
+        *v.offset(i as isize) = atof(token) as f32;
         i += 1
     }
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if crate::stdlib::strcmp(token, b")\x00" as *const u8 as *const libc::c_char) != 0 {
+    if crate::stdlib::strcmp(token, b")\x00" as *const u8 as *const i8) != 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: missing parenthesis in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shader.name.as_mut_ptr(),
         );
         return crate::src::qcommon::q_shared::qfalse;
@@ -674,40 +675,40 @@ NameToAFunc
 ===============
 */
 
-unsafe extern "C" fn NameToAFunc(mut funcname: *const libc::c_char) -> libc::c_uint {
+unsafe extern "C" fn NameToAFunc(mut funcname: *const i8) -> u32 {
     if crate::src::qcommon::q_shared::Q_stricmp(
         funcname,
-        b"GT0\x00" as *const u8 as *const libc::c_char,
+        b"GT0\x00" as *const u8 as *const i8,
     ) == 0
     {
-        return 0x10000000 as libc::c_int as libc::c_uint;
+        return 0x10000000u32;
     } else {
         if crate::src::qcommon::q_shared::Q_stricmp(
             funcname,
-            b"LT128\x00" as *const u8 as *const libc::c_char,
+            b"LT128\x00" as *const u8 as *const i8,
         ) == 0
         {
-            return 0x20000000 as libc::c_int as libc::c_uint;
+            return 0x20000000u32;
         } else {
             if crate::src::qcommon::q_shared::Q_stricmp(
                 funcname,
-                b"GE128\x00" as *const u8 as *const libc::c_char,
+                b"GE128\x00" as *const u8 as *const i8,
             ) == 0
             {
-                return 0x40000000 as libc::c_int as libc::c_uint;
+                return 0x40000000u32;
             }
         }
     }
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
-        crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+        crate::src::qcommon::q_shared::PRINT_WARNING as i32,
         b"WARNING: invalid alphaFunc name \'%s\' in shader \'%s\'\n\x00" as *const u8
-            as *const libc::c_char,
+            as *const i8,
         funcname,
         shader.name.as_mut_ptr(),
     );
-    return 0 as libc::c_int as libc::c_uint;
+    return 0u32;
 }
 /*
 ===============
@@ -715,71 +716,71 @@ NameToSrcBlendMode
 ===============
 */
 
-unsafe extern "C" fn NameToSrcBlendMode(mut name: *const libc::c_char) -> libc::c_int {
+unsafe extern "C" fn NameToSrcBlendMode(mut name: *const i8) -> i32 {
     if crate::src::qcommon::q_shared::Q_stricmp(
         name,
-        b"GL_ONE\x00" as *const u8 as *const libc::c_char,
+        b"GL_ONE\x00" as *const u8 as *const i8,
     ) == 0
     {
-        return 0x2 as libc::c_int;
+        return 0x2i32;
     } else {
         if crate::src::qcommon::q_shared::Q_stricmp(
             name,
-            b"GL_ZERO\x00" as *const u8 as *const libc::c_char,
+            b"GL_ZERO\x00" as *const u8 as *const i8,
         ) == 0
         {
-            return 0x1 as libc::c_int;
+            return 0x1i32;
         } else {
             if crate::src::qcommon::q_shared::Q_stricmp(
                 name,
-                b"GL_DST_COLOR\x00" as *const u8 as *const libc::c_char,
+                b"GL_DST_COLOR\x00" as *const u8 as *const i8,
             ) == 0
             {
-                return 0x3 as libc::c_int;
+                return 0x3i32;
             } else {
                 if crate::src::qcommon::q_shared::Q_stricmp(
                     name,
-                    b"GL_ONE_MINUS_DST_COLOR\x00" as *const u8 as *const libc::c_char,
+                    b"GL_ONE_MINUS_DST_COLOR\x00" as *const u8 as *const i8,
                 ) == 0
                 {
-                    return 0x4 as libc::c_int;
+                    return 0x4i32;
                 } else {
                     if crate::src::qcommon::q_shared::Q_stricmp(
                         name,
-                        b"GL_SRC_ALPHA\x00" as *const u8 as *const libc::c_char,
+                        b"GL_SRC_ALPHA\x00" as *const u8 as *const i8,
                     ) == 0
                     {
-                        return 0x5 as libc::c_int;
+                        return 0x5i32;
                     } else {
                         if crate::src::qcommon::q_shared::Q_stricmp(
                             name,
-                            b"GL_ONE_MINUS_SRC_ALPHA\x00" as *const u8 as *const libc::c_char,
+                            b"GL_ONE_MINUS_SRC_ALPHA\x00" as *const u8 as *const i8,
                         ) == 0
                         {
-                            return 0x6 as libc::c_int;
+                            return 0x6i32;
                         } else {
                             if crate::src::qcommon::q_shared::Q_stricmp(
                                 name,
-                                b"GL_DST_ALPHA\x00" as *const u8 as *const libc::c_char,
+                                b"GL_DST_ALPHA\x00" as *const u8 as *const i8,
                             ) == 0
                             {
-                                return 0x7 as libc::c_int;
+                                return 0x7i32;
                             } else {
                                 if crate::src::qcommon::q_shared::Q_stricmp(
                                     name,
                                     b"GL_ONE_MINUS_DST_ALPHA\x00" as *const u8
-                                        as *const libc::c_char,
+                                        as *const i8,
                                 ) == 0
                                 {
-                                    return 0x8 as libc::c_int;
+                                    return 0x8i32;
                                 } else {
                                     if crate::src::qcommon::q_shared::Q_stricmp(
                                         name,
                                         b"GL_SRC_ALPHA_SATURATE\x00" as *const u8
-                                            as *const libc::c_char,
+                                            as *const i8,
                                     ) == 0
                                     {
-                                        return 0x9 as libc::c_int;
+                                        return 0x9i32;
                                     }
                                 }
                             }
@@ -792,13 +793,13 @@ unsafe extern "C" fn NameToSrcBlendMode(mut name: *const libc::c_char) -> libc::
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
-        crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+        crate::src::qcommon::q_shared::PRINT_WARNING as i32,
         b"WARNING: unknown blend mode \'%s\' in shader \'%s\', substituting GL_ONE\n\x00"
-            as *const u8 as *const libc::c_char,
+            as *const u8 as *const i8,
         name,
         shader.name.as_mut_ptr(),
     );
-    return 0x2 as libc::c_int;
+    return 0x2;
 }
 /*
 ===============
@@ -806,63 +807,63 @@ NameToDstBlendMode
 ===============
 */
 
-unsafe extern "C" fn NameToDstBlendMode(mut name: *const libc::c_char) -> libc::c_int {
+unsafe extern "C" fn NameToDstBlendMode(mut name: *const i8) -> i32 {
     if crate::src::qcommon::q_shared::Q_stricmp(
         name,
-        b"GL_ONE\x00" as *const u8 as *const libc::c_char,
+        b"GL_ONE\x00" as *const u8 as *const i8,
     ) == 0
     {
-        return 0x20 as libc::c_int;
+        return 0x20i32;
     } else {
         if crate::src::qcommon::q_shared::Q_stricmp(
             name,
-            b"GL_ZERO\x00" as *const u8 as *const libc::c_char,
+            b"GL_ZERO\x00" as *const u8 as *const i8,
         ) == 0
         {
-            return 0x10 as libc::c_int;
+            return 0x10i32;
         } else {
             if crate::src::qcommon::q_shared::Q_stricmp(
                 name,
-                b"GL_SRC_ALPHA\x00" as *const u8 as *const libc::c_char,
+                b"GL_SRC_ALPHA\x00" as *const u8 as *const i8,
             ) == 0
             {
-                return 0x50 as libc::c_int;
+                return 0x50i32;
             } else {
                 if crate::src::qcommon::q_shared::Q_stricmp(
                     name,
-                    b"GL_ONE_MINUS_SRC_ALPHA\x00" as *const u8 as *const libc::c_char,
+                    b"GL_ONE_MINUS_SRC_ALPHA\x00" as *const u8 as *const i8,
                 ) == 0
                 {
-                    return 0x60 as libc::c_int;
+                    return 0x60i32;
                 } else {
                     if crate::src::qcommon::q_shared::Q_stricmp(
                         name,
-                        b"GL_DST_ALPHA\x00" as *const u8 as *const libc::c_char,
+                        b"GL_DST_ALPHA\x00" as *const u8 as *const i8,
                     ) == 0
                     {
-                        return 0x70 as libc::c_int;
+                        return 0x70i32;
                     } else {
                         if crate::src::qcommon::q_shared::Q_stricmp(
                             name,
-                            b"GL_ONE_MINUS_DST_ALPHA\x00" as *const u8 as *const libc::c_char,
+                            b"GL_ONE_MINUS_DST_ALPHA\x00" as *const u8 as *const i8,
                         ) == 0
                         {
-                            return 0x80 as libc::c_int;
+                            return 0x80i32;
                         } else {
                             if crate::src::qcommon::q_shared::Q_stricmp(
                                 name,
-                                b"GL_SRC_COLOR\x00" as *const u8 as *const libc::c_char,
+                                b"GL_SRC_COLOR\x00" as *const u8 as *const i8,
                             ) == 0
                             {
-                                return 0x30 as libc::c_int;
+                                return 0x30i32;
                             } else {
                                 if crate::src::qcommon::q_shared::Q_stricmp(
                                     name,
                                     b"GL_ONE_MINUS_SRC_COLOR\x00" as *const u8
-                                        as *const libc::c_char,
+                                        as *const i8,
                                 ) == 0
                                 {
-                                    return 0x40 as libc::c_int;
+                                    return 0x40i32;
                                 }
                             }
                         }
@@ -874,13 +875,13 @@ unsafe extern "C" fn NameToDstBlendMode(mut name: *const libc::c_char) -> libc::
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
-        crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+        crate::src::qcommon::q_shared::PRINT_WARNING as i32,
         b"WARNING: unknown blend mode \'%s\' in shader \'%s\', substituting GL_ONE\n\x00"
-            as *const u8 as *const libc::c_char,
+            as *const u8 as *const i8,
         name,
         shader.name.as_mut_ptr(),
     );
-    return 0x20 as libc::c_int;
+    return 0x20;
 }
 /*
 ===============
@@ -889,46 +890,46 @@ NameToGenFunc
 */
 
 unsafe extern "C" fn NameToGenFunc(
-    mut funcname: *const libc::c_char,
+    mut funcname: *const i8,
 ) -> crate::tr_local_h::genFunc_t {
     if crate::src::qcommon::q_shared::Q_stricmp(
         funcname,
-        b"sin\x00" as *const u8 as *const libc::c_char,
+        b"sin\x00" as *const u8 as *const i8,
     ) == 0
     {
         return crate::tr_local_h::GF_SIN;
     } else {
         if crate::src::qcommon::q_shared::Q_stricmp(
             funcname,
-            b"square\x00" as *const u8 as *const libc::c_char,
+            b"square\x00" as *const u8 as *const i8,
         ) == 0
         {
             return crate::tr_local_h::GF_SQUARE;
         } else {
             if crate::src::qcommon::q_shared::Q_stricmp(
                 funcname,
-                b"triangle\x00" as *const u8 as *const libc::c_char,
+                b"triangle\x00" as *const u8 as *const i8,
             ) == 0
             {
                 return crate::tr_local_h::GF_TRIANGLE;
             } else {
                 if crate::src::qcommon::q_shared::Q_stricmp(
                     funcname,
-                    b"sawtooth\x00" as *const u8 as *const libc::c_char,
+                    b"sawtooth\x00" as *const u8 as *const i8,
                 ) == 0
                 {
                     return crate::tr_local_h::GF_SAWTOOTH;
                 } else {
                     if crate::src::qcommon::q_shared::Q_stricmp(
                         funcname,
-                        b"inversesawtooth\x00" as *const u8 as *const libc::c_char,
+                        b"inversesawtooth\x00" as *const u8 as *const i8,
                     ) == 0
                     {
                         return crate::tr_local_h::GF_INVERSE_SAWTOOTH;
                     } else {
                         if crate::src::qcommon::q_shared::Q_stricmp(
                             funcname,
-                            b"noise\x00" as *const u8 as *const libc::c_char,
+                            b"noise\x00" as *const u8 as *const i8,
                         ) == 0
                         {
                             return crate::tr_local_h::GF_NOISE;
@@ -941,9 +942,9 @@ unsafe extern "C" fn NameToGenFunc(
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
-        crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+        crate::src::qcommon::q_shared::PRINT_WARNING as i32,
         b"WARNING: invalid genfunc name \'%s\' in shader \'%s\'\n\x00" as *const u8
-            as *const libc::c_char,
+            as *const i8,
         funcname,
         shader.name.as_mut_ptr(),
     );
@@ -956,19 +957,19 @@ ParseWaveForm
 */
 
 unsafe extern "C" fn ParseWaveForm(
-    mut text: *mut *mut libc::c_char,
+    mut text: *mut *mut i8,
     mut wave: *mut crate::tr_local_h::waveForm_t,
 ) {
-    let mut token: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut token: *mut i8 = 0 as *mut i8;
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+    if *token.offset(0) as i32 == 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: missing waveform parm in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shader.name.as_mut_ptr(),
         );
         return;
@@ -977,60 +978,60 @@ unsafe extern "C" fn ParseWaveForm(
     // BASE, AMP, PHASE, FREQ
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+    if *token.offset(0) as i32 == 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: missing waveform parm in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shader.name.as_mut_ptr(),
         );
         return;
     }
-    (*wave).base = atof(token) as libc::c_float;
+    (*wave).base = atof(token) as f32;
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+    if *token.offset(0) as i32 == 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: missing waveform parm in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shader.name.as_mut_ptr(),
         );
         return;
     }
-    (*wave).amplitude = atof(token) as libc::c_float;
+    (*wave).amplitude = atof(token) as f32;
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+    if *token.offset(0) as i32 == 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: missing waveform parm in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shader.name.as_mut_ptr(),
         );
         return;
     }
-    (*wave).phase = atof(token) as libc::c_float;
+    (*wave).phase = atof(token) as f32;
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+    if *token.offset(0) as i32 == 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: missing waveform parm in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shader.name.as_mut_ptr(),
         );
         return;
     }
-    (*wave).frequency = atof(token) as libc::c_float;
+    (*wave).frequency = atof(token) as f32;
 }
 /*
 ===================
@@ -1039,19 +1040,19 @@ ParseTexMod
 */
 
 unsafe extern "C" fn ParseTexMod(
-    mut _text: *mut libc::c_char,
+    mut _text: *mut i8,
     mut stage: *mut crate::tr_local_h::shaderStage_t,
 ) {
-    let mut token: *const libc::c_char = 0 as *const libc::c_char;
-    let mut text: *mut *mut libc::c_char = &mut _text;
+    let mut token: *const i8 = 0 as *const i8;
+    let mut text: *mut *mut i8 = &mut _text;
     let mut tmi: *mut crate::tr_local_h::texModInfo_t = 0 as *mut crate::tr_local_h::texModInfo_t;
-    if (*stage).bundle[0 as libc::c_int as usize].numTexMods == 4 as libc::c_int {
+    if (*stage).bundle[0].numTexMods == 4 {
         crate::src::renderergl1::tr_main::ri
             .Error
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
+            crate::src::qcommon::q_shared::ERR_DROP as i32,
             b"ERROR: too many tcMod stages in shader \'%s\'\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shader.name.as_mut_ptr(),
         );
         return;
@@ -1059,16 +1060,16 @@ unsafe extern "C" fn ParseTexMod(
     tmi = &mut *(*(*stage)
         .bundle
         .as_mut_ptr()
-        .offset(0 as libc::c_int as isize))
+        .offset(0))
     .texMods
     .offset(
         (*(*stage)
             .bundle
             .as_mut_ptr()
-            .offset(0 as libc::c_int as isize))
+            .offset(0))
         .numTexMods as isize,
     ) as *mut crate::tr_local_h::texModInfo_t;
-    (*stage).bundle[0 as libc::c_int as usize].numTexMods += 1;
+    (*stage).bundle[0].numTexMods += 1;
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
     //
@@ -1076,166 +1077,166 @@ unsafe extern "C" fn ParseTexMod(
     //
     if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"turb\x00" as *const u8 as *const libc::c_char,
+        b"turb\x00" as *const u8 as *const i8,
     ) == 0
     {
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing tcMod turb parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).wave.base = atof(token) as libc::c_float;
+        (*tmi).wave.base = atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing tcMod turb in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).wave.amplitude = atof(token) as libc::c_float;
+        (*tmi).wave.amplitude = atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing tcMod turb in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).wave.phase = atof(token) as libc::c_float;
+        (*tmi).wave.phase = atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing tcMod turb in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).wave.frequency = atof(token) as libc::c_float;
+        (*tmi).wave.frequency = atof(token) as f32;
         (*tmi).type_0 = crate::tr_local_h::TMOD_TURBULENT
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"scale\x00" as *const u8 as *const libc::c_char,
+        b"scale\x00" as *const u8 as *const i8,
     ) == 0
     {
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing scale parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).scale[0 as libc::c_int as usize] = atof(token) as libc::c_float;
+        (*tmi).scale[0] = atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing scale parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).scale[1 as libc::c_int as usize] = atof(token) as libc::c_float;
+        (*tmi).scale[1] = atof(token) as f32;
         (*tmi).type_0 = crate::tr_local_h::TMOD_SCALE
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"scroll\x00" as *const u8 as *const libc::c_char,
+        b"scroll\x00" as *const u8 as *const i8,
     ) == 0
     {
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing scale scroll parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).scroll[0 as libc::c_int as usize] = atof(token) as libc::c_float;
+        (*tmi).scroll[0] = atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing scale scroll parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).scroll[1 as libc::c_int as usize] = atof(token) as libc::c_float;
+        (*tmi).scroll[1] = atof(token) as f32;
         (*tmi).type_0 = crate::tr_local_h::TMOD_SCROLL
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"stretch\x00" as *const u8 as *const libc::c_char,
+        b"stretch\x00" as *const u8 as *const i8,
     ) == 0
     {
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing stretch parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
@@ -1245,198 +1246,198 @@ unsafe extern "C" fn ParseTexMod(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing stretch parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).wave.base = atof(token) as libc::c_float;
+        (*tmi).wave.base = atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing stretch parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).wave.amplitude = atof(token) as libc::c_float;
+        (*tmi).wave.amplitude = atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing stretch parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).wave.phase = atof(token) as libc::c_float;
+        (*tmi).wave.phase = atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing stretch parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).wave.frequency = atof(token) as libc::c_float;
+        (*tmi).wave.frequency = atof(token) as f32;
         (*tmi).type_0 = crate::tr_local_h::TMOD_STRETCH
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"transform\x00" as *const u8 as *const libc::c_char,
+        b"transform\x00" as *const u8 as *const i8,
     ) == 0
     {
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing transform parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).matrix[0 as libc::c_int as usize][0 as libc::c_int as usize] =
-            atof(token) as libc::c_float;
+        (*tmi).matrix[0][0] =
+            atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing transform parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).matrix[0 as libc::c_int as usize][1 as libc::c_int as usize] =
-            atof(token) as libc::c_float;
+        (*tmi).matrix[0][1] =
+            atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing transform parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).matrix[1 as libc::c_int as usize][0 as libc::c_int as usize] =
-            atof(token) as libc::c_float;
+        (*tmi).matrix[1][0] =
+            atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing transform parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).matrix[1 as libc::c_int as usize][1 as libc::c_int as usize] =
-            atof(token) as libc::c_float;
+        (*tmi).matrix[1][1] =
+            atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing transform parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).translate[0 as libc::c_int as usize] = atof(token) as libc::c_float;
+        (*tmi).translate[0] = atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing transform parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).translate[1 as libc::c_int as usize] = atof(token) as libc::c_float;
+        (*tmi).translate[1] = atof(token) as f32;
         (*tmi).type_0 = crate::tr_local_h::TMOD_TRANSFORM
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"rotate\x00" as *const u8 as *const libc::c_char,
+        b"rotate\x00" as *const u8 as *const i8,
     ) == 0
     {
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing tcMod rotate parms in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*tmi).rotateSpeed = atof(token) as libc::c_float;
+        (*tmi).rotateSpeed = atof(token) as f32;
         (*tmi).type_0 = crate::tr_local_h::TMOD_ROTATE
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"entityTranslate\x00" as *const u8 as *const libc::c_char,
+        b"entityTranslate\x00" as *const u8 as *const i8,
     ) == 0
     {
         (*tmi).type_0 = crate::tr_local_h::TMOD_ENTITY_TRANSLATE
@@ -1444,9 +1445,9 @@ unsafe extern "C" fn ParseTexMod(
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: unknown tcMod \'%s\' in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             token,
             shader.name.as_mut_ptr(),
         );
@@ -1478,30 +1479,30 @@ ParseStage
 
 unsafe extern "C" fn ParseStage(
     mut stage: *mut crate::tr_local_h::shaderStage_t,
-    mut text: *mut *mut libc::c_char,
+    mut text: *mut *mut i8,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut token: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut depthMaskBits: libc::c_int = 0x100 as libc::c_int;
-    let mut blendSrcBits: libc::c_int = 0 as libc::c_int;
-    let mut blendDstBits: libc::c_int = 0 as libc::c_int;
-    let mut atestBits: libc::c_int = 0 as libc::c_int;
-    let mut depthFuncBits: libc::c_int = 0 as libc::c_int;
+    let mut token: *mut i8 = 0 as *mut i8;
+    let mut depthMaskBits: i32 = 0x100;
+    let mut blendSrcBits: i32 = 0;
+    let mut blendDstBits: i32 = 0;
+    let mut atestBits: i32 = 0;
+    let mut depthFuncBits: i32 = 0;
     let mut depthMaskExplicit: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     (*stage).active = crate::src::qcommon::q_shared::qtrue;
     loop {
         token =
             crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qtrue);
-        if *token.offset(0 as libc::c_int as isize) == 0 {
+        if *token.offset(0) == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
-                b"WARNING: no matching \'}\' found\n\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
+                b"WARNING: no matching \'}\' found\n\x00" as *const u8 as *const i8,
             );
             return crate::src::qcommon::q_shared::qfalse;
         }
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == '}' as i32 {
+        if *token.offset(0) as i32 == '}' as i32 {
             break;
         }
         //
@@ -1509,45 +1510,45 @@ unsafe extern "C" fn ParseStage(
         //
         if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"map\x00" as *const u8 as *const libc::c_char,
+            b"map\x00" as *const u8 as *const i8,
         ) == 0
         {
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) == 0 {
+            if *token.offset(0) == 0 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: missing parameter for \'map\' keyword in shader \'%s\'\n\x00"
-                        as *const u8 as *const libc::c_char,
+                        as *const u8 as *const i8,
                     shader.name.as_mut_ptr(),
                 );
                 return crate::src::qcommon::q_shared::qfalse;
             }
             if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"$whiteimage\x00" as *const u8 as *const libc::c_char,
+                b"$whiteimage\x00" as *const u8 as *const i8,
             ) == 0
             {
-                (*stage).bundle[0 as libc::c_int as usize].image[0 as libc::c_int as usize] =
+                (*stage).bundle[0].image[0] =
                     crate::src::renderergl1::tr_main::tr.whiteImage
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"$lightmap\x00" as *const u8 as *const libc::c_char,
+                b"$lightmap\x00" as *const u8 as *const i8,
             ) == 0
             {
-                (*stage).bundle[0 as libc::c_int as usize].isLightmap =
+                (*stage).bundle[0].isLightmap =
                     crate::src::qcommon::q_shared::qtrue;
-                if shader.lightmapIndex < 0 as libc::c_int
+                if shader.lightmapIndex < 0
                     || crate::src::renderergl1::tr_main::tr.lightmaps.is_null()
                 {
-                    (*stage).bundle[0 as libc::c_int as usize].image[0 as libc::c_int as usize] =
+                    (*stage).bundle[0].image[0] =
                         crate::src::renderergl1::tr_main::tr.whiteImage
                 } else {
-                    (*stage).bundle[0 as libc::c_int as usize].image[0 as libc::c_int as usize] =
+                    (*stage).bundle[0].image[0] =
                         *crate::src::renderergl1::tr_main::tr
                             .lightmaps
                             .offset(shader.lightmapIndex as isize)
@@ -1557,28 +1558,30 @@ unsafe extern "C" fn ParseStage(
                     crate::tr_common_h::IMGTYPE_COLORALPHA;
                 let mut flags: crate::tr_common_h::imgFlags_t = crate::tr_common_h::IMGFLAG_NONE;
                 if shader.noMipMaps as u64 == 0 {
-                    flags = ::std::mem::transmute::<libc::c_uint, crate::tr_common_h::imgFlags_t>(
-                        flags as libc::c_uint
-                            | crate::tr_common_h::IMGFLAG_MIPMAP as libc::c_int as libc::c_uint,
+                    flags = ::std::mem::transmute::<u32, crate::tr_common_h::imgFlags_t>(
+                        
+                        flags
+                            |  crate::tr_common_h::IMGFLAG_MIPMAP,
                     )
                 }
                 if shader.noPicMip as u64 == 0 {
-                    flags = ::std::mem::transmute::<libc::c_uint, crate::tr_common_h::imgFlags_t>(
-                        flags as libc::c_uint
-                            | crate::tr_common_h::IMGFLAG_PICMIP as libc::c_int as libc::c_uint,
+                    flags = ::std::mem::transmute::<u32, crate::tr_common_h::imgFlags_t>(
+                        
+                        flags
+                            |  crate::tr_common_h::IMGFLAG_PICMIP,
                     )
                 }
-                (*stage).bundle[0 as libc::c_int as usize].image[0 as libc::c_int as usize] =
+                (*stage).bundle[0].image[0] =
                     crate::src::renderergl1::tr_image::R_FindImageFile(token, type_0, flags);
-                if (*stage).bundle[0 as libc::c_int as usize].image[0 as libc::c_int as usize]
+                if (*stage).bundle[0].image[0]
                     .is_null()
                 {
                     crate::src::renderergl1::tr_main::ri
                         .Printf
                         .expect("non-null function pointer")(
-                        crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                        crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                         b"WARNING: R_FindImageFile could not find \'%s\' in shader \'%s\'\n\x00"
-                            as *const u8 as *const libc::c_char,
+                            as *const u8 as *const i8,
                         token,
                         shader.name.as_mut_ptr(),
                     );
@@ -1587,7 +1590,7 @@ unsafe extern "C" fn ParseStage(
             }
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"clampmap\x00" as *const u8 as *const libc::c_char,
+            b"clampmap\x00" as *const u8 as *const i8,
         ) == 0
         {
             let mut type_1: crate::tr_common_h::imgType_t = crate::tr_common_h::IMGTYPE_COLORALPHA;
@@ -1597,39 +1600,41 @@ unsafe extern "C" fn ParseStage(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) == 0 {
+            if *token.offset(0) == 0 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: missing parameter for \'clampmap\' keyword in shader \'%s\'\n\x00"
-                        as *const u8 as *const libc::c_char,
+                        as *const u8 as *const i8,
                     shader.name.as_mut_ptr(),
                 );
                 return crate::src::qcommon::q_shared::qfalse;
             }
             if shader.noMipMaps as u64 == 0 {
-                flags_0 = ::std::mem::transmute::<libc::c_uint, crate::tr_common_h::imgFlags_t>(
-                    flags_0 as libc::c_uint
-                        | crate::tr_common_h::IMGFLAG_MIPMAP as libc::c_int as libc::c_uint,
+                flags_0 = ::std::mem::transmute::<u32, crate::tr_common_h::imgFlags_t>(
+                    
+                    flags_0
+                        |  crate::tr_common_h::IMGFLAG_MIPMAP,
                 )
             }
             if shader.noPicMip as u64 == 0 {
-                flags_0 = ::std::mem::transmute::<libc::c_uint, crate::tr_common_h::imgFlags_t>(
-                    flags_0 as libc::c_uint
-                        | crate::tr_common_h::IMGFLAG_PICMIP as libc::c_int as libc::c_uint,
+                flags_0 = ::std::mem::transmute::<u32, crate::tr_common_h::imgFlags_t>(
+                    
+                    flags_0
+                        |  crate::tr_common_h::IMGFLAG_PICMIP,
                 )
             }
-            (*stage).bundle[0 as libc::c_int as usize].image[0 as libc::c_int as usize] =
+            (*stage).bundle[0].image[0] =
                 crate::src::renderergl1::tr_image::R_FindImageFile(token, type_1, flags_0);
-            if (*stage).bundle[0 as libc::c_int as usize].image[0 as libc::c_int as usize].is_null()
+            if (*stage).bundle[0].image[0].is_null()
             {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: R_FindImageFile could not find \'%s\' in shader \'%s\'\n\x00"
-                        as *const u8 as *const libc::c_char,
+                        as *const u8 as *const i8,
                     token,
                     shader.name.as_mut_ptr(),
                 );
@@ -1637,27 +1642,27 @@ unsafe extern "C" fn ParseStage(
             }
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"animMap\x00" as *const u8 as *const libc::c_char,
+            b"animMap\x00" as *const u8 as *const i8,
         ) == 0
         {
-            let mut totalImages: libc::c_int = 0 as libc::c_int;
+            let mut totalImages: i32 = 0;
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) == 0 {
+            if *token.offset(0) == 0 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: missing parameter for \'animMap\' keyword in shader \'%s\'\n\x00"
-                        as *const u8 as *const libc::c_char,
+                        as *const u8 as *const i8,
                     shader.name.as_mut_ptr(),
                 );
                 return crate::src::qcommon::q_shared::qfalse;
             }
-            (*stage).bundle[0 as libc::c_int as usize].imageAnimationSpeed =
-                atof(token) as libc::c_float;
+            (*stage).bundle[0].imageAnimationSpeed =
+                atof(token) as f32;
             loop
             //
             // clampmap <name>
@@ -1667,201 +1672,200 @@ unsafe extern "C" fn ParseStage(
             //
             // parse up to MAX_IMAGE_ANIMATIONS animations
             {
-                let mut num: libc::c_int = 0;
+                let mut num: i32 = 0;
                 token = crate::src::qcommon::q_shared::COM_ParseExt(
                     text,
                     crate::src::qcommon::q_shared::qfalse,
                 );
-                if *token.offset(0 as libc::c_int as isize) == 0 {
+                if *token.offset(0) == 0 {
                     break;
                 }
-                num = (*stage).bundle[0 as libc::c_int as usize].numImageAnimations;
-                if num < 8 as libc::c_int {
+                num = (*stage).bundle[0].numImageAnimations;
+                if num < 8 {
                     let mut flags_1: crate::tr_common_h::imgFlags_t =
                         crate::tr_common_h::IMGFLAG_NONE;
                     if shader.noMipMaps as u64 == 0 {
                         flags_1 =
-                            ::std::mem::transmute::<libc::c_uint, crate::tr_common_h::imgFlags_t>(
-                                flags_1 as libc::c_uint
-                                    | crate::tr_common_h::IMGFLAG_MIPMAP as libc::c_int
-                                        as libc::c_uint,
+                            ::std::mem::transmute::<u32, crate::tr_common_h::imgFlags_t>(
+                                
+                                flags_1
+                                    |  crate::tr_common_h::IMGFLAG_MIPMAP,
                             )
                     }
                     if shader.noPicMip as u64 == 0 {
                         flags_1 =
-                            ::std::mem::transmute::<libc::c_uint, crate::tr_common_h::imgFlags_t>(
-                                flags_1 as libc::c_uint
-                                    | crate::tr_common_h::IMGFLAG_PICMIP as libc::c_int
-                                        as libc::c_uint,
+                            ::std::mem::transmute::<u32, crate::tr_common_h::imgFlags_t>(
+                                
+                                flags_1
+                                    |  crate::tr_common_h::IMGFLAG_PICMIP,
                             )
                     }
-                    (*stage).bundle[0 as libc::c_int as usize].image[num as usize] =
+                    (*stage).bundle[0].image[num as usize] =
                         crate::src::renderergl1::tr_image::R_FindImageFile(
                             token,
                             crate::tr_common_h::IMGTYPE_COLORALPHA,
                             flags_1,
                         );
-                    if (*stage).bundle[0 as libc::c_int as usize].image[num as usize].is_null() {
+                    if (*stage).bundle[0].image[num as usize].is_null() {
                         crate::src::renderergl1::tr_main::ri
                             .Printf
                             .expect("non-null function pointer")(
-                            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                             b"WARNING: R_FindImageFile could not find \'%s\' in shader \'%s\'\n\x00"
-                                as *const u8 as *const libc::c_char,
+                                as *const u8 as *const i8,
                             token,
                             shader.name.as_mut_ptr(),
                         );
                         return crate::src::qcommon::q_shared::qfalse;
                     }
-                    (*stage).bundle[0 as libc::c_int as usize].numImageAnimations += 1
+                    (*stage).bundle[0].numImageAnimations += 1
                 }
                 totalImages += 1
             }
-            if totalImages > 8 as libc::c_int {
+            if totalImages > 8 {
                 crate::src::renderergl1::tr_main::ri.Printf.expect("non-null function pointer")(crate::src::qcommon::q_shared::PRINT_WARNING as
-                                                                  libc::c_int,
+                                                                  i32,
                                                               b"WARNING: ignoring excess images for \'animMap\' (found %d, max is %d) in shader \'%s\'\n\x00"
                                                                   as *const u8
                                                                   as
-                                                                  *const libc::c_char,
+                                                                  *const i8,
                                                               totalImages,
-                                                              8 as
-                                                                  libc::c_int,
+                                                              8i32,
                                                               shader.name.as_mut_ptr());
             }
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"videoMap\x00" as *const u8 as *const libc::c_char,
+            b"videoMap\x00" as *const u8 as *const i8,
         ) == 0
         {
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) == 0 {
+            if *token.offset(0) == 0 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: missing parameter for \'videoMap\' keyword in shader \'%s\'\n\x00"
-                        as *const u8 as *const libc::c_char,
+                        as *const u8 as *const i8,
                     shader.name.as_mut_ptr(),
                 );
                 return crate::src::qcommon::q_shared::qfalse;
             }
-            (*stage).bundle[0 as libc::c_int as usize].videoMapHandle =
+            (*stage).bundle[0].videoMapHandle =
                 crate::src::renderergl1::tr_main::ri
                     .CIN_PlayCinematic
                     .expect("non-null function pointer")(
                     token,
-                    0 as libc::c_int,
-                    0 as libc::c_int,
-                    256 as libc::c_int,
-                    256 as libc::c_int,
-                    2 as libc::c_int | 8 as libc::c_int | 16 as libc::c_int,
+                    0,
+                    0,
+                    256,
+                    256,
+                    2 | 8 | 16,
                 );
-            if (*stage).bundle[0 as libc::c_int as usize].videoMapHandle != -(1 as libc::c_int) {
-                (*stage).bundle[0 as libc::c_int as usize].isVideoMap =
+            if (*stage).bundle[0].videoMapHandle != -(1) {
+                (*stage).bundle[0].isVideoMap =
                     crate::src::qcommon::q_shared::qtrue;
-                (*stage).bundle[0 as libc::c_int as usize].image[0 as libc::c_int as usize] =
+                (*stage).bundle[0].image[0] =
                     crate::src::renderergl1::tr_main::tr.scratchImage
-                        [(*stage).bundle[0 as libc::c_int as usize].videoMapHandle as usize]
+                        [(*stage).bundle[0].videoMapHandle as usize]
             } else {
                 crate::src::renderergl1::tr_main::ri.Printf.expect("non-null function pointer")(crate::src::qcommon::q_shared::PRINT_WARNING as
-                                                                  libc::c_int,
+                                                                  i32,
                                                               b"WARNING: could not load \'%s\' for \'videoMap\' keyword in shader \'%s\'\n\x00"
                                                                   as *const u8
                                                                   as
-                                                                  *const libc::c_char,
+                                                                  *const i8,
                                                               token,
                                                               shader.name.as_mut_ptr());
             }
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"alphaFunc\x00" as *const u8 as *const libc::c_char,
+            b"alphaFunc\x00" as *const u8 as *const i8,
         ) == 0
         {
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) == 0 {
+            if *token.offset(0) == 0 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: missing parameter for \'alphaFunc\' keyword in shader \'%s\'\n\x00"
-                        as *const u8 as *const libc::c_char,
+                        as *const u8 as *const i8,
                     shader.name.as_mut_ptr(),
                 );
                 return crate::src::qcommon::q_shared::qfalse;
             }
-            atestBits = NameToAFunc(token) as libc::c_int
+            atestBits = NameToAFunc(token) as i32
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"depthfunc\x00" as *const u8 as *const libc::c_char,
+            b"depthfunc\x00" as *const u8 as *const i8,
         ) == 0
         {
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) == 0 {
+            if *token.offset(0) == 0 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: missing parameter for \'depthfunc\' keyword in shader \'%s\'\n\x00"
-                        as *const u8 as *const libc::c_char,
+                        as *const u8 as *const i8,
                     shader.name.as_mut_ptr(),
                 );
                 return crate::src::qcommon::q_shared::qfalse;
             }
             if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"lequal\x00" as *const u8 as *const libc::c_char,
+                b"lequal\x00" as *const u8 as *const i8,
             ) == 0
             {
-                depthFuncBits = 0 as libc::c_int
+                depthFuncBits = 0
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"equal\x00" as *const u8 as *const libc::c_char,
+                b"equal\x00" as *const u8 as *const i8,
             ) == 0
             {
-                depthFuncBits = 0x20000 as libc::c_int
+                depthFuncBits = 0x20000
             } else {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: unknown depthfunc \'%s\' in shader \'%s\'\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     token,
                     shader.name.as_mut_ptr(),
                 );
             }
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"detail\x00" as *const u8 as *const libc::c_char,
+            b"detail\x00" as *const u8 as *const i8,
         ) == 0
         {
             (*stage).isDetail = crate::src::qcommon::q_shared::qtrue
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"blendfunc\x00" as *const u8 as *const libc::c_char,
+            b"blendfunc\x00" as *const u8 as *const i8,
         ) == 0
         {
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+            if *token.offset(0) as i32 == 0 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: missing parm for blendFunc in shader \'%s\'\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     shader.name.as_mut_ptr(),
                 );
             } else {
@@ -1881,25 +1885,25 @@ unsafe extern "C" fn ParseStage(
                 // check for "simple" blends first
                 if crate::src::qcommon::q_shared::Q_stricmp(
                     token,
-                    b"add\x00" as *const u8 as *const libc::c_char,
+                    b"add\x00" as *const u8 as *const i8,
                 ) == 0
                 {
-                    blendSrcBits = 0x2 as libc::c_int;
-                    blendDstBits = 0x20 as libc::c_int
+                    blendSrcBits = 0x2;
+                    blendDstBits = 0x20
                 } else if crate::src::qcommon::q_shared::Q_stricmp(
                     token,
-                    b"filter\x00" as *const u8 as *const libc::c_char,
+                    b"filter\x00" as *const u8 as *const i8,
                 ) == 0
                 {
-                    blendSrcBits = 0x3 as libc::c_int;
-                    blendDstBits = 0x10 as libc::c_int
+                    blendSrcBits = 0x3;
+                    blendDstBits = 0x10
                 } else if crate::src::qcommon::q_shared::Q_stricmp(
                     token,
-                    b"blend\x00" as *const u8 as *const libc::c_char,
+                    b"blend\x00" as *const u8 as *const i8,
                 ) == 0
                 {
-                    blendSrcBits = 0x5 as libc::c_int;
-                    blendDstBits = 0x60 as libc::c_int
+                    blendSrcBits = 0x5;
+                    blendDstBits = 0x60
                 } else {
                     // complex double blends
                     blendSrcBits = NameToSrcBlendMode(token);
@@ -1907,13 +1911,13 @@ unsafe extern "C" fn ParseStage(
                         text,
                         crate::src::qcommon::q_shared::qfalse,
                     );
-                    if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+                    if *token.offset(0) as i32 == 0 {
                         crate::src::renderergl1::tr_main::ri
                             .Printf
                             .expect("non-null function pointer")(
-                            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                             b"WARNING: missing parm for blendFunc in shader \'%s\'\n\x00"
-                                as *const u8 as *const libc::c_char,
+                                as *const u8 as *const i8,
                             shader.name.as_mut_ptr(),
                         );
                         continue;
@@ -1923,103 +1927,103 @@ unsafe extern "C" fn ParseStage(
                 }
                 // clear depth mask for blended surfaces
                 if depthMaskExplicit as u64 == 0 {
-                    depthMaskBits = 0 as libc::c_int
+                    depthMaskBits = 0
                 }
             }
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"rgbGen\x00" as *const u8 as *const libc::c_char,
+            b"rgbGen\x00" as *const u8 as *const i8,
         ) == 0
         {
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+            if *token.offset(0) as i32 == 0 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: missing parameters for rgbGen in shader \'%s\'\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     shader.name.as_mut_ptr(),
                 );
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"wave\x00" as *const u8 as *const libc::c_char,
+                b"wave\x00" as *const u8 as *const i8,
             ) == 0
             {
                 ParseWaveForm(text, &mut (*stage).rgbWave);
                 (*stage).rgbGen = crate::tr_local_h::CGEN_WAVEFORM
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"const\x00" as *const u8 as *const libc::c_char,
+                b"const\x00" as *const u8 as *const i8,
             ) == 0
             {
                 let mut color: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-                color[2 as libc::c_int as usize] =
-                    0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-                color[1 as libc::c_int as usize] = color[2 as libc::c_int as usize];
-                color[0 as libc::c_int as usize] = color[1 as libc::c_int as usize];
-                ParseVector(text, 3 as libc::c_int, color.as_mut_ptr());
-                (*stage).constantColor[0 as libc::c_int as usize] =
-                    (255 as libc::c_int as libc::c_float * color[0 as libc::c_int as usize])
+                color[2] =
+                    0f32;
+                color[1] = color[2];
+                color[0] = color[1];
+                ParseVector(text, 3, color.as_mut_ptr());
+                (*stage).constantColor[0] =
+                    (255f32 * color[0])
                         as crate::src::qcommon::q_shared::byte;
-                (*stage).constantColor[1 as libc::c_int as usize] =
-                    (255 as libc::c_int as libc::c_float * color[1 as libc::c_int as usize])
+                (*stage).constantColor[1] =
+                    (255f32 * color[1])
                         as crate::src::qcommon::q_shared::byte;
-                (*stage).constantColor[2 as libc::c_int as usize] =
-                    (255 as libc::c_int as libc::c_float * color[2 as libc::c_int as usize])
+                (*stage).constantColor[2] =
+                    (255f32 * color[2])
                         as crate::src::qcommon::q_shared::byte;
                 (*stage).rgbGen = crate::tr_local_h::CGEN_CONST
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"identity\x00" as *const u8 as *const libc::c_char,
+                b"identity\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).rgbGen = crate::tr_local_h::CGEN_IDENTITY
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"identityLighting\x00" as *const u8 as *const libc::c_char,
+                b"identityLighting\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).rgbGen = crate::tr_local_h::CGEN_IDENTITY_LIGHTING
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"entity\x00" as *const u8 as *const libc::c_char,
+                b"entity\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).rgbGen = crate::tr_local_h::CGEN_ENTITY
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"oneMinusEntity\x00" as *const u8 as *const libc::c_char,
+                b"oneMinusEntity\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).rgbGen = crate::tr_local_h::CGEN_ONE_MINUS_ENTITY
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"vertex\x00" as *const u8 as *const libc::c_char,
+                b"vertex\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).rgbGen = crate::tr_local_h::CGEN_VERTEX;
-                if (*stage).alphaGen as libc::c_uint == 0 as libc::c_int as libc::c_uint {
+                if  (*stage).alphaGen == 0u32 {
                     (*stage).alphaGen = crate::tr_local_h::AGEN_VERTEX
                 }
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"exactVertex\x00" as *const u8 as *const libc::c_char,
+                b"exactVertex\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).rgbGen = crate::tr_local_h::CGEN_EXACT_VERTEX
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"lightingDiffuse\x00" as *const u8 as *const libc::c_char,
+                b"lightingDiffuse\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).rgbGen = crate::tr_local_h::CGEN_LIGHTING_DIFFUSE
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"oneMinusVertex\x00" as *const u8 as *const libc::c_char,
+                b"oneMinusVertex\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).rgbGen = crate::tr_local_h::CGEN_ONE_MINUS_VERTEX
@@ -2027,90 +2031,90 @@ unsafe extern "C" fn ParseStage(
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: unknown rgbGen parameter \'%s\' in shader \'%s\'\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     token,
                     shader.name.as_mut_ptr(),
                 );
             }
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"alphaGen\x00" as *const u8 as *const libc::c_char,
+            b"alphaGen\x00" as *const u8 as *const i8,
         ) == 0
         {
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+            if *token.offset(0) as i32 == 0 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: missing parameters for alphaGen in shader \'%s\'\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     shader.name.as_mut_ptr(),
                 );
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"wave\x00" as *const u8 as *const libc::c_char,
+                b"wave\x00" as *const u8 as *const i8,
             ) == 0
             {
                 ParseWaveForm(text, &mut (*stage).alphaWave);
                 (*stage).alphaGen = crate::tr_local_h::AGEN_WAVEFORM
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"const\x00" as *const u8 as *const libc::c_char,
+                b"const\x00" as *const u8 as *const i8,
             ) == 0
             {
                 token = crate::src::qcommon::q_shared::COM_ParseExt(
                     text,
                     crate::src::qcommon::q_shared::qfalse,
                 );
-                (*stage).constantColor[3 as libc::c_int as usize] =
-                    (255 as libc::c_int as libc::c_double * atof(token))
+                (*stage).constantColor[3] =
+                    (255f64 * atof(token))
                         as crate::src::qcommon::q_shared::byte;
                 (*stage).alphaGen = crate::tr_local_h::AGEN_CONST
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"identity\x00" as *const u8 as *const libc::c_char,
+                b"identity\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).alphaGen = crate::tr_local_h::AGEN_IDENTITY
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"entity\x00" as *const u8 as *const libc::c_char,
+                b"entity\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).alphaGen = crate::tr_local_h::AGEN_ENTITY
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"oneMinusEntity\x00" as *const u8 as *const libc::c_char,
+                b"oneMinusEntity\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).alphaGen = crate::tr_local_h::AGEN_ONE_MINUS_ENTITY
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"vertex\x00" as *const u8 as *const libc::c_char,
+                b"vertex\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).alphaGen = crate::tr_local_h::AGEN_VERTEX
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"lightingSpecular\x00" as *const u8 as *const libc::c_char,
+                b"lightingSpecular\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).alphaGen = crate::tr_local_h::AGEN_LIGHTING_SPECULAR
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"oneMinusVertex\x00" as *const u8 as *const libc::c_char,
+                b"oneMinusVertex\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).alphaGen = crate::tr_local_h::AGEN_ONE_MINUS_VERTEX
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"portal\x00" as *const u8 as *const libc::c_char,
+                b"portal\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*stage).alphaGen = crate::tr_local_h::AGEN_PORTAL;
@@ -2118,148 +2122,150 @@ unsafe extern "C" fn ParseStage(
                     text,
                     crate::src::qcommon::q_shared::qfalse,
                 );
-                if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
-                    shader.portalRange = 256 as libc::c_int as libc::c_float;
+                if *token.offset(0) as i32 == 0 {
+                    shader.portalRange = 256f32;
                     crate::src::renderergl1::tr_main::ri.Printf.expect("non-null function pointer")(crate::src::qcommon::q_shared::PRINT_WARNING
                                                                       as
-                                                                      libc::c_int,
+                                                                      i32,
                                                                   b"WARNING: missing range parameter for alphaGen portal in shader \'%s\', defaulting to 256\n\x00"
                                                                       as
                                                                       *const u8
                                                                       as
-                                                                      *const libc::c_char,
+                                                                      *const i8,
                                                                   shader.name.as_mut_ptr());
                 } else {
-                    shader.portalRange = atof(token) as libc::c_float
+                    shader.portalRange = atof(token) as f32
                 }
             } else {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: unknown alphaGen parameter \'%s\' in shader \'%s\'\n\x00"
-                        as *const u8 as *const libc::c_char,
+                        as *const u8 as *const i8,
                     token,
                     shader.name.as_mut_ptr(),
                 );
             }
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"texgen\x00" as *const u8 as *const libc::c_char,
+            b"texgen\x00" as *const u8 as *const i8,
         ) == 0
             || crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"tcGen\x00" as *const u8 as *const libc::c_char,
+                b"tcGen\x00" as *const u8 as *const i8,
             ) == 0
         {
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+            if *token.offset(0) as i32 == 0 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: missing texgen parm in shader \'%s\'\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     shader.name.as_mut_ptr(),
                 );
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"environment\x00" as *const u8 as *const libc::c_char,
+                b"environment\x00" as *const u8 as *const i8,
             ) == 0
             {
-                (*stage).bundle[0 as libc::c_int as usize].tcGen =
+                (*stage).bundle[0].tcGen =
                     crate::tr_local_h::TCGEN_ENVIRONMENT_MAPPED
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"lightmap\x00" as *const u8 as *const libc::c_char,
+                b"lightmap\x00" as *const u8 as *const i8,
             ) == 0
             {
-                (*stage).bundle[0 as libc::c_int as usize].tcGen = crate::tr_local_h::TCGEN_LIGHTMAP
+                (*stage).bundle[0].tcGen = crate::tr_local_h::TCGEN_LIGHTMAP
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"texture\x00" as *const u8 as *const libc::c_char,
+                b"texture\x00" as *const u8 as *const i8,
             ) == 0
                 || crate::src::qcommon::q_shared::Q_stricmp(
                     token,
-                    b"base\x00" as *const u8 as *const libc::c_char,
+                    b"base\x00" as *const u8 as *const i8,
                 ) == 0
             {
-                (*stage).bundle[0 as libc::c_int as usize].tcGen = crate::tr_local_h::TCGEN_TEXTURE
+                (*stage).bundle[0].tcGen = crate::tr_local_h::TCGEN_TEXTURE
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"vector\x00" as *const u8 as *const libc::c_char,
+                b"vector\x00" as *const u8 as *const i8,
             ) == 0
             {
                 ParseVector(
                     text,
-                    3 as libc::c_int,
-                    (*stage).bundle[0 as libc::c_int as usize].tcGenVectors
-                        [0 as libc::c_int as usize]
+                    3,
+                    (*stage).bundle[0].tcGenVectors
+                        [0]
                         .as_mut_ptr(),
                 );
                 ParseVector(
                     text,
-                    3 as libc::c_int,
-                    (*stage).bundle[0 as libc::c_int as usize].tcGenVectors
-                        [1 as libc::c_int as usize]
+                    3,
+                    (*stage).bundle[0].tcGenVectors
+                        [1]
                         .as_mut_ptr(),
                 );
-                (*stage).bundle[0 as libc::c_int as usize].tcGen = crate::tr_local_h::TCGEN_VECTOR
+                (*stage).bundle[0].tcGen = crate::tr_local_h::TCGEN_VECTOR
             } else {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: unknown texgen parm in shader \'%s\'\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     shader.name.as_mut_ptr(),
                 );
             }
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"tcMod\x00" as *const u8 as *const libc::c_char,
+            b"tcMod\x00" as *const u8 as *const i8,
         ) == 0
         {
-            let mut buffer: [libc::c_char; 1024] =
+            let mut buffer: [i8; 1024] =
                 *::std::mem::transmute::<&[u8; 1024],
-                                         &mut [libc::c_char; 1024]>(b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00");
+                                         &mut [i8; 1024]>(b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00");
             loop {
                 token = crate::src::qcommon::q_shared::COM_ParseExt(
                     text,
                     crate::src::qcommon::q_shared::qfalse,
                 );
-                if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+                if *token.offset(0) as i32 == 0 {
                     break;
                 }
                 crate::src::qcommon::q_shared::Q_strcat(
                     buffer.as_mut_ptr(),
-                    ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+                    
+                    ::std::mem::size_of::<[i8; 1024]>() as i32,
                     token,
                 );
                 crate::src::qcommon::q_shared::Q_strcat(
                     buffer.as_mut_ptr(),
-                    ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
-                    b" \x00" as *const u8 as *const libc::c_char,
+                    
+                    ::std::mem::size_of::<[i8; 1024]>() as i32,
+                    b" \x00" as *const u8 as *const i8,
                 );
             }
             ParseTexMod(buffer.as_mut_ptr(), stage);
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"depthwrite\x00" as *const u8 as *const libc::c_char,
+            b"depthwrite\x00" as *const u8 as *const i8,
         ) == 0
         {
-            depthMaskBits = 0x100 as libc::c_int;
+            depthMaskBits = 0x100;
             depthMaskExplicit = crate::src::qcommon::q_shared::qtrue
         } else {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: unknown parameter \'%s\' in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 token,
                 shader.name.as_mut_ptr(),
             );
@@ -2284,11 +2290,11 @@ unsafe extern "C" fn ParseStage(
     //
     // if cgen isn't explicitly specified, use either identity or identitylighting
     //
-    if (*stage).rgbGen as libc::c_uint == crate::tr_local_h::CGEN_BAD as libc::c_int as libc::c_uint
+    if  (*stage).rgbGen ==  crate::tr_local_h::CGEN_BAD
     {
-        if blendSrcBits == 0 as libc::c_int
-            || blendSrcBits == 0x2 as libc::c_int
-            || blendSrcBits == 0x5 as libc::c_int
+        if blendSrcBits == 0
+            || blendSrcBits == 0x2
+            || blendSrcBits == 0x5
         {
             (*stage).rgbGen = crate::tr_local_h::CGEN_IDENTITY_LIGHTING
         } else {
@@ -2298,19 +2304,19 @@ unsafe extern "C" fn ParseStage(
     //
     // implicitly assume that a GL_ONE GL_ZERO blend mask disables blending
     //
-    if blendSrcBits == 0x2 as libc::c_int && blendDstBits == 0x10 as libc::c_int {
-        blendSrcBits = 0 as libc::c_int;
+    if blendSrcBits == 0x2 && blendDstBits == 0x10 {
+        blendSrcBits = 0;
         blendDstBits = blendSrcBits;
-        depthMaskBits = 0x100 as libc::c_int
+        depthMaskBits = 0x100
     }
     // decide which agens we can skip
-    if (*stage).alphaGen as libc::c_uint
-        == crate::tr_local_h::AGEN_IDENTITY as libc::c_int as libc::c_uint
+    if  (*stage).alphaGen
+        ==  crate::tr_local_h::AGEN_IDENTITY
     {
-        if (*stage).rgbGen as libc::c_uint
-            == crate::tr_local_h::CGEN_IDENTITY as libc::c_int as libc::c_uint
-            || (*stage).rgbGen as libc::c_uint
-                == crate::tr_local_h::CGEN_LIGHTING_DIFFUSE as libc::c_int as libc::c_uint
+        if  (*stage).rgbGen
+            ==  crate::tr_local_h::CGEN_IDENTITY
+            ||  (*stage).rgbGen
+                ==  crate::tr_local_h::CGEN_LIGHTING_DIFFUSE
         {
             (*stage).alphaGen = crate::tr_local_h::AGEN_SKIP
         }
@@ -2319,7 +2325,7 @@ unsafe extern "C" fn ParseStage(
     // compute state bits
     //
     (*stage).stateBits =
-        (depthMaskBits | blendSrcBits | blendDstBits | atestBits | depthFuncBits) as libc::c_uint;
+        (depthMaskBits | blendSrcBits | blendDstBits | atestBits | depthFuncBits) as u32;
     return crate::src::qcommon::q_shared::qtrue;
 }
 /*
@@ -2337,28 +2343,28 @@ deformVertexes text[0-7]
 ===============
 */
 
-unsafe extern "C" fn ParseDeform(mut text: *mut *mut libc::c_char) {
-    let mut token: *mut libc::c_char = 0 as *mut libc::c_char;
+unsafe extern "C" fn ParseDeform(mut text: *mut *mut i8) {
+    let mut token: *mut i8 = 0 as *mut i8;
     let mut ds: *mut crate::tr_local_h::deformStage_t = 0 as *mut crate::tr_local_h::deformStage_t;
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+    if *token.offset(0) as i32 == 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: missing deform parm in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shader.name.as_mut_ptr(),
         );
         return;
     }
-    if shader.numDeforms == 3 as libc::c_int {
+    if shader.numDeforms == 3 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
-            b"WARNING: MAX_SHADER_DEFORMS in \'%s\'\n\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
+            b"WARNING: MAX_SHADER_DEFORMS in \'%s\'\n\x00" as *const u8 as *const i8,
             shader.name.as_mut_ptr(),
         );
         return;
@@ -2370,7 +2376,7 @@ unsafe extern "C" fn ParseDeform(mut text: *mut *mut libc::c_char) {
     shader.numDeforms += 1;
     if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"projectionShadow\x00" as *const u8 as *const libc::c_char,
+        b"projectionShadow\x00" as *const u8 as *const i8,
     ) == 0
     {
         (*ds).deformation = crate::tr_local_h::DEFORM_PROJECTION_SHADOW;
@@ -2378,7 +2384,7 @@ unsafe extern "C" fn ParseDeform(mut text: *mut *mut libc::c_char) {
     }
     if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"autosprite\x00" as *const u8 as *const libc::c_char,
+        b"autosprite\x00" as *const u8 as *const i8,
     ) == 0
     {
         (*ds).deformation = crate::tr_local_h::DEFORM_AUTOSPRITE;
@@ -2386,7 +2392,7 @@ unsafe extern "C" fn ParseDeform(mut text: *mut *mut libc::c_char) {
     }
     if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"autosprite2\x00" as *const u8 as *const libc::c_char,
+        b"autosprite2\x00" as *const u8 as *const i8,
     ) == 0
     {
         (*ds).deformation = crate::tr_local_h::DEFORM_AUTOSPRITE2;
@@ -2394,105 +2400,105 @@ unsafe extern "C" fn ParseDeform(mut text: *mut *mut libc::c_char) {
     }
     if crate::src::qcommon::q_shared::Q_stricmpn(
         token,
-        b"text\x00" as *const u8 as *const libc::c_char,
-        4 as libc::c_int,
+        b"text\x00" as *const u8 as *const i8,
+        4,
     ) == 0
     {
-        let mut n: libc::c_int = 0;
-        n = *token.offset(4 as libc::c_int as isize) as libc::c_int - '0' as i32;
-        if n < 0 as libc::c_int || n > 7 as libc::c_int {
-            n = 0 as libc::c_int
+        let mut n: i32 = 0;
+        n = *token.offset(4) as i32 - '0' as i32;
+        if n < 0 || n > 7 {
+            n = 0
         }
         (*ds).deformation =
-            (crate::tr_local_h::DEFORM_TEXT0 as libc::c_int + n) as crate::tr_local_h::deform_t;
+            (crate::tr_local_h::DEFORM_TEXT0 as i32 + n) as crate::tr_local_h::deform_t;
         return;
     }
     if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"bulge\x00" as *const u8 as *const libc::c_char,
+        b"bulge\x00" as *const u8 as *const i8,
     ) == 0
     {
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing deformVertexes bulge parm in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*ds).bulgeWidth = atof(token) as libc::c_float;
+        (*ds).bulgeWidth = atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing deformVertexes bulge parm in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*ds).bulgeHeight = atof(token) as libc::c_float;
+        (*ds).bulgeHeight = atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing deformVertexes bulge parm in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*ds).bulgeSpeed = atof(token) as libc::c_float;
+        (*ds).bulgeSpeed = atof(token) as f32;
         (*ds).deformation = crate::tr_local_h::DEFORM_BULGE;
         return;
     }
     if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"wave\x00" as *const u8 as *const libc::c_char,
+        b"wave\x00" as *const u8 as *const i8,
     ) == 0
     {
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing deformVertexes parm in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        if atof(token) != 0 as libc::c_int as libc::c_double {
-            (*ds).deformationSpread = (1.0f32 as libc::c_double / atof(token)) as libc::c_float
+        if atof(token) != 0f64 {
+            (*ds).deformationSpread = (1f64 / atof(token)) as f32
         } else {
-            (*ds).deformationSpread = 100.0f32;
+            (*ds).deformationSpread = 100.0;
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: illegal div value of 0 in deformVertexes command for shader \'%s\'\n\x00"
-                    as *const u8 as *const libc::c_char,
+                    as *const u8 as *const i8,
                 shader.name.as_mut_ptr(),
             );
         }
@@ -2502,63 +2508,63 @@ unsafe extern "C" fn ParseDeform(mut text: *mut *mut libc::c_char) {
     }
     if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"normal\x00" as *const u8 as *const libc::c_char,
+        b"normal\x00" as *const u8 as *const i8,
     ) == 0
     {
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing deformVertexes parm in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*ds).deformationWave.amplitude = atof(token) as libc::c_float;
+        (*ds).deformationWave.amplitude = atof(token) as f32;
         token = crate::src::qcommon::q_shared::COM_ParseExt(
             text,
             crate::src::qcommon::q_shared::qfalse,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: missing deformVertexes parm in shader \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return;
         }
-        (*ds).deformationWave.frequency = atof(token) as libc::c_float;
+        (*ds).deformationWave.frequency = atof(token) as f32;
         (*ds).deformation = crate::tr_local_h::DEFORM_NORMALS;
         return;
     }
     if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"move\x00" as *const u8 as *const libc::c_char,
+        b"move\x00" as *const u8 as *const i8,
     ) == 0
     {
-        let mut i: libc::c_int = 0;
-        i = 0 as libc::c_int;
-        while i < 3 as libc::c_int {
+        let mut i: i32 = 0;
+        i = 0;
+        while i < 3 {
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+            if *token.offset(0) as i32 == 0 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: missing deformVertexes parm in shader \'%s\'\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     shader.name.as_mut_ptr(),
                 );
                 return;
@@ -2573,9 +2579,9 @@ unsafe extern "C" fn ParseDeform(mut text: *mut *mut libc::c_char) {
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
-        crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+        crate::src::qcommon::q_shared::PRINT_WARNING as i32,
         b"WARNING: unknown deformVertexes subtype \'%s\' found in shader \'%s\'\n\x00" as *const u8
-            as *const libc::c_char,
+            as *const i8,
         token,
         shader.name.as_mut_ptr(),
     );
@@ -2588,52 +2594,58 @@ skyParms <outerbox> <cloudheight> <innerbox>
 ===============
 */
 
-unsafe extern "C" fn ParseSkyParms(mut text: *mut *mut libc::c_char) {
-    let mut token: *mut libc::c_char = 0 as *mut libc::c_char;
-    static mut suf: [*mut libc::c_char; 6] = [
-        b"rt\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        b"bk\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        b"lf\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        b"ft\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        b"up\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        b"dn\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+unsafe extern "C" fn ParseSkyParms(mut text: *mut *mut i8) {
+    let mut token: *mut i8 = 0 as *mut i8;
+    static mut suf: [*mut i8; 6] = [
+        
+        b"rt\x00" as *const  u8 as *mut i8,
+        
+        b"bk\x00" as *const  u8 as *mut i8,
+        
+        b"lf\x00" as *const  u8 as *mut i8,
+        
+        b"ft\x00" as *const  u8 as *mut i8,
+        
+        b"up\x00" as *const  u8 as *mut i8,
+        
+        b"dn\x00" as *const  u8 as *mut i8,
     ];
-    let mut pathname: [libc::c_char; 64] = [0; 64];
-    let mut i: libc::c_int = 0;
+    let mut pathname: [i8; 64] = [0; 64];
+    let mut i: i32 = 0;
     let mut imgFlags: crate::tr_common_h::imgFlags_t = (crate::tr_common_h::IMGFLAG_MIPMAP
-        as libc::c_int
-        | crate::tr_common_h::IMGFLAG_PICMIP as libc::c_int)
+        as i32
+        | crate::tr_common_h::IMGFLAG_PICMIP as i32)
         as crate::tr_common_h::imgFlags_t;
     // outerbox
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+    if *token.offset(0) as i32 == 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: \'skyParms\' missing parameter in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shader.name.as_mut_ptr(),
         );
         return;
     }
-    if crate::stdlib::strcmp(token, b"-\x00" as *const u8 as *const libc::c_char) != 0 {
-        i = 0 as libc::c_int;
-        while i < 6 as libc::c_int {
+    if crate::stdlib::strcmp(token, b"-\x00" as *const u8 as *const i8) != 0 {
+        i = 0;
+        while i < 6 {
             crate::src::qcommon::q_shared::Com_sprintf(
                 pathname.as_mut_ptr(),
-                ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
-                b"%s_%s.tga\x00" as *const u8 as *const libc::c_char,
+                
+                ::std::mem::size_of::<[i8; 64]>() as i32,
+                b"%s_%s.tga\x00" as *const u8 as *const i8,
                 token,
                 suf[i as usize],
             );
             shader.sky.outerbox[i as usize] = crate::src::renderergl1::tr_image::R_FindImageFile(
                 pathname.as_mut_ptr(),
                 crate::tr_common_h::IMGTYPE_COLORALPHA,
-                (imgFlags as libc::c_uint
-                    | crate::tr_common_h::IMGFLAG_CLAMPTOEDGE as libc::c_int as libc::c_uint)
-                    as crate::tr_common_h::imgFlags_t,
+                imgFlags
+                    |  crate::tr_common_h::IMGFLAG_CLAMPTOEDGE,
             );
             if shader.sky.outerbox[i as usize].is_null() {
                 shader.sky.outerbox[i as usize] = crate::src::renderergl1::tr_main::tr.defaultImage
@@ -2644,43 +2656,44 @@ unsafe extern "C" fn ParseSkyParms(mut text: *mut *mut libc::c_char) {
     // cloudheight
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+    if *token.offset(0) as i32 == 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: \'skyParms\' missing parameter in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shader.name.as_mut_ptr(),
         );
         return;
     }
-    shader.sky.cloudHeight = atof(token) as libc::c_float;
+    shader.sky.cloudHeight = atof(token) as f32;
     if shader.sky.cloudHeight == 0. {
-        shader.sky.cloudHeight = 512 as libc::c_int as libc::c_float
+        shader.sky.cloudHeight = 512f32
     }
     crate::src::renderergl1::tr_sky::R_InitSkyTexCoords(shader.sky.cloudHeight);
     // innerbox
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+    if *token.offset(0) as i32 == 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: \'skyParms\' missing parameter in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shader.name.as_mut_ptr(),
         );
         return;
     }
-    if crate::stdlib::strcmp(token, b"-\x00" as *const u8 as *const libc::c_char) != 0 {
-        i = 0 as libc::c_int;
-        while i < 6 as libc::c_int {
+    if crate::stdlib::strcmp(token, b"-\x00" as *const u8 as *const i8) != 0 {
+        i = 0;
+        while i < 6 {
             crate::src::qcommon::q_shared::Com_sprintf(
                 pathname.as_mut_ptr(),
-                ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
-                b"%s_%s.tga\x00" as *const u8 as *const libc::c_char,
+                
+                ::std::mem::size_of::<[i8; 64]>() as i32,
+                b"%s_%s.tga\x00" as *const u8 as *const i8,
                 token,
                 suf[i as usize],
             );
@@ -2704,77 +2717,77 @@ ParseSort
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn ParseSort(mut text: *mut *mut libc::c_char) {
-    let mut token: *mut libc::c_char = 0 as *mut libc::c_char;
+pub unsafe extern "C" fn ParseSort(mut text: *mut *mut i8) {
+    let mut token: *mut i8 = 0 as *mut i8;
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+    if *token.offset(0) as i32 == 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: missing sort parameter in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             shader.name.as_mut_ptr(),
         );
         return;
     }
     if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"portal\x00" as *const u8 as *const libc::c_char,
+        b"portal\x00" as *const u8 as *const i8,
     ) == 0
     {
-        shader.sort = crate::tr_local_h::SS_PORTAL as libc::c_int as libc::c_float
+        shader.sort = crate::tr_local_h::SS_PORTAL as i32 as f32
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"sky\x00" as *const u8 as *const libc::c_char,
+        b"sky\x00" as *const u8 as *const i8,
     ) == 0
     {
-        shader.sort = crate::tr_local_h::SS_ENVIRONMENT as libc::c_int as libc::c_float
+        shader.sort = crate::tr_local_h::SS_ENVIRONMENT as i32 as f32
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"opaque\x00" as *const u8 as *const libc::c_char,
+        b"opaque\x00" as *const u8 as *const i8,
     ) == 0
     {
-        shader.sort = crate::tr_local_h::SS_OPAQUE as libc::c_int as libc::c_float
+        shader.sort = crate::tr_local_h::SS_OPAQUE as i32 as f32
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"decal\x00" as *const u8 as *const libc::c_char,
+        b"decal\x00" as *const u8 as *const i8,
     ) == 0
     {
-        shader.sort = crate::tr_local_h::SS_DECAL as libc::c_int as libc::c_float
+        shader.sort = crate::tr_local_h::SS_DECAL as i32 as f32
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"seeThrough\x00" as *const u8 as *const libc::c_char,
+        b"seeThrough\x00" as *const u8 as *const i8,
     ) == 0
     {
-        shader.sort = crate::tr_local_h::SS_SEE_THROUGH as libc::c_int as libc::c_float
+        shader.sort = crate::tr_local_h::SS_SEE_THROUGH as i32 as f32
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"banner\x00" as *const u8 as *const libc::c_char,
+        b"banner\x00" as *const u8 as *const i8,
     ) == 0
     {
-        shader.sort = crate::tr_local_h::SS_BANNER as libc::c_int as libc::c_float
+        shader.sort = crate::tr_local_h::SS_BANNER as i32 as f32
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"additive\x00" as *const u8 as *const libc::c_char,
+        b"additive\x00" as *const u8 as *const i8,
     ) == 0
     {
-        shader.sort = crate::tr_local_h::SS_BLEND1 as libc::c_int as libc::c_float
+        shader.sort = crate::tr_local_h::SS_BLEND1 as i32 as f32
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"nearest\x00" as *const u8 as *const libc::c_char,
+        b"nearest\x00" as *const u8 as *const i8,
     ) == 0
     {
-        shader.sort = crate::tr_local_h::SS_NEAREST as libc::c_int as libc::c_float
+        shader.sort = crate::tr_local_h::SS_NEAREST as i32 as f32
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         token,
-        b"underwater\x00" as *const u8 as *const libc::c_char,
+        b"underwater\x00" as *const u8 as *const i8,
     ) == 0
     {
-        shader.sort = crate::tr_local_h::SS_UNDERWATER as libc::c_int as libc::c_float
+        shader.sort = crate::tr_local_h::SS_UNDERWATER as i32 as f32
     } else {
-        shader.sort = atof(token) as libc::c_float
+        shader.sort = atof(token) as f32
     };
 }
 #[no_mangle]
@@ -2782,289 +2795,289 @@ pub unsafe extern "C" fn ParseSort(mut text: *mut *mut libc::c_char) {
 pub static mut infoParms: [infoParm_t; 32] = [
     {
         let mut init = infoParm_t {
-            name: b"water\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 1 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 32 as libc::c_int,
+            name:  b"water\x00" as *const  u8 as *mut i8,
+            clearSolid: 1,
+            surfaceFlags: 0,
+            contents: 32,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"slime\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 1 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 16 as libc::c_int,
+            name:  b"slime\x00" as *const  u8 as *mut i8,
+            clearSolid: 1,
+            surfaceFlags: 0,
+            contents: 16,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"lava\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 1 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 8 as libc::c_int,
+            name:  b"lava\x00" as *const  u8 as *mut i8,
+            clearSolid: 1,
+            surfaceFlags: 0,
+            contents: 8,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"playerclip\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 1 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 0x10000 as libc::c_int,
+            name:  b"playerclip\x00" as *const  u8 as *mut i8,
+            clearSolid: 1,
+            surfaceFlags: 0,
+            contents: 0x10000,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"monsterclip\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 1 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 0x20000 as libc::c_int,
+            name:  b"monsterclip\x00" as *const  u8 as *mut i8,
+            clearSolid: 1,
+            surfaceFlags: 0,
+            contents: 0x20000,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"nodrop\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 1 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 0x80000000 as libc::c_uint as libc::c_int,
+            name:  b"nodrop\x00" as *const  u8 as *mut i8,
+            clearSolid: 1,
+            surfaceFlags: 0,
+            contents: 0x80000000u32 as i32,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"nonsolid\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 1 as libc::c_int,
-            surfaceFlags: 0x4000 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"nonsolid\x00" as *const  u8 as *mut i8,
+            clearSolid: 1,
+            surfaceFlags: 0x4000,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"origin\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 1 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 0x1000000 as libc::c_int,
+            name:  b"origin\x00" as *const  u8 as *mut i8,
+            clearSolid: 1,
+            surfaceFlags: 0,
+            contents: 0x1000000,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"trans\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 0x20000000 as libc::c_int,
+            name:  b"trans\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0,
+            contents: 0x20000000,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"detail\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 0x8000000 as libc::c_int,
+            name:  b"detail\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0,
+            contents: 0x8000000,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"structural\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 0x10000000 as libc::c_int,
+            name:  b"structural\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0,
+            contents: 0x10000000,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"areaportal\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 1 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 0x8000 as libc::c_int,
+            name:  b"areaportal\x00" as *const  u8 as *mut i8,
+            clearSolid: 1,
+            surfaceFlags: 0,
+            contents: 0x8000,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"clusterportal\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 1 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 0x100000 as libc::c_int,
+            name:  b"clusterportal\x00" as *const  u8 as *mut i8,
+            clearSolid: 1,
+            surfaceFlags: 0,
+            contents: 0x100000,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"donotenter\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 1 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 0x200000 as libc::c_int,
+            name:  b"donotenter\x00" as *const  u8 as *mut i8,
+            clearSolid: 1,
+            surfaceFlags: 0,
+            contents: 0x200000,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"fog\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 1 as libc::c_int,
-            surfaceFlags: 0 as libc::c_int,
-            contents: 64 as libc::c_int,
+            name:  b"fog\x00" as *const  u8 as *mut i8,
+            clearSolid: 1,
+            surfaceFlags: 0,
+            contents: 64,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"sky\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x4 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"sky\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x4,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"lightfilter\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x8000 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"lightfilter\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x8000,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"alphashadow\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x10000 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"alphashadow\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x10000,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"hint\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x100 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"hint\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x100,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"slick\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x2 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"slick\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x2,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"noimpact\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x10 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"noimpact\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x10,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"nomarks\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x20 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"nomarks\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x20,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"ladder\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x8 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"ladder\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x8,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"nodamage\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x1 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"nodamage\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x1,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"metalsteps\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x1000 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"metalsteps\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x1000,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"flesh\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x40 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"flesh\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x40,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"nosteps\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x2000 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"nosteps\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x2000,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"nodraw\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x80 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"nodraw\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x80,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"pointlight\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x800 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"pointlight\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x800,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"nolightmap\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x400 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"nolightmap\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x400,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"nodlight\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x20000 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"nodlight\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x20000,
+            contents: 0,
         };
         init
     },
     {
         let mut init = infoParm_t {
-            name: b"dust\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            clearSolid: 0 as libc::c_int,
-            surfaceFlags: 0x40000 as libc::c_int,
-            contents: 0 as libc::c_int,
+            name:  b"dust\x00" as *const  u8 as *mut i8,
+            clearSolid: 0,
+            surfaceFlags: 0x40000,
+            contents: 0,
         };
         init
     },
@@ -3077,15 +3090,15 @@ surfaceparm <name>
 ===============
 */
 
-unsafe extern "C" fn ParseSurfaceParm(mut text: *mut *mut libc::c_char) {
-    let mut token: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut numInfoParms: libc::c_int = (::std::mem::size_of::<[infoParm_t; 32]>() as libc::c_ulong)
-        .wrapping_div(::std::mem::size_of::<infoParm_t>() as libc::c_ulong)
-        as libc::c_int;
-    let mut i: libc::c_int = 0;
+unsafe extern "C" fn ParseSurfaceParm(mut text: *mut *mut i8) {
+    let mut token: *mut i8 = 0 as *mut i8;
+    let mut numInfoParms: i32 = (::std::mem::size_of::<[infoParm_t; 32]>())
+        .wrapping_div(::std::mem::size_of::<infoParm_t>())
+        as i32;
+    let mut i: i32 = 0;
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    i = 0 as libc::c_int;
+    i = 0;
     while i < numInfoParms {
         if crate::src::qcommon::q_shared::Q_stricmp(token, infoParms[i as usize].name) == 0 {
             shader.surfaceFlags |= infoParms[i as usize].surfaceFlags;
@@ -3107,19 +3120,19 @@ will optimize it.
 */
 
 unsafe extern "C" fn ParseShader(
-    mut text: *mut *mut libc::c_char,
+    mut text: *mut *mut i8,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut token: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut s: libc::c_int = 0;
-    s = 0 as libc::c_int;
+    let mut token: *mut i8 = 0 as *mut i8;
+    let mut s: i32 = 0;
+    s = 0;
     token = crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qtrue);
-    if *token.offset(0 as libc::c_int as isize) as libc::c_int != '{' as i32 {
+    if *token.offset(0) as i32 != '{' as i32 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: expecting \'{\', found \'%s\' instead in shader \'%s\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             token,
             shader.name.as_mut_ptr(),
         );
@@ -3128,32 +3141,32 @@ unsafe extern "C" fn ParseShader(
     loop {
         token =
             crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qtrue);
-        if *token.offset(0 as libc::c_int as isize) == 0 {
+        if *token.offset(0) == 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: no concluding \'}\' in shader %s\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
             return crate::src::qcommon::q_shared::qfalse;
         }
         // end of shader definition
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == '}' as i32 {
+        if *token.offset(0) as i32 == '}' as i32 {
             break;
         }
         // stage definition
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == '{' as i32 {
-            if s >= 8 as libc::c_int {
+        if *token.offset(0) as i32 == '{' as i32 {
+            if s >= 8 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: too many stages in shader %s (max is %i)\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     shader.name.as_mut_ptr(),
-                    8 as libc::c_int,
+                    8i32,
                 );
                 return crate::src::qcommon::q_shared::qfalse;
             }
@@ -3164,39 +3177,39 @@ unsafe extern "C" fn ParseShader(
             s += 1
         } else if crate::src::qcommon::q_shared::Q_stricmpn(
             token,
-            b"qer\x00" as *const u8 as *const libc::c_char,
-            3 as libc::c_int,
+            b"qer\x00" as *const u8 as *const i8,
+            3,
         ) == 0
         {
             crate::src::qcommon::q_shared::SkipRestOfLine(text);
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"q3map_sun\x00" as *const u8 as *const libc::c_char,
+            b"q3map_sun\x00" as *const u8 as *const i8,
         ) == 0
             || crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"q3map_sunExt\x00" as *const u8 as *const libc::c_char,
+                b"q3map_sunExt\x00" as *const u8 as *const i8,
             ) == 0
         {
-            let mut a: libc::c_float = 0.;
-            let mut b: libc::c_float = 0.;
+            let mut a: f32 = 0.;
+            let mut b: f32 = 0.;
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            crate::src::renderergl1::tr_main::tr.sunLight[0 as libc::c_int as usize] =
+            crate::src::renderergl1::tr_main::tr.sunLight[0] =
                 atof(token) as crate::src::qcommon::q_shared::vec_t;
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            crate::src::renderergl1::tr_main::tr.sunLight[1 as libc::c_int as usize] =
+            crate::src::renderergl1::tr_main::tr.sunLight[1] =
                 atof(token) as crate::src::qcommon::q_shared::vec_t;
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            crate::src::renderergl1::tr_main::tr.sunLight[2 as libc::c_int as usize] =
+            crate::src::renderergl1::tr_main::tr.sunLight[2] =
                 atof(token) as crate::src::qcommon::q_shared::vec_t;
             crate::src::qcommon::q_math::VectorNormalize(
                 crate::src::renderergl1::tr_main::tr.sunLight.as_mut_ptr(),
@@ -3205,147 +3218,147 @@ unsafe extern "C" fn ParseShader(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            a = atof(token) as libc::c_float;
-            crate::src::renderergl1::tr_main::tr.sunLight[0 as libc::c_int as usize] =
-                crate::src::renderergl1::tr_main::tr.sunLight[0 as libc::c_int as usize] * a;
-            crate::src::renderergl1::tr_main::tr.sunLight[1 as libc::c_int as usize] =
-                crate::src::renderergl1::tr_main::tr.sunLight[1 as libc::c_int as usize] * a;
-            crate::src::renderergl1::tr_main::tr.sunLight[2 as libc::c_int as usize] =
-                crate::src::renderergl1::tr_main::tr.sunLight[2 as libc::c_int as usize] * a;
+            a = atof(token) as f32;
+            crate::src::renderergl1::tr_main::tr.sunLight[0] =
+                crate::src::renderergl1::tr_main::tr.sunLight[0] * a;
+            crate::src::renderergl1::tr_main::tr.sunLight[1] =
+                crate::src::renderergl1::tr_main::tr.sunLight[1] * a;
+            crate::src::renderergl1::tr_main::tr.sunLight[2] =
+                crate::src::renderergl1::tr_main::tr.sunLight[2] * a;
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            a = atof(token) as libc::c_float;
-            a = ((a / 180 as libc::c_int as libc::c_float) as libc::c_double
-                * 3.14159265358979323846f64) as libc::c_float;
+            a = atof(token) as f32;
+            a = ((a / 180f32) as f64
+                * 3.14159265358979323846) as f32;
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            b = atof(token) as libc::c_float;
-            b = ((b / 180 as libc::c_int as libc::c_float) as libc::c_double
-                * 3.14159265358979323846f64) as libc::c_float;
-            crate::src::renderergl1::tr_main::tr.sunDirection[0 as libc::c_int as usize] =
-                (crate::stdlib::cos(a as libc::c_double) * crate::stdlib::cos(b as libc::c_double))
+            b = atof(token) as f32;
+            b = ((b / 180f32) as f64
+                * 3.14159265358979323846) as f32;
+            crate::src::renderergl1::tr_main::tr.sunDirection[0] =
+                (crate::stdlib::cos(a as f64) * crate::stdlib::cos(b as f64))
                     as crate::src::qcommon::q_shared::vec_t;
-            crate::src::renderergl1::tr_main::tr.sunDirection[1 as libc::c_int as usize] =
-                (crate::stdlib::sin(a as libc::c_double) * crate::stdlib::cos(b as libc::c_double))
+            crate::src::renderergl1::tr_main::tr.sunDirection[1] =
+                (crate::stdlib::sin(a as f64) * crate::stdlib::cos(b as f64))
                     as crate::src::qcommon::q_shared::vec_t;
-            crate::src::renderergl1::tr_main::tr.sunDirection[2 as libc::c_int as usize] =
-                crate::stdlib::sin(b as libc::c_double) as crate::src::qcommon::q_shared::vec_t;
+            crate::src::renderergl1::tr_main::tr.sunDirection[2] =
+                crate::stdlib::sin(b as f64) as crate::src::qcommon::q_shared::vec_t;
             crate::src::qcommon::q_shared::SkipRestOfLine(text);
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"deformVertexes\x00" as *const u8 as *const libc::c_char,
+            b"deformVertexes\x00" as *const u8 as *const i8,
         ) == 0
         {
             ParseDeform(text);
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"tesssize\x00" as *const u8 as *const libc::c_char,
+            b"tesssize\x00" as *const u8 as *const i8,
         ) == 0
         {
             crate::src::qcommon::q_shared::SkipRestOfLine(text);
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"clampTime\x00" as *const u8 as *const libc::c_char,
+            b"clampTime\x00" as *const u8 as *const i8,
         ) == 0
         {
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) != 0 {
+            if *token.offset(0) != 0 {
                 shader.clampTime = atof(token)
             }
         } else if crate::src::qcommon::q_shared::Q_stricmpn(
             token,
-            b"q3map\x00" as *const u8 as *const libc::c_char,
-            5 as libc::c_int,
+            b"q3map\x00" as *const u8 as *const i8,
+            5,
         ) == 0
         {
             crate::src::qcommon::q_shared::SkipRestOfLine(text);
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"surfaceParm\x00" as *const u8 as *const libc::c_char,
+            b"surfaceParm\x00" as *const u8 as *const i8,
         ) == 0
         {
             ParseSurfaceParm(text);
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"nomipmaps\x00" as *const u8 as *const libc::c_char,
+            b"nomipmaps\x00" as *const u8 as *const i8,
         ) == 0
         {
             shader.noMipMaps = crate::src::qcommon::q_shared::qtrue;
             shader.noPicMip = crate::src::qcommon::q_shared::qtrue
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"nopicmip\x00" as *const u8 as *const libc::c_char,
+            b"nopicmip\x00" as *const u8 as *const i8,
         ) == 0
         {
             shader.noPicMip = crate::src::qcommon::q_shared::qtrue
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"polygonOffset\x00" as *const u8 as *const libc::c_char,
+            b"polygonOffset\x00" as *const u8 as *const i8,
         ) == 0
         {
             shader.polygonOffset = crate::src::qcommon::q_shared::qtrue
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"entityMergable\x00" as *const u8 as *const libc::c_char,
+            b"entityMergable\x00" as *const u8 as *const i8,
         ) == 0
         {
             shader.entityMergable = crate::src::qcommon::q_shared::qtrue
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"fogParms\x00" as *const u8 as *const libc::c_char,
+            b"fogParms\x00" as *const u8 as *const i8,
         ) == 0
         {
-            if ParseVector(text, 3 as libc::c_int, shader.fogParms.color.as_mut_ptr()) as u64 == 0 {
+            if ParseVector(text, 3, shader.fogParms.color.as_mut_ptr()) as u64 == 0 {
                 return crate::src::qcommon::q_shared::qfalse;
             }
             if (*crate::src::renderergl1::tr_init::r_greyscale).integer != 0 {
-                let mut luminance: libc::c_float = 0.;
-                luminance = 0.2126f32 * shader.fogParms.color[0 as libc::c_int as usize]
-                    + 0.7152f32 * shader.fogParms.color[1 as libc::c_int as usize]
-                    + 0.0722f32 * shader.fogParms.color[2 as libc::c_int as usize];
-                shader.fogParms.color[0 as libc::c_int as usize] = luminance;
-                shader.fogParms.color[1 as libc::c_int as usize] = luminance;
-                shader.fogParms.color[2 as libc::c_int as usize] = luminance
+                let mut luminance: f32 = 0.;
+                luminance = 0.2126 * shader.fogParms.color[0]
+                    + 0.7152 * shader.fogParms.color[1]
+                    + 0.0722 * shader.fogParms.color[2];
+                shader.fogParms.color[0] = luminance;
+                shader.fogParms.color[1] = luminance;
+                shader.fogParms.color[2] = luminance
             } else if (*crate::src::renderergl1::tr_init::r_greyscale).value != 0. {
-                let mut luminance_0: libc::c_float = 0.;
-                luminance_0 = 0.2126f32 * shader.fogParms.color[0 as libc::c_int as usize]
-                    + 0.7152f32 * shader.fogParms.color[1 as libc::c_int as usize]
-                    + 0.0722f32 * shader.fogParms.color[2 as libc::c_int as usize];
-                shader.fogParms.color[0 as libc::c_int as usize] = shader.fogParms.color
-                    [0 as libc::c_int as usize]
-                    * (1.0f32 - (*crate::src::renderergl1::tr_init::r_greyscale).value)
+                let mut luminance_0: f32 = 0.;
+                luminance_0 = 0.2126 * shader.fogParms.color[0]
+                    + 0.7152 * shader.fogParms.color[1]
+                    + 0.0722 * shader.fogParms.color[2];
+                shader.fogParms.color[0] = shader.fogParms.color
+                    [0]
+                    * (1.0 - (*crate::src::renderergl1::tr_init::r_greyscale).value)
                     + luminance_0 * (*crate::src::renderergl1::tr_init::r_greyscale).value;
-                shader.fogParms.color[1 as libc::c_int as usize] = shader.fogParms.color
-                    [1 as libc::c_int as usize]
-                    * (1.0f32 - (*crate::src::renderergl1::tr_init::r_greyscale).value)
+                shader.fogParms.color[1] = shader.fogParms.color
+                    [1]
+                    * (1.0 - (*crate::src::renderergl1::tr_init::r_greyscale).value)
                     + luminance_0 * (*crate::src::renderergl1::tr_init::r_greyscale).value;
-                shader.fogParms.color[2 as libc::c_int as usize] = shader.fogParms.color
-                    [2 as libc::c_int as usize]
-                    * (1.0f32 - (*crate::src::renderergl1::tr_init::r_greyscale).value)
+                shader.fogParms.color[2] = shader.fogParms.color
+                    [2]
+                    * (1.0 - (*crate::src::renderergl1::tr_init::r_greyscale).value)
                     + luminance_0 * (*crate::src::renderergl1::tr_init::r_greyscale).value
             }
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) == 0 {
+            if *token.offset(0) == 0 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: missing parm for \'fogParms\' keyword in shader \'%s\'\n\x00"
-                        as *const u8 as *const libc::c_char,
+                        as *const u8 as *const i8,
                     shader.name.as_mut_ptr(),
                 );
             } else {
-                shader.fogParms.depthForOpaque = atof(token) as libc::c_float;
+                shader.fogParms.depthForOpaque = atof(token) as f32;
                 // skip stuff that only the QuakeEdRadient needs
                 // sun parms
                 // skip stuff that only the q3map needs
@@ -3363,19 +3376,19 @@ unsafe extern "C" fn ParseShader(
             }
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"portal\x00" as *const u8 as *const libc::c_char,
+            b"portal\x00" as *const u8 as *const i8,
         ) == 0
         {
-            shader.sort = crate::tr_local_h::SS_PORTAL as libc::c_int as libc::c_float
+            shader.sort = crate::tr_local_h::SS_PORTAL as i32 as f32
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"skyparms\x00" as *const u8 as *const libc::c_char,
+            b"skyparms\x00" as *const u8 as *const i8,
         ) == 0
         {
             ParseSkyParms(text);
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"light\x00" as *const u8 as *const libc::c_char,
+            b"light\x00" as *const u8 as *const i8,
         ) == 0
         {
             crate::src::qcommon::q_shared::COM_ParseExt(
@@ -3384,47 +3397,47 @@ unsafe extern "C" fn ParseShader(
             );
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"cull\x00" as *const u8 as *const libc::c_char,
+            b"cull\x00" as *const u8 as *const i8,
         ) == 0
         {
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 text,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+            if *token.offset(0) as i32 == 0 {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: missing cull parms in shader \'%s\'\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     shader.name.as_mut_ptr(),
                 );
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"none\x00" as *const u8 as *const libc::c_char,
+                b"none\x00" as *const u8 as *const i8,
             ) == 0
                 || crate::src::qcommon::q_shared::Q_stricmp(
                     token,
-                    b"twosided\x00" as *const u8 as *const libc::c_char,
+                    b"twosided\x00" as *const u8 as *const i8,
                 ) == 0
                 || crate::src::qcommon::q_shared::Q_stricmp(
                     token,
-                    b"disable\x00" as *const u8 as *const libc::c_char,
+                    b"disable\x00" as *const u8 as *const i8,
                 ) == 0
             {
                 shader.cullType = crate::tr_local_h::CT_TWO_SIDED
             } else if crate::src::qcommon::q_shared::Q_stricmp(
                 token,
-                b"back\x00" as *const u8 as *const libc::c_char,
+                b"back\x00" as *const u8 as *const i8,
             ) == 0
                 || crate::src::qcommon::q_shared::Q_stricmp(
                     token,
-                    b"backside\x00" as *const u8 as *const libc::c_char,
+                    b"backside\x00" as *const u8 as *const i8,
                 ) == 0
                 || crate::src::qcommon::q_shared::Q_stricmp(
                     token,
-                    b"backsided\x00" as *const u8 as *const libc::c_char,
+                    b"backsided\x00" as *const u8 as *const i8,
                 ) == 0
             {
                 shader.cullType = crate::tr_local_h::CT_BACK_SIDED
@@ -3432,16 +3445,16 @@ unsafe extern "C" fn ParseShader(
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                     b"WARNING: invalid cull parm \'%s\' in shader \'%s\'\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     token,
                     shader.name.as_mut_ptr(),
                 );
             }
         } else if crate::src::qcommon::q_shared::Q_stricmp(
             token,
-            b"sort\x00" as *const u8 as *const libc::c_char,
+            b"sort\x00" as *const u8 as *const i8,
         ) == 0
         {
             ParseSort(text);
@@ -3449,9 +3462,9 @@ unsafe extern "C" fn ParseShader(
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
                 b"WARNING: unknown general shader parameter \'%s\' in \'%s\'\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 token,
                 shader.name.as_mut_ptr(),
             );
@@ -3466,9 +3479,9 @@ unsafe extern "C" fn ParseShader(
     //
     // ignore shaders that don't have any stages, unless it is a sky or fog
     //
-    if s == 0 as libc::c_int
+    if s == 0
         && shader.isSky as u64 == 0
-        && shader.contentFlags & 64 as libc::c_int == 0
+        && shader.contentFlags & 64 == 0
     {
         return crate::src::qcommon::q_shared::qfalse;
     }
@@ -3510,16 +3523,15 @@ unsafe extern "C" fn ComputeStageIteratorFunc() {
     //
     // see if this can go into the vertex lit fast path
     //
-    if shader.numUnfoggedPasses == 1 as libc::c_int {
-        if stages[0 as libc::c_int as usize].rgbGen as libc::c_uint
-            == crate::tr_local_h::CGEN_LIGHTING_DIFFUSE as libc::c_int as libc::c_uint
+    if shader.numUnfoggedPasses == 1 {
+        if  stages[0].rgbGen
+            ==  crate::tr_local_h::CGEN_LIGHTING_DIFFUSE
         {
-            if stages[0 as libc::c_int as usize].alphaGen as libc::c_uint
-                == crate::tr_local_h::AGEN_IDENTITY as libc::c_int as libc::c_uint
+            if  stages[0].alphaGen
+                ==  crate::tr_local_h::AGEN_IDENTITY
             {
-                if stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].tcGen
-                    as libc::c_uint
-                    == crate::tr_local_h::TCGEN_TEXTURE as libc::c_int as libc::c_uint
+                if  stages[0].bundle[0].tcGen
+                    ==  crate::tr_local_h::TCGEN_TEXTURE
                 {
                     if shader.polygonOffset as u64 == 0 {
                         if shader.multitextureEnv == 0 {
@@ -3538,18 +3550,16 @@ unsafe extern "C" fn ComputeStageIteratorFunc() {
     //
     // see if this can go into an optimized LM, multitextured path
     //
-    if shader.numUnfoggedPasses == 1 as libc::c_int {
-        if stages[0 as libc::c_int as usize].rgbGen as libc::c_uint
-            == crate::tr_local_h::CGEN_IDENTITY as libc::c_int as libc::c_uint
-            && stages[0 as libc::c_int as usize].alphaGen as libc::c_uint
-                == crate::tr_local_h::AGEN_IDENTITY as libc::c_int as libc::c_uint
+    if shader.numUnfoggedPasses == 1 {
+        if  stages[0].rgbGen
+            ==  crate::tr_local_h::CGEN_IDENTITY
+            &&  stages[0].alphaGen
+                ==  crate::tr_local_h::AGEN_IDENTITY
         {
-            if stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].tcGen
-                as libc::c_uint
-                == crate::tr_local_h::TCGEN_TEXTURE as libc::c_int as libc::c_uint
-                && stages[0 as libc::c_int as usize].bundle[1 as libc::c_int as usize].tcGen
-                    as libc::c_uint
-                    == crate::tr_local_h::TCGEN_LIGHTMAP as libc::c_int as libc::c_uint
+            if  stages[0].bundle[0].tcGen
+                ==  crate::tr_local_h::TCGEN_TEXTURE
+                &&  stages[0].bundle[1].tcGen
+                    ==  crate::tr_local_h::TCGEN_LIGHTMAP
             {
                 if shader.polygonOffset as u64 == 0 {
                     if shader.numDeforms == 0 {
@@ -3568,79 +3578,79 @@ unsafe extern "C" fn ComputeStageIteratorFunc() {
 static mut collapse: [collapse_t; 9] = [
     {
         let mut init = collapse_t {
-            blendA: 0 as libc::c_int,
-            blendB: 0x30 as libc::c_int | 0x1 as libc::c_int,
-            multitextureEnv: 0x2100 as libc::c_int,
-            multitextureBlend: 0 as libc::c_int,
+            blendA: 0,
+            blendB: 0x30 | 0x1,
+            multitextureEnv: 0x2100,
+            multitextureBlend: 0,
         };
         init
     },
     {
         let mut init = collapse_t {
-            blendA: 0 as libc::c_int,
-            blendB: 0x10 as libc::c_int | 0x3 as libc::c_int,
-            multitextureEnv: 0x2100 as libc::c_int,
-            multitextureBlend: 0 as libc::c_int,
+            blendA: 0,
+            blendB: 0x10 | 0x3,
+            multitextureEnv: 0x2100,
+            multitextureBlend: 0,
         };
         init
     },
     {
         let mut init = collapse_t {
-            blendA: 0x10 as libc::c_int | 0x3 as libc::c_int,
-            blendB: 0x10 as libc::c_int | 0x3 as libc::c_int,
-            multitextureEnv: 0x2100 as libc::c_int,
-            multitextureBlend: 0x10 as libc::c_int | 0x3 as libc::c_int,
+            blendA: 0x10 | 0x3,
+            blendB: 0x10 | 0x3,
+            multitextureEnv: 0x2100,
+            multitextureBlend: 0x10 | 0x3,
         };
         init
     },
     {
         let mut init = collapse_t {
-            blendA: 0x30 as libc::c_int | 0x1 as libc::c_int,
-            blendB: 0x10 as libc::c_int | 0x3 as libc::c_int,
-            multitextureEnv: 0x2100 as libc::c_int,
-            multitextureBlend: 0x10 as libc::c_int | 0x3 as libc::c_int,
+            blendA: 0x30 | 0x1,
+            blendB: 0x10 | 0x3,
+            multitextureEnv: 0x2100,
+            multitextureBlend: 0x10 | 0x3,
         };
         init
     },
     {
         let mut init = collapse_t {
-            blendA: 0x10 as libc::c_int | 0x3 as libc::c_int,
-            blendB: 0x30 as libc::c_int | 0x1 as libc::c_int,
-            multitextureEnv: 0x2100 as libc::c_int,
-            multitextureBlend: 0x10 as libc::c_int | 0x3 as libc::c_int,
+            blendA: 0x10 | 0x3,
+            blendB: 0x30 | 0x1,
+            multitextureEnv: 0x2100,
+            multitextureBlend: 0x10 | 0x3,
         };
         init
     },
     {
         let mut init = collapse_t {
-            blendA: 0x30 as libc::c_int | 0x1 as libc::c_int,
-            blendB: 0x30 as libc::c_int | 0x1 as libc::c_int,
-            multitextureEnv: 0x2100 as libc::c_int,
-            multitextureBlend: 0x10 as libc::c_int | 0x3 as libc::c_int,
+            blendA: 0x30 | 0x1,
+            blendB: 0x30 | 0x1,
+            multitextureEnv: 0x2100,
+            multitextureBlend: 0x10 | 0x3,
         };
         init
     },
     {
         let mut init = collapse_t {
-            blendA: 0 as libc::c_int,
-            blendB: 0x20 as libc::c_int | 0x2 as libc::c_int,
-            multitextureEnv: 0x104 as libc::c_int,
-            multitextureBlend: 0 as libc::c_int,
+            blendA: 0,
+            blendB: 0x20 | 0x2,
+            multitextureEnv: 0x104,
+            multitextureBlend: 0,
         };
         init
     },
     {
         let mut init = collapse_t {
-            blendA: 0x20 as libc::c_int | 0x2 as libc::c_int,
-            blendB: 0x20 as libc::c_int | 0x2 as libc::c_int,
-            multitextureEnv: 0x104 as libc::c_int,
-            multitextureBlend: 0x20 as libc::c_int | 0x2 as libc::c_int,
+            blendA: 0x20 | 0x2,
+            blendB: 0x20 | 0x2,
+            multitextureEnv: 0x104,
+            multitextureBlend: 0x20 | 0x2,
         };
         init
     },
     {
         let mut init = collapse_t {
-            blendA: -(1 as libc::c_int),
+            blendA: -(1),
             blendB: 0,
             multitextureEnv: 0,
             multitextureBlend: 0,
@@ -3658,17 +3668,17 @@ FIXME: I think modulated add + modulated add collapses incorrectly
 */
 
 unsafe extern "C" fn CollapseMultitexture() -> crate::src::qcommon::q_shared::qboolean {
-    let mut abits: libc::c_int = 0;
-    let mut bbits: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
+    let mut abits: i32 = 0;
+    let mut bbits: i32 = 0;
+    let mut i: i32 = 0;
     let mut tmpBundle: crate::tr_local_h::textureBundle_t = crate::tr_local_h::textureBundle_t {
-        image: [0 as *const crate::tr_common_h::image_t as *mut crate::tr_common_h::image_t; 8],
+        image: [0 as *mut crate::tr_common_h::image_t; 8],
         numImageAnimations: 0,
         imageAnimationSpeed: 0.,
         tcGen: crate::tr_local_h::TCGEN_BAD,
         tcGenVectors: [[0.; 3]; 2],
         numTexMods: 0,
-        texMods: 0 as *const crate::tr_local_h::texModInfo_t
+        texMods:  0
             as *mut crate::tr_local_h::texModInfo_t,
         videoMapHandle: 0,
         isLightmap: crate::src::qcommon::q_shared::qfalse,
@@ -3678,130 +3688,133 @@ unsafe extern "C" fn CollapseMultitexture() -> crate::src::qcommon::q_shared::qb
         return crate::src::qcommon::q_shared::qfalse;
     }
     // make sure both stages are active
-    if stages[0 as libc::c_int as usize].active as u64 == 0
-        || stages[1 as libc::c_int as usize].active as u64 == 0
+    if stages[0].active as u64 == 0
+        || stages[1].active as u64 == 0
     {
         return crate::src::qcommon::q_shared::qfalse;
     }
     // on voodoo2, don't combine different tmus
-    if crate::src::renderergl1::tr_init::glConfig.driverType as libc::c_uint
-        == crate::tr_types_h::GLDRV_VOODOO as libc::c_int as libc::c_uint
+    if  crate::src::renderergl1::tr_init::glConfig.driverType
+        ==  crate::tr_types_h::GLDRV_VOODOO
     {
-        if (*stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize])
+        if (*stages[0].bundle[0].image
+            [0])
             .TMU
-            == (*stages[1 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-                [0 as libc::c_int as usize])
+            == (*stages[1].bundle[0].image
+                [0])
                 .TMU
         {
             return crate::src::qcommon::q_shared::qfalse;
         }
     }
-    abits = stages[0 as libc::c_int as usize].stateBits as libc::c_int;
-    bbits = stages[1 as libc::c_int as usize].stateBits as libc::c_int;
+    abits = stages[0].stateBits as i32;
+    bbits = stages[1].stateBits as i32;
     // make sure that both stages have identical state other than blend modes
-    if abits & !(0xf0 as libc::c_int | 0xf as libc::c_int | 0x100 as libc::c_int)
-        != bbits & !(0xf0 as libc::c_int | 0xf as libc::c_int | 0x100 as libc::c_int)
+    if abits & !(0xf0 | 0xf | 0x100)
+        != bbits & !(0xf0 | 0xf | 0x100)
     {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    abits &= 0xf0 as libc::c_int | 0xf as libc::c_int;
-    bbits &= 0xf0 as libc::c_int | 0xf as libc::c_int;
+    abits &= 0xf0 | 0xf;
+    bbits &= 0xf0 | 0xf;
     // search for a valid multitexture blend function
-    i = 0 as libc::c_int;
-    while collapse[i as usize].blendA != -(1 as libc::c_int) {
+    i = 0;
+    while collapse[i as usize].blendA != -(1) {
         if abits == collapse[i as usize].blendA && bbits == collapse[i as usize].blendB {
             break;
         }
         i += 1
     }
     // nothing found
-    if collapse[i as usize].blendA == -(1 as libc::c_int) {
+    if collapse[i as usize].blendA == -(1) {
         return crate::src::qcommon::q_shared::qfalse;
     }
     // GL_ADD is a separate extension
-    if collapse[i as usize].multitextureEnv == 0x104 as libc::c_int
+    if collapse[i as usize].multitextureEnv == 0x104
         && crate::src::renderergl1::tr_init::glConfig.textureEnvAddAvailable as u64 == 0
     {
         return crate::src::qcommon::q_shared::qfalse;
     }
     // make sure waveforms have identical parameters
-    if stages[0 as libc::c_int as usize].rgbGen as libc::c_uint
-        != stages[1 as libc::c_int as usize].rgbGen as libc::c_uint
-        || stages[0 as libc::c_int as usize].alphaGen as libc::c_uint
-            != stages[1 as libc::c_int as usize].alphaGen as libc::c_uint
+    if  stages[0].rgbGen
+        !=  stages[1].rgbGen
+        ||  stages[0].alphaGen
+            !=  stages[1].alphaGen
     {
         return crate::src::qcommon::q_shared::qfalse;
     }
     // an add collapse can only have identity colors
-    if collapse[i as usize].multitextureEnv == 0x104 as libc::c_int
-        && stages[0 as libc::c_int as usize].rgbGen as libc::c_uint
-            != crate::tr_local_h::CGEN_IDENTITY as libc::c_int as libc::c_uint
+    if collapse[i as usize].multitextureEnv == 0x104
+        &&  stages[0].rgbGen
+            !=  crate::tr_local_h::CGEN_IDENTITY
     {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if stages[0 as libc::c_int as usize].rgbGen as libc::c_uint
-        == crate::tr_local_h::CGEN_WAVEFORM as libc::c_int as libc::c_uint
+    if  stages[0].rgbGen
+        ==  crate::tr_local_h::CGEN_WAVEFORM
     {
         if crate::stdlib::memcmp(
-            &mut (*stages.as_mut_ptr().offset(0 as libc::c_int as isize)).rgbWave
+            &mut (*stages.as_mut_ptr().offset(0)).rgbWave
                 as *mut crate::tr_local_h::waveForm_t as *const libc::c_void,
-            &mut (*stages.as_mut_ptr().offset(1 as libc::c_int as isize)).rgbWave
+            &mut (*stages.as_mut_ptr().offset(1)).rgbWave
                 as *mut crate::tr_local_h::waveForm_t as *const libc::c_void,
-            ::std::mem::size_of::<crate::tr_local_h::waveForm_t>() as libc::c_ulong,
+            
+            ::std::mem::size_of::<crate::tr_local_h::waveForm_t>(),
         ) != 0
         {
             return crate::src::qcommon::q_shared::qfalse;
         }
     }
-    if stages[0 as libc::c_int as usize].alphaGen as libc::c_uint
-        == crate::tr_local_h::AGEN_WAVEFORM as libc::c_int as libc::c_uint
+    if  stages[0].alphaGen
+        ==  crate::tr_local_h::AGEN_WAVEFORM
     {
         if crate::stdlib::memcmp(
-            &mut (*stages.as_mut_ptr().offset(0 as libc::c_int as isize)).alphaWave
+            &mut (*stages.as_mut_ptr().offset(0)).alphaWave
                 as *mut crate::tr_local_h::waveForm_t as *const libc::c_void,
-            &mut (*stages.as_mut_ptr().offset(1 as libc::c_int as isize)).alphaWave
+            &mut (*stages.as_mut_ptr().offset(1)).alphaWave
                 as *mut crate::tr_local_h::waveForm_t as *const libc::c_void,
-            ::std::mem::size_of::<crate::tr_local_h::waveForm_t>() as libc::c_ulong,
+            
+            ::std::mem::size_of::<crate::tr_local_h::waveForm_t>(),
         ) != 0
         {
             return crate::src::qcommon::q_shared::qfalse;
         }
     }
     // make sure that lightmaps are in bundle 1 for 3dfx
-    if stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].isLightmap as u64 != 0 {
-        tmpBundle = stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize];
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize] =
-            stages[1 as libc::c_int as usize].bundle[0 as libc::c_int as usize];
-        stages[0 as libc::c_int as usize].bundle[1 as libc::c_int as usize] = tmpBundle
+    if stages[0].bundle[0].isLightmap as u64 != 0 {
+        tmpBundle = stages[0].bundle[0];
+        stages[0].bundle[0] =
+            stages[1].bundle[0];
+        stages[0].bundle[1] = tmpBundle
     } else {
-        stages[0 as libc::c_int as usize].bundle[1 as libc::c_int as usize] =
-            stages[1 as libc::c_int as usize].bundle[0 as libc::c_int as usize]
+        stages[0].bundle[1] =
+            stages[1].bundle[0]
     }
     // set the new blend state bits
     shader.multitextureEnv = collapse[i as usize].multitextureEnv;
-    stages[0 as libc::c_int as usize].stateBits &=
-        !(0xf0 as libc::c_int | 0xf as libc::c_int) as libc::c_uint;
-    stages[0 as libc::c_int as usize].stateBits |=
-        collapse[i as usize].multitextureBlend as libc::c_uint;
+    stages[0].stateBits &=
+        !(0xf0i32 | 0xf) as u32;
+    stages[0].stateBits |=
+        collapse[i as usize].multitextureBlend as u32;
     //
     // move down subsequent shaders
     //
     crate::stdlib::memmove(
-        &mut *stages.as_mut_ptr().offset(1 as libc::c_int as isize)
+        &mut *stages.as_mut_ptr().offset(1)
             as *mut crate::tr_local_h::shaderStage_t as *mut libc::c_void,
-        &mut *stages.as_mut_ptr().offset(2 as libc::c_int as isize)
+        &mut *stages.as_mut_ptr().offset(2)
             as *mut crate::tr_local_h::shaderStage_t as *const libc::c_void,
-        (::std::mem::size_of::<crate::tr_local_h::shaderStage_t>() as libc::c_ulong)
-            .wrapping_mul((8 as libc::c_int - 2 as libc::c_int) as libc::c_ulong),
+        (::std::mem::size_of::<crate::tr_local_h::shaderStage_t>())
+            .wrapping_mul((8i32 - 2) as usize),
     );
     crate::stdlib::memset(
         &mut *stages
             .as_mut_ptr()
-            .offset((8 as libc::c_int - 1 as libc::c_int) as isize)
+            .offset((8i32 - 1) as isize)
             as *mut crate::tr_local_h::shaderStage_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::tr_local_h::shaderStage_t>() as libc::c_ulong,
+        0,
+        
+        ::std::mem::size_of::<crate::tr_local_h::shaderStage_t>(),
     );
     return crate::src::qcommon::q_shared::qtrue;
 }
@@ -3817,42 +3830,42 @@ sortedIndex.
 ==============
 */
 
-unsafe extern "C" fn FixRenderCommandList(mut newShader: libc::c_int) {
+unsafe extern "C" fn FixRenderCommandList(mut newShader: i32) {
     let mut cmdList: *mut crate::tr_local_h::renderCommandList_t =
         &mut (*crate::src::renderergl1::tr_backend::backEndData).commands;
     if !cmdList.is_null() {
         let mut curCmd: *const libc::c_void = (*cmdList).cmds.as_mut_ptr() as *const libc::c_void;
         loop {
-            curCmd = ((curCmd as crate::stdlib::intptr_t as libc::c_ulong)
-                .wrapping_add(::std::mem::size_of::<*mut libc::c_void>() as libc::c_ulong)
-                .wrapping_sub(1 as libc::c_int as libc::c_ulong)
-                & !(::std::mem::size_of::<*mut libc::c_void>() as libc::c_ulong)
-                    .wrapping_sub(1 as libc::c_int as libc::c_ulong))
+            curCmd = ((curCmd as usize)
+                .wrapping_add(::std::mem::size_of::<*mut libc::c_void>())
+                .wrapping_sub(1usize)
+                & !(::std::mem::size_of::<*mut libc::c_void>())
+                    .wrapping_sub(1usize))
                 as *mut libc::c_void;
-            match *(curCmd as *const libc::c_int) {
+            match *(curCmd as *const i32) {
                 1 => {
                     let mut sc_cmd: *const crate::tr_local_h::setColorCommand_t =
                         curCmd as *const crate::tr_local_h::setColorCommand_t;
-                    curCmd = sc_cmd.offset(1 as libc::c_int as isize) as *const libc::c_void
+                    curCmd = sc_cmd.offset(1) as *const libc::c_void
                 }
                 2 => {
                     let mut sp_cmd: *const crate::tr_local_h::stretchPicCommand_t =
                         curCmd as *const crate::tr_local_h::stretchPicCommand_t;
-                    curCmd = sp_cmd.offset(1 as libc::c_int as isize) as *const libc::c_void
+                    curCmd = sp_cmd.offset(1) as *const libc::c_void
                 }
                 3 => {
-                    let mut i: libc::c_int = 0;
+                    let mut i: i32 = 0;
                     let mut drawSurf: *mut crate::tr_local_h::drawSurf_t =
                         0 as *mut crate::tr_local_h::drawSurf_t;
                     let mut shader_0: *mut crate::tr_local_h::shader_t =
                         0 as *mut crate::tr_local_h::shader_t;
-                    let mut fogNum: libc::c_int = 0;
-                    let mut entityNum: libc::c_int = 0;
-                    let mut dlightMap: libc::c_int = 0;
-                    let mut sortedIndex: libc::c_int = 0;
+                    let mut fogNum: i32 = 0;
+                    let mut entityNum: i32 = 0;
+                    let mut dlightMap: i32 = 0;
+                    let mut sortedIndex: i32 = 0;
                     let mut ds_cmd: *const crate::tr_local_h::drawSurfsCommand_t =
                         curCmd as *const crate::tr_local_h::drawSurfsCommand_t;
-                    i = 0 as libc::c_int;
+                    i = 0;
                     drawSurf = (*ds_cmd).drawSurfs;
                     while i < (*ds_cmd).numDrawSurfs {
                         crate::src::renderergl1::tr_main::R_DecomposeSort(
@@ -3862,32 +3875,32 @@ unsafe extern "C" fn FixRenderCommandList(mut newShader: libc::c_int) {
                             &mut fogNum,
                             &mut dlightMap,
                         );
-                        sortedIndex = ((*drawSurf).sort >> 7 as libc::c_int + 10 as libc::c_int
-                            & (((1 as libc::c_int) << 14 as libc::c_int) - 1 as libc::c_int)
-                                as libc::c_uint)
-                            as libc::c_int;
+                        sortedIndex = ((*drawSurf).sort >> 7 + 10
+                            & (((1i32) << 14) - 1)
+                                as u32)
+                            as i32;
                         if sortedIndex >= newShader {
                             sortedIndex += 1;
-                            (*drawSurf).sort = (sortedIndex << 7 as libc::c_int + 10 as libc::c_int
+                            (*drawSurf).sort = (sortedIndex << 7 + 10
                                 | entityNum
-                                | fogNum << 2 as libc::c_int
+                                | fogNum << 2
                                 | dlightMap)
-                                as libc::c_uint
+                                as u32
                         }
                         i += 1;
                         drawSurf = drawSurf.offset(1)
                     }
-                    curCmd = ds_cmd.offset(1 as libc::c_int as isize) as *const libc::c_void
+                    curCmd = ds_cmd.offset(1) as *const libc::c_void
                 }
                 4 => {
                     let mut db_cmd: *const crate::tr_local_h::drawBufferCommand_t =
                         curCmd as *const crate::tr_local_h::drawBufferCommand_t;
-                    curCmd = db_cmd.offset(1 as libc::c_int as isize) as *const libc::c_void
+                    curCmd = db_cmd.offset(1) as *const libc::c_void
                 }
                 5 => {
                     let mut sb_cmd: *const crate::tr_local_h::swapBuffersCommand_t =
                         curCmd as *const crate::tr_local_h::swapBuffersCommand_t;
-                    curCmd = sb_cmd.offset(1 as libc::c_int as isize) as *const libc::c_void
+                    curCmd = sb_cmd.offset(1) as *const libc::c_void
                 }
                 0 | _ => return,
             }
@@ -3907,28 +3920,28 @@ Sets shader->sortedIndex
 */
 
 unsafe extern "C" fn SortNewShader() {
-    let mut i: libc::c_int = 0;
-    let mut sort: libc::c_float = 0.;
+    let mut i: i32 = 0;
+    let mut sort: f32 = 0.;
     let mut newShader: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
     newShader = crate::src::renderergl1::tr_main::tr.shaders
-        [(crate::src::renderergl1::tr_main::tr.numShaders - 1 as libc::c_int) as usize];
+        [(crate::src::renderergl1::tr_main::tr.numShaders - 1) as usize];
     sort = (*newShader).sort;
-    i = crate::src::renderergl1::tr_main::tr.numShaders - 2 as libc::c_int;
-    while i >= 0 as libc::c_int {
+    i = crate::src::renderergl1::tr_main::tr.numShaders - 2;
+    while i >= 0 {
         if (*crate::src::renderergl1::tr_main::tr.sortedShaders[i as usize]).sort <= sort {
             break;
         }
-        crate::src::renderergl1::tr_main::tr.sortedShaders[(i + 1 as libc::c_int) as usize] =
+        crate::src::renderergl1::tr_main::tr.sortedShaders[(i + 1) as usize] =
             crate::src::renderergl1::tr_main::tr.sortedShaders[i as usize];
-        (*crate::src::renderergl1::tr_main::tr.sortedShaders[(i + 1 as libc::c_int) as usize])
+        (*crate::src::renderergl1::tr_main::tr.sortedShaders[(i + 1) as usize])
             .sortedIndex += 1;
         i -= 1
     }
     // Arnout: fix rendercommandlist
     // https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=493
-    FixRenderCommandList(i + 1 as libc::c_int);
-    (*newShader).sortedIndex = i + 1 as libc::c_int;
-    crate::src::renderergl1::tr_main::tr.sortedShaders[(i + 1 as libc::c_int) as usize] = newShader;
+    FixRenderCommandList(i + 1);
+    (*newShader).sortedIndex = i + 1;
+    crate::src::renderergl1::tr_main::tr.sortedShaders[(i + 1) as usize] = newShader;
 }
 /*
 ====================
@@ -3938,30 +3951,31 @@ GeneratePermanentShader
 
 unsafe extern "C" fn GeneratePermanentShader() -> *mut crate::tr_local_h::shader_t {
     let mut newShader: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
-    let mut i: libc::c_int = 0;
-    let mut b: libc::c_int = 0;
-    let mut size: libc::c_int = 0;
-    let mut hash: libc::c_int = 0;
-    if crate::src::renderergl1::tr_main::tr.numShaders == (1 as libc::c_int) << 14 as libc::c_int {
+    let mut i: i32 = 0;
+    let mut b: i32 = 0;
+    let mut size: i32 = 0;
+    let mut hash: i32 = 0;
+    if crate::src::renderergl1::tr_main::tr.numShaders == (1) << 14 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: GeneratePermanentShader - MAX_SHADERS hit\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
         );
         return crate::src::renderergl1::tr_main::tr.defaultShader;
     }
     newShader = crate::src::renderergl1::tr_main::ri
         .Hunk_Alloc
         .expect("non-null function pointer")(
-        ::std::mem::size_of::<crate::tr_local_h::shader_t>() as libc::c_ulong as libc::c_int,
+        
+        ::std::mem::size_of::<crate::tr_local_h::shader_t>() as i32,
         crate::src::qcommon::q_shared::h_low,
     ) as *mut crate::tr_local_h::shader_t;
     *newShader = shader;
-    if shader.sort <= crate::tr_local_h::SS_OPAQUE as libc::c_int as libc::c_float {
+    if shader.sort <= crate::tr_local_h::SS_OPAQUE as i32 as f32 {
         (*newShader).fogPass = crate::tr_local_h::FP_EQUAL
-    } else if shader.contentFlags & 64 as libc::c_int != 0 {
+    } else if shader.contentFlags & 64 != 0 {
         (*newShader).fogPass = crate::tr_local_h::FP_LE
     }
     crate::src::renderergl1::tr_main::tr.shaders
@@ -3971,7 +3985,7 @@ unsafe extern "C" fn GeneratePermanentShader() -> *mut crate::tr_local_h::shader
         [crate::src::renderergl1::tr_main::tr.numShaders as usize] = newShader;
     (*newShader).sortedIndex = crate::src::renderergl1::tr_main::tr.numShaders;
     crate::src::renderergl1::tr_main::tr.numShaders += 1;
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*newShader).numUnfoggedPasses {
         if stages[i as usize].active as u64 == 0 {
             break;
@@ -3979,18 +3993,20 @@ unsafe extern "C" fn GeneratePermanentShader() -> *mut crate::tr_local_h::shader
         (*newShader).stages[i as usize] = crate::src::renderergl1::tr_main::ri
             .Hunk_Alloc
             .expect("non-null function pointer")(
-            ::std::mem::size_of::<crate::tr_local_h::shaderStage_t>() as libc::c_ulong
-                as libc::c_int,
+            
+            ::std::mem::size_of::<crate::tr_local_h::shaderStage_t>()
+                as i32,
             crate::src::qcommon::q_shared::h_low,
         ) as *mut crate::tr_local_h::shaderStage_t;
         *(*newShader).stages[i as usize] = stages[i as usize];
-        b = 0 as libc::c_int;
-        while b < 2 as libc::c_int {
+        b = 0;
+        while b < 2 {
             size = ((*(*newShader).stages[i as usize]).bundle[b as usize].numTexMods
-                as libc::c_ulong)
+                as usize)
                 .wrapping_mul(
-                    ::std::mem::size_of::<crate::tr_local_h::texModInfo_t>() as libc::c_ulong
-                ) as libc::c_int;
+                    
+                    ::std::mem::size_of::<crate::tr_local_h::texModInfo_t>()
+                ) as i32;
             (*(*newShader).stages[i as usize]).bundle[b as usize].texMods =
                 crate::src::renderergl1::tr_main::ri
                     .Hunk_Alloc
@@ -4000,14 +4016,14 @@ unsafe extern "C" fn GeneratePermanentShader() -> *mut crate::tr_local_h::shader
             crate::stdlib::memcpy(
                 (*(*newShader).stages[i as usize]).bundle[b as usize].texMods as *mut libc::c_void,
                 stages[i as usize].bundle[b as usize].texMods as *const libc::c_void,
-                size as libc::c_ulong,
+                size as usize,
             );
             b += 1
         }
         i += 1
     }
     SortNewShader();
-    hash = generateHashValue((*newShader).name.as_mut_ptr(), 1024 as libc::c_int) as libc::c_int;
+    hash = generateHashValue((*newShader).name.as_mut_ptr(), 1024) as i32;
     (*newShader).next = hashTable[hash as usize];
     hashTable[hash as usize] = newShader;
     return newShader;
@@ -4023,43 +4039,43 @@ what it is supposed to look like.
 */
 
 unsafe extern "C" fn VertexLightingCollapse() {
-    let mut stage: libc::c_int = 0;
+    let mut stage: i32 = 0;
     let mut bestStage: *mut crate::tr_local_h::shaderStage_t =
         0 as *mut crate::tr_local_h::shaderStage_t;
-    let mut bestImageRank: libc::c_int = 0;
-    let mut rank: libc::c_int = 0;
+    let mut bestImageRank: i32 = 0;
+    let mut rank: i32 = 0;
     // if we aren't opaque, just use the first pass
-    if shader.sort == crate::tr_local_h::SS_OPAQUE as libc::c_int as libc::c_float {
+    if shader.sort == crate::tr_local_h::SS_OPAQUE as i32 as f32 {
         // pick the best texture for the single pass
-        bestStage = &mut *stages.as_mut_ptr().offset(0 as libc::c_int as isize)
+        bestStage = &mut *stages.as_mut_ptr().offset(0)
             as *mut crate::tr_local_h::shaderStage_t;
-        bestImageRank = -(999999 as libc::c_int);
-        stage = 0 as libc::c_int;
-        while stage < 8 as libc::c_int {
+        bestImageRank = -(999999);
+        stage = 0;
+        while stage < 8 {
             let mut pStage: *mut crate::tr_local_h::shaderStage_t =
                 &mut *stages.as_mut_ptr().offset(stage as isize)
                     as *mut crate::tr_local_h::shaderStage_t;
             if (*pStage).active as u64 == 0 {
                 break;
             }
-            rank = 0 as libc::c_int;
-            if (*pStage).bundle[0 as libc::c_int as usize].isLightmap as u64 != 0 {
-                rank -= 100 as libc::c_int
+            rank = 0;
+            if (*pStage).bundle[0].isLightmap as u64 != 0 {
+                rank -= 100
             }
-            if (*pStage).bundle[0 as libc::c_int as usize].tcGen as libc::c_uint
-                != crate::tr_local_h::TCGEN_TEXTURE as libc::c_int as libc::c_uint
+            if  (*pStage).bundle[0].tcGen
+                !=  crate::tr_local_h::TCGEN_TEXTURE
             {
-                rank -= 5 as libc::c_int
+                rank -= 5
             }
-            if (*pStage).bundle[0 as libc::c_int as usize].numTexMods != 0 {
-                rank -= 5 as libc::c_int
+            if (*pStage).bundle[0].numTexMods != 0 {
+                rank -= 5
             }
-            if (*pStage).rgbGen as libc::c_uint
-                != crate::tr_local_h::CGEN_IDENTITY as libc::c_int as libc::c_uint
-                && (*pStage).rgbGen as libc::c_uint
-                    != crate::tr_local_h::CGEN_IDENTITY_LIGHTING as libc::c_int as libc::c_uint
+            if  (*pStage).rgbGen
+                !=  crate::tr_local_h::CGEN_IDENTITY
+                &&  (*pStage).rgbGen
+                    !=  crate::tr_local_h::CGEN_IDENTITY_LIGHTING
             {
-                rank -= 3 as libc::c_int
+                rank -= 3
             }
             if rank > bestImageRank {
                 bestImageRank = rank;
@@ -4067,57 +4083,57 @@ unsafe extern "C" fn VertexLightingCollapse() {
             }
             stage += 1
         }
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize] =
-            (*bestStage).bundle[0 as libc::c_int as usize];
-        stages[0 as libc::c_int as usize].stateBits &=
-            !(0xf0 as libc::c_int | 0xf as libc::c_int) as libc::c_uint;
-        stages[0 as libc::c_int as usize].stateBits |= 0x100 as libc::c_int as libc::c_uint;
-        if shader.lightmapIndex == -(1 as libc::c_int) {
-            stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_LIGHTING_DIFFUSE
+        stages[0].bundle[0] =
+            (*bestStage).bundle[0];
+        stages[0].stateBits &=
+            !(0xf0i32 | 0xf) as u32;
+        stages[0].stateBits |= 0x100;
+        if shader.lightmapIndex == -(1) {
+            stages[0].rgbGen = crate::tr_local_h::CGEN_LIGHTING_DIFFUSE
         } else {
-            stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_EXACT_VERTEX
+            stages[0].rgbGen = crate::tr_local_h::CGEN_EXACT_VERTEX
         }
-        stages[0 as libc::c_int as usize].alphaGen = crate::tr_local_h::AGEN_SKIP
+        stages[0].alphaGen = crate::tr_local_h::AGEN_SKIP
     } else {
         // don't use a lightmap (tesla coils)
-        if stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].isLightmap as u64
+        if stages[0].bundle[0].isLightmap as u64
             != 0
         {
-            stages[0 as libc::c_int as usize] = stages[1 as libc::c_int as usize]
+            stages[0] = stages[1]
         }
         // if we were in a cross-fade cgen, hack it to normal
-        if stages[0 as libc::c_int as usize].rgbGen as libc::c_uint
-            == crate::tr_local_h::CGEN_ONE_MINUS_ENTITY as libc::c_int as libc::c_uint
-            || stages[1 as libc::c_int as usize].rgbGen as libc::c_uint
-                == crate::tr_local_h::CGEN_ONE_MINUS_ENTITY as libc::c_int as libc::c_uint
+        if  stages[0].rgbGen
+            ==  crate::tr_local_h::CGEN_ONE_MINUS_ENTITY
+            ||  stages[1].rgbGen
+                ==  crate::tr_local_h::CGEN_ONE_MINUS_ENTITY
         {
-            stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_IDENTITY_LIGHTING
+            stages[0].rgbGen = crate::tr_local_h::CGEN_IDENTITY_LIGHTING
         }
-        if stages[0 as libc::c_int as usize].rgbGen as libc::c_uint
-            == crate::tr_local_h::CGEN_WAVEFORM as libc::c_int as libc::c_uint
-            && stages[0 as libc::c_int as usize].rgbWave.func as libc::c_uint
-                == crate::tr_local_h::GF_SAWTOOTH as libc::c_int as libc::c_uint
-            && (stages[1 as libc::c_int as usize].rgbGen as libc::c_uint
-                == crate::tr_local_h::CGEN_WAVEFORM as libc::c_int as libc::c_uint
-                && stages[1 as libc::c_int as usize].rgbWave.func as libc::c_uint
-                    == crate::tr_local_h::GF_INVERSE_SAWTOOTH as libc::c_int as libc::c_uint)
+        if  stages[0].rgbGen
+            ==  crate::tr_local_h::CGEN_WAVEFORM
+            &&  stages[0].rgbWave.func
+                ==  crate::tr_local_h::GF_SAWTOOTH
+            && (stages[1].rgbGen
+                ==  crate::tr_local_h::CGEN_WAVEFORM
+                &&  stages[1].rgbWave.func
+                    ==  crate::tr_local_h::GF_INVERSE_SAWTOOTH)
         {
-            stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_IDENTITY_LIGHTING
+            stages[0].rgbGen = crate::tr_local_h::CGEN_IDENTITY_LIGHTING
         }
-        if stages[0 as libc::c_int as usize].rgbGen as libc::c_uint
-            == crate::tr_local_h::CGEN_WAVEFORM as libc::c_int as libc::c_uint
-            && stages[0 as libc::c_int as usize].rgbWave.func as libc::c_uint
-                == crate::tr_local_h::GF_INVERSE_SAWTOOTH as libc::c_int as libc::c_uint
-            && (stages[1 as libc::c_int as usize].rgbGen as libc::c_uint
-                == crate::tr_local_h::CGEN_WAVEFORM as libc::c_int as libc::c_uint
-                && stages[1 as libc::c_int as usize].rgbWave.func as libc::c_uint
-                    == crate::tr_local_h::GF_SAWTOOTH as libc::c_int as libc::c_uint)
+        if  stages[0].rgbGen
+            ==  crate::tr_local_h::CGEN_WAVEFORM
+            &&  stages[0].rgbWave.func
+                ==  crate::tr_local_h::GF_INVERSE_SAWTOOTH
+            && (stages[1].rgbGen
+                ==  crate::tr_local_h::CGEN_WAVEFORM
+                &&  stages[1].rgbWave.func
+                    ==  crate::tr_local_h::GF_SAWTOOTH)
         {
-            stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_IDENTITY_LIGHTING
+            stages[0].rgbGen = crate::tr_local_h::CGEN_IDENTITY_LIGHTING
         }
     }
-    stage = 1 as libc::c_int;
-    while stage < 8 as libc::c_int {
+    stage = 1;
+    while stage < 8 {
         let mut pStage_0: *mut crate::tr_local_h::shaderStage_t =
             &mut *stages.as_mut_ptr().offset(stage as isize)
                 as *mut crate::tr_local_h::shaderStage_t;
@@ -4126,8 +4142,9 @@ unsafe extern "C" fn VertexLightingCollapse() {
         }
         crate::stdlib::memset(
             pStage_0 as *mut libc::c_void,
-            0 as libc::c_int,
-            ::std::mem::size_of::<crate::tr_local_h::shaderStage_t>() as libc::c_ulong,
+            0,
+            
+            ::std::mem::size_of::<crate::tr_local_h::shaderStage_t>(),
         );
         stage += 1
     }
@@ -4138,28 +4155,31 @@ InitShader
 ===============
 */
 
-unsafe extern "C" fn InitShader(mut name: *const libc::c_char, mut lightmapIndex: libc::c_int) {
-    let mut i: libc::c_int = 0;
+unsafe extern "C" fn InitShader(mut name: *const i8, mut lightmapIndex: i32) {
+    let mut i: i32 = 0;
     // clear the global shader
     crate::stdlib::memset(
         &mut shader as *mut crate::tr_local_h::shader_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::tr_local_h::shader_t>() as libc::c_ulong,
+        0,
+        
+        ::std::mem::size_of::<crate::tr_local_h::shader_t>(),
     );
     crate::stdlib::memset(
         &mut stages as *mut [crate::tr_local_h::shaderStage_t; 8] as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<[crate::tr_local_h::shaderStage_t; 8]>() as libc::c_ulong,
+        0,
+        
+        ::std::mem::size_of::<[crate::tr_local_h::shaderStage_t; 8]>(),
     );
     crate::src::qcommon::q_shared::Q_strncpyz(
         shader.name.as_mut_ptr(),
         name,
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+        
+        ::std::mem::size_of::<[i8; 64]>() as i32,
     );
     shader.lightmapIndex = lightmapIndex;
-    i = 0 as libc::c_int;
-    while i < 8 as libc::c_int {
-        stages[i as usize].bundle[0 as libc::c_int as usize].texMods =
+    i = 0;
+    while i < 8 {
+        stages[i as usize].bundle[0].texMods =
             texMods[i as usize].as_mut_ptr();
         i += 1
     }
@@ -4174,7 +4194,7 @@ from the current global working shader
 */
 
 unsafe extern "C" fn FinishShader() -> *mut crate::tr_local_h::shader_t {
-    let mut stage: libc::c_int = 0;
+    let mut stage: i32 = 0;
     let mut hasLightmapStage: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     let mut vertexLightmap: crate::src::qcommon::q_shared::qboolean =
@@ -4185,19 +4205,19 @@ unsafe extern "C" fn FinishShader() -> *mut crate::tr_local_h::shader_t {
     // set sky stuff appropriate
     //
     if shader.isSky as u64 != 0 {
-        shader.sort = crate::tr_local_h::SS_ENVIRONMENT as libc::c_int as libc::c_float
+        shader.sort = crate::tr_local_h::SS_ENVIRONMENT as i32 as f32
     }
     //
     // set polygon offset
     //
-    if shader.polygonOffset as libc::c_uint != 0 && shader.sort == 0. {
-        shader.sort = crate::tr_local_h::SS_DECAL as libc::c_int as libc::c_float
+    if  shader.polygonOffset != 0 && shader.sort == 0. {
+        shader.sort = crate::tr_local_h::SS_DECAL as i32 as f32
     }
     //
     // set appropriate stage information
     //
-    stage = 0 as libc::c_int;
-    while stage < 8 as libc::c_int {
+    stage = 0;
+    while stage < 8 {
         let mut pStage: *mut crate::tr_local_h::shaderStage_t =
             &mut *stages.as_mut_ptr().offset(stage as isize)
                 as *mut crate::tr_local_h::shaderStage_t;
@@ -4205,52 +4225,52 @@ unsafe extern "C" fn FinishShader() -> *mut crate::tr_local_h::shader_t {
             break;
         }
         // check for a missing texture
-        if (*pStage).bundle[0 as libc::c_int as usize].image[0 as libc::c_int as usize].is_null() {
+        if (*pStage).bundle[0].image[0].is_null() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
-                b"Shader %s has a stage with no image\n\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_WARNING as i32,
+                b"Shader %s has a stage with no image\n\x00" as *const u8 as *const i8,
                 shader.name.as_mut_ptr(),
             );
             (*pStage).active = crate::src::qcommon::q_shared::qfalse;
             stage += 1
-        } else if (*pStage).isDetail as libc::c_uint != 0
+        } else if  (*pStage).isDetail != 0
             && (*crate::src::renderergl1::tr_init::r_detailTextures).integer == 0
         {
-            let mut index: libc::c_int = 0;
-            index = stage + 1 as libc::c_int;
-            while index < 8 as libc::c_int {
+            let mut index: i32 = 0;
+            index = stage + 1;
+            while index < 8 {
                 if stages[index as usize].active as u64 == 0 {
                     break;
                 }
                 index += 1
             }
-            if index < 8 as libc::c_int {
+            if index < 8 {
                 crate::stdlib::memmove(
                     pStage as *mut libc::c_void,
-                    pStage.offset(1 as libc::c_int as isize) as *const libc::c_void,
-                    (::std::mem::size_of::<crate::tr_local_h::shaderStage_t>() as libc::c_ulong)
-                        .wrapping_mul((index - stage) as libc::c_ulong),
+                    pStage.offset(1isize) as *const libc::c_void,
+                    (::std::mem::size_of::<crate::tr_local_h::shaderStage_t>())
+                        .wrapping_mul((index - stage) as usize),
                 );
             } else {
-                if (stage + 1 as libc::c_int) < 8 as libc::c_int {
+                if (stage + 1) < 8 {
                     crate::stdlib::memmove(
                         pStage as *mut libc::c_void,
-                        pStage.offset(1 as libc::c_int as isize) as *const libc::c_void,
-                        (::std::mem::size_of::<crate::tr_local_h::shaderStage_t>()
-                            as libc::c_ulong)
-                            .wrapping_mul((index - stage - 1 as libc::c_int) as libc::c_ulong),
+                        pStage.offset(1isize) as *const libc::c_void,
+                        (::std::mem::size_of::<crate::tr_local_h::shaderStage_t>())
+                            .wrapping_mul((index - stage - 1i32) as usize),
                     );
                 }
                 crate::stdlib::memset(
                     &mut *stages
                         .as_mut_ptr()
-                        .offset((index - 1 as libc::c_int) as isize)
+                        .offset((index - 1i32) as isize)
                         as *mut crate::tr_local_h::shaderStage_t
                         as *mut libc::c_void,
-                    0 as libc::c_int,
-                    ::std::mem::size_of::<crate::tr_local_h::shaderStage_t>() as libc::c_ulong,
+                    0i32,
+                    
+                    ::std::mem::size_of::<crate::tr_local_h::shaderStage_t>(),
                 );
             }
         } else {
@@ -4260,18 +4280,18 @@ unsafe extern "C" fn FinishShader() -> *mut crate::tr_local_h::shader_t {
             //
             // default texture coordinate generation
             //
-            if (*pStage).bundle[0 as libc::c_int as usize].isLightmap as u64 != 0 {
-                if (*pStage).bundle[0 as libc::c_int as usize].tcGen as libc::c_uint
-                    == crate::tr_local_h::TCGEN_BAD as libc::c_int as libc::c_uint
+            if (*pStage).bundle[0].isLightmap as u64 != 0 {
+                if  (*pStage).bundle[0].tcGen
+                    ==  crate::tr_local_h::TCGEN_BAD
                 {
-                    (*pStage).bundle[0 as libc::c_int as usize].tcGen =
+                    (*pStage).bundle[0].tcGen =
                         crate::tr_local_h::TCGEN_LIGHTMAP
                 }
                 hasLightmapStage = crate::src::qcommon::q_shared::qtrue
-            } else if (*pStage).bundle[0 as libc::c_int as usize].tcGen as libc::c_uint
-                == crate::tr_local_h::TCGEN_BAD as libc::c_int as libc::c_uint
+            } else if  (*pStage).bundle[0].tcGen
+                ==  crate::tr_local_h::TCGEN_BAD
             {
-                (*pStage).bundle[0 as libc::c_int as usize].tcGen = crate::tr_local_h::TCGEN_TEXTURE
+                (*pStage).bundle[0].tcGen = crate::tr_local_h::TCGEN_TEXTURE
             }
             // not a true lightmap but we want to leave existing
             // behaviour in place and not print out a warning
@@ -4281,29 +4301,29 @@ unsafe extern "C" fn FinishShader() -> *mut crate::tr_local_h::shader_t {
             //
             // determine sort order and fog color adjustment
             //
-            if (*pStage).stateBits & (0xf as libc::c_int | 0xf0 as libc::c_int) as libc::c_uint != 0
-                && stages[0 as libc::c_int as usize].stateBits
-                    & (0xf as libc::c_int | 0xf0 as libc::c_int) as libc::c_uint
+            if (*pStage).stateBits & (0xfi32 | 0xf0) as u32 != 0
+                && stages[0].stateBits
+                    & (0xfi32 | 0xf0) as u32
                     != 0
             {
-                let mut blendSrcBits: libc::c_int =
-                    ((*pStage).stateBits & 0xf as libc::c_int as libc::c_uint) as libc::c_int;
-                let mut blendDstBits: libc::c_int =
-                    ((*pStage).stateBits & 0xf0 as libc::c_int as libc::c_uint) as libc::c_int;
+                let mut blendSrcBits: i32 =
+                    ((*pStage).stateBits & 0xf) as i32;
+                let mut blendDstBits: i32 =
+                    ((*pStage).stateBits & 0xf0) as i32;
                 // fog color adjustment only works for blend modes that have a contribution
                 // that aproaches 0 as the modulate values aproach 0 --
                 // GL_ONE, GL_ONE
                 // GL_ZERO, GL_ONE_MINUS_SRC_COLOR
                 // GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
                 // modulate, additive
-                if blendSrcBits == 0x2 as libc::c_int && blendDstBits == 0x20 as libc::c_int
-                    || blendSrcBits == 0x1 as libc::c_int && blendDstBits == 0x40 as libc::c_int
+                if blendSrcBits == 0x2 && blendDstBits == 0x20
+                    || blendSrcBits == 0x1 && blendDstBits == 0x40
                 {
                     (*pStage).adjustColorsForFog = crate::tr_local_h::ACFF_MODULATE_RGB
-                } else if blendSrcBits == 0x5 as libc::c_int && blendDstBits == 0x60 as libc::c_int
+                } else if blendSrcBits == 0x5 && blendDstBits == 0x60
                 {
                     (*pStage).adjustColorsForFog = crate::tr_local_h::ACFF_MODULATE_ALPHA
-                } else if blendSrcBits == 0x2 as libc::c_int && blendDstBits == 0x60 as libc::c_int
+                } else if blendSrcBits == 0x2 && blendDstBits == 0x60
                 {
                     (*pStage).adjustColorsForFog = crate::tr_local_h::ACFF_MODULATE_RGBA
                 }
@@ -4312,11 +4332,11 @@ unsafe extern "C" fn FinishShader() -> *mut crate::tr_local_h::shader_t {
                 // don't screw with sort order if this is a portal or environment
                 if shader.sort == 0. {
                     // see through item, like a grill or grate
-                    if (*pStage).stateBits & 0x100 as libc::c_int as libc::c_uint != 0 {
+                    if (*pStage).stateBits & 0x100 != 0 {
                         shader.sort =
-                            crate::tr_local_h::SS_SEE_THROUGH as libc::c_int as libc::c_float
+                            crate::tr_local_h::SS_SEE_THROUGH as i32 as f32
                     } else {
-                        shader.sort = crate::tr_local_h::SS_BLEND0 as libc::c_int as libc::c_float
+                        shader.sort = crate::tr_local_h::SS_BLEND0 as i32 as f32
                     }
                 }
             }
@@ -4326,47 +4346,47 @@ unsafe extern "C" fn FinishShader() -> *mut crate::tr_local_h::shader_t {
     // there are times when you will need to manually apply a sort to
     // opaque alpha tested shaders that have later blend passes
     if shader.sort == 0. {
-        shader.sort = crate::tr_local_h::SS_OPAQUE as libc::c_int as libc::c_float
+        shader.sort = crate::tr_local_h::SS_OPAQUE as i32 as f32
     }
     //
     // if we are in r_vertexLight mode, never use a lightmap texture
     //
-    if stage > 1 as libc::c_int
+    if stage > 1
         && ((*crate::src::renderergl1::tr_init::r_vertexLight).integer != 0
             && (*crate::src::renderergl1::tr_init::r_uiFullScreen).integer == 0
-            || crate::src::renderergl1::tr_init::glConfig.hardwareType as libc::c_uint
-                == crate::tr_types_h::GLHW_PERMEDIA2 as libc::c_int as libc::c_uint)
+            ||  crate::src::renderergl1::tr_init::glConfig.hardwareType
+                ==  crate::tr_types_h::GLHW_PERMEDIA2)
     {
         VertexLightingCollapse();
-        stage = 1 as libc::c_int;
+        stage = 1;
         hasLightmapStage = crate::src::qcommon::q_shared::qfalse
     }
     //
     // look for multitexture potential
     //
-    if stage > 1 as libc::c_int && CollapseMultitexture() as libc::c_uint != 0 {
+    if stage > 1 &&  CollapseMultitexture() != 0 {
         stage -= 1
     }
-    if shader.lightmapIndex >= 0 as libc::c_int && hasLightmapStage as u64 == 0 {
+    if shader.lightmapIndex >= 0 && hasLightmapStage as u64 == 0 {
         if vertexLightmap as u64 != 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_DEVELOPER as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_DEVELOPER as i32,
                 b"WARNING: shader \'%s\' has VERTEX forced lightmap!\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
         } else {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_DEVELOPER as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_DEVELOPER as i32,
                 b"WARNING: shader \'%s\' has lightmap but no lightmap stage!\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 shader.name.as_mut_ptr(),
             );
-            shader.lightmapIndex = -(1 as libc::c_int)
+            shader.lightmapIndex = -(1)
         }
     }
     //
@@ -4374,8 +4394,8 @@ unsafe extern "C" fn FinishShader() -> *mut crate::tr_local_h::shader_t {
     //
     shader.numUnfoggedPasses = stage;
     // fogonly shaders don't have any normal passes
-    if stage == 0 as libc::c_int && shader.isSky as u64 == 0 {
-        shader.sort = crate::tr_local_h::SS_FOG as libc::c_int as libc::c_float
+    if stage == 0 && shader.isSky as u64 == 0 {
+        shader.sort = crate::tr_local_h::SS_FOG as i32 as f32
     }
     // determine which stage iterator function is appropriate
     ComputeStageIteratorFunc();
@@ -4396,15 +4416,15 @@ If found, it will return a valid shader
 */
 
 unsafe extern "C" fn FindShaderInShaderText(
-    mut shadername: *const libc::c_char,
-) -> *mut libc::c_char {
-    let mut token: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut i: libc::c_int = 0;
-    let mut hash: libc::c_int = 0;
-    hash = generateHashValue(shadername, 2048 as libc::c_int) as libc::c_int;
+    mut shadername: *const i8,
+) -> *mut i8 {
+    let mut token: *mut i8 = 0 as *mut i8;
+    let mut p: *mut i8 = 0 as *mut i8;
+    let mut i: i32 = 0;
+    let mut hash: i32 = 0;
+    hash = generateHashValue(shadername, 2048) as i32;
     if !shaderTextHashTable[hash as usize].is_null() {
-        i = 0 as libc::c_int;
+        i = 0;
         while !(*shaderTextHashTable[hash as usize].offset(i as isize)).is_null() {
             p = *shaderTextHashTable[hash as usize].offset(i as isize);
             token = crate::src::qcommon::q_shared::COM_ParseExt(
@@ -4419,7 +4439,7 @@ unsafe extern "C" fn FindShaderInShaderText(
     }
     p = s_shaderText;
     if p.is_null() {
-        return 0 as *mut libc::c_char;
+        return 0 as *mut i8;
     }
     loop
     // look for label
@@ -4428,17 +4448,17 @@ unsafe extern "C" fn FindShaderInShaderText(
             &mut p,
             crate::src::qcommon::q_shared::qtrue,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             break;
         }
         if crate::src::qcommon::q_shared::Q_stricmp(token, shadername) == 0 {
             return p;
         } else {
             // skip the definition
-            crate::src::qcommon::q_shared::SkipBracedSection(&mut p, 0 as libc::c_int);
+            crate::src::qcommon::q_shared::SkipBracedSection(&mut p, 0i32);
         }
     }
-    return 0 as *mut libc::c_char;
+    return 0 as *mut i8;
 }
 /*
 ==================
@@ -4451,21 +4471,22 @@ default shader if the real one can't be found.
 #[no_mangle]
 
 pub unsafe extern "C" fn R_FindShaderByName(
-    mut name: *const libc::c_char,
+    mut name: *const i8,
 ) -> *mut crate::tr_local_h::shader_t {
-    let mut strippedName: [libc::c_char; 64] = [0; 64];
-    let mut hash: libc::c_int = 0;
+    let mut strippedName: [i8; 64] = [0; 64];
+    let mut hash: i32 = 0;
     let mut sh: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
-    if name.is_null() || *name.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int
+    if name.is_null() || *name.offset(0) as i32 == 0
     {
         return crate::src::renderergl1::tr_main::tr.defaultShader;
     }
     crate::src::qcommon::q_shared::COM_StripExtension(
         name,
         strippedName.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+        
+        ::std::mem::size_of::<[i8; 64]>() as i32,
     );
-    hash = generateHashValue(strippedName.as_mut_ptr(), 1024 as libc::c_int) as libc::c_int;
+    hash = generateHashValue(strippedName.as_mut_ptr(), 1024) as i32;
     //
     // see if the shader is already loaded
     //
@@ -4478,7 +4499,7 @@ pub unsafe extern "C" fn R_FindShaderByName(
         if crate::src::qcommon::q_shared::Q_stricmp(
             (*sh).name.as_mut_ptr(),
             strippedName.as_mut_ptr(),
-        ) == 0 as libc::c_int
+        ) == 0
         {
             // match found
             return sh;
@@ -4518,43 +4539,44 @@ most world construction surfaces.
 #[no_mangle]
 
 pub unsafe extern "C" fn R_FindShader(
-    mut name: *const libc::c_char,
-    mut lightmapIndex: libc::c_int,
+    mut name: *const i8,
+    mut lightmapIndex: i32,
     mut mipRawImage: crate::src::qcommon::q_shared::qboolean,
 ) -> *mut crate::tr_local_h::shader_t {
-    let mut strippedName: [libc::c_char; 64] = [0; 64];
-    let mut hash: libc::c_int = 0;
-    let mut shaderText: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut strippedName: [i8; 64] = [0; 64];
+    let mut hash: i32 = 0;
+    let mut shaderText: *mut i8 = 0 as *mut i8;
     let mut image: *mut crate::tr_common_h::image_t = 0 as *mut crate::tr_common_h::image_t;
     let mut sh: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
-    if *name.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+    if *name.offset(0) as i32 == 0 {
         return crate::src::renderergl1::tr_main::tr.defaultShader;
     }
     // use (fullbright) vertex lighting if the bsp file doesn't have
     // lightmaps
-    if lightmapIndex >= 0 as libc::c_int
+    if lightmapIndex >= 0
         && lightmapIndex >= crate::src::renderergl1::tr_main::tr.numLightmaps
     {
-        lightmapIndex = -(3 as libc::c_int)
-    } else if lightmapIndex < -(4 as libc::c_int) {
+        lightmapIndex = -(3)
+    } else if lightmapIndex < -(4) {
         // negative lightmap indexes cause stray pointers (think tr.lightmaps[lightmapIndex])
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"WARNING: shader \'%s\' has invalid lightmap index of %d\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             name,
             lightmapIndex,
         );
-        lightmapIndex = -(3 as libc::c_int)
+        lightmapIndex = -(3)
     }
     crate::src::qcommon::q_shared::COM_StripExtension(
         name,
         strippedName.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+        
+        ::std::mem::size_of::<[i8; 64]>() as i32,
     );
-    hash = generateHashValue(strippedName.as_mut_ptr(), 1024 as libc::c_int) as libc::c_int;
+    hash = generateHashValue(strippedName.as_mut_ptr(), 1024) as i32;
     //
     // see if the shader is already loaded
     //
@@ -4564,7 +4586,7 @@ pub unsafe extern "C" fn R_FindShader(
         // then a default shader is created with lightmapIndex == LIGHTMAP_NONE, so we
         // have to check all default shaders otherwise for every call to R_FindShader
         // with that same strippedName a new default shader is created.
-        if ((*sh).lightmapIndex == lightmapIndex || (*sh).defaultShader as libc::c_uint != 0)
+        if ((*sh).lightmapIndex == lightmapIndex ||  (*sh).defaultShader != 0)
             && crate::src::qcommon::q_shared::Q_stricmp(
                 (*sh).name.as_mut_ptr(),
                 strippedName.as_mut_ptr(),
@@ -4592,8 +4614,8 @@ pub unsafe extern "C" fn R_FindShader(
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"*SHADER* %s\n\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"*SHADER* %s\n\x00" as *const u8 as *const i8,
                 name,
             );
         }
@@ -4611,16 +4633,18 @@ pub unsafe extern "C" fn R_FindShader(
     let mut flags: crate::tr_common_h::imgFlags_t = crate::tr_common_h::IMGFLAG_NONE;
     flags = crate::tr_common_h::IMGFLAG_NONE;
     if mipRawImage as u64 != 0 {
-        flags = ::std::mem::transmute::<libc::c_uint, crate::tr_common_h::imgFlags_t>(
-            flags as libc::c_uint
-                | (crate::tr_common_h::IMGFLAG_MIPMAP as libc::c_int
-                    | crate::tr_common_h::IMGFLAG_PICMIP as libc::c_int)
-                    as libc::c_uint,
+        flags = ::std::mem::transmute::<u32, crate::tr_common_h::imgFlags_t>(
+            
+            flags
+                | (crate::tr_common_h::IMGFLAG_MIPMAP as i32
+                    | crate::tr_common_h::IMGFLAG_PICMIP as i32)
+                    as u32,
         )
     } else {
-        flags = ::std::mem::transmute::<libc::c_uint, crate::tr_common_h::imgFlags_t>(
-            flags as libc::c_uint
-                | crate::tr_common_h::IMGFLAG_CLAMPTOEDGE as libc::c_int as libc::c_uint,
+        flags = ::std::mem::transmute::<u32, crate::tr_common_h::imgFlags_t>(
+            
+            flags
+                |  crate::tr_common_h::IMGFLAG_CLAMPTOEDGE,
         )
     }
     image = crate::src::renderergl1::tr_image::R_FindImageFile(
@@ -4632,8 +4656,8 @@ pub unsafe extern "C" fn R_FindShader(
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_DEVELOPER as libc::c_int,
-            b"Couldn\'t find image file for shader %s\n\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::PRINT_DEVELOPER as i32,
+            b"Couldn\'t find image file for shader %s\n\x00" as *const u8 as *const i8,
             name,
         );
         shader.defaultShader = crate::src::qcommon::q_shared::qtrue;
@@ -4642,80 +4666,80 @@ pub unsafe extern "C" fn R_FindShader(
     //
     // create the default shading commands
     //
-    if shader.lightmapIndex == -(1 as libc::c_int) {
+    if shader.lightmapIndex == -(1) {
         // dynamic colors at vertexes
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = image;
-        stages[0 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_LIGHTING_DIFFUSE;
-        stages[0 as libc::c_int as usize].stateBits = 0x100 as libc::c_int as libc::c_uint
-    } else if shader.lightmapIndex == -(3 as libc::c_int) {
+        stages[0].bundle[0].image
+            [0] = image;
+        stages[0].active = crate::src::qcommon::q_shared::qtrue;
+        stages[0].rgbGen = crate::tr_local_h::CGEN_LIGHTING_DIFFUSE;
+        stages[0].stateBits = 0x100
+    } else if shader.lightmapIndex == -(3) {
         // explicit colors at vertexes
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = image;
-        stages[0 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_EXACT_VERTEX;
-        stages[0 as libc::c_int as usize].alphaGen = crate::tr_local_h::AGEN_SKIP;
-        stages[0 as libc::c_int as usize].stateBits = 0x100 as libc::c_int as libc::c_uint
-    } else if shader.lightmapIndex == -(4 as libc::c_int) {
+        stages[0].bundle[0].image
+            [0] = image;
+        stages[0].active = crate::src::qcommon::q_shared::qtrue;
+        stages[0].rgbGen = crate::tr_local_h::CGEN_EXACT_VERTEX;
+        stages[0].alphaGen = crate::tr_local_h::AGEN_SKIP;
+        stages[0].stateBits = 0x100
+    } else if shader.lightmapIndex == -(4) {
         // GUI elements
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = image;
-        stages[0 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_VERTEX;
-        stages[0 as libc::c_int as usize].alphaGen = crate::tr_local_h::AGEN_VERTEX;
-        stages[0 as libc::c_int as usize].stateBits =
-            (0x10000 as libc::c_int | 0x5 as libc::c_int | 0x60 as libc::c_int) as libc::c_uint
-    } else if shader.lightmapIndex == -(2 as libc::c_int) {
+        stages[0].bundle[0].image
+            [0] = image;
+        stages[0].active = crate::src::qcommon::q_shared::qtrue;
+        stages[0].rgbGen = crate::tr_local_h::CGEN_VERTEX;
+        stages[0].alphaGen = crate::tr_local_h::AGEN_VERTEX;
+        stages[0].stateBits =
+            (0x10000i32 | 0x5 | 0x60) as u32
+    } else if shader.lightmapIndex == -(2) {
         // fullbright level
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = crate::src::renderergl1::tr_main::tr.whiteImage;
-        stages[0 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_IDENTITY_LIGHTING;
-        stages[0 as libc::c_int as usize].stateBits = 0x100 as libc::c_int as libc::c_uint;
-        stages[1 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = image;
-        stages[1 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[1 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_IDENTITY;
-        stages[1 as libc::c_int as usize].stateBits |=
-            (0x3 as libc::c_int | 0x10 as libc::c_int) as libc::c_uint
+        stages[0].bundle[0].image
+            [0] = crate::src::renderergl1::tr_main::tr.whiteImage;
+        stages[0].active = crate::src::qcommon::q_shared::qtrue;
+        stages[0].rgbGen = crate::tr_local_h::CGEN_IDENTITY_LIGHTING;
+        stages[0].stateBits = 0x100;
+        stages[1].bundle[0].image
+            [0] = image;
+        stages[1].active = crate::src::qcommon::q_shared::qtrue;
+        stages[1].rgbGen = crate::tr_local_h::CGEN_IDENTITY;
+        stages[1].stateBits |=
+            (0x3i32 | 0x10) as u32
     } else {
         // two pass lightmap
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = *crate::src::renderergl1::tr_main::tr
+        stages[0].bundle[0].image
+            [0] = *crate::src::renderergl1::tr_main::tr
             .lightmaps
             .offset(shader.lightmapIndex as isize); // lightmaps are scaled on creation
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].isLightmap =
+        stages[0].bundle[0].isLightmap =
             crate::src::qcommon::q_shared::qtrue;
-        stages[0 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_IDENTITY;
+        stages[0].active = crate::src::qcommon::q_shared::qtrue;
+        stages[0].rgbGen = crate::tr_local_h::CGEN_IDENTITY;
         // for identitylight
-        stages[0 as libc::c_int as usize].stateBits = 0x100 as libc::c_int as libc::c_uint;
-        stages[1 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = image;
-        stages[1 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[1 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_IDENTITY;
-        stages[1 as libc::c_int as usize].stateBits |=
-            (0x3 as libc::c_int | 0x10 as libc::c_int) as libc::c_uint
+        stages[0].stateBits = 0x100;
+        stages[1].bundle[0].image
+            [0] = image;
+        stages[1].active = crate::src::qcommon::q_shared::qtrue;
+        stages[1].rgbGen = crate::tr_local_h::CGEN_IDENTITY;
+        stages[1].stateBits |=
+            (0x3i32 | 0x10) as u32
     }
     return FinishShader();
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn RE_RegisterShaderFromImage(
-    mut name: *const libc::c_char,
-    mut lightmapIndex: libc::c_int,
+    mut name: *const i8,
+    mut lightmapIndex: i32,
     mut image: *mut crate::tr_common_h::image_t,
     mut mipRawImage: crate::src::qcommon::q_shared::qboolean,
 ) -> crate::src::qcommon::q_shared::qhandle_t {
-    let mut hash: libc::c_int = 0;
+    let mut hash: i32 = 0;
     let mut sh: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
-    hash = generateHashValue(name, 1024 as libc::c_int) as libc::c_int;
+    hash = generateHashValue(name, 1024) as i32;
     // probably not necessary since this function
     // only gets called from tr_font.c with lightmapIndex == LIGHTMAP_2D
     // but better safe than sorry.
     if lightmapIndex >= crate::src::renderergl1::tr_main::tr.numLightmaps {
-        lightmapIndex = -(2 as libc::c_int)
+        lightmapIndex = -(2)
     }
     //
     // see if the shader is already loaded
@@ -4726,7 +4750,7 @@ pub unsafe extern "C" fn RE_RegisterShaderFromImage(
         // then a default shader is created with lightmapIndex == LIGHTMAP_NONE, so we
         // have to check all default shaders otherwise for every call to R_FindShader
         // with that same strippedName a new default shader is created.
-        if ((*sh).lightmapIndex == lightmapIndex || (*sh).defaultShader as libc::c_uint != 0)
+        if ((*sh).lightmapIndex == lightmapIndex ||  (*sh).defaultShader != 0)
             && crate::src::qcommon::q_shared::Q_stricmp((*sh).name.as_mut_ptr(), name) == 0
         {
             // match found
@@ -4743,61 +4767,61 @@ pub unsafe extern "C" fn RE_RegisterShaderFromImage(
     //
     // create the default shading commands
     //
-    if shader.lightmapIndex == -(1 as libc::c_int) {
+    if shader.lightmapIndex == -(1) {
         // dynamic colors at vertexes
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = image;
-        stages[0 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_LIGHTING_DIFFUSE;
-        stages[0 as libc::c_int as usize].stateBits = 0x100 as libc::c_int as libc::c_uint
-    } else if shader.lightmapIndex == -(3 as libc::c_int) {
+        stages[0].bundle[0].image
+            [0] = image;
+        stages[0].active = crate::src::qcommon::q_shared::qtrue;
+        stages[0].rgbGen = crate::tr_local_h::CGEN_LIGHTING_DIFFUSE;
+        stages[0].stateBits = 0x100
+    } else if shader.lightmapIndex == -(3) {
         // explicit colors at vertexes
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = image;
-        stages[0 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_EXACT_VERTEX;
-        stages[0 as libc::c_int as usize].alphaGen = crate::tr_local_h::AGEN_SKIP;
-        stages[0 as libc::c_int as usize].stateBits = 0x100 as libc::c_int as libc::c_uint
-    } else if shader.lightmapIndex == -(4 as libc::c_int) {
+        stages[0].bundle[0].image
+            [0] = image;
+        stages[0].active = crate::src::qcommon::q_shared::qtrue;
+        stages[0].rgbGen = crate::tr_local_h::CGEN_EXACT_VERTEX;
+        stages[0].alphaGen = crate::tr_local_h::AGEN_SKIP;
+        stages[0].stateBits = 0x100
+    } else if shader.lightmapIndex == -(4) {
         // GUI elements
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = image;
-        stages[0 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_VERTEX;
-        stages[0 as libc::c_int as usize].alphaGen = crate::tr_local_h::AGEN_VERTEX;
-        stages[0 as libc::c_int as usize].stateBits =
-            (0x10000 as libc::c_int | 0x5 as libc::c_int | 0x60 as libc::c_int) as libc::c_uint
-    } else if shader.lightmapIndex == -(2 as libc::c_int) {
+        stages[0].bundle[0].image
+            [0] = image;
+        stages[0].active = crate::src::qcommon::q_shared::qtrue;
+        stages[0].rgbGen = crate::tr_local_h::CGEN_VERTEX;
+        stages[0].alphaGen = crate::tr_local_h::AGEN_VERTEX;
+        stages[0].stateBits =
+            (0x10000i32 | 0x5 | 0x60) as u32
+    } else if shader.lightmapIndex == -(2) {
         // fullbright level
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = crate::src::renderergl1::tr_main::tr.whiteImage;
-        stages[0 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_IDENTITY_LIGHTING;
-        stages[0 as libc::c_int as usize].stateBits = 0x100 as libc::c_int as libc::c_uint;
-        stages[1 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = image;
-        stages[1 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[1 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_IDENTITY;
-        stages[1 as libc::c_int as usize].stateBits |=
-            (0x3 as libc::c_int | 0x10 as libc::c_int) as libc::c_uint
+        stages[0].bundle[0].image
+            [0] = crate::src::renderergl1::tr_main::tr.whiteImage;
+        stages[0].active = crate::src::qcommon::q_shared::qtrue;
+        stages[0].rgbGen = crate::tr_local_h::CGEN_IDENTITY_LIGHTING;
+        stages[0].stateBits = 0x100;
+        stages[1].bundle[0].image
+            [0] = image;
+        stages[1].active = crate::src::qcommon::q_shared::qtrue;
+        stages[1].rgbGen = crate::tr_local_h::CGEN_IDENTITY;
+        stages[1].stateBits |=
+            (0x3i32 | 0x10) as u32
     } else {
         // two pass lightmap
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = *crate::src::renderergl1::tr_main::tr
+        stages[0].bundle[0].image
+            [0] = *crate::src::renderergl1::tr_main::tr
             .lightmaps
             .offset(shader.lightmapIndex as isize); // lightmaps are scaled on creation
-        stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].isLightmap =
+        stages[0].bundle[0].isLightmap =
             crate::src::qcommon::q_shared::qtrue;
-        stages[0 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[0 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_IDENTITY;
+        stages[0].active = crate::src::qcommon::q_shared::qtrue;
+        stages[0].rgbGen = crate::tr_local_h::CGEN_IDENTITY;
         // for identitylight
-        stages[0 as libc::c_int as usize].stateBits = 0x100 as libc::c_int as libc::c_uint;
-        stages[1 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-            [0 as libc::c_int as usize] = image;
-        stages[1 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-        stages[1 as libc::c_int as usize].rgbGen = crate::tr_local_h::CGEN_IDENTITY;
-        stages[1 as libc::c_int as usize].stateBits |=
-            (0x3 as libc::c_int | 0x10 as libc::c_int) as libc::c_uint
+        stages[0].stateBits = 0x100;
+        stages[1].bundle[0].image
+            [0] = image;
+        stages[1].active = crate::src::qcommon::q_shared::qtrue;
+        stages[1].rgbGen = crate::tr_local_h::CGEN_IDENTITY;
+        stages[1].stateBits |=
+            (0x3i32 | 0x10) as u32
     }
     sh = FinishShader();
     return (*sh).index;
@@ -4816,18 +4840,18 @@ way to ask for different implicit lighting modes (vertex, lightmap, etc)
 #[no_mangle]
 
 pub unsafe extern "C" fn RE_RegisterShaderLightMap(
-    mut name: *const libc::c_char,
-    mut lightmapIndex: libc::c_int,
+    mut name: *const i8,
+    mut lightmapIndex: i32,
 ) -> crate::src::qcommon::q_shared::qhandle_t {
     let mut sh: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
-    if crate::stdlib::strlen(name) >= 64 as libc::c_int as libc::c_ulong {
+    if crate::stdlib::strlen(name) >= 64 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-            b"Shader name exceeds MAX_QPATH\n\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::PRINT_ALL as i32,
+            b"Shader name exceeds MAX_QPATH\n\x00" as *const u8 as *const i8,
         );
-        return 0 as libc::c_int;
+        return 0i32;
     }
     sh = R_FindShader(name, lightmapIndex, crate::src::qcommon::q_shared::qtrue);
     // we want to return 0 if the shader failed to
@@ -4836,7 +4860,7 @@ pub unsafe extern "C" fn RE_RegisterShaderLightMap(
     // something calls RE_RegisterShader again with
     // the same name, we don't try looking for it again
     if (*sh).defaultShader as u64 != 0 {
-        return 0 as libc::c_int;
+        return 0i32;
     }
     return (*sh).index;
 }
@@ -4854,21 +4878,21 @@ way to ask for different implicit lighting modes (vertex, lightmap, etc)
 #[no_mangle]
 
 pub unsafe extern "C" fn RE_RegisterShader(
-    mut name: *const libc::c_char,
+    mut name: *const i8,
 ) -> crate::src::qcommon::q_shared::qhandle_t {
     let mut sh: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
-    if crate::stdlib::strlen(name) >= 64 as libc::c_int as libc::c_ulong {
+    if crate::stdlib::strlen(name) >= 64 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-            b"Shader name exceeds MAX_QPATH\n\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::PRINT_ALL as i32,
+            b"Shader name exceeds MAX_QPATH\n\x00" as *const u8 as *const i8,
         );
-        return 0 as libc::c_int;
+        return 0i32;
     }
     sh = R_FindShader(
         name,
-        -(4 as libc::c_int),
+        -(4),
         crate::src::qcommon::q_shared::qtrue,
     );
     // we want to return 0 if the shader failed to
@@ -4877,7 +4901,7 @@ pub unsafe extern "C" fn RE_RegisterShader(
     // something calls RE_RegisterShader again with
     // the same name, we don't try looking for it again
     if (*sh).defaultShader as u64 != 0 {
-        return 0 as libc::c_int;
+        return 0i32;
     }
     return (*sh).index;
 }
@@ -4944,21 +4968,21 @@ For menu graphics that should never be picmiped
 #[no_mangle]
 
 pub unsafe extern "C" fn RE_RegisterShaderNoMip(
-    mut name: *const libc::c_char,
+    mut name: *const i8,
 ) -> crate::src::qcommon::q_shared::qhandle_t {
     let mut sh: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
-    if crate::stdlib::strlen(name) >= 64 as libc::c_int as libc::c_ulong {
+    if crate::stdlib::strlen(name) >= 64 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-            b"Shader name exceeds MAX_QPATH\n\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::PRINT_ALL as i32,
+            b"Shader name exceeds MAX_QPATH\n\x00" as *const u8 as *const i8,
         );
-        return 0 as libc::c_int;
+        return 0i32;
     }
     sh = R_FindShader(
         name,
-        -(4 as libc::c_int),
+        -(4),
         crate::src::qcommon::q_shared::qfalse,
     );
     // we want to return 0 if the shader failed to
@@ -4967,7 +4991,7 @@ pub unsafe extern "C" fn RE_RegisterShaderNoMip(
     // something calls RE_RegisterShader again with
     // the same name, we don't try looking for it again
     if (*sh).defaultShader as u64 != 0 {
-        return 0 as libc::c_int;
+        return 0i32;
     }
     return (*sh).index;
 }
@@ -4984,13 +5008,13 @@ it and returns a valid (possibly default) shader_t to be used internally.
 pub unsafe extern "C" fn R_GetShaderByHandle(
     mut hShader: crate::src::qcommon::q_shared::qhandle_t,
 ) -> *mut crate::tr_local_h::shader_t {
-    if hShader < 0 as libc::c_int {
+    if hShader < 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"R_GetShaderByHandle: out of range hShader \'%d\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             hShader,
         );
         return crate::src::renderergl1::tr_main::tr.defaultShader;
@@ -4999,9 +5023,9 @@ pub unsafe extern "C" fn R_GetShaderByHandle(
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
             b"R_GetShaderByHandle: out of range hShader \'%d\'\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             hShader,
         );
         return crate::src::renderergl1::tr_main::tr.defaultShader;
@@ -5019,22 +5043,22 @@ A second parameter will cause it to print in sorted order
 #[no_mangle]
 
 pub unsafe extern "C" fn R_ShaderList_f() {
-    let mut i: libc::c_int = 0;
-    let mut count: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut count: i32 = 0;
     let mut shader_0: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
-        crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-        b"-----------------------\n\x00" as *const u8 as *const libc::c_char,
+        crate::src::qcommon::q_shared::PRINT_ALL as i32,
+        b"-----------------------\n\x00" as *const u8 as *const i8,
     );
-    count = 0 as libc::c_int;
-    i = 0 as libc::c_int;
+    count = 0;
+    i = 0;
     while i < crate::src::renderergl1::tr_main::tr.numShaders {
         if crate::src::renderergl1::tr_main::ri
             .Cmd_Argc
             .expect("non-null function pointer")()
-            > 1 as libc::c_int
+            > 1
         {
             shader_0 = crate::src::renderergl1::tr_main::tr.sortedShaders[i as usize]
         } else {
@@ -5043,67 +5067,67 @@ pub unsafe extern "C" fn R_ShaderList_f() {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-            b"%i \x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::PRINT_ALL as i32,
+            b"%i \x00" as *const u8 as *const i8,
             (*shader_0).numUnfoggedPasses,
         );
-        if (*shader_0).lightmapIndex >= 0 as libc::c_int {
+        if (*shader_0).lightmapIndex >= 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"L \x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"L \x00" as *const u8 as *const i8,
             );
         } else {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"  \x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"  \x00" as *const u8 as *const i8,
             );
         }
-        if (*shader_0).multitextureEnv == 0x104 as libc::c_int {
+        if (*shader_0).multitextureEnv == 0x104 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"MT(a) \x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"MT(a) \x00" as *const u8 as *const i8,
             );
-        } else if (*shader_0).multitextureEnv == 0x2100 as libc::c_int {
+        } else if (*shader_0).multitextureEnv == 0x2100 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"MT(m) \x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"MT(m) \x00" as *const u8 as *const i8,
             );
-        } else if (*shader_0).multitextureEnv == 0x2101 as libc::c_int {
+        } else if (*shader_0).multitextureEnv == 0x2101 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"MT(d) \x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"MT(d) \x00" as *const u8 as *const i8,
             );
         } else {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"      \x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"      \x00" as *const u8 as *const i8,
             );
         }
         if (*shader_0).explicitlyDefined as u64 != 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"E \x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"E \x00" as *const u8 as *const i8,
             );
         } else {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"  \x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"  \x00" as *const u8 as *const i8,
             );
         }
         if (*shader_0).optimalStageIteratorFunc
@@ -5115,8 +5139,8 @@ pub unsafe extern "C" fn R_ShaderList_f() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"gen \x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"gen \x00" as *const u8 as *const i8,
             );
         } else if (*shader_0).optimalStageIteratorFunc
             == Some(
@@ -5127,8 +5151,8 @@ pub unsafe extern "C" fn R_ShaderList_f() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"sky \x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"sky \x00" as *const u8 as *const i8,
             );
         } else if (*shader_0).optimalStageIteratorFunc
             == Some(
@@ -5139,8 +5163,8 @@ pub unsafe extern "C" fn R_ShaderList_f() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"lmmt\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"lmmt\x00" as *const u8 as *const i8,
             );
         } else if (*shader_0).optimalStageIteratorFunc
             == Some(
@@ -5151,31 +5175,31 @@ pub unsafe extern "C" fn R_ShaderList_f() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"vlt \x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"vlt \x00" as *const u8 as *const i8,
             );
         } else {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b"    \x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b"    \x00" as *const u8 as *const i8,
             );
         }
         if (*shader_0).defaultShader as u64 != 0 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b": %s (DEFAULTED)\n\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b": %s (DEFAULTED)\n\x00" as *const u8 as *const i8,
                 (*shader_0).name.as_mut_ptr(),
             );
         } else {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-                b": %s\n\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
+                b": %s\n\x00" as *const u8 as *const i8,
                 (*shader_0).name.as_mut_ptr(),
             );
         }
@@ -5185,4182 +5209,4183 @@ pub unsafe extern "C" fn R_ShaderList_f() {
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
-        crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-        b"%i total shaders\n\x00" as *const u8 as *const libc::c_char,
+        crate::src::qcommon::q_shared::PRINT_ALL as i32,
+        b"%i total shaders\n\x00" as *const u8 as *const i8,
         count,
     );
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
-        crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-        b"------------------\n\x00" as *const u8 as *const libc::c_char,
+        crate::src::qcommon::q_shared::PRINT_ALL as i32,
+        b"------------------\n\x00" as *const u8 as *const i8,
     );
 }
 
 unsafe extern "C" fn ScanAndLoadShaderFiles() {
-    let mut shaderFiles: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-    let mut buffers: [*mut libc::c_char; 4096] = [
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
-        0 as *mut libc::c_char,
+    let mut shaderFiles: *mut *mut i8 = 0 as *mut *mut i8;
+    let mut buffers: [*mut i8; 4096] = [
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
+        0 as *mut i8,
     ];
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut numShaderFiles: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
-    let mut oldp: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut token: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut hashMem: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut textEnd: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut shaderTextHashTableSizes: [libc::c_int; 2048] = [0; 2048];
-    let mut hash: libc::c_int = 0;
-    let mut size: libc::c_int = 0;
-    let mut shaderName: [libc::c_char; 64] = [0; 64];
-    let mut shaderLine: libc::c_int = 0;
-    let mut sum: libc::c_long = 0 as libc::c_int as libc::c_long;
-    let mut summand: libc::c_long = 0;
+    let mut p: *mut i8 = 0 as *mut i8;
+    let mut numShaderFiles: i32 = 0;
+    let mut i: i32 = 0;
+    let mut oldp: *mut i8 = 0 as *mut i8;
+    let mut token: *mut i8 = 0 as *mut i8;
+    let mut hashMem: *mut i8 = 0 as *mut i8;
+    let mut textEnd: *mut i8 = 0 as *mut i8;
+    let mut shaderTextHashTableSizes: [i32; 2048] = [0; 2048];
+    let mut hash: i32 = 0;
+    let mut size: i32 = 0;
+    let mut shaderName: [i8; 64] = [0; 64];
+    let mut shaderLine: i32 = 0;
+    let mut sum: isize = 0;
+    let mut summand: isize = 0;
     // scan for shader files
     shaderFiles = crate::src::renderergl1::tr_main::ri
         .FS_ListFiles
         .expect("non-null function pointer")(
-        b"scripts\x00" as *const u8 as *const libc::c_char,
-        b".shader\x00" as *const u8 as *const libc::c_char,
+        b"scripts\x00" as *const u8 as *const i8,
+        b".shader\x00" as *const u8 as *const i8,
         &mut numShaderFiles,
     );
     if shaderFiles.is_null() || numShaderFiles == 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
-            b"WARNING: no shader files found\n\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::PRINT_WARNING as i32,
+            b"WARNING: no shader files found\n\x00" as *const u8 as *const i8,
         );
         return;
     }
-    if numShaderFiles > 4096 as libc::c_int {
-        numShaderFiles = 4096 as libc::c_int
+    if numShaderFiles > 4096 {
+        numShaderFiles = 4096
     }
     // load and parse shader files
-    i = 0 as libc::c_int;
+    i = 0;
     while i < numShaderFiles {
-        let mut filename: [libc::c_char; 64] = [0; 64];
+        let mut filename: [i8; 64] = [0; 64];
         crate::src::qcommon::q_shared::Com_sprintf(
             filename.as_mut_ptr(),
-            ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
-            b"scripts/%s\x00" as *const u8 as *const libc::c_char,
+            
+            ::std::mem::size_of::<[i8; 64]>() as i32,
+            b"scripts/%s\x00" as *const u8 as *const i8,
             *shaderFiles.offset(i as isize),
         );
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_DEVELOPER as libc::c_int,
-            b"...loading \'%s\'\n\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::PRINT_DEVELOPER as i32,
+            b"...loading \'%s\'\n\x00" as *const u8 as *const i8,
             filename.as_mut_ptr(),
         );
         summand = crate::src::renderergl1::tr_main::ri
             .FS_ReadFile
             .expect("non-null function pointer")(
             filename.as_mut_ptr(),
-            &mut *buffers.as_mut_ptr().offset(i as isize) as *mut *mut libc::c_char
+            &mut *buffers.as_mut_ptr().offset(i as isize) as *mut *mut i8
                 as *mut *mut libc::c_void,
         );
         if buffers[i as usize].is_null() {
             crate::src::renderergl1::tr_main::ri
                 .Error
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-                b"Couldn\'t load %s\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::ERR_DROP as i32,
+                b"Couldn\'t load %s\x00" as *const u8 as *const i8,
                 filename.as_mut_ptr(),
             );
         }
@@ -9378,31 +9403,32 @@ unsafe extern "C" fn ScanAndLoadShaderFiles() {
             crate::src::qcommon::q_shared::Q_strncpyz(
                 shaderName.as_mut_ptr(),
                 token,
-                ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+                
+                ::std::mem::size_of::<[i8; 64]>() as i32,
             );
             shaderLine = crate::src::qcommon::q_shared::COM_GetCurrentParseLine();
             token = crate::src::qcommon::q_shared::COM_ParseExt(
                 &mut p,
                 crate::src::qcommon::q_shared::qtrue,
             );
-            if *token.offset(0 as libc::c_int as isize) as libc::c_int != '{' as i32
-                || *token.offset(1 as libc::c_int as isize) as libc::c_int != '\u{0}' as i32
+            if *token.offset(0) as i32 != '{' as i32
+                || *token.offset(1) as i32 != '\u{0}' as i32
             {
                 crate::src::renderergl1::tr_main::ri.Printf.expect("non-null function pointer")(crate::src::qcommon::q_shared::PRINT_WARNING as
-                                                                  libc::c_int,
+                                                                  i32,
                                                               b"WARNING: Ignoring shader file %s. Shader \"%s\" on line %d missing opening brace\x00"
                                                                   as *const u8
                                                                   as
-                                                                  *const libc::c_char,
+                                                                  *const i8,
                                                               filename.as_mut_ptr(),
                                                               shaderName.as_mut_ptr(),
                                                               shaderLine);
-                if *token.offset(0 as libc::c_int as isize) != 0 {
+                if *token.offset(0) != 0 {
                     crate::src::renderergl1::tr_main::ri
                         .Printf
                         .expect("non-null function pointer")(
-                        crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
-                        b" (found \"%s\" on line %d)\x00" as *const u8 as *const libc::c_char,
+                        crate::src::qcommon::q_shared::PRINT_WARNING as i32,
+                        b" (found \"%s\" on line %d)\x00" as *const u8 as *const i8,
                         token,
                         crate::src::qcommon::q_shared::COM_GetCurrentParseLine(),
                     );
@@ -9410,29 +9436,29 @@ unsafe extern "C" fn ScanAndLoadShaderFiles() {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::PRINT_WARNING as libc::c_int,
-                    b".\n\x00" as *const u8 as *const libc::c_char,
+                    crate::src::qcommon::q_shared::PRINT_WARNING as i32,
+                    b".\n\x00" as *const u8 as *const i8,
                 );
                 crate::src::renderergl1::tr_main::ri
                     .FS_FreeFile
                     .expect("non-null function pointer")(
                     buffers[i as usize] as *mut libc::c_void
                 );
-                buffers[i as usize] = 0 as *mut libc::c_char;
+                buffers[i as usize] = 0 as *mut i8;
                 break;
             } else {
-                if !(crate::src::qcommon::q_shared::SkipBracedSection(&mut p, 1 as libc::c_int)
+                if !(crate::src::qcommon::q_shared::SkipBracedSection(&mut p, 1)
                     as u64
                     == 0)
                 {
                     continue;
                 }
                 crate::src::renderergl1::tr_main::ri.Printf.expect("non-null function pointer")(crate::src::qcommon::q_shared::PRINT_WARNING as
-                                                                  libc::c_int,
+                                                                  i32,
                                                               b"WARNING: Ignoring shader file %s. Shader \"%s\" on line %d missing closing brace.\n\x00"
                                                                   as *const u8
                                                                   as
-                                                                  *const libc::c_char,
+                                                                  *const i8,
                                                               filename.as_mut_ptr(),
                                                               shaderName.as_mut_ptr(),
                                                               shaderLine);
@@ -9441,7 +9467,7 @@ unsafe extern "C" fn ScanAndLoadShaderFiles() {
                     .expect("non-null function pointer")(
                     buffers[i as usize] as *mut libc::c_void
                 );
-                buffers[i as usize] = 0 as *mut libc::c_char;
+                buffers[i as usize] = 0 as *mut i8;
                 break;
             }
         }
@@ -9454,17 +9480,17 @@ unsafe extern "C" fn ScanAndLoadShaderFiles() {
     s_shaderText = crate::src::renderergl1::tr_main::ri
         .Hunk_Alloc
         .expect("non-null function pointer")(
-        (sum + (numShaderFiles * 2 as libc::c_int) as libc::c_long) as libc::c_int,
+        (sum + (numShaderFiles * 2) as isize) as i32,
         crate::src::qcommon::q_shared::h_low,
-    ) as *mut libc::c_char;
-    *s_shaderText.offset(0 as libc::c_int as isize) = '\u{0}' as i32 as libc::c_char;
+    ) as *mut i8;
+    *s_shaderText.offset(0) =  '\u{0}' as i8;
     textEnd = s_shaderText;
     // free in reverse order, so the temp files are all dumped
-    i = numShaderFiles - 1 as libc::c_int;
-    while i >= 0 as libc::c_int {
+    i = numShaderFiles - 1;
+    while i >= 0 {
         if !buffers[i as usize].is_null() {
             crate::stdlib::strcat(textEnd, buffers[i as usize]);
-            crate::stdlib::strcat(textEnd, b"\n\x00" as *const u8 as *const libc::c_char);
+            crate::stdlib::strcat(textEnd, b"\n\x00" as *const u8 as *const i8);
             textEnd = textEnd.offset(crate::stdlib::strlen(textEnd) as isize);
             crate::src::renderergl1::tr_main::ri
                 .FS_FreeFile
@@ -9481,10 +9507,11 @@ unsafe extern "C" fn ScanAndLoadShaderFiles() {
         .expect("non-null function pointer")(shaderFiles);
     crate::stdlib::memset(
         shaderTextHashTableSizes.as_mut_ptr() as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<[libc::c_int; 2048]>() as libc::c_ulong,
+        0,
+        
+        ::std::mem::size_of::<[i32; 2048]>(),
     );
-    size = 0 as libc::c_int;
+    size = 0;
     p = s_shaderText;
     loop
     // look for shader names
@@ -9493,37 +9520,38 @@ unsafe extern "C" fn ScanAndLoadShaderFiles() {
             &mut p,
             crate::src::qcommon::q_shared::qtrue,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             break;
         }
-        hash = generateHashValue(token, 2048 as libc::c_int) as libc::c_int;
+        hash = generateHashValue(token, 2048) as i32;
         shaderTextHashTableSizes[hash as usize] += 1;
         size += 1;
-        crate::src::qcommon::q_shared::SkipBracedSection(&mut p, 0 as libc::c_int);
+        crate::src::qcommon::q_shared::SkipBracedSection(&mut p, 0);
     }
-    size += 2048 as libc::c_int;
+    size += 2048;
     hashMem = crate::src::renderergl1::tr_main::ri
         .Hunk_Alloc
         .expect("non-null function pointer")(
-        (size as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong)
-            as libc::c_int,
+        (size as usize)
+            .wrapping_mul(::std::mem::size_of::<*mut i8>())
+            as i32,
         crate::src::qcommon::q_shared::h_low,
-    ) as *mut libc::c_char;
-    i = 0 as libc::c_int;
-    while i < 2048 as libc::c_int {
-        shaderTextHashTable[i as usize] = hashMem as *mut *mut libc::c_char;
+    ) as *mut i8;
+    i = 0;
+    while i < 2048 {
+        shaderTextHashTable[i as usize] = hashMem as *mut *mut i8;
         hashMem = hashMem.offset(
-            ((shaderTextHashTableSizes[i as usize] + 1 as libc::c_int) as libc::c_ulong)
-                .wrapping_mul(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong)
+            ((shaderTextHashTableSizes[i as usize] + 1) as usize)
+                .wrapping_mul(::std::mem::size_of::<*mut i8>())
                 as isize,
         );
         i += 1
     }
     crate::stdlib::memset(
         shaderTextHashTableSizes.as_mut_ptr() as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<[libc::c_int; 2048]>() as libc::c_ulong,
+        0,
+        
+        ::std::mem::size_of::<[i32; 2048]>(),
     );
     p = s_shaderText;
     loop
@@ -9534,15 +9562,15 @@ unsafe extern "C" fn ScanAndLoadShaderFiles() {
             &mut p,
             crate::src::qcommon::q_shared::qtrue,
         );
-        if *token.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
+        if *token.offset(0) as i32 == 0 {
             break;
         }
-        hash = generateHashValue(token, 2048 as libc::c_int) as libc::c_int;
+        hash = generateHashValue(token, 2048) as i32;
         let fresh0 = shaderTextHashTableSizes[hash as usize];
         shaderTextHashTableSizes[hash as usize] = shaderTextHashTableSizes[hash as usize] + 1;
         let ref mut fresh1 = *shaderTextHashTable[hash as usize].offset(fresh0 as isize);
         *fresh1 = oldp;
-        crate::src::qcommon::q_shared::SkipBracedSection(&mut p, 0 as libc::c_int);
+        crate::src::qcommon::q_shared::SkipBracedSection(&mut p, 0);
     }
 }
 /*
@@ -9552,54 +9580,55 @@ CreateInternalShaders
 */
 
 unsafe extern "C" fn CreateInternalShaders() {
-    crate::src::renderergl1::tr_main::tr.numShaders = 0 as libc::c_int;
+    crate::src::renderergl1::tr_main::tr.numShaders = 0;
     // init the default shader
     InitShader(
-        b"<default>\x00" as *const u8 as *const libc::c_char,
-        -(1 as libc::c_int),
+        b"<default>\x00" as *const u8 as *const i8,
+        -(1),
     );
-    stages[0 as libc::c_int as usize].bundle[0 as libc::c_int as usize].image
-        [0 as libc::c_int as usize] = crate::src::renderergl1::tr_main::tr.defaultImage;
-    stages[0 as libc::c_int as usize].active = crate::src::qcommon::q_shared::qtrue;
-    stages[0 as libc::c_int as usize].stateBits = 0x100 as libc::c_int as libc::c_uint;
+    stages[0].bundle[0].image
+        [0] = crate::src::renderergl1::tr_main::tr.defaultImage;
+    stages[0].active = crate::src::qcommon::q_shared::qtrue;
+    stages[0].stateBits = 0x100;
     crate::src::renderergl1::tr_main::tr.defaultShader = FinishShader();
     // shadow shader is just a marker
     crate::src::qcommon::q_shared::Q_strncpyz(
         shader.name.as_mut_ptr(),
-        b"<stencil shadow>\x00" as *const u8 as *const libc::c_char,
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+        b"<stencil shadow>\x00" as *const u8 as *const i8,
+        
+        ::std::mem::size_of::<[i8; 64]>() as i32,
     );
-    shader.sort = crate::tr_local_h::SS_STENCIL_SHADOW as libc::c_int as libc::c_float;
+    shader.sort = crate::tr_local_h::SS_STENCIL_SHADOW as i32 as f32;
     crate::src::renderergl1::tr_main::tr.shadowShader = FinishShader();
 }
 
 unsafe extern "C" fn CreateExternalShaders() {
     crate::src::renderergl1::tr_main::tr.projectionShadowShader = R_FindShader(
-        b"projectionShadow\x00" as *const u8 as *const libc::c_char,
-        -(1 as libc::c_int),
+        b"projectionShadow\x00" as *const u8 as *const i8,
+        -(1),
         crate::src::qcommon::q_shared::qtrue,
     );
     crate::src::renderergl1::tr_main::tr.flareShader = R_FindShader(
-        b"flareShader\x00" as *const u8 as *const libc::c_char,
-        -(1 as libc::c_int),
+        b"flareShader\x00" as *const u8 as *const i8,
+        -(1),
         crate::src::qcommon::q_shared::qtrue,
     );
     // Hack to make fogging work correctly on flares. Fog colors are calculated
     // in tr_flare.c already.
     if (*crate::src::renderergl1::tr_main::tr.flareShader).defaultShader as u64 == 0 {
-        let mut index: libc::c_int = 0;
-        index = 0 as libc::c_int;
+        let mut index: i32 = 0;
+        index = 0;
         while index < (*crate::src::renderergl1::tr_main::tr.flareShader).numUnfoggedPasses {
             (*(*crate::src::renderergl1::tr_main::tr.flareShader).stages[index as usize])
                 .adjustColorsForFog = crate::tr_local_h::ACFF_NONE;
             (*(*crate::src::renderergl1::tr_main::tr.flareShader).stages[index as usize])
-                .stateBits |= 0x10000 as libc::c_int as libc::c_uint;
+                .stateBits |= 0x10000;
             index += 1
         }
     }
     crate::src::renderergl1::tr_main::tr.sunShader = R_FindShader(
-        b"sun\x00" as *const u8 as *const libc::c_char,
-        -(1 as libc::c_int),
+        b"sun\x00" as *const u8 as *const i8,
+        -(1),
         crate::src::qcommon::q_shared::qtrue,
     );
 }
@@ -9936,13 +9965,14 @@ pub unsafe extern "C" fn R_InitShaders() {
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
-        crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-        b"Initializing Shaders\n\x00" as *const u8 as *const libc::c_char,
+        crate::src::qcommon::q_shared::PRINT_ALL as i32,
+        b"Initializing Shaders\n\x00" as *const u8 as *const i8,
     );
     crate::stdlib::memset(
         hashTable.as_mut_ptr() as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<[*mut crate::tr_local_h::shader_t; 1024]>() as libc::c_ulong,
+        0,
+        
+        ::std::mem::size_of::<[*mut crate::tr_local_h::shader_t; 1024]>(),
     );
     CreateInternalShaders();
     ScanAndLoadShaderFiles();

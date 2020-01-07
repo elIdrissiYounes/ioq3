@@ -2,40 +2,40 @@
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct envelope_lookup {
-    pub ch: libc::c_int,
-    pub winlength: libc::c_int,
-    pub searchstep: libc::c_int,
-    pub minenergy: libc::c_float,
+    pub ch: i32,
+    pub winlength: i32,
+    pub searchstep: i32,
+    pub minenergy: f32,
     pub mdct: crate::src::libvorbis_1_3_6::lib::mdct::mdct_lookup,
-    pub mdct_win: *mut libc::c_float,
+    pub mdct_win: *mut f32,
     pub band: [crate::src::libvorbis_1_3_6::lib::envelope::envelope_band; 7],
     pub filter: *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_filter_state,
-    pub stretch: libc::c_int,
-    pub mark: *mut libc::c_int,
-    pub storage: libc::c_long,
-    pub current: libc::c_long,
-    pub curmark: libc::c_long,
-    pub cursor: libc::c_long,
+    pub stretch: i32,
+    pub mark: *mut i32,
+    pub storage: isize,
+    pub current: isize,
+    pub curmark: isize,
+    pub cursor: isize,
 }
 
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct envelope_filter_state {
-    pub ampbuf: [libc::c_float; 17],
-    pub ampptr: libc::c_int,
-    pub nearDC: [libc::c_float; 15],
-    pub nearDC_acc: libc::c_float,
-    pub nearDC_partialacc: libc::c_float,
-    pub nearptr: libc::c_int,
+    pub ampbuf: [f32; 17],
+    pub ampptr: i32,
+    pub nearDC: [f32; 15],
+    pub nearDC_acc: f32,
+    pub nearDC_partialacc: f32,
+    pub nearptr: i32,
 }
 
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct envelope_band {
-    pub begin: libc::c_int,
-    pub end: libc::c_int,
-    pub window: *mut libc::c_float,
-    pub total: libc::c_float,
+    pub begin: i32,
+    pub end: i32,
+    pub window: *mut f32,
+    pub total: f32,
 }
 use ::libc;
 
@@ -44,11 +44,11 @@ pub mod scales_h {
     /* Segher was off (too high) by ~ .3 decibel.  Center the conversion correctly. */
     #[inline]
 
-    pub unsafe extern "C" fn todB(mut x: *const libc::c_float) -> libc::c_float {
+    pub unsafe extern "C" fn todB(mut x: *const f32) -> f32 {
         let mut ix: crate::scales_h::C2RustUnnamed_58 = crate::scales_h::C2RustUnnamed_58 { i: 0 };
         ix.f = *x;
-        ix.i = ix.i & 0x7fffffff as libc::c_int as libc::c_uint;
-        return ix.i as libc::c_float * 7.17711438e-7f32 - 764.6161886f32;
+        ix.i = ix.i & 0x7fffffff;
+        return ix.i as f32 * 7.17711438e-7 - 764.6161886;
     }
 
     /* Frequency to octave.  We arbitrarily declare 63.5 Hz to be octave
@@ -134,82 +134,72 @@ pub unsafe extern "C" fn _ve_envelope_init(
         (*vi).codec_setup as *mut crate::codec_internal_h::codec_setup_info; /* not random */
     let mut gi: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global =
         &mut (*ci).psy_g_param;
-    let mut ch: libc::c_int = (*vi).channels;
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    (*e).winlength = 128 as libc::c_int;
-    let mut n: libc::c_int = (*e).winlength;
-    (*e).searchstep = 64 as libc::c_int;
+    let mut ch: i32 = (*vi).channels;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    (*e).winlength = 128;
+    let mut n: i32 = (*e).winlength;
+    (*e).searchstep = 64;
     (*e).minenergy = (*gi).preecho_minenergy;
     (*e).ch = ch;
-    (*e).storage = 128 as libc::c_int as libc::c_long;
-    (*e).cursor = (*ci).blocksizes[1 as libc::c_int as usize] / 2 as libc::c_int as libc::c_long;
-    (*e).mdct_win = crate::stdlib::calloc(
-        n as libc::c_ulong,
-        ::std::mem::size_of::<libc::c_float>() as libc::c_ulong,
-    ) as *mut libc::c_float;
+    (*e).storage = 128isize;
+    (*e).cursor = (*ci).blocksizes[1] / 2;
+    (*e).mdct_win = crate::stdlib::calloc(n as usize, ::std::mem::size_of::<f32>()) as *mut f32;
     crate::src::libvorbis_1_3_6::lib::mdct::mdct_init(&mut (*e).mdct, n);
-    i = 0 as libc::c_int;
+    i = 0;
     while i < n {
-        *(*e).mdct_win.offset(i as isize) = crate::stdlib::sin(
-            i as libc::c_double / (n as libc::c_double - 1.0f64) * 3.14159265358979323846f64,
-        ) as libc::c_float;
+        *(*e).mdct_win.offset(i as isize) =
+            crate::stdlib::sin(i as f64 / (n as f64 - 1.0) * 3.14159265358979323846) as f32;
         *(*e).mdct_win.offset(i as isize) *= *(*e).mdct_win.offset(i as isize);
         i += 1
     }
     /* magic follows */
-    (*e).band[0 as libc::c_int as usize].begin = 2 as libc::c_int;
-    (*e).band[0 as libc::c_int as usize].end = 4 as libc::c_int;
-    (*e).band[1 as libc::c_int as usize].begin = 4 as libc::c_int;
-    (*e).band[1 as libc::c_int as usize].end = 5 as libc::c_int;
-    (*e).band[2 as libc::c_int as usize].begin = 6 as libc::c_int;
-    (*e).band[2 as libc::c_int as usize].end = 6 as libc::c_int;
-    (*e).band[3 as libc::c_int as usize].begin = 9 as libc::c_int;
-    (*e).band[3 as libc::c_int as usize].end = 8 as libc::c_int;
-    (*e).band[4 as libc::c_int as usize].begin = 13 as libc::c_int;
-    (*e).band[4 as libc::c_int as usize].end = 8 as libc::c_int;
-    (*e).band[5 as libc::c_int as usize].begin = 17 as libc::c_int;
-    (*e).band[5 as libc::c_int as usize].end = 8 as libc::c_int;
-    (*e).band[6 as libc::c_int as usize].begin = 22 as libc::c_int;
-    (*e).band[6 as libc::c_int as usize].end = 8 as libc::c_int;
-    j = 0 as libc::c_int;
-    while j < 7 as libc::c_int {
+    (*e).band[0].begin = 2;
+    (*e).band[0].end = 4;
+    (*e).band[1].begin = 4;
+    (*e).band[1].end = 5;
+    (*e).band[2].begin = 6;
+    (*e).band[2].end = 6;
+    (*e).band[3].begin = 9;
+    (*e).band[3].end = 8;
+    (*e).band[4].begin = 13;
+    (*e).band[4].end = 8;
+    (*e).band[5].begin = 17;
+    (*e).band[5].end = 8;
+    (*e).band[6].begin = 22;
+    (*e).band[6].end = 8;
+    j = 0;
+    while j < 7 {
         n = (*e).band[j as usize].end;
-        (*e).band[j as usize].window = crate::stdlib::malloc(
-            (n as libc::c_ulong)
-                .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong),
-        ) as *mut libc::c_float;
-        i = 0 as libc::c_int;
+        (*e).band[j as usize].window =
+            crate::stdlib::malloc((n as usize).wrapping_mul(::std::mem::size_of::<f32>()))
+                as *mut f32;
+        i = 0;
         while i < n {
-            *(*e).band[j as usize].window.offset(i as isize) = crate::stdlib::sin(
-                (i as libc::c_double + 0.5f64) / n as libc::c_double * 3.14159265358979323846f64,
-            ) as libc::c_float;
+            *(*e).band[j as usize].window.offset(i as isize) =
+                crate::stdlib::sin((i as f64 + 0.5) / n as f64 * 3.14159265358979323846) as f32;
             (*e).band[j as usize].total += *(*e).band[j as usize].window.offset(i as isize);
             i += 1
         }
-        (*e).band[j as usize].total =
-            (1.0f64 / (*e).band[j as usize].total as libc::c_double) as libc::c_float;
+        (*e).band[j as usize].total = (1.0 / (*e).band[j as usize].total as f64) as f32;
         j += 1
     }
     (*e).filter = crate::stdlib::calloc(
-        (7 as libc::c_int * ch) as libc::c_ulong,
-        ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::envelope::envelope_filter_state>()
-            as libc::c_ulong,
+        (7 * ch) as usize,
+        ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::envelope::envelope_filter_state>(),
     ) as *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_filter_state;
-    (*e).mark = crate::stdlib::calloc(
-        (*e).storage as libc::c_ulong,
-        ::std::mem::size_of::<libc::c_int>() as libc::c_ulong,
-    ) as *mut libc::c_int;
+    (*e).mark =
+        crate::stdlib::calloc((*e).storage as usize, ::std::mem::size_of::<i32>()) as *mut i32;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn _ve_envelope_clear(
     mut e: *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_lookup,
 ) {
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     crate::src::libvorbis_1_3_6::lib::mdct::mdct_clear(&mut (*e).mdct);
-    i = 0 as libc::c_int;
-    while i < 7 as libc::c_int {
+    i = 0;
+    while i < 7 {
         crate::stdlib::free((*e).band[i as usize].window as *mut libc::c_void);
         i += 1
     }
@@ -218,9 +208,8 @@ pub unsafe extern "C" fn _ve_envelope_clear(
     crate::stdlib::free((*e).mark as *mut libc::c_void);
     crate::stdlib::memset(
         e as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::envelope::envelope_lookup>()
-            as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::envelope::envelope_lookup>(),
     );
 }
 /* fairly straight threshhold-by-band based until we find something
@@ -229,36 +218,32 @@ that works better and isn't patented. */
 unsafe extern "C" fn _ve_amp(
     mut ve: *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_lookup,
     mut gi: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global,
-    mut data: *mut libc::c_float,
+    mut data: *mut f32,
     mut bands: *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_band,
     mut filters: *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_filter_state,
-) -> libc::c_int {
-    let mut n: libc::c_long = (*ve).winlength as libc::c_long;
-    let mut ret: libc::c_int = 0 as libc::c_int;
-    let mut i: libc::c_long = 0;
-    let mut j: libc::c_long = 0;
-    let mut decay: libc::c_float = 0.;
+) -> i32 {
+    let mut n: isize = (*ve).winlength as isize;
+    let mut ret: i32 = 0;
+    let mut i: isize = 0;
+    let mut j: isize = 0;
+    let mut decay: f32 = 0.;
     /* we want to have a 'minimum bar' for energy, else we're just
     basing blocks on quantization noise that outweighs the signal
     itself (for low power signals) */
-    let mut minV: libc::c_float = (*ve).minenergy;
-    let mut fresh0 = ::std::vec::from_elem(
-        0,
-        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
-            as usize,
-    );
-    let mut vec: *mut libc::c_float = fresh0.as_mut_ptr() as *mut libc::c_float;
+    let mut minV: f32 = (*ve).minenergy;
+    let mut fresh0 =
+        ::std::vec::from_elem(0, (n as usize).wrapping_mul(::std::mem::size_of::<f32>()));
+    let mut vec: *mut f32 = fresh0.as_mut_ptr() as *mut f32;
     /* stretch is used to gradually lengthen the number of windows
     considered prevoius-to-potential-trigger */
-    let mut stretch: libc::c_int = if (2 as libc::c_int) < (*ve).stretch / 2 as libc::c_int {
-        ((*ve).stretch) / 2 as libc::c_int
+    let mut stretch: i32 = if (2) < (*ve).stretch / 2 {
+        ((*ve).stretch) / 2
     } else {
-        2 as libc::c_int
+        2
     };
-    let mut penalty: libc::c_float = (*gi).stretch_penalty
-        - ((*ve).stretch / 2 as libc::c_int - 2 as libc::c_int) as libc::c_float;
-    if penalty < 0.0f32 {
-        penalty = 0.0f32
+    let mut penalty: f32 = (*gi).stretch_penalty - ((*ve).stretch / 2i32 - 2) as f32;
+    if penalty < 0.0 {
+        penalty = 0.0
     }
     if penalty > (*gi).stretch_penalty {
         penalty = (*gi).stretch_penalty
@@ -266,29 +251,22 @@ unsafe extern "C" fn _ve_amp(
     /*_analysis_output_always("lpcm",seq2,data,n,0,0,
     totalshift+pos*ve->searchstep);*/
     /* window and transform */
-    i = 0 as libc::c_int as libc::c_long;
+    i = 0;
     while i < n {
-        *vec.offset(i as isize) = *data.offset(i as isize) * *(*ve).mdct_win.offset(i as isize);
+        *vec.offset(i) = *data.offset(i) * *(*ve).mdct_win.offset(i);
         i += 1
     }
     crate::src::libvorbis_1_3_6::lib::mdct::mdct_forward(&mut (*ve).mdct, vec, vec);
     /*_analysis_output_always("mdct",seq2,vec,n/2,0,1,0); */
     /* near-DC spreading function; this has nothing to do with
     psychoacoustics, just sidelobe leakage and window size */
-    let mut temp: libc::c_float = ((*vec.offset(0 as libc::c_int as isize)
-        * *vec.offset(0 as libc::c_int as isize))
-        as libc::c_double
-        + 0.7f64
-            * *vec.offset(1 as libc::c_int as isize) as libc::c_double
-            * *vec.offset(1 as libc::c_int as isize) as libc::c_double
-        + 0.2f64
-            * *vec.offset(2 as libc::c_int as isize) as libc::c_double
-            * *vec.offset(2 as libc::c_int as isize) as libc::c_double)
-        as libc::c_float;
-    let mut ptr: libc::c_int = (*filters).nearptr;
+    let mut temp: f32 = ((*vec.offset(0) * *vec.offset(0)) as f64
+        + 0.7 * *vec.offset(1) as f64 * *vec.offset(1) as f64
+        + 0.2 * *vec.offset(2) as f64 * *vec.offset(2) as f64) as f32;
+    let mut ptr: i32 = (*filters).nearptr;
     /* the accumulation is regularly refreshed from scratch to avoid
     floating point creep */
-    if ptr == 0 as libc::c_int {
+    if ptr == 0 {
         (*filters).nearDC_acc = (*filters).nearDC_partialacc + temp;
         decay = (*filters).nearDC_acc;
         (*filters).nearDC_partialacc = temp
@@ -299,84 +277,80 @@ unsafe extern "C" fn _ve_amp(
     }
     (*filters).nearDC_acc -= (*filters).nearDC[ptr as usize];
     (*filters).nearDC[ptr as usize] = temp;
-    decay = (decay as libc::c_double
-        * (1.0f64 / (15 as libc::c_int + 1 as libc::c_int) as libc::c_double))
-        as libc::c_float;
+    decay = (decay as f64 * (1.0 / (15i32 + 1) as f64)) as f32;
     (*filters).nearptr += 1;
-    if (*filters).nearptr >= 15 as libc::c_int {
-        (*filters).nearptr = 0 as libc::c_int
+    if (*filters).nearptr >= 15 {
+        (*filters).nearptr = 0
     }
-    decay =
-        (todB(&mut decay) as libc::c_double * 0.5f64 - 15.0f32 as libc::c_double) as libc::c_float;
+    decay = (todB(&mut decay) as f64 * 0.5 - 15f64) as f32;
     /* perform spreading and limiting, also smooth the spectrum.  yes,
     the MDCT results in all real coefficients, but it still *behaves*
     like real/imaginary pairs */
-    i = 0 as libc::c_int as libc::c_long;
-    while i < n / 2 as libc::c_int as libc::c_long {
-        let mut val: libc::c_float = *vec.offset(i as isize) * *vec.offset(i as isize)
-            + *vec.offset((i + 1 as libc::c_int as libc::c_long) as isize)
-                * *vec.offset((i + 1 as libc::c_int as libc::c_long) as isize);
-        val = todB(&mut val) * 0.5f32;
+    i = 0;
+    while i < n / 2 {
+        let mut val: f32 =
+            *vec.offset(i) * *vec.offset(i) + *vec.offset(i + 1) * *vec.offset(i + 1);
+        val = todB(&mut val) * 0.5;
         if val < decay {
             val = decay
         }
         if val < minV {
             val = minV
         }
-        *vec.offset((i >> 1 as libc::c_int) as isize) = val;
-        decay = (decay as libc::c_double - 8.0f64) as libc::c_float;
-        i += 2 as libc::c_int as libc::c_long
+        *vec.offset(i >> 1) = val;
+        decay = (decay as f64 - 8.0) as f32;
+        i += 2
     }
     /*_analysis_output_always("spread",seq2++,vec,n/4,0,0,0);*/
     /* perform preecho/postecho triggering by band */
-    j = 0 as libc::c_int as libc::c_long;
-    while j < 7 as libc::c_int as libc::c_long {
-        let mut acc: libc::c_float = 0.0f64 as libc::c_float;
-        let mut valmax: libc::c_float = 0.;
-        let mut valmin: libc::c_float = 0.;
+    j = 0;
+    while j < 7 {
+        let mut acc: f32 = 0f32;
+        let mut valmax: f32 = 0.;
+        let mut valmin: f32 = 0.;
         /* accumulate amplitude */
-        i = 0 as libc::c_int as libc::c_long;
-        while i < (*bands.offset(j as isize)).end as libc::c_long {
-            acc += *vec.offset((i + (*bands.offset(j as isize)).begin as libc::c_long) as isize)
-                * *(*bands.offset(j as isize)).window.offset(i as isize);
+        i = 0;
+        while i < (*bands.offset(j)).end as isize {
+            acc += *vec.offset(i + (*bands.offset(j)).begin as isize)
+                * *(*bands.offset(j)).window.offset(i);
             i += 1
         }
-        acc *= (*bands.offset(j as isize)).total;
+        acc *= (*bands.offset(j)).total;
         /* convert amplitude to delta */
-        let mut p: libc::c_int = 0;
-        let mut this: libc::c_int = (*filters.offset(j as isize)).ampptr;
-        let mut postmax: libc::c_float = 0.;
-        let mut postmin: libc::c_float = 0.;
-        let mut premax: libc::c_float = -99999.0f32;
-        let mut premin: libc::c_float = 99999.0f32;
+        let mut p: i32 = 0;
+        let mut this: i32 = (*filters.offset(j)).ampptr;
+        let mut postmax: f32 = 0.;
+        let mut postmin: f32 = 0.;
+        let mut premax: f32 = -99999.0;
+        let mut premin: f32 = 99999.0;
         p = this;
         p -= 1;
-        if p < 0 as libc::c_int {
-            p += 16 as libc::c_int + 2 as libc::c_int - 1 as libc::c_int
+        if p < 0 {
+            p += 16 + 2 - 1
         }
-        postmax = if acc < (*filters.offset(j as isize)).ampbuf[p as usize] {
-            (*filters.offset(j as isize)).ampbuf[p as usize]
+        postmax = if acc < (*filters.offset(j)).ampbuf[p as usize] {
+            (*filters.offset(j)).ampbuf[p as usize]
         } else {
             acc
         };
-        postmin = if acc > (*filters.offset(j as isize)).ampbuf[p as usize] {
-            (*filters.offset(j as isize)).ampbuf[p as usize]
+        postmin = if acc > (*filters.offset(j)).ampbuf[p as usize] {
+            (*filters.offset(j)).ampbuf[p as usize]
         } else {
             acc
         };
-        i = 0 as libc::c_int as libc::c_long;
-        while i < stretch as libc::c_long {
+        i = 0;
+        while i < stretch as isize {
             p -= 1;
-            if p < 0 as libc::c_int {
-                p += 16 as libc::c_int + 2 as libc::c_int - 1 as libc::c_int
+            if p < 0 {
+                p += 16 + 2 - 1
             }
-            premax = if premax < (*filters.offset(j as isize)).ampbuf[p as usize] {
-                (*filters.offset(j as isize)).ampbuf[p as usize]
+            premax = if premax < (*filters.offset(j)).ampbuf[p as usize] {
+                (*filters.offset(j)).ampbuf[p as usize]
             } else {
                 premax
             };
-            premin = if premin > (*filters.offset(j as isize)).ampbuf[p as usize] {
-                (*filters.offset(j as isize)).ampbuf[p as usize]
+            premin = if premin > (*filters.offset(j)).ampbuf[p as usize] {
+                (*filters.offset(j)).ampbuf[p as usize]
             } else {
                 premin
             };
@@ -385,21 +359,19 @@ unsafe extern "C" fn _ve_amp(
         valmin = postmin - premin;
         valmax = postmax - premax;
         /*filters[j].markers[pos]=valmax;*/
-        (*filters.offset(j as isize)).ampbuf[this as usize] = acc;
-        let ref mut fresh1 = (*filters.offset(j as isize)).ampptr;
+        (*filters.offset(j)).ampbuf[this as usize] = acc;
+        let ref mut fresh1 = (*filters.offset(j)).ampptr;
         *fresh1 += 1;
-        if (*filters.offset(j as isize)).ampptr
-            >= 16 as libc::c_int + 2 as libc::c_int - 1 as libc::c_int
-        {
-            (*filters.offset(j as isize)).ampptr = 0 as libc::c_int
+        if (*filters.offset(j)).ampptr >= 16 + 2 - 1 {
+            (*filters.offset(j)).ampptr = 0
         }
         /* look at min/max, decide trigger */
         if valmax > (*gi).preecho_thresh[j as usize] + penalty {
-            ret |= 1 as libc::c_int;
-            ret |= 4 as libc::c_int
+            ret |= 1;
+            ret |= 4
         }
         if valmin < (*gi).postecho_thresh[j as usize] - penalty {
-            ret |= 2 as libc::c_int
+            ret |= 2
         }
         j += 1
     }
@@ -409,7 +381,7 @@ unsafe extern "C" fn _ve_amp(
 
 pub unsafe extern "C" fn _ve_envelope_search(
     mut v: *mut crate::codec_h::vorbis_dsp_state,
-) -> libc::c_long {
+) -> isize {
     let mut vi: *mut crate::codec_h::vorbis_info = (*v).vi;
     let mut ci: *mut crate::codec_internal_h::codec_setup_info =
         (*vi).codec_setup as *mut crate::codec_internal_h::codec_setup_info;
@@ -417,133 +389,115 @@ pub unsafe extern "C" fn _ve_envelope_search(
         &mut (*ci).psy_g_param;
     let mut ve: *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_lookup =
         (*((*v).backend_state as *mut crate::codec_internal_h::private_state)).ve;
-    let mut i: libc::c_long = 0;
-    let mut j: libc::c_long = 0;
-    let mut first: libc::c_int = ((*ve).current / (*ve).searchstep as libc::c_long) as libc::c_int;
-    let mut last: libc::c_int = (*v).pcm_current / (*ve).searchstep - 4 as libc::c_int;
-    if first < 0 as libc::c_int {
-        first = 0 as libc::c_int
+    let mut i: isize = 0;
+    let mut j: isize = 0;
+    let mut first: i32 = ((*ve).current / (*ve).searchstep as isize) as i32;
+    let mut last: i32 = (*v).pcm_current / (*ve).searchstep - 4;
+    if first < 0 {
+        first = 0
     }
     /* make sure we have enough storage to match the PCM */
-    if (last + 4 as libc::c_int + 2 as libc::c_int) as libc::c_long > (*ve).storage {
-        (*ve).storage = (last + 4 as libc::c_int + 2 as libc::c_int) as libc::c_long; /* be sure */
+    if (last + 4 + 2) as isize > (*ve).storage {
+        (*ve).storage = (last + 4 + 2) as isize; /* be sure */
         (*ve).mark = crate::stdlib::realloc(
             (*ve).mark as *mut libc::c_void,
-            ((*ve).storage as libc::c_ulong)
-                .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong),
-        ) as *mut libc::c_int
+            ((*ve).storage as usize).wrapping_mul(::std::mem::size_of::<i32>()),
+        ) as *mut i32
     }
-    j = first as libc::c_long;
-    while j < last as libc::c_long {
-        let mut ret: libc::c_int = 0 as libc::c_int;
+    j = first as isize;
+    while j < last as isize {
+        let mut ret: i32 = 0;
         (*ve).stretch += 1;
-        if (*ve).stretch > 12 as libc::c_int * 2 as libc::c_int {
-            (*ve).stretch = 12 as libc::c_int * 2 as libc::c_int
+        if (*ve).stretch > 12 * 2 {
+            (*ve).stretch = 12 * 2
         }
-        i = 0 as libc::c_int as libc::c_long;
-        while i < (*ve).ch as libc::c_long {
-            let mut pcm: *mut libc::c_float = (*(*v).pcm.offset(i as isize))
-                .offset(((*ve).searchstep as libc::c_long * j) as isize);
+        i = 0;
+        while i < (*ve).ch as isize {
+            let mut pcm: *mut f32 = (*(*v).pcm.offset(i)).offset((*ve).searchstep as isize * j);
             ret |= _ve_amp(
                 ve,
                 gi,
                 pcm,
                 (*ve).band.as_mut_ptr(),
-                (*ve)
-                    .filter
-                    .offset((i * 7 as libc::c_int as libc::c_long) as isize),
+                (*ve).filter.offset(i * 7),
             );
             i += 1
         }
-        *(*ve)
-            .mark
-            .offset((j + 2 as libc::c_int as libc::c_long) as isize) = 0 as libc::c_int;
-        if ret & 1 as libc::c_int != 0 {
-            *(*ve).mark.offset(j as isize) = 1 as libc::c_int;
-            *(*ve)
-                .mark
-                .offset((j + 1 as libc::c_int as libc::c_long) as isize) = 1 as libc::c_int
+        *(*ve).mark.offset(j + 2) = 0;
+        if ret & 1 != 0 {
+            *(*ve).mark.offset(j) = 1;
+            *(*ve).mark.offset(j + 1) = 1
         }
-        if ret & 2 as libc::c_int != 0 {
-            *(*ve).mark.offset(j as isize) = 1 as libc::c_int;
-            if j > 0 as libc::c_int as libc::c_long {
-                *(*ve)
-                    .mark
-                    .offset((j - 1 as libc::c_int as libc::c_long) as isize) = 1 as libc::c_int
+        if ret & 2 != 0 {
+            *(*ve).mark.offset(j) = 1;
+            if j > 0 {
+                *(*ve).mark.offset(j - 1) = 1
             }
         }
-        if ret & 4 as libc::c_int != 0 {
-            (*ve).stretch = -(1 as libc::c_int)
+        if ret & 4 != 0 {
+            (*ve).stretch = -(1)
         }
         j += 1
     }
-    (*ve).current = (last * (*ve).searchstep) as libc::c_long;
-    let mut centerW: libc::c_long = (*v).centerW;
-    let mut testW: libc::c_long = centerW
-        + (*ci).blocksizes[(*v).W as usize] / 4 as libc::c_int as libc::c_long
-        + (*ci).blocksizes[1 as libc::c_int as usize] / 2 as libc::c_int as libc::c_long
-        + (*ci).blocksizes[0 as libc::c_int as usize] / 4 as libc::c_int as libc::c_long;
+    (*ve).current = (last * (*ve).searchstep) as isize;
+    let mut centerW: isize = (*v).centerW;
+    let mut testW: isize = centerW
+        + (*ci).blocksizes[(*v).W as usize] / 4
+        + (*ci).blocksizes[1] / 2
+        + (*ci).blocksizes[0] / 4;
     j = (*ve).cursor;
-    while j < (*ve).current - (*ve).searchstep as libc::c_long {
+    while j < (*ve).current - (*ve).searchstep as isize {
         /* account for postecho
         working back one window */
         if j >= testW {
-            return 1 as libc::c_int as libc::c_long;
+            return 1isize;
         }
         (*ve).cursor = j;
-        if *(*ve)
-            .mark
-            .offset((j / (*ve).searchstep as libc::c_long) as isize)
-            != 0
-        {
+        if *(*ve).mark.offset(j / (*ve).searchstep as isize) != 0 {
             if j > centerW {
                 (*ve).curmark = j;
                 if j >= testW {
-                    return 1 as libc::c_int as libc::c_long;
+                    return 1isize;
                 }
-                return 0 as libc::c_int as libc::c_long;
+                return 0isize;
             }
         }
-        j += (*ve).searchstep as libc::c_long
+        j += (*ve).searchstep as isize
     }
-    return -(1 as libc::c_int) as libc::c_long;
+    return -1isize;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn _ve_envelope_mark(
-    mut v: *mut crate::codec_h::vorbis_dsp_state,
-) -> libc::c_int {
+pub unsafe extern "C" fn _ve_envelope_mark(mut v: *mut crate::codec_h::vorbis_dsp_state) -> i32 {
     let mut ve: *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_lookup =
         (*((*v).backend_state as *mut crate::codec_internal_h::private_state)).ve;
     let mut vi: *mut crate::codec_h::vorbis_info = (*v).vi;
     let mut ci: *mut crate::codec_internal_h::codec_setup_info =
         (*vi).codec_setup as *mut crate::codec_internal_h::codec_setup_info;
-    let mut centerW: libc::c_long = (*v).centerW;
-    let mut beginW: libc::c_long =
-        centerW - (*ci).blocksizes[(*v).W as usize] / 4 as libc::c_int as libc::c_long;
-    let mut endW: libc::c_long =
-        centerW + (*ci).blocksizes[(*v).W as usize] / 4 as libc::c_int as libc::c_long;
+    let mut centerW: isize = (*v).centerW;
+    let mut beginW: isize = centerW - (*ci).blocksizes[(*v).W as usize] / 4;
+    let mut endW: isize = centerW + (*ci).blocksizes[(*v).W as usize] / 4;
     if (*v).W != 0 {
-        beginW -= (*ci).blocksizes[(*v).lW as usize] / 4 as libc::c_int as libc::c_long;
-        endW += (*ci).blocksizes[(*v).nW as usize] / 4 as libc::c_int as libc::c_long
+        beginW -= (*ci).blocksizes[(*v).lW as usize] / 4;
+        endW += (*ci).blocksizes[(*v).nW as usize] / 4
     } else {
-        beginW -= (*ci).blocksizes[0 as libc::c_int as usize] / 4 as libc::c_int as libc::c_long;
-        endW += (*ci).blocksizes[0 as libc::c_int as usize] / 4 as libc::c_int as libc::c_long
+        beginW -= (*ci).blocksizes[0] / 4;
+        endW += (*ci).blocksizes[0] / 4
     }
     if (*ve).curmark >= beginW && (*ve).curmark < endW {
-        return 1 as libc::c_int;
+        return 1i32;
     }
-    let mut first: libc::c_long = beginW / (*ve).searchstep as libc::c_long;
-    let mut last: libc::c_long = endW / (*ve).searchstep as libc::c_long;
-    let mut i: libc::c_long = 0;
+    let mut first: isize = beginW / (*ve).searchstep as isize;
+    let mut last: isize = endW / (*ve).searchstep as isize;
+    let mut i: isize = 0;
     i = first;
     while i < last {
-        if *(*ve).mark.offset(i as isize) != 0 {
-            return 1 as libc::c_int;
+        if *(*ve).mark.offset(i) != 0 {
+            return 1i32;
         }
         i += 1
     }
-    return 0 as libc::c_int;
+    return 0;
 }
 /* *******************************************************************
 *                                                                  *
@@ -566,20 +520,18 @@ function: PCM data envelope analysis and manipulation
 
 pub unsafe extern "C" fn _ve_envelope_shift(
     mut e: *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_lookup,
-    mut shift: libc::c_long,
+    mut shift: isize,
 ) {
-    let mut smallsize: libc::c_int = ((*e).current / (*e).searchstep as libc::c_long
-        + 2 as libc::c_int as libc::c_long) as libc::c_int; /* adjust for placing marks
-                                                            ahead of ve->current */
-    let mut smallshift: libc::c_int = (shift / (*e).searchstep as libc::c_long) as libc::c_int;
+    let mut smallsize: i32 = ((*e).current / (*e).searchstep as isize + 2) as i32; /* adjust for placing marks
+                                                                                   ahead of ve->current */
+    let mut smallshift: i32 = (shift / (*e).searchstep as isize) as i32;
     crate::stdlib::memmove(
         (*e).mark as *mut libc::c_void,
         (*e).mark.offset(smallshift as isize) as *const libc::c_void,
-        ((smallsize - smallshift) as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong),
+        ((smallsize - smallshift) as usize).wrapping_mul(::std::mem::size_of::<i32>()),
     );
     (*e).current -= shift;
-    if (*e).curmark >= 0 as libc::c_int as libc::c_long {
+    if (*e).curmark >= 0isize {
         (*e).curmark -= shift
     }
     (*e).cursor -= shift;

@@ -2,71 +2,71 @@
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct vorbis_look_psy {
-    pub n: libc::c_int,
+    pub n: i32,
     pub vi: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy,
-    pub tonecurves: *mut *mut *mut libc::c_float,
-    pub noiseoffset: *mut *mut libc::c_float,
-    pub ath: *mut libc::c_float,
-    pub octave: *mut libc::c_long,
-    pub bark: *mut libc::c_long,
-    pub firstoc: libc::c_long,
-    pub shiftoc: libc::c_long,
-    pub eighth_octave_lines: libc::c_int,
-    pub total_octave_lines: libc::c_int,
-    pub rate: libc::c_long,
-    pub m_val: libc::c_float,
+    pub tonecurves: *mut *mut *mut f32,
+    pub noiseoffset: *mut *mut f32,
+    pub ath: *mut f32,
+    pub octave: *mut isize,
+    pub bark: *mut isize,
+    pub firstoc: isize,
+    pub shiftoc: isize,
+    pub eighth_octave_lines: i32,
+    pub total_octave_lines: i32,
+    pub rate: isize,
+    pub m_val: f32,
 }
 
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct vorbis_look_psy_global {
-    pub ampmax: libc::c_float,
-    pub channels: libc::c_int,
+    pub ampmax: f32,
+    pub channels: i32,
     pub gi: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global,
-    pub coupling_pointlimit: [[libc::c_int; 3]; 2],
+    pub coupling_pointlimit: [[i32; 3]; 2],
 }
 
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct vorbis_info_psy {
-    pub blockflag: libc::c_int,
-    pub ath_adjatt: libc::c_float,
-    pub ath_maxatt: libc::c_float,
-    pub tone_masteratt: [libc::c_float; 3],
-    pub tone_centerboost: libc::c_float,
-    pub tone_decay: libc::c_float,
-    pub tone_abs_limit: libc::c_float,
-    pub toneatt: [libc::c_float; 17],
-    pub noisemaskp: libc::c_int,
-    pub noisemaxsupp: libc::c_float,
-    pub noisewindowlo: libc::c_float,
-    pub noisewindowhi: libc::c_float,
-    pub noisewindowlomin: libc::c_int,
-    pub noisewindowhimin: libc::c_int,
-    pub noisewindowfixed: libc::c_int,
-    pub noiseoff: [[libc::c_float; 17]; 3],
-    pub noisecompand: [libc::c_float; 40],
-    pub max_curve_dB: libc::c_float,
-    pub normal_p: libc::c_int,
-    pub normal_start: libc::c_int,
-    pub normal_partition: libc::c_int,
-    pub normal_thresh: libc::c_double,
+    pub blockflag: i32,
+    pub ath_adjatt: f32,
+    pub ath_maxatt: f32,
+    pub tone_masteratt: [f32; 3],
+    pub tone_centerboost: f32,
+    pub tone_decay: f32,
+    pub tone_abs_limit: f32,
+    pub toneatt: [f32; 17],
+    pub noisemaskp: i32,
+    pub noisemaxsupp: f32,
+    pub noisewindowlo: f32,
+    pub noisewindowhi: f32,
+    pub noisewindowlomin: i32,
+    pub noisewindowhimin: i32,
+    pub noisewindowfixed: i32,
+    pub noiseoff: [[f32; 17]; 3],
+    pub noisecompand: [f32; 40],
+    pub max_curve_dB: f32,
+    pub normal_p: i32,
+    pub normal_start: i32,
+    pub normal_partition: i32,
+    pub normal_thresh: f64,
 }
 
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct vorbis_info_psy_global {
-    pub eighth_octave_lines: libc::c_int,
-    pub preecho_thresh: [libc::c_float; 7],
-    pub postecho_thresh: [libc::c_float; 7],
-    pub stretch_penalty: libc::c_float,
-    pub preecho_minenergy: libc::c_float,
-    pub ampmax_att_per_sec: libc::c_float,
-    pub coupling_pkHz: [libc::c_int; 15],
-    pub coupling_pointlimit: [[libc::c_int; 15]; 2],
-    pub coupling_prepointamp: [libc::c_int; 15],
-    pub coupling_postpointamp: [libc::c_int; 15],
-    pub sliding_lowpass: [[libc::c_int; 15]; 2],
+    pub eighth_octave_lines: i32,
+    pub preecho_thresh: [f32; 7],
+    pub postecho_thresh: [f32; 7],
+    pub stretch_penalty: f32,
+    pub preecho_minenergy: f32,
+    pub ampmax_att_per_sec: f32,
+    pub coupling_pkHz: [i32; 15],
+    pub coupling_pointlimit: [[i32; 15]; 2],
+    pub coupling_prepointamp: [i32; 15],
+    pub coupling_postpointamp: [i32; 15],
+    pub sliding_lowpass: [[i32; 15]; 2],
 }
 use ::libc;
 
@@ -90,10 +90,10 @@ pub mod scales_h {
     /* 20log10(x) */
     #[inline]
 
-    pub unsafe extern "C" fn unitnorm(mut x: libc::c_float) -> libc::c_float {
+    pub unsafe extern "C" fn unitnorm(mut x: f32) -> f32 {
         let mut ix: crate::scales_h::C2RustUnnamed_58 = crate::scales_h::C2RustUnnamed_58 { i: 0 };
         ix.f = x;
-        ix.i = ix.i & 0x80000000 as libc::c_uint | 0x3f800000 as libc::c_uint;
+        ix.i = ix.i & 0x80000000 | 0x3f800000;
         return ix.f;
     }
 
@@ -111,6050 +111,902 @@ pub mod scales_h {
 
 pub mod masking_h {
 
-    pub static mut ATH: [libc::c_float; 88] = [
-        -(51 as libc::c_int) as libc::c_float,
-        -(52 as libc::c_int) as libc::c_float,
-        -(53 as libc::c_int) as libc::c_float,
-        -(54 as libc::c_int) as libc::c_float,
-        -(55 as libc::c_int) as libc::c_float,
-        -(56 as libc::c_int) as libc::c_float,
-        -(57 as libc::c_int) as libc::c_float,
-        -(58 as libc::c_int) as libc::c_float,
-        -(59 as libc::c_int) as libc::c_float,
-        -(60 as libc::c_int) as libc::c_float,
-        -(61 as libc::c_int) as libc::c_float,
-        -(62 as libc::c_int) as libc::c_float,
-        -(63 as libc::c_int) as libc::c_float,
-        -(64 as libc::c_int) as libc::c_float,
-        -(65 as libc::c_int) as libc::c_float,
-        -(66 as libc::c_int) as libc::c_float,
-        -(67 as libc::c_int) as libc::c_float,
-        -(68 as libc::c_int) as libc::c_float,
-        -(69 as libc::c_int) as libc::c_float,
-        -(70 as libc::c_int) as libc::c_float,
-        -(71 as libc::c_int) as libc::c_float,
-        -(72 as libc::c_int) as libc::c_float,
-        -(73 as libc::c_int) as libc::c_float,
-        -(74 as libc::c_int) as libc::c_float,
-        -(75 as libc::c_int) as libc::c_float,
-        -(76 as libc::c_int) as libc::c_float,
-        -(77 as libc::c_int) as libc::c_float,
-        -(78 as libc::c_int) as libc::c_float,
-        -(80 as libc::c_int) as libc::c_float,
-        -(81 as libc::c_int) as libc::c_float,
-        -(82 as libc::c_int) as libc::c_float,
-        -(83 as libc::c_int) as libc::c_float,
-        -(84 as libc::c_int) as libc::c_float,
-        -(85 as libc::c_int) as libc::c_float,
-        -(86 as libc::c_int) as libc::c_float,
-        -(87 as libc::c_int) as libc::c_float,
-        -(88 as libc::c_int) as libc::c_float,
-        -(88 as libc::c_int) as libc::c_float,
-        -(89 as libc::c_int) as libc::c_float,
-        -(89 as libc::c_int) as libc::c_float,
-        -(90 as libc::c_int) as libc::c_float,
-        -(91 as libc::c_int) as libc::c_float,
-        -(91 as libc::c_int) as libc::c_float,
-        -(92 as libc::c_int) as libc::c_float,
-        -(93 as libc::c_int) as libc::c_float,
-        -(94 as libc::c_int) as libc::c_float,
-        -(95 as libc::c_int) as libc::c_float,
-        -(96 as libc::c_int) as libc::c_float,
-        -(96 as libc::c_int) as libc::c_float,
-        -(97 as libc::c_int) as libc::c_float,
-        -(98 as libc::c_int) as libc::c_float,
-        -(98 as libc::c_int) as libc::c_float,
-        -(99 as libc::c_int) as libc::c_float,
-        -(99 as libc::c_int) as libc::c_float,
-        -(100 as libc::c_int) as libc::c_float,
-        -(100 as libc::c_int) as libc::c_float,
-        -(101 as libc::c_int) as libc::c_float,
-        -(102 as libc::c_int) as libc::c_float,
-        -(103 as libc::c_int) as libc::c_float,
-        -(104 as libc::c_int) as libc::c_float,
-        -(106 as libc::c_int) as libc::c_float,
-        -(107 as libc::c_int) as libc::c_float,
-        -(107 as libc::c_int) as libc::c_float,
-        -(107 as libc::c_int) as libc::c_float,
-        -(107 as libc::c_int) as libc::c_float,
-        -(105 as libc::c_int) as libc::c_float,
-        -(103 as libc::c_int) as libc::c_float,
-        -(102 as libc::c_int) as libc::c_float,
-        -(101 as libc::c_int) as libc::c_float,
-        -(99 as libc::c_int) as libc::c_float,
-        -(98 as libc::c_int) as libc::c_float,
-        -(96 as libc::c_int) as libc::c_float,
-        -(95 as libc::c_int) as libc::c_float,
-        -(95 as libc::c_int) as libc::c_float,
-        -(96 as libc::c_int) as libc::c_float,
-        -(97 as libc::c_int) as libc::c_float,
-        -(96 as libc::c_int) as libc::c_float,
-        -(95 as libc::c_int) as libc::c_float,
-        -(93 as libc::c_int) as libc::c_float,
-        -(90 as libc::c_int) as libc::c_float,
-        -(80 as libc::c_int) as libc::c_float,
-        -(70 as libc::c_int) as libc::c_float,
-        -(50 as libc::c_int) as libc::c_float,
-        -(40 as libc::c_int) as libc::c_float,
-        -(30 as libc::c_int) as libc::c_float,
-        -(30 as libc::c_int) as libc::c_float,
-        -(30 as libc::c_int) as libc::c_float,
-        -(30 as libc::c_int) as libc::c_float,
+    pub static mut ATH: [f32; 88] = [
+        -51f32, -52f32, -53f32, -54f32, -55f32, -56f32, -57f32, -58f32, -59f32, -60f32, -61f32,
+        -62f32, -63f32, -64f32, -65f32, -66f32, -67f32, -68f32, -69f32, -70f32, -71f32, -72f32,
+        -73f32, -74f32, -75f32, -76f32, -77f32, -78f32, -80f32, -81f32, -82f32, -83f32, -84f32,
+        -85f32, -86f32, -87f32, -88f32, -88f32, -89f32, -89f32, -90f32, -91f32, -91f32, -92f32,
+        -93f32, -94f32, -95f32, -96f32, -96f32, -97f32, -98f32, -98f32, -99f32, -99f32, -100f32,
+        -100f32, -101f32, -102f32, -103f32, -104f32, -106f32, -107f32, -107f32, -107f32, -107f32,
+        -105f32, -103f32, -102f32, -101f32, -99f32, -98f32, -96f32, -95f32, -95f32, -96f32, -97f32,
+        -96f32, -95f32, -93f32, -90f32, -80f32, -70f32, -50f32, -40f32, -30f32, -30f32, -30f32,
+        -30f32,
     ];
     /* masking tones from -50 to 0dB, 62.5 through 16kHz at half octaves
     test tones from -2 octaves to +5 octaves sampled at eighth octaves */
     /* (Vorbis 0dB, the loudest possible tone, is assumed to be ~100dB SPL
     for collection of these curves) */
 
-    pub static mut tonemasks: [[[libc::c_float; 56]; 6]; 17] = [
+    pub static mut tonemasks: [[[f32; 56]; 6]; 17] = [
         [
             [
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -60f32, -60f32, -60f32, -60f32, -60f32, -60f32, -60f32, -60f32, -60f32, -60f32,
+                -60f32, -60f32, -62f32, -62f32, -65f32, -73f32, -69f32, -68f32, -68f32, -67f32,
+                -70f32, -70f32, -72f32, -74f32, -75f32, -79f32, -79f32, -80f32, -83f32, -88f32,
+                -93f32, -100f32, -110f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -48f32, -48f32, -48f32, -48f32, -48f32, -48f32, -48f32, -48f32, -48f32, -48f32,
+                -48f32, -48f32, -48f32, -53f32, -61f32, -66f32, -66f32, -68f32, -67f32, -70f32,
+                -76f32, -76f32, -72f32, -73f32, -75f32, -76f32, -78f32, -79f32, -83f32, -88f32,
+                -93f32, -100f32, -110f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(37 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(112 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -37f32, -37f32, -37f32, -37f32, -37f32, -37f32, -37f32, -37f32, -38f32, -40f32,
+                -42f32, -46f32, -48f32, -53f32, -55f32, -62f32, -65f32, -58f32, -56f32, -56f32,
+                -61f32, -60f32, -65f32, -67f32, -69f32, -71f32, -77f32, -77f32, -78f32, -80f32,
+                -82f32, -84f32, -88f32, -93f32, -98f32, -106f32, -112f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(25 as libc::c_int) as libc::c_float,
-                -(25 as libc::c_int) as libc::c_float,
-                -(25 as libc::c_int) as libc::c_float,
-                -(25 as libc::c_int) as libc::c_float,
-                -(25 as libc::c_int) as libc::c_float,
-                -(25 as libc::c_int) as libc::c_float,
-                -(25 as libc::c_int) as libc::c_float,
-                -(25 as libc::c_int) as libc::c_float,
-                -(25 as libc::c_int) as libc::c_float,
-                -(26 as libc::c_int) as libc::c_float,
-                -(27 as libc::c_int) as libc::c_float,
-                -(29 as libc::c_int) as libc::c_float,
-                -(32 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -25f32, -25f32, -25f32, -25f32, -25f32, -25f32, -25f32, -25f32, -25f32, -26f32,
+                -27f32, -29f32, -32f32, -38f32, -48f32, -52f32, -52f32, -50f32, -48f32, -48f32,
+                -51f32, -52f32, -54f32, -60f32, -67f32, -67f32, -66f32, -68f32, -69f32, -73f32,
+                -73f32, -76f32, -80f32, -81f32, -81f32, -85f32, -85f32, -86f32, -88f32, -93f32,
+                -100f32, -110f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(16 as libc::c_int) as libc::c_float,
-                -(16 as libc::c_int) as libc::c_float,
-                -(16 as libc::c_int) as libc::c_float,
-                -(16 as libc::c_int) as libc::c_float,
-                -(16 as libc::c_int) as libc::c_float,
-                -(16 as libc::c_int) as libc::c_float,
-                -(16 as libc::c_int) as libc::c_float,
-                -(16 as libc::c_int) as libc::c_float,
-                -(17 as libc::c_int) as libc::c_float,
-                -(19 as libc::c_int) as libc::c_float,
-                -(20 as libc::c_int) as libc::c_float,
-                -(22 as libc::c_int) as libc::c_float,
-                -(26 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(31 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(115 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -16f32, -16f32, -16f32, -16f32, -16f32, -16f32, -16f32, -16f32, -17f32, -19f32,
+                -20f32, -22f32, -26f32, -28f32, -31f32, -40f32, -47f32, -39f32, -39f32, -40f32,
+                -42f32, -43f32, -47f32, -51f32, -57f32, -52f32, -55f32, -55f32, -60f32, -58f32,
+                -62f32, -63f32, -70f32, -67f32, -69f32, -72f32, -73f32, -77f32, -80f32, -82f32,
+                -83f32, -87f32, -90f32, -94f32, -98f32, -104f32, -115f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(8 as libc::c_int) as libc::c_float,
-                -(8 as libc::c_int) as libc::c_float,
-                -(8 as libc::c_int) as libc::c_float,
-                -(8 as libc::c_int) as libc::c_float,
-                -(8 as libc::c_int) as libc::c_float,
-                -(8 as libc::c_int) as libc::c_float,
-                -(8 as libc::c_int) as libc::c_float,
-                -(8 as libc::c_int) as libc::c_float,
-                -(8 as libc::c_int) as libc::c_float,
-                -(8 as libc::c_int) as libc::c_float,
-                -(10 as libc::c_int) as libc::c_float,
-                -(11 as libc::c_int) as libc::c_float,
-                -(15 as libc::c_int) as libc::c_float,
-                -(19 as libc::c_int) as libc::c_float,
-                -(25 as libc::c_int) as libc::c_float,
-                -(30 as libc::c_int) as libc::c_float,
-                -(34 as libc::c_int) as libc::c_float,
-                -(31 as libc::c_int) as libc::c_float,
-                -(30 as libc::c_int) as libc::c_float,
-                -(31 as libc::c_int) as libc::c_float,
-                -(29 as libc::c_int) as libc::c_float,
-                -(32 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
+                -8f32, -8f32, -8f32, -8f32, -8f32, -8f32, -8f32, -8f32, -8f32, -8f32, -10f32,
+                -11f32, -15f32, -19f32, -25f32, -30f32, -34f32, -31f32, -30f32, -31f32, -29f32,
+                -32f32, -35f32, -42f32, -48f32, -42f32, -44f32, -46f32, -50f32, -50f32, -51f32,
+                -52f32, -59f32, -54f32, -55f32, -55f32, -58f32, -62f32, -63f32, -66f32, -72f32,
+                -73f32, -76f32, -75f32, -78f32, -80f32, -80f32, -81f32, -84f32, -88f32, -90f32,
+                -94f32, -98f32, -101f32, -106f32, -110f32,
             ],
         ],
         [
             [
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -66f32, -66f32, -66f32, -66f32, -66f32, -66f32, -66f32, -66f32, -66f32, -66f32,
+                -66f32, -66f32, -66f32, -67f32, -67f32, -67f32, -76f32, -72f32, -71f32, -74f32,
+                -76f32, -76f32, -75f32, -78f32, -79f32, -79f32, -81f32, -83f32, -86f32, -89f32,
+                -93f32, -97f32, -100f32, -105f32, -110f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(116 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -47f32, -47f32, -47f32, -47f32, -47f32, -47f32, -47f32, -47f32, -47f32, -47f32,
+                -47f32, -48f32, -51f32, -55f32, -59f32, -66f32, -66f32, -66f32, -67f32, -66f32,
+                -68f32, -69f32, -70f32, -74f32, -79f32, -77f32, -77f32, -78f32, -80f32, -81f32,
+                -82f32, -84f32, -86f32, -88f32, -91f32, -95f32, -100f32, -108f32, -116f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -36f32, -36f32, -36f32, -36f32, -36f32, -36f32, -36f32, -36f32, -36f32, -37f32,
+                -37f32, -41f32, -44f32, -48f32, -51f32, -58f32, -62f32, -60f32, -57f32, -59f32,
+                -59f32, -60f32, -63f32, -65f32, -72f32, -71f32, -70f32, -72f32, -74f32, -77f32,
+                -76f32, -78f32, -81f32, -81f32, -80f32, -83f32, -86f32, -91f32, -96f32, -100f32,
+                -105f32, -110f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(28 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(30 as libc::c_int) as libc::c_float,
-                -(32 as libc::c_int) as libc::c_float,
-                -(32 as libc::c_int) as libc::c_float,
-                -(33 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(112 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -28f32, -28f32, -28f32, -28f32, -28f32, -28f32, -28f32, -28f32, -28f32, -30f32,
+                -32f32, -32f32, -33f32, -35f32, -41f32, -49f32, -50f32, -49f32, -47f32, -48f32,
+                -48f32, -52f32, -51f32, -57f32, -65f32, -61f32, -59f32, -61f32, -64f32, -69f32,
+                -70f32, -74f32, -77f32, -77f32, -78f32, -81f32, -84f32, -85f32, -87f32, -90f32,
+                -92f32, -96f32, -100f32, -107f32, -112f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(19 as libc::c_int) as libc::c_float,
-                -(19 as libc::c_int) as libc::c_float,
-                -(19 as libc::c_int) as libc::c_float,
-                -(19 as libc::c_int) as libc::c_float,
-                -(19 as libc::c_int) as libc::c_float,
-                -(19 as libc::c_int) as libc::c_float,
-                -(19 as libc::c_int) as libc::c_float,
-                -(19 as libc::c_int) as libc::c_float,
-                -(20 as libc::c_int) as libc::c_float,
-                -(21 as libc::c_int) as libc::c_float,
-                -(23 as libc::c_int) as libc::c_float,
-                -(27 as libc::c_int) as libc::c_float,
-                -(30 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(114 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -19f32, -19f32, -19f32, -19f32, -19f32, -19f32, -19f32, -19f32, -20f32, -21f32,
+                -23f32, -27f32, -30f32, -35f32, -36f32, -41f32, -46f32, -44f32, -42f32, -40f32,
+                -41f32, -41f32, -43f32, -48f32, -55f32, -53f32, -52f32, -53f32, -56f32, -59f32,
+                -58f32, -60f32, -67f32, -66f32, -69f32, -71f32, -72f32, -75f32, -79f32, -81f32,
+                -84f32, -87f32, -90f32, -93f32, -97f32, -101f32, -107f32, -114f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(9 as libc::c_int) as libc::c_float,
-                -(9 as libc::c_int) as libc::c_float,
-                -(9 as libc::c_int) as libc::c_float,
-                -(9 as libc::c_int) as libc::c_float,
-                -(9 as libc::c_int) as libc::c_float,
-                -(9 as libc::c_int) as libc::c_float,
-                -(9 as libc::c_int) as libc::c_float,
-                -(9 as libc::c_int) as libc::c_float,
-                -(11 as libc::c_int) as libc::c_float,
-                -(12 as libc::c_int) as libc::c_float,
-                -(12 as libc::c_int) as libc::c_float,
-                -(15 as libc::c_int) as libc::c_float,
-                -(16 as libc::c_int) as libc::c_float,
-                -(20 as libc::c_int) as libc::c_float,
-                -(23 as libc::c_int) as libc::c_float,
-                -(30 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(34 as libc::c_int) as libc::c_float,
-                -(33 as libc::c_int) as libc::c_float,
-                -(34 as libc::c_int) as libc::c_float,
-                -(31 as libc::c_int) as libc::c_float,
-                -(32 as libc::c_int) as libc::c_float,
-                -(32 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -9f32, -9f32, -9f32, -9f32, -9f32, -9f32, -9f32, -9f32, -11f32, -12f32, -12f32,
+                -15f32, -16f32, -20f32, -23f32, -30f32, -37f32, -34f32, -33f32, -34f32, -31f32,
+                -32f32, -32f32, -38f32, -47f32, -44f32, -41f32, -40f32, -47f32, -49f32, -46f32,
+                -46f32, -58f32, -50f32, -50f32, -54f32, -58f32, -62f32, -64f32, -67f32, -67f32,
+                -70f32, -72f32, -76f32, -79f32, -83f32, -87f32, -91f32, -96f32, -100f32, -104f32,
+                -110f32, -999f32, -999f32, -999f32, -999f32,
             ],
         ],
         [
             [
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -62f32, -62f32, -62f32, -62f32, -62f32, -62f32, -62f32, -62f32, -62f32, -62f32,
+                -63f32, -64f32, -66f32, -67f32, -66f32, -68f32, -75f32, -72f32, -76f32, -75f32,
+                -76f32, -78f32, -79f32, -82f32, -84f32, -85f32, -90f32, -94f32, -101f32, -110f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(59 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(113 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -59f32, -59f32, -59f32, -59f32, -59f32, -59f32, -59f32, -59f32, -59f32, -59f32,
+                -59f32, -60f32, -60f32, -61f32, -63f32, -66f32, -71f32, -68f32, -70f32, -70f32,
+                -71f32, -72f32, -72f32, -75f32, -81f32, -78f32, -79f32, -82f32, -83f32, -86f32,
+                -90f32, -97f32, -103f32, -113f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(53 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -53f32, -53f32, -53f32, -53f32, -53f32, -53f32, -53f32, -53f32, -53f32, -54f32,
+                -55f32, -57f32, -56f32, -57f32, -55f32, -61f32, -65f32, -60f32, -60f32, -62f32,
+                -63f32, -63f32, -66f32, -68f32, -74f32, -73f32, -75f32, -75f32, -78f32, -80f32,
+                -80f32, -82f32, -85f32, -90f32, -96f32, -101f32, -108f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(46 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(112 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -46f32, -46f32, -46f32, -46f32, -46f32, -46f32, -46f32, -46f32, -46f32, -46f32,
+                -47f32, -47f32, -47f32, -47f32, -48f32, -51f32, -57f32, -51f32, -49f32, -50f32,
+                -51f32, -53f32, -54f32, -59f32, -66f32, -60f32, -62f32, -67f32, -67f32, -70f32,
+                -72f32, -75f32, -76f32, -78f32, -81f32, -85f32, -88f32, -94f32, -97f32, -104f32,
+                -112f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(115 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -36f32, -36f32, -36f32, -36f32, -36f32, -36f32, -36f32, -36f32, -39f32, -41f32,
+                -42f32, -42f32, -39f32, -38f32, -41f32, -43f32, -52f32, -44f32, -40f32, -39f32,
+                -37f32, -37f32, -40f32, -47f32, -54f32, -50f32, -48f32, -50f32, -55f32, -61f32,
+                -59f32, -62f32, -66f32, -66f32, -66f32, -69f32, -69f32, -73f32, -74f32, -74f32,
+                -75f32, -77f32, -79f32, -82f32, -87f32, -91f32, -95f32, -100f32, -108f32, -115f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(28 as libc::c_int) as libc::c_float,
-                -(26 as libc::c_int) as libc::c_float,
-                -(24 as libc::c_int) as libc::c_float,
-                -(22 as libc::c_int) as libc::c_float,
-                -(20 as libc::c_int) as libc::c_float,
-                -(20 as libc::c_int) as libc::c_float,
-                -(23 as libc::c_int) as libc::c_float,
-                -(29 as libc::c_int) as libc::c_float,
-                -(30 as libc::c_int) as libc::c_float,
-                -(31 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(27 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(33 as libc::c_int) as libc::c_float,
-                -(32 as libc::c_int) as libc::c_float,
-                -(29 as libc::c_int) as libc::c_float,
-                -(30 as libc::c_int) as libc::c_float,
-                -(30 as libc::c_int) as libc::c_float,
-                -(30 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
+                -28f32, -26f32, -24f32, -22f32, -20f32, -20f32, -23f32, -29f32, -30f32, -31f32,
+                -28f32, -27f32, -28f32, -28f32, -28f32, -35f32, -40f32, -33f32, -32f32, -29f32,
+                -30f32, -30f32, -30f32, -37f32, -45f32, -41f32, -37f32, -38f32, -45f32, -47f32,
+                -47f32, -48f32, -53f32, -49f32, -48f32, -50f32, -49f32, -49f32, -51f32, -52f32,
+                -58f32, -56f32, -57f32, -56f32, -60f32, -61f32, -62f32, -70f32, -72f32, -74f32,
+                -78f32, -83f32, -88f32, -93f32, -100f32, -106f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -110f32, -105f32, -100f32, -95f32, -91f32, -87f32, -83f32, -80f32, -78f32, -76f32,
+                -78f32, -78f32, -81f32, -83f32, -85f32, -86f32, -85f32, -86f32, -87f32, -90f32,
+                -97f32, -107f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(112 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -110f32, -105f32, -100f32, -95f32, -90f32, -85f32,
+                -81f32, -77f32, -73f32, -70f32, -67f32, -67f32, -68f32, -75f32, -73f32, -70f32,
+                -69f32, -70f32, -72f32, -75f32, -79f32, -84f32, -83f32, -84f32, -86f32, -88f32,
+                -89f32, -89f32, -93f32, -98f32, -105f32, -112f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(105 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -105f32, -100f32, -95f32, -90f32, -85f32, -80f32, -76f32, -71f32, -68f32, -68f32,
+                -65f32, -63f32, -63f32, -62f32, -62f32, -64f32, -65f32, -64f32, -61f32, -62f32,
+                -63f32, -64f32, -66f32, -68f32, -73f32, -73f32, -74f32, -75f32, -76f32, -81f32,
+                -83f32, -85f32, -88f32, -89f32, -92f32, -95f32, -100f32, -108f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(80 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(114 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -80f32, -75f32, -71f32, -68f32, -65f32, -63f32, -62f32, -61f32, -61f32, -61f32,
+                -61f32, -59f32, -56f32, -57f32, -53f32, -50f32, -58f32, -52f32, -50f32, -50f32,
+                -52f32, -53f32, -54f32, -58f32, -67f32, -63f32, -67f32, -68f32, -72f32, -75f32,
+                -78f32, -80f32, -81f32, -81f32, -82f32, -85f32, -89f32, -90f32, -93f32, -97f32,
+                -101f32, -107f32, -114f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(65 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -65f32, -61f32, -59f32, -57f32, -56f32, -55f32, -55f32, -56f32, -56f32, -57f32,
+                -55f32, -53f32, -52f32, -47f32, -44f32, -44f32, -50f32, -44f32, -41f32, -39f32,
+                -39f32, -42f32, -40f32, -46f32, -51f32, -49f32, -50f32, -53f32, -54f32, -63f32,
+                -60f32, -61f32, -62f32, -66f32, -66f32, -66f32, -70f32, -73f32, -74f32, -75f32,
+                -76f32, -75f32, -79f32, -85f32, -89f32, -91f32, -96f32, -102f32, -110f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(52 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(33 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(32 as libc::c_int) as libc::c_float,
-                -(29 as libc::c_int) as libc::c_float,
-                -(32 as libc::c_int) as libc::c_float,
-                -(32 as libc::c_int) as libc::c_float,
-                -(32 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(114 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -52f32, -50f32, -49f32, -49f32, -48f32, -48f32, -48f32, -49f32, -50f32, -50f32,
+                -49f32, -46f32, -43f32, -39f32, -35f32, -33f32, -38f32, -36f32, -32f32, -29f32,
+                -32f32, -32f32, -32f32, -35f32, -44f32, -39f32, -38f32, -38f32, -46f32, -50f32,
+                -45f32, -46f32, -53f32, -50f32, -50f32, -50f32, -54f32, -54f32, -53f32, -53f32,
+                -56f32, -57f32, -59f32, -66f32, -70f32, -72f32, -74f32, -79f32, -83f32, -85f32,
+                -90f32, -97f32, -114f32, -999f32, -999f32, -999f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -110f32, -105f32, -100f32,
+                -95f32, -90f32, -86f32, -80f32, -75f32, -75f32, -79f32, -80f32, -79f32, -80f32,
+                -81f32, -82f32, -88f32, -95f32, -103f32, -110f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(114 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -108f32, -103f32, -98f32, -93f32, -88f32,
+                -83f32, -79f32, -78f32, -75f32, -71f32, -67f32, -68f32, -73f32, -73f32, -72f32,
+                -73f32, -75f32, -77f32, -80f32, -82f32, -88f32, -93f32, -100f32, -107f32, -114f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -110f32, -105f32, -101f32, -96f32, -90f32, -86f32,
+                -81f32, -77f32, -73f32, -69f32, -66f32, -61f32, -62f32, -66f32, -64f32, -62f32,
+                -65f32, -66f32, -70f32, -72f32, -76f32, -81f32, -80f32, -84f32, -90f32, -95f32,
+                -102f32, -110f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(115 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -107f32, -103f32, -97f32, -92f32, -88f32, -83f32,
+                -79f32, -74f32, -70f32, -66f32, -59f32, -53f32, -58f32, -62f32, -55f32, -54f32,
+                -54f32, -54f32, -58f32, -61f32, -62f32, -72f32, -70f32, -72f32, -75f32, -78f32,
+                -80f32, -81f32, -80f32, -83f32, -83f32, -88f32, -93f32, -100f32, -107f32, -115f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -105f32, -100f32, -95f32, -90f32, -85f32, -80f32,
+                -75f32, -70f32, -66f32, -62f32, -56f32, -48f32, -44f32, -48f32, -46f32, -46f32,
+                -43f32, -46f32, -48f32, -48f32, -51f32, -58f32, -58f32, -59f32, -60f32, -62f32,
+                -62f32, -61f32, -61f32, -65f32, -64f32, -65f32, -68f32, -70f32, -74f32, -75f32,
+                -78f32, -81f32, -86f32, -95f32, -110f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(33 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(32 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(33 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -105f32, -100f32, -95f32, -90f32, -85f32, -80f32, -75f32, -70f32,
+                -65f32, -61f32, -55f32, -49f32, -39f32, -33f32, -40f32, -35f32, -32f32, -38f32,
+                -40f32, -33f32, -35f32, -37f32, -46f32, -41f32, -45f32, -44f32, -46f32, -42f32,
+                -45f32, -46f32, -52f32, -50f32, -50f32, -50f32, -54f32, -54f32, -55f32, -57f32,
+                -62f32, -64f32, -66f32, -68f32, -70f32, -76f32, -81f32, -90f32, -100f32, -110f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(99 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(117 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -105f32,
+                -98f32, -90f32, -85f32, -82f32, -83f32, -80f32, -78f32, -84f32, -79f32, -80f32,
+                -83f32, -87f32, -89f32, -91f32, -93f32, -99f32, -106f32, -117f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(112 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -105f32,
+                -98f32, -90f32, -85f32, -80f32, -75f32, -70f32, -68f32, -74f32, -72f32, -74f32,
+                -77f32, -80f32, -82f32, -85f32, -87f32, -92f32, -89f32, -91f32, -95f32, -100f32,
+                -106f32, -112f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(114 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -105f32,
+                -98f32, -90f32, -83f32, -75f32, -71f32, -63f32, -64f32, -67f32, -62f32, -64f32,
+                -67f32, -70f32, -73f32, -77f32, -81f32, -84f32, -83f32, -85f32, -89f32, -90f32,
+                -93f32, -98f32, -104f32, -109f32, -114f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(99 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -103f32,
+                -96f32, -88f32, -81f32, -75f32, -68f32, -58f32, -54f32, -56f32, -54f32, -56f32,
+                -56f32, -58f32, -60f32, -63f32, -66f32, -74f32, -69f32, -72f32, -72f32, -75f32,
+                -74f32, -77f32, -81f32, -81f32, -82f32, -84f32, -87f32, -93f32, -96f32, -99f32,
+                -104f32, -110f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(118 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -108f32, -102f32, -96f32, -91f32,
+                -85f32, -80f32, -74f32, -68f32, -60f32, -51f32, -46f32, -48f32, -46f32, -43f32,
+                -45f32, -47f32, -47f32, -49f32, -48f32, -56f32, -53f32, -55f32, -58f32, -57f32,
+                -63f32, -58f32, -60f32, -66f32, -64f32, -67f32, -70f32, -70f32, -74f32, -77f32,
+                -84f32, -86f32, -89f32, -91f32, -93f32, -94f32, -101f32, -109f32, -118f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(34 as libc::c_int) as libc::c_float,
-                -(34 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -108f32, -103f32, -98f32, -93f32, -88f32, -83f32,
+                -78f32, -73f32, -68f32, -60f32, -53f32, -44f32, -35f32, -38f32, -38f32, -34f32,
+                -34f32, -36f32, -40f32, -41f32, -44f32, -51f32, -45f32, -46f32, -47f32, -46f32,
+                -54f32, -50f32, -49f32, -50f32, -50f32, -50f32, -51f32, -54f32, -57f32, -58f32,
+                -60f32, -66f32, -66f32, -66f32, -64f32, -65f32, -68f32, -77f32, -82f32, -87f32,
+                -95f32, -110f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(113 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -107f32,
+                -102f32, -97f32, -92f32, -87f32, -83f32, -78f32, -75f32, -82f32, -79f32, -83f32,
+                -85f32, -89f32, -92f32, -95f32, -98f32, -101f32, -105f32, -109f32, -113f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -106f32, -100f32,
+                -95f32, -90f32, -86f32, -81f32, -78f32, -74f32, -69f32, -74f32, -74f32, -76f32,
+                -79f32, -83f32, -84f32, -86f32, -89f32, -92f32, -97f32, -93f32, -100f32, -103f32,
+                -107f32, -110f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(99 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -106f32, -100f32, -95f32,
+                -90f32, -87f32, -83f32, -80f32, -75f32, -69f32, -60f32, -66f32, -66f32, -68f32,
+                -70f32, -74f32, -78f32, -79f32, -81f32, -81f32, -83f32, -84f32, -87f32, -93f32,
+                -96f32, -99f32, -103f32, -107f32, -110f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -108f32, -103f32, -98f32, -93f32,
+                -89f32, -85f32, -82f32, -78f32, -71f32, -62f32, -55f32, -58f32, -58f32, -54f32,
+                -54f32, -55f32, -59f32, -61f32, -62f32, -70f32, -66f32, -66f32, -67f32, -70f32,
+                -72f32, -75f32, -78f32, -84f32, -84f32, -84f32, -88f32, -91f32, -90f32, -95f32,
+                -98f32, -102f32, -103f32, -106f32, -110f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -108f32, -103f32, -98f32, -94f32, -90f32,
+                -87f32, -82f32, -79f32, -73f32, -67f32, -58f32, -47f32, -50f32, -45f32, -41f32,
+                -45f32, -48f32, -44f32, -44f32, -49f32, -54f32, -51f32, -48f32, -47f32, -49f32,
+                -50f32, -51f32, -57f32, -58f32, -60f32, -63f32, -69f32, -70f32, -69f32, -71f32,
+                -74f32, -78f32, -82f32, -90f32, -95f32, -101f32, -105f32, -110f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(34 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -105f32, -101f32, -97f32, -93f32, -90f32, -85f32,
+                -80f32, -77f32, -72f32, -65f32, -56f32, -48f32, -37f32, -40f32, -36f32, -34f32,
+                -40f32, -50f32, -47f32, -38f32, -41f32, -47f32, -38f32, -35f32, -39f32, -38f32,
+                -43f32, -40f32, -45f32, -50f32, -45f32, -44f32, -47f32, -50f32, -55f32, -48f32,
+                -48f32, -52f32, -66f32, -70f32, -76f32, -82f32, -90f32, -97f32, -105f32, -110f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(112 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -108f32, -103f32, -98f32, -93f32, -86f32, -79f32, -76f32, -83f32, -81f32, -85f32,
+                -87f32, -89f32, -93f32, -98f32, -102f32, -107f32, -112f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(112 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -108f32, -103f32, -98f32, -93f32, -86f32, -79f32, -71f32, -77f32, -74f32, -77f32,
+                -79f32, -81f32, -84f32, -85f32, -90f32, -92f32, -93f32, -92f32, -98f32, -101f32,
+                -108f32, -112f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -108f32,
+                -103f32, -98f32, -93f32, -87f32, -78f32, -68f32, -65f32, -66f32, -62f32, -65f32,
+                -67f32, -70f32, -73f32, -75f32, -78f32, -82f32, -82f32, -83f32, -84f32, -91f32,
+                -93f32, -98f32, -102f32, -106f32, -110f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(113 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -105f32,
+                -100f32, -95f32, -90f32, -82f32, -74f32, -62f32, -57f32, -58f32, -56f32, -51f32,
+                -52f32, -52f32, -54f32, -54f32, -58f32, -66f32, -59f32, -60f32, -63f32, -66f32,
+                -69f32, -73f32, -79f32, -83f32, -84f32, -80f32, -81f32, -81f32, -82f32, -88f32,
+                -92f32, -98f32, -105f32, -113f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -107f32, -102f32,
+                -97f32, -92f32, -84f32, -79f32, -69f32, -57f32, -47f32, -52f32, -47f32, -44f32,
+                -45f32, -50f32, -52f32, -42f32, -42f32, -53f32, -43f32, -43f32, -48f32, -51f32,
+                -56f32, -55f32, -52f32, -57f32, -59f32, -61f32, -62f32, -67f32, -71f32, -78f32,
+                -83f32, -86f32, -94f32, -98f32, -103f32, -110f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(113 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -105f32, -100f32, -95f32,
+                -90f32, -84f32, -78f32, -70f32, -61f32, -51f32, -41f32, -40f32, -38f32, -40f32,
+                -46f32, -52f32, -51f32, -41f32, -40f32, -46f32, -40f32, -38f32, -38f32, -41f32,
+                -46f32, -41f32, -46f32, -47f32, -43f32, -43f32, -45f32, -41f32, -45f32, -56f32,
+                -67f32, -68f32, -83f32, -87f32, -90f32, -95f32, -102f32, -107f32, -113f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -109f32, -105f32, -101f32, -96f32, -91f32, -84f32, -77f32, -82f32, -82f32, -85f32,
+                -89f32, -94f32, -100f32, -106f32, -110f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(113 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -106f32, -103f32, -98f32, -92f32, -85f32, -80f32, -71f32, -75f32, -72f32, -76f32,
+                -80f32, -84f32, -86f32, -89f32, -93f32, -100f32, -107f32, -113f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(111 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -107f32, -104f32,
+                -101f32, -97f32, -92f32, -88f32, -84f32, -80f32, -64f32, -66f32, -63f32, -64f32,
+                -66f32, -69f32, -73f32, -77f32, -83f32, -83f32, -86f32, -91f32, -98f32, -104f32,
+                -111f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(111 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -107f32, -104f32,
+                -101f32, -97f32, -92f32, -90f32, -84f32, -74f32, -57f32, -58f32, -52f32, -55f32,
+                -54f32, -50f32, -52f32, -50f32, -52f32, -63f32, -62f32, -69f32, -76f32, -77f32,
+                -78f32, -78f32, -79f32, -82f32, -88f32, -94f32, -100f32, -106f32, -111f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(114 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -106f32, -102f32, -98f32,
+                -95f32, -90f32, -85f32, -83f32, -78f32, -70f32, -50f32, -50f32, -41f32, -44f32,
+                -49f32, -47f32, -50f32, -50f32, -44f32, -55f32, -46f32, -47f32, -48f32, -48f32,
+                -54f32, -49f32, -49f32, -58f32, -62f32, -71f32, -81f32, -87f32, -92f32, -97f32,
+                -102f32, -108f32, -114f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(113 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -106f32, -102f32, -98f32,
+                -95f32, -90f32, -85f32, -83f32, -78f32, -70f32, -45f32, -43f32, -41f32, -47f32,
+                -50f32, -51f32, -50f32, -49f32, -45f32, -47f32, -41f32, -44f32, -41f32, -39f32,
+                -43f32, -38f32, -37f32, -40f32, -41f32, -44f32, -50f32, -58f32, -65f32, -73f32,
+                -79f32, -85f32, -92f32, -97f32, -101f32, -105f32, -109f32, -113f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(114 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -107f32, -100f32, -95f32, -87f32, -81f32, -85f32, -83f32, -88f32,
+                -93f32, -100f32, -107f32, -114f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(115 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -107f32, -101f32, -95f32, -88f32, -83f32, -76f32, -73f32, -72f32, -79f32,
+                -84f32, -90f32, -95f32, -100f32, -105f32, -110f32, -115f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(99 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(111 as libc::c_int) as libc::c_float,
-                -(114 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -104f32, -98f32, -92f32, -87f32, -81f32, -70f32, -65f32, -62f32, -67f32,
+                -71f32, -74f32, -80f32, -85f32, -91f32, -95f32, -99f32, -103f32, -108f32, -111f32,
+                -114f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -103f32, -97f32, -90f32, -85f32, -76f32, -60f32, -56f32, -54f32, -60f32,
+                -62f32, -61f32, -56f32, -63f32, -65f32, -73f32, -74f32, -77f32, -75f32, -78f32,
+                -81f32, -86f32, -87f32, -88f32, -91f32, -94f32, -98f32, -103f32, -110f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(112 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -105f32, -100f32,
+                -97f32, -92f32, -86f32, -81f32, -79f32, -70f32, -57f32, -51f32, -47f32, -51f32,
+                -58f32, -60f32, -56f32, -53f32, -50f32, -58f32, -52f32, -50f32, -50f32, -53f32,
+                -55f32, -64f32, -69f32, -71f32, -85f32, -82f32, -78f32, -81f32, -85f32, -95f32,
+                -102f32, -112f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(36 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(112 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -105f32, -100f32,
+                -97f32, -92f32, -85f32, -83f32, -79f32, -72f32, -49f32, -40f32, -43f32, -43f32,
+                -54f32, -56f32, -51f32, -50f32, -40f32, -43f32, -38f32, -36f32, -35f32, -37f32,
+                -38f32, -37f32, -44f32, -54f32, -60f32, -57f32, -60f32, -70f32, -75f32, -84f32,
+                -92f32, -103f32, -112f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(99 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(113 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -110f32, -102f32, -95f32, -89f32, -82f32, -83f32, -84f32, -90f32,
+                -92f32, -99f32, -107f32, -113f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(111 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -107f32, -101f32, -95f32, -89f32, -83f32, -72f32, -74f32, -78f32, -85f32,
+                -88f32, -88f32, -90f32, -92f32, -98f32, -105f32, -111f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -109f32, -103f32, -97f32, -93f32, -87f32, -81f32, -70f32, -70f32, -67f32, -75f32,
+                -73f32, -76f32, -79f32, -81f32, -83f32, -88f32, -89f32, -97f32, -103f32, -110f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(116 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -107f32, -100f32, -94f32, -88f32, -83f32, -75f32, -63f32, -59f32, -59f32, -63f32,
+                -66f32, -60f32, -62f32, -67f32, -67f32, -77f32, -76f32, -81f32, -88f32, -86f32,
+                -92f32, -96f32, -102f32, -109f32, -116f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(112 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -105f32, -98f32, -92f32, -86f32, -81f32, -73f32, -56f32, -52f32, -47f32, -55f32,
+                -60f32, -58f32, -52f32, -51f32, -45f32, -49f32, -50f32, -53f32, -54f32, -61f32,
+                -71f32, -70f32, -69f32, -78f32, -79f32, -87f32, -90f32, -96f32, -104f32, -112f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(28 as libc::c_int) as libc::c_float,
-                -(33 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(99 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(114 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -103f32, -96f32, -90f32, -86f32, -78f32, -70f32, -51f32, -42f32, -47f32, -48f32,
+                -55f32, -54f32, -54f32, -53f32, -42f32, -35f32, -28f32, -33f32, -38f32, -37f32,
+                -44f32, -47f32, -49f32, -54f32, -63f32, -68f32, -78f32, -82f32, -89f32, -94f32,
+                -99f32, -104f32, -109f32, -114f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(99 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(115 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -110f32, -100f32, -90f32, -79f32, -85f32, -81f32,
+                -82f32, -82f32, -89f32, -94f32, -99f32, -103f32, -109f32, -115f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(115 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -105f32, -97f32, -85f32, -72f32, -74f32, -70f32, -70f32,
+                -70f32, -76f32, -85f32, -91f32, -93f32, -97f32, -103f32, -109f32, -115f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(112 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(113 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -112f32, -93f32, -81f32, -68f32, -62f32, -60f32, -60f32,
+                -57f32, -63f32, -70f32, -77f32, -82f32, -90f32, -93f32, -98f32, -104f32, -109f32,
+                -113f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(113 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(111 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -113f32, -100f32, -93f32, -84f32, -63f32, -58f32, -48f32, -53f32,
+                -54f32, -52f32, -52f32, -57f32, -64f32, -66f32, -76f32, -83f32, -81f32, -85f32,
+                -85f32, -90f32, -95f32, -98f32, -101f32, -103f32, -106f32, -108f32, -111f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(99 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -105f32, -95f32, -86f32, -74f32, -53f32, -50f32, -38f32, -43f32,
+                -49f32, -43f32, -42f32, -39f32, -39f32, -46f32, -52f32, -57f32, -56f32, -72f32,
+                -69f32, -74f32, -81f32, -87f32, -92f32, -94f32, -97f32, -99f32, -102f32, -105f32,
+                -108f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(99 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(30 as libc::c_int) as libc::c_float,
-                -(31 as libc::c_int) as libc::c_float,
-                -(31 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(33 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -108f32, -99f32, -90f32, -76f32, -66f32, -45f32, -43f32, -41f32, -44f32,
+                -47f32, -43f32, -47f32, -40f32, -30f32, -31f32, -31f32, -39f32, -33f32, -40f32,
+                -41f32, -43f32, -53f32, -59f32, -70f32, -73f32, -77f32, -79f32, -82f32, -84f32,
+                -87f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(76 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -110f32, -91f32, -76f32, -75f32, -85f32,
+                -93f32, -98f32, -104f32, -110f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -110f32, -91f32, -70f32, -70f32, -75f32,
+                -86f32, -89f32, -94f32, -98f32, -101f32, -106f32, -110f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(99 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -110f32, -95f32, -80f32, -60f32, -65f32, -64f32, -74f32,
+                -83f32, -88f32, -91f32, -95f32, -99f32, -103f32, -107f32, -110f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -110f32, -95f32, -80f32, -58f32, -55f32, -49f32, -66f32,
+                -68f32, -71f32, -78f32, -78f32, -80f32, -88f32, -85f32, -89f32, -97f32, -100f32,
+                -105f32, -110f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(41 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(103 as libc::c_int) as libc::c_float,
-                -(107 as libc::c_int) as libc::c_float,
-                -(112 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -110f32, -95f32, -80f32, -53f32, -52f32, -41f32, -59f32,
+                -59f32, -49f32, -58f32, -56f32, -63f32, -86f32, -79f32, -90f32, -93f32, -98f32,
+                -103f32, -107f32, -112f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(33 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -110f32, -97f32, -91f32, -73f32, -45f32, -40f32, -33f32, -53f32,
+                -61f32, -49f32, -54f32, -50f32, -50f32, -60f32, -52f32, -67f32, -74f32, -81f32,
+                -92f32, -96f32, -100f32, -105f32, -110f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(113 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(99 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(97 as libc::c_int) as libc::c_float,
-                -(106 as libc::c_int) as libc::c_float,
-                -(115 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -113f32, -106f32, -99f32, -92f32, -77f32, -80f32, -88f32, -97f32,
+                -106f32, -115f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(116 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(116 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -116f32, -109f32, -102f32, -95f32, -89f32, -74f32, -72f32, -88f32, -87f32,
+                -95f32, -102f32, -109f32, -116f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(116 as libc::c_int) as libc::c_float,
-                -(109 as libc::c_int) as libc::c_float,
-                -(102 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(75 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(115 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -116f32, -109f32, -102f32, -95f32, -89f32, -75f32, -66f32, -74f32, -77f32,
+                -78f32, -86f32, -87f32, -90f32, -96f32, -105f32, -115f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(115 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(72 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -115f32, -108f32, -101f32, -94f32, -88f32, -66f32, -56f32, -61f32, -70f32,
+                -65f32, -78f32, -72f32, -83f32, -84f32, -93f32, -98f32, -105f32, -110f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(57 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(89 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -110f32, -105f32, -95f32, -89f32, -82f32, -57f32, -52f32, -52f32, -59f32,
+                -56f32, -59f32, -58f32, -69f32, -67f32, -88f32, -82f32, -82f32, -89f32, -94f32,
+                -100f32, -108f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(101 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(51 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(59 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(95 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -110f32, -101f32, -96f32, -90f32, -83f32, -77f32, -54f32, -43f32, -38f32, -50f32,
+                -48f32, -52f32, -48f32, -42f32, -42f32, -51f32, -52f32, -53f32, -59f32, -65f32,
+                -71f32, -78f32, -85f32, -95f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(120 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -120f32, -105f32, -86f32, -68f32, -78f32, -79f32,
+                -90f32, -100f32, -110f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(120 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(96 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(115 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -120f32, -105f32, -86f32, -66f32, -73f32, -77f32,
+                -88f32, -96f32, -105f32, -115f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(120 as libc::c_int) as libc::c_float,
-                -(105 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(92 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -120f32, -105f32, -92f32, -80f32, -61f32, -64f32, -68f32, -80f32,
+                -87f32, -92f32, -100f32, -110f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(120 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(79 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(64 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -120f32, -104f32, -91f32, -79f32, -52f32, -60f32, -54f32, -64f32,
+                -69f32, -77f32, -80f32, -82f32, -84f32, -85f32, -87f32, -88f32, -90f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(118 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(65 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -118f32, -100f32, -87f32, -77f32, -49f32, -50f32, -44f32, -58f32,
+                -61f32, -61f32, -67f32, -65f32, -62f32, -62f32, -62f32, -65f32, -68f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(115 as libc::c_int) as libc::c_float,
-                -(98 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(44 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(49 as libc::c_int) as libc::c_float,
-                -(46 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(39 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -115f32, -98f32, -84f32, -62f32, -49f32, -44f32, -38f32, -46f32,
+                -49f32, -49f32, -46f32, -39f32, -37f32, -39f32, -40f32, -42f32, -43f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(82 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(90 as libc::c_int) as libc::c_float,
-                -(94 as libc::c_int) as libc::c_float,
-                -(99 as libc::c_int) as libc::c_float,
-                -(104 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -110f32, -88f32, -74f32, -77f32, -82f32,
+                -82f32, -85f32, -90f32, -94f32, -99f32, -104f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(66 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(81 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(93 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -110f32, -88f32, -66f32, -70f32, -81f32,
+                -80f32, -81f32, -84f32, -88f32, -91f32, -93f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(88 as libc::c_int) as libc::c_float,
-                -(61 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(77 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(85 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -110f32, -88f32, -61f32, -63f32, -70f32,
+                -71f32, -74f32, -77f32, -80f32, -83f32, -85f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(63 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(62 as libc::c_int) as libc::c_float,
-                -(58 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(52 as libc::c_int) as libc::c_float,
-                -(54 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -110f32, -86f32, -62f32, -63f32, -62f32,
+                -62f32, -58f32, -52f32, -50f32, -50f32, -52f32, -54f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(118 as libc::c_int) as libc::c_float,
-                -(108 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(50 as libc::c_int) as libc::c_float,
-                -(55 as libc::c_int) as libc::c_float,
-                -(47 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(40 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -118f32, -108f32, -84f32, -53f32, -50f32, -50f32,
+                -50f32, -55f32, -47f32, -45f32, -40f32, -40f32, -40f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(118 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(73 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(42 as libc::c_int) as libc::c_float,
-                -(43 as libc::c_int) as libc::c_float,
-                -(53 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -118f32, -100f32, -73f32, -43f32, -37f32, -42f32,
+                -43f32, -53f32, -38f32, -37f32, -35f32, -35f32, -38f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
         ],
         [
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(80 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -110f32, -100f32, -91f32, -84f32, -74f32, -80f32, -80f32, -80f32,
+                -80f32, -80f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(91 as libc::c_int) as libc::c_float,
-                -(84 as libc::c_int) as libc::c_float,
-                -(74 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(68 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -110f32, -100f32, -91f32, -84f32, -74f32, -68f32, -68f32, -68f32,
+                -68f32, -68f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(70 as libc::c_int) as libc::c_float,
-                -(60 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(30 as libc::c_int) as libc::c_float,
-                -(21 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -110f32, -100f32, -86f32, -78f32, -70f32, -60f32, -45f32, -30f32,
+                -21f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(87 as libc::c_int) as libc::c_float,
-                -(78 as libc::c_int) as libc::c_float,
-                -(67 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(29 as libc::c_int) as libc::c_float,
-                -(21 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -110f32, -100f32, -87f32, -78f32, -67f32, -48f32, -38f32, -29f32,
+                -21f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(86 as libc::c_int) as libc::c_float,
-                -(69 as libc::c_int) as libc::c_float,
-                -(56 as libc::c_int) as libc::c_float,
-                -(45 as libc::c_int) as libc::c_float,
-                -(35 as libc::c_int) as libc::c_float,
-                -(33 as libc::c_int) as libc::c_float,
-                -(29 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -110f32, -100f32, -86f32, -69f32, -56f32, -45f32, -35f32, -33f32,
+                -29f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
             [
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(110 as libc::c_int) as libc::c_float,
-                -(100 as libc::c_int) as libc::c_float,
-                -(83 as libc::c_int) as libc::c_float,
-                -(71 as libc::c_int) as libc::c_float,
-                -(48 as libc::c_int) as libc::c_float,
-                -(27 as libc::c_int) as libc::c_float,
-                -(38 as libc::c_int) as libc::c_float,
-                -(37 as libc::c_int) as libc::c_float,
-                -(34 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
-                -(999 as libc::c_int) as libc::c_float,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -110f32, -100f32, -83f32, -71f32, -48f32, -27f32, -38f32, -37f32,
+                -34f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32, -999f32,
+                -999f32,
             ],
         ],
     ];
@@ -6203,13 +1055,9 @@ use crate::stdlib::memset;
 use crate::stdlib::rint;
 use crate::stdlib::sqrt;
 
-static mut stereo_threshholds: [libc::c_double; 9] = [
-    0.0f64, 0.5f64, 1.0f64, 1.5f64, 2.5f64, 4.5f64, 8.5f64, 16.5f64, 9e10f64,
-];
+static mut stereo_threshholds: [f64; 9] = [0.0, 0.5, 1.0, 1.5, 2.5, 4.5, 8.5, 16.5, 9e10];
 
-static mut stereo_threshholds_limited: [libc::c_double; 9] = [
-    0.0f64, 0.5f64, 1.0f64, 1.5f64, 2.0f64, 2.5f64, 4.5f64, 8.5f64, 9e10f64,
-];
+static mut stereo_threshholds_limited: [f64; 9] = [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 4.5, 8.5, 9e10];
 #[no_mangle]
 
 pub unsafe extern "C" fn _vp_global_look(
@@ -6221,12 +1069,11 @@ pub unsafe extern "C" fn _vp_global_look(
         &mut (*ci).psy_g_param;
     let mut look: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy_global =
         crate::stdlib::calloc(
-            1 as libc::c_int as libc::c_ulong,
-            ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy_global>()
-                as libc::c_ulong,
+            1,
+            ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy_global>(),
         ) as *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy_global;
     (*look).channels = (*vi).channels;
-    (*look).ampmax = -9999.0f64 as libc::c_float;
+    (*look).ampmax = -9999f32;
     (*look).gi = gi;
     return look;
 }
@@ -6238,9 +1085,8 @@ pub unsafe extern "C" fn _vp_global_free(
     if !look.is_null() {
         crate::stdlib::memset(
             look as *mut libc::c_void,
-            0 as libc::c_int,
-            ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy_global>()
-                as libc::c_ulong,
+            0,
+            ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy_global>(),
         );
         crate::stdlib::free(look as *mut libc::c_void);
     };
@@ -6253,9 +1099,8 @@ pub unsafe extern "C" fn _vi_gpsy_free(
     if !i.is_null() {
         crate::stdlib::memset(
             i as *mut libc::c_void,
-            0 as libc::c_int,
-            ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global>()
-                as libc::c_ulong,
+            0,
+            ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global>(),
         );
         crate::stdlib::free(i as *mut libc::c_void);
     };
@@ -6268,18 +1113,17 @@ pub unsafe extern "C" fn _vi_psy_free(
     if !i.is_null() {
         crate::stdlib::memset(
             i as *mut libc::c_void,
-            0 as libc::c_int,
-            ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy>()
-                as libc::c_ulong,
+            0,
+            ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy>(),
         );
         crate::stdlib::free(i as *mut libc::c_void);
     };
 }
 
-unsafe extern "C" fn min_curve(mut c: *mut libc::c_float, mut c2: *mut libc::c_float) {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
-    while i < 56 as libc::c_int {
+unsafe extern "C" fn min_curve(mut c: *mut f32, mut c2: *mut f32) {
+    let mut i: i32 = 0;
+    i = 0;
+    while i < 56 {
         if *c2.offset(i as isize) < *c.offset(i as isize) {
             *c.offset(i as isize) = *c2.offset(i as isize)
         }
@@ -6287,10 +1131,10 @@ unsafe extern "C" fn min_curve(mut c: *mut libc::c_float, mut c2: *mut libc::c_f
     }
 }
 
-unsafe extern "C" fn max_curve(mut c: *mut libc::c_float, mut c2: *mut libc::c_float) {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
-    while i < 56 as libc::c_int {
+unsafe extern "C" fn max_curve(mut c: *mut f32, mut c2: *mut f32) {
+    let mut i: i32 = 0;
+    i = 0;
+    while i < 56 {
         if *c2.offset(i as isize) > *c.offset(i as isize) {
             *c.offset(i as isize) = *c2.offset(i as isize)
         }
@@ -6298,63 +1142,59 @@ unsafe extern "C" fn max_curve(mut c: *mut libc::c_float, mut c2: *mut libc::c_f
     }
 }
 
-unsafe extern "C" fn attenuate_curve(mut c: *mut libc::c_float, mut att: libc::c_float) {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
-    while i < 56 as libc::c_int {
+unsafe extern "C" fn attenuate_curve(mut c: *mut f32, mut att: f32) {
+    let mut i: i32 = 0;
+    i = 0;
+    while i < 56 {
         *c.offset(i as isize) += att;
         i += 1
     }
 }
 
 unsafe extern "C" fn setup_tone_curves(
-    mut curveatt_dB: *mut libc::c_float,
-    mut binHz: libc::c_float,
-    mut n: libc::c_int,
-    mut center_boost: libc::c_float,
-    mut center_decay_rate: libc::c_float,
-) -> *mut *mut *mut libc::c_float {
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    let mut k: libc::c_int = 0;
-    let mut m: libc::c_int = 0;
-    let mut ath: [libc::c_float; 56] = [0.; 56];
-    let mut workc: [[[libc::c_float; 56]; 8]; 17] = [[[0.; 56]; 8]; 17];
-    let mut athc: [[libc::c_float; 56]; 8] = [[0.; 56]; 8];
-    let mut fresh0 = ::std::vec::from_elem(
-        0,
-        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
-            as usize,
-    );
-    let mut brute_buffer: *mut libc::c_float = fresh0.as_mut_ptr() as *mut libc::c_float;
-    let mut ret: *mut *mut *mut libc::c_float = crate::stdlib::malloc(
-        (::std::mem::size_of::<*mut *mut libc::c_float>() as libc::c_ulong)
-            .wrapping_mul(17 as libc::c_int as libc::c_ulong),
-    ) as *mut *mut *mut libc::c_float;
+    mut curveatt_dB: *mut f32,
+    mut binHz: f32,
+    mut n: i32,
+    mut center_boost: f32,
+    mut center_decay_rate: f32,
+) -> *mut *mut *mut f32 {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut k: i32 = 0;
+    let mut m: i32 = 0;
+    let mut ath: [f32; 56] = [0.; 56];
+    let mut workc: [[[f32; 56]; 8]; 17] = [[[0.; 56]; 8]; 17];
+    let mut athc: [[f32; 56]; 8] = [[0.; 56]; 8];
+    let mut fresh0 =
+        ::std::vec::from_elem(0, (n as usize).wrapping_mul(::std::mem::size_of::<f32>()));
+    let mut brute_buffer: *mut f32 = fresh0.as_mut_ptr() as *mut f32;
+    let mut ret: *mut *mut *mut f32 =
+        crate::stdlib::malloc((::std::mem::size_of::<*mut *mut f32>()).wrapping_mul(17usize))
+            as *mut *mut *mut f32;
     crate::stdlib::memset(
         workc.as_mut_ptr() as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<[[[libc::c_float; 56]; 8]; 17]>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<[[[f32; 56]; 8]; 17]>(),
     );
-    i = 0 as libc::c_int;
-    while i < 17 as libc::c_int {
+    i = 0;
+    while i < 17 {
         /* we add back in the ATH to avoid low level curves falling off to
         -infinity and unnecessarily cutting off high level curves in the
         curve limiting (last step). */
         /* A half-band's settings must be valid over the whole band, and
         it's better to mask too little than too much */
-        let mut ath_offset: libc::c_int = i * 4 as libc::c_int;
-        j = 0 as libc::c_int;
-        while j < 56 as libc::c_int {
-            let mut min: libc::c_float = 999.0f64 as libc::c_float;
-            k = 0 as libc::c_int;
-            while k < 4 as libc::c_int {
-                if j + k + ath_offset < 88 as libc::c_int {
+        let mut ath_offset: i32 = i * 4;
+        j = 0;
+        while j < 56 {
+            let mut min: f32 = 999f32;
+            k = 0;
+            while k < 4 {
+                if j + k + ath_offset < 88 {
                     if min > ATH[(j + k + ath_offset) as usize] {
                         min = ATH[(j + k + ath_offset) as usize]
                     }
-                } else if min > ATH[(88 as libc::c_int - 1 as libc::c_int) as usize] {
-                    min = ATH[(88 as libc::c_int - 1 as libc::c_int) as usize]
+                } else if min > ATH[(88i32 - 1) as usize] {
+                    min = ATH[(88i32 - 1) as usize]
                 }
                 k += 1
             }
@@ -6363,46 +1203,37 @@ unsafe extern "C" fn setup_tone_curves(
         }
         /* copy curves into working space, replicate the 50dB curve to 30
         and 40, replicate the 100dB curve to 110 */
-        j = 0 as libc::c_int;
-        while j < 6 as libc::c_int {
+        j = 0;
+        while j < 6 {
             crate::stdlib::memcpy(
-                workc[i as usize][(j + 2 as libc::c_int) as usize].as_mut_ptr()
-                    as *mut libc::c_void,
+                workc[i as usize][(j + 2) as usize].as_mut_ptr() as *mut libc::c_void,
                 tonemasks[i as usize][j as usize].as_ptr() as *const libc::c_void,
-                (56 as libc::c_int as libc::c_ulong)
-                    .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong),
+                (56usize).wrapping_mul(::std::mem::size_of::<f32>()),
             );
             j += 1
         }
         crate::stdlib::memcpy(
-            workc[i as usize][0 as libc::c_int as usize].as_mut_ptr() as *mut libc::c_void,
-            tonemasks[i as usize][0 as libc::c_int as usize].as_ptr() as *const libc::c_void,
-            (56 as libc::c_int as libc::c_ulong)
-                .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong),
+            workc[i as usize][0].as_mut_ptr() as *mut libc::c_void,
+            tonemasks[i as usize][0].as_ptr() as *const libc::c_void,
+            (56usize).wrapping_mul(::std::mem::size_of::<f32>()),
         );
         crate::stdlib::memcpy(
-            workc[i as usize][1 as libc::c_int as usize].as_mut_ptr() as *mut libc::c_void,
-            tonemasks[i as usize][0 as libc::c_int as usize].as_ptr() as *const libc::c_void,
-            (56 as libc::c_int as libc::c_ulong)
-                .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong),
+            workc[i as usize][1].as_mut_ptr() as *mut libc::c_void,
+            tonemasks[i as usize][0].as_ptr() as *const libc::c_void,
+            (56usize).wrapping_mul(::std::mem::size_of::<f32>()),
         );
         /* apply centered curve boost/decay */
-        j = 0 as libc::c_int;
-        while j < 8 as libc::c_int {
-            k = 0 as libc::c_int;
-            while k < 56 as libc::c_int {
-                let mut adj: libc::c_float = center_boost
-                    + crate::stdlib::abs(16 as libc::c_int - k) as libc::c_float
-                        * center_decay_rate;
-                if (adj as libc::c_double) < 0.0f64
-                    && center_boost > 0 as libc::c_int as libc::c_float
-                {
-                    adj = 0.0f64 as libc::c_float
+        j = 0;
+        while j < 8 {
+            k = 0;
+            while k < 56 {
+                let mut adj: f32 =
+                    center_boost + crate::stdlib::abs(16 - k) as f32 * center_decay_rate;
+                if (adj as f64) < 0.0 && center_boost > 0f32 {
+                    adj = 0f32
                 }
-                if adj as libc::c_double > 0.0f64
-                    && center_boost < 0 as libc::c_int as libc::c_float
-                {
-                    adj = 0.0f64 as libc::c_float
+                if adj as f64 > 0.0 && center_boost < 0f32 {
+                    adj = 0f32
                 }
                 workc[i as usize][j as usize][k as usize] += adj;
                 k += 1
@@ -6411,29 +1242,22 @@ unsafe extern "C" fn setup_tone_curves(
         }
         /* normalize curves so the driving amplitude is 0dB */
         /* make temp curves with the ATH overlayed */
-        j = 0 as libc::c_int;
-        while j < 8 as libc::c_int {
+        j = 0;
+        while j < 8 {
             attenuate_curve(
                 workc[i as usize][j as usize].as_mut_ptr(),
-                (*curveatt_dB.offset(i as isize) as libc::c_double + 100.0f64
-                    - (if j < 2 as libc::c_int {
-                        2 as libc::c_int
-                    } else {
-                        j
-                    }) as libc::c_double
-                        * 10.0f64
-                    - 30.0f64) as libc::c_float,
+                (*curveatt_dB.offset(i as isize) as f64 + 100.0
+                    - (if j < 2 { 2 } else { j }) as f64 * 10.0
+                    - 30.0) as f32,
             );
             crate::stdlib::memcpy(
                 athc[j as usize].as_mut_ptr() as *mut libc::c_void,
                 ath.as_mut_ptr() as *const libc::c_void,
-                (56 as libc::c_int as libc::c_ulong)
-                    .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong),
+                (56usize).wrapping_mul(::std::mem::size_of::<f32>()),
             );
             attenuate_curve(
                 athc[j as usize].as_mut_ptr(),
-                (100.0f64 - (j as libc::c_float * 10.0f32) as libc::c_double - 30.0f64)
-                    as libc::c_float,
+                (100.0 - (j as f32 * 10.0) as f64 - 30.0) as f32,
             );
             max_curve(
                 athc[j as usize].as_mut_ptr(),
@@ -6450,11 +1274,11 @@ unsafe extern "C" fn setup_tone_curves(
         can be in (we assume) a range of ...+100dB] SL.  However, sounds
         20dB down will be in a range ...+80], 40dB down is from ...+60],
         etc... */
-        j = 1 as libc::c_int;
-        while j < 8 as libc::c_int {
+        j = 1;
+        while j < 8 {
             min_curve(
                 athc[j as usize].as_mut_ptr(),
-                athc[(j - 1 as libc::c_int) as usize].as_mut_ptr(),
+                athc[(j - 1) as usize].as_mut_ptr(),
             );
             min_curve(
                 workc[i as usize][j as usize].as_mut_ptr(),
@@ -6464,16 +1288,14 @@ unsafe extern "C" fn setup_tone_curves(
         }
         i += 1
     }
-    i = 0 as libc::c_int;
-    while i < 17 as libc::c_int {
-        let mut hi_curve: libc::c_int = 0;
-        let mut lo_curve: libc::c_int = 0;
-        let mut bin: libc::c_int = 0;
+    i = 0;
+    while i < 17 {
+        let mut hi_curve: i32 = 0;
+        let mut lo_curve: i32 = 0;
+        let mut bin: i32 = 0;
         let ref mut fresh1 = *ret.offset(i as isize);
-        *fresh1 = crate::stdlib::malloc(
-            (::std::mem::size_of::<*mut libc::c_float>() as libc::c_ulong)
-                .wrapping_mul(8 as libc::c_int as libc::c_ulong),
-        ) as *mut *mut libc::c_float;
+        *fresh1 = crate::stdlib::malloc((::std::mem::size_of::<*mut f32>()).wrapping_mul(8usize))
+            as *mut *mut f32;
         /* low frequency curves are measured with greater resolution than
         the MDCT/FFT will actually give us; we want the curve applied
         to the tone data to be pessimistic and thus apply the minimum
@@ -6484,45 +1306,37 @@ unsafe extern "C" fn setup_tone_curves(
         octave values may also be composited. */
         /* which octave curves will we be compositing? */
         bin = crate::stdlib::floor(
-            crate::stdlib::exp(
-                (i as libc::c_double * 0.5f64 + 5.965784f32 as libc::c_double)
-                    * 0.693147f32 as libc::c_double,
-            ) / binHz as libc::c_double,
-        ) as libc::c_int;
+            crate::stdlib::exp((i as f64 * 0.5 + 5.965784f32 as f64) * 0.693147f32 as f64)
+                / binHz as f64,
+        ) as i32;
         lo_curve = crate::stdlib::ceil(
-            (crate::stdlib::log(
-                (bin as libc::c_float * binHz + 1 as libc::c_int as libc::c_float)
-                    as libc::c_double,
-            ) * 1.442695f32 as libc::c_double
-                - 5.965784f32 as libc::c_double)
-                * 2 as libc::c_int as libc::c_double,
-        ) as libc::c_int;
+            (crate::stdlib::log((bin as f32 * binHz + 1f32) as f64) * 1.442695f32 as f64
+                - 5.965784f32 as f64)
+                * 2f64,
+        ) as i32;
         hi_curve = crate::stdlib::floor(
-            (crate::stdlib::log(
-                ((bin + 1 as libc::c_int) as libc::c_float * binHz) as libc::c_double,
-            ) * 1.442695f32 as libc::c_double
-                - 5.965784f32 as libc::c_double)
-                * 2 as libc::c_int as libc::c_double,
-        ) as libc::c_int;
+            (crate::stdlib::log(((bin + 1) as f32 * binHz) as f64) * 1.442695f32 as f64
+                - 5.965784f32 as f64)
+                * 2f64,
+        ) as i32;
         if lo_curve > i {
             lo_curve = i
         }
-        if lo_curve < 0 as libc::c_int {
-            lo_curve = 0 as libc::c_int
+        if lo_curve < 0 {
+            lo_curve = 0
         }
-        if hi_curve >= 17 as libc::c_int {
-            hi_curve = 17 as libc::c_int - 1 as libc::c_int
+        if hi_curve >= 17 {
+            hi_curve = 17 - 1
         }
-        m = 0 as libc::c_int;
-        while m < 8 as libc::c_int {
+        m = 0;
+        while m < 8 {
             let ref mut fresh2 = *(*ret.offset(i as isize)).offset(m as isize);
             *fresh2 = crate::stdlib::malloc(
-                (::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
-                    .wrapping_mul((56 as libc::c_int + 2 as libc::c_int) as libc::c_ulong),
-            ) as *mut libc::c_float;
-            j = 0 as libc::c_int;
+                (::std::mem::size_of::<f32>()).wrapping_mul((56i32 + 2) as usize),
+            ) as *mut f32;
+            j = 0;
             while j < n {
-                *brute_buffer.offset(j as isize) = 999.0f64 as libc::c_float;
+                *brute_buffer.offset(j as isize) = 999f32;
                 j += 1
             }
             /* render the curve into bins, then pull values back into curve.
@@ -6530,24 +1344,20 @@ unsafe extern "C" fn setup_tone_curves(
             a safe minimum */
             k = lo_curve;
             while k <= hi_curve {
-                let mut l: libc::c_int = 0 as libc::c_int;
-                j = 0 as libc::c_int;
-                while j < 56 as libc::c_int {
-                    let mut lo_bin: libc::c_int = (crate::stdlib::exp(
-                        (j as libc::c_double * 0.125f64 + k as libc::c_double * 0.5f64 - 2.0625f64
-                            + 5.965784f32 as libc::c_double)
-                            * 0.693147f32 as libc::c_double,
-                    ) / binHz as libc::c_double)
-                        as libc::c_int;
-                    let mut hi_bin: libc::c_int = (crate::stdlib::exp(
-                        (j as libc::c_double * 0.125f64 + k as libc::c_double * 0.5f64 - 1.9375f64
-                            + 5.965784f32 as libc::c_double)
-                            * 0.693147f32 as libc::c_double,
-                    ) / binHz as libc::c_double
-                        + 1 as libc::c_int as libc::c_double)
-                        as libc::c_int;
-                    if lo_bin < 0 as libc::c_int {
-                        lo_bin = 0 as libc::c_int
+                let mut l: i32 = 0;
+                j = 0;
+                while j < 56 {
+                    let mut lo_bin: i32 = (crate::stdlib::exp(
+                        (j as f64 * 0.125 + k as f64 * 0.5 - 2.0625 + 5.965784f32 as f64)
+                            * 0.693147f32 as f64,
+                    ) / binHz as f64) as i32;
+                    let mut hi_bin: i32 = (crate::stdlib::exp(
+                        (j as f64 * 0.125 + k as f64 * 0.5 - 1.9375 + 5.965784f32 as f64)
+                            * 0.693147f32 as f64,
+                    ) / binHz as f64
+                        + 1f64) as i32;
+                    if lo_bin < 0 {
+                        lo_bin = 0
                     }
                     if lo_bin > n {
                         lo_bin = n
@@ -6555,8 +1365,8 @@ unsafe extern "C" fn setup_tone_curves(
                     if lo_bin < l {
                         l = lo_bin
                     }
-                    if hi_bin < 0 as libc::c_int {
-                        hi_bin = 0 as libc::c_int
+                    if hi_bin < 0 {
+                        hi_bin = 0
                     }
                     if hi_bin > n {
                         hi_bin = n
@@ -6574,37 +1384,32 @@ unsafe extern "C" fn setup_tone_curves(
                 }
                 while l < n {
                     if *brute_buffer.offset(l as isize)
-                        > workc[k as usize][m as usize]
-                            [(56 as libc::c_int - 1 as libc::c_int) as usize]
+                        > workc[k as usize][m as usize][(56i32 - 1) as usize]
                     {
-                        *brute_buffer.offset(l as isize) = workc[k as usize][m as usize]
-                            [(56 as libc::c_int - 1 as libc::c_int) as usize]
+                        *brute_buffer.offset(l as isize) =
+                            workc[k as usize][m as usize][(56i32 - 1) as usize]
                     }
                     l += 1
                 }
                 k += 1
             }
             /* be equally paranoid about being valid up to next half ocatve */
-            if (i + 1 as libc::c_int) < 17 as libc::c_int {
-                let mut l_0: libc::c_int = 0 as libc::c_int;
-                k = i + 1 as libc::c_int;
-                j = 0 as libc::c_int;
-                while j < 56 as libc::c_int {
-                    let mut lo_bin_0: libc::c_int = (crate::stdlib::exp(
-                        (j as libc::c_double * 0.125f64 + i as libc::c_double * 0.5f64 - 2.0625f64
-                            + 5.965784f32 as libc::c_double)
-                            * 0.693147f32 as libc::c_double,
-                    ) / binHz as libc::c_double)
-                        as libc::c_int;
-                    let mut hi_bin_0: libc::c_int = (crate::stdlib::exp(
-                        (j as libc::c_double * 0.125f64 + i as libc::c_double * 0.5f64 - 1.9375f64
-                            + 5.965784f32 as libc::c_double)
-                            * 0.693147f32 as libc::c_double,
-                    ) / binHz as libc::c_double
-                        + 1 as libc::c_int as libc::c_double)
-                        as libc::c_int;
-                    if lo_bin_0 < 0 as libc::c_int {
-                        lo_bin_0 = 0 as libc::c_int
+            if (i + 1) < 17 {
+                let mut l_0: i32 = 0;
+                k = i + 1;
+                j = 0;
+                while j < 56 {
+                    let mut lo_bin_0: i32 = (crate::stdlib::exp(
+                        (j as f64 * 0.125 + i as f64 * 0.5 - 2.0625 + 5.965784f32 as f64)
+                            * 0.693147f32 as f64,
+                    ) / binHz as f64) as i32;
+                    let mut hi_bin_0: i32 = (crate::stdlib::exp(
+                        (j as f64 * 0.125 + i as f64 * 0.5 - 1.9375 + 5.965784f32 as f64)
+                            * 0.693147f32 as f64,
+                    ) / binHz as f64
+                        + 1f64) as i32;
+                    if lo_bin_0 < 0 {
+                        lo_bin_0 = 0
                     }
                     if lo_bin_0 > n {
                         lo_bin_0 = n
@@ -6612,8 +1417,8 @@ unsafe extern "C" fn setup_tone_curves(
                     if lo_bin_0 < l_0 {
                         l_0 = lo_bin_0
                     }
-                    if hi_bin_0 < 0 as libc::c_int {
-                        hi_bin_0 = 0 as libc::c_int
+                    if hi_bin_0 < 0 {
+                        hi_bin_0 = 0
                     }
                     if hi_bin_0 > n {
                         hi_bin_0 = n
@@ -6631,61 +1436,53 @@ unsafe extern "C" fn setup_tone_curves(
                 }
                 while l_0 < n {
                     if *brute_buffer.offset(l_0 as isize)
-                        > workc[k as usize][m as usize]
-                            [(56 as libc::c_int - 1 as libc::c_int) as usize]
+                        > workc[k as usize][m as usize][(56i32 - 1) as usize]
                     {
-                        *brute_buffer.offset(l_0 as isize) = workc[k as usize][m as usize]
-                            [(56 as libc::c_int - 1 as libc::c_int) as usize]
+                        *brute_buffer.offset(l_0 as isize) =
+                            workc[k as usize][m as usize][(56i32 - 1) as usize]
                     }
                     l_0 += 1
                 }
             }
-            j = 0 as libc::c_int;
-            while j < 56 as libc::c_int {
-                let mut bin_0: libc::c_int = (crate::stdlib::exp(
-                    (j as libc::c_double * 0.125f64 + i as libc::c_double * 0.5f64 - 2.0f64
-                        + 5.965784f32 as libc::c_double)
-                        * 0.693147f32 as libc::c_double,
-                ) / binHz as libc::c_double)
-                    as libc::c_int;
-                if bin_0 < 0 as libc::c_int {
-                    *(*(*ret.offset(i as isize)).offset(m as isize))
-                        .offset((j + 2 as libc::c_int) as isize) = -999.0f64 as libc::c_float
+            j = 0;
+            while j < 56 {
+                let mut bin_0: i32 = (crate::stdlib::exp(
+                    (j as f64 * 0.125 + i as f64 * 0.5 - 2.0 + 5.965784f32 as f64)
+                        * 0.693147f32 as f64,
+                ) / binHz as f64) as i32;
+                if bin_0 < 0 {
+                    *(*(*ret.offset(i as isize)).offset(m as isize)).offset((j + 2) as isize) =
+                        -999f32
                 } else if bin_0 >= n {
-                    *(*(*ret.offset(i as isize)).offset(m as isize))
-                        .offset((j + 2 as libc::c_int) as isize) = -999.0f64 as libc::c_float
+                    *(*(*ret.offset(i as isize)).offset(m as isize)).offset((j + 2) as isize) =
+                        -999f32
                 } else {
-                    *(*(*ret.offset(i as isize)).offset(m as isize))
-                        .offset((j + 2 as libc::c_int) as isize) =
+                    *(*(*ret.offset(i as isize)).offset(m as isize)).offset((j + 2) as isize) =
                         *brute_buffer.offset(bin_0 as isize)
                 }
                 j += 1
             }
             /* add fenceposts */
-            j = 0 as libc::c_int;
-            while j < 16 as libc::c_int {
-                if *(*(*ret.offset(i as isize)).offset(m as isize))
-                    .offset((j + 2 as libc::c_int) as isize)
+            j = 0;
+            while j < 16 {
+                if *(*(*ret.offset(i as isize)).offset(m as isize)).offset((j + 2) as isize)
                     > -200.0f32
                 {
                     break;
                 }
                 j += 1
             }
-            *(*(*ret.offset(i as isize)).offset(m as isize)).offset(0 as libc::c_int as isize) =
-                j as libc::c_float;
-            j = 56 as libc::c_int - 1 as libc::c_int;
-            while j > 16 as libc::c_int + 1 as libc::c_int {
-                if *(*(*ret.offset(i as isize)).offset(m as isize))
-                    .offset((j + 2 as libc::c_int) as isize)
+            *(*(*ret.offset(i as isize)).offset(m as isize)).offset(0) = j as f32;
+            j = 56 - 1;
+            while j > 16 + 1 {
+                if *(*(*ret.offset(i as isize)).offset(m as isize)).offset((j + 2) as isize)
                     > -200.0f32
                 {
                     break;
                 }
                 j -= 1
             }
-            *(*(*ret.offset(i as isize)).offset(m as isize)).offset(1 as libc::c_int as isize) =
-                j as libc::c_float;
+            *(*(*ret.offset(i as isize)).offset(m as isize)).offset(1) = j as f32;
             m += 1
         }
         i += 1
@@ -6698,217 +1495,175 @@ pub unsafe extern "C" fn _vp_psy_init(
     mut p: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
     mut vi: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy,
     mut gi: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global,
-    mut n: libc::c_int,
-    mut rate: libc::c_long,
+    mut n: i32,
+    mut rate: isize,
 ) {
-    let mut i: libc::c_long = 0;
-    let mut j: libc::c_long = 0;
-    let mut lo: libc::c_long = -(99 as libc::c_int) as libc::c_long;
-    let mut hi: libc::c_long = 1 as libc::c_int as libc::c_long;
-    let mut maxoc: libc::c_long = 0;
+    let mut i: isize = 0;
+    let mut j: isize = 0;
+    let mut lo: isize = -99;
+    let mut hi: isize = 1;
+    let mut maxoc: isize = 0;
     crate::stdlib::memset(
         p as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy>()
-            as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy>(),
     );
     (*p).eighth_octave_lines = (*gi).eighth_octave_lines;
     (*p).shiftoc = (crate::stdlib::rint(
-        crate::stdlib::log(((*gi).eighth_octave_lines as libc::c_float * 8.0f32) as libc::c_double)
-            / crate::stdlib::log(2.0f32 as libc::c_double),
-    ) - 1 as libc::c_int as libc::c_double) as libc::c_long;
-    (*p).firstoc = ((crate::stdlib::log(
-        (0.25f32 * rate as libc::c_float) as libc::c_double * 0.5f64 / n as libc::c_double,
-    ) * 1.442695f32 as libc::c_double
-        - 5.965784f32 as libc::c_double)
-        * ((1 as libc::c_int) << (*p).shiftoc + 1 as libc::c_int as libc::c_long) as libc::c_double
-        - (*gi).eighth_octave_lines as libc::c_double) as libc::c_long;
-    maxoc = ((crate::stdlib::log(
-        ((n as libc::c_float + 0.25f32) * rate as libc::c_float) as libc::c_double * 0.5f64
-            / n as libc::c_double,
-    ) * 1.442695f32 as libc::c_double
-        - 5.965784f32 as libc::c_double)
-        * ((1 as libc::c_int) << (*p).shiftoc + 1 as libc::c_int as libc::c_long) as libc::c_double
-        + 0.5f32 as libc::c_double) as libc::c_long;
-    (*p).total_octave_lines =
-        (maxoc - (*p).firstoc + 1 as libc::c_int as libc::c_long) as libc::c_int;
-    (*p).ath = crate::stdlib::malloc(
-        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong),
-    ) as *mut libc::c_float;
-    (*p).octave = crate::stdlib::malloc(
-        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_long>() as libc::c_ulong),
-    ) as *mut libc::c_long;
-    (*p).bark = crate::stdlib::malloc(
-        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_long>() as libc::c_ulong),
-    ) as *mut libc::c_long;
+        crate::stdlib::log(((*gi).eighth_octave_lines as f32 * 8.0) as f64)
+            / crate::stdlib::log(2f64),
+    ) - 1f64) as isize;
+    (*p).firstoc = ((crate::stdlib::log((0.25 * rate as f32) as f64 * 0.5 / n as f64)
+        * 1.442695f32 as f64
+        - 5.965784f32 as f64)
+        * ((1i32) << (*p).shiftoc + 1isize) as f64
+        - (*gi).eighth_octave_lines as f64) as isize;
+    maxoc = ((crate::stdlib::log(((n as f32 + 0.25) * rate as f32) as f64 * 0.5 / n as f64)
+        * 1.442695f32 as f64
+        - 5.965784f32 as f64)
+        * ((1i32) << (*p).shiftoc + 1isize) as f64
+        + 0.5) as isize;
+    (*p).total_octave_lines = (maxoc - (*p).firstoc + 1) as i32;
+    (*p).ath =
+        crate::stdlib::malloc((n as usize).wrapping_mul(::std::mem::size_of::<f32>())) as *mut f32;
+    (*p).octave = crate::stdlib::malloc((n as usize).wrapping_mul(::std::mem::size_of::<isize>()))
+        as *mut isize;
+    (*p).bark = crate::stdlib::malloc((n as usize).wrapping_mul(::std::mem::size_of::<isize>()))
+        as *mut isize;
     (*p).vi = vi;
     (*p).n = n;
     (*p).rate = rate;
     /* AoTuV HF weighting */
-    (*p).m_val = 1.0f64 as libc::c_float; /* 48kHz */
-    if rate < 26000 as libc::c_int as libc::c_long {
-        (*p).m_val = 0 as libc::c_int as libc::c_float
-    } else if rate < 38000 as libc::c_int as libc::c_long {
-        (*p).m_val = 0.94f64 as libc::c_float
-    } else if rate > 46000 as libc::c_int as libc::c_long {
-        (*p).m_val = 1.275f64 as libc::c_float
+    (*p).m_val = 1f32; /* 48kHz */
+    if rate < 26000isize {
+        (*p).m_val = 0f32
+    } else if rate < 38000i32 as isize {
+        (*p).m_val = 0.94f32
+    } else if rate > 46000i32 as isize {
+        (*p).m_val = 1.275f32
     } /* 32kHz */
     /* set up the lookups for a given blocksize and sample rate */
-    i = 0 as libc::c_int as libc::c_long;
-    j = 0 as libc::c_int as libc::c_long;
-    while i < (88 as libc::c_int - 1 as libc::c_int) as libc::c_long {
-        let mut endpos: libc::c_int = crate::stdlib::rint(
+    i = 0;
+    j = 0;
+    while i < (88i32 - 1) as isize {
+        let mut endpos: i32 = crate::stdlib::rint(
             crate::stdlib::exp(
-                ((i + 1 as libc::c_int as libc::c_long) as libc::c_double * 0.125f64 - 2.0f64
-                    + 5.965784f32 as libc::c_double)
-                    * 0.693147f32 as libc::c_double,
-            ) * 2 as libc::c_int as libc::c_double
-                * n as libc::c_double
-                / rate as libc::c_double,
-        ) as libc::c_int;
-        let mut base: libc::c_float = ATH[i as usize];
-        if j < endpos as libc::c_long {
-            let mut delta: libc::c_float = (ATH[(i + 1 as libc::c_int as libc::c_long) as usize]
-                - base)
-                / (endpos as libc::c_long - j) as libc::c_float;
-            while j < endpos as libc::c_long && j < n as libc::c_long {
-                *(*p).ath.offset(j as isize) = (base as libc::c_double + 100.0f64) as libc::c_float;
+                ((i + 1) as f64 * 0.125 - 2.0 + 5.965784f32 as f64) * 0.693147f32 as f64,
+            ) * 2f64
+                * n as f64
+                / rate as f64,
+        ) as i32;
+        let mut base: f32 = ATH[i as usize];
+        if j < endpos as isize {
+            let mut delta: f32 = (ATH[(i + 1) as usize] - base) / (endpos as isize - j) as f32;
+            while j < endpos as isize && j < n as isize {
+                *(*p).ath.offset(j) = (base as f64 + 100.0) as f32;
                 base += delta;
                 j += 1
             }
         }
         i += 1
     }
-    while j < n as libc::c_long {
-        *(*p).ath.offset(j as isize) = *(*p)
-            .ath
-            .offset((j - 1 as libc::c_int as libc::c_long) as isize);
+    while j < n as isize {
+        *(*p).ath.offset(j) = *(*p).ath.offset(j - 1);
         j += 1
     }
-    i = 0 as libc::c_int as libc::c_long;
-    while i < n as libc::c_long {
-        let mut bark: libc::c_float = (13.1f32 as libc::c_double
-            * crate::stdlib::atan(
-                (0.00074f32 * (rate / (2 as libc::c_int * n) as libc::c_long * i) as libc::c_float)
-                    as libc::c_double,
-            )
-            + 2.24f32 as libc::c_double
+    i = 0;
+    while i < n as isize {
+        let mut bark: f32 = (13.1f32 as f64
+            * crate::stdlib::atan((0.00074 * (rate / (2i32 * n) as isize * i) as f32) as f64)
+            + 2.24f32 as f64
                 * crate::stdlib::atan(
-                    ((rate / (2 as libc::c_int * n) as libc::c_long
-                        * i
-                        * (rate / (2 as libc::c_int * n) as libc::c_long * i))
-                        as libc::c_float
-                        * 1.85e-8f32) as libc::c_double,
+                    ((rate / (2i32 * n) as isize * i * (rate / (2i32 * n) as isize * i)) as f32
+                        * 1.85e-8) as f64,
                 )
-            + (1e-4f32 * (rate / (2 as libc::c_int * n) as libc::c_long * i) as libc::c_float)
-                as libc::c_double) as libc::c_float;
-        while (lo + (*vi).noisewindowlomin as libc::c_long) < i
-            && (13.1f32 as libc::c_double
-                * crate::stdlib::atan(
-                    (0.00074f32
-                        * (rate / (2 as libc::c_int * n) as libc::c_long * lo) as libc::c_float)
-                        as libc::c_double,
-                )
-                + 2.24f32 as libc::c_double
+            + (1e-4 * (rate / (2i32 * n) as isize * i) as f32) as f64)
+            as f32;
+        while (lo + (*vi).noisewindowlomin as isize) < i
+            && (13.1f32 as f64
+                * crate::stdlib::atan((0.00074 * (rate / (2i32 * n) as isize * lo) as f32) as f64)
+                + 2.24f32 as f64
                     * crate::stdlib::atan(
-                        ((rate / (2 as libc::c_int * n) as libc::c_long
-                            * lo
-                            * (rate / (2 as libc::c_int * n) as libc::c_long * lo))
-                            as libc::c_float
-                            * 1.85e-8f32) as libc::c_double,
+                        ((rate / (2i32 * n) as isize * lo * (rate / (2i32 * n) as isize * lo))
+                            as f32
+                            * 1.85e-8) as f64,
                     )
-                + (1e-4f32 * (rate / (2 as libc::c_int * n) as libc::c_long * lo) as libc::c_float)
-                    as libc::c_double)
-                < (bark - (*vi).noisewindowlo) as libc::c_double
+                + (1e-4 * (rate / (2i32 * n) as isize * lo) as f32) as f64)
+                < (bark - (*vi).noisewindowlo) as f64
         {
             lo += 1
         }
-        while hi <= n as libc::c_long
-            && (hi < i + (*vi).noisewindowhimin as libc::c_long
-                || (13.1f32 as libc::c_double
+        while hi <= n as isize
+            && (hi < i + (*vi).noisewindowhimin as isize
+                || (13.1f32 as f64
                     * crate::stdlib::atan(
-                        (0.00074f32
-                            * (rate / (2 as libc::c_int * n) as libc::c_long * hi) as libc::c_float)
-                            as libc::c_double,
+                        (0.00074 * (rate / (2i32 * n) as isize * hi) as f32) as f64,
                     )
-                    + 2.24f32 as libc::c_double
+                    + 2.24f32 as f64
                         * crate::stdlib::atan(
-                            ((rate / (2 as libc::c_int * n) as libc::c_long
-                                * hi
-                                * (rate / (2 as libc::c_int * n) as libc::c_long * hi))
-                                as libc::c_float
-                                * 1.85e-8f32) as libc::c_double,
+                            ((rate / (2i32 * n) as isize * hi * (rate / (2i32 * n) as isize * hi))
+                                as f32
+                                * 1.85e-8) as f64,
                         )
-                    + (1e-4f32
-                        * (rate / (2 as libc::c_int * n) as libc::c_long * hi) as libc::c_float)
-                        as libc::c_double)
-                    < (bark + (*vi).noisewindowhi) as libc::c_double)
+                    + (1e-4 * (rate / (2i32 * n) as isize * hi) as f32) as f64)
+                    < (bark + (*vi).noisewindowhi) as f64)
         {
             hi += 1
         }
-        *(*p).bark.offset(i as isize) = ((lo - 1 as libc::c_int as libc::c_long)
-            << 16 as libc::c_int)
-            + (hi - 1 as libc::c_int as libc::c_long);
+        *(*p).bark.offset(i) = ((lo - 1) << 16) + (hi - 1);
         i += 1
     }
-    i = 0 as libc::c_int as libc::c_long;
-    while i < n as libc::c_long {
-        *(*p).octave.offset(i as isize) = ((crate::stdlib::log(
-            (i as libc::c_float + 0.25f32) as libc::c_double * 0.5f64 * rate as libc::c_double
-                / n as libc::c_double,
-        ) * 1.442695f32 as libc::c_double
-            - 5.965784f32 as libc::c_double)
-            * ((1 as libc::c_int) << (*p).shiftoc + 1 as libc::c_int as libc::c_long)
-                as libc::c_double
-            + 0.5f32 as libc::c_double) as libc::c_long;
+    i = 0;
+    while i < n as isize {
+        *(*p).octave.offset(i) =
+            ((crate::stdlib::log((i as f32 + 0.25) as f64 * 0.5 * rate as f64 / n as f64)
+                * 1.442695f32 as f64
+                - 5.965784f32 as f64)
+                * ((1i32) << (*p).shiftoc + 1isize) as f64
+                + 0.5) as isize;
         i += 1
     }
     (*p).tonecurves = setup_tone_curves(
         (*vi).toneatt.as_mut_ptr(),
-        (rate as libc::c_double * 0.5f64 / n as libc::c_double) as libc::c_float,
+        (rate as f64 * 0.5 / n as f64) as f32,
         n,
         (*vi).tone_centerboost,
         (*vi).tone_decay,
     );
     /* set up rolling noise median */
-    (*p).noiseoffset = crate::stdlib::malloc(
-        (3 as libc::c_int as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<*mut libc::c_float>() as libc::c_ulong),
-    ) as *mut *mut libc::c_float;
-    i = 0 as libc::c_int as libc::c_long;
-    while i < 3 as libc::c_int as libc::c_long {
-        let ref mut fresh3 = *(*p).noiseoffset.offset(i as isize);
-        *fresh3 = crate::stdlib::malloc(
-            (n as libc::c_ulong)
-                .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong),
-        ) as *mut libc::c_float;
+    (*p).noiseoffset =
+        crate::stdlib::malloc((3usize).wrapping_mul(::std::mem::size_of::<*mut f32>()))
+            as *mut *mut f32;
+    i = 0;
+    while i < 3 {
+        let ref mut fresh3 = *(*p).noiseoffset.offset(i);
+        *fresh3 = crate::stdlib::malloc((n as usize).wrapping_mul(::std::mem::size_of::<f32>()))
+            as *mut f32;
         i += 1
     }
-    i = 0 as libc::c_int as libc::c_long;
-    while i < n as libc::c_long {
-        let mut halfoc: libc::c_float = ((crate::stdlib::log(
-            (i as libc::c_double + 0.5f64) * rate as libc::c_double
-                / (2.0f64 * n as libc::c_double),
-        ) * 1.442695f32 as libc::c_double
-            - 5.965784f32 as libc::c_double)
-            * 2.0f64) as libc::c_float;
-        let mut inthalfoc: libc::c_int = 0;
-        let mut del: libc::c_float = 0.;
-        if halfoc < 0 as libc::c_int as libc::c_float {
-            halfoc = 0 as libc::c_int as libc::c_float
+    i = 0;
+    while i < n as isize {
+        let mut halfoc: f32 =
+            ((crate::stdlib::log((i as f64 + 0.5) * rate as f64 / (2.0 * n as f64))
+                * 1.442695f32 as f64
+                - 5.965784f32 as f64)
+                * 2.0) as f32;
+        let mut inthalfoc: i32 = 0;
+        let mut del: f32 = 0.;
+        if halfoc < 0f32 {
+            halfoc = 0f32
         }
-        if halfoc >= (17 as libc::c_int - 1 as libc::c_int) as libc::c_float {
-            halfoc = (17 as libc::c_int - 1 as libc::c_int) as libc::c_float
+        if halfoc >= (17i32 - 1) as f32 {
+            halfoc = (17i32 - 1) as f32
         }
-        inthalfoc = halfoc as libc::c_int;
-        del = halfoc - inthalfoc as libc::c_float;
-        j = 0 as libc::c_int as libc::c_long;
-        while j < 3 as libc::c_int as libc::c_long {
-            *(*(*p).noiseoffset.offset(j as isize)).offset(i as isize) =
-                ((*(*p).vi).noiseoff[j as usize][inthalfoc as usize] as libc::c_double
-                    * (1.0f64 - del as libc::c_double)
-                    + ((*(*p).vi).noiseoff[j as usize][(inthalfoc + 1 as libc::c_int) as usize]
-                        * del) as libc::c_double) as libc::c_float;
+        inthalfoc = halfoc as i32;
+        del = halfoc - inthalfoc as f32;
+        j = 0;
+        while j < 3 {
+            *(*(*p).noiseoffset.offset(j)).offset(i) =
+                ((*(*p).vi).noiseoff[j as usize][inthalfoc as usize] as f64 * (1.0 - del as f64)
+                    + ((*(*p).vi).noiseoff[j as usize][(inthalfoc + 1) as usize] * del) as f64)
+                    as f32;
             j += 1
         }
         i += 1
@@ -6919,8 +1674,8 @@ pub unsafe extern "C" fn _vp_psy_init(
 pub unsafe extern "C" fn _vp_psy_clear(
     mut p: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
 ) {
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
     if !p.is_null() {
         if !(*p).ath.is_null() {
             crate::stdlib::free((*p).ath as *mut libc::c_void);
@@ -6932,10 +1687,10 @@ pub unsafe extern "C" fn _vp_psy_clear(
             crate::stdlib::free((*p).bark as *mut libc::c_void);
         }
         if !(*p).tonecurves.is_null() {
-            i = 0 as libc::c_int;
-            while i < 17 as libc::c_int {
-                j = 0 as libc::c_int;
-                while j < 8 as libc::c_int {
+            i = 0;
+            while i < 17 {
+                j = 0;
+                while j < 8 {
                     crate::stdlib::free(*(*(*p).tonecurves.offset(i as isize)).offset(j as isize)
                         as *mut libc::c_void);
                     j += 1
@@ -6946,8 +1701,8 @@ pub unsafe extern "C" fn _vp_psy_clear(
             crate::stdlib::free((*p).tonecurves as *mut libc::c_void);
         }
         if !(*p).noiseoffset.is_null() {
-            i = 0 as libc::c_int;
-            while i < 3 as libc::c_int {
+            i = 0;
+            while i < 3 {
                 crate::stdlib::free(*(*p).noiseoffset.offset(i as isize) as *mut libc::c_void);
                 i += 1
             }
@@ -6955,51 +1710,39 @@ pub unsafe extern "C" fn _vp_psy_clear(
         }
         crate::stdlib::memset(
             p as *mut libc::c_void,
-            0 as libc::c_int,
-            ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy>()
-                as libc::c_ulong,
+            0i32,
+            ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy>(),
         );
     };
 }
 /* octave/(8*eighth_octave_lines) x scale and dB y scale */
 
 unsafe extern "C" fn seed_curve(
-    mut seed: *mut libc::c_float,
-    mut curves: *mut *const libc::c_float,
-    mut amp: libc::c_float,
-    mut oc: libc::c_int,
-    mut n: libc::c_int,
-    mut linesper: libc::c_int,
-    mut dBoffset: libc::c_float,
+    mut seed: *mut f32,
+    mut curves: *mut *const f32,
+    mut amp: f32,
+    mut oc: i32,
+    mut n: i32,
+    mut linesper: i32,
+    mut dBoffset: f32,
 ) {
-    let mut i: libc::c_int = 0;
-    let mut post1: libc::c_int = 0;
-    let mut seedptr: libc::c_int = 0;
-    let mut posts: *const libc::c_float = 0 as *const libc::c_float;
-    let mut curve: *const libc::c_float = 0 as *const libc::c_float;
-    let mut choice: libc::c_int =
-        (((amp + dBoffset) as libc::c_double - 30.0f64) * 0.1f32 as libc::c_double) as libc::c_int;
-    choice = if choice < 0 as libc::c_int {
-        0 as libc::c_int
-    } else {
-        choice
-    };
-    choice = if choice > 8 as libc::c_int - 1 as libc::c_int {
-        (8 as libc::c_int) - 1 as libc::c_int
-    } else {
-        choice
-    };
+    let mut i: i32 = 0;
+    let mut post1: i32 = 0;
+    let mut seedptr: i32 = 0;
+    let mut posts: *const f32 = 0 as *const f32;
+    let mut curve: *const f32 = 0 as *const f32;
+    let mut choice: i32 = (((amp + dBoffset) as f64 - 30.0) * 0.1f32 as f64) as i32;
+    choice = if choice < 0 { 0 } else { choice };
+    choice = if choice > 8 - 1 { (8) - 1 } else { choice };
     posts = *curves.offset(choice as isize);
-    curve = posts.offset(2 as libc::c_int as isize);
-    post1 = *posts.offset(1 as libc::c_int as isize) as libc::c_int;
-    seedptr = (oc as libc::c_float
-        + (*posts.offset(0 as libc::c_int as isize) - 16 as libc::c_int as libc::c_float)
-            * linesper as libc::c_float
-        - (linesper >> 1 as libc::c_int) as libc::c_float) as libc::c_int;
-    i = *posts.offset(0 as libc::c_int as isize) as libc::c_int;
+    curve = posts.offset(2);
+    post1 = *posts.offset(1) as i32;
+    seedptr =
+        (oc as f32 + (*posts.offset(0) - 16f32) * linesper as f32 - (linesper >> 1) as f32) as i32;
+    i = *posts.offset(0) as i32;
     while i < post1 {
-        if seedptr > 0 as libc::c_int {
-            let mut lin: libc::c_float = amp + *curve.offset(i as isize);
+        if seedptr > 0 {
+            let mut lin: f32 = amp + *curve.offset(i as isize);
             if *seed.offset(seedptr as isize) < lin {
                 *seed.offset(seedptr as isize) = lin
             }
@@ -7014,45 +1757,40 @@ unsafe extern "C" fn seed_curve(
 
 unsafe extern "C" fn seed_loop(
     mut p: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
-    mut curves: *mut *mut *const libc::c_float,
-    mut f: *const libc::c_float,
-    mut flr: *const libc::c_float,
-    mut seed: *mut libc::c_float,
-    mut specmax: libc::c_float,
+    mut curves: *mut *mut *const f32,
+    mut f: *const f32,
+    mut flr: *const f32,
+    mut seed: *mut f32,
+    mut specmax: f32,
 ) {
     let mut vi: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy = (*p).vi;
-    let mut n: libc::c_long = (*p).n as libc::c_long;
-    let mut i: libc::c_long = 0;
-    let mut dBoffset: libc::c_float = (*vi).max_curve_dB - specmax;
+    let mut n: isize = (*p).n as isize;
+    let mut i: isize = 0;
+    let mut dBoffset: f32 = (*vi).max_curve_dB - specmax;
     /* prime the working vector with peak values */
-    i = 0 as libc::c_int as libc::c_long;
+    i = 0;
     while i < n {
-        let mut max: libc::c_float = *f.offset(i as isize);
-        let mut oc: libc::c_long = *(*p).octave.offset(i as isize);
-        while (i + 1 as libc::c_int as libc::c_long) < n
-            && *(*p)
-                .octave
-                .offset((i + 1 as libc::c_int as libc::c_long) as isize)
-                == oc
-        {
+        let mut max: f32 = *f.offset(i);
+        let mut oc: isize = *(*p).octave.offset(i);
+        while (i + 1) < n && *(*p).octave.offset(i + 1) == oc {
             i += 1;
-            if *f.offset(i as isize) > max {
-                max = *f.offset(i as isize)
+            if *f.offset(i) > max {
+                max = *f.offset(i)
             }
         }
-        if max + 6.0f32 > *flr.offset(i as isize) {
+        if max + 6.0 > *flr.offset(i) {
             oc = oc >> (*p).shiftoc;
-            if oc >= 17 as libc::c_int as libc::c_long {
-                oc = (17 as libc::c_int - 1 as libc::c_int) as libc::c_long
+            if oc >= 17 {
+                oc = (17i32 - 1) as isize
             }
-            if oc < 0 as libc::c_int as libc::c_long {
-                oc = 0 as libc::c_int as libc::c_long
+            if oc < 0 {
+                oc = 0
             }
             seed_curve(
                 seed,
-                *curves.offset(oc as isize),
+                *curves.offset(oc),
                 max,
-                (*(*p).octave.offset(i as isize) - (*p).firstoc) as libc::c_int,
+                (*(*p).octave.offset(i) - (*p).firstoc) as i32,
                 (*p).total_octave_lines,
                 (*p).eighth_octave_lines,
                 dBoffset,
@@ -7062,64 +1800,46 @@ unsafe extern "C" fn seed_loop(
     }
 }
 
-unsafe extern "C" fn seed_chase(
-    mut seeds: *mut libc::c_float,
-    mut linesper: libc::c_int,
-    mut n: libc::c_long,
-) {
-    let mut fresh4 = ::std::vec::from_elem(
-        0,
-        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_long>() as libc::c_ulong)
-            as usize,
-    );
-    let mut posstack: *mut libc::c_long = fresh4.as_mut_ptr() as *mut libc::c_long;
-    let mut fresh5 = ::std::vec::from_elem(
-        0,
-        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
-            as usize,
-    );
-    let mut ampstack: *mut libc::c_float = fresh5.as_mut_ptr() as *mut libc::c_float;
-    let mut stack: libc::c_long = 0 as libc::c_int as libc::c_long;
-    let mut pos: libc::c_long = 0 as libc::c_int as libc::c_long;
-    let mut i: libc::c_long = 0;
-    i = 0 as libc::c_int as libc::c_long;
+unsafe extern "C" fn seed_chase(mut seeds: *mut f32, mut linesper: i32, mut n: isize) {
+    let mut fresh4 =
+        ::std::vec::from_elem(0, (n as usize).wrapping_mul(::std::mem::size_of::<isize>()));
+    let mut posstack: *mut isize = fresh4.as_mut_ptr() as *mut isize;
+    let mut fresh5 =
+        ::std::vec::from_elem(0, (n as usize).wrapping_mul(::std::mem::size_of::<f32>()));
+    let mut ampstack: *mut f32 = fresh5.as_mut_ptr() as *mut f32;
+    let mut stack: isize = 0;
+    let mut pos: isize = 0;
+    let mut i: isize = 0;
+    i = 0;
     while i < n {
-        if stack < 2 as libc::c_int as libc::c_long {
-            *posstack.offset(stack as isize) = i;
+        if stack < 2 {
+            *posstack.offset(stack) = i;
             let fresh6 = stack;
             stack = stack + 1;
-            *ampstack.offset(fresh6 as isize) = *seeds.offset(i as isize)
+            *ampstack.offset(fresh6) = *seeds.offset(i)
         } else {
             loop {
-                if *seeds.offset(i as isize)
-                    < *ampstack.offset((stack - 1 as libc::c_int as libc::c_long) as isize)
-                {
-                    *posstack.offset(stack as isize) = i;
+                if *seeds.offset(i) < *ampstack.offset(stack - 1) {
+                    *posstack.offset(stack) = i;
                     let fresh7 = stack;
                     stack = stack + 1;
-                    *ampstack.offset(fresh7 as isize) = *seeds.offset(i as isize);
+                    *ampstack.offset(fresh7) = *seeds.offset(i);
                     break;
                 } else {
-                    if i < *posstack.offset((stack - 1 as libc::c_int as libc::c_long) as isize)
-                        + linesper as libc::c_long
-                    {
-                        if stack > 1 as libc::c_int as libc::c_long
-                            && *ampstack.offset((stack - 1 as libc::c_int as libc::c_long) as isize)
-                                <= *ampstack
-                                    .offset((stack - 2 as libc::c_int as libc::c_long) as isize)
-                            && i < *posstack
-                                .offset((stack - 2 as libc::c_int as libc::c_long) as isize)
-                                + linesper as libc::c_long
+                    if i < *posstack.offset(stack - 1) + linesper as isize {
+                        if stack > 1
+                            && *ampstack.offset(stack - 1) <= *ampstack.offset(stack - 2)
+                            && i < *posstack.offset(stack - 2) + linesper as isize
                         {
                             /* we completely overlap, making stack-1 irrelevant.  pop it */
                             stack -= 1;
                             continue;
                         }
                     }
-                    *posstack.offset(stack as isize) = i;
+                    *posstack.offset(stack) = i;
                     let fresh8 = stack;
                     stack = stack + 1;
-                    *ampstack.offset(fresh8 as isize) = *seeds.offset(i as isize);
+                    *ampstack.offset(fresh8) = *seeds.offset(i);
                     break;
                 }
             }
@@ -7128,18 +1848,13 @@ unsafe extern "C" fn seed_chase(
     }
     /* the stack now contains only the positions that are relevant. Scan
     'em straight through */
-    i = 0 as libc::c_int as libc::c_long;
+    i = 0;
     while i < stack {
-        let mut endpos: libc::c_long = 0;
-        if i < stack - 1 as libc::c_int as libc::c_long
-            && *ampstack.offset((i + 1 as libc::c_int as libc::c_long) as isize)
-                > *ampstack.offset(i as isize)
-        {
-            endpos = *posstack.offset((i + 1 as libc::c_int as libc::c_long) as isize)
+        let mut endpos: isize = 0;
+        if i < stack - 1 && *ampstack.offset(i + 1) > *ampstack.offset(i) {
+            endpos = *posstack.offset(i + 1)
         } else {
-            endpos = *posstack.offset(i as isize)
-                + linesper as libc::c_long
-                + 1 as libc::c_int as libc::c_long
+            endpos = *posstack.offset(i) + linesper as isize + 1
             /* +1 is important, else bin 0 is
             discarded in short frames */
         }
@@ -7147,7 +1862,7 @@ unsafe extern "C" fn seed_chase(
             endpos = n
         }
         while pos < endpos {
-            *seeds.offset(pos as isize) = *ampstack.offset(i as isize);
+            *seeds.offset(pos) = *ampstack.offset(i);
             pos += 1
         }
         i += 1
@@ -7159,131 +1874,107 @@ unsafe extern "C" fn seed_chase(
 
 unsafe extern "C" fn max_seeds(
     mut p: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
-    mut seed: *mut libc::c_float,
-    mut flr: *mut libc::c_float,
+    mut seed: *mut f32,
+    mut flr: *mut f32,
 ) {
-    let mut n: libc::c_long = (*p).total_octave_lines as libc::c_long; /* for masking */
-    let mut linesper: libc::c_int = (*p).eighth_octave_lines;
-    let mut linpos: libc::c_long = 0 as libc::c_int as libc::c_long;
-    let mut pos: libc::c_long = 0;
+    let mut n: isize = (*p).total_octave_lines as isize; /* for masking */
+    let mut linesper: i32 = (*p).eighth_octave_lines;
+    let mut linpos: isize = 0;
+    let mut pos: isize = 0;
     seed_chase(seed, linesper, n);
-    pos = *(*p).octave.offset(0 as libc::c_int as isize)
-        - (*p).firstoc
-        - (linesper >> 1 as libc::c_int) as libc::c_long;
-    while (linpos + 1 as libc::c_int as libc::c_long) < (*p).n as libc::c_long {
-        let mut minV: libc::c_float = *seed.offset(pos as isize);
-        let mut end: libc::c_long = (*(*p).octave.offset(linpos as isize)
-            + *(*p)
-                .octave
-                .offset((linpos + 1 as libc::c_int as libc::c_long) as isize)
-            >> 1 as libc::c_int)
-            - (*p).firstoc;
+    pos = *(*p).octave.offset(0) - (*p).firstoc - (linesper >> 1) as isize;
+    while (linpos + 1) < (*p).n as isize {
+        let mut minV: f32 = *seed.offset(pos);
+        let mut end: isize =
+            (*(*p).octave.offset(linpos) + *(*p).octave.offset(linpos + 1) >> 1) - (*p).firstoc;
         if minV > (*(*p).vi).tone_abs_limit {
             minV = (*(*p).vi).tone_abs_limit
         }
-        while pos + 1 as libc::c_int as libc::c_long <= end {
+        while pos + 1 <= end {
             pos += 1;
-            if *seed.offset(pos as isize) > -9999.0f32 && *seed.offset(pos as isize) < minV
-                || minV == -9999.0f32
-            {
-                minV = *seed.offset(pos as isize)
+            if *seed.offset(pos) > -9999.0f32 && *seed.offset(pos) < minV || minV == -9999.0 {
+                minV = *seed.offset(pos)
             }
         }
         end = pos + (*p).firstoc;
-        while linpos < (*p).n as libc::c_long && *(*p).octave.offset(linpos as isize) <= end {
-            if *flr.offset(linpos as isize) < minV {
-                *flr.offset(linpos as isize) = minV
+        while linpos < (*p).n as isize && *(*p).octave.offset(linpos) <= end {
+            if *flr.offset(linpos) < minV {
+                *flr.offset(linpos) = minV
             }
             linpos += 1
         }
     }
-    let mut minV_0: libc::c_float =
-        *seed.offset(((*p).total_octave_lines - 1 as libc::c_int) as isize);
-    while linpos < (*p).n as libc::c_long {
-        if *flr.offset(linpos as isize) < minV_0 {
-            *flr.offset(linpos as isize) = minV_0
+    let mut minV_0: f32 = *seed.offset(((*p).total_octave_lines - 1i32) as isize);
+    while linpos < (*p).n as isize {
+        if *flr.offset(linpos) < minV_0 {
+            *flr.offset(linpos) = minV_0
         }
         linpos += 1
     }
 }
 
 unsafe extern "C" fn bark_noise_hybridmp(
-    mut n: libc::c_int,
-    mut b: *const libc::c_long,
-    mut f: *const libc::c_float,
-    mut noise: *mut libc::c_float,
-    offset: libc::c_float,
-    fixed: libc::c_int,
+    mut n: i32,
+    mut b: *const isize,
+    mut f: *const f32,
+    mut noise: *mut f32,
+    offset: f32,
+    fixed: i32,
 ) {
-    let mut fresh9 = ::std::vec::from_elem(
-        0,
-        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
-            as usize,
-    );
-    let mut N: *mut libc::c_float = fresh9.as_mut_ptr() as *mut libc::c_float;
-    let mut fresh10 = ::std::vec::from_elem(
-        0,
-        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
-            as usize,
-    );
-    let mut X: *mut libc::c_float = fresh10.as_mut_ptr() as *mut libc::c_float;
-    let mut fresh11 = ::std::vec::from_elem(
-        0,
-        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
-            as usize,
-    );
-    let mut XX: *mut libc::c_float = fresh11.as_mut_ptr() as *mut libc::c_float;
-    let mut fresh12 = ::std::vec::from_elem(
-        0,
-        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
-            as usize,
-    );
-    let mut Y: *mut libc::c_float = fresh12.as_mut_ptr() as *mut libc::c_float;
-    let mut fresh13 = ::std::vec::from_elem(
-        0,
-        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
-            as usize,
-    );
-    let mut XY: *mut libc::c_float = fresh13.as_mut_ptr() as *mut libc::c_float;
-    let mut tN: libc::c_float = 0.;
-    let mut tX: libc::c_float = 0.;
-    let mut tXX: libc::c_float = 0.;
-    let mut tY: libc::c_float = 0.;
-    let mut tXY: libc::c_float = 0.;
-    let mut i: libc::c_int = 0;
-    let mut lo: libc::c_int = 0;
-    let mut hi: libc::c_int = 0;
-    let mut R: libc::c_float = 0.0f32;
-    let mut A: libc::c_float = 0.0f32;
-    let mut B: libc::c_float = 0.0f32;
-    let mut D: libc::c_float = 1.0f32;
-    let mut w: libc::c_float = 0.;
-    let mut x: libc::c_float = 0.;
-    let mut y: libc::c_float = 0.;
-    tXY = 0.0f32;
+    let mut fresh9 =
+        ::std::vec::from_elem(0, (n as usize).wrapping_mul(::std::mem::size_of::<f32>()));
+    let mut N: *mut f32 = fresh9.as_mut_ptr() as *mut f32;
+    let mut fresh10 =
+        ::std::vec::from_elem(0, (n as usize).wrapping_mul(::std::mem::size_of::<f32>()));
+    let mut X: *mut f32 = fresh10.as_mut_ptr() as *mut f32;
+    let mut fresh11 =
+        ::std::vec::from_elem(0, (n as usize).wrapping_mul(::std::mem::size_of::<f32>()));
+    let mut XX: *mut f32 = fresh11.as_mut_ptr() as *mut f32;
+    let mut fresh12 =
+        ::std::vec::from_elem(0, (n as usize).wrapping_mul(::std::mem::size_of::<f32>()));
+    let mut Y: *mut f32 = fresh12.as_mut_ptr() as *mut f32;
+    let mut fresh13 =
+        ::std::vec::from_elem(0, (n as usize).wrapping_mul(::std::mem::size_of::<f32>()));
+    let mut XY: *mut f32 = fresh13.as_mut_ptr() as *mut f32;
+    let mut tN: f32 = 0.;
+    let mut tX: f32 = 0.;
+    let mut tXX: f32 = 0.;
+    let mut tY: f32 = 0.;
+    let mut tXY: f32 = 0.;
+    let mut i: i32 = 0;
+    let mut lo: i32 = 0;
+    let mut hi: i32 = 0;
+    let mut R: f32 = 0.0;
+    let mut A: f32 = 0.0;
+    let mut B: f32 = 0.0;
+    let mut D: f32 = 1.0;
+    let mut w: f32 = 0.;
+    let mut x: f32 = 0.;
+    let mut y: f32 = 0.;
+    tXY = 0.0;
     tY = tXY;
     tXX = tY;
     tX = tXX;
     tN = tX;
-    y = *f.offset(0 as libc::c_int as isize) + offset;
-    if y < 1.0f32 {
-        y = 1.0f32
+    y = *f.offset(0) + offset;
+    if y < 1.0 {
+        y = 1.0
     }
-    w = ((y * y) as libc::c_double * 0.5f64) as libc::c_float;
+    w = ((y * y) as f64 * 0.5) as f32;
     tN += w;
     tX += w;
     tY += w * y;
-    *N.offset(0 as libc::c_int as isize) = tN;
-    *X.offset(0 as libc::c_int as isize) = tX;
-    *XX.offset(0 as libc::c_int as isize) = tXX;
-    *Y.offset(0 as libc::c_int as isize) = tY;
-    *XY.offset(0 as libc::c_int as isize) = tXY;
-    i = 1 as libc::c_int;
-    x = 1.0f32;
+    *N.offset(0) = tN;
+    *X.offset(0) = tX;
+    *XX.offset(0) = tXX;
+    *Y.offset(0) = tY;
+    *XY.offset(0) = tXY;
+    i = 1;
+    x = 1.0;
     while i < n {
         y = *f.offset(i as isize) + offset;
-        if y < 1.0f32 {
-            y = 1.0f32
+        if y < 1.0 {
+            y = 1.0
         }
         w = y * y;
         tN += w;
@@ -7297,16 +1988,16 @@ unsafe extern "C" fn bark_noise_hybridmp(
         *Y.offset(i as isize) = tY;
         *XY.offset(i as isize) = tXY;
         i += 1;
-        x += 1.0f32
+        x += 1.0
     }
-    i = 0 as libc::c_int;
-    x = 0.0f32;
+    i = 0;
+    x = 0.0;
     loop {
-        lo = (*b.offset(i as isize) >> 16 as libc::c_int) as libc::c_int;
-        if lo >= 0 as libc::c_int {
+        lo = (*b.offset(i as isize) >> 16) as i32;
+        if lo >= 0 {
             break;
         }
-        hi = (*b.offset(i as isize) & 0xffff as libc::c_int as libc::c_long) as libc::c_int;
+        hi = (*b.offset(i as isize) & 0xffffi32 as isize) as i32;
         tN = *N.offset(hi as isize) + *N.offset(-lo as isize);
         tX = *X.offset(hi as isize) - *X.offset(-lo as isize);
         tXX = *XX.offset(hi as isize) + *XX.offset(-lo as isize);
@@ -7316,16 +2007,16 @@ unsafe extern "C" fn bark_noise_hybridmp(
         B = tN * tXY - tX * tY;
         D = tN * tXX - tX * tX;
         R = (A + x * B) / D;
-        if R < 0.0f32 {
-            R = 0.0f32
+        if R < 0.0 {
+            R = 0.0
         }
         *noise.offset(i as isize) = R - offset;
         i += 1;
-        x += 1.0f32
+        x += 1.0
     }
     loop {
-        lo = (*b.offset(i as isize) >> 16 as libc::c_int) as libc::c_int;
-        hi = (*b.offset(i as isize) & 0xffff as libc::c_int as libc::c_long) as libc::c_int;
+        lo = (*b.offset(i as isize) >> 16) as i32;
+        hi = (*b.offset(i as isize) & 0xffffi32 as isize) as i32;
         if hi >= n {
             break;
         }
@@ -7338,31 +2029,31 @@ unsafe extern "C" fn bark_noise_hybridmp(
         B = tN * tXY - tX * tY;
         D = tN * tXX - tX * tX;
         R = (A + x * B) / D;
-        if R < 0.0f32 {
-            R = 0.0f32
+        if R < 0.0 {
+            R = 0.0
         }
         *noise.offset(i as isize) = R - offset;
         i += 1;
-        x += 1.0f32
+        x += 1.0
     }
     while i < n {
         R = (A + x * B) / D;
-        if R < 0.0f32 {
-            R = 0.0f32
+        if R < 0.0 {
+            R = 0.0
         }
         *noise.offset(i as isize) = R - offset;
         i += 1;
-        x += 1.0f32
+        x += 1.0
     }
-    if fixed <= 0 as libc::c_int {
+    if fixed <= 0 {
         return;
     }
-    i = 0 as libc::c_int;
-    x = 0.0f32;
+    i = 0;
+    x = 0.0;
     loop {
-        hi = i + fixed / 2 as libc::c_int;
+        hi = i + fixed / 2;
         lo = hi - fixed;
-        if lo >= 0 as libc::c_int {
+        if lo >= 0 {
             break;
         }
         tN = *N.offset(hi as isize) + *N.offset(-lo as isize);
@@ -7378,10 +2069,10 @@ unsafe extern "C" fn bark_noise_hybridmp(
             *noise.offset(i as isize) = R - offset
         }
         i += 1;
-        x += 1.0f32
+        x += 1.0
     }
     loop {
-        hi = i + fixed / 2 as libc::c_int;
+        hi = i + fixed / 2;
         lo = hi - fixed;
         if hi >= n {
             break;
@@ -7399,7 +2090,7 @@ unsafe extern "C" fn bark_noise_hybridmp(
             *noise.offset(i as isize) = R - offset
         }
         i += 1;
-        x += 1.0f32
+        x += 1.0
     }
     while i < n {
         R = (A + x * B) / D;
@@ -7407,33 +2098,23 @@ unsafe extern "C" fn bark_noise_hybridmp(
             *noise.offset(i as isize) = R - offset
         }
         i += 1;
-        x += 1.0f32
+        x += 1.0
     }
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn _vp_noisemask(
     mut p: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
-    mut logmdct: *mut libc::c_float,
-    mut logmask: *mut libc::c_float,
+    mut logmdct: *mut f32,
+    mut logmask: *mut f32,
 ) {
-    let mut i: libc::c_int = 0;
-    let mut n: libc::c_int = (*p).n;
-    let mut fresh14 = ::std::vec::from_elem(
-        0,
-        (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
-            as usize,
-    );
-    let mut work: *mut libc::c_float = fresh14.as_mut_ptr() as *mut libc::c_float;
-    bark_noise_hybridmp(
-        n,
-        (*p).bark,
-        logmdct,
-        logmask,
-        140.0f64 as libc::c_float,
-        -(1 as libc::c_int),
-    );
-    i = 0 as libc::c_int;
+    let mut i: i32 = 0;
+    let mut n: i32 = (*p).n;
+    let mut fresh14 =
+        ::std::vec::from_elem(0, (n as usize).wrapping_mul(::std::mem::size_of::<f32>()));
+    let mut work: *mut f32 = fresh14.as_mut_ptr() as *mut f32;
+    bark_noise_hybridmp(n, (*p).bark, logmdct, logmask, 140f32, -(1));
+    i = 0;
     while i < n {
         *work.offset(i as isize) = *logmdct.offset(i as isize) - *logmask.offset(i as isize);
         i += 1
@@ -7443,23 +2124,22 @@ pub unsafe extern "C" fn _vp_noisemask(
         (*p).bark,
         work,
         logmask,
-        0.0f64 as libc::c_float,
+        0f32,
         (*(*p).vi).noisewindowfixed,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < n {
         *work.offset(i as isize) = *logmdct.offset(i as isize) - *work.offset(i as isize);
         i += 1
     }
-    i = 0 as libc::c_int;
+    i = 0;
     while i < n {
-        let mut dB: libc::c_int =
-            (*logmask.offset(i as isize) as libc::c_double + 0.5f64) as libc::c_int;
-        if dB >= 40 as libc::c_int {
-            dB = 40 as libc::c_int - 1 as libc::c_int
+        let mut dB: i32 = (*logmask.offset(i as isize) as f64 + 0.5) as i32;
+        if dB >= 40 {
+            dB = 40 - 1
         }
-        if dB < 0 as libc::c_int {
-            dB = 0 as libc::c_int
+        if dB < 0 {
+            dB = 0
         }
         *logmask.offset(i as isize) =
             *work.offset(i as isize) + (*(*p).vi).noisecompand[dB as usize];
@@ -7470,21 +2150,20 @@ pub unsafe extern "C" fn _vp_noisemask(
 
 pub unsafe extern "C" fn _vp_tonemask(
     mut p: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
-    mut logfft: *mut libc::c_float,
-    mut logmask: *mut libc::c_float,
-    mut global_specmax: libc::c_float,
-    mut local_specmax: libc::c_float,
+    mut logfft: *mut f32,
+    mut logmask: *mut f32,
+    mut global_specmax: f32,
+    mut local_specmax: f32,
 ) {
-    let mut i: libc::c_int = 0;
-    let mut n: libc::c_int = (*p).n;
+    let mut i: i32 = 0;
+    let mut n: i32 = (*p).n;
     let mut fresh15 = ::std::vec::from_elem(
         0,
-        (::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
-            .wrapping_mul((*p).total_octave_lines as libc::c_ulong) as usize,
+        (::std::mem::size_of::<f32>()).wrapping_mul((*p).total_octave_lines as usize),
     );
-    let mut seed: *mut libc::c_float = fresh15.as_mut_ptr() as *mut libc::c_float;
-    let mut att: libc::c_float = local_specmax + (*(*p).vi).ath_adjatt;
-    i = 0 as libc::c_int;
+    let mut seed: *mut f32 = fresh15.as_mut_ptr() as *mut f32;
+    let mut att: f32 = local_specmax + (*(*p).vi).ath_adjatt;
+    i = 0;
     while i < (*p).total_octave_lines {
         *seed.offset(i as isize) = -9999.0f32;
         i += 1
@@ -7494,7 +2173,7 @@ pub unsafe extern "C" fn _vp_tonemask(
     if att < (*(*p).vi).ath_maxatt {
         att = (*(*p).vi).ath_maxatt
     }
-    i = 0 as libc::c_int;
+    i = 0;
     while i < n {
         *logmask.offset(i as isize) = *(*p).ath.offset(i as isize) + att;
         i += 1
@@ -7502,7 +2181,7 @@ pub unsafe extern "C" fn _vp_tonemask(
     /* tone masking */
     seed_loop(
         p,
-        (*p).tonecurves as *mut *mut *const libc::c_float,
+        (*p).tonecurves as *mut *mut *const f32,
         logfft,
         logmask,
         seed,
@@ -7514,23 +2193,23 @@ pub unsafe extern "C" fn _vp_tonemask(
 
 pub unsafe extern "C" fn _vp_offset_and_mix(
     mut p: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
-    mut noise: *mut libc::c_float,
-    mut tone: *mut libc::c_float,
-    mut offset_select: libc::c_int,
-    mut logmask: *mut libc::c_float,
-    mut mdct: *mut libc::c_float,
-    mut logmdct: *mut libc::c_float,
+    mut noise: *mut f32,
+    mut tone: *mut f32,
+    mut offset_select: i32,
+    mut logmask: *mut f32,
+    mut mdct: *mut f32,
+    mut logmdct: *mut f32,
 ) {
-    let mut i: libc::c_int = 0;
-    let mut n: libc::c_int = (*p).n;
-    let mut de: libc::c_float = 0.;
-    let mut coeffi: libc::c_float = 0.;
-    let mut cx: libc::c_float = 0.;
-    let mut toneatt: libc::c_float = (*(*p).vi).tone_masteratt[offset_select as usize];
+    let mut i: i32 = 0;
+    let mut n: i32 = (*p).n;
+    let mut de: f32 = 0.;
+    let mut coeffi: f32 = 0.;
+    let mut cx: f32 = 0.;
+    let mut toneatt: f32 = (*(*p).vi).tone_masteratt[offset_select as usize];
     cx = (*p).m_val;
-    i = 0 as libc::c_int;
+    i = 0;
     while i < n {
-        let mut val: libc::c_float = *noise.offset(i as isize)
+        let mut val: f32 = *noise.offset(i as isize)
             + *(*(*p).noiseoffset.offset(offset_select as isize)).offset(i as isize);
         if val > (*(*p).vi).noisemaxsupp {
             val = (*(*p).vi).noisemaxsupp
@@ -7548,25 +2227,23 @@ pub unsafe extern "C" fn _vp_offset_and_mix(
             However, this code is not perfect and all noise problems cannot be solved.
             by Aoyumi @ 2004/04/18
         */
-        if offset_select == 1 as libc::c_int {
-            coeffi = -17.2f64 as libc::c_float; /* coeffi is a -17.2dB threshold */
+        if offset_select == 1 {
+            coeffi = -17.2; /* coeffi is a -17.2dB threshold */
             val = val - *logmdct.offset(i as isize); /* val == mdct line value relative to floor in dB */
             if val > coeffi {
                 /* mdct value is > -17.2 dB below floor */
-                de = (1.0f64 - (val - coeffi) as libc::c_double * 0.005f64 * cx as libc::c_double)
-                    as libc::c_float;
+                de = (1.0 - (val - coeffi) as f64 * 0.005 * cx as f64) as f32;
                 /* pro-rated attenuation:
                 -0.00 dB boost if mdct value is -17.2dB (relative to floor)
                 -0.77 dB boost if mdct value is 0dB (relative to floor)
                 -1.64 dB boost if mdct value is +17.2dB (relative to floor)
                 etc... */
-                if de < 0 as libc::c_int as libc::c_float {
-                    de = 0.0001f64 as libc::c_float
+                if de < 0f32 {
+                    de = 0.0001
                 }
             } else {
                 /* mdct value is <= -17.2 dB below floor */
-                de = (1.0f64 - (val - coeffi) as libc::c_double * 0.0003f64 * cx as libc::c_double)
-                    as libc::c_float
+                de = (1.0 - (val - coeffi) as f64 * 0.0003 * cx as f64) as f32
             }
             /* pro-rated attenuation:
             +0.00 dB atten if mdct value is -17.2dB (relative to floor)
@@ -7580,311 +2257,309 @@ pub unsafe extern "C" fn _vp_offset_and_mix(
 #[no_mangle]
 
 pub unsafe extern "C" fn _vp_ampmax_decay(
-    mut amp: libc::c_float,
+    mut amp: f32,
     mut vd: *mut crate::codec_h::vorbis_dsp_state,
-) -> libc::c_float {
+) -> f32 {
     let mut vi: *mut crate::codec_h::vorbis_info = (*vd).vi;
     let mut ci: *mut crate::codec_internal_h::codec_setup_info =
         (*vi).codec_setup as *mut crate::codec_internal_h::codec_setup_info;
     let mut gi: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global =
         &mut (*ci).psy_g_param;
-    let mut n: libc::c_int =
-        ((*ci).blocksizes[(*vd).W as usize] / 2 as libc::c_int as libc::c_long) as libc::c_int;
-    let mut secs: libc::c_float = n as libc::c_float / (*vi).rate as libc::c_float;
+    let mut n: i32 = ((*ci).blocksizes[(*vd).W as usize] / 2) as i32;
+    let mut secs: f32 = n as f32 / (*vi).rate as f32;
     amp += secs * (*gi).ampmax_att_per_sec;
-    if amp < -(9999 as libc::c_int) as libc::c_float {
-        amp = -(9999 as libc::c_int) as libc::c_float
+    if amp < -9999f32 {
+        amp = -9999f32
     }
     return amp;
 }
 
-static mut FLOOR1_fromdB_LOOKUP: [libc::c_float; 256] = [
-    1.0649863e-07f32,
-    1.1341951e-07f32,
-    1.2079015e-07f32,
-    1.2863978e-07f32,
-    1.3699951e-07f32,
-    1.4590251e-07f32,
-    1.5538408e-07f32,
-    1.6548181e-07f32,
-    1.7623575e-07f32,
-    1.8768855e-07f32,
-    1.9988561e-07f32,
-    2.128753e-07f32,
-    2.2670913e-07f32,
-    2.4144197e-07f32,
-    2.5713223e-07f32,
-    2.7384213e-07f32,
-    2.9163793e-07f32,
-    3.1059021e-07f32,
-    3.3077411e-07f32,
-    3.5226968e-07f32,
-    3.7516214e-07f32,
-    3.9954229e-07f32,
-    4.2550680e-07f32,
-    4.5315863e-07f32,
-    4.8260743e-07f32,
-    5.1396998e-07f32,
-    5.4737065e-07f32,
-    5.8294187e-07f32,
-    6.2082472e-07f32,
-    6.6116941e-07f32,
-    7.0413592e-07f32,
-    7.4989464e-07f32,
-    7.9862701e-07f32,
-    8.5052630e-07f32,
-    9.0579828e-07f32,
-    9.6466216e-07f32,
-    1.0273513e-06f32,
-    1.0941144e-06f32,
-    1.1652161e-06f32,
-    1.2409384e-06f32,
-    1.3215816e-06f32,
-    1.4074654e-06f32,
-    1.4989305e-06f32,
-    1.5963394e-06f32,
-    1.7000785e-06f32,
-    1.8105592e-06f32,
-    1.9282195e-06f32,
-    2.0535261e-06f32,
-    2.1869758e-06f32,
-    2.3290978e-06f32,
-    2.4804557e-06f32,
-    2.6416497e-06f32,
-    2.8133190e-06f32,
-    2.9961443e-06f32,
-    3.1908506e-06f32,
-    3.3982101e-06f32,
-    3.6190449e-06f32,
-    3.8542308e-06f32,
-    4.1047004e-06f32,
-    4.3714470e-06f32,
-    4.6555282e-06f32,
-    4.9580707e-06f32,
-    5.2802740e-06f32,
-    5.6234160e-06f32,
-    5.9888572e-06f32,
-    6.3780469e-06f32,
-    6.7925283e-06f32,
-    7.2339451e-06f32,
-    7.7040476e-06f32,
-    8.2047000e-06f32,
-    8.7378876e-06f32,
-    9.3057248e-06f32,
-    9.9104632e-06f32,
-    1.0554501e-05f32,
-    1.1240392e-05f32,
-    1.1970856e-05f32,
-    1.2748789e-05f32,
-    1.3577278e-05f32,
-    1.4459606e-05f32,
-    1.5399272e-05f32,
-    1.6400004e-05f32,
-    1.7465768e-05f32,
-    1.8600792e-05f32,
-    1.9809576e-05f32,
-    2.1096914e-05f32,
-    2.2467911e-05f32,
-    2.3928002e-05f32,
-    2.5482978e-05f32,
-    2.7139006e-05f32,
-    2.8902651e-05f32,
-    3.0780908e-05f32,
-    3.2781225e-05f32,
-    3.4911534e-05f32,
-    3.7180282e-05f32,
-    3.9596466e-05f32,
-    4.2169667e-05f32,
-    4.4910090e-05f32,
-    4.7828601e-05f32,
-    5.0936773e-05f32,
-    5.4246931e-05f32,
-    5.7772202e-05f32,
-    6.1526565e-05f32,
-    6.5524908e-05f32,
-    6.9783085e-05f32,
-    7.4317983e-05f32,
-    7.9147585e-05f32,
-    8.4291040e-05f32,
-    8.9768747e-05f32,
-    9.5602426e-05f32,
-    0.00010181521f32,
-    0.00010843174f32,
-    0.00011547824f32,
-    0.00012298267f32,
-    0.00013097477f32,
-    0.00013948625f32,
-    0.00014855085f32,
-    0.00015820453f32,
-    0.00016848555f32,
-    0.00017943469f32,
-    0.00019109536f32,
-    0.00020351382f32,
-    0.00021673929f32,
-    0.00023082423f32,
-    0.00024582449f32,
-    0.00026179955f32,
-    0.00027881276f32,
-    0.00029693158f32,
-    0.00031622787f32,
-    0.00033677814f32,
-    0.00035866388f32,
-    0.00038197188f32,
-    0.00040679456f32,
-    0.00043323036f32,
-    0.00046138411f32,
-    0.00049136745f32,
-    0.00052329927f32,
-    0.00055730621f32,
-    0.00059352311f32,
-    0.00063209358f32,
-    0.00067317058f32,
-    0.00071691700f32,
-    0.00076350630f32,
-    0.00081312324f32,
-    0.00086596457f32,
-    0.00092223983f32,
-    0.00098217216f32,
-    0.0010459992f32,
-    0.0011139742f32,
-    0.0011863665f32,
-    0.0012634633f32,
-    0.0013455702f32,
-    0.0014330129f32,
-    0.0015261382f32,
-    0.0016253153f32,
-    0.0017309374f32,
-    0.0018434235f32,
-    0.0019632195f32,
-    0.0020908006f32,
-    0.0022266726f32,
-    0.0023713743f32,
-    0.0025254795f32,
-    0.0026895994f32,
-    0.0028643847f32,
-    0.0030505286f32,
-    0.0032487691f32,
-    0.0034598925f32,
-    0.0036847358f32,
-    0.0039241906f32,
-    0.0041792066f32,
-    0.0044507950f32,
-    0.0047400328f32,
-    0.0050480668f32,
-    0.0053761186f32,
-    0.0057254891f32,
-    0.0060975636f32,
-    0.0064938176f32,
-    0.0069158225f32,
-    0.0073652516f32,
-    0.0078438871f32,
-    0.0083536271f32,
-    0.0088964928f32,
-    0.009474637f32,
-    0.010090352f32,
-    0.010746080f32,
-    0.011444421f32,
-    0.012188144f32,
-    0.012980198f32,
-    0.013823725f32,
-    0.014722068f32,
-    0.015678791f32,
-    0.016697687f32,
-    0.017782797f32,
-    0.018938423f32,
-    0.020169149f32,
-    0.021479854f32,
-    0.022875735f32,
-    0.024362330f32,
-    0.025945531f32,
-    0.027631618f32,
-    0.029427276f32,
-    0.031339626f32,
-    0.033376252f32,
-    0.035545228f32,
-    0.037855157f32,
-    0.040315199f32,
-    0.042935108f32,
-    0.045725273f32,
-    0.048696758f32,
-    0.051861348f32,
-    0.055231591f32,
-    0.058820850f32,
-    0.062643361f32,
-    0.066714279f32,
-    0.071049749f32,
-    0.075666962f32,
-    0.080584227f32,
-    0.085821044f32,
-    0.091398179f32,
-    0.097337747f32,
-    0.10366330f32,
-    0.11039993f32,
-    0.11757434f32,
-    0.12521498f32,
-    0.13335215f32,
-    0.14201813f32,
-    0.15124727f32,
-    0.16107617f32,
-    0.17154380f32,
-    0.18269168f32,
-    0.19456402f32,
-    0.20720788f32,
-    0.22067342f32,
-    0.23501402f32,
-    0.25028656f32,
-    0.26655159f32,
-    0.28387361f32,
-    0.30232132f32,
-    0.32196786f32,
-    0.34289114f32,
-    0.36517414f32,
-    0.38890521f32,
-    0.41417847f32,
-    0.44109412f32,
-    0.46975890f32,
-    0.50028648f32,
-    0.53279791f32,
-    0.56742212f32,
-    0.60429640f32,
-    0.64356699f32,
-    0.68538959f32,
-    0.72993007f32,
-    0.77736504f32,
-    0.82788260f32,
-    0.88168307f32,
-    0.9389798f32,
-    1.0f32,
+static mut FLOOR1_fromdB_LOOKUP: [f32; 256] = [
+    1.0649863e-07,
+    1.1341951e-07,
+    1.2079015e-07,
+    1.2863978e-07,
+    1.3699951e-07,
+    1.4590251e-07,
+    1.5538408e-07,
+    1.6548181e-07,
+    1.7623575e-07,
+    1.8768855e-07,
+    1.9988561e-07,
+    2.128753e-07,
+    2.2670913e-07,
+    2.4144197e-07,
+    2.5713223e-07,
+    2.7384213e-07,
+    2.9163793e-07,
+    3.1059021e-07,
+    3.3077411e-07,
+    3.5226968e-07,
+    3.7516214e-07,
+    3.9954229e-07,
+    4.2550680e-07,
+    4.5315863e-07,
+    4.8260743e-07,
+    5.1396998e-07,
+    5.4737065e-07,
+    5.8294187e-07,
+    6.2082472e-07,
+    6.6116941e-07,
+    7.0413592e-07,
+    7.4989464e-07,
+    7.9862701e-07,
+    8.5052630e-07,
+    9.0579828e-07,
+    9.6466216e-07,
+    1.0273513e-06,
+    1.0941144e-06,
+    1.1652161e-06,
+    1.2409384e-06,
+    1.3215816e-06,
+    1.4074654e-06,
+    1.4989305e-06,
+    1.5963394e-06,
+    1.7000785e-06,
+    1.8105592e-06,
+    1.9282195e-06,
+    2.0535261e-06,
+    2.1869758e-06,
+    2.3290978e-06,
+    2.4804557e-06,
+    2.6416497e-06,
+    2.8133190e-06,
+    2.9961443e-06,
+    3.1908506e-06,
+    3.3982101e-06,
+    3.6190449e-06,
+    3.8542308e-06,
+    4.1047004e-06,
+    4.3714470e-06,
+    4.6555282e-06,
+    4.9580707e-06,
+    5.2802740e-06,
+    5.6234160e-06,
+    5.9888572e-06,
+    6.3780469e-06,
+    6.7925283e-06,
+    7.2339451e-06,
+    7.7040476e-06,
+    8.2047000e-06,
+    8.7378876e-06,
+    9.3057248e-06,
+    9.9104632e-06,
+    1.0554501e-05,
+    1.1240392e-05,
+    1.1970856e-05,
+    1.2748789e-05,
+    1.3577278e-05,
+    1.4459606e-05,
+    1.5399272e-05,
+    1.6400004e-05,
+    1.7465768e-05,
+    1.8600792e-05,
+    1.9809576e-05,
+    2.1096914e-05,
+    2.2467911e-05,
+    2.3928002e-05,
+    2.5482978e-05,
+    2.7139006e-05,
+    2.8902651e-05,
+    3.0780908e-05,
+    3.2781225e-05,
+    3.4911534e-05,
+    3.7180282e-05,
+    3.9596466e-05,
+    4.2169667e-05,
+    4.4910090e-05,
+    4.7828601e-05,
+    5.0936773e-05,
+    5.4246931e-05,
+    5.7772202e-05,
+    6.1526565e-05,
+    6.5524908e-05,
+    6.9783085e-05,
+    7.4317983e-05,
+    7.9147585e-05,
+    8.4291040e-05,
+    8.9768747e-05,
+    9.5602426e-05,
+    0.00010181521,
+    0.00010843174,
+    0.00011547824,
+    0.00012298267,
+    0.00013097477,
+    0.00013948625,
+    0.00014855085,
+    0.00015820453,
+    0.00016848555,
+    0.00017943469,
+    0.00019109536,
+    0.00020351382,
+    0.00021673929,
+    0.00023082423,
+    0.00024582449,
+    0.00026179955,
+    0.00027881276,
+    0.00029693158,
+    0.00031622787,
+    0.00033677814,
+    0.00035866388,
+    0.00038197188,
+    0.00040679456,
+    0.00043323036,
+    0.00046138411,
+    0.00049136745,
+    0.00052329927,
+    0.00055730621,
+    0.00059352311,
+    0.00063209358,
+    0.00067317058,
+    0.00071691700,
+    0.00076350630,
+    0.00081312324,
+    0.00086596457,
+    0.00092223983,
+    0.00098217216,
+    0.0010459992,
+    0.0011139742,
+    0.0011863665,
+    0.0012634633,
+    0.0013455702,
+    0.0014330129,
+    0.0015261382,
+    0.0016253153,
+    0.0017309374,
+    0.0018434235,
+    0.0019632195,
+    0.0020908006,
+    0.0022266726,
+    0.0023713743,
+    0.0025254795,
+    0.0026895994,
+    0.0028643847,
+    0.0030505286,
+    0.0032487691,
+    0.0034598925,
+    0.0036847358,
+    0.0039241906,
+    0.0041792066,
+    0.0044507950,
+    0.0047400328,
+    0.0050480668,
+    0.0053761186,
+    0.0057254891,
+    0.0060975636,
+    0.0064938176,
+    0.0069158225,
+    0.0073652516,
+    0.0078438871,
+    0.0083536271,
+    0.0088964928,
+    0.009474637,
+    0.010090352,
+    0.010746080,
+    0.011444421,
+    0.012188144,
+    0.012980198,
+    0.013823725,
+    0.014722068,
+    0.015678791,
+    0.016697687,
+    0.017782797,
+    0.018938423,
+    0.020169149,
+    0.021479854,
+    0.022875735,
+    0.024362330,
+    0.025945531,
+    0.027631618,
+    0.029427276,
+    0.031339626,
+    0.033376252,
+    0.035545228,
+    0.037855157,
+    0.040315199,
+    0.042935108,
+    0.045725273,
+    0.048696758,
+    0.051861348,
+    0.055231591,
+    0.058820850,
+    0.062643361,
+    0.066714279,
+    0.071049749,
+    0.075666962,
+    0.080584227,
+    0.085821044,
+    0.091398179,
+    0.097337747,
+    0.10366330,
+    0.11039993,
+    0.11757434,
+    0.12521498,
+    0.13335215,
+    0.14201813,
+    0.15124727,
+    0.16107617,
+    0.17154380,
+    0.18269168,
+    0.19456402,
+    0.20720788,
+    0.22067342,
+    0.23501402,
+    0.25028656,
+    0.26655159,
+    0.28387361,
+    0.30232132,
+    0.32196786,
+    0.34289114,
+    0.36517414,
+    0.38890521,
+    0.41417847,
+    0.44109412,
+    0.46975890,
+    0.50028648,
+    0.53279791,
+    0.56742212,
+    0.60429640,
+    0.64356699,
+    0.68538959,
+    0.72993007,
+    0.77736504,
+    0.82788260,
+    0.88168307,
+    0.9389798,
+    1.0,
 ];
 /* this is for per-channel noise normalization */
 
-unsafe extern "C" fn apsort(mut a: *const libc::c_void, mut b: *const libc::c_void) -> libc::c_int {
-    let mut f1: libc::c_float = **(a as *mut *mut libc::c_float);
-    let mut f2: libc::c_float = **(b as *mut *mut libc::c_float);
-    return (f1 < f2) as libc::c_int - (f1 > f2) as libc::c_int;
+unsafe extern "C" fn apsort(mut a: *const libc::c_void, mut b: *const libc::c_void) -> i32 {
+    let mut f1: f32 = **(a as *mut *mut f32);
+    let mut f2: f32 = **(b as *mut *mut f32);
+    return (f1 < f2) as i32 - (f1 > f2) as i32;
 }
 
 unsafe extern "C" fn flag_lossless(
-    mut limit: libc::c_int,
-    mut prepoint: libc::c_float,
-    mut postpoint: libc::c_float,
-    mut mdct: *mut libc::c_float,
-    mut floor_0: *mut libc::c_float,
-    mut flag: *mut libc::c_int,
-    mut i: libc::c_int,
-    mut jn: libc::c_int,
+    mut limit: i32,
+    mut prepoint: f32,
+    mut postpoint: f32,
+    mut mdct: *mut f32,
+    mut floor_0: *mut f32,
+    mut flag: *mut i32,
+    mut i: i32,
+    mut jn: i32,
 ) {
-    let mut j: libc::c_int = 0;
-    j = 0 as libc::c_int;
+    let mut j: i32 = 0;
+    j = 0;
     while j < jn {
-        let mut point: libc::c_float = if j >= limit - i { postpoint } else { prepoint };
-        let mut r: libc::c_float = (crate::stdlib::fabs(*mdct.offset(j as isize) as libc::c_double)
-            / *floor_0.offset(j as isize) as libc::c_double)
-            as libc::c_float;
+        let mut point: f32 = if j >= limit - i { postpoint } else { prepoint };
+        let mut r: f32 = (crate::stdlib::fabs(*mdct.offset(j as isize) as f64)
+            / *floor_0.offset(j as isize) as f64) as f32;
         if r < point {
-            *flag.offset(j as isize) = 0 as libc::c_int
+            *flag.offset(j as isize) = 0
         } else {
-            *flag.offset(j as isize) = 1 as libc::c_int
+            *flag.offset(j as isize) = 1
         }
         j += 1
     }
@@ -7896,27 +2571,25 @@ values of the *r vector (for elements with flag unset).  On output,
 
 unsafe extern "C" fn noise_normalize(
     mut p: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
-    mut limit: libc::c_int,
-    mut r: *mut libc::c_float,
-    mut q: *mut libc::c_float,
-    mut f: *mut libc::c_float,
-    mut flags: *mut libc::c_int,
-    mut acc: libc::c_float,
-    mut i: libc::c_int,
-    mut n: libc::c_int,
-    mut out: *mut libc::c_int,
-) -> libc::c_float {
+    mut limit: i32,
+    mut r: *mut f32,
+    mut q: *mut f32,
+    mut f: *mut f32,
+    mut flags: *mut i32,
+    mut acc: f32,
+    mut i: i32,
+    mut n: i32,
+    mut out: *mut i32,
+) -> f32 {
     let mut vi: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy = (*p).vi;
     let mut fresh16 = ::std::vec::from_elem(
         0,
-        (n as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<*mut libc::c_float>() as libc::c_ulong)
-            as usize,
+        (n as usize).wrapping_mul(::std::mem::size_of::<*mut f32>()),
     );
-    let mut sort: *mut *mut libc::c_float = fresh16.as_mut_ptr() as *mut *mut libc::c_float;
-    let mut j: libc::c_int = 0;
-    let mut count: libc::c_int = 0 as libc::c_int;
-    let mut start: libc::c_int = if (*vi).normal_p != 0 {
+    let mut sort: *mut *mut f32 = fresh16.as_mut_ptr() as *mut *mut f32;
+    let mut j: i32 = 0;
+    let mut count: i32 = 0;
+    let mut start: i32 = if (*vi).normal_p != 0 {
         ((*vi).normal_start) - i
     } else {
         n
@@ -7928,19 +2601,18 @@ unsafe extern "C" fn noise_normalize(
     acc = 0.0f32;
     /* still responsible for populating *out where noise norm not in
     effect.  There's no need to [re]populate *q in these areas */
-    j = 0 as libc::c_int;
+    j = 0;
     while j < start {
         if flags.is_null() || *flags.offset(j as isize) == 0 {
             /* lossless coupling already quantized.
             Don't touch; requantizing based on
             energy would be incorrect. */
-            let mut ve: libc::c_float = *q.offset(j as isize) / *f.offset(j as isize);
-            if *r.offset(j as isize) < 0 as libc::c_int as libc::c_float {
+            let mut ve: f32 = *q.offset(j as isize) / *f.offset(j as isize);
+            if *r.offset(j as isize) < 0f32 {
                 *out.offset(j as isize) =
-                    -crate::stdlib::rint(crate::stdlib::sqrt(ve as libc::c_double)) as libc::c_int
+                    -crate::stdlib::rint(crate::stdlib::sqrt(ve as f64)) as i32
             } else {
-                *out.offset(j as isize) =
-                    crate::stdlib::rint(crate::stdlib::sqrt(ve as libc::c_double)) as libc::c_int
+                *out.offset(j as isize) = crate::stdlib::rint(crate::stdlib::sqrt(ve as f64)) as i32
             }
         }
         j += 1
@@ -7951,13 +2623,13 @@ unsafe extern "C" fn noise_normalize(
             /* can't noise norm elements that have
             already been loslessly coupled; we can
             only account for their energy error */
-            let mut ve_0: libc::c_float = *q.offset(j as isize) / *f.offset(j as isize);
+            let mut ve_0: f32 = *q.offset(j as isize) / *f.offset(j as isize);
             /* Despite all the new, more capable coupling code, for now we
             implement noise norm as it has been up to this point. Only
             consider promotions to unit magnitude from 0.  In addition
             the only energy error counted is quantizations to zero. */
             /* also-- the original point code only applied noise norm at > pointlimit */
-            if ve_0 < 0.25f32 && (flags.is_null() || j >= limit - i) {
+            if ve_0 < 0.25 && (flags.is_null() || j >= limit - i) {
                 acc += ve_0;
                 let fresh17 = count;
                 count = count + 1;
@@ -7966,17 +2638,14 @@ unsafe extern "C" fn noise_normalize(
             /* q is fabs(r) for unflagged element */
             } else {
                 /* For now: no acc adjustment for nonzero quantization.  populate *out and q as this value is final. */
-                if *r.offset(j as isize) < 0 as libc::c_int as libc::c_float {
+                if *r.offset(j as isize) < 0f32 {
                     *out.offset(j as isize) =
-                        -crate::stdlib::rint(crate::stdlib::sqrt(ve_0 as libc::c_double))
-                            as libc::c_int
+                        -crate::stdlib::rint(crate::stdlib::sqrt(ve_0 as f64)) as i32
                 } else {
                     *out.offset(j as isize) =
-                        crate::stdlib::rint(crate::stdlib::sqrt(ve_0 as libc::c_double))
-                            as libc::c_int
+                        crate::stdlib::rint(crate::stdlib::sqrt(ve_0 as f64)) as i32
                 }
-                *q.offset(j as isize) = (*out.offset(j as isize) * *out.offset(j as isize))
-                    as libc::c_float
+                *q.offset(j as isize) = (*out.offset(j as isize) * *out.offset(j as isize)) as f32
                     * *f.offset(j as isize)
             }
         }
@@ -7990,25 +2659,21 @@ unsafe extern "C" fn noise_normalize(
         crate::stdlib::qsort(
             sort as *mut libc::c_void,
             count as crate::stddef_h::size_t,
-            ::std::mem::size_of::<*mut libc::c_float>() as libc::c_ulong,
+            ::std::mem::size_of::<*mut f32>(),
             Some(
                 apsort
-                    as unsafe extern "C" fn(
-                        _: *const libc::c_void,
-                        _: *const libc::c_void,
-                    ) -> libc::c_int,
+                    as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> i32,
             ),
         );
-        j = 0 as libc::c_int;
+        j = 0;
         while j < count {
-            let mut k: libc::c_int =
-                (*sort.offset(j as isize)).wrapping_offset_from(q) as libc::c_long as libc::c_int;
-            if acc as libc::c_double >= (*vi).normal_thresh {
-                *out.offset(k as isize) = unitnorm(*r.offset(k as isize)) as libc::c_int;
+            let mut k: i32 = (*sort.offset(j as isize)).wrapping_offset_from(q) as i32;
+            if acc as f64 >= (*vi).normal_thresh {
+                *out.offset(k as isize) = unitnorm(*r.offset(k as isize)) as i32;
                 acc -= 1.0f32;
                 *q.offset(k as isize) = *f.offset(k as isize)
             } else {
-                *out.offset(k as isize) = 0 as libc::c_int;
+                *out.offset(k as isize) = 0;
                 *q.offset(k as isize) = 0.0f32
             }
             j += 1
@@ -8046,161 +2711,138 @@ seperable processes in depth>1 coupling. */
 #[no_mangle]
 
 pub unsafe extern "C" fn _vp_couple_quantize_normalize(
-    mut blobno: libc::c_int,
+    mut blobno: i32,
     mut g: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global,
     mut p: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
     mut vi: *mut crate::backends_h::vorbis_info_mapping0,
-    mut mdct: *mut *mut libc::c_float,
-    mut iwork: *mut *mut libc::c_int,
-    mut nonzero: *mut libc::c_int,
-    mut sliding_lowpass: libc::c_int,
-    mut ch: libc::c_int,
+    mut mdct: *mut *mut f32,
+    mut iwork: *mut *mut i32,
+    mut nonzero: *mut i32,
+    mut sliding_lowpass: i32,
+    mut ch: i32,
 ) {
-    let mut i: libc::c_int = 0;
-    let mut n: libc::c_int = (*p).n;
-    let mut partition: libc::c_int = if (*(*p).vi).normal_p != 0 {
+    let mut i: i32 = 0;
+    let mut n: i32 = (*p).n;
+    let mut partition: i32 = if (*(*p).vi).normal_p != 0 {
         (*(*p).vi).normal_partition
     } else {
-        16 as libc::c_int
+        16
     };
-    let mut limit: libc::c_int =
-        (*g).coupling_pointlimit[(*(*p).vi).blockflag as usize][blobno as usize];
-    let mut prepoint: libc::c_float =
-        stereo_threshholds[(*g).coupling_prepointamp[blobno as usize] as usize] as libc::c_float;
-    let mut postpoint: libc::c_float =
-        stereo_threshholds[(*g).coupling_postpointamp[blobno as usize] as usize] as libc::c_float;
+    let mut limit: i32 = (*g).coupling_pointlimit[(*(*p).vi).blockflag as usize][blobno as usize];
+    let mut prepoint: f32 =
+        stereo_threshholds[(*g).coupling_prepointamp[blobno as usize] as usize] as f32;
+    let mut postpoint: f32 =
+        stereo_threshholds[(*g).coupling_postpointamp[blobno as usize] as usize] as f32;
     /* mdct is our raw mdct output, floor not removed. */
     /* inout passes in the ifloor, passes back quantized result */
     /* unquantized energy (negative indicates amplitude has negative sign) */
     let mut fresh19 = ::std::vec::from_elem(
         0,
-        (ch as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<*mut libc::c_float>() as libc::c_ulong)
-            as usize,
+        (ch as usize).wrapping_mul(::std::mem::size_of::<*mut f32>()),
     );
-    let mut raw: *mut *mut libc::c_float = fresh19.as_mut_ptr() as *mut *mut libc::c_float;
+    let mut raw: *mut *mut f32 = fresh19.as_mut_ptr() as *mut *mut f32;
     /* dual pupose; quantized energy (if flag set), othersize fabs(raw) */
     let mut fresh20 = ::std::vec::from_elem(
         0,
-        (ch as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<*mut libc::c_float>() as libc::c_ulong)
-            as usize,
+        (ch as usize).wrapping_mul(::std::mem::size_of::<*mut f32>()),
     );
-    let mut quant: *mut *mut libc::c_float = fresh20.as_mut_ptr() as *mut *mut libc::c_float;
+    let mut quant: *mut *mut f32 = fresh20.as_mut_ptr() as *mut *mut f32;
     /* floor energy */
     let mut fresh21 = ::std::vec::from_elem(
         0,
-        (ch as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<*mut libc::c_float>() as libc::c_ulong)
-            as usize,
+        (ch as usize).wrapping_mul(::std::mem::size_of::<*mut f32>()),
     );
-    let mut floor_0: *mut *mut libc::c_float = fresh21.as_mut_ptr() as *mut *mut libc::c_float;
+    let mut floor_0: *mut *mut f32 = fresh21.as_mut_ptr() as *mut *mut f32;
     /* flags indicating raw/quantized status of elements in raw vector */
     let mut fresh22 = ::std::vec::from_elem(
         0,
-        (ch as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<*mut libc::c_int>() as libc::c_ulong)
-            as usize,
+        (ch as usize).wrapping_mul(::std::mem::size_of::<*mut i32>()),
     );
-    let mut flag: *mut *mut libc::c_int = fresh22.as_mut_ptr() as *mut *mut libc::c_int;
+    let mut flag: *mut *mut i32 = fresh22.as_mut_ptr() as *mut *mut i32;
     /* non-zero flag working vector */
-    let mut fresh23 = ::std::vec::from_elem(
-        0,
-        (ch as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
-            as usize,
-    );
-    let mut nz: *mut libc::c_int = fresh23.as_mut_ptr() as *mut libc::c_int;
+    let mut fresh23 =
+        ::std::vec::from_elem(0, (ch as usize).wrapping_mul(::std::mem::size_of::<i32>()));
+    let mut nz: *mut i32 = fresh23.as_mut_ptr();
     /* energy surplus/defecit tracking */
     let mut fresh24 = ::std::vec::from_elem(
         0,
-        ((ch + (*vi).coupling_steps) as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong) as usize,
+        ((ch + (*vi).coupling_steps) as usize).wrapping_mul(::std::mem::size_of::<f32>()),
     );
-    let mut acc: *mut libc::c_float = fresh24.as_mut_ptr() as *mut libc::c_float;
+    let mut acc: *mut f32 = fresh24.as_mut_ptr() as *mut f32;
     /* The threshold of a stereo is changed with the size of n */
-    if n > 1000 as libc::c_int {
-        postpoint = stereo_threshholds_limited[(*g).coupling_postpointamp[blobno as usize] as usize]
-            as libc::c_float
+    if n > 1000 {
+        postpoint =
+            stereo_threshholds_limited[(*g).coupling_postpointamp[blobno as usize] as usize] as f32
     }
     let mut fresh25 = ::std::vec::from_elem(
         0,
-        ((ch * partition) as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong) as usize,
+        ((ch * partition) as usize).wrapping_mul(::std::mem::size_of::<f32>()),
     );
-    let ref mut fresh26 = *raw.offset(0 as libc::c_int as isize);
-    *fresh26 = fresh25.as_mut_ptr() as *mut libc::c_float;
+    let ref mut fresh26 = *raw.offset(0);
+    *fresh26 = fresh25.as_mut_ptr() as *mut f32;
     let mut fresh27 = ::std::vec::from_elem(
         0,
-        ((ch * partition) as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong) as usize,
+        ((ch * partition) as usize).wrapping_mul(::std::mem::size_of::<f32>()),
     );
-    let ref mut fresh28 = *quant.offset(0 as libc::c_int as isize);
-    *fresh28 = fresh27.as_mut_ptr() as *mut libc::c_float;
+    let ref mut fresh28 = *quant.offset(0);
+    *fresh28 = fresh27.as_mut_ptr() as *mut f32;
     let mut fresh29 = ::std::vec::from_elem(
         0,
-        ((ch * partition) as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong) as usize,
+        ((ch * partition) as usize).wrapping_mul(::std::mem::size_of::<f32>()),
     );
-    let ref mut fresh30 = *floor_0.offset(0 as libc::c_int as isize);
-    *fresh30 = fresh29.as_mut_ptr() as *mut libc::c_float;
+    let ref mut fresh30 = *floor_0.offset(0);
+    *fresh30 = fresh29.as_mut_ptr() as *mut f32;
     let mut fresh31 = ::std::vec::from_elem(
         0,
-        ((ch * partition) as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong) as usize,
+        ((ch * partition) as usize).wrapping_mul(::std::mem::size_of::<i32>()),
     );
-    let ref mut fresh32 = *flag.offset(0 as libc::c_int as isize);
-    *fresh32 = fresh31.as_mut_ptr() as *mut libc::c_int;
-    i = 1 as libc::c_int;
+    let ref mut fresh32 = *flag.offset(0);
+    *fresh32 = fresh31.as_mut_ptr();
+    i = 1;
     while i < ch {
         let ref mut fresh33 = *raw.offset(i as isize);
-        *fresh33 = &mut *(*raw.offset(0 as libc::c_int as isize)).offset((partition * i) as isize)
-            as *mut libc::c_float;
+        *fresh33 = &mut *(*raw.offset(0)).offset((partition * i) as isize) as *mut f32;
         let ref mut fresh34 = *quant.offset(i as isize);
-        *fresh34 = &mut *(*quant.offset(0 as libc::c_int as isize)).offset((partition * i) as isize)
-            as *mut libc::c_float;
+        *fresh34 = &mut *(*quant.offset(0)).offset((partition * i) as isize) as *mut f32;
         let ref mut fresh35 = *floor_0.offset(i as isize);
-        *fresh35 = &mut *(*floor_0.offset(0 as libc::c_int as isize))
-            .offset((partition * i) as isize) as *mut libc::c_float;
+        *fresh35 = &mut *(*floor_0.offset(0)).offset((partition * i) as isize) as *mut f32;
         let ref mut fresh36 = *flag.offset(i as isize);
-        *fresh36 = &mut *(*flag.offset(0 as libc::c_int as isize)).offset((partition * i) as isize)
-            as *mut libc::c_int;
+        *fresh36 = &mut *(*flag.offset(0)).offset((partition * i) as isize) as *mut i32;
         i += 1
     }
-    i = 0 as libc::c_int;
+    i = 0;
     while i < ch + (*vi).coupling_steps {
         *acc.offset(i as isize) = 0.0f32;
         i += 1
     }
-    i = 0 as libc::c_int;
+    i = 0;
     while i < n {
-        let mut k: libc::c_int = 0;
-        let mut j: libc::c_int = 0;
-        let mut jn: libc::c_int = if partition > n - i {
+        let mut k: i32 = 0;
+        let mut j: i32 = 0;
+        let mut jn: i32 = if partition > n - i {
             (n) - i
         } else {
             partition
         };
-        let mut step: libc::c_int = 0;
-        let mut track: libc::c_int = 0 as libc::c_int;
+        let mut step: i32 = 0;
+        let mut track: i32 = 0;
         crate::stdlib::memcpy(
             nz as *mut libc::c_void,
             nonzero as *const libc::c_void,
-            (::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
-                .wrapping_mul(ch as libc::c_ulong),
+            (::std::mem::size_of::<i32>()).wrapping_mul(ch as usize),
         );
         /* prefill */
         crate::stdlib::memset(
-            *flag.offset(0 as libc::c_int as isize) as *mut libc::c_void,
-            0 as libc::c_int,
-            ((ch * partition) as libc::c_ulong)
-                .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong),
+            *flag.offset(0) as *mut libc::c_void,
+            0,
+            ((ch * partition) as usize).wrapping_mul(::std::mem::size_of::<i32>()),
         );
-        k = 0 as libc::c_int;
+        k = 0;
         while k < ch {
-            let mut iout: *mut libc::c_int =
-                &mut *(*iwork.offset(k as isize)).offset(i as isize) as *mut libc::c_int;
+            let mut iout: *mut i32 =
+                &mut *(*iwork.offset(k as isize)).offset(i as isize) as *mut i32;
             if *nz.offset(k as isize) != 0 {
-                j = 0 as libc::c_int;
+                j = 0;
                 while j < jn {
                     *(*floor_0.offset(k as isize)).offset(j as isize) =
                         FLOOR1_fromdB_LOOKUP[*iout.offset(j as isize) as usize];
@@ -8216,7 +2858,7 @@ pub unsafe extern "C" fn _vp_couple_quantize_normalize(
                     i,
                     jn,
                 );
-                j = 0 as libc::c_int;
+                j = 0;
                 while j < jn {
                     let ref mut fresh37 = *(*raw.offset(k as isize)).offset(j as isize);
                     *fresh37 = *(*mdct.offset(k as isize)).offset((i + j) as isize)
@@ -8235,20 +2877,20 @@ pub unsafe extern "C" fn _vp_couple_quantize_normalize(
                     *raw.offset(k as isize),
                     *quant.offset(k as isize),
                     *floor_0.offset(k as isize),
-                    0 as *mut libc::c_int,
+                    0 as *mut i32,
                     *acc.offset(track as isize),
                     i,
                     jn,
                     iout,
                 )
             } else {
-                j = 0 as libc::c_int;
+                j = 0;
                 while j < jn {
                     *(*floor_0.offset(k as isize)).offset(j as isize) = 1e-10f32;
                     *(*raw.offset(k as isize)).offset(j as isize) = 0.0f32;
                     *(*quant.offset(k as isize)).offset(j as isize) = 0.0f32;
-                    *(*flag.offset(k as isize)).offset(j as isize) = 0 as libc::c_int;
-                    *iout.offset(j as isize) = 0 as libc::c_int;
+                    *(*flag.offset(k as isize)).offset(j as isize) = 0;
+                    *iout.offset(j as isize) = 0;
                     j += 1
                 }
                 *acc.offset(track as isize) = 0.0f32
@@ -8257,62 +2899,52 @@ pub unsafe extern "C" fn _vp_couple_quantize_normalize(
             k += 1
         }
         /* coupling */
-        step = 0 as libc::c_int;
+        step = 0;
         while step < (*vi).coupling_steps {
-            let mut Mi: libc::c_int = (*vi).coupling_mag[step as usize];
-            let mut Ai: libc::c_int = (*vi).coupling_ang[step as usize];
-            let mut iM: *mut libc::c_int =
-                &mut *(*iwork.offset(Mi as isize)).offset(i as isize) as *mut libc::c_int;
-            let mut iA: *mut libc::c_int =
-                &mut *(*iwork.offset(Ai as isize)).offset(i as isize) as *mut libc::c_int;
-            let mut reM: *mut libc::c_float = *raw.offset(Mi as isize);
-            let mut reA: *mut libc::c_float = *raw.offset(Ai as isize);
-            let mut qeM: *mut libc::c_float = *quant.offset(Mi as isize);
-            let mut qeA: *mut libc::c_float = *quant.offset(Ai as isize);
-            let mut floorM: *mut libc::c_float = *floor_0.offset(Mi as isize);
-            let mut floorA: *mut libc::c_float = *floor_0.offset(Ai as isize);
-            let mut fM: *mut libc::c_int = *flag.offset(Mi as isize);
-            let mut fA: *mut libc::c_int = *flag.offset(Ai as isize);
+            let mut Mi: i32 = (*vi).coupling_mag[step as usize];
+            let mut Ai: i32 = (*vi).coupling_ang[step as usize];
+            let mut iM: *mut i32 =
+                &mut *(*iwork.offset(Mi as isize)).offset(i as isize) as *mut i32;
+            let mut iA: *mut i32 =
+                &mut *(*iwork.offset(Ai as isize)).offset(i as isize) as *mut i32;
+            let mut reM: *mut f32 = *raw.offset(Mi as isize);
+            let mut reA: *mut f32 = *raw.offset(Ai as isize);
+            let mut qeM: *mut f32 = *quant.offset(Mi as isize);
+            let mut qeA: *mut f32 = *quant.offset(Ai as isize);
+            let mut floorM: *mut f32 = *floor_0.offset(Mi as isize);
+            let mut floorA: *mut f32 = *floor_0.offset(Ai as isize);
+            let mut fM: *mut i32 = *flag.offset(Mi as isize);
+            let mut fA: *mut i32 = *flag.offset(Ai as isize);
             if *nz.offset(Mi as isize) != 0 || *nz.offset(Ai as isize) != 0 {
                 let ref mut fresh38 = *nz.offset(Ai as isize);
-                *fresh38 = 1 as libc::c_int;
+                *fresh38 = 1;
                 *nz.offset(Mi as isize) = *fresh38;
-                j = 0 as libc::c_int;
+                j = 0;
                 while j < jn {
                     if j < sliding_lowpass - i {
                         if *fM.offset(j as isize) != 0 || *fA.offset(j as isize) != 0 {
                             /* lossless coupling */
-                            *reM.offset(j as isize) = (crate::stdlib::fabs(
-                                *reM.offset(j as isize) as libc::c_double
-                            ) + crate::stdlib::fabs(
-                                *reA.offset(j as isize) as libc::c_double,
-                            ))
-                                as libc::c_float;
+                            *reM.offset(j as isize) =
+                                (crate::stdlib::fabs(*reM.offset(j as isize) as f64)
+                                    + crate::stdlib::fabs(*reA.offset(j as isize) as f64))
+                                    as f32;
                             *qeM.offset(j as isize) =
                                 *qeM.offset(j as isize) + *qeA.offset(j as isize);
                             let ref mut fresh39 = *fA.offset(j as isize);
-                            *fresh39 = 1 as libc::c_int;
+                            *fresh39 = 1;
                             *fM.offset(j as isize) = *fresh39;
                             /* couple iM/iA */
-                            let mut A: libc::c_int = *iM.offset(j as isize);
-                            let mut B: libc::c_int = *iA.offset(j as isize);
+                            let mut A: i32 = *iM.offset(j as isize);
+                            let mut B: i32 = *iA.offset(j as isize);
                             if crate::stdlib::abs(A) > crate::stdlib::abs(B) {
-                                *iA.offset(j as isize) = if A > 0 as libc::c_int {
-                                    (A) - B
-                                } else {
-                                    (B) - A
-                                }
+                                *iA.offset(j as isize) = if A > 0 { (A) - B } else { (B) - A }
                             } else {
-                                *iA.offset(j as isize) = if B > 0 as libc::c_int {
-                                    (A) - B
-                                } else {
-                                    (B) - A
-                                };
+                                *iA.offset(j as isize) = if B > 0 { (A) - B } else { (B) - A };
                                 *iM.offset(j as isize) = B
                             }
                             /* collapse two equivalent tuples to one */
                             if *iA.offset(j as isize)
-                                >= crate::stdlib::abs(*iM.offset(j as isize)) * 2 as libc::c_int
+                                >= crate::stdlib::abs(*iM.offset(j as isize)) * 2
                             {
                                 *iA.offset(j as isize) = -*iA.offset(j as isize);
                                 *iM.offset(j as isize) = -*iM.offset(j as isize)
@@ -8323,32 +2955,25 @@ pub unsafe extern "C" fn _vp_couple_quantize_normalize(
                                 /* dipole */
                                 *reM.offset(j as isize) += *reA.offset(j as isize);
                                 *qeM.offset(j as isize) =
-                                    crate::stdlib::fabs(*reM.offset(j as isize) as libc::c_double)
-                                        as libc::c_float
-                            } else if *reM.offset(j as isize) + *reA.offset(j as isize)
-                                < 0 as libc::c_int as libc::c_float
-                            {
+                                    crate::stdlib::fabs(*reM.offset(j as isize) as f64) as f32
+                            } else if *reM.offset(j as isize) + *reA.offset(j as isize) < 0f32 {
                                 let ref mut fresh40 = *qeM.offset(j as isize);
-                                *fresh40 =
-                                    (crate::stdlib::fabs(*reM.offset(j as isize) as libc::c_double)
-                                        + crate::stdlib::fabs(
-                                            *reA.offset(j as isize) as libc::c_double
-                                        )) as libc::c_float;
+                                *fresh40 = (crate::stdlib::fabs(*reM.offset(j as isize) as f64)
+                                    + crate::stdlib::fabs(*reA.offset(j as isize) as f64))
+                                    as f32;
                                 *reM.offset(j as isize) = -*fresh40
                             } else {
                                 let ref mut fresh41 = *qeM.offset(j as isize);
-                                *fresh41 =
-                                    (crate::stdlib::fabs(*reM.offset(j as isize) as libc::c_double)
-                                        + crate::stdlib::fabs(
-                                            *reA.offset(j as isize) as libc::c_double
-                                        )) as libc::c_float;
+                                *fresh41 = (crate::stdlib::fabs(*reM.offset(j as isize) as f64)
+                                    + crate::stdlib::fabs(*reA.offset(j as isize) as f64))
+                                    as f32;
                                 *reM.offset(j as isize) = *fresh41
                             }
                             let ref mut fresh42 = *qeA.offset(j as isize);
                             *fresh42 = 0.0f32;
                             *reA.offset(j as isize) = *fresh42;
-                            *fA.offset(j as isize) = 1 as libc::c_int;
-                            *iA.offset(j as isize) = 0 as libc::c_int
+                            *fA.offset(j as isize) = 1;
+                            *iA.offset(j as isize) = 0
                         }
                     }
                     let ref mut fresh43 = *floorA.offset(j as isize);
@@ -8376,15 +3001,15 @@ pub unsafe extern "C" fn _vp_couple_quantize_normalize(
         }
         i += partition
     }
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*vi).coupling_steps {
         /* make sure coupling a zero and a nonzero channel results in two
         nonzero channels. */
         if *nonzero.offset((*vi).coupling_mag[i as usize] as isize) != 0
             || *nonzero.offset((*vi).coupling_ang[i as usize] as isize) != 0
         {
-            *nonzero.offset((*vi).coupling_mag[i as usize] as isize) = 1 as libc::c_int;
-            *nonzero.offset((*vi).coupling_ang[i as usize] as isize) = 1 as libc::c_int
+            *nonzero.offset((*vi).coupling_mag[i as usize] as isize) = 1;
+            *nonzero.offset((*vi).coupling_ang[i as usize] as isize) = 1
         }
         i += 1
     }

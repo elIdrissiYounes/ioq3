@@ -5,9 +5,6 @@ is licensed under the GPLv2. Do not mingle code, please!
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Sys_LaunchAutoupdater(
-    mut argc: libc::c_int,
-    mut argv: *mut *mut libc::c_char,
-) {
+pub unsafe extern "C" fn Sys_LaunchAutoupdater(mut argc: i32, mut argv: *mut *mut i8) {
     /* possibly unused. Pacify compilers. */
 }

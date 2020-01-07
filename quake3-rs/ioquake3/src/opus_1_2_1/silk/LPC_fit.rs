@@ -230,26 +230,26 @@ POSSIBILITY OF SUCH DAMAGE.
 pub unsafe extern "C" fn silk_LPC_fit(
     mut a_QOUT: *mut crate::opus_types_h::opus_int16,
     mut a_QIN: *mut crate::opus_types_h::opus_int32,
-    QOUT: libc::c_int,
-    QIN: libc::c_int,
-    d: libc::c_int,
+    QOUT: i32,
+    QIN: i32,
+    d: i32,
 )
 /* I    Filter order                                                */
 {
-    let mut i: libc::c_int = 0;
-    let mut k: libc::c_int = 0;
-    let mut idx: libc::c_int = 0 as libc::c_int;
+    let mut i: i32 = 0;
+    let mut k: i32 = 0;
+    let mut idx: i32 = 0;
     let mut maxabs: crate::opus_types_h::opus_int32 = 0;
     let mut absval: crate::opus_types_h::opus_int32 = 0;
     let mut chirp_Q16: crate::opus_types_h::opus_int32 = 0;
     /* Limit the maximum absolute value of the prediction coefficients, so that they'll fit in int16 */
-    i = 0 as libc::c_int;
-    while i < 10 as libc::c_int {
+    i = 0;
+    while i < 10 {
         /* Find maximum absolute value and its index */
-        maxabs = 0 as libc::c_int;
-        k = 0 as libc::c_int;
+        maxabs = 0;
+        k = 0;
         while k < d {
-            absval = if *a_QIN.offset(k as isize) > 0 as libc::c_int {
+            absval = if *a_QIN.offset(k as isize) > 0 {
                 *a_QIN.offset(k as isize)
             } else {
                 -*a_QIN.offset(k as isize)
@@ -260,73 +260,58 @@ pub unsafe extern "C" fn silk_LPC_fit(
             }
             k += 1
         }
-        maxabs = if QIN - QOUT == 1 as libc::c_int {
-            (maxabs >> 1 as libc::c_int) + (maxabs & 1 as libc::c_int)
+        maxabs = if QIN - QOUT == 1 {
+            (maxabs >> 1) + (maxabs & 1)
         } else {
-            ((maxabs >> QIN - QOUT - 1 as libc::c_int) + 1 as libc::c_int) >> 1 as libc::c_int
+            ((maxabs >> QIN - QOUT - 1) + 1) >> 1
         };
-        if !(maxabs > 0x7fff as libc::c_int) {
+        if !(maxabs > 0x7fff) {
             break;
         }
         /* Reduce magnitude of prediction coefficients */
-        maxabs = if maxabs < 163838 as libc::c_int {
-            maxabs
-        } else {
-            163838 as libc::c_int
-        }; /* ( silk_int32_MAX >> 14 ) + silk_int16_MAX = 163838 */
-        chirp_Q16 = (0.999f64
-            * ((1 as libc::c_int as libc::c_longlong) << 16 as libc::c_int) as libc::c_double
-            + 0.5f64) as crate::opus_types_h::opus_int32
-            - (((maxabs - 0x7fff as libc::c_int) as crate::opus_types_h::opus_uint32)
-                << 14 as libc::c_int) as crate::opus_types_h::opus_int32
-                / (maxabs * (idx + 1 as libc::c_int) >> 2 as libc::c_int);
+        maxabs = if maxabs < 163838 { maxabs } else { 163838 }; /* ( silk_int32_MAX >> 14 ) + silk_int16_MAX = 163838 */
+        chirp_Q16 = (0.999 * ((1i64) << 16) as f64 + 0.5) as crate::opus_types_h::opus_int32
+            - (((maxabs - 0x7fff) as crate::opus_types_h::opus_uint32) << 14)
+                as crate::opus_types_h::opus_int32
+                / (maxabs * (idx + 1) >> 2);
         crate::src::opus_1_2_1::silk::bwexpander_32::silk_bwexpander_32(a_QIN, d, chirp_Q16);
         i += 1
     }
-    if i == 10 as libc::c_int {
+    if i == 10 {
         /* Reached the last iteration, clip the coefficients */
-        k = 0 as libc::c_int;
+        k = 0;
         while k < d {
-            *a_QOUT.offset(k as isize) = if (if QIN - QOUT == 1 as libc::c_int {
-                (*a_QIN.offset(k as isize) >> 1 as libc::c_int)
-                    + (*a_QIN.offset(k as isize) & 1 as libc::c_int)
+            *a_QOUT.offset(k as isize) = if (if QIN - QOUT == 1 {
+                (*a_QIN.offset(k as isize) >> 1) + (*a_QIN.offset(k as isize) & 1)
             } else {
-                ((*a_QIN.offset(k as isize) >> QIN - QOUT - 1 as libc::c_int) + 1 as libc::c_int)
-                    >> 1 as libc::c_int
-            }) > 0x7fff as libc::c_int
+                ((*a_QIN.offset(k as isize) >> QIN - QOUT - 1) + 1) >> 1
+            }) > 0x7fff
             {
-                0x7fff as libc::c_int
-            } else if (if QIN - QOUT == 1 as libc::c_int {
-                (*a_QIN.offset(k as isize) >> 1 as libc::c_int)
-                    + (*a_QIN.offset(k as isize) & 1 as libc::c_int)
+                0x7fff
+            } else if (if QIN - QOUT == 1 {
+                (*a_QIN.offset(k as isize) >> 1) + (*a_QIN.offset(k as isize) & 1)
             } else {
-                ((*a_QIN.offset(k as isize) >> QIN - QOUT - 1 as libc::c_int) + 1 as libc::c_int)
-                    >> 1 as libc::c_int
-            }) < 0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
+                ((*a_QIN.offset(k as isize) >> QIN - QOUT - 1) + 1) >> 1
+            }) < 0x8000i32 as crate::opus_types_h::opus_int16 as i32
             {
-                0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
-            } else if QIN - QOUT == 1 as libc::c_int {
-                (*a_QIN.offset(k as isize) >> 1 as libc::c_int)
-                    + (*a_QIN.offset(k as isize) & 1 as libc::c_int)
+                0x8000i32 as crate::opus_types_h::opus_int16 as i32
+            } else if QIN - QOUT == 1 {
+                (*a_QIN.offset(k as isize) >> 1) + (*a_QIN.offset(k as isize) & 1)
             } else {
-                ((*a_QIN.offset(k as isize) >> QIN - QOUT - 1 as libc::c_int) + 1 as libc::c_int)
-                    >> 1 as libc::c_int
+                ((*a_QIN.offset(k as isize) >> QIN - QOUT - 1) + 1) >> 1
             } as crate::opus_types_h::opus_int16;
             *a_QIN.offset(k as isize) =
-                ((*a_QOUT.offset(k as isize) as crate::opus_types_h::opus_int32
-                    as crate::opus_types_h::opus_uint32)
-                    << QIN - QOUT) as crate::opus_types_h::opus_int32;
+                ((*a_QOUT.offset(k as isize) as crate::opus_types_h::opus_uint32) << QIN - QOUT)
+                    as crate::opus_types_h::opus_int32;
             k += 1
         }
     } else {
-        k = 0 as libc::c_int;
+        k = 0;
         while k < d {
-            *a_QOUT.offset(k as isize) = if QIN - QOUT == 1 as libc::c_int {
-                (*a_QIN.offset(k as isize) >> 1 as libc::c_int)
-                    + (*a_QIN.offset(k as isize) & 1 as libc::c_int)
+            *a_QOUT.offset(k as isize) = if QIN - QOUT == 1 {
+                (*a_QIN.offset(k as isize) >> 1) + (*a_QIN.offset(k as isize) & 1i32)
             } else {
-                ((*a_QIN.offset(k as isize) >> QIN - QOUT - 1 as libc::c_int) + 1 as libc::c_int)
-                    >> 1 as libc::c_int
+                ((*a_QIN.offset(k as isize) >> QIN - QOUT - 1) + 1) >> 1
             } as crate::opus_types_h::opus_int16;
             k += 1
         }

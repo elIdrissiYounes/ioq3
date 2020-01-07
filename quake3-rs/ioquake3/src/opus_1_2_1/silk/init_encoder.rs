@@ -98,29 +98,25 @@ POSSIBILITY OF SUCH DAMAGE.
 
 pub unsafe extern "C" fn silk_init_encoder(
     mut psEnc: *mut crate::structs_FLP_h::silk_encoder_state_FLP,
-    mut arch: libc::c_int,
-) -> libc::c_int
+    mut arch: i32,
+) -> i32
 /* I    Run-time architecture                                                       */ {
-    let mut ret: libc::c_int = 0 as libc::c_int;
+    let mut ret: i32 = 0;
     /* Clear the entire encoder state */
     crate::stdlib::memset(
         psEnc as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::structs_FLP_h::silk_encoder_state_FLP>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::structs_FLP_h::silk_encoder_state_FLP>(),
     );
     (*psEnc).sCmn.arch = arch;
     (*psEnc).sCmn.variable_HP_smth1_Q15 = (((crate::src::opus_1_2_1::silk::lin2log::silk_lin2log(
-        ((60 as libc::c_int as libc::c_longlong
-            * ((1 as libc::c_int as libc::c_longlong) << 16 as libc::c_int))
-            as libc::c_double
-            + 0.5f64) as crate::opus_types_h::opus_int32,
-    ) - ((16 as libc::c_int) << 7 as libc::c_int))
+        ((60i64 * ((1) << 16)) as f64 + 0.5) as crate::opus_types_h::opus_int32,
+    ) - ((16) << 7))
         as crate::opus_types_h::opus_uint32)
-        << 8 as libc::c_int)
-        as crate::opus_types_h::opus_int32;
+        << 8) as crate::opus_types_h::opus_int32;
     (*psEnc).sCmn.variable_HP_smth2_Q15 = (*psEnc).sCmn.variable_HP_smth1_Q15;
     /* Used to deactivate LSF interpolation, pitch prediction */
-    (*psEnc).sCmn.first_frame_after_reset = 1 as libc::c_int;
+    (*psEnc).sCmn.first_frame_after_reset = 1;
     /* Initialize Silk VAD */
     ret += crate::src::opus_1_2_1::silk::VAD::silk_VAD_Init(&mut (*psEnc).sCmn.sVAD);
     return ret;

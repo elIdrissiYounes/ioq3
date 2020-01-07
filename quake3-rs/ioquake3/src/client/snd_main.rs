@@ -65,31 +65,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #[no_mangle]
 
 pub static mut s_volume: *mut crate::src::qcommon::q_shared::cvar_t =
-    0 as *const crate::src::qcommon::q_shared::cvar_t as *mut crate::src::qcommon::q_shared::cvar_t;
+    0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut s_muted: *mut crate::src::qcommon::q_shared::cvar_t =
-    0 as *const crate::src::qcommon::q_shared::cvar_t as *mut crate::src::qcommon::q_shared::cvar_t;
+    0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut s_musicVolume: *mut crate::src::qcommon::q_shared::cvar_t =
-    0 as *const crate::src::qcommon::q_shared::cvar_t as *mut crate::src::qcommon::q_shared::cvar_t;
+    0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut s_doppler: *mut crate::src::qcommon::q_shared::cvar_t =
-    0 as *const crate::src::qcommon::q_shared::cvar_t as *mut crate::src::qcommon::q_shared::cvar_t;
+    0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut s_backend: *mut crate::src::qcommon::q_shared::cvar_t =
-    0 as *const crate::src::qcommon::q_shared::cvar_t as *mut crate::src::qcommon::q_shared::cvar_t;
+    0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut s_muteWhenMinimized: *mut crate::src::qcommon::q_shared::cvar_t =
-    0 as *const crate::src::qcommon::q_shared::cvar_t as *mut crate::src::qcommon::q_shared::cvar_t;
+    0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut s_muteWhenUnfocused: *mut crate::src::qcommon::q_shared::cvar_t =
-    0 as *const crate::src::qcommon::q_shared::cvar_t as *mut crate::src::qcommon::q_shared::cvar_t;
+    0 as *mut crate::src::qcommon::q_shared::cvar_t;
 
 static mut si: crate::snd_local_h::soundInterface_t = crate::snd_local_h::soundInterface_t {
     Shutdown: None,
@@ -213,8 +213,8 @@ S_StartSound
 
 pub unsafe extern "C" fn S_StartSound(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-    mut entnum: libc::c_int,
-    mut entchannel: libc::c_int,
+    mut entnum: i32,
+    mut entchannel: i32,
     mut sfx: crate::src::qcommon::q_shared::sfxHandle_t,
 ) {
     if si.StartSound.is_some() {
@@ -230,7 +230,7 @@ S_StartLocalSound
 
 pub unsafe extern "C" fn S_StartLocalSound(
     mut sfx: crate::src::qcommon::q_shared::sfxHandle_t,
-    mut channelNum: libc::c_int,
+    mut channelNum: i32,
 ) {
     if si.StartLocalSound.is_some() {
         si.StartLocalSound.expect("non-null function pointer")(sfx, channelNum);
@@ -243,10 +243,7 @@ S_StartBackgroundTrack
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn S_StartBackgroundTrack(
-    mut intro: *const libc::c_char,
-    mut loop_0: *const libc::c_char,
-) {
+pub unsafe extern "C" fn S_StartBackgroundTrack(mut intro: *const i8, mut loop_0: *const i8) {
     if si.StartBackgroundTrack.is_some() {
         si.StartBackgroundTrack.expect("non-null function pointer")(intro, loop_0);
     };
@@ -271,14 +268,14 @@ S_RawSamples
 #[no_mangle]
 
 pub unsafe extern "C" fn S_RawSamples(
-    mut stream: libc::c_int,
-    mut samples: libc::c_int,
-    mut rate: libc::c_int,
-    mut width: libc::c_int,
-    mut channels: libc::c_int,
+    mut stream: i32,
+    mut samples: i32,
+    mut rate: i32,
+    mut width: i32,
+    mut channels: i32,
     mut data: *const crate::src::qcommon::q_shared::byte,
-    mut volume: libc::c_float,
-    mut entityNum: libc::c_int,
+    mut volume: f32,
+    mut entityNum: i32,
 ) {
     if si.RawSamples.is_some() {
         si.RawSamples.expect("non-null function pointer")(
@@ -320,7 +317,7 @@ S_AddLoopingSound
 #[no_mangle]
 
 pub unsafe extern "C" fn S_AddLoopingSound(
-    mut entityNum: libc::c_int,
+    mut entityNum: i32,
     mut origin: *const crate::src::qcommon::q_shared::vec_t,
     mut velocity: *const crate::src::qcommon::q_shared::vec_t,
     mut sfx: crate::src::qcommon::q_shared::sfxHandle_t,
@@ -337,7 +334,7 @@ S_AddRealLoopingSound
 #[no_mangle]
 
 pub unsafe extern "C" fn S_AddRealLoopingSound(
-    mut entityNum: libc::c_int,
+    mut entityNum: i32,
     mut origin: *const crate::src::qcommon::q_shared::vec_t,
     mut velocity: *const crate::src::qcommon::q_shared::vec_t,
     mut sfx: crate::src::qcommon::q_shared::sfxHandle_t,
@@ -355,7 +352,7 @@ S_StopLoopingSound
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn S_StopLoopingSound(mut entityNum: libc::c_int) {
+pub unsafe extern "C" fn S_StopLoopingSound(mut entityNum: i32) {
     if si.StopLoopingSound.is_some() {
         si.StopLoopingSound.expect("non-null function pointer")(entityNum);
     };
@@ -368,10 +365,10 @@ S_Respatialize
 #[no_mangle]
 
 pub unsafe extern "C" fn S_Respatialize(
-    mut entityNum: libc::c_int,
+    mut entityNum: i32,
     mut origin: *const crate::src::qcommon::q_shared::vec_t,
     mut axis: *mut crate::src::qcommon::q_shared::vec3_t,
-    mut inwater: libc::c_int,
+    mut inwater: i32,
 ) {
     if si.Respatialize.is_some() {
         si.Respatialize.expect("non-null function pointer")(entityNum, origin, axis, inwater);
@@ -385,7 +382,7 @@ S_UpdateEntityPosition
 #[no_mangle]
 
 pub unsafe extern "C" fn S_UpdateEntityPosition(
-    mut entityNum: libc::c_int,
+    mut entityNum: i32,
     mut origin: *const crate::src::qcommon::q_shared::vec_t,
 ) {
     if si.UpdateEntityPosition.is_some() {
@@ -406,7 +403,7 @@ pub unsafe extern "C" fn S_Update() {
             && !((*s_muteWhenUnfocused).integer != 0
                 && (*crate::src::qcommon::common::com_unfocused).integer != 0)
         {
-            (*s_muted).integer = crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            (*s_muted).integer = crate::src::qcommon::q_shared::qfalse as i32;
             (*s_muted).modified = crate::src::qcommon::q_shared::qtrue
         }
     } else if (*s_muteWhenMinimized).integer != 0
@@ -414,7 +411,7 @@ pub unsafe extern "C" fn S_Update() {
         || (*s_muteWhenUnfocused).integer != 0
             && (*crate::src::qcommon::common::com_unfocused).integer != 0
     {
-        (*s_muted).integer = crate::src::qcommon::q_shared::qtrue as libc::c_int;
+        (*s_muted).integer = crate::src::qcommon::q_shared::qtrue as i32;
         (*s_muted).modified = crate::src::qcommon::q_shared::qtrue
     }
     if si.Update.is_some() {
@@ -453,13 +450,13 @@ S_RegisterSound
 #[no_mangle]
 
 pub unsafe extern "C" fn S_RegisterSound(
-    mut sample: *const libc::c_char,
+    mut sample: *const i8,
     mut compressed: crate::src::qcommon::q_shared::qboolean,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
     if si.RegisterSound.is_some() {
         return si.RegisterSound.expect("non-null function pointer")(sample, compressed);
     } else {
-        return 0 as libc::c_int;
+        return 0i32;
     };
 }
 /*
@@ -857,13 +854,13 @@ S_AvailableCaptureSamples
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn S_AvailableCaptureSamples() -> libc::c_int {
+pub unsafe extern "C" fn S_AvailableCaptureSamples() -> i32 {
     if si.AvailableCaptureSamples.is_some() {
         return si
             .AvailableCaptureSamples
             .expect("non-null function pointer")();
     }
-    return 0 as libc::c_int;
+    return 0;
 }
 /*
 =================
@@ -873,7 +870,7 @@ S_Capture
 #[no_mangle]
 
 pub unsafe extern "C" fn S_Capture(
-    mut samples: libc::c_int,
+    mut samples: i32,
     mut data: *mut crate::src::qcommon::q_shared::byte,
 ) {
     if si.Capture.is_some() {
@@ -932,7 +929,7 @@ S_MasterGain
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn S_MasterGain(mut gain: libc::c_float) {
+pub unsafe extern "C" fn S_MasterGain(mut gain: f32) {
     if si.MasterGain.is_some() {
         si.MasterGain.expect("non-null function pointer")(gain);
     };
@@ -946,21 +943,21 @@ S_Play_f
 #[no_mangle]
 
 pub unsafe extern "C" fn S_Play_f() {
-    let mut i: libc::c_int = 0;
-    let mut c: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut c: i32 = 0;
     let mut h: crate::src::qcommon::q_shared::sfxHandle_t = 0;
     if si.RegisterSound.is_none() || si.StartLocalSound.is_none() {
         return;
     }
     c = crate::src::qcommon::cmd::Cmd_Argc();
-    if c < 2 as libc::c_int {
+    if c < 2 {
         crate::src::qcommon::common::Com_Printf(
             b"Usage: play <sound filename> [sound filename] [sound filename] ...\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
         );
         return;
     }
-    i = 1 as libc::c_int;
+    i = 1;
     while i < c {
         h = si.RegisterSound.expect("non-null function pointer")(
             crate::src::qcommon::cmd::Cmd_Argv(i),
@@ -969,7 +966,7 @@ pub unsafe extern "C" fn S_Play_f() {
         if h != 0 {
             si.StartLocalSound.expect("non-null function pointer")(
                 h,
-                crate::src::qcommon::q_shared::CHAN_LOCAL_SOUND as libc::c_int,
+                crate::src::qcommon::q_shared::CHAN_LOCAL_SOUND as i32,
             );
         }
         i += 1
@@ -983,24 +980,24 @@ S_Music_f
 #[no_mangle]
 
 pub unsafe extern "C" fn S_Music_f() {
-    let mut c: libc::c_int = 0;
+    let mut c: i32 = 0;
     if si.StartBackgroundTrack.is_none() {
         return;
     }
     c = crate::src::qcommon::cmd::Cmd_Argc();
-    if c == 2 as libc::c_int {
+    if c == 2 {
         si.StartBackgroundTrack.expect("non-null function pointer")(
-            crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int),
-            0 as *const libc::c_char,
+            crate::src::qcommon::cmd::Cmd_Argv(1i32),
+            0 as *const i8,
         );
-    } else if c == 3 as libc::c_int {
+    } else if c == 3 {
         si.StartBackgroundTrack.expect("non-null function pointer")(
-            crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int),
-            crate::src::qcommon::cmd::Cmd_Argv(2 as libc::c_int),
+            crate::src::qcommon::cmd::Cmd_Argv(1i32),
+            crate::src::qcommon::cmd::Cmd_Argv(2i32),
         );
     } else {
         crate::src::qcommon::common::Com_Printf(
-            b"Usage: music <musicfile> [loopfile]\n\x00" as *const u8 as *const libc::c_char,
+            b"Usage: music <musicfile> [loopfile]\n\x00" as *const u8 as *const i8,
         );
         return;
     };
@@ -1032,117 +1029,115 @@ pub unsafe extern "C" fn S_Init() {
     let mut started: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     crate::src::qcommon::common::Com_Printf(
-        b"------ Initializing Sound ------\n\x00" as *const u8 as *const libc::c_char,
+        b"------ Initializing Sound ------\n\x00" as *const u8 as *const i8,
     );
     s_volume = crate::src::qcommon::cvar::Cvar_Get(
-        b"s_volume\x00" as *const u8 as *const libc::c_char,
-        b"0.8\x00" as *const u8 as *const libc::c_char,
-        0x1 as libc::c_int,
+        b"s_volume\x00" as *const u8 as *const i8,
+        b"0.8\x00" as *const u8 as *const i8,
+        0x1,
     );
     s_musicVolume = crate::src::qcommon::cvar::Cvar_Get(
-        b"s_musicvolume\x00" as *const u8 as *const libc::c_char,
-        b"0.25\x00" as *const u8 as *const libc::c_char,
-        0x1 as libc::c_int,
+        b"s_musicvolume\x00" as *const u8 as *const i8,
+        b"0.25\x00" as *const u8 as *const i8,
+        0x1,
     );
     s_muted = crate::src::qcommon::cvar::Cvar_Get(
-        b"s_muted\x00" as *const u8 as *const libc::c_char,
-        b"0\x00" as *const u8 as *const libc::c_char,
-        0x40 as libc::c_int,
+        b"s_muted\x00" as *const u8 as *const i8,
+        b"0\x00" as *const u8 as *const i8,
+        0x40,
     );
     s_doppler = crate::src::qcommon::cvar::Cvar_Get(
-        b"s_doppler\x00" as *const u8 as *const libc::c_char,
-        b"1\x00" as *const u8 as *const libc::c_char,
-        0x1 as libc::c_int,
+        b"s_doppler\x00" as *const u8 as *const i8,
+        b"1\x00" as *const u8 as *const i8,
+        0x1,
     );
     s_backend = crate::src::qcommon::cvar::Cvar_Get(
-        b"s_backend\x00" as *const u8 as *const libc::c_char,
-        b"\x00" as *const u8 as *const libc::c_char,
-        0x40 as libc::c_int,
+        b"s_backend\x00" as *const u8 as *const i8,
+        b"\x00" as *const u8 as *const i8,
+        0x40,
     );
     s_muteWhenMinimized = crate::src::qcommon::cvar::Cvar_Get(
-        b"s_muteWhenMinimized\x00" as *const u8 as *const libc::c_char,
-        b"0\x00" as *const u8 as *const libc::c_char,
-        0x1 as libc::c_int,
+        b"s_muteWhenMinimized\x00" as *const u8 as *const i8,
+        b"0\x00" as *const u8 as *const i8,
+        0x1,
     );
     s_muteWhenUnfocused = crate::src::qcommon::cvar::Cvar_Get(
-        b"s_muteWhenUnfocused\x00" as *const u8 as *const libc::c_char,
-        b"0\x00" as *const u8 as *const libc::c_char,
-        0x1 as libc::c_int,
+        b"s_muteWhenUnfocused\x00" as *const u8 as *const i8,
+        b"0\x00" as *const u8 as *const i8,
+        0x1,
     );
     cv = crate::src::qcommon::cvar::Cvar_Get(
-        b"s_initsound\x00" as *const u8 as *const libc::c_char,
-        b"1\x00" as *const u8 as *const libc::c_char,
-        0 as libc::c_int,
+        b"s_initsound\x00" as *const u8 as *const i8,
+        b"1\x00" as *const u8 as *const i8,
+        0,
     );
     if (*cv).integer == 0 {
-        crate::src::qcommon::common::Com_Printf(
-            b"Sound disabled.\n\x00" as *const u8 as *const libc::c_char,
-        );
+        crate::src::qcommon::common::Com_Printf(b"Sound disabled.\n\x00" as *const u8 as *const i8);
     } else {
         crate::src::client::snd_codec::S_CodecInit();
         crate::src::qcommon::cmd::Cmd_AddCommand(
-            b"play\x00" as *const u8 as *const libc::c_char,
+            b"play\x00" as *const u8 as *const i8,
             Some(S_Play_f as unsafe extern "C" fn() -> ()),
         );
         crate::src::qcommon::cmd::Cmd_AddCommand(
-            b"music\x00" as *const u8 as *const libc::c_char,
+            b"music\x00" as *const u8 as *const i8,
             Some(S_Music_f as unsafe extern "C" fn() -> ()),
         );
         crate::src::qcommon::cmd::Cmd_AddCommand(
-            b"stopmusic\x00" as *const u8 as *const libc::c_char,
+            b"stopmusic\x00" as *const u8 as *const i8,
             Some(S_StopMusic_f as unsafe extern "C" fn() -> ()),
         );
         crate::src::qcommon::cmd::Cmd_AddCommand(
-            b"s_list\x00" as *const u8 as *const libc::c_char,
+            b"s_list\x00" as *const u8 as *const i8,
             Some(S_SoundList as unsafe extern "C" fn() -> ()),
         );
         crate::src::qcommon::cmd::Cmd_AddCommand(
-            b"s_stop\x00" as *const u8 as *const libc::c_char,
+            b"s_stop\x00" as *const u8 as *const i8,
             Some(S_StopAllSounds as unsafe extern "C" fn() -> ()),
         );
         crate::src::qcommon::cmd::Cmd_AddCommand(
-            b"s_info\x00" as *const u8 as *const libc::c_char,
+            b"s_info\x00" as *const u8 as *const i8,
             Some(S_SoundInfo as unsafe extern "C" fn() -> ()),
         );
         cv = crate::src::qcommon::cvar::Cvar_Get(
-            b"s_useOpenAL\x00" as *const u8 as *const libc::c_char,
-            b"1\x00" as *const u8 as *const libc::c_char,
-            0x1 as libc::c_int | 0x20 as libc::c_int,
+            b"s_useOpenAL\x00" as *const u8 as *const i8,
+            b"1\x00" as *const u8 as *const i8,
+            0x1 | 0x20,
         );
         if (*cv).integer != 0 {
             //OpenAL
             started = crate::src::client::snd_openal::S_AL_Init(&mut si);
             crate::src::qcommon::cvar::Cvar_Set(
-                b"s_backend\x00" as *const u8 as *const libc::c_char,
-                b"OpenAL\x00" as *const u8 as *const libc::c_char,
+                b"s_backend\x00" as *const u8 as *const i8,
+                b"OpenAL\x00" as *const u8 as *const i8,
             );
         }
         if started as u64 == 0 {
             started = crate::src::client::snd_dma::S_Base_Init(&mut si);
             crate::src::qcommon::cvar::Cvar_Set(
-                b"s_backend\x00" as *const u8 as *const libc::c_char,
-                b"base\x00" as *const u8 as *const libc::c_char,
+                b"s_backend\x00" as *const u8 as *const i8,
+                b"base\x00" as *const u8 as *const i8,
             );
         }
         if started as u64 != 0 {
             if S_ValidSoundInterface(&mut si) as u64 == 0 {
                 crate::src::qcommon::common::Com_Error(
-                    crate::src::qcommon::q_shared::ERR_FATAL as libc::c_int,
-                    b"Sound interface invalid\x00" as *const u8 as *const libc::c_char,
+                    crate::src::qcommon::q_shared::ERR_FATAL as i32,
+                    b"Sound interface invalid\x00" as *const u8 as *const i8,
                 );
             }
             S_SoundInfo();
             crate::src::qcommon::common::Com_Printf(
-                b"Sound initialization successful.\n\x00" as *const u8 as *const libc::c_char,
+                b"Sound initialization successful.\n\x00" as *const u8 as *const i8,
             );
         } else {
             crate::src::qcommon::common::Com_Printf(
-                b"Sound initialization failed.\n\x00" as *const u8 as *const libc::c_char,
+                b"Sound initialization failed.\n\x00" as *const u8 as *const i8,
             );
         }
     }
     crate::src::qcommon::common::Com_Printf(
-        b"--------------------------------\n\x00" as *const u8 as *const libc::c_char,
+        b"--------------------------------\n\x00" as *const u8 as *const i8,
     );
 }
 /*
@@ -1221,16 +1216,14 @@ pub unsafe extern "C" fn S_Shutdown() {
     }
     crate::stdlib::memset(
         &mut si as *mut crate::snd_local_h::soundInterface_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::snd_local_h::soundInterface_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::snd_local_h::soundInterface_t>(),
     );
-    crate::src::qcommon::cmd::Cmd_RemoveCommand(b"play\x00" as *const u8 as *const libc::c_char);
-    crate::src::qcommon::cmd::Cmd_RemoveCommand(b"music\x00" as *const u8 as *const libc::c_char);
-    crate::src::qcommon::cmd::Cmd_RemoveCommand(
-        b"stopmusic\x00" as *const u8 as *const libc::c_char,
-    );
-    crate::src::qcommon::cmd::Cmd_RemoveCommand(b"s_list\x00" as *const u8 as *const libc::c_char);
-    crate::src::qcommon::cmd::Cmd_RemoveCommand(b"s_stop\x00" as *const u8 as *const libc::c_char);
-    crate::src::qcommon::cmd::Cmd_RemoveCommand(b"s_info\x00" as *const u8 as *const libc::c_char);
+    crate::src::qcommon::cmd::Cmd_RemoveCommand(b"play\x00" as *const u8 as *const i8);
+    crate::src::qcommon::cmd::Cmd_RemoveCommand(b"music\x00" as *const u8 as *const i8);
+    crate::src::qcommon::cmd::Cmd_RemoveCommand(b"stopmusic\x00" as *const u8 as *const i8);
+    crate::src::qcommon::cmd::Cmd_RemoveCommand(b"s_list\x00" as *const u8 as *const i8);
+    crate::src::qcommon::cmd::Cmd_RemoveCommand(b"s_stop\x00" as *const u8 as *const i8);
+    crate::src::qcommon::cmd::Cmd_RemoveCommand(b"s_info\x00" as *const u8 as *const i8);
     crate::src::client::snd_codec::S_CodecShutdown();
 }

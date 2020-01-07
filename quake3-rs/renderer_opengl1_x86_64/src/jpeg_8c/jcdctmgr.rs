@@ -252,7 +252,7 @@ pub struct my_fdct_controller {
     pub do_dct: [crate::jdct_h::forward_DCT_method_ptr; 10],
     pub divisors: [*mut crate::jdct_h::DCTELEM; 4],
     pub do_float_dct: [crate::jdct_h::float_DCT_method_ptr; 10],
-    pub float_divisors: [*mut libc::c_float; 4],
+    pub float_divisors: [*mut f32; 4],
 }
 /* The current scaled-DCT routines require ISLOW-style divisor tables,
  * so be sure to compile that code if either ISLOW or SCALING is requested.
@@ -285,7 +285,7 @@ unsafe extern "C" fn forward_DCT(
     let mut workspace: [crate::jdct_h::DCTELEM; 64] = [0; 64];
     let mut bi: crate::jmorecfg_h::JDIMENSION = 0;
     sample_data = sample_data.offset(start_row as isize);
-    bi = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
+    bi = 0;
     while bi < num_blocks {
         /* Perform the DCT */
         Some(do_dct.expect("non-null function pointer")).expect("non-null function pointer")(
@@ -296,11 +296,11 @@ unsafe extern "C" fn forward_DCT(
         /* Quantize/descale the coefficients, and store into coef_blocks[] */
         let mut temp: crate::jdct_h::DCTELEM = 0;
         let mut qval: crate::jdct_h::DCTELEM = 0;
-        let mut i: libc::c_int = 0;
+        let mut i: i32 = 0;
         let mut output_ptr: crate::jpeglib_h::JCOEFPTR =
             (*coef_blocks.offset(bi as isize)).as_mut_ptr();
-        i = 0 as libc::c_int;
-        while i < 64 as libc::c_int {
+        i = 0;
+        while i < 64 {
             qval = *divisors.offset(i as isize);
             temp = workspace[i as usize];
             /* Divide the coefficient value by qval, ensuring proper rounding.
@@ -315,30 +315,29 @@ unsafe extern "C" fn forward_DCT(
              * for a < b to discover whether a/b is 0.
              * If your machine's division is fast enough, define FAST_DIVIDE.
              */
-            if temp < 0 as libc::c_int {
+            if temp < 0 {
                 temp = -temp; /* for rounding */
-                temp += qval >> 1 as libc::c_int; /* for rounding */
+                temp += qval >> 1; /* for rounding */
                 if temp >= qval {
                     temp /= qval
                 } else {
-                    temp = 0 as libc::c_int
+                    temp = 0
                 }
                 temp = -temp
             } else {
-                temp += qval >> 1 as libc::c_int;
+                temp += qval >> 1;
                 if temp >= qval {
                     temp /= qval
                 } else {
-                    temp = 0 as libc::c_int
+                    temp = 0
                 }
             }
             *output_ptr.offset(i as isize) = temp as crate::jmorecfg_h::JCOEF;
             i += 1
         }
         bi = bi.wrapping_add(1);
-        start_col = (start_col as libc::c_uint)
-            .wrapping_add((*compptr).DCT_h_scaled_size as libc::c_uint)
-            as crate::jmorecfg_h::JDIMENSION as crate::jmorecfg_h::JDIMENSION
+        start_col =  (start_col)
+            .wrapping_add((*compptr).DCT_h_scaled_size as u32)
     }
 }
 
@@ -357,11 +356,11 @@ unsafe extern "C" fn forward_DCT_float(
     let mut fdct: my_fdct_ptr = (*cinfo).fdct as my_fdct_ptr; /* work area for FDCT subroutine */
     let mut do_dct: crate::jdct_h::float_DCT_method_ptr =
         (*fdct).do_float_dct[(*compptr).component_index as usize]; /* fold in the vertical offset once */
-    let mut divisors: *mut libc::c_float = (*fdct).float_divisors[(*compptr).quant_tbl_no as usize];
-    let mut workspace: [libc::c_float; 64] = [0.; 64];
+    let mut divisors: *mut f32 = (*fdct).float_divisors[(*compptr).quant_tbl_no as usize];
+    let mut workspace: [f32; 64] = [0.; 64];
     let mut bi: crate::jmorecfg_h::JDIMENSION = 0;
     sample_data = sample_data.offset(start_row as isize);
-    bi = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
+    bi = 0;
     while bi < num_blocks {
         /* Perform the DCT */
         Some(do_dct.expect("non-null function pointer")).expect("non-null function pointer")(
@@ -370,12 +369,12 @@ unsafe extern "C" fn forward_DCT_float(
             start_col,
         );
         /* Quantize/descale the coefficients, and store into coef_blocks[] */
-        let mut temp: libc::c_float = 0.;
-        let mut i: libc::c_int = 0;
+        let mut temp: f32 = 0.;
+        let mut i: i32 = 0;
         let mut output_ptr: crate::jpeglib_h::JCOEFPTR =
             (*coef_blocks.offset(bi as isize)).as_mut_ptr();
-        i = 0 as libc::c_int;
-        while i < 64 as libc::c_int {
+        i = 0;
+        while i < 64 {
             /* Apply the quantization and scaling factor */
             temp = workspace[i as usize] * *divisors.offset(i as isize);
             /* Round to nearest integer.
@@ -384,15 +383,14 @@ unsafe extern "C" fn forward_DCT_float(
              * The maximum coefficient size is +-16K (for 12-bit data), so this
              * code should work for either 16-bit or 32-bit ints.
              */
-            *output_ptr.offset(i as isize) = ((temp + 16384.5f64 as libc::c_float) as libc::c_int
-                - 16384 as libc::c_int)
+            *output_ptr.offset(i as isize) = ((temp + 16384.5) as i32
+                - 16384)
                 as crate::jmorecfg_h::JCOEF;
             i += 1
         }
         bi = bi.wrapping_add(1);
-        start_col = (start_col as libc::c_uint)
-            .wrapping_add((*compptr).DCT_h_scaled_size as libc::c_uint)
-            as crate::jmorecfg_h::JDIMENSION as crate::jmorecfg_h::JDIMENSION
+        start_col =  (start_col)
+            .wrapping_add((*compptr).DCT_h_scaled_size as u32)
     }
 }
 /* DCT_FLOAT_SUPPORTED */
@@ -407,19 +405,19 @@ unsafe extern "C" fn forward_DCT_float(
 
 unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
     let mut fdct: my_fdct_ptr = (*cinfo).fdct as my_fdct_ptr;
-    let mut ci: libc::c_int = 0;
-    let mut qtblno: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
+    let mut ci: i32 = 0;
+    let mut qtblno: i32 = 0;
+    let mut i: i32 = 0;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
-    let mut method: libc::c_int = 0 as libc::c_int;
+    let mut method: i32 = 0;
     let mut qtbl: *mut crate::jpeglib_h::JQUANT_TBL = 0 as *mut crate::jpeglib_h::JQUANT_TBL;
     let mut dtbl: *mut crate::jdct_h::DCTELEM = 0 as *mut crate::jdct_h::DCTELEM;
-    ci = 0 as libc::c_int;
+    ci = 0;
     compptr = (*cinfo).comp_info;
     while ci < (*cinfo).num_components {
         /* Select the proper DCT routine for this component's scaling */
-        match ((*compptr).DCT_h_scaled_size << 8 as libc::c_int) + (*compptr).DCT_v_scaled_size {
+        match ((*compptr).DCT_h_scaled_size << 8) + (*compptr).DCT_v_scaled_size {
             257 => {
                 (*fdct).do_dct[ci as usize] = Some(
                     crate::src::jpeg_8c::jfdctint::jpeg_fdct_1x1
@@ -429,7 +427,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             514 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -440,7 +438,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             771 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -451,7 +449,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             1028 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -462,7 +460,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             1285 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -473,7 +471,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             1542 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -484,7 +482,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             1799 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -495,7 +493,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             2313 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -506,7 +504,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             2570 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -517,7 +515,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             2827 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -528,7 +526,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             3084 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -539,7 +537,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             3341 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -550,7 +548,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             3598 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -561,7 +559,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             3855 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -572,7 +570,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             4112 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -583,7 +581,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             4104 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -594,7 +592,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             3591 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -605,7 +603,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             3078 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -616,7 +614,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             2565 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -627,7 +625,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             2052 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -638,7 +636,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             1539 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -649,7 +647,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             1026 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -660,7 +658,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             513 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -671,7 +669,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             2064 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -682,7 +680,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             1806 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -693,7 +691,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             1548 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -704,7 +702,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             1290 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -715,7 +713,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             1032 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -726,7 +724,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             774 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -737,7 +735,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             516 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -748,7 +746,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
             258 => {
                 (*fdct).do_dct[ci as usize] = Some(
@@ -759,9 +757,9 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                             _: crate::jmorecfg_h::JDIMENSION,
                         ) -> (),
                 ); /* jfdctint uses islow-style table */
-                method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
-            2056 => match (*cinfo).dct_method as libc::c_uint {
+            2056 => match  (*cinfo).dct_method {
                 0 => {
                     (*fdct).do_dct[ci as usize] = Some(
                         crate::src::jpeg_8c::jfdctint::jpeg_fdct_islow
@@ -771,7 +769,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                                 _: crate::jmorecfg_h::JDIMENSION,
                             ) -> (),
                     );
-                    method = crate::jpeglib_h::JDCT_ISLOW as libc::c_int
+                    method = crate::jpeglib_h::JDCT_ISLOW as i32
                 }
                 1 => {
                     (*fdct).do_dct[ci as usize] = Some(
@@ -782,22 +780,22 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                                 _: crate::jmorecfg_h::JDIMENSION,
                             ) -> (),
                     );
-                    method = crate::jpeglib_h::JDCT_IFAST as libc::c_int
+                    method = crate::jpeglib_h::JDCT_IFAST as i32
                 }
                 2 => {
                     (*fdct).do_float_dct[ci as usize] = Some(
                         crate::src::jpeg_8c::jfdctflt::jpeg_fdct_float
                             as unsafe extern "C" fn(
-                                _: *mut libc::c_float,
+                                _: *mut f32,
                                 _: crate::jpeglib_h::JSAMPARRAY,
                                 _: crate::jmorecfg_h::JDIMENSION,
                             ) -> (),
                     );
-                    method = crate::jpeglib_h::JDCT_FLOAT as libc::c_int
+                    method = crate::jpeglib_h::JDCT_FLOAT as i32
                 }
                 _ => {
                     (*(*cinfo).err).msg_code =
-                        crate::src::jpeg_8c::jerror::JERR_NOT_COMPILED as libc::c_int;
+                        crate::src::jpeg_8c::jerror::JERR_NOT_COMPILED as i32;
                     Some(
                         (*(*cinfo).err)
                             .error_exit
@@ -810,10 +808,10 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
             },
             _ => {
                 (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_DCTSIZE as libc::c_int;
-                (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] =
+                    crate::src::jpeg_8c::jerror::JERR_BAD_DCTSIZE as i32;
+                (*(*cinfo).err).msg_parm.i[0] =
                     (*compptr).DCT_h_scaled_size;
-                (*(*cinfo).err).msg_parm.i[1 as libc::c_int as usize] =
+                (*(*cinfo).err).msg_parm.i[1] =
                     (*compptr).DCT_v_scaled_size;
                 Some(
                     (*(*cinfo).err)
@@ -827,13 +825,13 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
         }
         qtblno = (*compptr).quant_tbl_no;
         /* Make sure specified quantization table is present */
-        if qtblno < 0 as libc::c_int
-            || qtblno >= 4 as libc::c_int
+        if qtblno < 0
+            || qtblno >= 4
             || (*cinfo).quant_tbl_ptrs[qtblno as usize].is_null()
         {
             (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_NO_QUANT_TABLE as libc::c_int;
-            (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = qtblno;
+                crate::src::jpeg_8c::jerror::JERR_NO_QUANT_TABLE as i32;
+            (*(*cinfo).err).msg_parm.i[0] = qtblno;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -860,18 +858,17 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                         )
                         .expect("non-null function pointer")(
                             cinfo as crate::jpeglib_h::j_common_ptr,
-                            1 as libc::c_int,
-                            (64 as libc::c_int as libc::c_ulong)
-                                .wrapping_mul(::std::mem::size_of::<crate::jdct_h::DCTELEM>()
-                                    as libc::c_ulong),
+                            1,
+                            (64usize)
+                                .wrapping_mul(::std::mem::size_of::<crate::jdct_h::DCTELEM>()),
                         ) as *mut crate::jdct_h::DCTELEM
                 }
                 dtbl = (*fdct).divisors[qtblno as usize];
-                i = 0 as libc::c_int;
-                while i < 64 as libc::c_int {
+                i = 0;
+                while i < 64 {
                     *dtbl.offset(i as isize) = ((*qtbl).quantval[i as usize]
                         as crate::jdct_h::DCTELEM)
-                        << 3 as libc::c_int;
+                        << 3;
                     i += 1
                 }
                 (*fdct).pub_0.forward_DCT[ci as usize] = Some(
@@ -895,70 +892,70 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                  * We apply a further scale factor of 8.
                  */
                 static mut aanscales: [crate::jmorecfg_h::INT16; 64] = [
-                    16384 as libc::c_int as crate::jmorecfg_h::INT16,
-                    22725 as libc::c_int as crate::jmorecfg_h::INT16,
-                    21407 as libc::c_int as crate::jmorecfg_h::INT16,
-                    19266 as libc::c_int as crate::jmorecfg_h::INT16,
-                    16384 as libc::c_int as crate::jmorecfg_h::INT16,
-                    12873 as libc::c_int as crate::jmorecfg_h::INT16,
-                    8867 as libc::c_int as crate::jmorecfg_h::INT16,
-                    4520 as libc::c_int as crate::jmorecfg_h::INT16,
-                    22725 as libc::c_int as crate::jmorecfg_h::INT16,
-                    31521 as libc::c_int as crate::jmorecfg_h::INT16,
-                    29692 as libc::c_int as crate::jmorecfg_h::INT16,
-                    26722 as libc::c_int as crate::jmorecfg_h::INT16,
-                    22725 as libc::c_int as crate::jmorecfg_h::INT16,
-                    17855 as libc::c_int as crate::jmorecfg_h::INT16,
-                    12299 as libc::c_int as crate::jmorecfg_h::INT16,
-                    6270 as libc::c_int as crate::jmorecfg_h::INT16,
-                    21407 as libc::c_int as crate::jmorecfg_h::INT16,
-                    29692 as libc::c_int as crate::jmorecfg_h::INT16,
-                    27969 as libc::c_int as crate::jmorecfg_h::INT16,
-                    25172 as libc::c_int as crate::jmorecfg_h::INT16,
-                    21407 as libc::c_int as crate::jmorecfg_h::INT16,
-                    16819 as libc::c_int as crate::jmorecfg_h::INT16,
-                    11585 as libc::c_int as crate::jmorecfg_h::INT16,
-                    5906 as libc::c_int as crate::jmorecfg_h::INT16,
-                    19266 as libc::c_int as crate::jmorecfg_h::INT16,
-                    26722 as libc::c_int as crate::jmorecfg_h::INT16,
-                    25172 as libc::c_int as crate::jmorecfg_h::INT16,
-                    22654 as libc::c_int as crate::jmorecfg_h::INT16,
-                    19266 as libc::c_int as crate::jmorecfg_h::INT16,
-                    15137 as libc::c_int as crate::jmorecfg_h::INT16,
-                    10426 as libc::c_int as crate::jmorecfg_h::INT16,
-                    5315 as libc::c_int as crate::jmorecfg_h::INT16,
-                    16384 as libc::c_int as crate::jmorecfg_h::INT16,
-                    22725 as libc::c_int as crate::jmorecfg_h::INT16,
-                    21407 as libc::c_int as crate::jmorecfg_h::INT16,
-                    19266 as libc::c_int as crate::jmorecfg_h::INT16,
-                    16384 as libc::c_int as crate::jmorecfg_h::INT16,
-                    12873 as libc::c_int as crate::jmorecfg_h::INT16,
-                    8867 as libc::c_int as crate::jmorecfg_h::INT16,
-                    4520 as libc::c_int as crate::jmorecfg_h::INT16,
-                    12873 as libc::c_int as crate::jmorecfg_h::INT16,
-                    17855 as libc::c_int as crate::jmorecfg_h::INT16,
-                    16819 as libc::c_int as crate::jmorecfg_h::INT16,
-                    15137 as libc::c_int as crate::jmorecfg_h::INT16,
-                    12873 as libc::c_int as crate::jmorecfg_h::INT16,
-                    10114 as libc::c_int as crate::jmorecfg_h::INT16,
-                    6967 as libc::c_int as crate::jmorecfg_h::INT16,
-                    3552 as libc::c_int as crate::jmorecfg_h::INT16,
-                    8867 as libc::c_int as crate::jmorecfg_h::INT16,
-                    12299 as libc::c_int as crate::jmorecfg_h::INT16,
-                    11585 as libc::c_int as crate::jmorecfg_h::INT16,
-                    10426 as libc::c_int as crate::jmorecfg_h::INT16,
-                    8867 as libc::c_int as crate::jmorecfg_h::INT16,
-                    6967 as libc::c_int as crate::jmorecfg_h::INT16,
-                    4799 as libc::c_int as crate::jmorecfg_h::INT16,
-                    2446 as libc::c_int as crate::jmorecfg_h::INT16,
-                    4520 as libc::c_int as crate::jmorecfg_h::INT16,
-                    6270 as libc::c_int as crate::jmorecfg_h::INT16,
-                    5906 as libc::c_int as crate::jmorecfg_h::INT16,
-                    5315 as libc::c_int as crate::jmorecfg_h::INT16,
-                    4520 as libc::c_int as crate::jmorecfg_h::INT16,
-                    3552 as libc::c_int as crate::jmorecfg_h::INT16,
-                    2446 as libc::c_int as crate::jmorecfg_h::INT16,
-                    1247 as libc::c_int as crate::jmorecfg_h::INT16,
+                    16384,
+                    22725,
+                    21407,
+                    19266,
+                    16384,
+                    12873,
+                    8867,
+                    4520,
+                    22725,
+                    31521,
+                    29692,
+                    26722,
+                    22725,
+                    17855,
+                    12299,
+                    6270,
+                    21407,
+                    29692,
+                    27969,
+                    25172,
+                    21407,
+                    16819,
+                    11585,
+                    5906,
+                    19266,
+                    26722,
+                    25172,
+                    22654,
+                    19266,
+                    15137,
+                    10426,
+                    5315,
+                    16384,
+                    22725,
+                    21407,
+                    19266,
+                    16384,
+                    12873,
+                    8867,
+                    4520,
+                    12873,
+                    17855,
+                    16819,
+                    15137,
+                    12873,
+                    10114,
+                    6967,
+                    3552,
+                    8867,
+                    12299,
+                    11585,
+                    10426,
+                    8867,
+                    6967,
+                    4799,
+                    2446,
+                    4520,
+                    6270,
+                    5906,
+                    5315,
+                    4520,
+                    3552,
+                    2446,
+                    1247,
                 ];
                 if (*fdct).divisors[qtblno as usize].is_null() {
                     (*fdct).divisors[qtblno as usize] =
@@ -969,21 +966,20 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                         )
                         .expect("non-null function pointer")(
                             cinfo as crate::jpeglib_h::j_common_ptr,
-                            1 as libc::c_int,
-                            (64 as libc::c_int as libc::c_ulong)
-                                .wrapping_mul(::std::mem::size_of::<crate::jdct_h::DCTELEM>()
-                                    as libc::c_ulong),
+                            1,
+                            (64usize)
+                                .wrapping_mul(::std::mem::size_of::<crate::jdct_h::DCTELEM>()),
                         ) as *mut crate::jdct_h::DCTELEM
                 }
                 dtbl = (*fdct).divisors[qtblno as usize];
-                i = 0 as libc::c_int;
-                while i < 64 as libc::c_int {
+                i = 0;
+                while i < 64 {
                     *dtbl.offset(i as isize) = ((*qtbl).quantval[i as usize]
                         as crate::jmorecfg_h::INT32
                         * aanscales[i as usize] as crate::jmorecfg_h::INT32
-                        + ((1 as libc::c_int as crate::jmorecfg_h::INT32)
-                            << 14 as libc::c_int - 3 as libc::c_int - 1 as libc::c_int)
-                        >> 14 as libc::c_int - 3 as libc::c_int)
+                        + ((1)
+                            << 14 - 3 - 1)
+                        >> 14 - 3)
                         as crate::jdct_h::DCTELEM;
                     i += 1
                 }
@@ -1009,18 +1005,18 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                  * What's actually stored is 1/divisor so that the inner loop can
                  * use a multiplication rather than a division.
                  */
-                let mut fdtbl: *mut libc::c_float = 0 as *mut libc::c_float;
-                let mut row: libc::c_int = 0;
-                let mut col: libc::c_int = 0;
-                static mut aanscalefactor: [libc::c_double; 8] = [
-                    1.0f64,
-                    1.387039845f64,
-                    1.306562965f64,
-                    1.175875602f64,
-                    1.0f64,
-                    0.785694958f64,
-                    0.541196100f64,
-                    0.275899379f64,
+                let mut fdtbl: *mut f32 = 0 as *mut f32;
+                let mut row: i32 = 0;
+                let mut col: i32 = 0;
+                static mut aanscalefactor: [f64; 8] = [
+                    1.0,
+                    1.387039845,
+                    1.306562965,
+                    1.175875602,
+                    1.0,
+                    0.785694958,
+                    0.541196100,
+                    0.275899379,
                 ];
                 if (*fdct).float_divisors[qtblno as usize].is_null() {
                     (*fdct).float_divisors[qtblno as usize] =
@@ -1031,24 +1027,25 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                         )
                         .expect("non-null function pointer")(
                             cinfo as crate::jpeglib_h::j_common_ptr,
-                            1 as libc::c_int,
-                            (64 as libc::c_int as libc::c_ulong).wrapping_mul(
-                                ::std::mem::size_of::<libc::c_float>() as libc::c_ulong,
+                            1,
+                            (64usize).wrapping_mul(
+                                
+                                ::std::mem::size_of::<f32>(),
                             ),
-                        ) as *mut libc::c_float
+                        ) as *mut f32
                 }
                 fdtbl = (*fdct).float_divisors[qtblno as usize];
-                i = 0 as libc::c_int;
-                row = 0 as libc::c_int;
-                while row < 8 as libc::c_int {
-                    col = 0 as libc::c_int;
-                    while col < 8 as libc::c_int {
-                        *fdtbl.offset(i as isize) = (1.0f64
-                            / ((*qtbl).quantval[i as usize] as libc::c_double
+                i = 0;
+                row = 0;
+                while row < 8 {
+                    col = 0;
+                    while col < 8 {
+                        *fdtbl.offset(i as isize) = (1.0
+                            / ((*qtbl).quantval[i as usize] as f64
                                 * aanscalefactor[row as usize]
                                 * aanscalefactor[col as usize]
-                                * 8.0f64))
-                            as libc::c_float;
+                                * 8.0))
+                            as f32;
                         i += 1;
                         col += 1
                     }
@@ -1069,7 +1066,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
             }
             _ => {
                 (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_NOT_COMPILED as libc::c_int;
+                    crate::src::jpeg_8c::jerror::JERR_NOT_COMPILED as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -1091,7 +1088,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
 
 pub unsafe extern "C" fn jinit_forward_dct(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
     let mut fdct: my_fdct_ptr = 0 as *mut my_fdct_controller;
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     fdct = Some(
         (*(*cinfo).mem)
             .alloc_small
@@ -1099,17 +1096,18 @@ pub unsafe extern "C" fn jinit_forward_dct(mut cinfo: crate::jpeglib_h::j_compre
     )
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
-        1 as libc::c_int,
-        ::std::mem::size_of::<my_fdct_controller>() as libc::c_ulong,
+        1,
+        
+        ::std::mem::size_of::<my_fdct_controller>(),
     ) as my_fdct_ptr;
     (*cinfo).fdct = fdct as *mut crate::jpegint_h::jpeg_forward_dct;
     (*fdct).pub_0.start_pass =
         Some(start_pass_fdctmgr as unsafe extern "C" fn(_: crate::jpeglib_h::j_compress_ptr) -> ());
     /* Mark divisor tables unallocated */
-    i = 0 as libc::c_int;
-    while i < 4 as libc::c_int {
+    i = 0;
+    while i < 4 {
         (*fdct).divisors[i as usize] = 0 as *mut crate::jdct_h::DCTELEM;
-        (*fdct).float_divisors[i as usize] = 0 as *mut libc::c_float;
+        (*fdct).float_divisors[i as usize] = 0 as *mut f32;
         i += 1
     }
 }

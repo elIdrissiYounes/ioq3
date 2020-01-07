@@ -1,89 +1,89 @@
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct iqmheader {
-    pub magic: [libc::c_char; 16],
-    pub version: libc::c_uint,
-    pub filesize: libc::c_uint,
-    pub flags: libc::c_uint,
-    pub num_text: libc::c_uint,
-    pub ofs_text: libc::c_uint,
-    pub num_meshes: libc::c_uint,
-    pub ofs_meshes: libc::c_uint,
-    pub num_vertexarrays: libc::c_uint,
-    pub num_vertexes: libc::c_uint,
-    pub ofs_vertexarrays: libc::c_uint,
-    pub num_triangles: libc::c_uint,
-    pub ofs_triangles: libc::c_uint,
-    pub ofs_adjacency: libc::c_uint,
-    pub num_joints: libc::c_uint,
-    pub ofs_joints: libc::c_uint,
-    pub num_poses: libc::c_uint,
-    pub ofs_poses: libc::c_uint,
-    pub num_anims: libc::c_uint,
-    pub ofs_anims: libc::c_uint,
-    pub num_frames: libc::c_uint,
-    pub num_framechannels: libc::c_uint,
-    pub ofs_frames: libc::c_uint,
-    pub ofs_bounds: libc::c_uint,
-    pub num_comment: libc::c_uint,
-    pub ofs_comment: libc::c_uint,
-    pub num_extensions: libc::c_uint,
-    pub ofs_extensions: libc::c_uint,
+    pub magic: [i8; 16],
+    pub version: u32,
+    pub filesize: u32,
+    pub flags: u32,
+    pub num_text: u32,
+    pub ofs_text: u32,
+    pub num_meshes: u32,
+    pub ofs_meshes: u32,
+    pub num_vertexarrays: u32,
+    pub num_vertexes: u32,
+    pub ofs_vertexarrays: u32,
+    pub num_triangles: u32,
+    pub ofs_triangles: u32,
+    pub ofs_adjacency: u32,
+    pub num_joints: u32,
+    pub ofs_joints: u32,
+    pub num_poses: u32,
+    pub ofs_poses: u32,
+    pub num_anims: u32,
+    pub ofs_anims: u32,
+    pub num_frames: u32,
+    pub num_framechannels: u32,
+    pub ofs_frames: u32,
+    pub ofs_bounds: u32,
+    pub num_comment: u32,
+    pub ofs_comment: u32,
+    pub num_extensions: u32,
+    pub ofs_extensions: u32,
 }
 pub type iqmHeader_t = crate::iqm_h::iqmheader;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct iqmmesh {
-    pub name: libc::c_uint,
-    pub material: libc::c_uint,
-    pub first_vertex: libc::c_uint,
-    pub num_vertexes: libc::c_uint,
-    pub first_triangle: libc::c_uint,
-    pub num_triangles: libc::c_uint,
+    pub name: u32,
+    pub material: u32,
+    pub first_vertex: u32,
+    pub num_vertexes: u32,
+    pub first_triangle: u32,
+    pub num_triangles: u32,
 }
 pub type iqmMesh_t = crate::iqm_h::iqmmesh;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct iqmtriangle {
-    pub vertex: [libc::c_uint; 3],
+    pub vertex: [u32; 3],
 }
 pub type iqmTriangle_t = crate::iqm_h::iqmtriangle;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct iqmjoint {
-    pub name: libc::c_uint,
-    pub parent: libc::c_int,
-    pub translate: [libc::c_float; 3],
-    pub rotate: [libc::c_float; 4],
-    pub scale: [libc::c_float; 3],
+    pub name: u32,
+    pub parent: i32,
+    pub translate: [f32; 3],
+    pub rotate: [f32; 4],
+    pub scale: [f32; 3],
 }
 pub type iqmJoint_t = crate::iqm_h::iqmjoint;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct iqmpose {
-    pub parent: libc::c_int,
-    pub mask: libc::c_uint,
-    pub channeloffset: [libc::c_float; 10],
-    pub channelscale: [libc::c_float; 10],
+    pub parent: i32,
+    pub mask: u32,
+    pub channeloffset: [f32; 10],
+    pub channelscale: [f32; 10],
 }
 pub type iqmPose_t = crate::iqm_h::iqmpose;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct iqmvertexarray {
-    pub type_0: libc::c_uint,
-    pub flags: libc::c_uint,
-    pub format: libc::c_uint,
-    pub size: libc::c_uint,
-    pub offset: libc::c_uint,
+    pub type_0: u32,
+    pub flags: u32,
+    pub format: u32,
+    pub size: u32,
+    pub offset: u32,
 }
 pub type iqmVertexArray_t = crate::iqm_h::iqmvertexarray;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct iqmbounds {
-    pub bbmin: [libc::c_float; 3],
-    pub bbmax: [libc::c_float; 3],
-    pub xyradius: libc::c_float,
-    pub radius: libc::c_float,
+    pub bbmin: [f32; 3],
+    pub bbmax: [f32; 3],
+    pub xyradius: f32,
+    pub radius: f32,
 }
 pub type iqmBounds_t = crate::iqm_h::iqmbounds;
 pub const IQM_CUSTOM: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 16;

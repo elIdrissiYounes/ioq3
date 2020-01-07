@@ -7,8 +7,8 @@ pub mod SigProc_FLP_h {
     /* sigmoid function */
     #[inline]
 
-    pub unsafe extern "C" fn silk_sigmoid(mut x: libc::c_float) -> libc::c_float {
-        return (1.0f64 / (1.0f64 + crate::stdlib::exp(-x as libc::c_double))) as libc::c_float;
+    pub unsafe extern "C" fn silk_sigmoid(mut x: f32) -> f32 {
+        return (1.0 / (1.0 + crate::stdlib::exp(-x as f64))) as f32;
     }
     use crate::stdlib::exp;
     /* SILK_SIGPROC_FLP_H */
@@ -206,21 +206,21 @@ POSSIBILITY OF SUCH DAMAGE.
 pub unsafe extern "C" fn silk_process_gains_FLP(
     mut psEnc: *mut crate::structs_FLP_h::silk_encoder_state_FLP,
     mut psEncCtrl: *mut crate::structs_FLP_h::silk_encoder_control_FLP,
-    mut condCoding: libc::c_int,
+    mut condCoding: i32,
 )
 /* I    The type of conditional coding to use       */
 {
     let mut psShapeSt: *mut crate::structs_FLP_h::silk_shape_state_FLP = &mut (*psEnc).sShape;
-    let mut k: libc::c_int = 0;
+    let mut k: i32 = 0;
     let mut pGains_Q16: [crate::opus_types_h::opus_int32; 4] = [0; 4];
-    let mut s: libc::c_float = 0.;
-    let mut InvMaxSqrVal: libc::c_float = 0.;
-    let mut gain: libc::c_float = 0.;
-    let mut quant_offset: libc::c_float = 0.;
+    let mut s: f32 = 0.;
+    let mut InvMaxSqrVal: f32 = 0.;
+    let mut gain: f32 = 0.;
+    let mut quant_offset: f32 = 0.;
     /* Gain reduction when LTP coding gain is high */
-    if (*psEnc).sCmn.indices.signalType as libc::c_int == 2 as libc::c_int {
-        s = 1.0f32 - 0.5f32 * silk_sigmoid(0.25f32 * ((*psEncCtrl).LTPredCodGain - 12.0f32));
-        k = 0 as libc::c_int;
+    if (*psEnc).sCmn.indices.signalType as i32 == 2 {
+        s = 1.0 - 0.5 * silk_sigmoid(0.25 * ((*psEncCtrl).LTPredCodGain - 12.0));
+        k = 0;
         while k < (*psEnc).sCmn.nb_subfr {
             (*psEncCtrl).Gains[k as usize] *= s;
             k += 1
@@ -228,71 +228,66 @@ pub unsafe extern "C" fn silk_process_gains_FLP(
     }
     /* Limit the quantized signal */
     InvMaxSqrVal = (crate::stdlib::pow(
-        2.0f32 as libc::c_double,
-        (0.33f32
-            * (21.0f32
-                - (*psEnc).sCmn.SNR_dB_Q7 as libc::c_float
-                    * (1 as libc::c_int as libc::c_float / 128.0f32))) as libc::c_double,
-    ) / (*psEnc).sCmn.subfr_length as libc::c_double) as libc::c_float;
-    k = 0 as libc::c_int;
+        2f64,
+        (0.33 * (21.0 - (*psEnc).sCmn.SNR_dB_Q7 as f32 * (1f32 / 128.0))) as f64,
+    ) / (*psEnc).sCmn.subfr_length as f64) as f32;
+    k = 0;
     while k < (*psEnc).sCmn.nb_subfr {
         /* Soft limit on ratio residual energy and squared gains */
         gain = (*psEncCtrl).Gains[k as usize];
         gain = crate::stdlib::sqrt(
-            (gain * gain + (*psEncCtrl).ResNrg[k as usize] * InvMaxSqrVal) as libc::c_double,
-        ) as libc::c_float;
-        (*psEncCtrl).Gains[k as usize] = if gain < 32767.0f32 { gain } else { 32767.0f32 };
+            (gain * gain + (*psEncCtrl).ResNrg[k as usize] * InvMaxSqrVal) as f64,
+        ) as f32;
+        (*psEncCtrl).Gains[k as usize] = if gain < 32767.0 { gain } else { 32767.0 };
         k += 1
     }
     /* Prepare gains for noise shaping quantization */
-    k = 0 as libc::c_int;
+    k = 0;
     while k < (*psEnc).sCmn.nb_subfr {
         pGains_Q16[k as usize] =
             ((*psEncCtrl).Gains[k as usize] * 65536.0f32) as crate::opus_types_h::opus_int32;
         k += 1
     }
     /* Save unquantized gains and gain Index */
-    crate::stdlib::memcpy((*psEncCtrl).GainsUnq_Q16.as_mut_ptr() as *mut libc::c_void,
-           pGains_Q16.as_mut_ptr() as *const libc::c_void,
-           ((*psEnc).sCmn.nb_subfr as
-                libc::c_ulong).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()
-                                                as libc::c_ulong));
+    crate::stdlib::memcpy(
+        (*psEncCtrl).GainsUnq_Q16.as_mut_ptr() as *mut libc::c_void,
+        pGains_Q16.as_mut_ptr() as *const libc::c_void,
+        ((*psEnc).sCmn.nb_subfr as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()),
+    );
     (*psEncCtrl).lastGainIndexPrev = (*psShapeSt).LastGainIndex;
     /* Quantize gains */
     crate::src::opus_1_2_1::silk::gain_quant::silk_gains_quant(
         (*psEnc).sCmn.indices.GainsIndices.as_mut_ptr(),
         pGains_Q16.as_mut_ptr(),
         &mut (*psShapeSt).LastGainIndex,
-        (condCoding == 2 as libc::c_int) as libc::c_int,
+        (condCoding == 2) as i32,
         (*psEnc).sCmn.nb_subfr,
     );
     /* Overwrite unquantized gains with quantized gains and convert back to Q0 from Q16 */
-    k = 0 as libc::c_int;
+    k = 0;
     while k < (*psEnc).sCmn.nb_subfr {
-        (*psEncCtrl).Gains[k as usize] = pGains_Q16[k as usize] as libc::c_float / 65536.0f32;
+        (*psEncCtrl).Gains[k as usize] = pGains_Q16[k as usize] as f32 / 65536.0;
         k += 1
     }
     /* Set quantizer offset for voiced signals. Larger offset when LTP coding gain is low or tilt is high (ie low-pass) */
-    if (*psEnc).sCmn.indices.signalType as libc::c_int == 2 as libc::c_int {
-        if (*psEncCtrl).LTPredCodGain
-            + (*psEnc).sCmn.input_tilt_Q15 as libc::c_float * (1.0f32 / 32768.0f32)
-            > 1.0f32
+    if (*psEnc).sCmn.indices.signalType as i32 == 2 {
+        if (*psEncCtrl).LTPredCodGain + (*psEnc).sCmn.input_tilt_Q15 as f32 * (1.0 / 32768.0) > 1.0
         {
-            (*psEnc).sCmn.indices.quantOffsetType = 0 as libc::c_int as libc::c_schar
+            (*psEnc).sCmn.indices.quantOffsetType = 0i8
         } else {
-            (*psEnc).sCmn.indices.quantOffsetType = 1 as libc::c_int as libc::c_schar
+            (*psEnc).sCmn.indices.quantOffsetType = 1i8
         }
     }
     /* Quantizer boundary adjustment */
     quant_offset = crate::src::opus_1_2_1::silk::tables_other::silk_Quantization_Offsets_Q10
-        [((*psEnc).sCmn.indices.signalType as libc::c_int >> 1 as libc::c_int) as usize]
-        [(*psEnc).sCmn.indices.quantOffsetType as usize] as libc::c_int
-        as libc::c_float
-        / 1024.0f32;
-    (*psEncCtrl).Lambda = 1.2f32
-        + -0.05f32 * (*psEnc).sCmn.nStatesDelayedDecision as libc::c_float
-        + -0.2f32 * (*psEnc).sCmn.speech_activity_Q8 as libc::c_float * (1.0f32 / 256.0f32)
-        + -0.1f32 * (*psEncCtrl).input_quality
-        + -0.2f32 * (*psEncCtrl).coding_quality
-        + 0.8f32 * quant_offset;
+        [((*psEnc).sCmn.indices.signalType as i32 >> 1) as usize]
+        [(*psEnc).sCmn.indices.quantOffsetType as usize] as i32 as f32
+        / 1024.0;
+    (*psEncCtrl).Lambda = 1.2
+        + -0.05 * (*psEnc).sCmn.nStatesDelayedDecision as f32
+        + -0.2 * (*psEnc).sCmn.speech_activity_Q8 as f32 * (1.0 / 256.0)
+        + -0.1 * (*psEncCtrl).input_quality
+        + -0.2 * (*psEncCtrl).coding_quality
+        + 0.8 * quant_offset;
 }

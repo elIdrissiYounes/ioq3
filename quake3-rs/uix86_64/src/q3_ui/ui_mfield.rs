@@ -3,8 +3,8 @@ use ::libc;
 pub mod ctype_h {
     #[inline]
 
-    pub unsafe extern "C" fn tolower(mut __c: libc::c_int) -> libc::c_int {
-        return if __c >= -(128 as libc::c_int) && __c < 256 as libc::c_int {
+    pub unsafe extern "C" fn tolower(mut __c: i32) -> i32 {
+        return if __c >= -(128) && __c < 256 {
             *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
         } else {
             __c
@@ -325,28 +325,27 @@ x, y, are in pixels
 
 pub unsafe extern "C" fn MField_Draw(
     mut edit: *mut crate::ui_local_h::mfield_t,
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut style: libc::c_int,
+    mut x: i32,
+    mut y: i32,
+    mut style: i32,
     mut color: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut len: libc::c_int = 0;
-    let mut charw: libc::c_int = 0;
-    let mut drawLen: libc::c_int = 0;
-    let mut prestep: libc::c_int = 0;
-    let mut cursorChar: libc::c_int = 0;
-    let mut str: [libc::c_char; 1024] = [0; 1024];
+    let mut len: i32 = 0;
+    let mut charw: i32 = 0;
+    let mut drawLen: i32 = 0;
+    let mut prestep: i32 = 0;
+    let mut cursorChar: i32 = 0;
+    let mut str: [i8; 1024] = [0; 1024];
     drawLen = (*edit).widthInChars;
-    len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr())
-        .wrapping_add(1 as libc::c_int as libc::c_ulong) as libc::c_int;
+    len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr()).wrapping_add(1usize) as i32;
     // guarantee that cursor will be visible
     if len <= drawLen {
-        prestep = 0 as libc::c_int
+        prestep = 0
     } else {
         if (*edit).scroll + drawLen > len {
             (*edit).scroll = len - drawLen;
-            if (*edit).scroll < 0 as libc::c_int {
-                (*edit).scroll = 0 as libc::c_int
+            if (*edit).scroll < 0 {
+                (*edit).scroll = 0
             }
         }
         prestep = (*edit).scroll
@@ -355,48 +354,48 @@ pub unsafe extern "C" fn MField_Draw(
         drawLen = len - prestep
     }
     // extract <drawLen> characters from the field at <prestep>
-    if drawLen >= 1024 as libc::c_int {
+    if drawLen >= 1024 {
         crate::src::ui::ui_syscalls::trap_Error(
-            b"drawLen >= MAX_STRING_CHARS\x00" as *const u8 as *const libc::c_char,
+            b"drawLen >= MAX_STRING_CHARS\x00" as *const u8 as *const i8,
         );
     }
     crate::stdlib::memcpy(
         str.as_mut_ptr() as *mut libc::c_void,
         (*edit).buffer.as_mut_ptr().offset(prestep as isize) as *const libc::c_void,
-        drawLen as libc::c_ulong,
+        drawLen as usize,
     );
-    str[drawLen as usize] = 0 as libc::c_int as libc::c_char;
+    str[drawLen as usize] = 0;
     crate::src::q3_ui::ui_atoms::UI_DrawString(x, y, str.as_mut_ptr(), style, color);
     // draw the cursor
-    if style & 0x4000 as libc::c_int == 0 {
+    if style & 0x4000 == 0 {
         return;
     }
     if crate::src::ui::ui_syscalls::trap_Key_GetOverstrikeMode() as u64 != 0 {
-        cursorChar = 11 as libc::c_int
+        cursorChar = 11
     } else {
-        cursorChar = 10 as libc::c_int
+        cursorChar = 10
     }
-    style &= !(0x4000 as libc::c_int);
-    style |= 0x1000 as libc::c_int;
-    if style & 0x10 as libc::c_int != 0 {
-        charw = 8 as libc::c_int
-    } else if style & 0x40 as libc::c_int != 0 {
-        charw = 32 as libc::c_int
+    style &= !(0x4000);
+    style |= 0x1000;
+    if style & 0x10 != 0 {
+        charw = 8
+    } else if style & 0x40 != 0 {
+        charw = 32
     } else {
-        charw = 16 as libc::c_int
+        charw = 16
     }
-    if style & 0x1 as libc::c_int != 0 {
-        len = crate::stdlib::strlen(str.as_mut_ptr()) as libc::c_int;
-        x = x - len * charw / 2 as libc::c_int
-    } else if style & 0x2 as libc::c_int != 0 {
-        len = crate::stdlib::strlen(str.as_mut_ptr()) as libc::c_int;
+    if style & 0x1 != 0 {
+        len = crate::stdlib::strlen(str.as_mut_ptr()) as i32;
+        x = x - len * charw / 2
+    } else if style & 0x2 != 0 {
+        len = crate::stdlib::strlen(str.as_mut_ptr()) as i32;
         x = x - len * charw
     }
     crate::src::q3_ui::ui_atoms::UI_DrawChar(
         x + ((*edit).cursor - prestep) * charw,
         y,
         cursorChar,
-        style & !(0x1 as libc::c_int | 0x2 as libc::c_int),
+        style & !(0x1 | 0x2),
         color,
     );
 }
@@ -408,15 +407,15 @@ MField_Paste
 #[no_mangle]
 
 pub unsafe extern "C" fn MField_Paste(mut edit: *mut crate::ui_local_h::mfield_t) {
-    let mut pasteBuffer: [libc::c_char; 64] = [0; 64];
-    let mut pasteLen: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
-    crate::src::ui::ui_syscalls::trap_GetClipboardData(pasteBuffer.as_mut_ptr(), 64 as libc::c_int);
+    let mut pasteBuffer: [i8; 64] = [0; 64];
+    let mut pasteLen: i32 = 0;
+    let mut i: i32 = 0;
+    crate::src::ui::ui_syscalls::trap_GetClipboardData(pasteBuffer.as_mut_ptr(), 64);
     // send as if typed, so insert / overstrike works properly
-    pasteLen = crate::stdlib::strlen(pasteBuffer.as_mut_ptr()) as libc::c_int;
-    i = 0 as libc::c_int;
+    pasteLen = crate::stdlib::strlen(pasteBuffer.as_mut_ptr()) as i32;
+    i = 0;
     while i < pasteLen {
-        MField_CharEvent(edit, pasteBuffer[i as usize] as libc::c_int);
+        MField_CharEvent(edit, pasteBuffer[i as usize] as i32);
         i += 1
     }
 }
@@ -434,23 +433,18 @@ Key events are used for non-printable characters, others are gotten from char ev
 
 pub unsafe extern "C" fn MField_KeyDownEvent(
     mut edit: *mut crate::ui_local_h::mfield_t,
-    mut key: libc::c_int,
+    mut key: i32,
 ) {
-    let mut len: libc::c_int = 0;
+    let mut len: i32 = 0;
     // shift-insert is paste
-    if (key == crate::keycodes_h::K_INS as libc::c_int
-        || key == crate::keycodes_h::K_KP_INS as libc::c_int)
-        && crate::src::ui::ui_syscalls::trap_Key_IsDown(crate::keycodes_h::K_SHIFT as libc::c_int)
-            as libc::c_uint
-            != 0
+    if (key == crate::keycodes_h::K_INS as i32 || key == crate::keycodes_h::K_KP_INS as i32)
+        && crate::src::ui::ui_syscalls::trap_Key_IsDown(crate::keycodes_h::K_SHIFT as i32) != 0
     {
         MField_Paste(edit);
         return;
     }
-    len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr()) as libc::c_int;
-    if key == crate::keycodes_h::K_DEL as libc::c_int
-        || key == crate::keycodes_h::K_KP_DEL as libc::c_int
-    {
+    len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr()) as i32;
+    if key == crate::keycodes_h::K_DEL as i32 || key == crate::keycodes_h::K_KP_DEL as i32 {
         if (*edit).cursor < len {
             crate::stdlib::memmove(
                 (*edit).buffer.as_mut_ptr().offset((*edit).cursor as isize) as *mut libc::c_void,
@@ -458,14 +452,14 @@ pub unsafe extern "C" fn MField_KeyDownEvent(
                     .buffer
                     .as_mut_ptr()
                     .offset((*edit).cursor as isize)
-                    .offset(1 as libc::c_int as isize) as *const libc::c_void,
-                (len - (*edit).cursor) as libc::c_ulong,
+                    .offset(1isize) as *const libc::c_void,
+                (len - (*edit).cursor) as usize,
             );
         }
         return;
     }
-    if key == crate::keycodes_h::K_RIGHTARROW as libc::c_int
-        || key == crate::keycodes_h::K_KP_RIGHTARROW as libc::c_int
+    if key == crate::keycodes_h::K_RIGHTARROW as i32
+        || key == crate::keycodes_h::K_KP_RIGHTARROW as i32
     {
         if (*edit).cursor < len {
             (*edit).cursor += 1
@@ -475,10 +469,10 @@ pub unsafe extern "C" fn MField_KeyDownEvent(
         }
         return;
     }
-    if key == crate::keycodes_h::K_LEFTARROW as libc::c_int
-        || key == crate::keycodes_h::K_KP_LEFTARROW as libc::c_int
+    if key == crate::keycodes_h::K_LEFTARROW as i32
+        || key == crate::keycodes_h::K_KP_LEFTARROW as i32
     {
-        if (*edit).cursor > 0 as libc::c_int {
+        if (*edit).cursor > 0 {
             (*edit).cursor -= 1
         }
         if (*edit).cursor < (*edit).scroll {
@@ -486,16 +480,14 @@ pub unsafe extern "C" fn MField_KeyDownEvent(
         }
         return;
     }
-    if key == crate::keycodes_h::K_HOME as libc::c_int
-        || key == crate::keycodes_h::K_KP_HOME as libc::c_int
+    if key == crate::keycodes_h::K_HOME as i32
+        || key == crate::keycodes_h::K_KP_HOME as i32
         || ({
-            let mut __res: libc::c_int = 0;
-            if ::std::mem::size_of::<libc::c_int>() as libc::c_ulong
-                > 1 as libc::c_int as libc::c_ulong
-            {
+            let mut __res: i32 = 0;
+            if ::std::mem::size_of::<i32>() > 1 {
                 if 0 != 0 {
-                    let mut __c: libc::c_int = key;
-                    __res = (if __c < -(128 as libc::c_int) || __c > 255 as libc::c_int {
+                    let mut __c: i32 = key;
+                    __res = (if __c < -(128) || __c > 255 {
                         __c
                     } else {
                         *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
@@ -508,25 +500,20 @@ pub unsafe extern "C" fn MField_KeyDownEvent(
             }
             __res
         }) == 'a' as i32
-            && crate::src::ui::ui_syscalls::trap_Key_IsDown(
-                crate::keycodes_h::K_CTRL as libc::c_int,
-            ) as libc::c_uint
-                != 0
+            && crate::src::ui::ui_syscalls::trap_Key_IsDown(crate::keycodes_h::K_CTRL as i32) != 0
     {
-        (*edit).cursor = 0 as libc::c_int;
-        (*edit).scroll = 0 as libc::c_int;
+        (*edit).cursor = 0;
+        (*edit).scroll = 0;
         return;
     }
-    if key == crate::keycodes_h::K_END as libc::c_int
-        || key == crate::keycodes_h::K_KP_END as libc::c_int
+    if key == crate::keycodes_h::K_END as i32
+        || key == crate::keycodes_h::K_KP_END as i32
         || ({
-            let mut __res: libc::c_int = 0;
-            if ::std::mem::size_of::<libc::c_int>() as libc::c_ulong
-                > 1 as libc::c_int as libc::c_ulong
-            {
+            let mut __res: i32 = 0;
+            if ::std::mem::size_of::<i32>() > 1 {
                 if 0 != 0 {
-                    let mut __c: libc::c_int = key;
-                    __res = (if __c < -(128 as libc::c_int) || __c > 255 as libc::c_int {
+                    let mut __c: i32 = key;
+                    __res = (if __c < -(128) || __c > 255 {
                         __c
                     } else {
                         *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
@@ -539,23 +526,18 @@ pub unsafe extern "C" fn MField_KeyDownEvent(
             }
             __res
         }) == 'e' as i32
-            && crate::src::ui::ui_syscalls::trap_Key_IsDown(
-                crate::keycodes_h::K_CTRL as libc::c_int,
-            ) as libc::c_uint
-                != 0
+            && crate::src::ui::ui_syscalls::trap_Key_IsDown(crate::keycodes_h::K_CTRL as i32) != 0
     {
         (*edit).cursor = len;
-        (*edit).scroll = len - (*edit).widthInChars + 1 as libc::c_int;
-        if (*edit).scroll < 0 as libc::c_int {
-            (*edit).scroll = 0 as libc::c_int
+        (*edit).scroll = len - (*edit).widthInChars + 1;
+        if (*edit).scroll < 0 {
+            (*edit).scroll = 0
         }
         return;
     }
-    if key == crate::keycodes_h::K_INS as libc::c_int
-        || key == crate::keycodes_h::K_KP_INS as libc::c_int
-    {
+    if key == crate::keycodes_h::K_INS as i32 || key == crate::keycodes_h::K_KP_INS as i32 {
         crate::src::ui::ui_syscalls::trap_Key_SetOverstrikeMode(
-            (crate::src::ui::ui_syscalls::trap_Key_GetOverstrikeMode() as u64 == 0) as libc::c_int
+            (crate::src::ui::ui_syscalls::trap_Key_GetOverstrikeMode() as u64 == 0)
                 as crate::src::qcommon::q_shared::qboolean,
         );
         return;
@@ -568,33 +550,30 @@ MField_CharEvent
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn MField_CharEvent(
-    mut edit: *mut crate::ui_local_h::mfield_t,
-    mut ch: libc::c_int,
-) {
-    let mut len: libc::c_int = 0;
-    if ch == 'v' as i32 - 'a' as i32 + 1 as libc::c_int {
+pub unsafe extern "C" fn MField_CharEvent(mut edit: *mut crate::ui_local_h::mfield_t, mut ch: i32) {
+    let mut len: i32 = 0;
+    if ch == 'v' as i32 - 'a' as i32 + 1 {
         // ctrl-v is paste
         MField_Paste(edit);
         return;
     }
-    if ch == 'c' as i32 - 'a' as i32 + 1 as libc::c_int {
+    if ch == 'c' as i32 - 'a' as i32 + 1 {
         // ctrl-c clears the field
         MField_Clear(edit);
         return;
     }
-    len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr()) as libc::c_int;
-    if ch == 'h' as i32 - 'a' as i32 + 1 as libc::c_int {
+    len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr()) as i32;
+    if ch == 'h' as i32 - 'a' as i32 + 1 {
         // ctrl-h is backspace
-        if (*edit).cursor > 0 as libc::c_int {
+        if (*edit).cursor > 0 {
             crate::stdlib::memmove(
                 (*edit)
                     .buffer
                     .as_mut_ptr()
                     .offset((*edit).cursor as isize)
-                    .offset(-(1 as libc::c_int as isize)) as *mut libc::c_void,
+                    .offset(-(1)) as *mut libc::c_void,
                 (*edit).buffer.as_mut_ptr().offset((*edit).cursor as isize) as *const libc::c_void,
-                (len + 1 as libc::c_int - (*edit).cursor) as libc::c_ulong,
+                (len + 1 - (*edit).cursor) as usize,
             );
             (*edit).cursor -= 1;
             if (*edit).cursor < (*edit).scroll {
@@ -603,38 +582,35 @@ pub unsafe extern "C" fn MField_CharEvent(
         }
         return;
     }
-    if ch == 'a' as i32 - 'a' as i32 + 1 as libc::c_int {
+    if ch == 'a' as i32 - 'a' as i32 + 1 {
         // ctrl-a is home
-        (*edit).cursor = 0 as libc::c_int;
-        (*edit).scroll = 0 as libc::c_int;
+        (*edit).cursor = 0;
+        (*edit).scroll = 0;
         return;
     }
-    if ch == 'e' as i32 - 'a' as i32 + 1 as libc::c_int {
+    if ch == 'e' as i32 - 'a' as i32 + 1 {
         // ctrl-e is end
         (*edit).cursor = len;
-        (*edit).scroll = (*edit).cursor - (*edit).widthInChars + 1 as libc::c_int;
-        if (*edit).scroll < 0 as libc::c_int {
-            (*edit).scroll = 0 as libc::c_int
+        (*edit).scroll = (*edit).cursor - (*edit).widthInChars + 1;
+        if (*edit).scroll < 0 {
+            (*edit).scroll = 0
         }
         return;
     }
     //
     // ignore any other non printable chars
     //
-    if ch < 32 as libc::c_int {
+    if ch < 32 {
         return;
     }
     if crate::src::ui::ui_syscalls::trap_Key_GetOverstrikeMode() as u64 != 0 {
-        if (*edit).cursor == 256 as libc::c_int - 1 as libc::c_int
-            || (*edit).maxchars != 0 && (*edit).cursor >= (*edit).maxchars
+        if (*edit).cursor == 256 - 1 || (*edit).maxchars != 0 && (*edit).cursor >= (*edit).maxchars
         {
             return;
         }
     } else {
         // insert mode
-        if len == 256 as libc::c_int - 1 as libc::c_int
-            || (*edit).maxchars != 0 && len >= (*edit).maxchars
-        {
+        if len == 256 - 1 || (*edit).maxchars != 0 && len >= (*edit).maxchars {
             return;
         }
         crate::stdlib::memmove(
@@ -642,20 +618,20 @@ pub unsafe extern "C" fn MField_CharEvent(
                 .buffer
                 .as_mut_ptr()
                 .offset((*edit).cursor as isize)
-                .offset(1 as libc::c_int as isize) as *mut libc::c_void,
+                .offset(1isize) as *mut libc::c_void,
             (*edit).buffer.as_mut_ptr().offset((*edit).cursor as isize) as *const libc::c_void,
-            (len + 1 as libc::c_int - (*edit).cursor) as libc::c_ulong,
+            (len + 1i32 - (*edit).cursor) as usize,
         );
     }
-    (*edit).buffer[(*edit).cursor as usize] = ch as libc::c_char;
-    if (*edit).maxchars == 0 || (*edit).cursor < (*edit).maxchars - 1 as libc::c_int {
+    (*edit).buffer[(*edit).cursor as usize] = ch as i8;
+    if (*edit).maxchars == 0 || (*edit).cursor < (*edit).maxchars - 1 {
         (*edit).cursor += 1
     }
     if (*edit).cursor >= (*edit).widthInChars {
         (*edit).scroll += 1
     }
-    if (*edit).cursor == len + 1 as libc::c_int {
-        (*edit).buffer[(*edit).cursor as usize] = 0 as libc::c_int as libc::c_char
+    if (*edit).cursor == len + 1 {
+        (*edit).buffer[(*edit).cursor as usize] = 0i8
     };
 }
 /*
@@ -666,9 +642,9 @@ MField_Clear
 #[no_mangle]
 
 pub unsafe extern "C" fn MField_Clear(mut edit: *mut crate::ui_local_h::mfield_t) {
-    (*edit).buffer[0 as libc::c_int as usize] = 0 as libc::c_int as libc::c_char;
-    (*edit).cursor = 0 as libc::c_int;
-    (*edit).scroll = 0 as libc::c_int;
+    (*edit).buffer[0] = 0i8;
+    (*edit).cursor = 0;
+    (*edit).scroll = 0;
 }
 /*
 ==================
@@ -678,23 +654,23 @@ MenuField_Init
 #[no_mangle]
 
 pub unsafe extern "C" fn MenuField_Init(mut m: *mut crate::ui_local_h::menufield_s) {
-    let mut l: libc::c_int = 0;
-    let mut w: libc::c_int = 0;
-    let mut h: libc::c_int = 0;
+    let mut l: i32 = 0;
+    let mut w: i32 = 0;
+    let mut h: i32 = 0;
     MField_Clear(&mut (*m).field);
-    if (*m).generic.flags & 0x2 as libc::c_int as libc::c_uint != 0 {
-        w = 8 as libc::c_int;
-        h = 16 as libc::c_int
+    if (*m).generic.flags & 0x2u32 != 0 {
+        w = 8;
+        h = 16
     } else {
-        w = 16 as libc::c_int;
-        h = 16 as libc::c_int
+        w = 16;
+        h = 16
     }
     if !(*m).generic.name.is_null() {
         l = crate::stdlib::strlen((*m).generic.name)
-            .wrapping_add(1 as libc::c_int as libc::c_ulong)
-            .wrapping_mul(w as libc::c_ulong) as libc::c_int
+            .wrapping_add(1usize)
+            .wrapping_mul(w as usize) as i32
     } else {
-        l = 0 as libc::c_int
+        l = 0
     }
     (*m).generic.left = (*m).generic.x - l;
     (*m).generic.top = (*m).generic.y;
@@ -709,29 +685,29 @@ MenuField_Draw
 #[no_mangle]
 
 pub unsafe extern "C" fn MenuField_Draw(mut f: *mut crate::ui_local_h::menufield_s) {
-    let mut x: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
-    let mut w: libc::c_int = 0;
-    let mut style: libc::c_int = 0;
+    let mut x: i32 = 0;
+    let mut y: i32 = 0;
+    let mut w: i32 = 0;
+    let mut style: i32 = 0;
     let mut focus: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
-    let mut color: *mut libc::c_float = 0 as *mut libc::c_float;
+    let mut color: *mut f32 = 0 as *mut f32;
     x = (*f).generic.x;
     y = (*f).generic.y;
-    if (*f).generic.flags & 0x2 as libc::c_int as libc::c_uint != 0 {
-        w = 8 as libc::c_int;
-        style = 0x10 as libc::c_int
+    if (*f).generic.flags & 0x2u32 != 0 {
+        w = 8;
+        style = 0x10
     } else {
-        w = 16 as libc::c_int;
-        style = 0x20 as libc::c_int
+        w = 16;
+        style = 0x20
     }
     if crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor((*f).generic.parent) == f as *mut libc::c_void
     {
         focus = crate::src::qcommon::q_shared::qtrue;
-        style |= 0x4000 as libc::c_int
+        style |= 0x4000
     } else {
         focus = crate::src::qcommon::q_shared::qfalse
     }
-    if (*f).generic.flags & 0x2000 as libc::c_int as libc::c_uint != 0 {
+    if (*f).generic.flags & 0x2000u32 != 0 {
         color = crate::src::q3_ui::ui_qmenu::text_color_disabled.as_mut_ptr()
     } else if focus as u64 != 0 {
         color = crate::src::q3_ui::ui_qmenu::text_color_highlight.as_mut_ptr()
@@ -741,26 +717,20 @@ pub unsafe extern "C" fn MenuField_Draw(mut f: *mut crate::ui_local_h::menufield
     if focus as u64 != 0 {
         // draw cursor
         crate::src::q3_ui::ui_atoms::UI_FillRect(
-            (*f).generic.left as libc::c_float,
-            (*f).generic.top as libc::c_float,
-            ((*f).generic.right - (*f).generic.left + 1 as libc::c_int) as libc::c_float,
-            ((*f).generic.bottom - (*f).generic.top + 1 as libc::c_int) as libc::c_float,
+            (*f).generic.left as f32,
+            (*f).generic.top as f32,
+            ((*f).generic.right - (*f).generic.left + 1i32) as f32,
+            ((*f).generic.bottom - (*f).generic.top + 1i32) as f32,
             crate::src::q3_ui::ui_qmenu::listbar_color.as_mut_ptr(),
         );
-        crate::src::q3_ui::ui_atoms::UI_DrawChar(
-            x,
-            y,
-            13 as libc::c_int,
-            0x1 as libc::c_int | 0x1000 as libc::c_int | style,
-            color,
-        );
+        crate::src::q3_ui::ui_atoms::UI_DrawChar(x, y, 13i32, 0x1i32 | 0x1000i32 | style, color);
     }
     if !(*f).generic.name.is_null() {
         crate::src::q3_ui::ui_atoms::UI_DrawString(
             x - w,
             y,
             (*f).generic.name,
-            style | 0x2 as libc::c_int,
+            style | 0x2i32,
             color,
         );
     }
@@ -816,28 +786,28 @@ MenuField_Key
 
 pub unsafe extern "C" fn MenuField_Key(
     mut m: *mut crate::ui_local_h::menufield_s,
-    mut key: *mut libc::c_int,
+    mut key: *mut i32,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
-    let mut keycode: libc::c_int = 0;
+    let mut keycode: i32 = 0;
     keycode = *key;
     match keycode {
         169 | 13 | 185 | 186 | 187 | 188 => {
             // have enter go to next cursor point
-            *key = crate::keycodes_h::K_TAB as libc::c_int
+            *key = crate::keycodes_h::K_TAB as i32
         }
         9 | 167 | 133 | 161 | 132 => {}
         _ => {
-            if keycode & 1024 as libc::c_int != 0 {
-                keycode &= !(1024 as libc::c_int);
-                if (*m).generic.flags & 0x80000 as libc::c_int as libc::c_uint != 0
+            if keycode & 1024 != 0 {
+                keycode &= !(1024);
+                if (*m).generic.flags & 0x80000u32 != 0
                     && crate::src::qcommon::q_shared::Q_islower(keycode) != 0
                 {
                     keycode -= 'a' as i32 - 'A' as i32
-                } else if (*m).generic.flags & 0x40000 as libc::c_int as libc::c_uint != 0
+                } else if (*m).generic.flags & 0x40000u32 != 0
                     && crate::src::qcommon::q_shared::Q_isupper(keycode) != 0
                 {
                     keycode -= 'A' as i32 - 'a' as i32
-                } else if (*m).generic.flags & 0x20 as libc::c_int as libc::c_uint != 0
+                } else if (*m).generic.flags & 0x20u32 != 0
                     && crate::src::qcommon::q_shared::Q_isalpha(keycode) != 0
                 {
                     return crate::src::q3_ui::ui_qmenu::menu_buzz_sound;
@@ -848,5 +818,5 @@ pub unsafe extern "C" fn MenuField_Key(
             }
         }
     }
-    return 0 as libc::c_int;
+    return 0;
 }

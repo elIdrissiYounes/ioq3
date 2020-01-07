@@ -106,7 +106,7 @@ pub struct mainmenu_t {
 #[derive(Copy, Clone)]
 pub struct errorMessage_t {
     pub menu: crate::ui_local_h::menuframework_s,
-    pub errorMessage: [libc::c_char; 4096],
+    pub errorMessage: [i8; 4096],
 }
 
 static mut s_main: mainmenu_t = mainmenu_t {
@@ -114,7 +114,7 @@ static mut s_main: mainmenu_t = mainmenu_t {
         cursor: 0,
         cursor_prev: 0,
         nitems: 0,
-        items: [0 as *const libc::c_void as *mut libc::c_void; 64],
+        items: [0 as *mut libc::c_void; 64],
         draw: None,
         key: None,
         wrapAround: crate::src::qcommon::q_shared::qfalse,
@@ -124,7 +124,7 @@ static mut s_main: mainmenu_t = mainmenu_t {
     singleplayer: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -132,22 +132,21 @@ static mut s_main: mainmenu_t = mainmenu_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     multiplayer: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -155,22 +154,21 @@ static mut s_main: mainmenu_t = mainmenu_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     setup: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -178,22 +176,21 @@ static mut s_main: mainmenu_t = mainmenu_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     demos: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -201,22 +198,21 @@ static mut s_main: mainmenu_t = mainmenu_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     cinematics: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -224,22 +220,21 @@ static mut s_main: mainmenu_t = mainmenu_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     teamArena: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -247,22 +242,21 @@ static mut s_main: mainmenu_t = mainmenu_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     mods: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -270,22 +264,21 @@ static mut s_main: mainmenu_t = mainmenu_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     exit: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -293,17 +286,16 @@ static mut s_main: mainmenu_t = mainmenu_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     bannerModel: 0,
 };
@@ -313,7 +305,7 @@ static mut s_errorMessage: errorMessage_t = errorMessage_t {
         cursor: 0,
         cursor_prev: 0,
         nitems: 0,
-        items: [0 as *const libc::c_void as *mut libc::c_void; 64],
+        items: [0 as *mut libc::c_void; 64],
         draw: None,
         key: None,
         wrapAround: crate::src::qcommon::q_shared::qfalse,
@@ -342,8 +334,8 @@ Main_MenuEvent
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Main_MenuEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
-    if event != 3 as libc::c_int {
+pub unsafe extern "C" fn Main_MenuEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+    if event != 3 {
         return;
     }
     match (*(ptr as *mut crate::ui_local_h::menucommon_s)).id {
@@ -367,17 +359,17 @@ pub unsafe extern "C" fn Main_MenuEvent(mut ptr: *mut libc::c_void, mut event: l
         }
         15 => {
             crate::src::ui::ui_syscalls::trap_Cvar_Set(
-                b"fs_game\x00" as *const u8 as *const libc::c_char,
-                b"missionpack\x00" as *const u8 as *const libc::c_char,
+                b"fs_game\x00" as *const u8 as *const i8,
+                b"missionpack\x00" as *const u8 as *const i8,
             );
             crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText(
-                crate::src::qcommon::q_shared::EXEC_APPEND as libc::c_int,
-                b"vid_restart;\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::EXEC_APPEND as i32,
+                b"vid_restart;\x00" as *const u8 as *const i8,
             );
         }
         17 => {
             crate::src::q3_ui::ui_confirm::UI_ConfirmMenu(
-                b"EXIT GAME?\x00" as *const u8 as *const libc::c_char,
+                b"EXIT GAME?\x00" as *const u8 as *const i8,
                 None,
                 Some(
                     MainMenu_ExitAction
@@ -397,17 +389,17 @@ MainMenu_Cache
 
 pub unsafe extern "C" fn MainMenu_Cache() {
     s_main.bannerModel = crate::src::ui::ui_syscalls::trap_R_RegisterModel(
-        b"models/mapobjects/banner/banner5.md3\x00" as *const u8 as *const libc::c_char,
+        b"models/mapobjects/banner/banner5.md3\x00" as *const u8 as *const i8,
     );
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn ErrorMessage_Key(
-    mut key: libc::c_int,
+    mut key: i32,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
     crate::src::ui::ui_syscalls::trap_Cvar_Set(
-        b"com_errorMessage\x00" as *const u8 as *const libc::c_char,
-        b"\x00" as *const u8 as *const libc::c_char,
+        b"com_errorMessage\x00" as *const u8 as *const i8,
+        b"\x00" as *const u8 as *const i8,
     );
     UI_MainMenu();
     return crate::src::q3_ui::ui_qmenu::menu_null_sound;
@@ -458,82 +450,74 @@ unsafe extern "C" fn Main_MenuDraw() {
     };
     let mut origin: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut angles: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut adjust: libc::c_float = 0.;
-    let mut x: libc::c_float = 0.;
-    let mut y: libc::c_float = 0.;
-    let mut w: libc::c_float = 0.;
-    let mut h: libc::c_float = 0.;
-    let mut color: crate::src::qcommon::q_shared::vec4_t = [
-        0.5f64 as crate::src::qcommon::q_shared::vec_t,
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    ];
+    let mut adjust: f32 = 0.;
+    let mut x: f32 = 0.;
+    let mut y: f32 = 0.;
+    let mut w: f32 = 0.;
+    let mut h: f32 = 0.;
+    let mut color: crate::src::qcommon::q_shared::vec4_t = [0.5, 0f32, 0f32, 1f32];
     // setup the refdef
     crate::stdlib::memset(
         &mut refdef as *mut crate::tr_types_h::refdef_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::tr_types_h::refdef_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::tr_types_h::refdef_t>(),
     ); // JDC: Kenneth asked me to stop this 1.0 * sin( (float)uis.realtime / 1000 );
-    refdef.rdflags = 0x1 as libc::c_int;
+    refdef.rdflags = 0x1;
     crate::src::qcommon::q_math::AxisClear(refdef.viewaxis.as_mut_ptr());
-    x = 0 as libc::c_int as libc::c_float;
-    y = 0 as libc::c_int as libc::c_float;
-    w = 640 as libc::c_int as libc::c_float;
-    h = 120 as libc::c_int as libc::c_float;
+    x = 0f32;
+    y = 0f32;
+    w = 640f32;
+    h = 120f32;
     crate::src::q3_ui::ui_atoms::UI_AdjustFrom640(&mut x, &mut y, &mut w, &mut h);
-    refdef.x = x as libc::c_int;
-    refdef.y = y as libc::c_int;
-    refdef.width = w as libc::c_int;
-    refdef.height = h as libc::c_int;
-    adjust = 0 as libc::c_int as libc::c_float;
-    refdef.fov_x = 60 as libc::c_int as libc::c_float + adjust;
-    refdef.fov_y = (19.6875f64 + adjust as libc::c_double) as libc::c_float;
+    refdef.x = x as i32;
+    refdef.y = y as i32;
+    refdef.width = w as i32;
+    refdef.height = h as i32;
+    adjust = 0f32;
+    refdef.fov_x = 60f32 + adjust;
+    refdef.fov_y = (19.6875 + adjust as f64) as f32;
     refdef.time = crate::src::q3_ui::ui_atoms::uis.realtime;
-    origin[0 as libc::c_int as usize] = 300 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    origin[1 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    origin[2 as libc::c_int as usize] =
-        -(32 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+    origin[0] = 300f32;
+    origin[1] = 0f32;
+    origin[2] = -32f32;
     crate::src::ui::ui_syscalls::trap_R_ClearScene();
     // add the model
     crate::stdlib::memset(
         &mut ent as *mut crate::tr_types_h::refEntity_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::tr_types_h::refEntity_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::tr_types_h::refEntity_t>(),
     );
-    adjust = (5.0f64
-        * crate::stdlib::sin(
-            (crate::src::q3_ui::ui_atoms::uis.realtime as libc::c_float
-                / 5000 as libc::c_int as libc::c_float) as libc::c_double,
-        )) as libc::c_float;
-    angles[0 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    angles[1 as libc::c_int as usize] = 180 as libc::c_int as libc::c_float + adjust;
-    angles[2 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
+    adjust = (5.0
+        * crate::stdlib::sin((crate::src::q3_ui::ui_atoms::uis.realtime as f32 / 5000f32) as f64))
+        as f32;
+    angles[0] = 0f32;
+    angles[1] = 180f32 + adjust;
+    angles[2] = 0f32;
     crate::src::qcommon::q_math::AnglesToAxis(
         angles.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         ent.axis.as_mut_ptr(),
     );
     ent.hModel = s_main.bannerModel;
-    ent.origin[0 as libc::c_int as usize] = origin[0 as libc::c_int as usize];
-    ent.origin[1 as libc::c_int as usize] = origin[1 as libc::c_int as usize];
-    ent.origin[2 as libc::c_int as usize] = origin[2 as libc::c_int as usize];
-    ent.lightingOrigin[0 as libc::c_int as usize] = origin[0 as libc::c_int as usize];
-    ent.lightingOrigin[1 as libc::c_int as usize] = origin[1 as libc::c_int as usize];
-    ent.lightingOrigin[2 as libc::c_int as usize] = origin[2 as libc::c_int as usize];
-    ent.renderfx = 0x80 as libc::c_int | 0x40 as libc::c_int;
-    ent.oldorigin[0 as libc::c_int as usize] = ent.origin[0 as libc::c_int as usize];
-    ent.oldorigin[1 as libc::c_int as usize] = ent.origin[1 as libc::c_int as usize];
-    ent.oldorigin[2 as libc::c_int as usize] = ent.origin[2 as libc::c_int as usize];
+    ent.origin[0] = origin[0];
+    ent.origin[1] = origin[1];
+    ent.origin[2] = origin[2];
+    ent.lightingOrigin[0] = origin[0];
+    ent.lightingOrigin[1] = origin[1];
+    ent.lightingOrigin[2] = origin[2];
+    ent.renderfx = 0x80 | 0x40;
+    ent.oldorigin[0] = ent.origin[0];
+    ent.oldorigin[1] = ent.origin[1];
+    ent.oldorigin[2] = ent.origin[2];
     crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(&mut ent);
     crate::src::ui::ui_syscalls::trap_R_RenderScene(&mut refdef);
     if crate::stdlib::strlen(s_errorMessage.errorMessage.as_mut_ptr()) != 0 {
         crate::src::q3_ui::ui_atoms::UI_DrawProportionalString_AutoWrapped(
-            320 as libc::c_int,
-            192 as libc::c_int,
-            600 as libc::c_int,
-            20 as libc::c_int,
+            320i32,
+            192i32,
+            600i32,
+            20i32,
             s_errorMessage.errorMessage.as_mut_ptr(),
-            0x1 as libc::c_int | 0x10 as libc::c_int | 0x800 as libc::c_int,
+            0x1i32 | 0x10i32 | 0x800i32,
             crate::src::q3_ui::ui_qmenu::menu_text_color.as_mut_ptr(),
         );
     } else {
@@ -542,27 +526,27 @@ unsafe extern "C" fn Main_MenuDraw() {
     }
     if crate::src::q3_ui::ui_atoms::uis.demoversion as u64 != 0 {
         crate::src::q3_ui::ui_atoms::UI_DrawProportionalString(
-            320 as libc::c_int,
-            372 as libc::c_int,
-            b"DEMO      FOR MATURE AUDIENCES      DEMO\x00" as *const u8 as *const libc::c_char,
-            0x1 as libc::c_int | 0x10 as libc::c_int,
+            320,
+            372,
+            b"DEMO      FOR MATURE AUDIENCES      DEMO\x00" as *const u8 as *const i8,
+            0x1 | 0x10,
             color.as_mut_ptr(),
         );
         crate::src::q3_ui::ui_atoms::UI_DrawString(
-            320 as libc::c_int,
-            400 as libc::c_int,
+            320i32,
+            400i32,
             b"Quake III Arena(c) 1999-2000, Id Software, Inc.  All Rights Reserved\x00" as *const u8
-                as *const libc::c_char,
-            0x1 as libc::c_int | 0x10 as libc::c_int,
+                as *const i8,
+            0x1i32 | 0x10i32,
             color.as_mut_ptr(),
         );
     } else {
         crate::src::q3_ui::ui_atoms::UI_DrawString(
-            320 as libc::c_int,
-            450 as libc::c_int,
+            320i32,
+            450i32,
             b"Quake III Arena(c) 1999-2000, Id Software, Inc.  All Rights Reserved\x00" as *const u8
-                as *const libc::c_char,
-            0x1 as libc::c_int | 0x10 as libc::c_int,
+                as *const i8,
+            0x1i32 | 0x10i32,
             color.as_mut_ptr(),
         );
     };
@@ -574,35 +558,34 @@ UI_TeamArenaExists
 */
 
 unsafe extern "C" fn UI_TeamArenaExists() -> crate::src::qcommon::q_shared::qboolean {
-    let mut numdirs: libc::c_int = 0;
-    let mut dirlist: [libc::c_char; 2048] = [0; 2048];
-    let mut dirptr: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut descptr: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut i: libc::c_int = 0;
-    let mut dirlen: libc::c_int = 0;
+    let mut numdirs: i32 = 0;
+    let mut dirlist: [i8; 2048] = [0; 2048];
+    let mut dirptr: *mut i8 = 0 as *mut i8;
+    let mut descptr: *mut i8 = 0 as *mut i8;
+    let mut i: i32 = 0;
+    let mut dirlen: i32 = 0;
     numdirs = crate::src::ui::ui_syscalls::trap_FS_GetFileList(
-        b"$modlist\x00" as *const u8 as *const libc::c_char,
-        b"\x00" as *const u8 as *const libc::c_char,
+        b"$modlist\x00" as *const u8 as *const i8,
+        b"\x00" as *const u8 as *const i8,
         dirlist.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 2048]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 2048]>() as i32,
     );
     dirptr = dirlist.as_mut_ptr();
-    i = 0 as libc::c_int;
+    i = 0;
     while i < numdirs {
-        dirlen = crate::stdlib::strlen(dirptr).wrapping_add(1 as libc::c_int as libc::c_ulong)
-            as libc::c_int;
+        dirlen = crate::stdlib::strlen(dirptr).wrapping_add(1usize) as i32;
         descptr = dirptr.offset(dirlen as isize);
         if crate::src::qcommon::q_shared::Q_stricmp(
             dirptr,
-            b"missionpack\x00" as *const u8 as *const libc::c_char,
-        ) == 0 as libc::c_int
+            b"missionpack\x00" as *const u8 as *const i8,
+        ) == 0
         {
             return crate::src::qcommon::q_shared::qtrue;
         }
         dirptr = dirptr.offset(
-            (dirlen as libc::c_ulong)
+            (dirlen as usize)
                 .wrapping_add(crate::stdlib::strlen(descptr))
-                .wrapping_add(1 as libc::c_int as libc::c_ulong) as isize,
+                .wrapping_add(1usize) as isize,
         );
         i += 1
     }
@@ -664,25 +647,24 @@ and that local cinematics are killed
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_MainMenu() {
-    let mut y: libc::c_int = 0;
+    let mut y: i32 = 0;
     let mut teamArena: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
-    let mut style: libc::c_int = 0x1 as libc::c_int | 0x800 as libc::c_int;
+    let mut style: i32 = 0x1 | 0x800;
     crate::src::ui::ui_syscalls::trap_Cvar_Set(
-        b"sv_killserver\x00" as *const u8 as *const libc::c_char,
-        b"1\x00" as *const u8 as *const libc::c_char,
+        b"sv_killserver\x00" as *const u8 as *const i8,
+        b"1\x00" as *const u8 as *const i8,
     );
     if crate::src::q3_ui::ui_atoms::uis.demoversion as u64 == 0
         && crate::src::q3_ui::ui_main::ui_cdkeychecked.integer == 0
     {
-        let mut key: [libc::c_char; 17] = [0; 17];
+        let mut key: [i8; 17] = [0; 17];
         crate::src::ui::ui_syscalls::trap_GetCDKey(
             key.as_mut_ptr(),
-            ::std::mem::size_of::<[libc::c_char; 17]>() as libc::c_ulong as libc::c_int,
+            ::std::mem::size_of::<[i8; 17]>() as i32,
         );
-        if crate::src::ui::ui_syscalls::trap_VerifyCDKey(key.as_mut_ptr(), 0 as *const libc::c_char)
-            as libc::c_uint
-            == crate::src::qcommon::q_shared::qfalse as libc::c_int as libc::c_uint
+        if crate::src::ui::ui_syscalls::trap_VerifyCDKey(key.as_mut_ptr(), 0 as *const i8)
+            == crate::src::qcommon::q_shared::qfalse
         {
             crate::src::q3_ui::ui_cdkey::UI_CDKeyMenu();
             return;
@@ -690,35 +672,32 @@ pub unsafe extern "C" fn UI_MainMenu() {
     }
     crate::stdlib::memset(
         &mut s_main as *mut mainmenu_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<mainmenu_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<mainmenu_t>(),
     );
     crate::stdlib::memset(
         &mut s_errorMessage as *mut errorMessage_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<errorMessage_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<errorMessage_t>(),
     );
     // com_errorMessage would need that too
     MainMenu_Cache();
     crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer(
-        b"com_errorMessage\x00" as *const u8 as *const libc::c_char,
+        b"com_errorMessage\x00" as *const u8 as *const i8,
         s_errorMessage.errorMessage.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 4096]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 4096]>() as i32,
     );
     if crate::stdlib::strlen(s_errorMessage.errorMessage.as_mut_ptr()) != 0 {
         s_errorMessage.menu.draw = Some(Main_MenuDraw as unsafe extern "C" fn() -> ());
         s_errorMessage.menu.key = Some(
             ErrorMessage_Key
-                as unsafe extern "C" fn(
-                    _: libc::c_int,
-                )
-                    -> crate::src::qcommon::q_shared::sfxHandle_t,
+                as unsafe extern "C" fn(_: i32) -> crate::src::qcommon::q_shared::sfxHandle_t,
         );
         s_errorMessage.menu.fullscreen = crate::src::qcommon::q_shared::qtrue;
         s_errorMessage.menu.wrapAround = crate::src::qcommon::q_shared::qtrue;
         s_errorMessage.menu.showlogo = crate::src::qcommon::q_shared::qtrue;
-        crate::src::ui::ui_syscalls::trap_Key_SetCatcher(0x2 as libc::c_int);
-        crate::src::q3_ui::ui_atoms::uis.menusp = 0 as libc::c_int;
+        crate::src::ui::ui_syscalls::trap_Key_SetCatcher(0x2);
+        crate::src::q3_ui::ui_atoms::uis.menusp = 0;
         crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_errorMessage.menu);
         return;
     }
@@ -726,113 +705,97 @@ pub unsafe extern "C" fn UI_MainMenu() {
     s_main.menu.fullscreen = crate::src::qcommon::q_shared::qtrue;
     s_main.menu.wrapAround = crate::src::qcommon::q_shared::qtrue;
     s_main.menu.showlogo = crate::src::qcommon::q_shared::qtrue;
-    y = 134 as libc::c_int;
-    s_main.singleplayer.generic.type_0 = 9 as libc::c_int;
-    s_main.singleplayer.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    s_main.singleplayer.generic.x = 320 as libc::c_int;
+    y = 134;
+    s_main.singleplayer.generic.type_0 = 9;
+    s_main.singleplayer.generic.flags = 0x8 | 0x100;
+    s_main.singleplayer.generic.x = 320;
     s_main.singleplayer.generic.y = y;
-    s_main.singleplayer.generic.id = 10 as libc::c_int;
+    s_main.singleplayer.generic.id = 10;
     s_main.singleplayer.generic.callback =
-        Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_main.singleplayer.string =
-        b"SINGLE PLAYER\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+        Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_main.singleplayer.string = b"SINGLE PLAYER\x00" as *const u8 as *mut i8;
     s_main.singleplayer.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
     s_main.singleplayer.style = style;
-    y += 34 as libc::c_int;
-    s_main.multiplayer.generic.type_0 = 9 as libc::c_int;
-    s_main.multiplayer.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    s_main.multiplayer.generic.x = 320 as libc::c_int;
+    y += 34;
+    s_main.multiplayer.generic.type_0 = 9;
+    s_main.multiplayer.generic.flags = 0x8 | 0x100;
+    s_main.multiplayer.generic.x = 320;
     s_main.multiplayer.generic.y = y;
-    s_main.multiplayer.generic.id = 11 as libc::c_int;
+    s_main.multiplayer.generic.id = 11;
     s_main.multiplayer.generic.callback =
-        Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_main.multiplayer.string =
-        b"MULTIPLAYER\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+        Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_main.multiplayer.string = b"MULTIPLAYER\x00" as *const u8 as *mut i8;
     s_main.multiplayer.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
     s_main.multiplayer.style = style;
-    y += 34 as libc::c_int;
-    s_main.setup.generic.type_0 = 9 as libc::c_int;
-    s_main.setup.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    s_main.setup.generic.x = 320 as libc::c_int;
+    y += 34;
+    s_main.setup.generic.type_0 = 9;
+    s_main.setup.generic.flags = 0x8 | 0x100;
+    s_main.setup.generic.x = 320;
     s_main.setup.generic.y = y;
-    s_main.setup.generic.id = 12 as libc::c_int;
+    s_main.setup.generic.id = 12;
     s_main.setup.generic.callback =
-        Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_main.setup.string = b"SETUP\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+        Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_main.setup.string = b"SETUP\x00" as *const u8 as *mut i8;
     s_main.setup.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
     s_main.setup.style = style;
-    y += 34 as libc::c_int;
-    s_main.demos.generic.type_0 = 9 as libc::c_int;
-    s_main.demos.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    s_main.demos.generic.x = 320 as libc::c_int;
+    y += 34;
+    s_main.demos.generic.type_0 = 9;
+    s_main.demos.generic.flags = 0x8 | 0x100;
+    s_main.demos.generic.x = 320;
     s_main.demos.generic.y = y;
-    s_main.demos.generic.id = 13 as libc::c_int;
+    s_main.demos.generic.id = 13;
     s_main.demos.generic.callback =
-        Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_main.demos.string = b"DEMOS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+        Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_main.demos.string = b"DEMOS\x00" as *const u8 as *mut i8;
     s_main.demos.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
     s_main.demos.style = style;
-    y += 34 as libc::c_int;
-    s_main.cinematics.generic.type_0 = 9 as libc::c_int;
-    s_main.cinematics.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    s_main.cinematics.generic.x = 320 as libc::c_int;
+    y += 34;
+    s_main.cinematics.generic.type_0 = 9;
+    s_main.cinematics.generic.flags = 0x8 | 0x100;
+    s_main.cinematics.generic.x = 320;
     s_main.cinematics.generic.y = y;
-    s_main.cinematics.generic.id = 14 as libc::c_int;
+    s_main.cinematics.generic.id = 14;
     s_main.cinematics.generic.callback =
-        Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_main.cinematics.string =
-        b"CINEMATICS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+        Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_main.cinematics.string = b"CINEMATICS\x00" as *const u8 as *mut i8;
     s_main.cinematics.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
     s_main.cinematics.style = style;
-    if crate::src::q3_ui::ui_atoms::uis.demoversion as u64 == 0
-        && UI_TeamArenaExists() as libc::c_uint != 0
-    {
+    if crate::src::q3_ui::ui_atoms::uis.demoversion as u64 == 0 && UI_TeamArenaExists() != 0 {
         teamArena = crate::src::qcommon::q_shared::qtrue;
-        y += 34 as libc::c_int;
-        s_main.teamArena.generic.type_0 = 9 as libc::c_int;
-        s_main.teamArena.generic.flags =
-            0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-        s_main.teamArena.generic.x = 320 as libc::c_int;
+        y += 34;
+        s_main.teamArena.generic.type_0 = 9;
+        s_main.teamArena.generic.flags = 0x8 | 0x100;
+        s_main.teamArena.generic.x = 320;
         s_main.teamArena.generic.y = y;
-        s_main.teamArena.generic.id = 15 as libc::c_int;
-        s_main.teamArena.generic.callback = Some(
-            Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-        );
-        s_main.teamArena.string =
-            b"TEAM ARENA\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+        s_main.teamArena.generic.id = 15;
+        s_main.teamArena.generic.callback =
+            Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+        s_main.teamArena.string = b"TEAM ARENA\x00" as *const u8 as *mut i8;
         s_main.teamArena.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
         s_main.teamArena.style = style
     }
     if crate::src::q3_ui::ui_atoms::uis.demoversion as u64 == 0 {
-        y += 34 as libc::c_int;
-        s_main.mods.generic.type_0 = 9 as libc::c_int;
-        s_main.mods.generic.flags =
-            0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-        s_main.mods.generic.x = 320 as libc::c_int;
+        y += 34;
+        s_main.mods.generic.type_0 = 9;
+        s_main.mods.generic.flags = 0x8 | 0x100;
+        s_main.mods.generic.x = 320;
         s_main.mods.generic.y = y;
-        s_main.mods.generic.id = 16 as libc::c_int;
-        s_main.mods.generic.callback = Some(
-            Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-        );
-        s_main.mods.string = b"MODS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+        s_main.mods.generic.id = 16;
+        s_main.mods.generic.callback =
+            Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+        s_main.mods.string = b"MODS\x00" as *const u8 as *mut i8;
         s_main.mods.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
         s_main.mods.style = style
     }
-    y += 34 as libc::c_int;
-    s_main.exit.generic.type_0 = 9 as libc::c_int;
-    s_main.exit.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    s_main.exit.generic.x = 320 as libc::c_int;
+    y += 34;
+    s_main.exit.generic.type_0 = 9;
+    s_main.exit.generic.flags = 0x8 | 0x100;
+    s_main.exit.generic.x = 320;
     s_main.exit.generic.y = y;
-    s_main.exit.generic.id = 17 as libc::c_int;
+    s_main.exit.generic.id = 17;
     s_main.exit.generic.callback =
-        Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_main.exit.string = b"EXIT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+        Some(Main_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_main.exit.string = b"EXIT\x00" as *const u8 as *mut i8;
     s_main.exit.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
     s_main.exit.style = style;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
@@ -871,7 +834,7 @@ pub unsafe extern "C" fn UI_MainMenu() {
         &mut s_main.menu,
         &mut s_main.exit as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
-    crate::src::ui::ui_syscalls::trap_Key_SetCatcher(0x2 as libc::c_int);
-    crate::src::q3_ui::ui_atoms::uis.menusp = 0 as libc::c_int;
+    crate::src::ui::ui_syscalls::trap_Key_SetCatcher(0x2);
+    crate::src::q3_ui::ui_atoms::uis.menusp = 0;
     crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_main.menu);
 }

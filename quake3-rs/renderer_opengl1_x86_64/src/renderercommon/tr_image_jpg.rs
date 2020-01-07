@@ -183,13 +183,13 @@ pub struct q_jpeg_error_mgr_s {
 pub struct my_destination_mgr {
     pub pub_0: crate::jpeglib_h::jpeg_destination_mgr,
     pub outfile: *mut crate::src::qcommon::q_shared::byte,
-    pub size: libc::c_int,
+    pub size: i32,
 }
 
 pub type my_dest_ptr = *mut my_destination_mgr;
 
 unsafe extern "C" fn R_JPGErrorExit(mut cinfo: crate::jpeglib_h::j_common_ptr) {
-    let mut buffer: [libc::c_char; 200] = [0; 200];
+    let mut buffer: [i8; 200] = [0; 200];
     /* "public" fields */
     /* for return to caller */
     /* cinfo->err really points to a q_jpeg_error_mgr_s struct, so coerce pointer */
@@ -203,16 +203,16 @@ unsafe extern "C" fn R_JPGErrorExit(mut cinfo: crate::jpeglib_h::j_common_ptr) {
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
-        crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-        b"Error: %s\x00" as *const u8 as *const libc::c_char,
+        crate::src::qcommon::q_shared::PRINT_ALL as i32,
+        b"Error: %s\x00" as *const u8 as *const i8,
         buffer.as_mut_ptr(),
     );
     /* Return control to the setjmp point */
-    crate::stdlib::longjmp((*jerr).setjmp_buffer.as_mut_ptr(), 1 as libc::c_int);
+    crate::stdlib::longjmp((*jerr).setjmp_buffer.as_mut_ptr(), 1);
 }
 
 unsafe extern "C" fn R_JPGOutputMessage(mut cinfo: crate::jpeglib_h::j_common_ptr) {
-    let mut buffer: [libc::c_char; 200] = [0; 200];
+    let mut buffer: [i8; 200] = [0; 200];
     /* Create the message */
     Some(
         (*(*cinfo).err)
@@ -224,8 +224,8 @@ unsafe extern "C" fn R_JPGOutputMessage(mut cinfo: crate::jpeglib_h::j_common_pt
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
-        crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-        b"%s\n\x00" as *const u8 as *const libc::c_char,
+        crate::src::qcommon::q_shared::PRINT_ALL as i32,
+        b"%s\n\x00" as *const u8 as *const i8,
         buffer.as_mut_ptr(),
     );
 }
@@ -293,10 +293,10 @@ IMAGE LOADERS
 #[no_mangle]
 
 pub unsafe extern "C" fn R_LoadJPG(
-    mut filename: *const libc::c_char,
-    mut pic: *mut *mut libc::c_uchar,
-    mut width: *mut libc::c_int,
-    mut height: *mut libc::c_int,
+    mut filename: *const i8,
+    mut pic: *mut *mut u8,
+    mut width: *mut i32,
+    mut height: *mut i32,
 ) {
     /* This struct contains the JPEG decompression parameters and pointers to
      * working space (which is allocated as needed by the JPEG library).
@@ -342,7 +342,7 @@ pub unsafe extern "C" fn R_LoadJPG(
             input_iMCU_row: 0,
             output_scan_number: 0,
             output_iMCU_row: 0,
-            coef_bits: 0 as *mut [libc::c_int; 64],
+            coef_bits: 0 as *mut [i32; 64],
             quant_tbl_ptrs: [0 as *mut crate::jpeglib_h::JQUANT_TBL; 4],
             dc_huff_tbl_ptrs: [0 as *mut crate::jpeglib_h::JHUFF_TBL; 4],
             ac_huff_tbl_ptrs: [0 as *mut crate::jpeglib_h::JHUFF_TBL; 4],
@@ -382,7 +382,7 @@ pub unsafe extern "C" fn R_LoadJPG(
             Ah: 0,
             Al: 0,
             block_size: 0,
-            natural_order: 0 as *const libc::c_int,
+            natural_order: 0 as *const i32,
             lim_Se: 0,
             unread_marker: 0,
             master: 0 as *mut crate::jpegint_h::jpeg_decomp_master,
@@ -422,9 +422,9 @@ pub unsafe extern "C" fn R_LoadJPG(
             msg_parm: crate::jpeglib_h::C2RustUnnamed_0 { i: [0; 8] },
             trace_level: 0,
             num_warnings: 0,
-            jpeg_message_table: 0 as *const *const libc::c_char,
+            jpeg_message_table: 0 as *const *const i8,
             last_jpeg_message: 0,
-            addon_message_table: 0 as *const *const libc::c_char,
+            addon_message_table: 0 as *const *const i8,
             first_addon_message: 0,
             last_addon_message: 0,
         },
@@ -436,14 +436,14 @@ pub unsafe extern "C" fn R_LoadJPG(
     };
     /* More stuff */
     let mut buffer: crate::jpeglib_h::JSAMPARRAY = 0 as *mut crate::jpeglib_h::JSAMPROW; /* Output row buffer */
-    let mut row_stride: libc::c_uint = 0; /* physical row width in output buffer */
-    let mut pixelcount: libc::c_uint = 0;
-    let mut memcount: libc::c_uint = 0;
-    let mut sindex: libc::c_uint = 0;
-    let mut dindex: libc::c_uint = 0;
+    let mut row_stride: u32 = 0; /* physical row width in output buffer */
+    let mut pixelcount: u32 = 0;
+    let mut memcount: u32 = 0;
+    let mut sindex: u32 = 0;
+    let mut dindex: u32 = 0;
     let mut out: *mut crate::src::qcommon::q_shared::byte =
         0 as *mut crate::src::qcommon::q_shared::byte;
-    let mut len: libc::c_int = 0;
+    let mut len: i32 = 0;
     let mut fbuffer: C2RustUnnamed_86 = C2RustUnnamed_86 {
         b: 0 as *mut crate::src::qcommon::q_shared::byte,
     };
@@ -456,9 +456,9 @@ pub unsafe extern "C" fn R_LoadJPG(
      */
     len = crate::src::renderergl1::tr_main::ri
         .FS_ReadFile
-        .expect("non-null function pointer")(filename as *mut libc::c_char, &mut fbuffer.v)
-        as libc::c_int;
-    if fbuffer.b.is_null() || len < 0 as libc::c_int {
+        .expect("non-null function pointer")(filename as *mut i8, &mut fbuffer.v)
+        as i32;
+    if fbuffer.b.is_null() || len < 0 {
         return;
     }
     /* Step 1: allocate and initialize JPEG decompression object */
@@ -485,8 +485,8 @@ pub unsafe extern "C" fn R_LoadJPG(
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-            b", loading file %s\n\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::PRINT_ALL as i32,
+            b", loading file %s\n\x00" as *const u8 as *const i8,
             filename,
         );
         return;
@@ -494,13 +494,14 @@ pub unsafe extern "C" fn R_LoadJPG(
     /* Now we can initialize the JPEG decompression object. */
     crate::src::jpeg_8c::jdapimin::jpeg_CreateDecompress(
         &mut cinfo,
-        80 as libc::c_int,
-        ::std::mem::size_of::<crate::jpeglib_h::jpeg_decompress_struct>() as libc::c_ulong,
+        80,
+        
+        ::std::mem::size_of::<crate::jpeglib_h::jpeg_decompress_struct>(),
     );
     /* Step 2: specify data source (eg, a file) */
-    crate::src::jpeg_8c::jdatasrc::jpeg_mem_src(&mut cinfo, fbuffer.b, len as libc::c_ulong);
+    crate::src::jpeg_8c::jdatasrc::jpeg_mem_src(&mut cinfo, fbuffer.b, len as usize);
     /* Step 3: read file parameters with jpeg_read_header() */
-    crate::src::jpeg_8c::jdapimin::jpeg_read_header(&mut cinfo, 1 as libc::c_int);
+    crate::src::jpeg_8c::jdapimin::jpeg_read_header(&mut cinfo, 1);
     /* We can ignore the return value from jpeg_read_header since
      *   (a) suspension is not possible with the stdio data source, and
      *   (b) we passed TRUE to reject a tables-only JPEG file as an error.
@@ -528,12 +529,12 @@ pub unsafe extern "C" fn R_LoadJPG(
     if cinfo.output_width == 0
         || cinfo.output_height == 0
         || pixelcount
-            .wrapping_mul(4 as libc::c_int as libc::c_uint)
+            .wrapping_mul(4u32)
             .wrapping_div(cinfo.output_width)
-            .wrapping_div(4 as libc::c_int as libc::c_uint)
+            .wrapping_div(4u32)
             != cinfo.output_height
-        || pixelcount > 0x1fffffff as libc::c_int as libc::c_uint
-        || cinfo.output_components != 3 as libc::c_int
+        || pixelcount > 0x1fffffff
+        || cinfo.output_components != 3
     {
         // Free the memory to make sure we don't leak memory
         crate::src::renderergl1::tr_main::ri
@@ -543,26 +544,26 @@ pub unsafe extern "C" fn R_LoadJPG(
         crate::src::renderergl1::tr_main::ri
             .Error
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
+            crate::src::qcommon::q_shared::ERR_DROP as i32,
             b"LoadJPG: %s has an invalid image format: %dx%d*4=%d, components: %d\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             filename,
             cinfo.output_width,
             cinfo.output_height,
-            pixelcount.wrapping_mul(4 as libc::c_int as libc::c_uint),
+            pixelcount.wrapping_mul(4u32),
             cinfo.output_components,
         );
     }
-    memcount = pixelcount.wrapping_mul(4 as libc::c_int as libc::c_uint);
+    memcount = pixelcount.wrapping_mul(4u32);
     row_stride = cinfo
         .output_width
-        .wrapping_mul(cinfo.output_components as libc::c_uint);
+        .wrapping_mul(cinfo.output_components as u32);
     out = crate::src::renderergl1::tr_main::ri
         .Malloc
-        .expect("non-null function pointer")(memcount as libc::c_int)
+        .expect("non-null function pointer")(memcount as i32)
         as *mut crate::src::qcommon::q_shared::byte;
-    *width = cinfo.output_width as libc::c_int;
-    *height = cinfo.output_height as libc::c_int;
+    *width = cinfo.output_width as i32;
+    *height = cinfo.output_height as i32;
     /* Step 6: while (scan lines remain to be read) */
     /*           jpeg_read_scanlines(...); */
     /* Here we use the library's state variable cinfo.output_scanline as the
@@ -578,16 +579,16 @@ pub unsafe extern "C" fn R_LoadJPG(
         crate::src::jpeg_8c::jdapistd::jpeg_read_scanlines(
             &mut cinfo,
             buffer,
-            1 as libc::c_int as crate::jmorecfg_h::JDIMENSION,
+            1,
         );
     }
     buf = out;
     // Expand from RGB to RGBA
-    sindex = pixelcount.wrapping_mul(cinfo.output_components as libc::c_uint);
+    sindex = pixelcount.wrapping_mul(cinfo.output_components as u32);
     dindex = memcount;
     loop {
         dindex = dindex.wrapping_sub(1);
-        *buf.offset(dindex as isize) = 255 as libc::c_int as crate::src::qcommon::q_shared::byte;
+        *buf.offset(dindex as isize) = 255u8;
         sindex = sindex.wrapping_sub(1);
         dindex = dindex.wrapping_sub(1);
         *buf.offset(dindex as isize) = *buf.offset(sindex as isize);
@@ -665,12 +666,12 @@ unsafe extern "C" fn empty_output_buffer(
     crate::src::renderergl1::tr_main::ri
         .Error
         .expect("non-null function pointer")(
-        crate::src::qcommon::q_shared::ERR_FATAL as libc::c_int,
+        crate::src::qcommon::q_shared::ERR_FATAL as i32,
         b"Output buffer for encoded JPEG image has insufficient size of %d bytes\x00" as *const u8
-            as *const libc::c_char,
+            as *const i8,
         (*dest).size,
     );
-    return 0 as libc::c_int;
+    return 0;
 }
 /*
  * Terminate destination --- called by jpeg_finish_compress
@@ -691,7 +692,7 @@ unsafe extern "C" fn term_destination(mut cinfo: crate::jpeglib_h::j_compress_pt
 unsafe extern "C" fn jpegDest(
     mut cinfo: crate::jpeglib_h::j_compress_ptr,
     mut outfile: *mut crate::src::qcommon::q_shared::byte,
-    mut size: libc::c_int,
+    mut size: i32,
 ) {
     let mut dest: my_dest_ptr = 0 as *mut my_destination_mgr;
     /* The destination object is made permanent so that multiple JPEG images
@@ -709,8 +710,9 @@ unsafe extern "C" fn jpegDest(
         )
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
-            0 as libc::c_int,
-            ::std::mem::size_of::<my_destination_mgr>() as libc::c_ulong,
+            0,
+            
+            ::std::mem::size_of::<my_destination_mgr>(),
         ) as *mut crate::jpeglib_h::jpeg_destination_mgr
     }
     dest = (*cinfo).dest as my_dest_ptr;
@@ -740,11 +742,11 @@ Expects RGB input data
 pub unsafe extern "C" fn RE_SaveJPGToBuffer(
     mut buffer: *mut crate::src::qcommon::q_shared::byte,
     mut bufSize: crate::stddef_h::size_t,
-    mut quality: libc::c_int,
-    mut image_width: libc::c_int,
-    mut image_height: libc::c_int,
+    mut quality: i32,
+    mut image_width: i32,
+    mut image_height: i32,
     mut image_buffer: *mut crate::src::qcommon::q_shared::byte,
-    mut padding: libc::c_int,
+    mut padding: i32,
 ) -> crate::stddef_h::size_t {
     let mut cinfo: crate::jpeglib_h::jpeg_compress_struct =
         crate::jpeglib_h::jpeg_compress_struct {
@@ -811,7 +813,7 @@ pub unsafe extern "C" fn RE_SaveJPGToBuffer(
             Ah: 0,
             Al: 0,
             block_size: 0,
-            natural_order: 0 as *const libc::c_int,
+            natural_order: 0 as *const i32,
             lim_Se: 0,
             master: 0 as *mut crate::jpegint_h::jpeg_comp_master,
             main: 0 as *mut crate::jpegint_h::jpeg_c_main_controller,
@@ -836,9 +838,9 @@ pub unsafe extern "C" fn RE_SaveJPGToBuffer(
             msg_parm: crate::jpeglib_h::C2RustUnnamed_0 { i: [0; 8] },
             trace_level: 0,
             num_warnings: 0,
-            jpeg_message_table: 0 as *const *const libc::c_char,
+            jpeg_message_table: 0 as *const *const i8,
             last_jpeg_message: 0,
-            addon_message_table: 0 as *const *const libc::c_char,
+            addon_message_table: 0 as *const *const i8,
             first_addon_message: 0,
             last_addon_message: 0,
         },
@@ -851,7 +853,7 @@ pub unsafe extern "C" fn RE_SaveJPGToBuffer(
     let mut row_pointer: [crate::jpeglib_h::JSAMPROW; 1] =
         [0 as *mut crate::jmorecfg_h::JSAMPLE; 1];
     let mut dest: my_dest_ptr = 0 as *mut my_destination_mgr;
-    let mut row_stride: libc::c_int = 0;
+    let mut row_stride: i32 = 0;
     let mut outcount: crate::stddef_h::size_t = 0;
     /* Step 1: allocate and initialize JPEG compression object */
     cinfo.err = crate::src::jpeg_8c::jerror::jpeg_std_error(&mut jerr.pub_0);
@@ -868,34 +870,35 @@ pub unsafe extern "C" fn RE_SaveJPGToBuffer(
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-            b"\n\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::PRINT_ALL as i32,
+            b"\n\x00" as *const u8 as *const i8,
         );
-        return 0 as libc::c_int as crate::stddef_h::size_t;
+        return 0usize;
     }
     /* Now we can initialize the JPEG compression object. */
     crate::src::jpeg_8c::jcapimin::jpeg_CreateCompress(
         &mut cinfo,
-        80 as libc::c_int,
-        ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>() as libc::c_ulong,
+        80,
+        
+        ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>(),
     );
     /* Step 2: specify data destination (eg, a file) */
     /* Note: steps 2 and 3 can be done in either order. */
-    jpegDest(&mut cinfo, buffer, bufSize as libc::c_int);
+    jpegDest(&mut cinfo, buffer, bufSize as i32);
     /* Step 3: set parameters for compression */
     cinfo.image_width = image_width as crate::jmorecfg_h::JDIMENSION; /* image width and height, in pixels */
     cinfo.image_height = image_height as crate::jmorecfg_h::JDIMENSION; /* # of color components per pixel */
-    cinfo.input_components = 3 as libc::c_int; /* colorspace of input image */
+    cinfo.input_components = 3; /* colorspace of input image */
     cinfo.in_color_space = crate::jpeglib_h::JCS_RGB;
     crate::src::jpeg_8c::jcparam::jpeg_set_defaults(&mut cinfo);
-    crate::src::jpeg_8c::jcparam::jpeg_set_quality(&mut cinfo, quality, 1 as libc::c_int);
+    crate::src::jpeg_8c::jcparam::jpeg_set_quality(&mut cinfo, quality, 1);
     /* If quality is set high, disable chroma subsampling */
-    if quality >= 85 as libc::c_int {
-        (*cinfo.comp_info.offset(0 as libc::c_int as isize)).h_samp_factor = 1 as libc::c_int;
-        (*cinfo.comp_info.offset(0 as libc::c_int as isize)).v_samp_factor = 1 as libc::c_int
+    if quality >= 85 {
+        (*cinfo.comp_info.offset(0)).h_samp_factor = 1;
+        (*cinfo.comp_info.offset(0)).v_samp_factor = 1
     }
     /* Step 4: Start compressor */
-    crate::src::jpeg_8c::jcapistd::jpeg_start_compress(&mut cinfo, 1 as libc::c_int);
+    crate::src::jpeg_8c::jcapistd::jpeg_start_compress(&mut cinfo, 1);
     /* Step 5: while (scan lines remain to be written) */
     /*           jpeg_write_scanlines(...); */
     row_stride = image_width * cinfo.input_components + padding; /* JSAMPLEs per row in image_buffer */
@@ -904,25 +907,25 @@ pub unsafe extern "C" fn RE_SaveJPGToBuffer(
          * Here the array is only one element long, but you could pass
          * more than one scanline at a time if that's more convenient.
          */
-        row_pointer[0 as libc::c_int as usize] = &mut *image_buffer.offset(
+        row_pointer[0] = &mut *image_buffer.offset(
             cinfo
                 .image_height
-                .wrapping_sub(1 as libc::c_int as libc::c_uint)
-                .wrapping_mul(row_stride as libc::c_uint)
-                .wrapping_sub(cinfo.next_scanline.wrapping_mul(row_stride as libc::c_uint))
+                .wrapping_sub(1u32)
+                .wrapping_mul(row_stride as u32)
+                .wrapping_sub(cinfo.next_scanline.wrapping_mul(row_stride as u32))
                 as isize,
         )
             as *mut crate::src::qcommon::q_shared::byte;
         crate::src::jpeg_8c::jcapistd::jpeg_write_scanlines(
             &mut cinfo,
             row_pointer.as_mut_ptr(),
-            1 as libc::c_int as crate::jmorecfg_h::JDIMENSION,
+            1,
         );
     }
     /* Step 6: Finish compression */
     crate::src::jpeg_8c::jcapimin::jpeg_finish_compress(&mut cinfo);
     dest = cinfo.dest as my_dest_ptr;
-    outcount = ((*dest).size as libc::c_ulong).wrapping_sub((*dest).pub_0.free_in_buffer);
+    outcount = ((*dest).size as usize).wrapping_sub((*dest).pub_0.free_in_buffer);
     /* Step 7: release JPEG compression object */
     crate::src::jpeg_8c::jcapimin::jpeg_destroy_compress(&mut cinfo);
     /* And we're done! */
@@ -931,20 +934,20 @@ pub unsafe extern "C" fn RE_SaveJPGToBuffer(
 #[no_mangle]
 
 pub unsafe extern "C" fn RE_SaveJPG(
-    mut filename: *mut libc::c_char,
-    mut quality: libc::c_int,
-    mut image_width: libc::c_int,
-    mut image_height: libc::c_int,
+    mut filename: *mut i8,
+    mut quality: i32,
+    mut image_width: i32,
+    mut image_height: i32,
     mut image_buffer: *mut crate::src::qcommon::q_shared::byte,
-    mut padding: libc::c_int,
+    mut padding: i32,
 ) {
     let mut out: *mut crate::src::qcommon::q_shared::byte =
         0 as *mut crate::src::qcommon::q_shared::byte;
     let mut bufSize: crate::stddef_h::size_t = 0;
-    bufSize = (image_width * image_height * 3 as libc::c_int) as crate::stddef_h::size_t;
+    bufSize = (image_width * image_height * 3i32) as crate::stddef_h::size_t;
     out = crate::src::renderergl1::tr_main::ri
         .Hunk_AllocateTempMemory
-        .expect("non-null function pointer")(bufSize as libc::c_int)
+        .expect("non-null function pointer")(bufSize as i32)
         as *mut crate::src::qcommon::q_shared::byte;
     bufSize = RE_SaveJPGToBuffer(
         out,
@@ -960,7 +963,7 @@ pub unsafe extern "C" fn RE_SaveJPG(
         .expect("non-null function pointer")(
         filename,
         out as *const libc::c_void,
-        bufSize as libc::c_int,
+        bufSize as i32,
     );
     crate::src::renderergl1::tr_main::ri
         .Hunk_FreeTempMemory

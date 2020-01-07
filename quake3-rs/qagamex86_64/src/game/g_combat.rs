@@ -239,10 +239,9 @@ pub mod q_shared_h {
         mut v: *const crate::src::qcommon::q_shared::vec_t,
     ) -> crate::src::qcommon::q_shared::vec_t {
         return crate::stdlib::sqrt(
-            (*v.offset(0 as libc::c_int as isize) * *v.offset(0 as libc::c_int as isize)
-                + *v.offset(1 as libc::c_int as isize) * *v.offset(1 as libc::c_int as isize)
-                + *v.offset(2 as libc::c_int as isize) * *v.offset(2 as libc::c_int as isize))
-                as libc::c_double,
+            (*v.offset(0) * *v.offset(0)
+                + *v.offset(1) * *v.offset(1)
+                + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
     use crate::stdlib::sqrt;
@@ -624,15 +623,12 @@ ScorePlum
 pub unsafe extern "C" fn ScorePlum(
     mut ent: *mut crate::g_local_h::gentity_t,
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-    mut score: libc::c_int,
+    mut score: i32,
 ) {
     let mut plum: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
-    plum = crate::src::game::g_utils::G_TempEntity(
-        origin,
-        crate::bg_public_h::EV_SCOREPLUM as libc::c_int,
-    );
+    plum = crate::src::game::g_utils::G_TempEntity(origin, crate::bg_public_h::EV_SCOREPLUM as i32);
     // only send this temp entity to a single client
-    (*plum).r.svFlags |= 0x100 as libc::c_int;
+    (*plum).r.svFlags |= 0x100;
     (*plum).r.singleClient = (*ent).s.number;
     //
     (*plum).s.otherEntityNum = (*ent).s.number;
@@ -650,7 +646,7 @@ Adds score to both the client and his team
 pub unsafe extern "C" fn AddScore(
     mut ent: *mut crate::g_local_h::gentity_t,
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-    mut score: libc::c_int,
+    mut score: i32,
 ) {
     if (*ent).client.is_null() {
         return;
@@ -662,11 +658,11 @@ pub unsafe extern "C" fn AddScore(
     // show score plum
     ScorePlum(ent, origin, score);
     //
-    (*(*ent).client).ps.persistant[crate::bg_public_h::PERS_SCORE as libc::c_int as usize] += score;
-    if crate::src::game::g_main::g_gametype.integer == crate::bg_public_h::GT_TEAM as libc::c_int {
-        crate::src::game::g_main::level.teamScores[(*(*ent).client).ps.persistant
-            [crate::bg_public_h::PERS_TEAM as libc::c_int as usize]
-            as usize] += score
+    (*(*ent).client).ps.persistant[crate::bg_public_h::PERS_SCORE as usize] += score;
+    if crate::src::game::g_main::g_gametype.integer == crate::bg_public_h::GT_TEAM as i32 {
+        crate::src::game::g_main::level.teamScores
+            [(*(*ent).client).ps.persistant[crate::bg_public_h::PERS_TEAM as usize] as usize] +=
+            score
     }
     crate::src::game::g_main::CalculateRanks();
 }
@@ -681,9 +677,9 @@ Toss the weapon and powerups for the killed player
 
 pub unsafe extern "C" fn TossClientItems(mut self_0: *mut crate::g_local_h::gentity_t) {
     let mut item: *mut crate::bg_public_h::gitem_t = 0 as *mut crate::bg_public_h::gitem_t;
-    let mut weapon: libc::c_int = 0;
-    let mut angle: libc::c_float = 0.;
-    let mut i: libc::c_int = 0;
+    let mut weapon: i32 = 0;
+    let mut angle: f32 = 0.;
+    let mut i: i32 = 0;
     let mut drop_0: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     // drop the weapon if not a gauntlet or machinegun
     weapon = (*self_0).s.weapon;
@@ -691,35 +687,33 @@ pub unsafe extern "C" fn TossClientItems(mut self_0: *mut crate::g_local_h::gent
     // weapon that isn't the mg or gauntlet.  Without this, a client
     // can pick up a weapon, be killed, and not drop the weapon because
     // their weapon change hasn't completed yet and they are still holding the MG.
-    if weapon == crate::bg_public_h::WP_MACHINEGUN as libc::c_int
-        || weapon == crate::bg_public_h::WP_GRAPPLING_HOOK as libc::c_int
+    if weapon == crate::bg_public_h::WP_MACHINEGUN as i32
+        || weapon == crate::bg_public_h::WP_GRAPPLING_HOOK as i32
     {
-        if (*(*self_0).client).ps.weaponstate == crate::bg_public_h::WEAPON_DROPPING as libc::c_int
-        {
-            weapon = (*(*self_0).client).pers.cmd.weapon as libc::c_int
+        if (*(*self_0).client).ps.weaponstate == crate::bg_public_h::WEAPON_DROPPING as i32 {
+            weapon = (*(*self_0).client).pers.cmd.weapon as i32
         }
-        if (*(*self_0).client).ps.stats[crate::bg_public_h::STAT_WEAPONS as libc::c_int as usize]
-            & (1 as libc::c_int) << weapon
+        if (*(*self_0).client).ps.stats[crate::bg_public_h::STAT_WEAPONS as usize] & (1) << weapon
             == 0
         {
-            weapon = crate::bg_public_h::WP_NONE as libc::c_int
+            weapon = crate::bg_public_h::WP_NONE as i32
         }
     }
-    if weapon > crate::bg_public_h::WP_MACHINEGUN as libc::c_int
-        && weapon != crate::bg_public_h::WP_GRAPPLING_HOOK as libc::c_int
+    if weapon > crate::bg_public_h::WP_MACHINEGUN as i32
+        && weapon != crate::bg_public_h::WP_GRAPPLING_HOOK as i32
         && (*(*self_0).client).ps.ammo[weapon as usize] != 0
     {
         // find the item type for this weapon
         item =
             crate::src::game::bg_misc::BG_FindItemForWeapon(weapon as crate::bg_public_h::weapon_t);
         // spawn the item
-        crate::src::game::g_items::Drop_Item(self_0, item, 0 as libc::c_int as libc::c_float);
+        crate::src::game::g_items::Drop_Item(self_0, item, 0f32);
     }
     // drop all the powerups if not in teamplay
-    if crate::src::game::g_main::g_gametype.integer != crate::bg_public_h::GT_TEAM as libc::c_int {
-        angle = 45 as libc::c_int as libc::c_float;
-        i = 1 as libc::c_int;
-        while i < crate::bg_public_h::PW_NUM_POWERUPS as libc::c_int {
+    if crate::src::game::g_main::g_gametype.integer != crate::bg_public_h::GT_TEAM as i32 {
+        angle = 45f32;
+        i = 1;
+        while i < crate::bg_public_h::PW_NUM_POWERUPS as i32 {
             if (*(*self_0).client).ps.powerups[i as usize] > crate::src::game::g_main::level.time {
                 item = crate::src::game::bg_misc::BG_FindItemForPowerup(
                     i as crate::bg_public_h::powerup_t,
@@ -729,11 +723,11 @@ pub unsafe extern "C" fn TossClientItems(mut self_0: *mut crate::g_local_h::gent
                     // decide how many seconds it has left
                     (*drop_0).count = ((*(*self_0).client).ps.powerups[i as usize]
                         - crate::src::game::g_main::level.time)
-                        / 1000 as libc::c_int;
-                    if (*drop_0).count < 1 as libc::c_int {
-                        (*drop_0).count = 1 as libc::c_int
+                        / 1000;
+                    if (*drop_0).count < 1 {
+                        (*drop_0).count = 1
                     }
-                    angle += 45 as libc::c_int as libc::c_float
+                    angle += 45f32
                 }
             }
             i += 1
@@ -754,28 +748,22 @@ pub unsafe extern "C" fn LookAtKiller(
 ) {
     let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     if !attacker.is_null() && attacker != self_0 {
-        dir[0 as libc::c_int as usize] = (*attacker).s.pos.trBase[0 as libc::c_int as usize]
-            - (*self_0).s.pos.trBase[0 as libc::c_int as usize];
-        dir[1 as libc::c_int as usize] = (*attacker).s.pos.trBase[1 as libc::c_int as usize]
-            - (*self_0).s.pos.trBase[1 as libc::c_int as usize];
-        dir[2 as libc::c_int as usize] = (*attacker).s.pos.trBase[2 as libc::c_int as usize]
-            - (*self_0).s.pos.trBase[2 as libc::c_int as usize]
+        dir[0] = (*attacker).s.pos.trBase[0] - (*self_0).s.pos.trBase[0];
+        dir[1] = (*attacker).s.pos.trBase[1] - (*self_0).s.pos.trBase[1];
+        dir[2] = (*attacker).s.pos.trBase[2] - (*self_0).s.pos.trBase[2]
     } else if !inflictor.is_null() && inflictor != self_0 {
-        dir[0 as libc::c_int as usize] = (*inflictor).s.pos.trBase[0 as libc::c_int as usize]
-            - (*self_0).s.pos.trBase[0 as libc::c_int as usize];
-        dir[1 as libc::c_int as usize] = (*inflictor).s.pos.trBase[1 as libc::c_int as usize]
-            - (*self_0).s.pos.trBase[1 as libc::c_int as usize];
-        dir[2 as libc::c_int as usize] = (*inflictor).s.pos.trBase[2 as libc::c_int as usize]
-            - (*self_0).s.pos.trBase[2 as libc::c_int as usize]
+        dir[0] = (*inflictor).s.pos.trBase[0] - (*self_0).s.pos.trBase[0];
+        dir[1] = (*inflictor).s.pos.trBase[1] - (*self_0).s.pos.trBase[1];
+        dir[2] = (*inflictor).s.pos.trBase[2] - (*self_0).s.pos.trBase[2]
     } else {
-        (*(*self_0).client).ps.stats[crate::bg_public_h::STAT_DEAD_YAW as libc::c_int as usize] =
-            (*self_0).s.angles[1 as libc::c_int as usize] as libc::c_int;
+        (*(*self_0).client).ps.stats[crate::bg_public_h::STAT_DEAD_YAW as usize] =
+            (*self_0).s.angles[1] as i32;
         return;
     }
-    (*(*self_0).client).ps.stats[crate::bg_public_h::STAT_DEAD_YAW as libc::c_int as usize] =
+    (*(*self_0).client).ps.stats[crate::bg_public_h::STAT_DEAD_YAW as usize] =
         crate::src::game::g_utils::vectoyaw(
             dir.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t
-        ) as libc::c_int;
+        ) as i32;
 }
 /*
 ==================
@@ -784,16 +772,13 @@ GibEntity
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn GibEntity(
-    mut self_0: *mut crate::g_local_h::gentity_t,
-    mut killer: libc::c_int,
-) {
+pub unsafe extern "C" fn GibEntity(mut self_0: *mut crate::g_local_h::gentity_t, mut killer: i32) {
     let mut ent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     //if this entity still has kamikaze
-    if (*self_0).s.eFlags & 0x200 as libc::c_int != 0 {
+    if (*self_0).s.eFlags & 0x200 != 0 {
         // check if there is a kamikaze timer around for this owner
-        i = 0 as libc::c_int;
+        i = 0;
         while i < crate::src::game::g_main::level.num_entities {
             ent = &mut *crate::src::game::g_main::g_entities
                 .as_mut_ptr()
@@ -802,7 +787,7 @@ pub unsafe extern "C" fn GibEntity(
                 if !((*ent).activator != self_0) {
                     if !(crate::stdlib::strcmp(
                         (*ent).classname,
-                        b"kamikaze timer\x00" as *const u8 as *const libc::c_char,
+                        b"kamikaze timer\x00" as *const u8 as *const i8,
                     ) != 0)
                     {
                         crate::src::game::g_utils::G_FreeEntity(ent);
@@ -813,14 +798,10 @@ pub unsafe extern "C" fn GibEntity(
             i += 1
         }
     }
-    crate::src::game::g_utils::G_AddEvent(
-        self_0,
-        crate::bg_public_h::EV_GIB_PLAYER as libc::c_int,
-        killer,
-    );
+    crate::src::game::g_utils::G_AddEvent(self_0, crate::bg_public_h::EV_GIB_PLAYER as i32, killer);
     (*self_0).takedamage = crate::src::qcommon::q_shared::qfalse;
-    (*self_0).s.eType = crate::bg_public_h::ET_INVISIBLE as libc::c_int;
-    (*self_0).r.contents = 0 as libc::c_int;
+    (*self_0).s.eType = crate::bg_public_h::ET_INVISIBLE as i32;
+    (*self_0).r.contents = 0;
 }
 /*
 ==================
@@ -833,46 +814,46 @@ pub unsafe extern "C" fn body_die(
     mut self_0: *mut crate::g_local_h::gentity_t,
     mut inflictor: *mut crate::g_local_h::gentity_t,
     mut attacker: *mut crate::g_local_h::gentity_t,
-    mut damage: libc::c_int,
-    mut meansOfDeath: libc::c_int,
+    mut damage: i32,
+    mut meansOfDeath: i32,
 ) {
-    if (*self_0).health > -(40 as libc::c_int) {
+    if (*self_0).health > -(40) {
         return;
     }
     if crate::src::game::g_main::g_blood.integer == 0 {
-        (*self_0).health = -(40 as libc::c_int) + 1 as libc::c_int;
+        (*self_0).health = -(40) + 1;
         return;
     }
-    GibEntity(self_0, 0 as libc::c_int);
+    GibEntity(self_0, 0);
 }
 // these are just for logging, the client prints its own messages
 #[no_mangle]
 
-pub static mut modNames: [*mut libc::c_char; 24] = [
-    b"MOD_UNKNOWN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_SHOTGUN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_GAUNTLET\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_MACHINEGUN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_GRENADE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_GRENADE_SPLASH\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_ROCKET\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_ROCKET_SPLASH\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_PLASMA\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_PLASMA_SPLASH\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_RAILGUN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_LIGHTNING\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_BFG\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_BFG_SPLASH\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_WATER\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_SLIME\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_LAVA\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_CRUSH\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_TELEFRAG\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_FALLING\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_SUICIDE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_TARGET_LASER\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_TRIGGER_HURT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"MOD_GRAPPLE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+pub static mut modNames: [*mut i8; 24] = [
+    b"MOD_UNKNOWN\x00" as *const u8 as *mut i8,
+    b"MOD_SHOTGUN\x00" as *const u8 as *mut i8,
+    b"MOD_GAUNTLET\x00" as *const u8 as *mut i8,
+    b"MOD_MACHINEGUN\x00" as *const u8 as *mut i8,
+    b"MOD_GRENADE\x00" as *const u8 as *mut i8,
+    b"MOD_GRENADE_SPLASH\x00" as *const u8 as *mut i8,
+    b"MOD_ROCKET\x00" as *const u8 as *mut i8,
+    b"MOD_ROCKET_SPLASH\x00" as *const u8 as *mut i8,
+    b"MOD_PLASMA\x00" as *const u8 as *mut i8,
+    b"MOD_PLASMA_SPLASH\x00" as *const u8 as *mut i8,
+    b"MOD_RAILGUN\x00" as *const u8 as *mut i8,
+    b"MOD_LIGHTNING\x00" as *const u8 as *mut i8,
+    b"MOD_BFG\x00" as *const u8 as *mut i8,
+    b"MOD_BFG_SPLASH\x00" as *const u8 as *mut i8,
+    b"MOD_WATER\x00" as *const u8 as *mut i8,
+    b"MOD_SLIME\x00" as *const u8 as *mut i8,
+    b"MOD_LAVA\x00" as *const u8 as *mut i8,
+    b"MOD_CRUSH\x00" as *const u8 as *mut i8,
+    b"MOD_TELEFRAG\x00" as *const u8 as *mut i8,
+    b"MOD_FALLING\x00" as *const u8 as *mut i8,
+    b"MOD_SUICIDE\x00" as *const u8 as *mut i8,
+    b"MOD_TARGET_LASER\x00" as *const u8 as *mut i8,
+    b"MOD_TRIGGER_HURT\x00" as *const u8 as *mut i8,
+    b"MOD_GRAPPLE\x00" as *const u8 as *mut i8,
 ];
 /*
 ==================
@@ -887,70 +868,49 @@ pub unsafe extern "C" fn CheckAlmostCapture(
 ) {
     let mut ent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut classname: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut classname: *mut i8 = 0 as *mut i8;
     // if this player was carrying a flag
-    if (*(*self_0).client).ps.powerups[crate::bg_public_h::PW_REDFLAG as libc::c_int as usize] != 0
-        || (*(*self_0).client).ps.powerups[crate::bg_public_h::PW_BLUEFLAG as libc::c_int as usize]
-            != 0
-        || (*(*self_0).client).ps.powerups
-            [crate::bg_public_h::PW_NEUTRALFLAG as libc::c_int as usize]
-            != 0
+    if (*(*self_0).client).ps.powerups[crate::bg_public_h::PW_REDFLAG as usize] != 0
+        || (*(*self_0).client).ps.powerups[crate::bg_public_h::PW_BLUEFLAG as usize] != 0
+        || (*(*self_0).client).ps.powerups[crate::bg_public_h::PW_NEUTRALFLAG as usize] != 0
     {
         // get the goal flag this player should have been going for
-        if crate::src::game::g_main::g_gametype.integer == crate::bg_public_h::GT_CTF as libc::c_int
-        {
-            if (*(*self_0).client).sess.sessionTeam as libc::c_uint
-                == crate::bg_public_h::TEAM_BLUE as libc::c_int as libc::c_uint
-            {
-                classname = b"team_CTF_blueflag\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char
+        if crate::src::game::g_main::g_gametype.integer == crate::bg_public_h::GT_CTF as i32 {
+            if (*(*self_0).client).sess.sessionTeam == crate::bg_public_h::TEAM_BLUE {
+                classname = b"team_CTF_blueflag\x00" as *const u8 as *mut i8
             } else {
-                classname =
-                    b"team_CTF_redflag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+                classname = b"team_CTF_redflag\x00" as *const u8 as *mut i8
             }
-        } else if (*(*self_0).client).sess.sessionTeam as libc::c_uint
-            == crate::bg_public_h::TEAM_BLUE as libc::c_int as libc::c_uint
-        {
-            classname =
-                b"team_CTF_redflag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+        } else if (*(*self_0).client).sess.sessionTeam == crate::bg_public_h::TEAM_BLUE {
+            classname = b"team_CTF_redflag\x00" as *const u8 as *mut i8
         } else {
-            classname =
-                b"team_CTF_blueflag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+            classname = b"team_CTF_blueflag\x00" as *const u8 as *mut i8
         }
         ent = 0 as *mut crate::g_local_h::gentity_t;
         loop {
             ent = crate::src::game::g_utils::G_Find(
                 ent,
-                &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut libc::c_char
-                    as crate::stddef_h::size_t as libc::c_int,
+                &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut i8 as i32,
                 classname,
             );
-            if !(!ent.is_null() && (*ent).flags & 0x1000 as libc::c_int != 0) {
+            if !(!ent.is_null() && (*ent).flags & 0x1000 != 0) {
                 break;
             }
         }
         // if we found the destination flag and it's not picked up
-        if !ent.is_null() && (*ent).r.svFlags & 0x1 as libc::c_int == 0 {
+        if !ent.is_null() && (*ent).r.svFlags & 0x1 == 0 {
             // if the player was *very* close
-            dir[0 as libc::c_int as usize] = (*(*self_0).client).ps.origin
-                [0 as libc::c_int as usize]
-                - (*ent).s.origin[0 as libc::c_int as usize];
-            dir[1 as libc::c_int as usize] = (*(*self_0).client).ps.origin
-                [1 as libc::c_int as usize]
-                - (*ent).s.origin[1 as libc::c_int as usize];
-            dir[2 as libc::c_int as usize] = (*(*self_0).client).ps.origin
-                [2 as libc::c_int as usize]
-                - (*ent).s.origin[2 as libc::c_int as usize];
+            dir[0] = (*(*self_0).client).ps.origin[0] - (*ent).s.origin[0];
+            dir[1] = (*(*self_0).client).ps.origin[1] - (*ent).s.origin[1];
+            dir[2] = (*(*self_0).client).ps.origin[2] - (*ent).s.origin[2];
             if VectorLength(dir.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t)
-                < 200 as libc::c_int as libc::c_float
+                < 200f32
             {
                 (*(*self_0).client).ps.persistant
-                    [crate::bg_public_h::PERS_PLAYEREVENTS as libc::c_int as usize] ^=
-                    0x4 as libc::c_int;
+                    [crate::bg_public_h::PERS_PLAYEREVENTS as usize] ^= 0x4;
                 if !(*attacker).client.is_null() {
                     (*(*attacker).client).ps.persistant
-                        [crate::bg_public_h::PERS_PLAYEREVENTS as libc::c_int as usize] ^=
-                        0x4 as libc::c_int
+                        [crate::bg_public_h::PERS_PLAYEREVENTS as usize] ^= 0x4
                 }
             }
         }
@@ -969,46 +929,33 @@ pub unsafe extern "C" fn CheckAlmostScored(
 ) {
     let mut ent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut classname: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut classname: *mut i8 = 0 as *mut i8;
     // if the player was carrying cubes
     if (*(*self_0).client).ps.generic1 != 0 {
-        if (*(*self_0).client).sess.sessionTeam as libc::c_uint
-            == crate::bg_public_h::TEAM_BLUE as libc::c_int as libc::c_uint
-        {
-            classname =
-                b"team_redobelisk\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+        if (*(*self_0).client).sess.sessionTeam == crate::bg_public_h::TEAM_BLUE {
+            classname = b"team_redobelisk\x00" as *const u8 as *mut i8
         } else {
-            classname =
-                b"team_blueobelisk\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+            classname = b"team_blueobelisk\x00" as *const u8 as *mut i8
         }
         ent = crate::src::game::g_utils::G_Find(
             0 as *mut crate::g_local_h::gentity_t,
-            &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut libc::c_char
-                as crate::stddef_h::size_t as libc::c_int,
+            &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut i8 as i32,
             classname,
         );
         // if we found the destination obelisk
         if !ent.is_null() {
             // if the player was *very* close
-            dir[0 as libc::c_int as usize] = (*(*self_0).client).ps.origin
-                [0 as libc::c_int as usize]
-                - (*ent).s.origin[0 as libc::c_int as usize];
-            dir[1 as libc::c_int as usize] = (*(*self_0).client).ps.origin
-                [1 as libc::c_int as usize]
-                - (*ent).s.origin[1 as libc::c_int as usize];
-            dir[2 as libc::c_int as usize] = (*(*self_0).client).ps.origin
-                [2 as libc::c_int as usize]
-                - (*ent).s.origin[2 as libc::c_int as usize];
+            dir[0] = (*(*self_0).client).ps.origin[0] - (*ent).s.origin[0];
+            dir[1] = (*(*self_0).client).ps.origin[1] - (*ent).s.origin[1];
+            dir[2] = (*(*self_0).client).ps.origin[2] - (*ent).s.origin[2];
             if VectorLength(dir.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t)
-                < 200 as libc::c_int as libc::c_float
+                < 200f32
             {
                 (*(*self_0).client).ps.persistant
-                    [crate::bg_public_h::PERS_PLAYEREVENTS as libc::c_int as usize] ^=
-                    0x4 as libc::c_int;
+                    [crate::bg_public_h::PERS_PLAYEREVENTS as usize] ^= 0x4;
                 if !(*attacker).client.is_null() {
                     (*(*attacker).client).ps.persistant
-                        [crate::bg_public_h::PERS_PLAYEREVENTS as libc::c_int as usize] ^=
-                        0x4 as libc::c_int
+                        [crate::bg_public_h::PERS_PLAYEREVENTS as usize] ^= 0x4
                 }
             }
         }
@@ -1048,17 +995,17 @@ pub unsafe extern "C" fn player_die(
     mut self_0: *mut crate::g_local_h::gentity_t,
     mut inflictor: *mut crate::g_local_h::gentity_t,
     mut attacker: *mut crate::g_local_h::gentity_t,
-    mut damage: libc::c_int,
-    mut meansOfDeath: libc::c_int,
+    mut damage: i32,
+    mut meansOfDeath: i32,
 ) {
     let mut ent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
-    let mut anim: libc::c_int = 0;
-    let mut contents: libc::c_int = 0;
-    let mut killer: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
-    let mut killerName: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut obit: *mut libc::c_char = 0 as *mut libc::c_char;
-    if (*(*self_0).client).ps.pm_type == crate::bg_public_h::PM_DEAD as libc::c_int {
+    let mut anim: i32 = 0;
+    let mut contents: i32 = 0;
+    let mut killer: i32 = 0;
+    let mut i: i32 = 0;
+    let mut killerName: *mut i8 = 0 as *mut i8;
+    let mut obit: *mut i8 = 0 as *mut i8;
+    if (*(*self_0).client).ps.pm_type == crate::bg_public_h::PM_DEAD as i32 {
         return;
     }
     if crate::src::game::g_main::level.intermissiontime != 0 {
@@ -1071,34 +1018,33 @@ pub unsafe extern "C" fn player_die(
     if !(*self_0).client.is_null() && !(*(*self_0).client).hook.is_null() {
         crate::src::game::g_weapon::Weapon_HookFree((*(*self_0).client).hook);
     }
-    (*(*self_0).client).ps.pm_type = crate::bg_public_h::PM_DEAD as libc::c_int;
+    (*(*self_0).client).ps.pm_type = crate::bg_public_h::PM_DEAD as i32;
     if !attacker.is_null() {
         killer = (*attacker).s.number;
         if !(*attacker).client.is_null() {
             killerName = (*(*attacker).client).pers.netname.as_mut_ptr()
         } else {
-            killerName =
-                b"<non-client>\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+            killerName = b"<non-client>\x00" as *const u8 as *mut i8
         }
     } else {
-        killer = ((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int;
-        killerName = b"<world>\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+        killer = ((1) << 10) - 2;
+        killerName = b"<world>\x00" as *const u8 as *mut i8
     }
-    if killer < 0 as libc::c_int || killer >= 64 as libc::c_int {
-        killer = ((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int;
-        killerName = b"<world>\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+    if killer < 0 || killer >= 64 {
+        killer = ((1) << 10) - 2;
+        killerName = b"<world>\x00" as *const u8 as *mut i8
     }
-    if meansOfDeath < 0 as libc::c_int
-        || meansOfDeath as libc::c_ulong
-            >= (::std::mem::size_of::<[*mut libc::c_char; 24]>() as libc::c_ulong)
-                .wrapping_div(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong)
+    if meansOfDeath < 0
+        || meansOfDeath as usize
+            >= (::std::mem::size_of::<[*mut i8; 24]>())
+                .wrapping_div(::std::mem::size_of::<*mut i8>())
     {
-        obit = b"<bad obituary>\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+        obit = b"<bad obituary>\x00" as *const u8 as *mut i8
     } else {
         obit = modNames[meansOfDeath as usize]
     }
     crate::src::game::g_main::G_LogPrintf(
-        b"Kill: %i %i %i: %s killed %s by %s\n\x00" as *const u8 as *const libc::c_char,
+        b"Kill: %i %i %i: %s killed %s by %s\n\x00" as *const u8 as *const i8,
         killer,
         (*self_0).s.number,
         meansOfDeath,
@@ -1109,122 +1055,79 @@ pub unsafe extern "C" fn player_die(
     // broadcast the death event to everyone
     ent = crate::src::game::g_utils::G_TempEntity(
         (*self_0).r.currentOrigin.as_mut_ptr(),
-        crate::bg_public_h::EV_OBITUARY as libc::c_int,
+        crate::bg_public_h::EV_OBITUARY as i32,
     ); // send to everyone
     (*ent).s.eventParm = meansOfDeath;
     (*ent).s.otherEntityNum = (*self_0).s.number;
     (*ent).s.otherEntityNum2 = killer;
-    (*ent).r.svFlags = 0x20 as libc::c_int;
+    (*ent).r.svFlags = 0x20;
     (*self_0).enemy = attacker;
-    (*(*self_0).client).ps.persistant[crate::bg_public_h::PERS_KILLED as libc::c_int as usize] += 1;
+    (*(*self_0).client).ps.persistant[crate::bg_public_h::PERS_KILLED as usize] += 1;
     if !attacker.is_null() && !(*attacker).client.is_null() {
         (*(*attacker).client).lastkilled_client = (*self_0).s.number;
-        if attacker == self_0
-            || crate::src::game::g_team::OnSameTeam(self_0, attacker) as libc::c_uint != 0
-        {
-            AddScore(
-                attacker,
-                (*self_0).r.currentOrigin.as_mut_ptr(),
-                -(1 as libc::c_int),
-            );
+        if attacker == self_0 || crate::src::game::g_team::OnSameTeam(self_0, attacker) != 0 {
+            AddScore(attacker, (*self_0).r.currentOrigin.as_mut_ptr(), -(1i32));
         } else {
-            AddScore(
-                attacker,
-                (*self_0).r.currentOrigin.as_mut_ptr(),
-                1 as libc::c_int,
-            );
-            if meansOfDeath == crate::bg_public_h::MOD_GAUNTLET as libc::c_int {
+            AddScore(attacker, (*self_0).r.currentOrigin.as_mut_ptr(), 1);
+            if meansOfDeath == crate::bg_public_h::MOD_GAUNTLET as i32 {
                 // play humiliation on player
                 (*(*attacker).client).ps.persistant
-                    [crate::bg_public_h::PERS_GAUNTLET_FRAG_COUNT as libc::c_int as usize] += 1;
+                    [crate::bg_public_h::PERS_GAUNTLET_FRAG_COUNT as usize] += 1;
                 // add the sprite over the player's head
-                (*(*attacker).client).ps.eFlags &= !(0x8000 as libc::c_int
-                    | 0x8 as libc::c_int
-                    | 0x40 as libc::c_int
-                    | 0x20000 as libc::c_int
-                    | 0x10000 as libc::c_int
-                    | 0x800 as libc::c_int);
-                (*(*attacker).client).ps.eFlags |= 0x40 as libc::c_int;
-                (*(*attacker).client).rewardTime =
-                    crate::src::game::g_main::level.time + 2000 as libc::c_int;
+                (*(*attacker).client).ps.eFlags &=
+                    !(0x8000 | 0x8 | 0x40 | 0x20000 | 0x10000 | 0x800);
+                (*(*attacker).client).ps.eFlags |= 0x40;
+                (*(*attacker).client).rewardTime = crate::src::game::g_main::level.time + 2000;
                 // also play humiliation on target
-                (*(*self_0).client).ps.persistant
-                    [crate::bg_public_h::PERS_PLAYEREVENTS as libc::c_int as usize] ^=
-                    0x2 as libc::c_int
+                (*(*self_0).client).ps.persistant[crate::bg_public_h::PERS_PLAYEREVENTS as usize] ^=
+                    0x2
             }
             // check for two kills in a short amount of time
             // if this is close enough to the last kill, give a reward sound
-            if crate::src::game::g_main::level.time - (*(*attacker).client).lastKillTime
-                < 3000 as libc::c_int
-            {
+            if crate::src::game::g_main::level.time - (*(*attacker).client).lastKillTime < 3000 {
                 // play excellent on player
                 (*(*attacker).client).ps.persistant
-                    [crate::bg_public_h::PERS_EXCELLENT_COUNT as libc::c_int as usize] += 1;
+                    [crate::bg_public_h::PERS_EXCELLENT_COUNT as usize] += 1;
                 // add the sprite over the player's head
-                (*(*attacker).client).ps.eFlags &= !(0x8000 as libc::c_int
-                    | 0x8 as libc::c_int
-                    | 0x40 as libc::c_int
-                    | 0x20000 as libc::c_int
-                    | 0x10000 as libc::c_int
-                    | 0x800 as libc::c_int);
-                (*(*attacker).client).ps.eFlags |= 0x8 as libc::c_int;
-                (*(*attacker).client).rewardTime =
-                    crate::src::game::g_main::level.time + 2000 as libc::c_int
+                (*(*attacker).client).ps.eFlags &=
+                    !(0x8000 | 0x8 | 0x40 | 0x20000 | 0x10000 | 0x800);
+                (*(*attacker).client).ps.eFlags |= 0x8;
+                (*(*attacker).client).rewardTime = crate::src::game::g_main::level.time + 2000
             }
             (*(*attacker).client).lastKillTime = crate::src::game::g_main::level.time
         }
     } else {
-        AddScore(
-            self_0,
-            (*self_0).r.currentOrigin.as_mut_ptr(),
-            -(1 as libc::c_int),
-        );
+        AddScore(self_0, (*self_0).r.currentOrigin.as_mut_ptr(), -(1i32));
     }
     // Add team bonuses
     crate::src::game::g_team::Team_FragBonuses(self_0, inflictor, attacker);
     // if I committed suicide, the flag does not fall, it returns.
-    if meansOfDeath == crate::bg_public_h::MOD_SUICIDE as libc::c_int {
-        if (*(*self_0).client).ps.powerups
-            [crate::bg_public_h::PW_NEUTRALFLAG as libc::c_int as usize]
-            != 0
-        {
+    if meansOfDeath == crate::bg_public_h::MOD_SUICIDE as i32 {
+        if (*(*self_0).client).ps.powerups[crate::bg_public_h::PW_NEUTRALFLAG as usize] != 0 {
             // only happens in One Flag CTF
-            crate::src::game::g_team::Team_ReturnFlag(crate::bg_public_h::TEAM_FREE as libc::c_int);
-            (*(*self_0).client).ps.powerups
-                [crate::bg_public_h::PW_NEUTRALFLAG as libc::c_int as usize] = 0 as libc::c_int
-        } else if (*(*self_0).client).ps.powerups
-            [crate::bg_public_h::PW_REDFLAG as libc::c_int as usize]
-            != 0
-        {
+            crate::src::game::g_team::Team_ReturnFlag(crate::bg_public_h::TEAM_FREE as i32);
+            (*(*self_0).client).ps.powerups[crate::bg_public_h::PW_NEUTRALFLAG as usize] = 0
+        } else if (*(*self_0).client).ps.powerups[crate::bg_public_h::PW_REDFLAG as usize] != 0 {
             // only happens in standard CTF
-            crate::src::game::g_team::Team_ReturnFlag(crate::bg_public_h::TEAM_RED as libc::c_int);
-            (*(*self_0).client).ps.powerups
-                [crate::bg_public_h::PW_REDFLAG as libc::c_int as usize] = 0 as libc::c_int
-        } else if (*(*self_0).client).ps.powerups
-            [crate::bg_public_h::PW_BLUEFLAG as libc::c_int as usize]
-            != 0
-        {
+            crate::src::game::g_team::Team_ReturnFlag(crate::bg_public_h::TEAM_RED as i32);
+            (*(*self_0).client).ps.powerups[crate::bg_public_h::PW_REDFLAG as usize] = 0
+        } else if (*(*self_0).client).ps.powerups[crate::bg_public_h::PW_BLUEFLAG as usize] != 0 {
             // only happens in standard CTF
-            crate::src::game::g_team::Team_ReturnFlag(crate::bg_public_h::TEAM_BLUE as libc::c_int); // show scores
-            (*(*self_0).client).ps.powerups
-                [crate::bg_public_h::PW_BLUEFLAG as libc::c_int as usize] = 0 as libc::c_int
+            crate::src::game::g_team::Team_ReturnFlag(crate::bg_public_h::TEAM_BLUE as i32); // show scores
+            (*(*self_0).client).ps.powerups[crate::bg_public_h::PW_BLUEFLAG as usize] = 0
         }
     }
     TossClientItems(self_0);
     crate::src::game::g_cmds::Cmd_Score_f(self_0);
     // send updated scores to any clients that are following this one,
     // or they would get stale scoreboards
-    i = 0 as libc::c_int; // can still be gibbed
+    i = 0; // can still be gibbed
     while i < crate::src::game::g_main::level.maxclients {
         let mut client: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
         client = &mut *crate::src::game::g_main::level.clients.offset(i as isize)
             as *mut crate::g_local_h::gclient_s;
-        if !((*client).pers.connected as libc::c_uint
-            != crate::g_local_h::CON_CONNECTED as libc::c_int as libc::c_uint)
-        {
-            if !((*client).sess.sessionTeam as libc::c_uint
-                != crate::bg_public_h::TEAM_SPECTATOR as libc::c_int as libc::c_uint)
-            {
+        if !((*client).pers.connected != crate::g_local_h::CON_CONNECTED) {
+            if !((*client).sess.sessionTeam != crate::bg_public_h::TEAM_SPECTATOR) {
                 if (*client).sess.spectatorClient == (*self_0).s.number {
                     crate::src::game::g_cmds::Cmd_Score_f(
                         crate::src::game::g_main::g_entities
@@ -1237,64 +1140,56 @@ pub unsafe extern "C" fn player_die(
         i += 1
     }
     (*self_0).takedamage = crate::src::qcommon::q_shared::qtrue;
-    (*self_0).s.weapon = crate::bg_public_h::WP_NONE as libc::c_int;
-    (*self_0).s.powerups = 0 as libc::c_int;
-    (*self_0).r.contents = 0x4000000 as libc::c_int;
-    (*self_0).s.angles[0 as libc::c_int as usize] =
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    (*self_0).s.angles[2 as libc::c_int as usize] =
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
+    (*self_0).s.weapon = crate::bg_public_h::WP_NONE as i32;
+    (*self_0).s.powerups = 0;
+    (*self_0).r.contents = 0x4000000;
+    (*self_0).s.angles[0] = 0f32;
+    (*self_0).s.angles[2] = 0f32;
     LookAtKiller(self_0, inflictor, attacker);
-    (*(*self_0).client).ps.viewangles[0 as libc::c_int as usize] =
-        (*self_0).s.angles[0 as libc::c_int as usize];
-    (*(*self_0).client).ps.viewangles[1 as libc::c_int as usize] =
-        (*self_0).s.angles[1 as libc::c_int as usize];
-    (*(*self_0).client).ps.viewangles[2 as libc::c_int as usize] =
-        (*self_0).s.angles[2 as libc::c_int as usize];
-    (*self_0).s.loopSound = 0 as libc::c_int;
-    (*self_0).r.maxs[2 as libc::c_int as usize] =
-        -(8 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+    (*(*self_0).client).ps.viewangles[0] = (*self_0).s.angles[0];
+    (*(*self_0).client).ps.viewangles[1] = (*self_0).s.angles[1];
+    (*(*self_0).client).ps.viewangles[2] = (*self_0).s.angles[2];
+    (*self_0).s.loopSound = 0;
+    (*self_0).r.maxs[2] = -8f32;
     // don't allow respawn until the death anim is done
     // g_forcerespawn may force spawning at some later time
-    (*(*self_0).client).respawnTime = crate::src::game::g_main::level.time + 1700 as libc::c_int;
+    (*(*self_0).client).respawnTime = crate::src::game::g_main::level.time + 1700;
     // remove powerups
     crate::stdlib::memset(
         (*(*self_0).client).ps.powerups.as_mut_ptr() as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<[libc::c_int; 16]>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<[i32; 16]>(),
     );
     // never gib in a nodrop
     contents = crate::src::game::g_syscalls::trap_PointContents(
         (*self_0).r.currentOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        -(1 as libc::c_int),
+        -(1),
     );
-    if (*self_0).health <= -(40 as libc::c_int)
-        && contents as libc::c_uint & 0x80000000 as libc::c_uint == 0
+    if (*self_0).health <= -(40)
+        && contents as u32 & 0x80000000 == 0
         && crate::src::game::g_main::g_blood.integer != 0
-        || meansOfDeath == crate::bg_public_h::MOD_SUICIDE as libc::c_int
+        || meansOfDeath == crate::bg_public_h::MOD_SUICIDE as i32
     {
         // gib death
         GibEntity(self_0, killer);
     } else {
         // normal death
-        static mut i_0: libc::c_int = 0;
+        static mut i_0: i32 = 0;
         match i_0 {
-            0 => anim = crate::bg_public_h::BOTH_DEATH1 as libc::c_int,
-            1 => anim = crate::bg_public_h::BOTH_DEATH2 as libc::c_int,
-            2 | _ => anim = crate::bg_public_h::BOTH_DEATH3 as libc::c_int,
+            0 => anim = crate::bg_public_h::BOTH_DEATH1 as i32,
+            1 => anim = crate::bg_public_h::BOTH_DEATH2 as i32,
+            2 | _ => anim = crate::bg_public_h::BOTH_DEATH3 as i32,
         }
         // for the no-blood option, we need to prevent the health
         // from going to gib level
-        if (*self_0).health <= -(40 as libc::c_int) {
-            (*self_0).health = -(40 as libc::c_int) + 1 as libc::c_int
+        if (*self_0).health <= -(40) {
+            (*self_0).health = -(40) + 1
         }
-        (*(*self_0).client).ps.legsAnim =
-            (*(*self_0).client).ps.legsAnim & 128 as libc::c_int ^ 128 as libc::c_int | anim;
-        (*(*self_0).client).ps.torsoAnim =
-            (*(*self_0).client).ps.torsoAnim & 128 as libc::c_int ^ 128 as libc::c_int | anim;
+        (*(*self_0).client).ps.legsAnim = (*(*self_0).client).ps.legsAnim & 128 ^ 128 | anim;
+        (*(*self_0).client).ps.torsoAnim = (*(*self_0).client).ps.torsoAnim & 128 ^ 128 | anim;
         crate::src::game::g_utils::G_AddEvent(
             self_0,
-            crate::bg_public_h::EV_DEATH1 as libc::c_int + i_0,
+            crate::bg_public_h::EV_DEATH1 as i32 + i_0,
             killer,
         );
         // the body can still be gibbed
@@ -1304,12 +1199,12 @@ pub unsafe extern "C" fn player_die(
                     _: *mut crate::g_local_h::gentity_t,
                     _: *mut crate::g_local_h::gentity_t,
                     _: *mut crate::g_local_h::gentity_t,
-                    _: libc::c_int,
-                    _: libc::c_int,
+                    _: i32,
+                    _: i32,
                 ) -> (),
         );
         // globally cycle through the different death animations
-        i_0 = (i_0 + 1 as libc::c_int) % 3 as libc::c_int
+        i_0 = (i_0 + 1) % 3
     }
     crate::src::game::g_syscalls::trap_LinkEntity(self_0);
 }
@@ -1322,32 +1217,32 @@ CheckArmor
 
 pub unsafe extern "C" fn CheckArmor(
     mut ent: *mut crate::g_local_h::gentity_t,
-    mut damage: libc::c_int,
-    mut dflags: libc::c_int,
-) -> libc::c_int {
+    mut damage: i32,
+    mut dflags: i32,
+) -> i32 {
     let mut client: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
-    let mut save: libc::c_int = 0;
-    let mut count: libc::c_int = 0;
+    let mut save: i32 = 0;
+    let mut count: i32 = 0;
     if damage == 0 {
-        return 0 as libc::c_int;
+        return 0i32;
     }
     client = (*ent).client;
     if client.is_null() {
-        return 0 as libc::c_int;
+        return 0i32;
     }
-    if dflags & 0x2 as libc::c_int != 0 {
-        return 0 as libc::c_int;
+    if dflags & 0x2 != 0 {
+        return 0i32;
     }
     // armor
-    count = (*client).ps.stats[crate::bg_public_h::STAT_ARMOR as libc::c_int as usize];
-    save = crate::stdlib::ceil(damage as libc::c_double * 0.66f64) as libc::c_int;
+    count = (*client).ps.stats[crate::bg_public_h::STAT_ARMOR as usize];
+    save = crate::stdlib::ceil(damage as f64 * 0.66) as i32;
     if save >= count {
         save = count
     }
     if save == 0 {
-        return 0 as libc::c_int;
+        return 0i32;
     }
-    (*client).ps.stats[crate::bg_public_h::STAT_ARMOR as libc::c_int as usize] -= save;
+    (*client).ps.stats[crate::bg_public_h::STAT_ARMOR as usize] -= save;
     return save;
 }
 /*
@@ -1359,75 +1254,50 @@ RaySphereIntersections
 
 pub unsafe extern "C" fn RaySphereIntersections(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-    mut radius: libc::c_float,
+    mut radius: f32,
     mut point: *mut crate::src::qcommon::q_shared::vec_t,
     mut dir: *mut crate::src::qcommon::q_shared::vec_t,
     mut intersections: *mut crate::src::qcommon::q_shared::vec3_t,
-) -> libc::c_int {
-    let mut b: libc::c_float = 0.;
-    let mut c: libc::c_float = 0.;
-    let mut d: libc::c_float = 0.;
-    let mut t: libc::c_float = 0.;
+) -> i32 {
+    let mut b: f32 = 0.;
+    let mut c: f32 = 0.;
+    let mut d: f32 = 0.;
+    let mut t: f32 = 0.;
     //	| origin - (point + t * dir) | = radius
     //	a = dir[0]^2 + dir[1]^2 + dir[2]^2;
     //	b = 2 * (dir[0] * (point[0] - origin[0]) + dir[1] * (point[1] - origin[1]) + dir[2] * (point[2] - origin[2]));
     //	c = (point[0] - origin[0])^2 + (point[1] - origin[1])^2 + (point[2] - origin[2])^2 - radius^2;
     // normalize dir so a = 1
     crate::src::qcommon::q_math::VectorNormalize(dir);
-    b = 2 as libc::c_int as libc::c_float
-        * (*dir.offset(0 as libc::c_int as isize)
-            * (*point.offset(0 as libc::c_int as isize)
-                - *origin.offset(0 as libc::c_int as isize))
-            + *dir.offset(1 as libc::c_int as isize)
-                * (*point.offset(1 as libc::c_int as isize)
-                    - *origin.offset(1 as libc::c_int as isize))
-            + *dir.offset(2 as libc::c_int as isize)
-                * (*point.offset(2 as libc::c_int as isize)
-                    - *origin.offset(2 as libc::c_int as isize)));
-    c = (*point.offset(0 as libc::c_int as isize) - *origin.offset(0 as libc::c_int as isize))
-        * (*point.offset(0 as libc::c_int as isize) - *origin.offset(0 as libc::c_int as isize))
-        + (*point.offset(1 as libc::c_int as isize) - *origin.offset(1 as libc::c_int as isize))
-            * (*point.offset(1 as libc::c_int as isize)
-                - *origin.offset(1 as libc::c_int as isize))
-        + (*point.offset(2 as libc::c_int as isize) - *origin.offset(2 as libc::c_int as isize))
-            * (*point.offset(2 as libc::c_int as isize)
-                - *origin.offset(2 as libc::c_int as isize))
+    b = 2f32
+        * (*dir.offset(0) * (*point.offset(0) - *origin.offset(0))
+            + *dir.offset(1) * (*point.offset(1) - *origin.offset(1))
+            + *dir.offset(2) * (*point.offset(2) - *origin.offset(2)));
+    c = (*point.offset(0) - *origin.offset(0)) * (*point.offset(0) - *origin.offset(0))
+        + (*point.offset(1) - *origin.offset(1)) * (*point.offset(1) - *origin.offset(1))
+        + (*point.offset(2) - *origin.offset(2)) * (*point.offset(2) - *origin.offset(2))
         - radius * radius;
-    d = b * b - 4 as libc::c_int as libc::c_float * c;
-    if d > 0 as libc::c_int as libc::c_float {
-        t = ((-b as libc::c_double + crate::stdlib::sqrt(d as libc::c_double))
-            / 2 as libc::c_int as libc::c_double) as libc::c_float;
-        (*intersections.offset(0 as libc::c_int as isize))[0 as libc::c_int as usize] =
-            *point.offset(0 as libc::c_int as isize) + *dir.offset(0 as libc::c_int as isize) * t;
-        (*intersections.offset(0 as libc::c_int as isize))[1 as libc::c_int as usize] =
-            *point.offset(1 as libc::c_int as isize) + *dir.offset(1 as libc::c_int as isize) * t;
-        (*intersections.offset(0 as libc::c_int as isize))[2 as libc::c_int as usize] =
-            *point.offset(2 as libc::c_int as isize) + *dir.offset(2 as libc::c_int as isize) * t;
-        t = ((-b as libc::c_double - crate::stdlib::sqrt(d as libc::c_double))
-            / 2 as libc::c_int as libc::c_double) as libc::c_float;
-        (*intersections.offset(1 as libc::c_int as isize))[0 as libc::c_int as usize] =
-            *point.offset(0 as libc::c_int as isize) + *dir.offset(0 as libc::c_int as isize) * t;
-        (*intersections.offset(1 as libc::c_int as isize))[1 as libc::c_int as usize] =
-            *point.offset(1 as libc::c_int as isize) + *dir.offset(1 as libc::c_int as isize) * t;
-        (*intersections.offset(1 as libc::c_int as isize))[2 as libc::c_int as usize] =
-            *point.offset(2 as libc::c_int as isize) + *dir.offset(2 as libc::c_int as isize) * t;
-        return 2 as libc::c_int;
+    d = b * b - 4f32 * c;
+    if d > 0f32 {
+        t = ((-b as f64 + crate::stdlib::sqrt(d as f64)) / 2f64) as f32;
+        (*intersections.offset(0))[0] = *point.offset(0) + *dir.offset(0) * t;
+        (*intersections.offset(0))[1] = *point.offset(1) + *dir.offset(1) * t;
+        (*intersections.offset(0))[2] = *point.offset(2) + *dir.offset(2) * t;
+        t = ((-b as f64 - crate::stdlib::sqrt(d as f64)) / 2f64) as f32;
+        (*intersections.offset(1))[0] = *point.offset(0) + *dir.offset(0) * t;
+        (*intersections.offset(1))[1] = *point.offset(1) + *dir.offset(1) * t;
+        (*intersections.offset(1))[2] = *point.offset(2) + *dir.offset(2) * t;
+        return 2i32;
     } else {
-        if d == 0 as libc::c_int as libc::c_float {
-            t = -b / 2 as libc::c_int as libc::c_float;
-            (*intersections.offset(0 as libc::c_int as isize))[0 as libc::c_int as usize] = *point
-                .offset(0 as libc::c_int as isize)
-                + *dir.offset(0 as libc::c_int as isize) * t;
-            (*intersections.offset(0 as libc::c_int as isize))[1 as libc::c_int as usize] = *point
-                .offset(1 as libc::c_int as isize)
-                + *dir.offset(1 as libc::c_int as isize) * t;
-            (*intersections.offset(0 as libc::c_int as isize))[2 as libc::c_int as usize] = *point
-                .offset(2 as libc::c_int as isize)
-                + *dir.offset(2 as libc::c_int as isize) * t;
-            return 1 as libc::c_int;
+        if d == 0f32 {
+            t = -b / 2f32;
+            (*intersections.offset(0))[0] = *point.offset(0) + *dir.offset(0) * t;
+            (*intersections.offset(0))[1] = *point.offset(1) + *dir.offset(1) * t;
+            (*intersections.offset(0))[2] = *point.offset(2) + *dir.offset(2) * t;
+            return 1i32;
         }
     }
-    return 0 as libc::c_int;
+    return 0;
 }
 /*
 ============
@@ -1460,15 +1330,15 @@ pub unsafe extern "C" fn G_Damage(
     mut attacker: *mut crate::g_local_h::gentity_t,
     mut dir: *mut crate::src::qcommon::q_shared::vec_t,
     mut point: *mut crate::src::qcommon::q_shared::vec_t,
-    mut damage: libc::c_int,
-    mut dflags: libc::c_int,
-    mut mod_0: libc::c_int,
+    mut damage: i32,
+    mut dflags: i32,
+    mut mod_0: i32,
 ) {
     let mut client: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
-    let mut take: libc::c_int = 0;
-    let mut asave: libc::c_int = 0;
-    let mut knockback: libc::c_int = 0;
-    let mut max: libc::c_int = 0;
+    let mut take: i32 = 0;
+    let mut asave: i32 = 0;
+    let mut knockback: i32 = 0;
+    let mut max: i32 = 0;
     if (*targ).takedamage as u64 == 0 {
         return;
     }
@@ -1480,21 +1350,18 @@ pub unsafe extern "C" fn G_Damage(
     if inflictor.is_null() {
         inflictor = &mut *crate::src::game::g_main::g_entities
             .as_mut_ptr()
-            .offset((((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int) as isize)
+            .offset((((1i32) << 10) - 2) as isize)
             as *mut crate::g_local_h::gentity_t
     }
     if attacker.is_null() {
         attacker = &mut *crate::src::game::g_main::g_entities
             .as_mut_ptr()
-            .offset((((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int) as isize)
+            .offset((((1i32) << 10) - 2) as isize)
             as *mut crate::g_local_h::gentity_t
     }
     // shootable doors / buttons don't actually have any health
-    if (*targ).s.eType == crate::bg_public_h::ET_MOVER as libc::c_int {
-        if (*targ).use_0.is_some()
-            && (*targ).moverState as libc::c_uint
-                == crate::g_local_h::MOVER_POS1 as libc::c_int as libc::c_uint
-        {
+    if (*targ).s.eType == crate::bg_public_h::ET_MOVER as i32 {
+        if (*targ).use_0.is_some() && (*targ).moverState == crate::g_local_h::MOVER_POS1 {
             (*targ).use_0.expect("non-null function pointer")(targ, inflictor, attacker);
         }
         return;
@@ -1502,9 +1369,8 @@ pub unsafe extern "C" fn G_Damage(
     // reduce damage by the attacker's handicap value
     // unless they are rocket jumping
     if !(*attacker).client.is_null() && attacker != targ {
-        max = (*(*attacker).client).ps.stats
-            [crate::bg_public_h::STAT_MAX_HEALTH as libc::c_int as usize];
-        damage = damage * max / 100 as libc::c_int
+        max = (*(*attacker).client).ps.stats[crate::bg_public_h::STAT_MAX_HEALTH as usize];
+        damage = damage * max / 100
     }
     client = (*targ).client;
     if !client.is_null() {
@@ -1513,115 +1379,99 @@ pub unsafe extern "C" fn G_Damage(
         }
     }
     if dir.is_null() {
-        dflags |= 0x4 as libc::c_int
+        dflags |= 0x4
     } else {
         crate::src::qcommon::q_math::VectorNormalize(dir);
     }
     knockback = damage;
-    if knockback > 200 as libc::c_int {
-        knockback = 200 as libc::c_int
+    if knockback > 200 {
+        knockback = 200
     }
-    if (*targ).flags & 0x800 as libc::c_int != 0 {
-        knockback = 0 as libc::c_int
+    if (*targ).flags & 0x800 != 0 {
+        knockback = 0
     }
-    if dflags & 0x4 as libc::c_int != 0 {
-        knockback = 0 as libc::c_int
+    if dflags & 0x4 != 0 {
+        knockback = 0
     }
     // figure momentum add, even if the damage won't be taken
     if knockback != 0 && !(*targ).client.is_null() {
         let mut kvel: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-        let mut mass: libc::c_float = 0.;
-        mass = 200 as libc::c_int as libc::c_float;
-        kvel[0 as libc::c_int as usize] = *dir.offset(0 as libc::c_int as isize)
-            * (crate::src::game::g_main::g_knockback.value * knockback as libc::c_float / mass);
-        kvel[1 as libc::c_int as usize] = *dir.offset(1 as libc::c_int as isize)
-            * (crate::src::game::g_main::g_knockback.value * knockback as libc::c_float / mass);
-        kvel[2 as libc::c_int as usize] = *dir.offset(2 as libc::c_int as isize)
-            * (crate::src::game::g_main::g_knockback.value * knockback as libc::c_float / mass);
-        (*(*targ).client).ps.velocity[0 as libc::c_int as usize] = (*(*targ).client).ps.velocity
-            [0 as libc::c_int as usize]
-            + kvel[0 as libc::c_int as usize];
-        (*(*targ).client).ps.velocity[1 as libc::c_int as usize] = (*(*targ).client).ps.velocity
-            [1 as libc::c_int as usize]
-            + kvel[1 as libc::c_int as usize];
-        (*(*targ).client).ps.velocity[2 as libc::c_int as usize] = (*(*targ).client).ps.velocity
-            [2 as libc::c_int as usize]
-            + kvel[2 as libc::c_int as usize];
+        let mut mass: f32 = 0.;
+        mass = 200f32;
+        kvel[0] = *dir.offset(0)
+            * (crate::src::game::g_main::g_knockback.value * knockback as f32 / mass);
+        kvel[1] = *dir.offset(1)
+            * (crate::src::game::g_main::g_knockback.value * knockback as f32 / mass);
+        kvel[2] = *dir.offset(2)
+            * (crate::src::game::g_main::g_knockback.value * knockback as f32 / mass);
+        (*(*targ).client).ps.velocity[0] = (*(*targ).client).ps.velocity[0] + kvel[0];
+        (*(*targ).client).ps.velocity[1] = (*(*targ).client).ps.velocity[1] + kvel[1];
+        (*(*targ).client).ps.velocity[2] = (*(*targ).client).ps.velocity[2] + kvel[2];
         // set the timer so that the other client can't cancel
         // out the movement immediately
         if (*(*targ).client).ps.pm_time == 0 {
-            let mut t: libc::c_int = 0;
-            t = knockback * 2 as libc::c_int;
-            if t < 50 as libc::c_int {
-                t = 50 as libc::c_int
+            let mut t: i32 = 0;
+            t = knockback * 2;
+            if t < 50 {
+                t = 50
             }
-            if t > 200 as libc::c_int {
-                t = 200 as libc::c_int
+            if t > 200 {
+                t = 200
             }
             (*(*targ).client).ps.pm_time = t;
-            (*(*targ).client).ps.pm_flags |= 64 as libc::c_int
+            (*(*targ).client).ps.pm_flags |= 64
         }
     }
     // check for completely getting out of the damage
-    if dflags & 0x8 as libc::c_int == 0 {
+    if dflags & 0x8 == 0 {
         // if TF_NO_FRIENDLY_FIRE is set, don't do damage to the target
         // if the attacker was on the same team
-        if targ != attacker
-            && crate::src::game::g_team::OnSameTeam(targ, attacker) as libc::c_uint != 0
-        {
+        if targ != attacker && crate::src::game::g_team::OnSameTeam(targ, attacker) != 0 {
             if crate::src::game::g_main::g_friendlyFire.integer == 0 {
                 return;
             }
         }
         // check for godmode
-        if (*targ).flags & 0x10 as libc::c_int != 0 {
+        if (*targ).flags & 0x10 != 0 {
             return;
         }
     }
     // battlesuit protects from all radius damage (but takes knockback)
     // and protects 50% against all damage
-    if !client.is_null()
-        && (*client).ps.powerups[crate::bg_public_h::PW_BATTLESUIT as libc::c_int as usize] != 0
-    {
+    if !client.is_null() && (*client).ps.powerups[crate::bg_public_h::PW_BATTLESUIT as usize] != 0 {
         crate::src::game::g_utils::G_AddEvent(
             targ,
-            crate::bg_public_h::EV_POWERUP_BATTLESUIT as libc::c_int,
-            0 as libc::c_int,
+            crate::bg_public_h::EV_POWERUP_BATTLESUIT as i32,
+            0,
         );
-        if dflags & 0x1 as libc::c_int != 0
-            || mod_0 == crate::bg_public_h::MOD_FALLING as libc::c_int
-        {
+        if dflags & 0x1 != 0 || mod_0 == crate::bg_public_h::MOD_FALLING as i32 {
             return;
         }
-        damage = (damage as libc::c_double * 0.5f64) as libc::c_int
+        damage = (damage as f64 * 0.5) as i32
     }
     // add to the attacker's hit counter (if the target isn't a general entity like a prox mine)
     if !(*attacker).client.is_null()
         && !client.is_null()
         && targ != attacker
-        && (*targ).health > 0 as libc::c_int
-        && (*targ).s.eType != crate::bg_public_h::ET_MISSILE as libc::c_int
-        && (*targ).s.eType != crate::bg_public_h::ET_GENERAL as libc::c_int
+        && (*targ).health > 0
+        && (*targ).s.eType != crate::bg_public_h::ET_MISSILE as i32
+        && (*targ).s.eType != crate::bg_public_h::ET_GENERAL as i32
     {
         if crate::src::game::g_team::OnSameTeam(targ, attacker) as u64 != 0 {
-            (*(*attacker).client).ps.persistant
-                [crate::bg_public_h::PERS_HITS as libc::c_int as usize] -= 1
+            (*(*attacker).client).ps.persistant[crate::bg_public_h::PERS_HITS as usize] -= 1
         } else {
-            (*(*attacker).client).ps.persistant
-                [crate::bg_public_h::PERS_HITS as libc::c_int as usize] += 1
+            (*(*attacker).client).ps.persistant[crate::bg_public_h::PERS_HITS as usize] += 1
         }
-        (*(*attacker).client).ps.persistant
-            [crate::bg_public_h::PERS_ATTACKEE_ARMOR as libc::c_int as usize] = (*targ).health
-            << 8 as libc::c_int
-            | (*client).ps.stats[crate::bg_public_h::STAT_ARMOR as libc::c_int as usize]
+        (*(*attacker).client).ps.persistant[crate::bg_public_h::PERS_ATTACKEE_ARMOR as usize] =
+            (*targ).health << 8 | (*client).ps.stats[crate::bg_public_h::STAT_ARMOR as usize]
     }
     // always give half damage if hurting self
     // calculated after knockback, so rocket jumping works
     if targ == attacker {
-        damage = (damage as libc::c_double * 0.5f64) as libc::c_int
+        damage = (damage as f64 * 0.5) as i32
     }
-    if damage < 1 as libc::c_int {
-        damage = 1 as libc::c_int
+    if damage < 1 {
+        damage = 1
     }
     take = damage;
     // save some from armor
@@ -1629,7 +1479,7 @@ pub unsafe extern "C" fn G_Damage(
     take -= asave;
     if crate::src::game::g_main::g_debugDamage.integer != 0 {
         crate::src::game::g_main::G_Printf(
-            b"%i: client:%i health:%i damage:%i armor:%i\n\x00" as *const u8 as *const libc::c_char,
+            b"%i: client:%i health:%i damage:%i armor:%i\n\x00" as *const u8 as *const i8,
             crate::src::game::g_main::level.time,
             (*targ).s.number,
             (*targ).health,
@@ -1642,35 +1492,28 @@ pub unsafe extern "C" fn G_Damage(
     // at the end of the frame
     if !client.is_null() {
         if !attacker.is_null() {
-            (*client).ps.persistant[crate::bg_public_h::PERS_ATTACKER as libc::c_int as usize] =
+            (*client).ps.persistant[crate::bg_public_h::PERS_ATTACKER as usize] =
                 (*attacker).s.number
         } else {
-            (*client).ps.persistant[crate::bg_public_h::PERS_ATTACKER as libc::c_int as usize] =
-                ((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int
+            (*client).ps.persistant[crate::bg_public_h::PERS_ATTACKER as usize] = ((1) << 10) - 2
         }
         (*client).damage_armor += asave;
         (*client).damage_blood += take;
         (*client).damage_knockback += knockback;
         if !dir.is_null() {
-            (*client).damage_from[0 as libc::c_int as usize] =
-                *dir.offset(0 as libc::c_int as isize);
-            (*client).damage_from[1 as libc::c_int as usize] =
-                *dir.offset(1 as libc::c_int as isize);
-            (*client).damage_from[2 as libc::c_int as usize] =
-                *dir.offset(2 as libc::c_int as isize);
+            (*client).damage_from[0] = *dir.offset(0);
+            (*client).damage_from[1] = *dir.offset(1);
+            (*client).damage_from[2] = *dir.offset(2);
             (*client).damage_fromWorld = crate::src::qcommon::q_shared::qfalse
         } else {
-            (*client).damage_from[0 as libc::c_int as usize] =
-                (*targ).r.currentOrigin[0 as libc::c_int as usize];
-            (*client).damage_from[1 as libc::c_int as usize] =
-                (*targ).r.currentOrigin[1 as libc::c_int as usize];
-            (*client).damage_from[2 as libc::c_int as usize] =
-                (*targ).r.currentOrigin[2 as libc::c_int as usize];
+            (*client).damage_from[0] = (*targ).r.currentOrigin[0];
+            (*client).damage_from[1] = (*targ).r.currentOrigin[1];
+            (*client).damage_from[2] = (*targ).r.currentOrigin[2];
             (*client).damage_fromWorld = crate::src::qcommon::q_shared::qtrue
         }
     }
     // See if it's the player hurting the emeny flag carrier
-    if crate::src::game::g_main::g_gametype.integer == crate::bg_public_h::GT_CTF as libc::c_int {
+    if crate::src::game::g_main::g_gametype.integer == crate::bg_public_h::GT_CTF as i32 {
         crate::src::game::g_team::Team_CheckHurtCarrier(targ, attacker);
     }
     if !(*targ).client.is_null() {
@@ -1682,15 +1525,14 @@ pub unsafe extern "C" fn G_Damage(
     if take != 0 {
         (*targ).health = (*targ).health - take;
         if !(*targ).client.is_null() {
-            (*(*targ).client).ps.stats[crate::bg_public_h::STAT_HEALTH as libc::c_int as usize] =
-                (*targ).health
+            (*(*targ).client).ps.stats[crate::bg_public_h::STAT_HEALTH as usize] = (*targ).health
         }
-        if (*targ).health <= 0 as libc::c_int {
+        if (*targ).health <= 0 {
             if !client.is_null() {
-                (*targ).flags |= 0x800 as libc::c_int
+                (*targ).flags |= 0x800
             }
-            if (*targ).health < -(999 as libc::c_int) {
-                (*targ).health = -(999 as libc::c_int)
+            if (*targ).health < -(999) {
+                (*targ).health = -(999)
             }
             (*targ).enemy = attacker;
             (*targ).die.expect("non-null function pointer")(targ, inflictor, attacker, take, mod_0);
@@ -1734,33 +1576,19 @@ pub unsafe extern "C" fn CanDamage(
         entityNum: 0,
     };
     let mut midpoint: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut offsetmins: crate::src::qcommon::q_shared::vec3_t = [
-        -(15 as libc::c_int) as crate::src::qcommon::q_shared::vec_t,
-        -(15 as libc::c_int) as crate::src::qcommon::q_shared::vec_t,
-        -(15 as libc::c_int) as crate::src::qcommon::q_shared::vec_t,
-    ];
-    let mut offsetmaxs: crate::src::qcommon::q_shared::vec3_t = [
-        15 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        15 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        15 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    ];
+    let mut offsetmins: crate::src::qcommon::q_shared::vec3_t = [-15f32, -15f32, -15f32];
+    let mut offsetmaxs: crate::src::qcommon::q_shared::vec3_t = [15f32, 15f32, 15f32];
     // use the midpoint of the bounds instead of the origin, because
     // bmodels may have their origin is 0,0,0
-    midpoint[0 as libc::c_int as usize] =
-        (*targ).r.absmin[0 as libc::c_int as usize] + (*targ).r.absmax[0 as libc::c_int as usize];
-    midpoint[1 as libc::c_int as usize] =
-        (*targ).r.absmin[1 as libc::c_int as usize] + (*targ).r.absmax[1 as libc::c_int as usize];
-    midpoint[2 as libc::c_int as usize] =
-        (*targ).r.absmin[2 as libc::c_int as usize] + (*targ).r.absmax[2 as libc::c_int as usize];
-    midpoint[0 as libc::c_int as usize] = (midpoint[0 as libc::c_int as usize] as libc::c_double
-        * 0.5f64) as crate::src::qcommon::q_shared::vec_t;
-    midpoint[1 as libc::c_int as usize] = (midpoint[1 as libc::c_int as usize] as libc::c_double
-        * 0.5f64) as crate::src::qcommon::q_shared::vec_t;
-    midpoint[2 as libc::c_int as usize] = (midpoint[2 as libc::c_int as usize] as libc::c_double
-        * 0.5f64) as crate::src::qcommon::q_shared::vec_t;
-    dest[0 as libc::c_int as usize] = midpoint[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] = midpoint[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] = midpoint[2 as libc::c_int as usize];
+    midpoint[0] = (*targ).r.absmin[0] + (*targ).r.absmax[0];
+    midpoint[1] = (*targ).r.absmin[1] + (*targ).r.absmax[1];
+    midpoint[2] = (*targ).r.absmin[2] + (*targ).r.absmax[2];
+    midpoint[0] = (midpoint[0] as f64 * 0.5) as crate::src::qcommon::q_shared::vec_t;
+    midpoint[1] = (midpoint[1] as f64 * 0.5) as crate::src::qcommon::q_shared::vec_t;
+    midpoint[2] = (midpoint[2] as f64 * 0.5) as crate::src::qcommon::q_shared::vec_t;
+    dest[0] = midpoint[0];
+    dest[1] = midpoint[1];
+    dest[2] = midpoint[2];
     crate::src::game::g_syscalls::trap_Trace(
         &mut tr,
         origin as *const crate::src::qcommon::q_shared::vec_t,
@@ -1769,20 +1597,20 @@ pub unsafe extern "C" fn CanDamage(
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
         dest.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int,
-        1 as libc::c_int,
+        ((1) << 10) - 1,
+        1,
     );
-    if tr.fraction as libc::c_double == 1.0f64 || tr.entityNum == (*targ).s.number {
+    if tr.fraction as f64 == 1.0 || tr.entityNum == (*targ).s.number {
         return crate::src::qcommon::q_shared::qtrue;
     }
     // this should probably check in the plane of projection,
     // rather than in world coordinate
-    dest[0 as libc::c_int as usize] = midpoint[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] = midpoint[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] = midpoint[2 as libc::c_int as usize];
-    dest[0 as libc::c_int as usize] += offsetmaxs[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] += offsetmaxs[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] += offsetmaxs[2 as libc::c_int as usize];
+    dest[0] = midpoint[0];
+    dest[1] = midpoint[1];
+    dest[2] = midpoint[2];
+    dest[0] += offsetmaxs[0];
+    dest[1] += offsetmaxs[1];
+    dest[2] += offsetmaxs[2];
     crate::src::game::g_syscalls::trap_Trace(
         &mut tr,
         origin as *const crate::src::qcommon::q_shared::vec_t,
@@ -1791,18 +1619,18 @@ pub unsafe extern "C" fn CanDamage(
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
         dest.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int,
-        1 as libc::c_int,
+        ((1) << 10) - 1,
+        1,
     );
-    if tr.fraction as libc::c_double == 1.0f64 {
+    if tr.fraction as f64 == 1.0 {
         return crate::src::qcommon::q_shared::qtrue;
     }
-    dest[0 as libc::c_int as usize] = midpoint[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] = midpoint[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] = midpoint[2 as libc::c_int as usize];
-    dest[0 as libc::c_int as usize] += offsetmaxs[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] += offsetmins[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] += offsetmaxs[2 as libc::c_int as usize];
+    dest[0] = midpoint[0];
+    dest[1] = midpoint[1];
+    dest[2] = midpoint[2];
+    dest[0] += offsetmaxs[0];
+    dest[1] += offsetmins[1];
+    dest[2] += offsetmaxs[2];
     crate::src::game::g_syscalls::trap_Trace(
         &mut tr,
         origin as *const crate::src::qcommon::q_shared::vec_t,
@@ -1811,18 +1639,18 @@ pub unsafe extern "C" fn CanDamage(
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
         dest.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int,
-        1 as libc::c_int,
+        ((1) << 10) - 1,
+        1,
     );
-    if tr.fraction as libc::c_double == 1.0f64 {
+    if tr.fraction as f64 == 1.0 {
         return crate::src::qcommon::q_shared::qtrue;
     }
-    dest[0 as libc::c_int as usize] = midpoint[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] = midpoint[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] = midpoint[2 as libc::c_int as usize];
-    dest[0 as libc::c_int as usize] += offsetmins[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] += offsetmaxs[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] += offsetmaxs[2 as libc::c_int as usize];
+    dest[0] = midpoint[0];
+    dest[1] = midpoint[1];
+    dest[2] = midpoint[2];
+    dest[0] += offsetmins[0];
+    dest[1] += offsetmaxs[1];
+    dest[2] += offsetmaxs[2];
     crate::src::game::g_syscalls::trap_Trace(
         &mut tr,
         origin as *const crate::src::qcommon::q_shared::vec_t,
@@ -1831,18 +1659,18 @@ pub unsafe extern "C" fn CanDamage(
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
         dest.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int,
-        1 as libc::c_int,
+        ((1) << 10) - 1,
+        1,
     );
-    if tr.fraction as libc::c_double == 1.0f64 {
+    if tr.fraction as f64 == 1.0 {
         return crate::src::qcommon::q_shared::qtrue;
     }
-    dest[0 as libc::c_int as usize] = midpoint[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] = midpoint[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] = midpoint[2 as libc::c_int as usize];
-    dest[0 as libc::c_int as usize] += offsetmins[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] += offsetmins[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] += offsetmaxs[2 as libc::c_int as usize];
+    dest[0] = midpoint[0];
+    dest[1] = midpoint[1];
+    dest[2] = midpoint[2];
+    dest[0] += offsetmins[0];
+    dest[1] += offsetmins[1];
+    dest[2] += offsetmaxs[2];
     crate::src::game::g_syscalls::trap_Trace(
         &mut tr,
         origin as *const crate::src::qcommon::q_shared::vec_t,
@@ -1851,18 +1679,18 @@ pub unsafe extern "C" fn CanDamage(
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
         dest.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int,
-        1 as libc::c_int,
+        ((1) << 10) - 1,
+        1,
     );
-    if tr.fraction as libc::c_double == 1.0f64 {
+    if tr.fraction as f64 == 1.0 {
         return crate::src::qcommon::q_shared::qtrue;
     }
-    dest[0 as libc::c_int as usize] = midpoint[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] = midpoint[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] = midpoint[2 as libc::c_int as usize];
-    dest[0 as libc::c_int as usize] += offsetmaxs[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] += offsetmaxs[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] += offsetmins[2 as libc::c_int as usize];
+    dest[0] = midpoint[0];
+    dest[1] = midpoint[1];
+    dest[2] = midpoint[2];
+    dest[0] += offsetmaxs[0];
+    dest[1] += offsetmaxs[1];
+    dest[2] += offsetmins[2];
     crate::src::game::g_syscalls::trap_Trace(
         &mut tr,
         origin as *const crate::src::qcommon::q_shared::vec_t,
@@ -1871,18 +1699,18 @@ pub unsafe extern "C" fn CanDamage(
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
         dest.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int,
-        1 as libc::c_int,
+        ((1) << 10) - 1,
+        1,
     );
-    if tr.fraction as libc::c_double == 1.0f64 {
+    if tr.fraction as f64 == 1.0 {
         return crate::src::qcommon::q_shared::qtrue;
     }
-    dest[0 as libc::c_int as usize] = midpoint[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] = midpoint[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] = midpoint[2 as libc::c_int as usize];
-    dest[0 as libc::c_int as usize] += offsetmaxs[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] += offsetmins[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] += offsetmins[2 as libc::c_int as usize];
+    dest[0] = midpoint[0];
+    dest[1] = midpoint[1];
+    dest[2] = midpoint[2];
+    dest[0] += offsetmaxs[0];
+    dest[1] += offsetmins[1];
+    dest[2] += offsetmins[2];
     crate::src::game::g_syscalls::trap_Trace(
         &mut tr,
         origin as *const crate::src::qcommon::q_shared::vec_t,
@@ -1891,18 +1719,18 @@ pub unsafe extern "C" fn CanDamage(
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
         dest.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int,
-        1 as libc::c_int,
+        ((1) << 10) - 1,
+        1,
     );
-    if tr.fraction as libc::c_double == 1.0f64 {
+    if tr.fraction as f64 == 1.0 {
         return crate::src::qcommon::q_shared::qtrue;
     }
-    dest[0 as libc::c_int as usize] = midpoint[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] = midpoint[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] = midpoint[2 as libc::c_int as usize];
-    dest[0 as libc::c_int as usize] += offsetmins[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] += offsetmaxs[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] += offsetmins[2 as libc::c_int as usize];
+    dest[0] = midpoint[0];
+    dest[1] = midpoint[1];
+    dest[2] = midpoint[2];
+    dest[0] += offsetmins[0];
+    dest[1] += offsetmaxs[1];
+    dest[2] += offsetmins[2];
     crate::src::game::g_syscalls::trap_Trace(
         &mut tr,
         origin as *const crate::src::qcommon::q_shared::vec_t,
@@ -1911,18 +1739,18 @@ pub unsafe extern "C" fn CanDamage(
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
         dest.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int,
-        1 as libc::c_int,
+        ((1) << 10) - 1,
+        1,
     );
-    if tr.fraction as libc::c_double == 1.0f64 {
+    if tr.fraction as f64 == 1.0 {
         return crate::src::qcommon::q_shared::qtrue;
     }
-    dest[0 as libc::c_int as usize] = midpoint[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] = midpoint[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] = midpoint[2 as libc::c_int as usize];
-    dest[0 as libc::c_int as usize] += offsetmins[0 as libc::c_int as usize];
-    dest[1 as libc::c_int as usize] += offsetmins[1 as libc::c_int as usize];
-    dest[2 as libc::c_int as usize] += offsetmins[2 as libc::c_int as usize];
+    dest[0] = midpoint[0];
+    dest[1] = midpoint[1];
+    dest[2] = midpoint[2];
+    dest[0] += offsetmins[0];
+    dest[1] += offsetmins[1];
+    dest[2] += offsetmins[2];
     crate::src::game::g_syscalls::trap_Trace(
         &mut tr,
         origin as *const crate::src::qcommon::q_shared::vec_t,
@@ -1931,10 +1759,10 @@ pub unsafe extern "C" fn CanDamage(
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
         dest.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int,
-        1 as libc::c_int,
+        ((1) << 10) - 1,
+        1,
     );
-    if tr.fraction as libc::c_double == 1.0f64 {
+    if tr.fraction as f64 == 1.0 {
         return crate::src::qcommon::q_shared::qtrue;
     }
     return crate::src::qcommon::q_shared::qfalse;
@@ -2126,29 +1954,29 @@ G_RadiusDamage
 pub unsafe extern "C" fn G_RadiusDamage(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut attacker: *mut crate::g_local_h::gentity_t,
-    mut damage: libc::c_float,
-    mut radius: libc::c_float,
+    mut damage: f32,
+    mut radius: f32,
     mut ignore: *mut crate::g_local_h::gentity_t,
-    mut mod_0: libc::c_int,
+    mut mod_0: i32,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut points: libc::c_float = 0.;
-    let mut dist: libc::c_float = 0.;
+    let mut points: f32 = 0.;
+    let mut dist: f32 = 0.;
     let mut ent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
-    let mut entityList: [libc::c_int; 1024] = [0; 1024];
-    let mut numListedEntities: libc::c_int = 0;
+    let mut entityList: [i32; 1024] = [0; 1024];
+    let mut numListedEntities: i32 = 0;
     let mut mins: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut maxs: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut v: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut i: libc::c_int = 0;
-    let mut e: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut e: i32 = 0;
     let mut hitClient: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
-    if radius < 1 as libc::c_int as libc::c_float {
-        radius = 1 as libc::c_int as libc::c_float
+    if radius < 1f32 {
+        radius = 1f32
     }
-    i = 0 as libc::c_int;
-    while i < 3 as libc::c_int {
+    i = 0;
+    while i < 3 {
         mins[i as usize] = *origin.offset(i as isize) - radius;
         maxs[i as usize] = *origin.offset(i as isize) + radius;
         i += 1
@@ -2157,9 +1985,9 @@ pub unsafe extern "C" fn G_RadiusDamage(
         mins.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         maxs.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         entityList.as_mut_ptr(),
-        (1 as libc::c_int) << 10 as libc::c_int,
+        (1) << 10,
     );
-    e = 0 as libc::c_int;
+    e = 0;
     while e < numListedEntities {
         ent = &mut *crate::src::game::g_main::g_entities
             .as_mut_ptr()
@@ -2168,46 +1996,38 @@ pub unsafe extern "C" fn G_RadiusDamage(
         if !(ent == ignore) {
             if !((*ent).takedamage as u64 == 0) {
                 // find the distance from the edge of the bounding box
-                i = 0 as libc::c_int;
-                while i < 3 as libc::c_int {
+                i = 0;
+                while i < 3 {
                     if *origin.offset(i as isize) < (*ent).r.absmin[i as usize] {
                         v[i as usize] = (*ent).r.absmin[i as usize] - *origin.offset(i as isize)
                     } else if *origin.offset(i as isize) > (*ent).r.absmax[i as usize] {
                         v[i as usize] = *origin.offset(i as isize) - (*ent).r.absmax[i as usize]
                     } else {
-                        v[i as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t
+                        v[i as usize] = 0f32
                     }
                     i += 1
                 }
                 dist = VectorLength(v.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t);
                 if !(dist >= radius) {
-                    points = (damage as libc::c_double
-                        * (1.0f64 - (dist / radius) as libc::c_double))
-                        as libc::c_float;
+                    points = (damage as f64 * (1.0 - (dist / radius) as f64)) as f32;
                     if CanDamage(ent, origin) as u64 != 0 {
                         if crate::src::game::g_weapon::LogAccuracyHit(ent, attacker) as u64 != 0 {
                             hitClient = crate::src::qcommon::q_shared::qtrue
                         }
-                        dir[0 as libc::c_int as usize] = (*ent).r.currentOrigin
-                            [0 as libc::c_int as usize]
-                            - *origin.offset(0 as libc::c_int as isize);
-                        dir[1 as libc::c_int as usize] = (*ent).r.currentOrigin
-                            [1 as libc::c_int as usize]
-                            - *origin.offset(1 as libc::c_int as isize);
-                        dir[2 as libc::c_int as usize] = (*ent).r.currentOrigin
-                            [2 as libc::c_int as usize]
-                            - *origin.offset(2 as libc::c_int as isize);
+                        dir[0] = (*ent).r.currentOrigin[0] - *origin.offset(0);
+                        dir[1] = (*ent).r.currentOrigin[1] - *origin.offset(1);
+                        dir[2] = (*ent).r.currentOrigin[2] - *origin.offset(2);
                         // push the center of mass higher than the origin so players
                         // get knocked into the air more
-                        dir[2 as libc::c_int as usize] += 24 as libc::c_int as libc::c_float;
+                        dir[2] += 24f32;
                         G_Damage(
                             ent,
                             0 as *mut crate::g_local_h::gentity_t,
                             attacker,
                             dir.as_mut_ptr(),
                             origin,
-                            points as libc::c_int,
-                            0x1 as libc::c_int,
+                            points as i32,
+                            0x1i32,
                             mod_0,
                         );
                     }

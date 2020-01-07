@@ -2,12 +2,12 @@
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct fuzzyseperator_s {
-    pub index: libc::c_int,
-    pub value: libc::c_int,
-    pub type_0: libc::c_int,
-    pub weight: libc::c_float,
-    pub minweight: libc::c_float,
-    pub maxweight: libc::c_float,
+    pub index: i32,
+    pub value: i32,
+    pub type_0: i32,
+    pub weight: f32,
+    pub minweight: f32,
+    pub maxweight: f32,
     pub child: *mut crate::src::botlib::be_ai_weight::fuzzyseperator_s,
     pub next: *mut crate::src::botlib::be_ai_weight::fuzzyseperator_s,
 }
@@ -15,7 +15,7 @@ pub struct fuzzyseperator_s {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct weight_s {
-    pub name: *mut libc::c_char,
+    pub name: *mut i8,
     pub firstseperator: *mut crate::src::botlib::be_ai_weight::fuzzyseperator_s,
 }
 
@@ -24,9 +24,9 @@ pub type weight_t = crate::src::botlib::be_ai_weight::weight_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct weightconfig_s {
-    pub numweights: libc::c_int,
+    pub numweights: i32,
     pub weights: [crate::src::botlib::be_ai_weight::weight_t; 128],
-    pub filename: [libc::c_char; 64],
+    pub filename: [i8; 64],
 }
 
 pub type weightconfig_t = crate::src::botlib::be_ai_weight::weightconfig_s;
@@ -89,8 +89,7 @@ use crate::stdlib::strlen;
 #[no_mangle]
 
 pub static mut weightFileList: [*mut crate::src::botlib::be_ai_weight::weightconfig_t; 128] =
-    [0 as *const crate::src::botlib::be_ai_weight::weightconfig_t
-        as *mut crate::src::botlib::be_ai_weight::weightconfig_t; 128];
+    [0 as *mut crate::src::botlib::be_ai_weight::weightconfig_t; 128];
 //===========================================================================
 //
 // Parameter:				-
@@ -101,52 +100,50 @@ pub static mut weightFileList: [*mut crate::src::botlib::be_ai_weight::weightcon
 
 pub unsafe extern "C" fn ReadValue(
     mut source: *mut crate::src::botlib::l_precomp::source_t,
-    mut value: *mut libc::c_float,
-) -> libc::c_int {
+    mut value: *mut f32,
+) -> i32 {
     let mut token: crate::src::botlib::l_script::token_t = crate::src::botlib::l_script::token_t {
         string: [0; 1024],
         type_0: 0,
         subtype: 0,
         intvalue: 0,
         floatvalue: 0.,
-        whitespace_p: 0 as *mut libc::c_char,
-        endwhitespace_p: 0 as *mut libc::c_char,
+        whitespace_p: 0 as *mut i8,
+        endwhitespace_p: 0 as *mut i8,
         line: 0,
         linescrossed: 0,
         next: 0 as *mut crate::src::botlib::l_script::token_s,
     };
     if crate::src::botlib::l_precomp::PC_ExpectAnyToken(source, &mut token) == 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     if crate::stdlib::strcmp(
         token.string.as_mut_ptr(),
-        b"-\x00" as *const u8 as *const libc::c_char,
+        b"-\x00" as *const u8 as *const i8,
     ) == 0
     {
         crate::src::botlib::l_precomp::SourceWarning(
             source,
-            b"negative value set to zero\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
+            b"negative value set to zero\x00" as *const u8 as *mut i8,
         );
         if crate::src::botlib::l_precomp::PC_ExpectAnyToken(source, &mut token) == 0 {
             crate::src::botlib::l_precomp::SourceError(
                 source,
-                b"Missing return value\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
+                b"Missing return value\x00" as *const u8 as *mut i8,
             );
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     }
-    if token.type_0 != 3 as libc::c_int {
+    if token.type_0 != 3 {
         crate::src::botlib::l_precomp::SourceError(
             source,
-            b"invalid return value %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"invalid return value %s\x00" as *const u8 as *mut i8,
             token.string.as_mut_ptr(),
         );
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     *value = token.floatvalue;
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //end of the function ReadValue
 //===========================================================================
@@ -160,67 +157,65 @@ pub unsafe extern "C" fn ReadValue(
 pub unsafe extern "C" fn ReadFuzzyWeight(
     mut source: *mut crate::src::botlib::l_precomp::source_t,
     mut fs: *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t,
-) -> libc::c_int {
+) -> i32 {
     if crate::src::botlib::l_precomp::PC_CheckTokenString(
         source,
-        b"balance\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"balance\x00" as *const u8 as *mut i8,
     ) != 0
     {
         //end if
-        (*fs).type_0 = 1 as libc::c_int; //end if
+        (*fs).type_0 = 1; //end if
         if crate::src::botlib::l_precomp::PC_ExpectTokenString(
             source,
-            b"(\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"(\x00" as *const u8 as *mut i8,
         ) == 0
         {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
         if ReadValue(source, &mut (*fs).weight) == 0 {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
         if crate::src::botlib::l_precomp::PC_ExpectTokenString(
             source,
-            b",\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b",\x00" as *const u8 as *mut i8,
         ) == 0
         {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
         if ReadValue(source, &mut (*fs).minweight) == 0 {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
         if crate::src::botlib::l_precomp::PC_ExpectTokenString(
             source,
-            b",\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b",\x00" as *const u8 as *mut i8,
         ) == 0
         {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
         if ReadValue(source, &mut (*fs).maxweight) == 0 {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
         if crate::src::botlib::l_precomp::PC_ExpectTokenString(
             source,
-            b")\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b")\x00" as *const u8 as *mut i8,
         ) == 0
         {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     } else {
-        (*fs).type_0 = 0 as libc::c_int;
+        (*fs).type_0 = 0;
         if ReadValue(source, &mut (*fs).weight) == 0 {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
         (*fs).minweight = (*fs).weight;
         (*fs).maxweight = (*fs).weight
     }
-    if crate::src::botlib::l_precomp::PC_ExpectTokenString(
-        source,
-        b";\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    ) == 0
+    if crate::src::botlib::l_precomp::PC_ExpectTokenString(source, b";\x00" as *const u8 as *mut i8)
+        == 0
     {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //end of the function ReadFuzzyWeight
 //===========================================================================
@@ -257,8 +252,8 @@ pub unsafe extern "C" fn FreeFuzzySeperators_r(
 pub unsafe extern "C" fn FreeWeightConfig2(
     mut config: *mut crate::src::botlib::be_ai_weight::weightconfig_t,
 ) {
-    let mut i: libc::c_int = 0; //end for
-    i = 0 as libc::c_int;
+    let mut i: i32 = 0; //end for
+    i = 0;
     while i < (*config).numweights {
         FreeFuzzySeperators_r((*config).weights[i as usize].firstseperator);
         if !(*config).weights[i as usize].name.is_null() {
@@ -284,7 +279,7 @@ pub unsafe extern "C" fn FreeWeightConfig(
     mut config: *mut crate::src::botlib::be_ai_weight::weightconfig_t,
 ) {
     if crate::src::botlib::l_libvar::LibVarGetValue(
-        b"bot_reloadcharacters\x00" as *const u8 as *const libc::c_char,
+        b"bot_reloadcharacters\x00" as *const u8 as *const i8,
     ) == 0.
     {
         return;
@@ -303,18 +298,18 @@ pub unsafe extern "C" fn FreeWeightConfig(
 pub unsafe extern "C" fn ReadFuzzySeperators_r(
     mut source: *mut crate::src::botlib::l_precomp::source_t,
 ) -> *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t {
-    let mut newindent: libc::c_int = 0;
-    let mut index: libc::c_int = 0;
-    let mut def: libc::c_int = 0;
-    let mut founddefault: libc::c_int = 0;
+    let mut newindent: i32 = 0;
+    let mut index: i32 = 0;
+    let mut def: i32 = 0;
+    let mut founddefault: i32 = 0;
     let mut token: crate::src::botlib::l_script::token_t = crate::src::botlib::l_script::token_t {
         string: [0; 1024],
         type_0: 0,
         subtype: 0,
         intvalue: 0,
         floatvalue: 0.,
-        whitespace_p: 0 as *mut libc::c_char,
-        endwhitespace_p: 0 as *mut libc::c_char,
+        whitespace_p: 0 as *mut i8,
+        endwhitespace_p: 0 as *mut i8,
         line: 0,
         linescrossed: 0,
         next: 0 as *mut crate::src::botlib::l_script::token_s,
@@ -325,37 +320,25 @@ pub unsafe extern "C" fn ReadFuzzySeperators_r(
         0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
     let mut firstfs: *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t =
         0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
-    founddefault = crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    founddefault = crate::src::qcommon::q_shared::qfalse as i32;
     firstfs = 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
     lastfs = 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
-    if crate::src::botlib::l_precomp::PC_ExpectTokenString(
-        source,
-        b"(\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    ) == 0
+    if crate::src::botlib::l_precomp::PC_ExpectTokenString(source, b"(\x00" as *const u8 as *mut i8)
+        == 0
     {
         return 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
     }
-    if crate::src::botlib::l_precomp::PC_ExpectTokenType(
-        source,
-        3 as libc::c_int,
-        0x1000 as libc::c_int,
-        &mut token,
-    ) == 0
+    if crate::src::botlib::l_precomp::PC_ExpectTokenType(source, 3, 0x1000, &mut token) == 0 {
+        return 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
+    }
+    index = token.intvalue as i32;
+    if crate::src::botlib::l_precomp::PC_ExpectTokenString(source, b")\x00" as *const u8 as *mut i8)
+        == 0
     {
         return 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
     }
-    index = token.intvalue as libc::c_int;
-    if crate::src::botlib::l_precomp::PC_ExpectTokenString(
-        source,
-        b")\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    ) == 0
-    {
-        return 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
-    }
-    if crate::src::botlib::l_precomp::PC_ExpectTokenString(
-        source,
-        b"{\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    ) == 0
+    if crate::src::botlib::l_precomp::PC_ExpectTokenString(source, b"{\x00" as *const u8 as *mut i8)
+        == 0
     {
         return 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
     }
@@ -365,19 +348,18 @@ pub unsafe extern "C" fn ReadFuzzySeperators_r(
     loop {
         def = (crate::stdlib::strcmp(
             token.string.as_mut_ptr(),
-            b"default\x00" as *const u8 as *const libc::c_char,
-        ) == 0) as libc::c_int;
+            b"default\x00" as *const u8 as *const i8,
+        ) == 0) as i32;
         //end if
         if def != 0
             || crate::stdlib::strcmp(
                 token.string.as_mut_ptr(),
-                b"case\x00" as *const u8 as *const libc::c_char,
+                b"case\x00" as *const u8 as *const i8,
             ) == 0
         {
             fs = crate::src::botlib::l_memory::GetClearedMemory(::std::mem::size_of::<
                 crate::src::botlib::be_ai_weight::fuzzyseperator_t,
-            >() as libc::c_ulong)
-                as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
+            >()) as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
             (*fs).index = index;
             if !lastfs.is_null() {
                 (*lastfs).next = fs
@@ -391,43 +373,38 @@ pub unsafe extern "C" fn ReadFuzzySeperators_r(
                 if founddefault != 0 {
                     crate::src::botlib::l_precomp::SourceError(
                         source,
-                        b"switch already has a default\x00" as *const u8 as *const libc::c_char
-                            as *mut libc::c_char,
+                        b"switch already has a default\x00" as *const u8 as *mut i8,
                     ); //end if
                     FreeFuzzySeperators_r(firstfs); //end if
                     return 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
                 } //end if
-                (*fs).value = 999999 as libc::c_int; //end if
-                founddefault = crate::src::qcommon::q_shared::qtrue as libc::c_int
+                (*fs).value = 999999; //end if
+                founddefault = crate::src::qcommon::q_shared::qtrue as i32
             } else {
-                if crate::src::botlib::l_precomp::PC_ExpectTokenType(
-                    source,
-                    3 as libc::c_int,
-                    0x1000 as libc::c_int,
-                    &mut token,
-                ) == 0
+                if crate::src::botlib::l_precomp::PC_ExpectTokenType(source, 3, 0x1000, &mut token)
+                    == 0
                 {
                     FreeFuzzySeperators_r(firstfs); //end if
                     return 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
                 }
-                (*fs).value = token.intvalue as libc::c_int
+                (*fs).value = token.intvalue as i32
             }
             if crate::src::botlib::l_precomp::PC_ExpectTokenString(
                 source,
-                b":\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b":\x00" as *const u8 as *mut i8,
             ) == 0
                 || crate::src::botlib::l_precomp::PC_ExpectAnyToken(source, &mut token) == 0
             {
                 FreeFuzzySeperators_r(firstfs);
                 return 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
             }
-            newindent = crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            newindent = crate::src::qcommon::q_shared::qfalse as i32;
             if crate::stdlib::strcmp(
                 token.string.as_mut_ptr(),
-                b"{\x00" as *const u8 as *const libc::c_char,
+                b"{\x00" as *const u8 as *const i8,
             ) == 0
             {
-                newindent = crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                newindent = crate::src::qcommon::q_shared::qtrue as i32;
                 if crate::src::botlib::l_precomp::PC_ExpectAnyToken(source, &mut token) == 0 {
                     FreeFuzzySeperators_r(firstfs);
                     return 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
@@ -436,7 +413,7 @@ pub unsafe extern "C" fn ReadFuzzySeperators_r(
             } //end else
             if crate::stdlib::strcmp(
                 token.string.as_mut_ptr(),
-                b"return\x00" as *const u8 as *const libc::c_char,
+                b"return\x00" as *const u8 as *const i8,
             ) == 0
             {
                 if ReadFuzzyWeight(source, fs) == 0 {
@@ -446,7 +423,7 @@ pub unsafe extern "C" fn ReadFuzzySeperators_r(
             //end if
             } else if crate::stdlib::strcmp(
                 token.string.as_mut_ptr(),
-                b"switch\x00" as *const u8 as *const libc::c_char,
+                b"switch\x00" as *const u8 as *const i8,
             ) == 0
             {
                 (*fs).child = ReadFuzzySeperators_r(source);
@@ -458,7 +435,7 @@ pub unsafe extern "C" fn ReadFuzzySeperators_r(
             } else {
                 crate::src::botlib::l_precomp::SourceError(
                     source,
-                    b"invalid name %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                    b"invalid name %s\x00" as *const u8 as *mut i8,
                     token.string.as_mut_ptr(),
                 );
                 return 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
@@ -466,7 +443,7 @@ pub unsafe extern "C" fn ReadFuzzySeperators_r(
             if newindent != 0 {
                 if crate::src::botlib::l_precomp::PC_ExpectTokenString(
                     source,
-                    b"}\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                    b"}\x00" as *const u8 as *mut i8,
                 ) == 0
                 {
                     FreeFuzzySeperators_r(firstfs);
@@ -478,7 +455,7 @@ pub unsafe extern "C" fn ReadFuzzySeperators_r(
             FreeFuzzySeperators_r(firstfs);
             crate::src::botlib::l_precomp::SourceError(
                 source,
-                b"invalid name %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"invalid name %s\x00" as *const u8 as *mut i8,
                 token.string.as_mut_ptr(),
             );
             return 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
@@ -489,7 +466,7 @@ pub unsafe extern "C" fn ReadFuzzySeperators_r(
         }
         if !(crate::stdlib::strcmp(
             token.string.as_mut_ptr(),
-            b"}\x00" as *const u8 as *const libc::c_char,
+            b"}\x00" as *const u8 as *const i8,
         ) != 0)
         {
             break;
@@ -499,15 +476,14 @@ pub unsafe extern "C" fn ReadFuzzySeperators_r(
     if founddefault == 0 {
         crate::src::botlib::l_precomp::SourceWarning(
             source,
-            b"switch without default\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"switch without default\x00" as *const u8 as *mut i8,
         ); //end if
         fs = crate::src::botlib::l_memory::GetClearedMemory(::std::mem::size_of::<
             crate::src::botlib::be_ai_weight::fuzzyseperator_t,
-        >() as libc::c_ulong)
-            as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
+        >()) as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t;
         (*fs).index = index;
-        (*fs).value = 999999 as libc::c_int;
-        (*fs).weight = 0 as libc::c_int as libc::c_float;
+        (*fs).value = 999999;
+        (*fs).weight = 0f32;
         (*fs).next = 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_s;
         (*fs).child = 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_s;
         if !lastfs.is_null() {
@@ -530,19 +506,19 @@ pub unsafe extern "C" fn ReadFuzzySeperators_r(
 #[no_mangle]
 
 pub unsafe extern "C" fn ReadWeightConfig(
-    mut filename: *mut libc::c_char,
+    mut filename: *mut i8,
 ) -> *mut crate::src::botlib::be_ai_weight::weightconfig_t {
-    let mut newindent: libc::c_int = 0;
-    let mut avail: libc::c_int = 0 as libc::c_int;
-    let mut n: libc::c_int = 0;
+    let mut newindent: i32 = 0;
+    let mut avail: i32 = 0;
+    let mut n: i32 = 0;
     let mut token: crate::src::botlib::l_script::token_t = crate::src::botlib::l_script::token_t {
         string: [0; 1024],
         type_0: 0,
         subtype: 0,
         intvalue: 0,
         floatvalue: 0.,
-        whitespace_p: 0 as *mut libc::c_char,
-        endwhitespace_p: 0 as *mut libc::c_char,
+        whitespace_p: 0 as *mut i8,
+        endwhitespace_p: 0 as *mut i8,
         line: 0,
         linescrossed: 0,
         next: 0 as *mut crate::src::botlib::l_script::token_s,
@@ -555,51 +531,46 @@ pub unsafe extern "C" fn ReadWeightConfig(
         0 as *mut crate::src::botlib::be_ai_weight::weightconfig_t;
     //DEBUG
     if crate::src::botlib::l_libvar::LibVarGetValue(
-        b"bot_reloadcharacters\x00" as *const u8 as *const libc::c_char,
+        b"bot_reloadcharacters\x00" as *const u8 as *const i8,
     ) == 0.
     {
-        avail = -(1 as libc::c_int); //end if
-                                     //end if
-        n = 0 as libc::c_int; //end for
-        while n < 128 as libc::c_int {
+        avail = -(1); //end if
+                      //end if
+        n = 0; //end for
+        while n < 128 {
             config = weightFileList[n as usize];
             //end if
             if config.is_null() {
                 //end if
-                if avail == -(1 as libc::c_int) {
+                if avail == -(1) {
                     avail = n
                 }
-            } else if crate::stdlib::strcmp(filename, (*config).filename.as_mut_ptr())
-                == 0 as libc::c_int
-            {
+            } else if crate::stdlib::strcmp(filename, (*config).filename.as_mut_ptr()) == 0 {
                 //end if
                 //botimport.Print( PRT_MESSAGE, "retained %s\n", filename );
                 return config;
             } //end if
             n += 1
         }
-        if avail == -(1 as libc::c_int) {
+        if avail == -(1) {
             crate::src::botlib::be_interface::botimport
                 .Print
                 .expect("non-null function pointer")(
-                3 as libc::c_int,
-                b"weightFileList was full trying to load %s\n\x00" as *const u8
-                    as *const libc::c_char as *mut libc::c_char,
+                3,
+                b"weightFileList was full trying to load %s\n\x00" as *const u8 as *mut i8,
                 filename,
             );
             return 0 as *mut crate::src::botlib::be_ai_weight::weightconfig_t;
         }
     }
-    crate::src::botlib::l_precomp::PC_SetBaseFolder(
-        b"botfiles\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    );
+    crate::src::botlib::l_precomp::PC_SetBaseFolder(b"botfiles\x00" as *const u8 as *mut i8);
     source = crate::src::botlib::l_precomp::LoadSourceFile(filename);
     if source.is_null() {
         crate::src::botlib::be_interface::botimport
             .Print
             .expect("non-null function pointer")(
-            3 as libc::c_int,
-            b"counldn\'t load %s\n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            3,
+            b"counldn\'t load %s\n\x00" as *const u8 as *mut i8,
             filename,
         );
         return 0 as *mut crate::src::botlib::be_ai_weight::weightconfig_t;
@@ -607,34 +578,28 @@ pub unsafe extern "C" fn ReadWeightConfig(
     //
     config = crate::src::botlib::l_memory::GetClearedMemory(::std::mem::size_of::<
         crate::src::botlib::be_ai_weight::weightconfig_t,
-    >() as libc::c_ulong) as *mut crate::src::botlib::be_ai_weight::weightconfig_t;
-    (*config).numweights = 0 as libc::c_int;
+    >()) as *mut crate::src::botlib::be_ai_weight::weightconfig_t;
+    (*config).numweights = 0;
     crate::src::qcommon::q_shared::Q_strncpyz(
         (*config).filename.as_mut_ptr(),
         filename,
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 64]>() as i32,
     );
     //parse the item config file
     while crate::src::botlib::l_precomp::PC_ReadToken(source, &mut token) != 0 {
         if crate::stdlib::strcmp(
             token.string.as_mut_ptr(),
-            b"weight\x00" as *const u8 as *const libc::c_char,
+            b"weight\x00" as *const u8 as *const i8,
         ) == 0
         {
-            if (*config).numweights >= 128 as libc::c_int {
+            if (*config).numweights >= 128 {
                 crate::src::botlib::l_precomp::SourceWarning(
                     source,
-                    b"too many fuzzy weights\x00" as *const u8 as *const libc::c_char
-                        as *mut libc::c_char,
+                    b"too many fuzzy weights\x00" as *const u8 as *mut i8,
                 ); //end while
                 break; //end if
             } else {
-                if crate::src::botlib::l_precomp::PC_ExpectTokenType(
-                    source,
-                    1 as libc::c_int,
-                    0 as libc::c_int,
-                    &mut token,
-                ) == 0
+                if crate::src::botlib::l_precomp::PC_ExpectTokenType(source, 1, 0, &mut token) == 0
                 {
                     FreeWeightConfig(config); //end if
                     crate::src::botlib::l_precomp::FreeSource(source); //end if
@@ -643,9 +608,8 @@ pub unsafe extern "C" fn ReadWeightConfig(
                 crate::src::botlib::l_script::StripDoubleQuotes(token.string.as_mut_ptr());
                 (*config).weights[(*config).numweights as usize].name =
                     crate::src::botlib::l_memory::GetClearedMemory(
-                        crate::stdlib::strlen(token.string.as_mut_ptr())
-                            .wrapping_add(1 as libc::c_int as libc::c_ulong),
-                    ) as *mut libc::c_char;
+                        crate::stdlib::strlen(token.string.as_mut_ptr()).wrapping_add(1usize),
+                    ) as *mut i8;
                 crate::stdlib::strcpy(
                     (*config).weights[(*config).numweights as usize].name,
                     token.string.as_mut_ptr(),
@@ -655,13 +619,13 @@ pub unsafe extern "C" fn ReadWeightConfig(
                     crate::src::botlib::l_precomp::FreeSource(source);
                     return 0 as *mut crate::src::botlib::be_ai_weight::weightconfig_t;
                 }
-                newindent = crate::src::qcommon::q_shared::qfalse as libc::c_int;
+                newindent = crate::src::qcommon::q_shared::qfalse as i32;
                 if crate::stdlib::strcmp(
                     token.string.as_mut_ptr(),
-                    b"{\x00" as *const u8 as *const libc::c_char,
+                    b"{\x00" as *const u8 as *const i8,
                 ) == 0
                 {
-                    newindent = crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                    newindent = crate::src::qcommon::q_shared::qtrue as i32;
                     if crate::src::botlib::l_precomp::PC_ExpectAnyToken(source, &mut token) == 0 {
                         FreeWeightConfig(config);
                         crate::src::botlib::l_precomp::FreeSource(source);
@@ -671,7 +635,7 @@ pub unsafe extern "C" fn ReadWeightConfig(
                 } //end else
                 if crate::stdlib::strcmp(
                     token.string.as_mut_ptr(),
-                    b"switch\x00" as *const u8 as *const libc::c_char,
+                    b"switch\x00" as *const u8 as *const i8,
                 ) == 0
                 {
                     fs = ReadFuzzySeperators_r(source); //end if
@@ -683,16 +647,15 @@ pub unsafe extern "C" fn ReadWeightConfig(
                     (*config).weights[(*config).numweights as usize].firstseperator = fs
                 } else if crate::stdlib::strcmp(
                     token.string.as_mut_ptr(),
-                    b"return\x00" as *const u8 as *const libc::c_char,
+                    b"return\x00" as *const u8 as *const i8,
                 ) == 0
                 {
                     fs = crate::src::botlib::l_memory::GetClearedMemory(::std::mem::size_of::<
                         crate::src::botlib::be_ai_weight::fuzzyseperator_t,
-                    >()
-                        as libc::c_ulong)
+                    >())
                         as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t; //end if
-                    (*fs).index = 0 as libc::c_int;
-                    (*fs).value = 999999 as libc::c_int;
+                    (*fs).index = 0;
+                    (*fs).value = 999999;
                     (*fs).next = 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_s;
                     (*fs).child = 0 as *mut crate::src::botlib::be_ai_weight::fuzzyseperator_s;
                     if ReadFuzzyWeight(source, fs) == 0 {
@@ -705,8 +668,7 @@ pub unsafe extern "C" fn ReadWeightConfig(
                 } else {
                     crate::src::botlib::l_precomp::SourceError(
                         source,
-                        b"invalid name %s\x00" as *const u8 as *const libc::c_char
-                            as *mut libc::c_char,
+                        b"invalid name %s\x00" as *const u8 as *mut i8,
                         token.string.as_mut_ptr(),
                     );
                     FreeWeightConfig(config);
@@ -716,7 +678,7 @@ pub unsafe extern "C" fn ReadWeightConfig(
                 if newindent != 0 {
                     if crate::src::botlib::l_precomp::PC_ExpectTokenString(
                         source,
-                        b"}\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                        b"}\x00" as *const u8 as *mut i8,
                     ) == 0
                     {
                         FreeWeightConfig(config);
@@ -730,7 +692,7 @@ pub unsafe extern "C" fn ReadWeightConfig(
         } else {
             crate::src::botlib::l_precomp::SourceError(
                 source,
-                b"invalid name %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"invalid name %s\x00" as *const u8 as *mut i8,
                 token.string.as_mut_ptr(),
             ); //end if
             FreeWeightConfig(config);
@@ -745,14 +707,14 @@ pub unsafe extern "C" fn ReadWeightConfig(
     crate::src::botlib::be_interface::botimport
         .Print
         .expect("non-null function pointer")(
-        1 as libc::c_int,
-        b"loaded %s\n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        1,
+        b"loaded %s\n\x00" as *const u8 as *mut i8,
         filename,
     );
     //DEBUG
     //
     if crate::src::botlib::l_libvar::LibVarGetValue(
-        b"bot_reloadcharacters\x00" as *const u8 as *const libc::c_char,
+        b"bot_reloadcharacters\x00" as *const u8 as *const i8,
     ) == 0.
     {
         weightFileList[avail as usize] = config
@@ -772,10 +734,10 @@ pub unsafe extern "C" fn ReadWeightConfig(
 
 pub unsafe extern "C" fn FindFuzzyWeight(
     mut wc: *mut crate::src::botlib::be_ai_weight::weightconfig_t,
-    mut name: *mut libc::c_char,
-) -> libc::c_int {
-    let mut i: libc::c_int = 0; //end if
-    i = 0 as libc::c_int;
+    mut name: *mut i8,
+) -> i32 {
+    let mut i: i32 = 0; //end if
+    i = 0;
     while i < (*wc).numweights {
         if crate::stdlib::strcmp((*wc).weights[i as usize].name, name) == 0 {
             return i;
@@ -783,7 +745,7 @@ pub unsafe extern "C" fn FindFuzzyWeight(
         i += 1
         //end if
     }
-    return -(1 as libc::c_int);
+    return -(1);
 }
 //end of the function FindFuzzyWeight
 //===========================================================================
@@ -795,12 +757,12 @@ pub unsafe extern "C" fn FindFuzzyWeight(
 #[no_mangle]
 
 pub unsafe extern "C" fn FuzzyWeight_r(
-    mut inventory: *mut libc::c_int,
+    mut inventory: *mut i32,
     mut fs: *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t,
-) -> libc::c_float {
-    let mut scale: libc::c_float = 0.; //end else if
-    let mut w1: libc::c_float = 0.; //end if
-    let mut w2: libc::c_float = 0.; //end if
+) -> f32 {
+    let mut scale: f32 = 0.; //end else if
+    let mut w1: f32 = 0.; //end if
+    let mut w2: f32 = 0.; //end if
     if *inventory.offset((*fs).index as isize) < (*fs).value {
         if !(*fs).child.is_null() {
             return FuzzyWeight_r(inventory, (*fs).child);
@@ -823,15 +785,15 @@ pub unsafe extern "C" fn FuzzyWeight_r(
                     w2 = (*(*fs).next).weight
                 }
                 //the scale factor
-                if (*(*fs).next).value == 999999 as libc::c_int {
+                if (*(*fs).next).value == 999999 {
                     // is fs->next the default case?
                     return w2;
                 } else {
-                    scale = (*inventory.offset((*fs).index as isize) - (*fs).value) as libc::c_float
-                        / ((*(*fs).next).value - (*fs).value) as libc::c_float
+                    scale = (*inventory.offset((*fs).index as isize) - (*fs).value) as f32
+                        / ((*(*fs).next).value - (*fs).value) as f32
                 } // can't interpolate, return default weight
                   //scale between the two weights
-                return (1 as libc::c_int as libc::c_float - scale) * w1 + scale * w2;
+                return (1f32 - scale) * w1 + scale * w2;
             }
             return FuzzyWeight_r(inventory, (*fs).next);
         }
@@ -848,19 +810,18 @@ pub unsafe extern "C" fn FuzzyWeight_r(
 #[no_mangle]
 
 pub unsafe extern "C" fn FuzzyWeightUndecided_r(
-    mut inventory: *mut libc::c_int,
+    mut inventory: *mut i32,
     mut fs: *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t,
-) -> libc::c_float {
-    let mut scale: libc::c_float = 0.; //end else if
-    let mut w1: libc::c_float = 0.; //end if
-    let mut w2: libc::c_float = 0.; //end if
+) -> f32 {
+    let mut scale: f32 = 0.; //end else if
+    let mut w1: f32 = 0.; //end if
+    let mut w2: f32 = 0.; //end if
     if *inventory.offset((*fs).index as isize) < (*fs).value {
         if !(*fs).child.is_null() {
             return FuzzyWeightUndecided_r(inventory, (*fs).child);
         } else {
             return (*fs).minweight
-                + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                    / 0x7fff as libc::c_int as libc::c_float
+                + (crate::stdlib::rand() & 0x7fffi32) as f32 / 32767f32
                     * ((*fs).maxweight - (*fs).minweight);
         }
     } else {
@@ -871,8 +832,7 @@ pub unsafe extern "C" fn FuzzyWeightUndecided_r(
                     w1 = FuzzyWeightUndecided_r(inventory, (*fs).child)
                 } else {
                     w1 = (*fs).minweight
-                        + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                            / 0x7fff as libc::c_int as libc::c_float
+                        + (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32
                             * ((*fs).maxweight - (*fs).minweight)
                 }
                 //second weight
@@ -880,20 +840,19 @@ pub unsafe extern "C" fn FuzzyWeightUndecided_r(
                     w2 = FuzzyWeight_r(inventory, (*(*fs).next).child)
                 } else {
                     w2 = (*(*fs).next).minweight
-                        + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                            / 0x7fff as libc::c_int as libc::c_float
+                        + (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32
                             * ((*(*fs).next).maxweight - (*(*fs).next).minweight)
                 }
                 //the scale factor
-                if (*(*fs).next).value == 999999 as libc::c_int {
+                if (*(*fs).next).value == 999999 {
                     // is fs->next the default case?
                     return w2;
                 } else {
-                    scale = (*inventory.offset((*fs).index as isize) - (*fs).value) as libc::c_float
-                        / ((*(*fs).next).value - (*fs).value) as libc::c_float
+                    scale = (*inventory.offset((*fs).index as isize) - (*fs).value) as f32
+                        / ((*(*fs).next).value - (*fs).value) as f32
                 } // can't interpolate, return default weight
                   //scale between the two weights
-                return (1 as libc::c_int as libc::c_float - scale) * w1 + scale * w2;
+                return (1f32 - scale) * w1 + scale * w2;
             }
             return FuzzyWeightUndecided_r(inventory, (*fs).next);
         }
@@ -911,10 +870,10 @@ pub unsafe extern "C" fn FuzzyWeightUndecided_r(
 #[no_mangle]
 
 pub unsafe extern "C" fn FuzzyWeight(
-    mut inventory: *mut libc::c_int,
+    mut inventory: *mut i32,
     mut wc: *mut crate::src::botlib::be_ai_weight::weightconfig_t,
-    mut weightnum: libc::c_int,
-) -> libc::c_float {
+    mut weightnum: i32,
+) -> f32 {
     return FuzzyWeight_r(inventory, (*wc).weights[weightnum as usize].firstseperator);
 }
 //end of the function FuzzyWeight
@@ -927,10 +886,10 @@ pub unsafe extern "C" fn FuzzyWeight(
 #[no_mangle]
 
 pub unsafe extern "C" fn FuzzyWeightUndecided(
-    mut inventory: *mut libc::c_int,
+    mut inventory: *mut i32,
     mut wc: *mut crate::src::botlib::be_ai_weight::weightconfig_t,
-    mut weightnum: libc::c_int,
-) -> libc::c_float {
+    mut weightnum: i32,
+) -> f32 {
     return FuzzyWeightUndecided_r(inventory, (*wc).weights[weightnum as usize].firstseperator);
 }
 //end of the function FuzzyWeightUndecided
@@ -948,29 +907,19 @@ pub unsafe extern "C" fn EvolveFuzzySeperator_r(
     if !(*fs).child.is_null() {
         //end else if
         EvolveFuzzySeperator_r((*fs).child); //end if
-    } else if (*fs).type_0 == 1 as libc::c_int {
+    } else if (*fs).type_0 == 1 {
         //every once in a while an evolution leap occurs, mutation
-        if (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double)
-            < 0.01f64
-        {
-            (*fs).weight = ((*fs).weight as libc::c_double
-                + 2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                        / 0x7fff as libc::c_int as libc::c_float)
-                        as libc::c_double
-                        - 0.5f64)
-                    * ((*fs).maxweight - (*fs).minweight) as libc::c_double)
-                as libc::c_float
+        if (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64) < 0.01 {
+            (*fs).weight = ((*fs).weight as f64
+                + 2.0
+                    * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+                    * ((*fs).maxweight - (*fs).minweight) as f64) as f32
         } else {
-            (*fs).weight = ((*fs).weight as libc::c_double
-                + 2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                        / 0x7fff as libc::c_int as libc::c_float)
-                        as libc::c_double
-                        - 0.5f64)
-                    * ((*fs).maxweight - (*fs).minweight) as libc::c_double
-                    * 0.5f64) as libc::c_float
+            (*fs).weight = ((*fs).weight as f64
+                + 2.0
+                    * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+                    * ((*fs).maxweight - (*fs).minweight) as f64
+                    * 0.5) as f32
         }
         //modify bounds if necessary because of mutation
         if (*fs).weight < (*fs).minweight {
@@ -996,8 +945,8 @@ pub unsafe extern "C" fn EvolveFuzzySeperator_r(
 pub unsafe extern "C" fn EvolveWeightConfig(
     mut config: *mut crate::src::botlib::be_ai_weight::weightconfig_t,
 ) {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
+    let mut i: i32 = 0;
+    i = 0;
     while i < (*config).numweights {
         EvolveFuzzySeperator_r((*config).weights[i as usize].firstseperator);
         i += 1
@@ -1015,12 +964,12 @@ pub unsafe extern "C" fn EvolveWeightConfig(
 
 pub unsafe extern "C" fn ScaleFuzzySeperator_r(
     mut fs: *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t,
-    mut scale: libc::c_float,
+    mut scale: f32,
 ) {
     if !(*fs).child.is_null() {
         //end else if
         ScaleFuzzySeperator_r((*fs).child, scale); //end if
-    } else if (*fs).type_0 == 1 as libc::c_int {
+    } else if (*fs).type_0 == 1 {
         //
         (*fs).weight = ((*fs).maxweight + (*fs).minweight) * scale;
         //get the weight between bounds
@@ -1046,16 +995,16 @@ pub unsafe extern "C" fn ScaleFuzzySeperator_r(
 
 pub unsafe extern "C" fn ScaleWeight(
     mut config: *mut crate::src::botlib::be_ai_weight::weightconfig_t,
-    mut name: *mut libc::c_char,
-    mut scale: libc::c_float,
+    mut name: *mut i8,
+    mut scale: f32,
 ) {
-    let mut i: libc::c_int = 0;
-    if scale < 0 as libc::c_int as libc::c_float {
-        scale = 0 as libc::c_int as libc::c_float
-    } else if scale > 1 as libc::c_int as libc::c_float {
-        scale = 1 as libc::c_int as libc::c_float
+    let mut i: i32 = 0;
+    if scale < 0f32 {
+        scale = 0f32
+    } else if scale > 1f32 {
+        scale = 1f32
     }
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*config).numweights {
         if crate::stdlib::strcmp(name, (*config).weights[i as usize].name) == 0 {
             ScaleFuzzySeperator_r((*config).weights[i as usize].firstseperator, scale);
@@ -1078,14 +1027,13 @@ pub unsafe extern "C" fn ScaleWeight(
 
 pub unsafe extern "C" fn ScaleFuzzySeperatorBalanceRange_r(
     mut fs: *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t,
-    mut scale: libc::c_float,
+    mut scale: f32,
 ) {
     if !(*fs).child.is_null() {
         //end else if
         ScaleFuzzySeperatorBalanceRange_r((*fs).child, scale); //end if
-    } else if (*fs).type_0 == 1 as libc::c_int {
-        let mut mid: libc::c_float =
-            (((*fs).minweight + (*fs).maxweight) as libc::c_double * 0.5f64) as libc::c_float;
+    } else if (*fs).type_0 == 1 {
+        let mut mid: f32 = (((*fs).minweight + (*fs).maxweight) as f64 * 0.5) as f32;
         //end if
         (*fs).maxweight = mid + ((*fs).maxweight - mid) * scale;
         (*fs).minweight = mid + ((*fs).minweight - mid) * scale;
@@ -1109,15 +1057,15 @@ pub unsafe extern "C" fn ScaleFuzzySeperatorBalanceRange_r(
 
 pub unsafe extern "C" fn ScaleFuzzyBalanceRange(
     mut config: *mut crate::src::botlib::be_ai_weight::weightconfig_t,
-    mut scale: libc::c_float,
+    mut scale: f32,
 ) {
-    let mut i: libc::c_int = 0;
-    if scale < 0 as libc::c_int as libc::c_float {
-        scale = 0 as libc::c_int as libc::c_float
-    } else if scale > 100 as libc::c_int as libc::c_float {
-        scale = 100 as libc::c_int as libc::c_float
+    let mut i: i32 = 0;
+    if scale < 0f32 {
+        scale = 0f32
+    } else if scale > 100f32 {
+        scale = 100f32
     }
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*config).numweights {
         ScaleFuzzySeperatorBalanceRange_r((*config).weights[i as usize].firstseperator, scale);
         i += 1
@@ -1137,35 +1085,33 @@ pub unsafe extern "C" fn InterbreedFuzzySeperator_r(
     mut fs1: *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t,
     mut fs2: *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t,
     mut fsout: *mut crate::src::botlib::be_ai_weight::fuzzyseperator_t,
-) -> libc::c_int {
+) -> i32 {
     if !(*fs1).child.is_null() {
         //end else if
         if (*fs2).child.is_null() || (*fsout).child.is_null() {
             crate::src::botlib::be_interface::botimport
                 .Print
                 .expect("non-null function pointer")(
-                3 as libc::c_int,
-                b"cannot interbreed weight configs, unequal child\n\x00" as *const u8
-                    as *const libc::c_char as *mut libc::c_char,
+                3,
+                b"cannot interbreed weight configs, unequal child\n\x00" as *const u8 as *mut i8,
             ); //end if
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
         if InterbreedFuzzySeperator_r((*fs2).child, (*fs2).child, (*fsout).child) == 0 {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     //end if
-    } else if (*fs1).type_0 == 1 as libc::c_int {
-        if (*fs2).type_0 != 1 as libc::c_int || (*fsout).type_0 != 1 as libc::c_int {
+    } else if (*fs1).type_0 == 1 {
+        if (*fs2).type_0 != 1 || (*fsout).type_0 != 1 {
             crate::src::botlib::be_interface::botimport
                 .Print
                 .expect("non-null function pointer")(
-                3 as libc::c_int,
-                b"cannot interbreed weight configs, unequal balance\n\x00" as *const u8
-                    as *const libc::c_char as *mut libc::c_char,
+                3,
+                b"cannot interbreed weight configs, unequal balance\n\x00" as *const u8 as *mut i8,
             ); //end if
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         } //end if
-        (*fsout).weight = ((*fs1).weight + (*fs2).weight) / 2 as libc::c_int as libc::c_float; //end if
+        (*fsout).weight = ((*fs1).weight + (*fs2).weight) / 2f32; //end if
         if (*fsout).weight > (*fsout).maxweight {
             (*fsout).maxweight = (*fsout).weight
         }
@@ -1178,18 +1124,17 @@ pub unsafe extern "C" fn InterbreedFuzzySeperator_r(
             crate::src::botlib::be_interface::botimport
                 .Print
                 .expect("non-null function pointer")(
-                3 as libc::c_int,
-                b"cannot interbreed weight configs, unequal next\n\x00" as *const u8
-                    as *const libc::c_char as *mut libc::c_char,
+                3,
+                b"cannot interbreed weight configs, unequal next\n\x00" as *const u8 as *mut i8,
             );
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
         if InterbreedFuzzySeperator_r((*fs1).next, (*fs2).next, (*fsout).next) == 0 {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
         //end if
     }
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //interbreed the weight configurations and stores the interbreeded one in configout
 //end of the function InterbreedFuzzySeperator_r
@@ -1207,20 +1152,19 @@ pub unsafe extern "C" fn InterbreedWeightConfigs(
     mut config2: *mut crate::src::botlib::be_ai_weight::weightconfig_t,
     mut configout: *mut crate::src::botlib::be_ai_weight::weightconfig_t,
 ) {
-    let mut i: libc::c_int = 0; //end if
+    let mut i: i32 = 0; //end if
     if (*config1).numweights != (*config2).numweights
         || (*config1).numweights != (*configout).numweights
     {
         crate::src::botlib::be_interface::botimport
             .Print
             .expect("non-null function pointer")(
-            3 as libc::c_int,
-            b"cannot interbreed weight configs, unequal numweights\n\x00" as *const u8
-                as *const libc::c_char as *mut libc::c_char,
+            3,
+            b"cannot interbreed weight configs, unequal numweights\n\x00" as *const u8 as *mut i8,
         );
         return;
     }
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*config1).numweights {
         InterbreedFuzzySeperator_r(
             (*config1).weights[i as usize].firstseperator,
@@ -1242,9 +1186,9 @@ pub unsafe extern "C" fn InterbreedWeightConfigs(
 #[no_mangle]
 
 pub unsafe extern "C" fn BotShutdownWeights() {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
-    while i < 128 as libc::c_int {
+    let mut i: i32 = 0;
+    i = 0;
+    while i < 128 {
         if !weightFileList[i as usize].is_null() {
             FreeWeightConfig2(weightFileList[i as usize]);
             weightFileList[i as usize] = 0 as *mut crate::src::botlib::be_ai_weight::weightconfig_t

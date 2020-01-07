@@ -92,53 +92,45 @@ pub use crate::zlib_h::z_streamp;
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn inflate_fast(mut strm: crate::zlib_h::z_streamp, mut start: libc::c_uint)
+pub unsafe extern "C" fn inflate_fast(mut strm: crate::zlib_h::z_streamp, mut start: u32)
 /* inflate()'s starting value for strm->avail_out */
 {
     let mut state: *mut crate::src::zlib::inflate::inflate_state =
         0 as *mut crate::src::zlib::inflate::inflate_state; /* local strm->next_in */
-    let mut in_0: *mut libc::c_uchar = 0 as *mut libc::c_uchar; /* while in < last, enough input available */
-    let mut last: *mut libc::c_uchar = 0 as *mut libc::c_uchar; /* local strm->next_out */
-    let mut out: *mut libc::c_uchar = 0 as *mut libc::c_uchar; /* inflate()'s initial strm->next_out */
-    let mut beg: *mut libc::c_uchar = 0 as *mut libc::c_uchar; /* while out < end, enough space available */
-    let mut end: *mut libc::c_uchar = 0 as *mut libc::c_uchar; /* window size or zero if not using window */
-    let mut wsize: libc::c_uint = 0; /* valid bytes in the window */
-    let mut whave: libc::c_uint = 0; /* window write index */
-    let mut write: libc::c_uint = 0; /* allocated sliding window, if wsize != 0 */
-    let mut window: *mut libc::c_uchar = 0 as *mut libc::c_uchar; /* local strm->hold */
-    let mut hold: libc::c_ulong = 0; /* local strm->bits */
-    let mut bits: libc::c_uint = 0; /* local strm->lencode */
+    let mut in_0: *mut u8 = 0 as *mut u8; /* while in < last, enough input available */
+    let mut last: *mut u8 = 0 as *mut u8; /* local strm->next_out */
+    let mut out: *mut u8 = 0 as *mut u8; /* inflate()'s initial strm->next_out */
+    let mut beg: *mut u8 = 0 as *mut u8; /* while out < end, enough space available */
+    let mut end: *mut u8 = 0 as *mut u8; /* window size or zero if not using window */
+    let mut wsize: u32 = 0; /* valid bytes in the window */
+    let mut whave: u32 = 0; /* window write index */
+    let mut write: u32 = 0; /* allocated sliding window, if wsize != 0 */
+    let mut window: *mut u8 = 0 as *mut u8; /* local strm->hold */
+    let mut hold: usize = 0; /* local strm->bits */
+    let mut bits: u32 = 0; /* local strm->lencode */
     let mut lcode: *const crate::src::zlib::inftrees::code =
         0 as *const crate::src::zlib::inftrees::code; /* local strm->distcode */
     let mut dcode: *const crate::src::zlib::inftrees::code =
         0 as *const crate::src::zlib::inftrees::code; /* mask for first level of length codes */
-    let mut lmask: libc::c_uint = 0; /* mask for first level of distance codes */
-    let mut dmask: libc::c_uint = 0; /* retrieved table entry */
+    let mut lmask: u32 = 0; /* mask for first level of distance codes */
+    let mut dmask: u32 = 0; /* retrieved table entry */
     let mut this: crate::src::zlib::inftrees::code = crate::src::zlib::inftrees::code {
         op: 0,
         bits: 0,
         val: 0,
     }; /* code bits, operation, extra bits, or */
     /*  window position, window bytes to copy */
-    let mut op: libc::c_uint = 0; /* match length, unused bytes */
-    let mut len: libc::c_uint = 0; /* match distance */
-    let mut dist: libc::c_uint = 0; /* where to copy match from */
-    let mut from: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+    let mut op: u32 = 0; /* match length, unused bytes */
+    let mut len: u32 = 0; /* match distance */
+    let mut dist: u32 = 0; /* where to copy match from */
+    let mut from: *mut u8 = 0 as *mut u8;
     /* copy state to local variables */
     state = (*strm).state as *mut crate::src::zlib::inflate::inflate_state;
-    in_0 = (*strm).next_in.offset(-(1 as libc::c_int as isize));
-    last = in_0.offset(
-        (*strm)
-            .avail_in
-            .wrapping_sub(5 as libc::c_int as libc::c_uint) as isize,
-    );
-    out = (*strm).next_out.offset(-(1 as libc::c_int as isize));
+    in_0 = (*strm).next_in.offset(-(1));
+    last = in_0.offset((*strm).avail_in.wrapping_sub(5u32) as isize);
+    out = (*strm).next_out.offset(-(1));
     beg = out.offset(-(start.wrapping_sub((*strm).avail_out) as isize));
-    end = out.offset(
-        (*strm)
-            .avail_out
-            .wrapping_sub(257 as libc::c_int as libc::c_uint) as isize,
-    );
+    end = out.offset((*strm).avail_out.wrapping_sub(257u32) as isize);
     wsize = (*state).wsize;
     whave = (*state).whave;
     write = (*state).write;
@@ -147,72 +139,66 @@ pub unsafe extern "C" fn inflate_fast(mut strm: crate::zlib_h::z_streamp, mut st
     bits = (*state).bits;
     lcode = (*state).lencode;
     dcode = (*state).distcode;
-    lmask =
-        ((1 as libc::c_uint) << (*state).lenbits).wrapping_sub(1 as libc::c_int as libc::c_uint);
-    dmask =
-        ((1 as libc::c_uint) << (*state).distbits).wrapping_sub(1 as libc::c_int as libc::c_uint);
+    lmask = ((1u32) << (*state).lenbits).wrapping_sub(1u32);
+    dmask = ((1u32) << (*state).distbits).wrapping_sub(1u32);
     let mut current_block_141: u64;
     's_132: loop
     /* decode literals and length/distances until end-of-block or not enough
     input data or output space */
     {
-        if bits < 15 as libc::c_int as libc::c_uint {
+        if bits < 15 {
             in_0 = in_0.offset(1);
-            hold = hold.wrapping_add((*in_0 as libc::c_ulong) << bits);
-            bits = bits.wrapping_add(8 as libc::c_int as libc::c_uint);
+            hold = hold.wrapping_add((*in_0 as usize) << bits);
+            bits = bits.wrapping_add(8u32);
             in_0 = in_0.offset(1);
-            hold = hold.wrapping_add((*in_0 as libc::c_ulong) << bits);
-            bits = bits.wrapping_add(8 as libc::c_int as libc::c_uint)
+            hold = hold.wrapping_add((*in_0 as usize) << bits);
+            bits = bits.wrapping_add(8u32)
         }
-        this = *lcode.offset((hold & lmask as libc::c_ulong) as isize);
+        this = *lcode.offset((hold & lmask as usize) as isize);
         loop {
-            op = this.bits as libc::c_uint;
-            hold >>= op;
+            op = this.bits as u32;
+            hold >>= op as usize;
             bits = bits.wrapping_sub(op);
-            op = this.op as libc::c_uint;
-            if op == 0 as libc::c_int as libc::c_uint {
+            op = this.op as u32;
+            if op == 0 {
                 /* literal */
                 out = out.offset(1);
-                *out = this.val as libc::c_uchar;
+                *out = this.val as u8;
                 current_block_141 = 18386322304582297246;
                 break;
-            } else if op & 16 as libc::c_int as libc::c_uint != 0 {
+            } else if op & 16 != 0 {
                 /* length base */
-                len = this.val as libc::c_uint; /* number of extra bits */
-                op &= 15 as libc::c_int as libc::c_uint;
+                len = this.val as u32; /* number of extra bits */
+                op &= 15;
                 if op != 0 {
                     if bits < op {
                         in_0 = in_0.offset(1);
-                        hold = hold.wrapping_add((*in_0 as libc::c_ulong) << bits);
-                        bits = bits.wrapping_add(8 as libc::c_int as libc::c_uint)
+                        hold = hold.wrapping_add((*in_0 as usize) << bits);
+                        bits = bits.wrapping_add(8u32)
                     }
-                    len = len.wrapping_add(
-                        hold as libc::c_uint
-                            & ((1 as libc::c_uint) << op)
-                                .wrapping_sub(1 as libc::c_int as libc::c_uint),
-                    );
-                    hold >>= op;
+                    len = len.wrapping_add(hold as u32 & ((1u32) << op).wrapping_sub(1u32));
+                    hold >>= op as usize;
                     bits = bits.wrapping_sub(op)
                 }
-                if bits < 15 as libc::c_int as libc::c_uint {
+                if bits < 15 {
                     in_0 = in_0.offset(1);
-                    hold = hold.wrapping_add((*in_0 as libc::c_ulong) << bits);
-                    bits = bits.wrapping_add(8 as libc::c_int as libc::c_uint);
+                    hold = hold.wrapping_add((*in_0 as usize) << bits);
+                    bits = bits.wrapping_add(8u32);
                     in_0 = in_0.offset(1);
-                    hold = hold.wrapping_add((*in_0 as libc::c_ulong) << bits);
-                    bits = bits.wrapping_add(8 as libc::c_int as libc::c_uint)
+                    hold = hold.wrapping_add((*in_0 as usize) << bits);
+                    bits = bits.wrapping_add(8u32)
                 }
-                this = *dcode.offset((hold & dmask as libc::c_ulong) as isize);
+                this = *dcode.offset((hold & dmask as usize) as isize);
                 current_block_141 = 719419377338824450;
                 break;
-            } else if op & 64 as libc::c_int as libc::c_uint == 0 as libc::c_int as libc::c_uint {
+            } else if op & 64 == 0 {
                 /* 2nd level length code */
-                this = *lcode.offset((this.val as libc::c_ulong).wrapping_add(
-                    hold
-                        & ((1 as libc::c_uint) << op).wrapping_sub(1 as libc::c_int as libc::c_uint)
-                            as libc::c_ulong,
-                ) as isize)
-            } else if op & 32 as libc::c_int as libc::c_uint != 0 {
+                this = *lcode.offset(
+                    (this.val as usize)
+                        .wrapping_add(hold & ((1u32) << op).wrapping_sub(1u32) as usize)
+                        as isize,
+                )
+            } else if op & 32 != 0 {
                 current_block_141 = 5250576585193495047;
                 break;
             } else {
@@ -223,32 +209,28 @@ pub unsafe extern "C" fn inflate_fast(mut strm: crate::zlib_h::z_streamp, mut st
         match current_block_141 {
             719419377338824450 => {
                 loop {
-                    op = this.bits as libc::c_uint;
-                    hold >>= op;
+                    op = this.bits as u32;
+                    hold >>= op as usize;
                     bits = bits.wrapping_sub(op);
-                    op = this.op as libc::c_uint;
-                    if op & 16 as libc::c_int as libc::c_uint != 0 {
+                    op = this.op as u32;
+                    if op & 16 != 0 {
                         /* distance base */
-                        dist = this.val as libc::c_uint; /* number of extra bits */
-                        op &= 15 as libc::c_int as libc::c_uint; /* max distance in output */
+                        dist = this.val as u32; /* number of extra bits */
+                        op &= 15; /* max distance in output */
                         if bits < op {
                             in_0 = in_0.offset(1);
-                            hold = hold.wrapping_add((*in_0 as libc::c_ulong) << bits);
-                            bits = bits.wrapping_add(8 as libc::c_int as libc::c_uint);
+                            hold = hold.wrapping_add((*in_0 as usize) << bits);
+                            bits = bits.wrapping_add(8u32);
                             if bits < op {
                                 in_0 = in_0.offset(1);
-                                hold = hold.wrapping_add((*in_0 as libc::c_ulong) << bits);
-                                bits = bits.wrapping_add(8 as libc::c_int as libc::c_uint)
+                                hold = hold.wrapping_add((*in_0 as usize) << bits);
+                                bits = bits.wrapping_add(8u32)
                             }
                         }
-                        dist = dist.wrapping_add(
-                            hold as libc::c_uint
-                                & ((1 as libc::c_uint) << op)
-                                    .wrapping_sub(1 as libc::c_int as libc::c_uint),
-                        );
-                        hold >>= op;
+                        dist = dist.wrapping_add(hold as u32 & ((1u32) << op).wrapping_sub(1u32));
+                        hold >>= op as usize;
                         bits = bits.wrapping_sub(op);
-                        op = out.wrapping_offset_from(beg) as libc::c_long as libc::c_uint;
+                        op = out.wrapping_offset_from(beg) as u32;
                         if dist > op {
                             current_block_141 = 5873035170358615968;
                             break;
@@ -256,21 +238,15 @@ pub unsafe extern "C" fn inflate_fast(mut strm: crate::zlib_h::z_streamp, mut st
                             current_block_141 = 17239133558811367971;
                             break;
                         }
-                    } else if op & 64 as libc::c_int as libc::c_uint
-                        == 0 as libc::c_int as libc::c_uint
-                    {
+                    } else if op & 64 == 0 {
                         /* 2nd level distance code */
                         this = *dcode.offset(
-                            (this.val as libc::c_ulong).wrapping_add(
-                                hold & ((1 as libc::c_uint) << op)
-                                    .wrapping_sub(1 as libc::c_int as libc::c_uint)
-                                    as libc::c_ulong,
-                            ) as isize,
+                            (this.val as usize)
+                                .wrapping_add(hold & ((1u32) << op).wrapping_sub(1u32) as usize)
+                                as isize,
                         )
                     } else {
-                        (*strm).msg = b"invalid distance code\x00" as *const u8
-                            as *const libc::c_char
-                            as *mut libc::c_char; /* copy direct from output */
+                        (*strm).msg = b"invalid distance code\x00" as *const u8 as *mut i8; /* copy direct from output */
                         (*state).mode = crate::src::zlib::inflate::BAD;
                         break 's_132;
                     }
@@ -289,8 +265,8 @@ pub unsafe extern "C" fn inflate_fast(mut strm: crate::zlib_h::z_streamp, mut st
                             from = from.offset(1);
                             out = out.offset(1);
                             *out = *from;
-                            len = len.wrapping_sub(3 as libc::c_int as libc::c_uint);
-                            if !(len > 2 as libc::c_int as libc::c_uint) {
+                            len = len.wrapping_sub(3u32);
+                            if !(len > 2) {
                                 break;
                             }
                         }
@@ -298,7 +274,7 @@ pub unsafe extern "C" fn inflate_fast(mut strm: crate::zlib_h::z_streamp, mut st
                             from = from.offset(1);
                             out = out.offset(1);
                             *out = *from;
-                            if len > 1 as libc::c_int as libc::c_uint {
+                            if len > 1 {
                                 from = from.offset(1);
                                 out = out.offset(1);
                                 *out = *from
@@ -309,14 +285,13 @@ pub unsafe extern "C" fn inflate_fast(mut strm: crate::zlib_h::z_streamp, mut st
                         /* see if copy from window */
                         op = dist.wrapping_sub(op); /* distance back in window */
                         if op > whave {
-                            (*strm).msg = b"invalid distance too far back\x00" as *const u8
-                                as *const libc::c_char
-                                as *mut libc::c_char;
+                            (*strm).msg =
+                                b"invalid distance too far back\x00" as *const u8 as *mut i8;
                             (*state).mode = crate::src::zlib::inflate::BAD;
                             break;
                         } else {
-                            from = window.offset(-(1 as libc::c_int as isize));
-                            if write == 0 as libc::c_int as libc::c_uint {
+                            from = window.offset(-(1));
+                            if write == 0 {
                                 /* very common case */
                                 from = from.offset(wsize.wrapping_sub(op) as isize);
                                 if op < len {
@@ -351,7 +326,7 @@ pub unsafe extern "C" fn inflate_fast(mut strm: crate::zlib_h::z_streamp, mut st
                                             break;
                                         }
                                     }
-                                    from = window.offset(-(1 as libc::c_int as isize));
+                                    from = window.offset(-(1));
                                     if write < len {
                                         /* some from start of window */
                                         op = write;
@@ -388,7 +363,7 @@ pub unsafe extern "C" fn inflate_fast(mut strm: crate::zlib_h::z_streamp, mut st
                                     /* rest from output */
                                 }
                             }
-                            while len > 2 as libc::c_int as libc::c_uint {
+                            while len > 2 {
                                 from = from.offset(1);
                                 out = out.offset(1);
                                 *out = *from;
@@ -398,13 +373,13 @@ pub unsafe extern "C" fn inflate_fast(mut strm: crate::zlib_h::z_streamp, mut st
                                 from = from.offset(1);
                                 out = out.offset(1);
                                 *out = *from;
-                                len = len.wrapping_sub(3 as libc::c_int as libc::c_uint)
+                                len = len.wrapping_sub(3u32)
                             }
                             if len != 0 {
                                 from = from.offset(1);
                                 out = out.offset(1);
                                 *out = *from;
-                                if len > 1 as libc::c_int as libc::c_uint {
+                                if len > 1 {
                                     from = from.offset(1);
                                     out = out.offset(1);
                                     *out = *from
@@ -415,8 +390,7 @@ pub unsafe extern "C" fn inflate_fast(mut strm: crate::zlib_h::z_streamp, mut st
                 }
             }
             4976922244085895320 => {
-                (*strm).msg = b"invalid literal/length code\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char;
+                (*strm).msg = b"invalid literal/length code\x00" as *const u8 as *mut i8;
                 (*state).mode = crate::src::zlib::inflate::BAD;
                 break;
             }
@@ -433,24 +407,23 @@ pub unsafe extern "C" fn inflate_fast(mut strm: crate::zlib_h::z_streamp, mut st
         }
     }
     /* return unused bytes (on entry, bits < 8, so in won't go too far back) */
-    len = bits >> 3 as libc::c_int;
+    len = bits >> 3;
     in_0 = in_0.offset(-(len as isize));
-    bits = bits.wrapping_sub(len << 3 as libc::c_int);
-    hold &= ((1 as libc::c_uint) << bits).wrapping_sub(1 as libc::c_int as libc::c_uint)
-        as libc::c_ulong;
+    bits = bits.wrapping_sub(len << 3);
+    hold &= ((1u32) << bits).wrapping_sub(1u32) as usize;
     /* update state and return */
-    (*strm).next_in = in_0.offset(1 as libc::c_int as isize);
-    (*strm).next_out = out.offset(1 as libc::c_int as isize);
+    (*strm).next_in = in_0.offset(1);
+    (*strm).next_out = out.offset(1);
     (*strm).avail_in = if in_0 < last {
-        (5 as libc::c_int as libc::c_long) + last.wrapping_offset_from(in_0) as libc::c_long
+        (5) + last.wrapping_offset_from(in_0)
     } else {
-        (5 as libc::c_int as libc::c_long) - in_0.wrapping_offset_from(last) as libc::c_long
-    } as libc::c_uint;
+        (5) - in_0.wrapping_offset_from(last)
+    } as u32;
     (*strm).avail_out = if out < end {
-        (257 as libc::c_int as libc::c_long) + end.wrapping_offset_from(out) as libc::c_long
+        (257) + end.wrapping_offset_from(out)
     } else {
-        (257 as libc::c_int as libc::c_long) - out.wrapping_offset_from(end) as libc::c_long
-    } as libc::c_uint;
+        (257) - out.wrapping_offset_from(end)
+    } as u32;
     (*state).hold = hold;
     (*state).bits = bits;
 }

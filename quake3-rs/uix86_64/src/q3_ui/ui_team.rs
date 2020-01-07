@@ -3,12 +3,8 @@ use ::libc;
 pub mod stdlib_h {
     #[inline]
 
-    pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
-            __nptr,
-            0 as *mut libc::c_void as *mut *mut libc::c_char,
-            10 as libc::c_int,
-        ) as libc::c_int;
+    pub unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
+        return crate::stdlib::strtol(__nptr, 0 as *mut *mut i8, 10) as i32;
     }
 }
 
@@ -65,7 +61,7 @@ static mut s_teammain: teammain_t = teammain_t {
         cursor: 0,
         cursor_prev: 0,
         nitems: 0,
-        items: [0 as *const libc::c_void as *mut libc::c_void; 64],
+        items: [0 as *mut libc::c_void; 64],
         draw: None,
         key: None,
         wrapAround: crate::src::qcommon::q_shared::qfalse,
@@ -75,7 +71,7 @@ static mut s_teammain: teammain_t = teammain_t {
     frame: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -83,26 +79,25 @@ static mut s_teammain: teammain_t = teammain_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     joinred: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -110,22 +105,21 @@ static mut s_teammain: teammain_t = teammain_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     joinblue: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -133,22 +127,21 @@ static mut s_teammain: teammain_t = teammain_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     joingame: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -156,22 +149,21 @@ static mut s_teammain: teammain_t = teammain_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     spectate: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -179,17 +171,16 @@ static mut s_teammain: teammain_t = teammain_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
 };
 /*
@@ -198,36 +189,36 @@ TeamMain_MenuEvent
 ===============
 */
 
-unsafe extern "C" fn TeamMain_MenuEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
-    if event != 3 as libc::c_int {
+unsafe extern "C" fn TeamMain_MenuEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+    if event != 3 {
         return;
     }
     match (*(ptr as *mut crate::ui_local_h::menucommon_s)).id {
         100 => {
             crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText(
-                crate::src::qcommon::q_shared::EXEC_APPEND as libc::c_int,
-                b"cmd team red\n\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::EXEC_APPEND as i32,
+                b"cmd team red\n\x00" as *const u8 as *const i8,
             );
             crate::src::q3_ui::ui_atoms::UI_ForceMenuOff();
         }
         101 => {
             crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText(
-                crate::src::qcommon::q_shared::EXEC_APPEND as libc::c_int,
-                b"cmd team blue\n\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::EXEC_APPEND as i32,
+                b"cmd team blue\n\x00" as *const u8 as *const i8,
             );
             crate::src::q3_ui::ui_atoms::UI_ForceMenuOff();
         }
         102 => {
             crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText(
-                crate::src::qcommon::q_shared::EXEC_APPEND as libc::c_int,
-                b"cmd team free\n\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::EXEC_APPEND as i32,
+                b"cmd team free\n\x00" as *const u8 as *const i8,
             );
             crate::src::q3_ui::ui_atoms::UI_ForceMenuOff();
         }
         103 => {
             crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText(
-                crate::src::qcommon::q_shared::EXEC_APPEND as libc::c_int,
-                b"cmd team spectator\n\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::EXEC_APPEND as i32,
+                b"cmd team spectator\n\x00" as *const u8 as *const i8,
             );
             crate::src::q3_ui::ui_atoms::UI_ForceMenuOff();
         }
@@ -242,96 +233,80 @@ TeamMain_MenuInit
 #[no_mangle]
 
 pub unsafe extern "C" fn TeamMain_MenuInit() {
-    let mut y: libc::c_int = 0;
-    let mut gametype: libc::c_int = 0;
-    let mut info: [libc::c_char; 1024] = [0; 1024];
+    let mut y: i32 = 0;
+    let mut gametype: i32 = 0;
+    let mut info: [i8; 1024] = [0; 1024];
     crate::stdlib::memset(
         &mut s_teammain as *mut teammain_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<teammain_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<teammain_t>(),
     );
     TeamMain_Cache();
     s_teammain.menu.wrapAround = crate::src::qcommon::q_shared::qtrue;
     s_teammain.menu.fullscreen = crate::src::qcommon::q_shared::qfalse;
-    s_teammain.frame.generic.type_0 = 6 as libc::c_int;
-    s_teammain.frame.generic.flags = 0x4000 as libc::c_int as libc::c_uint;
-    s_teammain.frame.generic.name = b"menu/art/cut_frame\x00" as *const u8 as *const libc::c_char;
-    s_teammain.frame.generic.x = 142 as libc::c_int;
-    s_teammain.frame.generic.y = 118 as libc::c_int;
-    s_teammain.frame.width = 359 as libc::c_int;
-    s_teammain.frame.height = 256 as libc::c_int;
-    y = 194 as libc::c_int;
-    s_teammain.joinred.generic.type_0 = 9 as libc::c_int;
-    s_teammain.joinred.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    s_teammain.joinred.generic.id = 100 as libc::c_int;
-    s_teammain.joinred.generic.callback = Some(
-        TeamMain_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    s_teammain.joinred.generic.x = 320 as libc::c_int;
+    s_teammain.frame.generic.type_0 = 6;
+    s_teammain.frame.generic.flags = 0x4000;
+    s_teammain.frame.generic.name = b"menu/art/cut_frame\x00" as *const u8 as *const i8;
+    s_teammain.frame.generic.x = 142;
+    s_teammain.frame.generic.y = 118;
+    s_teammain.frame.width = 359;
+    s_teammain.frame.height = 256;
+    y = 194;
+    s_teammain.joinred.generic.type_0 = 9;
+    s_teammain.joinred.generic.flags = 0x8 | 0x100;
+    s_teammain.joinred.generic.id = 100;
+    s_teammain.joinred.generic.callback =
+        Some(TeamMain_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_teammain.joinred.generic.x = 320;
     s_teammain.joinred.generic.y = y;
-    s_teammain.joinred.string =
-        b"JOIN RED\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-    s_teammain.joinred.style = 0x1 as libc::c_int | 0x10 as libc::c_int;
+    s_teammain.joinred.string = b"JOIN RED\x00" as *const u8 as *mut i8;
+    s_teammain.joinred.style = 0x1 | 0x10;
     s_teammain.joinred.color = crate::src::qcommon::q_math::colorRed.as_mut_ptr();
-    y += 20 as libc::c_int;
-    s_teammain.joinblue.generic.type_0 = 9 as libc::c_int;
-    s_teammain.joinblue.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    s_teammain.joinblue.generic.id = 101 as libc::c_int;
-    s_teammain.joinblue.generic.callback = Some(
-        TeamMain_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    s_teammain.joinblue.generic.x = 320 as libc::c_int;
+    y += 20;
+    s_teammain.joinblue.generic.type_0 = 9;
+    s_teammain.joinblue.generic.flags = 0x8 | 0x100;
+    s_teammain.joinblue.generic.id = 101;
+    s_teammain.joinblue.generic.callback =
+        Some(TeamMain_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_teammain.joinblue.generic.x = 320;
     s_teammain.joinblue.generic.y = y;
-    s_teammain.joinblue.string =
-        b"JOIN BLUE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-    s_teammain.joinblue.style = 0x1 as libc::c_int | 0x10 as libc::c_int;
+    s_teammain.joinblue.string = b"JOIN BLUE\x00" as *const u8 as *mut i8;
+    s_teammain.joinblue.style = 0x1 | 0x10;
     s_teammain.joinblue.color = crate::src::qcommon::q_math::colorRed.as_mut_ptr();
-    y += 20 as libc::c_int;
-    s_teammain.joingame.generic.type_0 = 9 as libc::c_int;
-    s_teammain.joingame.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    s_teammain.joingame.generic.id = 102 as libc::c_int;
-    s_teammain.joingame.generic.callback = Some(
-        TeamMain_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    s_teammain.joingame.generic.x = 320 as libc::c_int;
+    y += 20;
+    s_teammain.joingame.generic.type_0 = 9;
+    s_teammain.joingame.generic.flags = 0x8 | 0x100;
+    s_teammain.joingame.generic.id = 102;
+    s_teammain.joingame.generic.callback =
+        Some(TeamMain_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_teammain.joingame.generic.x = 320;
     s_teammain.joingame.generic.y = y;
-    s_teammain.joingame.string =
-        b"JOIN GAME\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-    s_teammain.joingame.style = 0x1 as libc::c_int | 0x10 as libc::c_int;
+    s_teammain.joingame.string = b"JOIN GAME\x00" as *const u8 as *mut i8;
+    s_teammain.joingame.style = 0x1 | 0x10;
     s_teammain.joingame.color = crate::src::qcommon::q_math::colorRed.as_mut_ptr();
-    y += 20 as libc::c_int;
-    s_teammain.spectate.generic.type_0 = 9 as libc::c_int;
-    s_teammain.spectate.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    s_teammain.spectate.generic.id = 103 as libc::c_int;
-    s_teammain.spectate.generic.callback = Some(
-        TeamMain_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    s_teammain.spectate.generic.x = 320 as libc::c_int;
+    y += 20;
+    s_teammain.spectate.generic.type_0 = 9;
+    s_teammain.spectate.generic.flags = 0x8 | 0x100;
+    s_teammain.spectate.generic.id = 103;
+    s_teammain.spectate.generic.callback =
+        Some(TeamMain_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_teammain.spectate.generic.x = 320;
     s_teammain.spectate.generic.y = y;
-    s_teammain.spectate.string =
-        b"SPECTATE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-    s_teammain.spectate.style = 0x1 as libc::c_int | 0x10 as libc::c_int;
+    s_teammain.spectate.string = b"SPECTATE\x00" as *const u8 as *mut i8;
+    s_teammain.spectate.style = 0x1 | 0x10;
     s_teammain.spectate.color = crate::src::qcommon::q_math::colorRed.as_mut_ptr();
-    crate::src::ui::ui_syscalls::trap_GetConfigString(
-        0 as libc::c_int,
-        info.as_mut_ptr(),
-        1024 as libc::c_int,
-    );
+    crate::src::ui::ui_syscalls::trap_GetConfigString(0, info.as_mut_ptr(), 1024);
     gametype = atoi(crate::src::qcommon::q_shared::Info_ValueForKey(
         info.as_mut_ptr(),
-        b"g_gametype\x00" as *const u8 as *const libc::c_char,
+        b"g_gametype\x00" as *const u8 as *const i8,
     ));
     // set initial states
     match gametype {
         2 | 0 | 1 => {
-            s_teammain.joinred.generic.flags |= 0x2000 as libc::c_int as libc::c_uint;
-            s_teammain.joinblue.generic.flags |= 0x2000 as libc::c_int as libc::c_uint
+            s_teammain.joinred.generic.flags |= 0x2000;
+            s_teammain.joinblue.generic.flags |= 0x2000
         }
-        3 | 4 | _ => s_teammain.joingame.generic.flags |= 0x2000 as libc::c_int as libc::c_uint,
+        3 | 4 | _ => s_teammain.joingame.generic.flags |= 0x2000,
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
         &mut s_teammain.menu,
@@ -363,7 +338,7 @@ TeamMain_Cache
 
 pub unsafe extern "C" fn TeamMain_Cache() {
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/cut_frame\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/cut_frame\x00" as *const u8 as *const i8,
     );
 }
 /*

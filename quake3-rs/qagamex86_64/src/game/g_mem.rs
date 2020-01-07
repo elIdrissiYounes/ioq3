@@ -6,36 +6,34 @@ use crate::src::game::g_main::G_Printf;
 pub use crate::src::qcommon::q_shared::cvarHandle_t;
 pub use crate::src::qcommon::q_shared::vmCvar_t;
 
-static mut memoryPool: [libc::c_char; 262144] = [0; 262144];
+static mut memoryPool: [i8; 262144] = [0; 262144];
 
-static mut allocPoint: libc::c_int = 0;
+static mut allocPoint: i32 = 0;
 #[no_mangle]
 
-pub unsafe extern "C" fn G_Alloc(mut size: libc::c_int) -> *mut libc::c_void {
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+pub unsafe extern "C" fn G_Alloc(mut size: i32) -> *mut libc::c_void {
+    let mut p: *mut i8 = 0 as *mut i8;
     if crate::src::game::g_main::g_debugAlloc.integer != 0 {
         crate::src::game::g_main::G_Printf(
-            b"G_Alloc of %i bytes (%i left)\n\x00" as *const u8 as *const libc::c_char,
+            b"G_Alloc of %i bytes (%i left)\n\x00" as *const u8 as *const i8,
             size,
-            256 as libc::c_int * 1024 as libc::c_int
-                - allocPoint
-                - (size + 31 as libc::c_int & !(31 as libc::c_int)),
+            256i32 * 1024i32 - allocPoint - (size + 31i32 & !(31i32)),
         );
     }
-    if allocPoint + size > 256 as libc::c_int * 1024 as libc::c_int {
+    if allocPoint + size > 256 * 1024 {
         crate::src::game::g_main::G_Error(
-            b"G_Alloc: failed on allocation of %i bytes\x00" as *const u8 as *const libc::c_char,
+            b"G_Alloc: failed on allocation of %i bytes\x00" as *const u8 as *const i8,
             size,
         );
     }
-    p = &mut *memoryPool.as_mut_ptr().offset(allocPoint as isize) as *mut libc::c_char;
-    allocPoint += size + 31 as libc::c_int & !(31 as libc::c_int);
+    p = &mut *memoryPool.as_mut_ptr().offset(allocPoint as isize) as *mut i8;
+    allocPoint += size + 31 & !(31);
     return p as *mut libc::c_void;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn G_InitMemory() {
-    allocPoint = 0 as libc::c_int;
+    allocPoint = 0;
 }
 /*
 ===========================================================================
@@ -265,9 +263,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 pub unsafe extern "C" fn Svcmd_GameMem_f() {
     crate::src::game::g_main::G_Printf(
-        b"Game memory status: %i out of %i bytes allocated\n\x00" as *const u8
-            as *const libc::c_char,
+        b"Game memory status: %i out of %i bytes allocated\n\x00" as *const u8 as *const i8,
         allocPoint,
-        256 as libc::c_int * 1024 as libc::c_int,
+        256i32 * 1024i32,
     );
 }

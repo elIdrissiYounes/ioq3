@@ -107,26 +107,22 @@ POSSIBILITY OF SUCH DAMAGE.
 #[no_mangle]
 
 pub unsafe extern "C" fn silk_scale_copy_vector_FLP(
-    mut data_out: *mut libc::c_float,
-    mut data_in: *const libc::c_float,
-    mut gain: libc::c_float,
-    mut dataSize: libc::c_int,
+    mut data_out: *mut f32,
+    mut data_in: *const f32,
+    mut gain: f32,
+    mut dataSize: i32,
 ) {
-    let mut i: libc::c_int = 0;
-    let mut dataSize4: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut dataSize4: i32 = 0;
     /* 4x unrolled loop */
-    dataSize4 = dataSize & 0xfffc as libc::c_int;
-    i = 0 as libc::c_int;
+    dataSize4 = dataSize & 0xfffc;
+    i = 0;
     while i < dataSize4 {
-        *data_out.offset((i + 0 as libc::c_int) as isize) =
-            gain * *data_in.offset((i + 0 as libc::c_int) as isize);
-        *data_out.offset((i + 1 as libc::c_int) as isize) =
-            gain * *data_in.offset((i + 1 as libc::c_int) as isize);
-        *data_out.offset((i + 2 as libc::c_int) as isize) =
-            gain * *data_in.offset((i + 2 as libc::c_int) as isize);
-        *data_out.offset((i + 3 as libc::c_int) as isize) =
-            gain * *data_in.offset((i + 3 as libc::c_int) as isize);
-        i += 4 as libc::c_int
+        *data_out.offset((i + 0) as isize) = gain * *data_in.offset((i + 0) as isize);
+        *data_out.offset((i + 1) as isize) = gain * *data_in.offset((i + 1) as isize);
+        *data_out.offset((i + 2) as isize) = gain * *data_in.offset((i + 2) as isize);
+        *data_out.offset((i + 3) as isize) = gain * *data_in.offset((i + 3) as isize);
+        i += 4
     }
     /* any remaining elements */
     while i < dataSize {

@@ -53,37 +53,39 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // tr_subs.c - common function replacements for modular renderer
 #[no_mangle]
 
-pub unsafe extern "C" fn Com_Printf(mut msg: *const libc::c_char, mut args: ...) {
+pub unsafe extern "C" fn Com_Printf(mut msg: *const i8, mut args: ...) {
     let mut argptr: ::std::ffi::VaListImpl;
-    let mut text: [libc::c_char; 1024] = [0; 1024];
+    let mut text: [i8; 1024] = [0; 1024];
     argptr = args.clone();
     crate::stdlib::vsnprintf(
         text.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong,
+        
+        ::std::mem::size_of::<[i8; 1024]>(),
         msg,
         argptr.as_va_list(),
     );
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
-        crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-        b"%s\x00" as *const u8 as *const libc::c_char,
+        crate::src::qcommon::q_shared::PRINT_ALL as i32,
+        b"%s\x00" as *const u8 as *const i8,
         text.as_mut_ptr(),
     );
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn Com_Error(
-    mut level: libc::c_int,
-    mut error: *const libc::c_char,
+    mut level: i32,
+    mut error: *const i8,
     mut args: ...
 ) -> ! {
     let mut argptr: ::std::ffi::VaListImpl;
-    let mut text: [libc::c_char; 1024] = [0; 1024];
+    let mut text: [i8; 1024] = [0; 1024];
     argptr = args.clone();
     crate::stdlib::vsnprintf(
         text.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong,
+        
+        ::std::mem::size_of::<[i8; 1024]>(),
         error,
         argptr.as_va_list(),
     );
@@ -91,7 +93,7 @@ pub unsafe extern "C" fn Com_Error(
         .Error
         .expect("non-null function pointer")(
         level,
-        b"%s\x00" as *const u8 as *const libc::c_char,
+        b"%s\x00" as *const u8 as *const i8,
         text.as_mut_ptr(),
     );
 }

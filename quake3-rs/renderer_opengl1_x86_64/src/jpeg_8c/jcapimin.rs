@@ -219,16 +219,16 @@ use crate::stdlib::memset;
 
 pub unsafe extern "C" fn jpeg_CreateCompress(
     mut cinfo: crate::jpeglib_h::j_compress_ptr,
-    mut version: libc::c_int,
+    mut version: i32,
     mut structsize: crate::stddef_h::size_t,
 ) {
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     /* Guard against version mismatches between library and caller. */
     (*cinfo).mem = 0 as *mut crate::jpeglib_h::jpeg_memory_mgr; /* so jpeg_destroy knows mem mgr not called */
-    if version != 80 as libc::c_int {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_LIB_VERSION as libc::c_int;
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = 80 as libc::c_int;
-        (*(*cinfo).err).msg_parm.i[1 as libc::c_int as usize] = version;
+    if version != 80 {
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_LIB_VERSION as i32;
+        (*(*cinfo).err).msg_parm.i[0] = 80;
+        (*(*cinfo).err).msg_parm.i[1] = version;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -237,13 +237,14 @@ pub unsafe extern "C" fn jpeg_CreateCompress(
         .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr);
     }
     if structsize
-        != ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>() as libc::c_ulong
+        !=  ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>()
     {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STRUCT_SIZE as libc::c_int;
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] =
-            ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>() as libc::c_ulong
-                as libc::c_int;
-        (*(*cinfo).err).msg_parm.i[1 as libc::c_int as usize] = structsize as libc::c_int;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STRUCT_SIZE as i32;
+        (*(*cinfo).err).msg_parm.i[0] =
+            
+            ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>()
+                as i32;
+        (*(*cinfo).err).msg_parm.i[1] = structsize as i32;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -261,38 +262,39 @@ pub unsafe extern "C" fn jpeg_CreateCompress(
     let mut client_data: *mut libc::c_void = (*cinfo).client_data;
     crate::stdlib::memset(
         cinfo as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>() as libc::c_ulong,
+        0,
+        
+        ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>(),
     );
     (*cinfo).err = err;
     (*cinfo).client_data = client_data;
-    (*cinfo).is_decompressor = 0 as libc::c_int;
+    (*cinfo).is_decompressor = 0;
     /* Initialize a memory manager instance for this object */
     crate::src::jpeg_8c::jmemmgr::jinit_memory_mgr(cinfo as crate::jpeglib_h::j_common_ptr);
     /* Zero out pointers to permanent structures. */
     (*cinfo).progress = 0 as *mut crate::jpeglib_h::jpeg_progress_mgr;
     (*cinfo).dest = 0 as *mut crate::jpeglib_h::jpeg_destination_mgr;
     (*cinfo).comp_info = 0 as *mut crate::jpeglib_h::jpeg_component_info;
-    i = 0 as libc::c_int;
-    while i < 4 as libc::c_int {
+    i = 0;
+    while i < 4 {
         (*cinfo).quant_tbl_ptrs[i as usize] = 0 as *mut crate::jpeglib_h::JQUANT_TBL;
-        (*cinfo).q_scale_factor[i as usize] = 100 as libc::c_int;
+        (*cinfo).q_scale_factor[i as usize] = 100;
         i += 1
     }
-    i = 0 as libc::c_int;
-    while i < 4 as libc::c_int {
+    i = 0;
+    while i < 4 {
         (*cinfo).dc_huff_tbl_ptrs[i as usize] = 0 as *mut crate::jpeglib_h::JHUFF_TBL;
         (*cinfo).ac_huff_tbl_ptrs[i as usize] = 0 as *mut crate::jpeglib_h::JHUFF_TBL;
         i += 1
     }
     /* Must do it here for emit_dqt in case jpeg_write_tables is used */
-    (*cinfo).block_size = 8 as libc::c_int; /* in case application forgets */
+    (*cinfo).block_size = 8; /* in case application forgets */
     (*cinfo).natural_order = crate::src::jpeg_8c::jutils::jpeg_natural_order.as_ptr();
-    (*cinfo).lim_Se = 64 as libc::c_int - 1 as libc::c_int;
+    (*cinfo).lim_Se = 64 - 1;
     (*cinfo).script_space = 0 as *mut crate::jpeglib_h::jpeg_scan_info;
-    (*cinfo).input_gamma = 1.0f64;
+    (*cinfo).input_gamma = 1.0;
     /* OK, I'm ready */
-    (*cinfo).global_state = 100 as libc::c_int;
+    (*cinfo).global_state = 100;
 }
 /*
  * Destruction of a JPEG compression object
@@ -330,19 +332,19 @@ pub unsafe extern "C" fn jpeg_suppress_tables(
     mut cinfo: crate::jpeglib_h::j_compress_ptr,
     mut suppress: crate::jmorecfg_h::boolean,
 ) {
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     let mut qtbl: *mut crate::jpeglib_h::JQUANT_TBL = 0 as *mut crate::jpeglib_h::JQUANT_TBL;
     let mut htbl: *mut crate::jpeglib_h::JHUFF_TBL = 0 as *mut crate::jpeglib_h::JHUFF_TBL;
-    i = 0 as libc::c_int;
-    while i < 4 as libc::c_int {
+    i = 0;
+    while i < 4 {
         qtbl = (*cinfo).quant_tbl_ptrs[i as usize];
         if !qtbl.is_null() {
             (*qtbl).sent_table = suppress
         }
         i += 1
     }
-    i = 0 as libc::c_int;
-    while i < 4 as libc::c_int {
+    i = 0;
+    while i < 4 {
         htbl = (*cinfo).dc_huff_tbl_ptrs[i as usize];
         if !htbl.is_null() {
             (*htbl).sent_table = suppress
@@ -364,11 +366,11 @@ pub unsafe extern "C" fn jpeg_suppress_tables(
 
 pub unsafe extern "C" fn jpeg_finish_compress(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
     let mut iMCU_row: crate::jmorecfg_h::JDIMENSION = 0;
-    if (*cinfo).global_state == 101 as libc::c_int || (*cinfo).global_state == 102 as libc::c_int {
+    if (*cinfo).global_state == 101 || (*cinfo).global_state == 102 {
         /* Terminate first pass */
         if (*cinfo).next_scanline < (*cinfo).image_height {
             (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_TOO_LITTLE_DATA as libc::c_int;
+                crate::src::jpeg_8c::jerror::JERR_TOO_LITTLE_DATA as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -384,9 +386,9 @@ pub unsafe extern "C" fn jpeg_finish_compress(mut cinfo: crate::jpeglib_h::j_com
                 .expect("non-null function pointer"),
         )
         .expect("non-null function pointer")(cinfo);
-    } else if (*cinfo).global_state != 103 as libc::c_int {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as libc::c_int;
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = (*cinfo).global_state;
+    } else if (*cinfo).global_state != 103 {
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as i32;
+        (*(*cinfo).err).msg_parm.i[0] = (*cinfo).global_state;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -402,11 +404,11 @@ pub unsafe extern "C" fn jpeg_finish_compress(mut cinfo: crate::jpeglib_h::j_com
                 .expect("non-null function pointer"),
         )
         .expect("non-null function pointer")(cinfo);
-        iMCU_row = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
+        iMCU_row = 0;
         while iMCU_row < (*cinfo).total_iMCU_rows {
             if !(*cinfo).progress.is_null() {
-                (*(*cinfo).progress).pass_counter = iMCU_row as libc::c_long;
-                (*(*cinfo).progress).pass_limit = (*cinfo).total_iMCU_rows as libc::c_long;
+                (*(*cinfo).progress).pass_counter = iMCU_row as isize;
+                (*(*cinfo).progress).pass_limit = (*cinfo).total_iMCU_rows as isize;
                 Some(
                     (*(*cinfo).progress)
                         .progress_monitor
@@ -426,11 +428,12 @@ pub unsafe extern "C" fn jpeg_finish_compress(mut cinfo: crate::jpeglib_h::j_com
             )
             .expect("non-null function pointer")(
                 cinfo,
-                0 as *mut libc::c_void as crate::jpeglib_h::JSAMPIMAGE,
+                
+                0 as crate::jpeglib_h::JSAMPIMAGE,
             ) == 0
             {
                 (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_CANT_SUSPEND as libc::c_int;
+                    crate::src::jpeg_8c::jerror::JERR_CANT_SUSPEND as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -475,20 +478,20 @@ pub unsafe extern "C" fn jpeg_finish_compress(mut cinfo: crate::jpeglib_h::j_com
 
 pub unsafe extern "C" fn jpeg_write_marker(
     mut cinfo: crate::jpeglib_h::j_compress_ptr,
-    mut marker: libc::c_int,
+    mut marker: i32,
     mut dataptr: *const crate::jmorecfg_h::JOCTET,
-    mut datalen: libc::c_uint,
+    mut datalen: u32,
 ) {
     let mut write_marker_byte: Option<
-        unsafe extern "C" fn(_: crate::jpeglib_h::j_compress_ptr, _: libc::c_int) -> (),
+        unsafe extern "C" fn(_: crate::jpeglib_h::j_compress_ptr, _: i32) -> (),
     > = None; /* copy for speed */
-    if (*cinfo).next_scanline != 0 as libc::c_int as libc::c_uint
-        || (*cinfo).global_state != 101 as libc::c_int
-            && (*cinfo).global_state != 102 as libc::c_int
-            && (*cinfo).global_state != 103 as libc::c_int
+    if (*cinfo).next_scanline != 0u32
+        || (*cinfo).global_state != 101
+            && (*cinfo).global_state != 102
+            && (*cinfo).global_state != 103
     {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as libc::c_int;
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = (*cinfo).global_state;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as i32;
+        (*(*cinfo).err).msg_parm.i[0] = (*cinfo).global_state;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -510,7 +513,7 @@ pub unsafe extern "C" fn jpeg_write_marker(
             break;
         }
         Some(write_marker_byte.expect("non-null function pointer"))
-            .expect("non-null function pointer")(cinfo, *dataptr as libc::c_int);
+            .expect("non-null function pointer")(cinfo, *dataptr as i32);
         dataptr = dataptr.offset(1)
     }
 }
@@ -519,16 +522,16 @@ pub unsafe extern "C" fn jpeg_write_marker(
 
 pub unsafe extern "C" fn jpeg_write_m_header(
     mut cinfo: crate::jpeglib_h::j_compress_ptr,
-    mut marker: libc::c_int,
-    mut datalen: libc::c_uint,
+    mut marker: i32,
+    mut datalen: u32,
 ) {
-    if (*cinfo).next_scanline != 0 as libc::c_int as libc::c_uint
-        || (*cinfo).global_state != 101 as libc::c_int
-            && (*cinfo).global_state != 102 as libc::c_int
-            && (*cinfo).global_state != 103 as libc::c_int
+    if (*cinfo).next_scanline != 0u32
+        || (*cinfo).global_state != 101
+            && (*cinfo).global_state != 102
+            && (*cinfo).global_state != 103
     {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as libc::c_int;
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = (*cinfo).global_state;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as i32;
+        (*(*cinfo).err).msg_parm.i[0] = (*cinfo).global_state;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -547,7 +550,7 @@ pub unsafe extern "C" fn jpeg_write_m_header(
 
 pub unsafe extern "C" fn jpeg_write_m_byte(
     mut cinfo: crate::jpeglib_h::j_compress_ptr,
-    mut val: libc::c_int,
+    mut val: i32,
 ) {
     Some(
         (*(*cinfo).marker)
@@ -620,9 +623,9 @@ pub unsafe extern "C" fn jpeg_write_m_byte(
 #[no_mangle]
 
 pub unsafe extern "C" fn jpeg_write_tables(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
-    if (*cinfo).global_state != 100 as libc::c_int {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as libc::c_int;
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = (*cinfo).global_state;
+    if (*cinfo).global_state != 100 {
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as i32;
+        (*(*cinfo).err).msg_parm.i[0] = (*cinfo).global_state;
         Some(
             (*(*cinfo).err)
                 .error_exit

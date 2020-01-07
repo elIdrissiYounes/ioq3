@@ -157,23 +157,17 @@ CG_ResetEntity
 unsafe extern "C" fn CG_ResetEntity(mut cent: *mut crate::cg_local_h::centity_t) {
     // if the previous snapshot this entity was updated in is at least
     // an event window back in time then we can reset the previous event
-    if (*cent).snapShotTime < crate::src::cgame::cg_main::cg.time - 300 as libc::c_int {
-        (*cent).previousEvent = 0 as libc::c_int
+    if (*cent).snapShotTime < crate::src::cgame::cg_main::cg.time - 300 {
+        (*cent).previousEvent = 0
     }
     (*cent).trailTime = (*crate::src::cgame::cg_main::cg.snap).serverTime;
-    (*cent).lerpOrigin[0 as libc::c_int as usize] =
-        (*cent).currentState.origin[0 as libc::c_int as usize];
-    (*cent).lerpOrigin[1 as libc::c_int as usize] =
-        (*cent).currentState.origin[1 as libc::c_int as usize];
-    (*cent).lerpOrigin[2 as libc::c_int as usize] =
-        (*cent).currentState.origin[2 as libc::c_int as usize];
-    (*cent).lerpAngles[0 as libc::c_int as usize] =
-        (*cent).currentState.angles[0 as libc::c_int as usize];
-    (*cent).lerpAngles[1 as libc::c_int as usize] =
-        (*cent).currentState.angles[1 as libc::c_int as usize];
-    (*cent).lerpAngles[2 as libc::c_int as usize] =
-        (*cent).currentState.angles[2 as libc::c_int as usize];
-    if (*cent).currentState.eType == crate::bg_public_h::ET_PLAYER as libc::c_int {
+    (*cent).lerpOrigin[0] = (*cent).currentState.origin[0];
+    (*cent).lerpOrigin[1] = (*cent).currentState.origin[1];
+    (*cent).lerpOrigin[2] = (*cent).currentState.origin[2];
+    (*cent).lerpAngles[0] = (*cent).currentState.angles[0];
+    (*cent).lerpAngles[1] = (*cent).currentState.angles[1];
+    (*cent).lerpAngles[2] = (*cent).currentState.angles[2];
+    if (*cent).currentState.eType == crate::bg_public_h::ET_PLAYER as i32 {
         crate::src::cgame::cg_players::CG_ResetPlayerEntity(cent);
     };
 }
@@ -208,7 +202,7 @@ All other times will use CG_TransitionSnapshot instead.
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_SetInitialSnapshot(mut snap: *mut crate::cg_public_h::snapshot_t) {
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     let mut cent: *mut crate::cg_local_h::centity_t = 0 as *mut crate::cg_local_h::centity_t;
     let mut state: *mut crate::src::qcommon::q_shared::entityState_t =
         0 as *mut crate::src::qcommon::q_shared::entityState_t;
@@ -227,7 +221,7 @@ pub unsafe extern "C" fn CG_SetInitialSnapshot(mut snap: *mut crate::cg_public_h
     // set our local weapon selection pointer to
     // what the server has indicated the current weapon is
     crate::src::cgame::cg_playerstate::CG_Respawn();
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*crate::src::cgame::cg_main::cg.snap).numEntities {
         state = &mut *(*crate::src::cgame::cg_main::cg.snap)
             .entities
@@ -241,7 +235,7 @@ pub unsafe extern "C" fn CG_SetInitialSnapshot(mut snap: *mut crate::cg_public_h
             &mut (*cent).currentState as *mut crate::src::qcommon::q_shared::entityState_t
                 as *mut libc::c_void,
             state as *const libc::c_void,
-            ::std::mem::size_of::<crate::src::qcommon::q_shared::entityState_t>() as libc::c_ulong,
+            ::std::mem::size_of::<crate::src::qcommon::q_shared::entityState_t>(),
         );
         //cent->currentState = *state;
         (*cent).interpolate = crate::src::qcommon::q_shared::qfalse;
@@ -264,15 +258,15 @@ unsafe extern "C" fn CG_TransitionSnapshot() {
     let mut cent: *mut crate::cg_local_h::centity_t = 0 as *mut crate::cg_local_h::centity_t;
     let mut oldFrame: *mut crate::cg_public_h::snapshot_t =
         0 as *mut crate::cg_public_h::snapshot_t;
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     if crate::src::cgame::cg_main::cg.snap.is_null() {
         crate::src::cgame::cg_main::CG_Error(
-            b"CG_TransitionSnapshot: NULL cg.snap\x00" as *const u8 as *const libc::c_char,
+            b"CG_TransitionSnapshot: NULL cg.snap\x00" as *const u8 as *const i8,
         );
     }
     if crate::src::cgame::cg_main::cg.nextSnap.is_null() {
         crate::src::cgame::cg_main::CG_Error(
-            b"CG_TransitionSnapshot: NULL cg.nextSnap\x00" as *const u8 as *const libc::c_char,
+            b"CG_TransitionSnapshot: NULL cg.nextSnap\x00" as *const u8 as *const i8,
         );
     }
     // execute any server string commands before transitioning entities
@@ -282,7 +276,7 @@ unsafe extern "C" fn CG_TransitionSnapshot() {
     // if we had a map_restart, set everything with initial
     (crate::src::cgame::cg_main::cg.mapRestart as u64) != 0;
     // clear the currentValid flag for all entities in the existing snapshot
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*crate::src::cgame::cg_main::cg.snap).numEntities {
         cent = &mut *crate::src::cgame::cg_main::cg_entities.as_mut_ptr().offset(
             (*(*crate::src::cgame::cg_main::cg.snap)
@@ -308,7 +302,7 @@ unsafe extern "C" fn CG_TransitionSnapshot() {
     crate::src::cgame::cg_main::cg_entities
         [(*crate::src::cgame::cg_main::cg.snap).ps.clientNum as usize]
         .interpolate = crate::src::qcommon::q_shared::qfalse;
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*crate::src::cgame::cg_main::cg.snap).numEntities {
         cent = &mut *crate::src::cgame::cg_main::cg_entities.as_mut_ptr().offset(
             (*(*crate::src::cgame::cg_main::cg.snap)
@@ -332,14 +326,14 @@ unsafe extern "C" fn CG_TransitionSnapshot() {
         ops = &mut (*oldFrame).ps;
         ps = &mut (*crate::src::cgame::cg_main::cg.snap).ps;
         // teleporting checks are irrespective of prediction
-        if ((*ps).eFlags ^ (*ops).eFlags) & 0x4 as libc::c_int != 0 {
+        if ((*ps).eFlags ^ (*ops).eFlags) & 0x4 != 0 {
             crate::src::cgame::cg_main::cg.thisFrameTeleport = crate::src::qcommon::q_shared::qtrue
             // will be cleared by prediction code
         }
         // if we are not doing client side movement prediction for any
         // reason, then the client events and view changes will be issued now
-        if crate::src::cgame::cg_main::cg.demoPlayback as libc::c_uint != 0
-            || (*crate::src::cgame::cg_main::cg.snap).ps.pm_flags & 4096 as libc::c_int != 0
+        if crate::src::cgame::cg_main::cg.demoPlayback != 0
+            || (*crate::src::cgame::cg_main::cg.snap).ps.pm_flags & 4096 != 0
             || crate::src::cgame::cg_main::cg_nopredict.integer != 0
             || crate::src::cgame::cg_main::cg_synchronousClients.integer != 0
         {
@@ -356,7 +350,7 @@ A new snapshot has just been read in from the client system.
 */
 
 unsafe extern "C" fn CG_SetNextSnap(mut snap: *mut crate::cg_public_h::snapshot_t) {
-    let mut num: libc::c_int = 0;
+    let mut num: i32 = 0;
     let mut es: *mut crate::src::qcommon::q_shared::entityState_t =
         0 as *mut crate::src::qcommon::q_shared::entityState_t;
     let mut cent: *mut crate::cg_local_h::centity_t = 0 as *mut crate::cg_local_h::centity_t;
@@ -373,7 +367,7 @@ unsafe extern "C" fn CG_SetNextSnap(mut snap: *mut crate::cg_public_h::snapshot_
         [(*crate::src::cgame::cg_main::cg.snap).ps.clientNum as usize]
         .interpolate = crate::src::qcommon::q_shared::qtrue;
     // check for extrapolation errors
-    num = 0 as libc::c_int;
+    num = 0;
     while num < (*snap).numEntities {
         es = &mut *(*snap).entities.as_mut_ptr().offset(num as isize)
             as *mut crate::src::qcommon::q_shared::entityState_t;
@@ -384,13 +378,13 @@ unsafe extern "C" fn CG_SetNextSnap(mut snap: *mut crate::cg_public_h::snapshot_
             &mut (*cent).nextState as *mut crate::src::qcommon::q_shared::entityState_t
                 as *mut libc::c_void,
             es as *const libc::c_void,
-            ::std::mem::size_of::<crate::src::qcommon::q_shared::entityState_t>() as libc::c_ulong,
+            ::std::mem::size_of::<crate::src::qcommon::q_shared::entityState_t>(),
         );
         //cent->nextState = *es;
         // if this frame is a teleport, or the entity wasn't in the
         // previous frame, don't interpolate
         if (*cent).currentValid as u64 == 0
-            || ((*cent).currentState.eFlags ^ (*es).eFlags) & 0x4 as libc::c_int != 0
+            || ((*cent).currentState.eFlags ^ (*es).eFlags) & 0x4 != 0
         {
             (*cent).interpolate = crate::src::qcommon::q_shared::qfalse
         } else {
@@ -401,9 +395,7 @@ unsafe extern "C" fn CG_SetNextSnap(mut snap: *mut crate::cg_public_h::snapshot_
     // if the next frame is a teleport for the playerstate, we
     // can't interpolate during demos
     if !crate::src::cgame::cg_main::cg.snap.is_null()
-        && ((*snap).ps.eFlags ^ (*crate::src::cgame::cg_main::cg.snap).ps.eFlags)
-            & 0x4 as libc::c_int
-            != 0
+        && ((*snap).ps.eFlags ^ (*crate::src::cgame::cg_main::cg.snap).ps.eFlags) & 0x4 != 0
     {
         crate::src::cgame::cg_main::cg.nextFrameTeleport = crate::src::qcommon::q_shared::qtrue
     } else {
@@ -418,7 +410,7 @@ unsafe extern "C" fn CG_SetNextSnap(mut snap: *mut crate::cg_public_h::snapshot_
     // if changing server restarts, don't interpolate
     if ((*crate::src::cgame::cg_main::cg.nextSnap).snapFlags
         ^ (*crate::src::cgame::cg_main::cg.snap).snapFlags)
-        & 4 as libc::c_int
+        & 4
         != 0
     {
         crate::src::cgame::cg_main::cg.nextFrameTeleport = crate::src::qcommon::q_shared::qtrue
@@ -441,11 +433,11 @@ unsafe extern "C" fn CG_ReadNextSnapshot() -> *mut crate::cg_public_h::snapshot_
     let mut r: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
     let mut dest: *mut crate::cg_public_h::snapshot_t = 0 as *mut crate::cg_public_h::snapshot_t;
     if crate::src::cgame::cg_main::cg.latestSnapshotNum
-        > crate::src::cgame::cg_main::cgs.processedSnapshotNum + 1000 as libc::c_int
+        > crate::src::cgame::cg_main::cgs.processedSnapshotNum + 1000
     {
         crate::src::cgame::cg_main::CG_Printf(
             b"WARNING: CG_ReadNextSnapshot: way out of range, %i > %i\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             crate::src::cgame::cg_main::cg.latestSnapshotNum,
             crate::src::cgame::cg_main::cgs.processedSnapshotNum,
         );
@@ -458,20 +450,17 @@ unsafe extern "C" fn CG_ReadNextSnapshot() -> *mut crate::cg_public_h::snapshot_
             == &mut *crate::src::cgame::cg_main::cg
                 .activeSnapshots
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize)
-                as *mut crate::cg_public_h::snapshot_t
+                .offset(0) as *mut crate::cg_public_h::snapshot_t
         {
             dest = &mut *crate::src::cgame::cg_main::cg
                 .activeSnapshots
                 .as_mut_ptr()
-                .offset(1 as libc::c_int as isize)
-                as *mut crate::cg_public_h::snapshot_t
+                .offset(1) as *mut crate::cg_public_h::snapshot_t
         } else {
             dest = &mut *crate::src::cgame::cg_main::cg
                 .activeSnapshots
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize)
-                as *mut crate::cg_public_h::snapshot_t
+                .offset(0) as *mut crate::cg_public_h::snapshot_t
         }
         // If there are additional snapshots, continue trying to
         // read them.
@@ -480,7 +469,7 @@ unsafe extern "C" fn CG_ReadNextSnapshot() -> *mut crate::cg_public_h::snapshot_
             crate::src::cgame::cg_main::cgs.processedSnapshotNum,
             dest,
         );
-        (!crate::src::cgame::cg_main::cg.snap.is_null() && r as libc::c_uint != 0)
+        (!crate::src::cgame::cg_main::cg.snap.is_null() && r != 0)
             && (*dest).serverTime == (*crate::src::cgame::cg_main::cg.snap).serverTime;
         if r as u64 != 0 {
             crate::src::cgame::cg_draw::CG_AddLagometerSnapshotInfo(dest);
@@ -763,7 +752,7 @@ of an interpolating one)
 
 pub unsafe extern "C" fn CG_ProcessSnapshots() {
     let mut snap: *mut crate::cg_public_h::snapshot_t = 0 as *mut crate::cg_public_h::snapshot_t;
-    let mut n: libc::c_int = 0;
+    let mut n: i32 = 0;
     // see what the latest snapshot the client system has is
     crate::src::cgame::cg_syscalls::trap_GetCurrentSnapshotNumber(
         &mut n,
@@ -773,8 +762,7 @@ pub unsafe extern "C" fn CG_ProcessSnapshots() {
         if n < crate::src::cgame::cg_main::cg.latestSnapshotNum {
             // this should never happen
             crate::src::cgame::cg_main::CG_Error(
-                b"CG_ProcessSnapshots: n < cg.latestSnapshotNum\x00" as *const u8
-                    as *const libc::c_char,
+                b"CG_ProcessSnapshots: n < cg.latestSnapshotNum\x00" as *const u8 as *const i8,
             );
         }
         crate::src::cgame::cg_main::cg.latestSnapshotNum = n
@@ -790,7 +778,7 @@ pub unsafe extern "C" fn CG_ProcessSnapshots() {
         }
         // set our weapon selection to what
         // the playerstate is currently using
-        if (*snap).snapFlags & 2 as libc::c_int == 0 {
+        if (*snap).snapFlags & 2 == 0 {
             CG_SetInitialSnapshot(snap);
         }
     }
@@ -814,7 +802,7 @@ pub unsafe extern "C" fn CG_ProcessSnapshots() {
             {
                 crate::src::cgame::cg_main::CG_Error(
                     b"CG_ProcessSnapshots: Server time went backwards\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                 );
             }
         }
@@ -831,7 +819,7 @@ pub unsafe extern "C" fn CG_ProcessSnapshots() {
     // assert our valid conditions upon exiting
     if crate::src::cgame::cg_main::cg.snap.is_null() {
         crate::src::cgame::cg_main::CG_Error(
-            b"CG_ProcessSnapshots: cg.snap == NULL\x00" as *const u8 as *const libc::c_char,
+            b"CG_ProcessSnapshots: cg.snap == NULL\x00" as *const u8 as *const i8,
         );
     }
     if crate::src::cgame::cg_main::cg.time < (*crate::src::cgame::cg_main::cg.snap).serverTime {
@@ -844,7 +832,7 @@ pub unsafe extern "C" fn CG_ProcessSnapshots() {
     {
         crate::src::cgame::cg_main::CG_Error(
             b"CG_ProcessSnapshots: cg.nextSnap->serverTime <= cg.time\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
         );
     };
 }

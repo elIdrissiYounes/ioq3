@@ -41,16 +41,16 @@ pub struct serverinfo_t {
     pub framer: crate::ui_local_h::menubitmap_s,
     pub back: crate::ui_local_h::menubitmap_s,
     pub add: crate::ui_local_h::menutext_s,
-    pub info: [libc::c_char; 1024],
-    pub numlines: libc::c_int,
+    pub info: [i8; 1024],
+    pub numlines: i32,
 }
 
-static mut serverinfo_artlist: [*mut libc::c_char; 5] = [
-    b"menu/art/frame2_l\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"menu/art/frame1_r\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"menu/art/back_0\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
+static mut serverinfo_artlist: [*mut i8; 5] = [
+    b"menu/art/frame2_l\x00" as *const u8 as *mut i8,
+    b"menu/art/frame1_r\x00" as *const u8 as *mut i8,
+    b"menu/art/back_0\x00" as *const u8 as *mut i8,
+    b"menu/art/back_1\x00" as *const u8 as *mut i8,
+    0 as *mut i8,
 ];
 
 static mut s_serverinfo: serverinfo_t = serverinfo_t {
@@ -58,7 +58,7 @@ static mut s_serverinfo: serverinfo_t = serverinfo_t {
         cursor: 0,
         cursor_prev: 0,
         nitems: 0,
-        items: [0 as *const libc::c_void as *mut libc::c_void; 64],
+        items: [0 as *mut libc::c_void; 64],
         draw: None,
         key: None,
         wrapAround: crate::src::qcommon::q_shared::qfalse,
@@ -68,7 +68,7 @@ static mut s_serverinfo: serverinfo_t = serverinfo_t {
     banner: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -76,22 +76,21 @@ static mut s_serverinfo: serverinfo_t = serverinfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     framel: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -99,26 +98,25 @@ static mut s_serverinfo: serverinfo_t = serverinfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     framer: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -126,26 +124,25 @@ static mut s_serverinfo: serverinfo_t = serverinfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     back: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -153,26 +150,25 @@ static mut s_serverinfo: serverinfo_t = serverinfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     add: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -180,17 +176,16 @@ static mut s_serverinfo: serverinfo_t = serverinfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     info: [0; 1024],
     numlines: 0,
@@ -205,28 +200,25 @@ Add current server to favorites
 #[no_mangle]
 
 pub unsafe extern "C" fn Favorites_Add() {
-    let mut adrstr: [libc::c_char; 128] = [0; 128];
-    let mut serverbuff: [libc::c_char; 128] = [0; 128];
-    let mut i: libc::c_int = 0;
-    let mut best: libc::c_int = 0;
+    let mut adrstr: [i8; 128] = [0; 128];
+    let mut serverbuff: [i8; 128] = [0; 128];
+    let mut i: i32 = 0;
+    let mut best: i32 = 0;
     crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer(
-        b"cl_currentServerAddress\x00" as *const u8 as *const libc::c_char,
+        b"cl_currentServerAddress\x00" as *const u8 as *const i8,
         serverbuff.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 128]>() as i32,
     );
-    if serverbuff[0 as libc::c_int as usize] == 0 {
+    if serverbuff[0] == 0 {
         return;
     }
-    best = 0 as libc::c_int;
-    i = 0 as libc::c_int;
-    while i < 16 as libc::c_int {
+    best = 0;
+    i = 0;
+    while i < 16 {
         crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer(
-            crate::src::qcommon::q_shared::va(
-                b"server%d\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-                i + 1 as libc::c_int,
-            ),
+            crate::src::qcommon::q_shared::va(b"server%d\x00" as *const u8 as *mut i8, i + 1i32),
             adrstr.as_mut_ptr(),
-            ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong as libc::c_int,
+            ::std::mem::size_of::<[i8; 128]>() as i32,
         );
         if crate::src::qcommon::q_shared::Q_stricmp(serverbuff.as_mut_ptr(), adrstr.as_mut_ptr())
             == 0
@@ -235,17 +227,14 @@ pub unsafe extern "C" fn Favorites_Add() {
             return;
         }
         // use first empty available slot
-        if adrstr[0 as libc::c_int as usize] == 0 && best == 0 {
-            best = i + 1 as libc::c_int
+        if adrstr[0] == 0 && best == 0 {
+            best = i + 1
         }
         i += 1
     }
     if best != 0 {
         crate::src::ui::ui_syscalls::trap_Cvar_Set(
-            crate::src::qcommon::q_shared::va(
-                b"server%d\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-                best,
-            ),
+            crate::src::qcommon::q_shared::va(b"server%d\x00" as *const u8 as *mut i8, best),
             serverbuff.as_mut_ptr(),
         );
     };
@@ -256,16 +245,16 @@ ServerInfo_Event
 =================
 */
 
-unsafe extern "C" fn ServerInfo_Event(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
+unsafe extern "C" fn ServerInfo_Event(mut ptr: *mut libc::c_void, mut event: i32) {
     match (*(ptr as *mut crate::ui_local_h::menucommon_s)).id {
         100 => {
-            if !(event != 3 as libc::c_int) {
+            if !(event != 3) {
                 Favorites_Add();
                 crate::src::q3_ui::ui_atoms::UI_PopMenu();
             }
         }
         101 => {
-            if !(event != 3 as libc::c_int) {
+            if !(event != 3) {
                 crate::src::q3_ui::ui_atoms::UI_PopMenu();
             }
         }
@@ -279,42 +268,38 @@ ServerInfo_MenuDraw
 */
 
 unsafe extern "C" fn ServerInfo_MenuDraw() {
-    let mut s: *const libc::c_char = 0 as *const libc::c_char;
-    let mut key: [libc::c_char; 1024] = [0; 1024];
-    let mut value: [libc::c_char; 1024] = [0; 1024];
-    let mut i: libc::c_int = 0 as libc::c_int;
-    let mut y: libc::c_int = 0;
-    y = 480 as libc::c_int / 2 as libc::c_int
-        - s_serverinfo.numlines * 16 as libc::c_int / 2 as libc::c_int
-        - 20 as libc::c_int;
+    let mut s: *const i8 = 0 as *const i8;
+    let mut key: [i8; 1024] = [0; 1024];
+    let mut value: [i8; 1024] = [0; 1024];
+    let mut i: i32 = 0;
+    let mut y: i32 = 0;
+    y = 480 / 2 - s_serverinfo.numlines * 16 / 2 - 20;
     s = s_serverinfo.info.as_mut_ptr();
     while !s.is_null() && i < s_serverinfo.numlines {
         crate::src::qcommon::q_shared::Info_NextPair(&mut s, key.as_mut_ptr(), value.as_mut_ptr());
-        if key[0 as libc::c_int as usize] == 0 {
+        if key[0] == 0 {
             break;
         }
         crate::src::qcommon::q_shared::Q_strcat(
             key.as_mut_ptr(),
-            1024 as libc::c_int,
-            b":\x00" as *const u8 as *const libc::c_char,
+            1024,
+            b":\x00" as *const u8 as *const i8,
         );
         crate::src::q3_ui::ui_atoms::UI_DrawString(
-            (640 as libc::c_int as libc::c_double * 0.50f64 - 8 as libc::c_int as libc::c_double)
-                as libc::c_int,
+            (640f64 * 0.50 - 8f64) as i32,
             y,
             key.as_mut_ptr(),
-            0x2 as libc::c_int | 0x10 as libc::c_int,
+            0x2 | 0x10,
             crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr(),
         );
         crate::src::q3_ui::ui_atoms::UI_DrawString(
-            (640 as libc::c_int as libc::c_double * 0.50f64 + 8 as libc::c_int as libc::c_double)
-                as libc::c_int,
+            (640f64 * 0.50 + 8f64) as i32,
             y,
             value.as_mut_ptr(),
-            0 as libc::c_int | 0x10 as libc::c_int,
+            0 | 0x10,
             crate::src::q3_ui::ui_qmenu::text_color_normal.as_mut_ptr(),
         );
-        y += 16 as libc::c_int;
+        y += 16;
         i += 1
     }
     crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut s_serverinfo.menu);
@@ -326,7 +311,7 @@ ServerInfo_MenuKey
 */
 
 unsafe extern "C" fn ServerInfo_MenuKey(
-    mut key: libc::c_int,
+    mut key: i32,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
     return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(&mut s_serverinfo.menu, key);
 }
@@ -338,9 +323,9 @@ ServerInfo_Cache
 #[no_mangle]
 
 pub unsafe extern "C" fn ServerInfo_Cache() {
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     // touch all our pics
-    i = 0 as libc::c_int;
+    i = 0;
     while !serverinfo_artlist[i as usize].is_null() {
         crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(serverinfo_artlist[i as usize]);
         i += 1
@@ -455,91 +440,82 @@ UI_ServerInfoMenu
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_ServerInfoMenu() {
-    let mut s: *const libc::c_char = 0 as *const libc::c_char;
-    let mut key: [libc::c_char; 1024] = [0; 1024];
-    let mut value: [libc::c_char; 1024] = [0; 1024];
+    let mut s: *const i8 = 0 as *const i8;
+    let mut key: [i8; 1024] = [0; 1024];
+    let mut value: [i8; 1024] = [0; 1024];
     // zero set all our globals
     crate::stdlib::memset(
         &mut s_serverinfo as *mut serverinfo_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<serverinfo_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<serverinfo_t>(),
     );
     ServerInfo_Cache();
     s_serverinfo.menu.draw = Some(ServerInfo_MenuDraw as unsafe extern "C" fn() -> ());
     s_serverinfo.menu.key = Some(
         ServerInfo_MenuKey
-            as unsafe extern "C" fn(_: libc::c_int) -> crate::src::qcommon::q_shared::sfxHandle_t,
+            as unsafe extern "C" fn(_: i32) -> crate::src::qcommon::q_shared::sfxHandle_t,
     );
     s_serverinfo.menu.wrapAround = crate::src::qcommon::q_shared::qtrue;
     s_serverinfo.menu.fullscreen = crate::src::qcommon::q_shared::qtrue;
-    s_serverinfo.banner.generic.type_0 = 10 as libc::c_int;
-    s_serverinfo.banner.generic.x = 320 as libc::c_int;
-    s_serverinfo.banner.generic.y = 16 as libc::c_int;
-    s_serverinfo.banner.string =
-        b"SERVER INFO\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    s_serverinfo.banner.generic.type_0 = 10;
+    s_serverinfo.banner.generic.x = 320;
+    s_serverinfo.banner.generic.y = 16;
+    s_serverinfo.banner.string = b"SERVER INFO\x00" as *const u8 as *mut i8;
     s_serverinfo.banner.color = crate::src::q3_ui::ui_qmenu::color_white.as_mut_ptr();
-    s_serverinfo.banner.style = 0x1 as libc::c_int;
-    s_serverinfo.framel.generic.type_0 = 6 as libc::c_int;
-    s_serverinfo.framel.generic.name = b"menu/art/frame2_l\x00" as *const u8 as *const libc::c_char;
-    s_serverinfo.framel.generic.flags = 0x4000 as libc::c_int as libc::c_uint;
-    s_serverinfo.framel.generic.x = 0 as libc::c_int;
-    s_serverinfo.framel.generic.y = 78 as libc::c_int;
-    s_serverinfo.framel.width = 256 as libc::c_int;
-    s_serverinfo.framel.height = 329 as libc::c_int;
-    s_serverinfo.framer.generic.type_0 = 6 as libc::c_int;
-    s_serverinfo.framer.generic.name = b"menu/art/frame1_r\x00" as *const u8 as *const libc::c_char;
-    s_serverinfo.framer.generic.flags = 0x4000 as libc::c_int as libc::c_uint;
-    s_serverinfo.framer.generic.x = 376 as libc::c_int;
-    s_serverinfo.framer.generic.y = 76 as libc::c_int;
-    s_serverinfo.framer.width = 256 as libc::c_int;
-    s_serverinfo.framer.height = 334 as libc::c_int;
-    s_serverinfo.add.generic.type_0 = 9 as libc::c_int;
-    s_serverinfo.add.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
+    s_serverinfo.banner.style = 0x1;
+    s_serverinfo.framel.generic.type_0 = 6;
+    s_serverinfo.framel.generic.name = b"menu/art/frame2_l\x00" as *const u8 as *const i8;
+    s_serverinfo.framel.generic.flags = 0x4000;
+    s_serverinfo.framel.generic.x = 0;
+    s_serverinfo.framel.generic.y = 78;
+    s_serverinfo.framel.width = 256;
+    s_serverinfo.framel.height = 329;
+    s_serverinfo.framer.generic.type_0 = 6;
+    s_serverinfo.framer.generic.name = b"menu/art/frame1_r\x00" as *const u8 as *const i8;
+    s_serverinfo.framer.generic.flags = 0x4000;
+    s_serverinfo.framer.generic.x = 376;
+    s_serverinfo.framer.generic.y = 76;
+    s_serverinfo.framer.width = 256;
+    s_serverinfo.framer.height = 334;
+    s_serverinfo.add.generic.type_0 = 9;
+    s_serverinfo.add.generic.flags = 0x8 | 0x100;
     s_serverinfo.add.generic.callback =
-        Some(ServerInfo_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_serverinfo.add.generic.id = 100 as libc::c_int;
-    s_serverinfo.add.generic.x = 320 as libc::c_int;
-    s_serverinfo.add.generic.y = 371 as libc::c_int;
-    s_serverinfo.add.string =
-        b"ADD TO FAVORITES\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-    s_serverinfo.add.style = 0x1 as libc::c_int | 0x10 as libc::c_int;
+        Some(ServerInfo_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_serverinfo.add.generic.id = 100;
+    s_serverinfo.add.generic.x = 320;
+    s_serverinfo.add.generic.y = 371;
+    s_serverinfo.add.string = b"ADD TO FAVORITES\x00" as *const u8 as *mut i8;
+    s_serverinfo.add.style = 0x1 | 0x10;
     s_serverinfo.add.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
     if crate::src::ui::ui_syscalls::trap_Cvar_VariableValue(
-        b"sv_running\x00" as *const u8 as *const libc::c_char,
+        b"sv_running\x00" as *const u8 as *const i8,
     ) != 0.
     {
-        s_serverinfo.add.generic.flags |= 0x2000 as libc::c_int as libc::c_uint
+        s_serverinfo.add.generic.flags |= 0x2000
     }
-    s_serverinfo.back.generic.type_0 = 6 as libc::c_int;
-    s_serverinfo.back.generic.name = b"menu/art/back_0\x00" as *const u8 as *const libc::c_char;
-    s_serverinfo.back.generic.flags =
-        0x4 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
+    s_serverinfo.back.generic.type_0 = 6;
+    s_serverinfo.back.generic.name = b"menu/art/back_0\x00" as *const u8 as *const i8;
+    s_serverinfo.back.generic.flags = 0x4 | 0x100;
     s_serverinfo.back.generic.callback =
-        Some(ServerInfo_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_serverinfo.back.generic.id = 101 as libc::c_int;
-    s_serverinfo.back.generic.x = 0 as libc::c_int;
-    s_serverinfo.back.generic.y = 480 as libc::c_int - 64 as libc::c_int;
-    s_serverinfo.back.width = 128 as libc::c_int;
-    s_serverinfo.back.height = 64 as libc::c_int;
-    s_serverinfo.back.focuspic =
-        b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-    crate::src::ui::ui_syscalls::trap_GetConfigString(
-        0 as libc::c_int,
-        s_serverinfo.info.as_mut_ptr(),
-        1024 as libc::c_int,
-    );
-    s_serverinfo.numlines = 0 as libc::c_int;
+        Some(ServerInfo_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_serverinfo.back.generic.id = 101;
+    s_serverinfo.back.generic.x = 0;
+    s_serverinfo.back.generic.y = 480 - 64;
+    s_serverinfo.back.width = 128;
+    s_serverinfo.back.height = 64;
+    s_serverinfo.back.focuspic = b"menu/art/back_1\x00" as *const u8 as *mut i8;
+    crate::src::ui::ui_syscalls::trap_GetConfigString(0, s_serverinfo.info.as_mut_ptr(), 1024);
+    s_serverinfo.numlines = 0;
     s = s_serverinfo.info.as_mut_ptr();
     while !s.is_null() {
         crate::src::qcommon::q_shared::Info_NextPair(&mut s, key.as_mut_ptr(), value.as_mut_ptr());
-        if key[0 as libc::c_int as usize] == 0 {
+        if key[0] == 0 {
             break;
         }
         s_serverinfo.numlines += 1
     }
-    if s_serverinfo.numlines > 16 as libc::c_int {
-        s_serverinfo.numlines = 16 as libc::c_int
+    if s_serverinfo.numlines > 16 {
+        s_serverinfo.numlines = 16
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
         &mut s_serverinfo.menu,

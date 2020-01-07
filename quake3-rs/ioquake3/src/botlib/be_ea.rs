@@ -33,7 +33,7 @@ use crate::stdlib::memcpy;
 #[no_mangle]
 
 pub static mut botinputs: *mut crate::botlib_h::bot_input_t =
-    0 as *const crate::botlib_h::bot_input_t as *mut crate::botlib_h::bot_input_t;
+    0 as *mut crate::botlib_h::bot_input_t;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -73,15 +73,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_Say(mut client: libc::c_int, mut str: *mut libc::c_char) {
+pub unsafe extern "C" fn EA_Say(mut client: i32, mut str: *mut i8) {
     crate::src::botlib::be_interface::botimport
         .BotClientCommand
         .expect("non-null function pointer")(
         client,
-        crate::src::qcommon::q_shared::va(
-            b"say %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            str,
-        ),
+        crate::src::qcommon::q_shared::va(b"say %s\x00" as *const u8 as *mut i8, str),
     );
 }
 //end of the function EA_Say
@@ -93,15 +90,12 @@ pub unsafe extern "C" fn EA_Say(mut client: libc::c_int, mut str: *mut libc::c_c
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_SayTeam(mut client: libc::c_int, mut str: *mut libc::c_char) {
+pub unsafe extern "C" fn EA_SayTeam(mut client: i32, mut str: *mut i8) {
     crate::src::botlib::be_interface::botimport
         .BotClientCommand
         .expect("non-null function pointer")(
         client,
-        crate::src::qcommon::q_shared::va(
-            b"say_team %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            str,
-        ),
+        crate::src::qcommon::q_shared::va(b"say_team %s\x00" as *const u8 as *mut i8, str),
     );
 }
 //end of the function EA_SayTeam
@@ -113,17 +107,13 @@ pub unsafe extern "C" fn EA_SayTeam(mut client: libc::c_int, mut str: *mut libc:
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_Tell(
-    mut client: libc::c_int,
-    mut clientto: libc::c_int,
-    mut str: *mut libc::c_char,
-) {
+pub unsafe extern "C" fn EA_Tell(mut client: i32, mut clientto: i32, mut str: *mut i8) {
     crate::src::botlib::be_interface::botimport
         .BotClientCommand
         .expect("non-null function pointer")(
         client,
         crate::src::qcommon::q_shared::va(
-            b"tell %d, %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"tell %d, %s\x00" as *const u8 as *mut i8,
             clientto,
             str,
         ),
@@ -138,15 +128,12 @@ pub unsafe extern "C" fn EA_Tell(
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_UseItem(mut client: libc::c_int, mut it: *mut libc::c_char) {
+pub unsafe extern "C" fn EA_UseItem(mut client: i32, mut it: *mut i8) {
     crate::src::botlib::be_interface::botimport
         .BotClientCommand
         .expect("non-null function pointer")(
         client,
-        crate::src::qcommon::q_shared::va(
-            b"use %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            it,
-        ),
+        crate::src::qcommon::q_shared::va(b"use %s\x00" as *const u8 as *mut i8, it),
     );
 }
 //end of the function EA_UseItem
@@ -158,15 +145,12 @@ pub unsafe extern "C" fn EA_UseItem(mut client: libc::c_int, mut it: *mut libc::
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_DropItem(mut client: libc::c_int, mut it: *mut libc::c_char) {
+pub unsafe extern "C" fn EA_DropItem(mut client: i32, mut it: *mut i8) {
     crate::src::botlib::be_interface::botimport
         .BotClientCommand
         .expect("non-null function pointer")(
         client,
-        crate::src::qcommon::q_shared::va(
-            b"drop %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            it,
-        ),
+        crate::src::qcommon::q_shared::va(b"drop %s\x00" as *const u8 as *mut i8, it),
     );
 }
 //end of the function EA_DropItem
@@ -178,15 +162,12 @@ pub unsafe extern "C" fn EA_DropItem(mut client: libc::c_int, mut it: *mut libc:
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_UseInv(mut client: libc::c_int, mut inv: *mut libc::c_char) {
+pub unsafe extern "C" fn EA_UseInv(mut client: i32, mut inv: *mut i8) {
     crate::src::botlib::be_interface::botimport
         .BotClientCommand
         .expect("non-null function pointer")(
         client,
-        crate::src::qcommon::q_shared::va(
-            b"invuse %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            inv,
-        ),
+        crate::src::qcommon::q_shared::va(b"invuse %s\x00" as *const u8 as *mut i8, inv),
     );
 }
 //end of the function EA_UseInv
@@ -198,15 +179,12 @@ pub unsafe extern "C" fn EA_UseInv(mut client: libc::c_int, mut inv: *mut libc::
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_DropInv(mut client: libc::c_int, mut inv: *mut libc::c_char) {
+pub unsafe extern "C" fn EA_DropInv(mut client: i32, mut inv: *mut i8) {
     crate::src::botlib::be_interface::botimport
         .BotClientCommand
         .expect("non-null function pointer")(
         client,
-        crate::src::qcommon::q_shared::va(
-            b"invdrop %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            inv,
-        ),
+        crate::src::qcommon::q_shared::va(b"invdrop %s\x00" as *const u8 as *mut i8, inv),
     );
 }
 //end of the function EA_DropInv
@@ -218,10 +196,10 @@ pub unsafe extern "C" fn EA_DropInv(mut client: libc::c_int, mut inv: *mut libc:
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_Gesture(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_Gesture(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).actionflags |= 0x20000 as libc::c_int;
+    (*bi).actionflags |= 0x20000;
 }
 //end of the function EA_Gesture
 //===========================================================================
@@ -232,7 +210,7 @@ pub unsafe extern "C" fn EA_Gesture(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_Command(mut client: libc::c_int, mut command: *mut libc::c_char) {
+pub unsafe extern "C" fn EA_Command(mut client: i32, mut command: *mut i8) {
     crate::src::botlib::be_interface::botimport
         .BotClientCommand
         .expect("non-null function pointer")(client, command);
@@ -247,7 +225,7 @@ pub unsafe extern "C" fn EA_Command(mut client: libc::c_int, mut command: *mut l
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_SelectWeapon(mut client: libc::c_int, mut weapon: libc::c_int) {
+pub unsafe extern "C" fn EA_SelectWeapon(mut client: i32, mut weapon: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
     (*bi).weapon = weapon;
@@ -261,10 +239,10 @@ pub unsafe extern "C" fn EA_SelectWeapon(mut client: libc::c_int, mut weapon: li
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_Attack(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_Attack(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).actionflags |= 0x1 as libc::c_int;
+    (*bi).actionflags |= 0x1;
 }
 //end of the function EA_Attack
 //===========================================================================
@@ -275,10 +253,10 @@ pub unsafe extern "C" fn EA_Attack(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_Talk(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_Talk(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).actionflags |= 0x10000 as libc::c_int;
+    (*bi).actionflags |= 0x10000;
 }
 //end of the function EA_Talk
 //===========================================================================
@@ -289,10 +267,10 @@ pub unsafe extern "C" fn EA_Talk(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_Use(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_Use(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).actionflags |= 0x2 as libc::c_int;
+    (*bi).actionflags |= 0x2;
 }
 //end of the function EA_Use
 //===========================================================================
@@ -303,10 +281,10 @@ pub unsafe extern "C" fn EA_Use(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_Respawn(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_Respawn(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).actionflags |= 0x8 as libc::c_int;
+    (*bi).actionflags |= 0x8;
 }
 //end of the function EA_Respawn
 //===========================================================================
@@ -317,13 +295,13 @@ pub unsafe extern "C" fn EA_Respawn(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_Jump(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_Jump(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t; //end if
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    if (*bi).actionflags & 0x10000000 as libc::c_int != 0 {
-        (*bi).actionflags &= !(0x10 as libc::c_int)
+    if (*bi).actionflags & 0x10000000 != 0 {
+        (*bi).actionflags &= !(0x10)
     } else {
-        (*bi).actionflags |= 0x10 as libc::c_int
+        (*bi).actionflags |= 0x10
     };
     //end if
 }
@@ -336,13 +314,13 @@ pub unsafe extern "C" fn EA_Jump(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_DelayedJump(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_DelayedJump(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t; //end if
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    if (*bi).actionflags & 0x10000000 as libc::c_int != 0 {
-        (*bi).actionflags &= !(0x8000 as libc::c_int)
+    if (*bi).actionflags & 0x10000000 != 0 {
+        (*bi).actionflags &= !(0x8000)
     } else {
-        (*bi).actionflags |= 0x8000 as libc::c_int
+        (*bi).actionflags |= 0x8000
     };
     //end if
 }
@@ -355,10 +333,10 @@ pub unsafe extern "C" fn EA_DelayedJump(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_Crouch(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_Crouch(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).actionflags |= 0x80 as libc::c_int;
+    (*bi).actionflags |= 0x80;
 }
 //end of the function EA_Crouch
 //===========================================================================
@@ -369,10 +347,10 @@ pub unsafe extern "C" fn EA_Crouch(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_Walk(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_Walk(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).actionflags |= 0x80000 as libc::c_int;
+    (*bi).actionflags |= 0x80000;
 }
 //end of the function EA_Walk
 //===========================================================================
@@ -383,7 +361,7 @@ pub unsafe extern "C" fn EA_Walk(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_Action(mut client: libc::c_int, mut action: libc::c_int) {
+pub unsafe extern "C" fn EA_Action(mut client: i32, mut action: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
     (*bi).actionflags |= action;
@@ -397,10 +375,10 @@ pub unsafe extern "C" fn EA_Action(mut client: libc::c_int, mut action: libc::c_
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_MoveUp(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_MoveUp(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).actionflags |= 0x20 as libc::c_int;
+    (*bi).actionflags |= 0x20;
 }
 //end of the function EA_MoveUp
 //===========================================================================
@@ -411,10 +389,10 @@ pub unsafe extern "C" fn EA_MoveUp(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_MoveDown(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_MoveDown(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).actionflags |= 0x100 as libc::c_int;
+    (*bi).actionflags |= 0x100;
 }
 //end of the function EA_MoveDown
 //===========================================================================
@@ -425,10 +403,10 @@ pub unsafe extern "C" fn EA_MoveDown(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_MoveForward(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_MoveForward(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).actionflags |= 0x200 as libc::c_int;
+    (*bi).actionflags |= 0x200;
 }
 //end of the function EA_MoveForward
 //===========================================================================
@@ -439,10 +417,10 @@ pub unsafe extern "C" fn EA_MoveForward(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_MoveBack(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_MoveBack(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).actionflags |= 0x800 as libc::c_int;
+    (*bi).actionflags |= 0x800;
 }
 //end of the function EA_MoveBack
 //===========================================================================
@@ -453,10 +431,10 @@ pub unsafe extern "C" fn EA_MoveBack(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_MoveLeft(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_MoveLeft(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).actionflags |= 0x1000 as libc::c_int;
+    (*bi).actionflags |= 0x1000;
 }
 //end of the function EA_MoveLeft
 //===========================================================================
@@ -467,10 +445,10 @@ pub unsafe extern "C" fn EA_MoveLeft(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_MoveRight(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_MoveRight(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).actionflags |= 0x2000 as libc::c_int;
+    (*bi).actionflags |= 0x2000;
 }
 //end of the function EA_MoveRight
 //===========================================================================
@@ -482,20 +460,20 @@ pub unsafe extern "C" fn EA_MoveRight(mut client: libc::c_int) {
 #[no_mangle]
 
 pub unsafe extern "C" fn EA_Move(
-    mut client: libc::c_int,
+    mut client: i32,
     mut dir: *mut crate::src::qcommon::q_shared::vec_t,
-    mut speed: libc::c_float,
+    mut speed: f32,
 ) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).dir[0 as libc::c_int as usize] = *dir.offset(0 as libc::c_int as isize);
-    (*bi).dir[1 as libc::c_int as usize] = *dir.offset(1 as libc::c_int as isize);
-    (*bi).dir[2 as libc::c_int as usize] = *dir.offset(2 as libc::c_int as isize);
+    (*bi).dir[0] = *dir.offset(0);
+    (*bi).dir[1] = *dir.offset(1);
+    (*bi).dir[2] = *dir.offset(2);
     //cap speed
-    if speed > 400 as libc::c_int as libc::c_float {
-        speed = 400 as libc::c_int as libc::c_float
-    } else if speed < -(400 as libc::c_int) as libc::c_float {
-        speed = -(400 as libc::c_int) as libc::c_float
+    if speed > 400f32 {
+        speed = 400f32
+    } else if speed < -400f32 {
+        speed = -400f32
     }
     (*bi).speed = speed;
 }
@@ -509,14 +487,14 @@ pub unsafe extern "C" fn EA_Move(
 #[no_mangle]
 
 pub unsafe extern "C" fn EA_View(
-    mut client: libc::c_int,
+    mut client: i32,
     mut viewangles: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).viewangles[0 as libc::c_int as usize] = *viewangles.offset(0 as libc::c_int as isize);
-    (*bi).viewangles[1 as libc::c_int as usize] = *viewangles.offset(1 as libc::c_int as isize);
-    (*bi).viewangles[2 as libc::c_int as usize] = *viewangles.offset(2 as libc::c_int as isize);
+    (*bi).viewangles[0] = *viewangles.offset(0);
+    (*bi).viewangles[1] = *viewangles.offset(1);
+    (*bi).viewangles[2] = *viewangles.offset(2);
 }
 //send regular input to the server
 //end of the function EA_View
@@ -528,7 +506,7 @@ pub unsafe extern "C" fn EA_View(
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_EndRegular(mut client: libc::c_int, mut thinktime: libc::c_float) {}
+pub unsafe extern "C" fn EA_EndRegular(mut client: i32, mut thinktime: f32) {}
 //end of the function EA_EndRegular
 //===========================================================================
 //
@@ -539,8 +517,8 @@ pub unsafe extern "C" fn EA_EndRegular(mut client: libc::c_int, mut thinktime: l
 #[no_mangle]
 
 pub unsafe extern "C" fn EA_GetInput(
-    mut client: libc::c_int,
-    mut thinktime: libc::c_float,
+    mut client: i32,
+    mut thinktime: f32,
     mut input: *mut crate::botlib_h::bot_input_t,
 ) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
@@ -549,7 +527,7 @@ pub unsafe extern "C" fn EA_GetInput(
     crate::stdlib::memcpy(
         input as *mut libc::c_void,
         bi as *const libc::c_void,
-        ::std::mem::size_of::<crate::botlib_h::bot_input_t>() as libc::c_ulong,
+        ::std::mem::size_of::<crate::botlib_h::bot_input_t>(),
     );
 }
 //end of the function EA_GetInput
@@ -561,19 +539,19 @@ pub unsafe extern "C" fn EA_GetInput(
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_ResetInput(mut client: libc::c_int) {
+pub unsafe extern "C" fn EA_ResetInput(mut client: i32) {
     let mut bi: *mut crate::botlib_h::bot_input_t = 0 as *mut crate::botlib_h::bot_input_t;
-    let mut jumped: libc::c_int = crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    let mut jumped: i32 = crate::src::qcommon::q_shared::qfalse as i32;
     bi = &mut *botinputs.offset(client as isize) as *mut crate::botlib_h::bot_input_t;
-    (*bi).thinktime = 0 as libc::c_int as libc::c_float;
-    (*bi).dir[2 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    (*bi).dir[1 as libc::c_int as usize] = (*bi).dir[2 as libc::c_int as usize];
-    (*bi).dir[0 as libc::c_int as usize] = (*bi).dir[1 as libc::c_int as usize];
-    (*bi).speed = 0 as libc::c_int as libc::c_float;
-    jumped = (*bi).actionflags & 0x10 as libc::c_int;
-    (*bi).actionflags = 0 as libc::c_int;
+    (*bi).thinktime = 0f32;
+    (*bi).dir[2] = 0f32;
+    (*bi).dir[1] = (*bi).dir[2];
+    (*bi).dir[0] = (*bi).dir[1];
+    (*bi).speed = 0f32;
+    jumped = (*bi).actionflags & 0x10;
+    (*bi).actionflags = 0;
     if jumped != 0 {
-        (*bi).actionflags |= 0x10000000 as libc::c_int
+        (*bi).actionflags |= 0x10000000
     };
 }
 //setup and shutdown routines
@@ -586,13 +564,13 @@ pub unsafe extern "C" fn EA_ResetInput(mut client: libc::c_int) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn EA_Setup() -> libc::c_int {
+pub unsafe extern "C" fn EA_Setup() -> i32 {
     //initialize the bot inputs
     botinputs = crate::src::botlib::l_memory::GetClearedHunkMemory(
-        (crate::src::botlib::be_interface::botlibglobals.maxclients as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<crate::botlib_h::bot_input_t>() as libc::c_ulong),
+        (crate::src::botlib::be_interface::botlibglobals.maxclients as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::botlib_h::bot_input_t>()),
     ) as *mut crate::botlib_h::bot_input_t;
-    return 0 as libc::c_int;
+    return 0;
 }
 //end of the function EA_Setup
 //===========================================================================

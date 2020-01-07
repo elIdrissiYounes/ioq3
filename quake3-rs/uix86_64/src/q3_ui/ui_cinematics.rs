@@ -3,12 +3,8 @@ use ::libc;
 pub mod stdlib_h {
     #[inline]
 
-    pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
-            __nptr,
-            0 as *mut libc::c_void as *mut *mut libc::c_char,
-            10 as libc::c_int,
-        ) as libc::c_int;
+    pub unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
+        return crate::stdlib::strtol(__nptr, 0 as *mut *mut i8, 10) as i32;
     }
 }
 
@@ -86,7 +82,7 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
         cursor: 0,
         cursor_prev: 0,
         nitems: 0,
-        items: [0 as *const libc::c_void as *mut libc::c_void; 64],
+        items: [0 as *mut libc::c_void; 64],
         draw: None,
         key: None,
         wrapAround: crate::src::qcommon::q_shared::qfalse,
@@ -96,7 +92,7 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
     banner: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -104,22 +100,21 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     framel: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -127,26 +122,25 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     framer: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -154,26 +148,25 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     cin_idlogo: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -181,22 +174,21 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     cin_intro: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -204,22 +196,21 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     cin_tier1: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -227,22 +218,21 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     cin_tier2: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -250,22 +240,21 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     cin_tier3: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -273,22 +262,21 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     cin_tier4: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -296,22 +284,21 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     cin_tier5: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -319,22 +306,21 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     cin_tier6: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -342,22 +328,21 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     cin_tier7: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -365,22 +350,21 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     cin_end: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -388,22 +372,21 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     back: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -411,35 +394,34 @@ static mut cinematicsMenuInfo: cinematicsMenuInfo_t = cinematicsMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
 };
 
-static mut cinematics: [*mut libc::c_char; 10] = [
-    b"idlogo\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"intro\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"tier1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"tier2\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"tier3\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"tier4\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"tier5\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"tier6\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"tier7\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"end\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+static mut cinematics: [*mut i8; 10] = [
+    b"idlogo\x00" as *const u8 as *mut i8,
+    b"intro\x00" as *const u8 as *mut i8,
+    b"tier1\x00" as *const u8 as *mut i8,
+    b"tier2\x00" as *const u8 as *mut i8,
+    b"tier3\x00" as *const u8 as *mut i8,
+    b"tier4\x00" as *const u8 as *mut i8,
+    b"tier5\x00" as *const u8 as *mut i8,
+    b"tier6\x00" as *const u8 as *mut i8,
+    b"tier7\x00" as *const u8 as *mut i8,
+    b"end\x00" as *const u8 as *mut i8,
 ];
 /*
 ===============
@@ -447,11 +429,8 @@ UI_CinematicsMenu_BackEvent
 ===============
 */
 
-unsafe extern "C" fn UI_CinematicsMenu_BackEvent(
-    mut ptr: *mut libc::c_void,
-    mut event: libc::c_int,
-) {
-    if event != 3 as libc::c_int {
+unsafe extern "C" fn UI_CinematicsMenu_BackEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+    if event != 3 {
         return;
     }
     crate::src::q3_ui::ui_atoms::UI_PopMenu();
@@ -462,32 +441,28 @@ UI_CinematicsMenu_Event
 ===============
 */
 
-unsafe extern "C" fn UI_CinematicsMenu_Event(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
-    let mut n: libc::c_int = 0;
-    if event != 3 as libc::c_int {
+unsafe extern "C" fn UI_CinematicsMenu_Event(mut ptr: *mut libc::c_void, mut event: i32) {
+    let mut n: i32 = 0;
+    if event != 3 {
         return;
     }
-    n = (*(ptr as *mut crate::ui_local_h::menucommon_s)).id - 11 as libc::c_int;
+    n = (*(ptr as *mut crate::ui_local_h::menucommon_s)).id - 11;
     crate::src::ui::ui_syscalls::trap_Cvar_Set(
-        b"nextmap\x00" as *const u8 as *const libc::c_char,
-        crate::src::qcommon::q_shared::va(
-            b"ui_cinematics %i\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            n,
-        ),
+        b"nextmap\x00" as *const u8 as *const i8,
+        crate::src::qcommon::q_shared::va(b"ui_cinematics %i\x00" as *const u8 as *mut i8, n),
     );
-    if crate::src::q3_ui::ui_atoms::uis.demoversion as libc::c_uint != 0
-        && (*(ptr as *mut crate::ui_local_h::menucommon_s)).id == 20 as libc::c_int
+    if crate::src::q3_ui::ui_atoms::uis.demoversion != 0
+        && (*(ptr as *mut crate::ui_local_h::menucommon_s)).id == 20
     {
         crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText(
-            crate::src::qcommon::q_shared::EXEC_APPEND as libc::c_int,
-            b"disconnect; cinematic demoEnd.RoQ 1\n\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::EXEC_APPEND as i32,
+            b"disconnect; cinematic demoEnd.RoQ 1\n\x00" as *const u8 as *const i8,
         );
     } else {
         crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText(
-            crate::src::qcommon::q_shared::EXEC_APPEND as libc::c_int,
+            crate::src::qcommon::q_shared::EXEC_APPEND as i32,
             crate::src::qcommon::q_shared::va(
-                b"disconnect; cinematic %s.RoQ\n\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
+                b"disconnect; cinematic %s.RoQ\n\x00" as *const u8 as *mut i8,
                 cinematics[n as usize],
             ),
         );
@@ -500,220 +475,183 @@ UI_CinematicsMenu_Init
 */
 
 unsafe extern "C" fn UI_CinematicsMenu_Init() {
-    let mut y: libc::c_int = 0;
+    let mut y: i32 = 0;
     UI_CinematicsMenu_Cache();
     crate::stdlib::memset(
         &mut cinematicsMenuInfo as *mut cinematicsMenuInfo_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<cinematicsMenuInfo_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<cinematicsMenuInfo_t>(),
     );
     cinematicsMenuInfo.menu.fullscreen = crate::src::qcommon::q_shared::qtrue;
-    cinematicsMenuInfo.banner.generic.type_0 = 10 as libc::c_int;
-    cinematicsMenuInfo.banner.generic.x = 320 as libc::c_int;
-    cinematicsMenuInfo.banner.generic.y = 16 as libc::c_int;
-    cinematicsMenuInfo.banner.string =
-        b"CINEMATICS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    cinematicsMenuInfo.banner.generic.type_0 = 10;
+    cinematicsMenuInfo.banner.generic.x = 320;
+    cinematicsMenuInfo.banner.generic.y = 16;
+    cinematicsMenuInfo.banner.string = b"CINEMATICS\x00" as *const u8 as *mut i8;
     cinematicsMenuInfo.banner.color = crate::src::q3_ui::ui_qmenu::color_white.as_mut_ptr();
-    cinematicsMenuInfo.banner.style = 0x1 as libc::c_int;
-    cinematicsMenuInfo.framel.generic.type_0 = 6 as libc::c_int;
-    cinematicsMenuInfo.framel.generic.name =
-        b"menu/art/frame2_l\x00" as *const u8 as *const libc::c_char;
-    cinematicsMenuInfo.framel.generic.flags = 0x4000 as libc::c_int as libc::c_uint;
-    cinematicsMenuInfo.framel.generic.x = 0 as libc::c_int;
-    cinematicsMenuInfo.framel.generic.y = 78 as libc::c_int;
-    cinematicsMenuInfo.framel.width = 256 as libc::c_int;
-    cinematicsMenuInfo.framel.height = 329 as libc::c_int;
-    cinematicsMenuInfo.framer.generic.type_0 = 6 as libc::c_int;
-    cinematicsMenuInfo.framer.generic.name =
-        b"menu/art/frame1_r\x00" as *const u8 as *const libc::c_char;
-    cinematicsMenuInfo.framer.generic.flags = 0x4000 as libc::c_int as libc::c_uint;
-    cinematicsMenuInfo.framer.generic.x = 376 as libc::c_int;
-    cinematicsMenuInfo.framer.generic.y = 76 as libc::c_int;
-    cinematicsMenuInfo.framer.width = 256 as libc::c_int;
-    cinematicsMenuInfo.framer.height = 334 as libc::c_int;
-    y = 100 as libc::c_int;
-    cinematicsMenuInfo.cin_idlogo.generic.type_0 = 9 as libc::c_int;
-    cinematicsMenuInfo.cin_idlogo.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    cinematicsMenuInfo.cin_idlogo.generic.x = 320 as libc::c_int;
+    cinematicsMenuInfo.banner.style = 0x1;
+    cinematicsMenuInfo.framel.generic.type_0 = 6;
+    cinematicsMenuInfo.framel.generic.name = b"menu/art/frame2_l\x00" as *const u8 as *const i8;
+    cinematicsMenuInfo.framel.generic.flags = 0x4000;
+    cinematicsMenuInfo.framel.generic.x = 0;
+    cinematicsMenuInfo.framel.generic.y = 78;
+    cinematicsMenuInfo.framel.width = 256;
+    cinematicsMenuInfo.framel.height = 329;
+    cinematicsMenuInfo.framer.generic.type_0 = 6;
+    cinematicsMenuInfo.framer.generic.name = b"menu/art/frame1_r\x00" as *const u8 as *const i8;
+    cinematicsMenuInfo.framer.generic.flags = 0x4000;
+    cinematicsMenuInfo.framer.generic.x = 376;
+    cinematicsMenuInfo.framer.generic.y = 76;
+    cinematicsMenuInfo.framer.width = 256;
+    cinematicsMenuInfo.framer.height = 334;
+    y = 100;
+    cinematicsMenuInfo.cin_idlogo.generic.type_0 = 9;
+    cinematicsMenuInfo.cin_idlogo.generic.flags = 0x8 | 0x100;
+    cinematicsMenuInfo.cin_idlogo.generic.x = 320;
     cinematicsMenuInfo.cin_idlogo.generic.y = y;
-    cinematicsMenuInfo.cin_idlogo.generic.id = 11 as libc::c_int;
-    cinematicsMenuInfo.cin_idlogo.generic.callback = Some(
-        UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    cinematicsMenuInfo.cin_idlogo.string =
-        b"ID LOGO\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    cinematicsMenuInfo.cin_idlogo.generic.id = 11;
+    cinematicsMenuInfo.cin_idlogo.generic.callback =
+        Some(UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    cinematicsMenuInfo.cin_idlogo.string = b"ID LOGO\x00" as *const u8 as *mut i8;
     cinematicsMenuInfo.cin_idlogo.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    cinematicsMenuInfo.cin_idlogo.style = 0x1 as libc::c_int;
-    y += 30 as libc::c_int;
-    cinematicsMenuInfo.cin_intro.generic.type_0 = 9 as libc::c_int;
-    cinematicsMenuInfo.cin_intro.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    cinematicsMenuInfo.cin_intro.generic.x = 320 as libc::c_int;
+    cinematicsMenuInfo.cin_idlogo.style = 0x1;
+    y += 30;
+    cinematicsMenuInfo.cin_intro.generic.type_0 = 9;
+    cinematicsMenuInfo.cin_intro.generic.flags = 0x8 | 0x100;
+    cinematicsMenuInfo.cin_intro.generic.x = 320;
     cinematicsMenuInfo.cin_intro.generic.y = y;
-    cinematicsMenuInfo.cin_intro.generic.id = 12 as libc::c_int;
-    cinematicsMenuInfo.cin_intro.generic.callback = Some(
-        UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    cinematicsMenuInfo.cin_intro.string =
-        b"INTRO\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    cinematicsMenuInfo.cin_intro.generic.id = 12;
+    cinematicsMenuInfo.cin_intro.generic.callback =
+        Some(UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    cinematicsMenuInfo.cin_intro.string = b"INTRO\x00" as *const u8 as *mut i8;
     cinematicsMenuInfo.cin_intro.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    cinematicsMenuInfo.cin_intro.style = 0x1 as libc::c_int;
+    cinematicsMenuInfo.cin_intro.style = 0x1;
     if crate::src::q3_ui::ui_atoms::uis.demoversion as u64 != 0 {
-        cinematicsMenuInfo.cin_intro.generic.flags |= 0x2000 as libc::c_int as libc::c_uint
+        cinematicsMenuInfo.cin_intro.generic.flags |= 0x2000
     }
-    y += 30 as libc::c_int;
-    cinematicsMenuInfo.cin_tier1.generic.type_0 = 9 as libc::c_int;
-    cinematicsMenuInfo.cin_tier1.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    cinematicsMenuInfo.cin_tier1.generic.x = 320 as libc::c_int;
+    y += 30;
+    cinematicsMenuInfo.cin_tier1.generic.type_0 = 9;
+    cinematicsMenuInfo.cin_tier1.generic.flags = 0x8 | 0x100;
+    cinematicsMenuInfo.cin_tier1.generic.x = 320;
     cinematicsMenuInfo.cin_tier1.generic.y = y;
-    cinematicsMenuInfo.cin_tier1.generic.id = 13 as libc::c_int;
-    cinematicsMenuInfo.cin_tier1.generic.callback = Some(
-        UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    cinematicsMenuInfo.cin_tier1.string =
-        b"Tier 1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    cinematicsMenuInfo.cin_tier1.generic.id = 13;
+    cinematicsMenuInfo.cin_tier1.generic.callback =
+        Some(UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    cinematicsMenuInfo.cin_tier1.string = b"Tier 1\x00" as *const u8 as *mut i8;
     cinematicsMenuInfo.cin_tier1.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    cinematicsMenuInfo.cin_tier1.style = 0x1 as libc::c_int;
-    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(1 as libc::c_int) as u64 == 0 {
-        cinematicsMenuInfo.cin_tier1.generic.flags |= 0x2000 as libc::c_int as libc::c_uint
+    cinematicsMenuInfo.cin_tier1.style = 0x1;
+    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(1) as u64 == 0 {
+        cinematicsMenuInfo.cin_tier1.generic.flags |= 0x2000
     }
-    y += 30 as libc::c_int;
-    cinematicsMenuInfo.cin_tier2.generic.type_0 = 9 as libc::c_int;
-    cinematicsMenuInfo.cin_tier2.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    cinematicsMenuInfo.cin_tier2.generic.x = 320 as libc::c_int;
+    y += 30;
+    cinematicsMenuInfo.cin_tier2.generic.type_0 = 9;
+    cinematicsMenuInfo.cin_tier2.generic.flags = 0x8 | 0x100;
+    cinematicsMenuInfo.cin_tier2.generic.x = 320;
     cinematicsMenuInfo.cin_tier2.generic.y = y;
-    cinematicsMenuInfo.cin_tier2.generic.id = 14 as libc::c_int;
-    cinematicsMenuInfo.cin_tier2.generic.callback = Some(
-        UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    cinematicsMenuInfo.cin_tier2.string =
-        b"Tier 2\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    cinematicsMenuInfo.cin_tier2.generic.id = 14;
+    cinematicsMenuInfo.cin_tier2.generic.callback =
+        Some(UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    cinematicsMenuInfo.cin_tier2.string = b"Tier 2\x00" as *const u8 as *mut i8;
     cinematicsMenuInfo.cin_tier2.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    cinematicsMenuInfo.cin_tier2.style = 0x1 as libc::c_int;
-    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(2 as libc::c_int) as u64 == 0 {
-        cinematicsMenuInfo.cin_tier2.generic.flags |= 0x2000 as libc::c_int as libc::c_uint
+    cinematicsMenuInfo.cin_tier2.style = 0x1;
+    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(2) as u64 == 0 {
+        cinematicsMenuInfo.cin_tier2.generic.flags |= 0x2000
     }
-    y += 30 as libc::c_int;
-    cinematicsMenuInfo.cin_tier3.generic.type_0 = 9 as libc::c_int;
-    cinematicsMenuInfo.cin_tier3.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    cinematicsMenuInfo.cin_tier3.generic.x = 320 as libc::c_int;
+    y += 30;
+    cinematicsMenuInfo.cin_tier3.generic.type_0 = 9;
+    cinematicsMenuInfo.cin_tier3.generic.flags = 0x8 | 0x100;
+    cinematicsMenuInfo.cin_tier3.generic.x = 320;
     cinematicsMenuInfo.cin_tier3.generic.y = y;
-    cinematicsMenuInfo.cin_tier3.generic.id = 15 as libc::c_int;
-    cinematicsMenuInfo.cin_tier3.generic.callback = Some(
-        UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    cinematicsMenuInfo.cin_tier3.string =
-        b"Tier 3\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    cinematicsMenuInfo.cin_tier3.generic.id = 15;
+    cinematicsMenuInfo.cin_tier3.generic.callback =
+        Some(UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    cinematicsMenuInfo.cin_tier3.string = b"Tier 3\x00" as *const u8 as *mut i8;
     cinematicsMenuInfo.cin_tier3.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    cinematicsMenuInfo.cin_tier3.style = 0x1 as libc::c_int;
-    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(3 as libc::c_int) as u64 == 0 {
-        cinematicsMenuInfo.cin_tier3.generic.flags |= 0x2000 as libc::c_int as libc::c_uint
+    cinematicsMenuInfo.cin_tier3.style = 0x1;
+    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(3) as u64 == 0 {
+        cinematicsMenuInfo.cin_tier3.generic.flags |= 0x2000
     }
-    y += 30 as libc::c_int;
-    cinematicsMenuInfo.cin_tier4.generic.type_0 = 9 as libc::c_int;
-    cinematicsMenuInfo.cin_tier4.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    cinematicsMenuInfo.cin_tier4.generic.x = 320 as libc::c_int;
+    y += 30;
+    cinematicsMenuInfo.cin_tier4.generic.type_0 = 9;
+    cinematicsMenuInfo.cin_tier4.generic.flags = 0x8 | 0x100;
+    cinematicsMenuInfo.cin_tier4.generic.x = 320;
     cinematicsMenuInfo.cin_tier4.generic.y = y;
-    cinematicsMenuInfo.cin_tier4.generic.id = 16 as libc::c_int;
-    cinematicsMenuInfo.cin_tier4.generic.callback = Some(
-        UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    cinematicsMenuInfo.cin_tier4.string =
-        b"Tier 4\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    cinematicsMenuInfo.cin_tier4.generic.id = 16;
+    cinematicsMenuInfo.cin_tier4.generic.callback =
+        Some(UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    cinematicsMenuInfo.cin_tier4.string = b"Tier 4\x00" as *const u8 as *mut i8;
     cinematicsMenuInfo.cin_tier4.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    cinematicsMenuInfo.cin_tier4.style = 0x1 as libc::c_int;
-    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(4 as libc::c_int) as u64 == 0 {
-        cinematicsMenuInfo.cin_tier4.generic.flags |= 0x2000 as libc::c_int as libc::c_uint
+    cinematicsMenuInfo.cin_tier4.style = 0x1;
+    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(4) as u64 == 0 {
+        cinematicsMenuInfo.cin_tier4.generic.flags |= 0x2000
     }
-    y += 30 as libc::c_int;
-    cinematicsMenuInfo.cin_tier5.generic.type_0 = 9 as libc::c_int;
-    cinematicsMenuInfo.cin_tier5.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    cinematicsMenuInfo.cin_tier5.generic.x = 320 as libc::c_int;
+    y += 30;
+    cinematicsMenuInfo.cin_tier5.generic.type_0 = 9;
+    cinematicsMenuInfo.cin_tier5.generic.flags = 0x8 | 0x100;
+    cinematicsMenuInfo.cin_tier5.generic.x = 320;
     cinematicsMenuInfo.cin_tier5.generic.y = y;
-    cinematicsMenuInfo.cin_tier5.generic.id = 17 as libc::c_int;
-    cinematicsMenuInfo.cin_tier5.generic.callback = Some(
-        UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    cinematicsMenuInfo.cin_tier5.string =
-        b"Tier 5\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    cinematicsMenuInfo.cin_tier5.generic.id = 17;
+    cinematicsMenuInfo.cin_tier5.generic.callback =
+        Some(UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    cinematicsMenuInfo.cin_tier5.string = b"Tier 5\x00" as *const u8 as *mut i8;
     cinematicsMenuInfo.cin_tier5.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    cinematicsMenuInfo.cin_tier5.style = 0x1 as libc::c_int;
-    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(5 as libc::c_int) as u64 == 0 {
-        cinematicsMenuInfo.cin_tier5.generic.flags |= 0x2000 as libc::c_int as libc::c_uint
+    cinematicsMenuInfo.cin_tier5.style = 0x1;
+    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(5) as u64 == 0 {
+        cinematicsMenuInfo.cin_tier5.generic.flags |= 0x2000
     }
-    y += 30 as libc::c_int;
-    cinematicsMenuInfo.cin_tier6.generic.type_0 = 9 as libc::c_int;
-    cinematicsMenuInfo.cin_tier6.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    cinematicsMenuInfo.cin_tier6.generic.x = 320 as libc::c_int;
+    y += 30;
+    cinematicsMenuInfo.cin_tier6.generic.type_0 = 9;
+    cinematicsMenuInfo.cin_tier6.generic.flags = 0x8 | 0x100;
+    cinematicsMenuInfo.cin_tier6.generic.x = 320;
     cinematicsMenuInfo.cin_tier6.generic.y = y;
-    cinematicsMenuInfo.cin_tier6.generic.id = 18 as libc::c_int;
-    cinematicsMenuInfo.cin_tier6.generic.callback = Some(
-        UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    cinematicsMenuInfo.cin_tier6.string =
-        b"Tier 6\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    cinematicsMenuInfo.cin_tier6.generic.id = 18;
+    cinematicsMenuInfo.cin_tier6.generic.callback =
+        Some(UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    cinematicsMenuInfo.cin_tier6.string = b"Tier 6\x00" as *const u8 as *mut i8;
     cinematicsMenuInfo.cin_tier6.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    cinematicsMenuInfo.cin_tier6.style = 0x1 as libc::c_int;
-    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(6 as libc::c_int) as u64 == 0 {
-        cinematicsMenuInfo.cin_tier6.generic.flags |= 0x2000 as libc::c_int as libc::c_uint
+    cinematicsMenuInfo.cin_tier6.style = 0x1;
+    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(6) as u64 == 0 {
+        cinematicsMenuInfo.cin_tier6.generic.flags |= 0x2000
     }
-    y += 30 as libc::c_int;
-    cinematicsMenuInfo.cin_tier7.generic.type_0 = 9 as libc::c_int;
-    cinematicsMenuInfo.cin_tier7.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    cinematicsMenuInfo.cin_tier7.generic.x = 320 as libc::c_int;
+    y += 30;
+    cinematicsMenuInfo.cin_tier7.generic.type_0 = 9;
+    cinematicsMenuInfo.cin_tier7.generic.flags = 0x8 | 0x100;
+    cinematicsMenuInfo.cin_tier7.generic.x = 320;
     cinematicsMenuInfo.cin_tier7.generic.y = y;
-    cinematicsMenuInfo.cin_tier7.generic.id = 19 as libc::c_int;
-    cinematicsMenuInfo.cin_tier7.generic.callback = Some(
-        UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    cinematicsMenuInfo.cin_tier7.string =
-        b"Tier 7\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    cinematicsMenuInfo.cin_tier7.generic.id = 19;
+    cinematicsMenuInfo.cin_tier7.generic.callback =
+        Some(UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    cinematicsMenuInfo.cin_tier7.string = b"Tier 7\x00" as *const u8 as *mut i8;
     cinematicsMenuInfo.cin_tier7.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    cinematicsMenuInfo.cin_tier7.style = 0x1 as libc::c_int;
-    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(7 as libc::c_int) as u64 == 0 {
-        cinematicsMenuInfo.cin_tier7.generic.flags |= 0x2000 as libc::c_int as libc::c_uint
+    cinematicsMenuInfo.cin_tier7.style = 0x1;
+    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(7) as u64 == 0 {
+        cinematicsMenuInfo.cin_tier7.generic.flags |= 0x2000
     }
-    y += 30 as libc::c_int;
-    cinematicsMenuInfo.cin_end.generic.type_0 = 9 as libc::c_int;
-    cinematicsMenuInfo.cin_end.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    cinematicsMenuInfo.cin_end.generic.x = 320 as libc::c_int;
+    y += 30;
+    cinematicsMenuInfo.cin_end.generic.type_0 = 9;
+    cinematicsMenuInfo.cin_end.generic.flags = 0x8 | 0x100;
+    cinematicsMenuInfo.cin_end.generic.x = 320;
     cinematicsMenuInfo.cin_end.generic.y = y;
-    cinematicsMenuInfo.cin_end.generic.id = 20 as libc::c_int;
-    cinematicsMenuInfo.cin_end.generic.callback = Some(
-        UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    cinematicsMenuInfo.cin_end.string =
-        b"END\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    cinematicsMenuInfo.cin_end.generic.id = 20;
+    cinematicsMenuInfo.cin_end.generic.callback =
+        Some(UI_CinematicsMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    cinematicsMenuInfo.cin_end.string = b"END\x00" as *const u8 as *mut i8;
     cinematicsMenuInfo.cin_end.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    cinematicsMenuInfo.cin_end.style = 0x1 as libc::c_int;
-    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(8 as libc::c_int) as u64 == 0 {
-        cinematicsMenuInfo.cin_end.generic.flags |= 0x2000 as libc::c_int as libc::c_uint
+    cinematicsMenuInfo.cin_end.style = 0x1;
+    if crate::src::q3_ui::ui_gameinfo::UI_CanShowTierVideo(8) as u64 == 0 {
+        cinematicsMenuInfo.cin_end.generic.flags |= 0x2000
     }
-    cinematicsMenuInfo.back.generic.type_0 = 6 as libc::c_int;
-    cinematicsMenuInfo.back.generic.name =
-        b"menu/art/back_0\x00" as *const u8 as *const libc::c_char;
-    cinematicsMenuInfo.back.generic.flags =
-        0x4 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    cinematicsMenuInfo.back.generic.id = 10 as libc::c_int;
+    cinematicsMenuInfo.back.generic.type_0 = 6;
+    cinematicsMenuInfo.back.generic.name = b"menu/art/back_0\x00" as *const u8 as *const i8;
+    cinematicsMenuInfo.back.generic.flags = 0x4 | 0x100;
+    cinematicsMenuInfo.back.generic.id = 10;
     cinematicsMenuInfo.back.generic.callback = Some(
-        UI_CinematicsMenu_BackEvent
-            as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
+        UI_CinematicsMenu_BackEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> (),
     );
-    cinematicsMenuInfo.back.generic.x = 0 as libc::c_int;
-    cinematicsMenuInfo.back.generic.y = 480 as libc::c_int - 64 as libc::c_int;
-    cinematicsMenuInfo.back.width = 128 as libc::c_int;
-    cinematicsMenuInfo.back.height = 64 as libc::c_int;
-    cinematicsMenuInfo.back.focuspic =
-        b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    cinematicsMenuInfo.back.generic.x = 0;
+    cinematicsMenuInfo.back.generic.y = 480 - 64;
+    cinematicsMenuInfo.back.width = 128;
+    cinematicsMenuInfo.back.height = 64;
+    cinematicsMenuInfo.back.focuspic = b"menu/art/back_1\x00" as *const u8 as *mut i8;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
         &mut cinematicsMenuInfo.menu,
         &mut cinematicsMenuInfo.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
@@ -789,16 +727,16 @@ UI_CinematicsMenu_Cache
 
 pub unsafe extern "C" fn UI_CinematicsMenu_Cache() {
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/back_0\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/back_0\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/back_1\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/back_1\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/frame2_l\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/frame2_l\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/frame1_r\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/frame1_r\x00" as *const u8 as *const i8,
     );
 }
 /*
@@ -891,11 +829,11 @@ UI_CinematicsMenu_f
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_CinematicsMenu_f() {
-    let mut n: libc::c_int = 0;
-    n = atoi(crate::src::q3_ui::ui_atoms::UI_Argv(1 as libc::c_int));
+    let mut n: i32 = 0;
+    n = atoi(crate::src::q3_ui::ui_atoms::UI_Argv(1));
     UI_CinematicsMenu();
     crate::src::q3_ui::ui_qmenu::Menu_SetCursorToItem(
         &mut cinematicsMenuInfo.menu,
-        cinematicsMenuInfo.menu.items[(n + 3 as libc::c_int) as usize],
+        cinematicsMenuInfo.menu.items[(n + 3) as usize],
     );
 }

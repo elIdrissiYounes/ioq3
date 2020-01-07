@@ -135,24 +135,24 @@ POSSIBILITY OF SUCH DAMAGE.
 pub unsafe extern "C" fn silk_find_LPC_FLP(
     mut psEncC: *mut crate::structs_h::silk_encoder_state,
     mut NLSF_Q15: *mut crate::opus_types_h::opus_int16,
-    mut x: *const libc::c_float,
-    minInvGain: libc::c_float,
+    mut x: *const f32,
+    minInvGain: f32,
 )
 /* I    Inverse of max prediction gain              */
 {
-    let mut k: libc::c_int = 0;
-    let mut subfr_length: libc::c_int = 0;
-    let mut a: [libc::c_float; 16] = [0.; 16];
+    let mut k: i32 = 0;
+    let mut subfr_length: i32 = 0;
+    let mut a: [f32; 16] = [0.; 16];
     /* Used only for NLSF interpolation */
-    let mut res_nrg: libc::c_float = 0.;
-    let mut res_nrg_2nd: libc::c_float = 0.;
-    let mut res_nrg_interp: libc::c_float = 0.;
+    let mut res_nrg: f32 = 0.;
+    let mut res_nrg_2nd: f32 = 0.;
+    let mut res_nrg_interp: f32 = 0.;
     let mut NLSF0_Q15: [crate::opus_types_h::opus_int16; 16] = [0; 16];
-    let mut a_tmp: [libc::c_float; 16] = [0.; 16];
-    let mut LPC_res: [libc::c_float; 384] = [0.; 384];
+    let mut a_tmp: [f32; 16] = [0.; 16];
+    let mut LPC_res: [f32; 384] = [0.; 384];
     subfr_length = (*psEncC).subfr_length + (*psEncC).predictLPCOrder;
     /* Default: No interpolation */
-    (*psEncC).indices.NLSFInterpCoef_Q2 = 4 as libc::c_int as libc::c_schar;
+    (*psEncC).indices.NLSFInterpCoef_Q2 = 4i8;
     /* Burg AR analysis for the full frame */
     res_nrg = crate::src::opus_1_2_1::silk::float::burg_modified_FLP::silk_burg_modified_FLP(
         a.as_mut_ptr(),
@@ -164,16 +164,16 @@ pub unsafe extern "C" fn silk_find_LPC_FLP(
     );
     if (*psEncC).useInterpolatedNLSFs != 0
         && (*psEncC).first_frame_after_reset == 0
-        && (*psEncC).nb_subfr == 4 as libc::c_int
+        && (*psEncC).nb_subfr == 4
     {
         /* Optimal solution for last 10 ms; subtract residual energy here, as that's easier than        */
         /* adding it to the residual energy of the first 10 ms in each iteration of the search below    */
         res_nrg -= crate::src::opus_1_2_1::silk::float::burg_modified_FLP::silk_burg_modified_FLP(
             a_tmp.as_mut_ptr(),
-            x.offset((4 as libc::c_int / 2 as libc::c_int * subfr_length) as isize),
+            x.offset((4 / 2 * subfr_length) as isize),
             minInvGain,
             subfr_length,
-            4 as libc::c_int / 2 as libc::c_int,
+            4 / 2,
             (*psEncC).predictLPCOrder,
         );
         /* Convert to NLSFs */
@@ -183,9 +183,9 @@ pub unsafe extern "C" fn silk_find_LPC_FLP(
             (*psEncC).predictLPCOrder,
         );
         /* Search over interpolation indices to find the one with lowest residual energy */
-        res_nrg_2nd = 3.40282347e+38f32;
-        k = 3 as libc::c_int;
-        while k >= 0 as libc::c_int {
+        res_nrg_2nd = 3.40282347e+38;
+        k = 3;
+        while k >= 0 {
             /* Interpolate NLSFs for first half */
             crate::src::opus_1_2_1::silk::interpolate::silk_interpolate(
                 NLSF0_Q15.as_mut_ptr(),
@@ -204,8 +204,8 @@ pub unsafe extern "C" fn silk_find_LPC_FLP(
             /* Calculate residual energy with LSF interpolation */
             crate::src::opus_1_2_1::silk::float::LPC_analysis_filter_FLP::silk_LPC_analysis_filter_FLP(LPC_res.as_mut_ptr(),
                                          a_tmp.as_mut_ptr() as
-                                             *const libc::c_float, x,
-                                         2 as libc::c_int * subfr_length,
+                                             *const f32, x,
+                                         2 * subfr_length,
                                          (*psEncC).predictLPCOrder);
             res_nrg_interp = (crate::src::opus_1_2_1::silk::float::energy_FLP::silk_energy_FLP(
                 LPC_res
@@ -218,12 +218,12 @@ pub unsafe extern "C" fn silk_find_LPC_FLP(
                     .offset((*psEncC).predictLPCOrder as isize)
                     .offset(subfr_length as isize),
                 subfr_length - (*psEncC).predictLPCOrder,
-            )) as libc::c_float;
+            )) as f32;
             /* Determine whether current interpolated NLSFs are best so far */
             if res_nrg_interp < res_nrg {
                 /* Interpolation has lower residual energy */
                 res_nrg = res_nrg_interp;
-                (*psEncC).indices.NLSFInterpCoef_Q2 = k as libc::c_schar
+                (*psEncC).indices.NLSFInterpCoef_Q2 = k as i8
             } else if res_nrg_interp > res_nrg_2nd {
                 break;
             }
@@ -231,7 +231,7 @@ pub unsafe extern "C" fn silk_find_LPC_FLP(
             k -= 1
         }
     }
-    if (*psEncC).indices.NLSFInterpCoef_Q2 as libc::c_int == 4 as libc::c_int {
+    if (*psEncC).indices.NLSFInterpCoef_Q2 as i32 == 4 {
         /* NLSF interpolation is currently inactive, calculate NLSFs from full frame AR coefficients */
         crate::src::opus_1_2_1::silk::float::wrappers_FLP::silk_A2NLSF_FLP(
             NLSF_Q15,

@@ -1,6 +1,6 @@
 extern "C" {
     #[no_mangle]
-    pub fn SDL_GetError() -> *const libc::c_char;
+    pub fn SDL_GetError() -> *const i8;
     #[no_mangle]
     pub fn SDL_WasInit(flags: crate::stdlib::Uint32) -> crate::stdlib::Uint32;
 
@@ -8,7 +8,7 @@ extern "C" {
     pub fn SDL_QuitSubSystem(flags: crate::stdlib::Uint32);
 
     #[no_mangle]
-    pub fn SDL_Init(flags: crate::stdlib::Uint32) -> libc::c_int;
+    pub fn SDL_Init(flags: crate::stdlib::Uint32) -> i32;
     #[no_mangle]
     pub fn SDL_calloc(
         nmemb: crate::stddef_h::size_t,
@@ -22,10 +22,10 @@ extern "C" {
     #[no_mangle]
     pub fn SDL_CreateRGBSurfaceFrom(
         pixels: *mut libc::c_void,
-        width: libc::c_int,
-        height: libc::c_int,
-        depth: libc::c_int,
-        pitch: libc::c_int,
+        width: i32,
+        height: i32,
+        depth: i32,
+        pitch: i32,
         Rmask: crate::stdlib::Uint32,
         Gmask: crate::stdlib::Uint32,
         Bmask: crate::stdlib::Uint32,
@@ -42,49 +42,49 @@ extern "C" {
         red: *const crate::stdlib::Uint16,
         green: *const crate::stdlib::Uint16,
         blue: *const crate::stdlib::Uint16,
-    ) -> libc::c_int;
+    ) -> i32;
 
     #[no_mangle]
-    pub fn SDL_GetCurrentVideoDriver() -> *const libc::c_char;
+    pub fn SDL_GetCurrentVideoDriver() -> *const i8;
 
     #[no_mangle]
-    pub fn SDL_GetNumDisplayModes(displayIndex: libc::c_int) -> libc::c_int;
+    pub fn SDL_GetNumDisplayModes(displayIndex: i32) -> i32;
 
     #[no_mangle]
     pub fn SDL_GetDisplayMode(
-        displayIndex: libc::c_int,
-        modeIndex: libc::c_int,
+        displayIndex: i32,
+        modeIndex: i32,
         mode: *mut crate::stdlib::SDL_DisplayMode,
-    ) -> libc::c_int;
+    ) -> i32;
 
     #[no_mangle]
     pub fn SDL_GetDesktopDisplayMode(
-        displayIndex: libc::c_int,
+        displayIndex: i32,
         mode: *mut crate::stdlib::SDL_DisplayMode,
-    ) -> libc::c_int;
+    ) -> i32;
 
     #[no_mangle]
-    pub fn SDL_GetWindowDisplayIndex(window: *mut crate::stdlib::SDL_Window) -> libc::c_int;
+    pub fn SDL_GetWindowDisplayIndex(window: *mut crate::stdlib::SDL_Window) -> i32;
 
     #[no_mangle]
     pub fn SDL_SetWindowDisplayMode(
         window: *mut crate::stdlib::SDL_Window,
         mode: *const crate::stdlib::SDL_DisplayMode,
-    ) -> libc::c_int;
+    ) -> i32;
 
     #[no_mangle]
     pub fn SDL_GetWindowDisplayMode(
         window: *mut crate::stdlib::SDL_Window,
         mode: *mut crate::stdlib::SDL_DisplayMode,
-    ) -> libc::c_int;
+    ) -> i32;
 
     #[no_mangle]
     pub fn SDL_CreateWindow(
-        title: *const libc::c_char,
-        x: libc::c_int,
-        y: libc::c_int,
-        w: libc::c_int,
-        h: libc::c_int,
+        title: *const i8,
+        x: i32,
+        y: i32,
+        w: i32,
+        h: i32,
         flags: crate::stdlib::Uint32,
     ) -> *mut crate::stdlib::SDL_Window;
 
@@ -100,8 +100,8 @@ extern "C" {
     #[no_mangle]
     pub fn SDL_GetWindowPosition(
         window: *mut crate::stdlib::SDL_Window,
-        x: *mut libc::c_int,
-        y: *mut libc::c_int,
+        x: *mut i32,
+        y: *mut i32,
     );
 
     #[no_mangle]
@@ -111,31 +111,31 @@ extern "C" {
     pub fn SDL_SetWindowFullscreen(
         window: *mut crate::stdlib::SDL_Window,
         flags: crate::stdlib::Uint32,
-    ) -> libc::c_int;
+    ) -> i32;
 
     #[no_mangle]
     pub fn SDL_SetWindowBrightness(
         window: *mut crate::stdlib::SDL_Window,
-        brightness: libc::c_float,
-    ) -> libc::c_int;
+        brightness: f32,
+    ) -> i32;
 
     #[no_mangle]
     pub fn SDL_DestroyWindow(window: *mut crate::stdlib::SDL_Window);
 
     #[no_mangle]
-    pub fn SDL_GL_GetProcAddress(proc_0: *const libc::c_char) -> *mut libc::c_void;
+    pub fn SDL_GL_GetProcAddress(proc_0: *const i8) -> *mut libc::c_void;
 
     #[no_mangle]
-    pub fn SDL_GL_ExtensionSupported(extension: *const libc::c_char) -> crate::stdlib::SDL_bool;
+    pub fn SDL_GL_ExtensionSupported(extension: *const i8) -> crate::stdlib::SDL_bool;
 
     #[no_mangle]
-    pub fn SDL_GL_SetAttribute(attr: crate::stdlib::SDL_GLattr, value: libc::c_int) -> libc::c_int;
+    pub fn SDL_GL_SetAttribute(attr: crate::stdlib::SDL_GLattr, value: i32) -> i32;
 
     #[no_mangle]
     pub fn SDL_GL_GetAttribute(
         attr: crate::stdlib::SDL_GLattr,
-        value: *mut libc::c_int,
-    ) -> libc::c_int;
+        value: *mut i32,
+    ) -> i32;
 
     #[no_mangle]
     pub fn SDL_GL_CreateContext(
@@ -143,7 +143,7 @@ extern "C" {
     ) -> crate::stdlib::SDL_GLContext;
 
     #[no_mangle]
-    pub fn SDL_GL_SetSwapInterval(interval: libc::c_int) -> libc::c_int;
+    pub fn SDL_GL_SetSwapInterval(interval: i32) -> i32;
 
     #[no_mangle]
     pub fn SDL_GL_SwapWindow(window: *mut crate::stdlib::SDL_Window);
@@ -151,7 +151,7 @@ extern "C" {
     #[no_mangle]
     pub fn SDL_GL_DeleteContext(context: crate::stdlib::SDL_GLContext);
     #[no_mangle]
-    pub fn __ctype_b_loc() -> *mut *const libc::c_ushort;
+    pub fn __ctype_b_loc() -> *mut *const u16;
 
     #[no_mangle]
     pub fn __ctype_tolower_loc() -> *mut *const crate::stdlib::__int32_t;
@@ -159,94 +159,94 @@ extern "C" {
     #[no_mangle]
     pub fn __ctype_toupper_loc() -> *mut *const crate::stdlib::__int32_t;
     #[no_mangle]
-    pub fn _setjmp(_: *mut crate::stdlib::__jmp_buf_tag) -> libc::c_int;
+    pub fn _setjmp(_: *mut crate::stdlib::__jmp_buf_tag) -> i32;
 
     #[no_mangle]
-    pub fn longjmp(_: *mut crate::stdlib::__jmp_buf_tag, _: libc::c_int) -> !;
+    pub fn longjmp(_: *mut crate::stdlib::__jmp_buf_tag, _: i32) -> !;
     #[no_mangle]
-    pub fn floor(_: libc::c_double) -> libc::c_double;
+    pub fn floor(_: f64) -> f64;
 
     #[no_mangle]
-    pub fn pow(_: libc::c_double, _: libc::c_double) -> libc::c_double;
+    pub fn pow(_: f64, _: f64) -> f64;
 
     #[no_mangle]
-    pub fn ceil(_: libc::c_double) -> libc::c_double;
+    pub fn ceil(_: f64) -> f64;
 
     #[no_mangle]
-    pub fn tan(_: libc::c_double) -> libc::c_double;
+    pub fn tan(_: f64) -> f64;
 
     #[no_mangle]
-    pub fn acos(_: libc::c_double) -> libc::c_double;
+    pub fn acos(_: f64) -> f64;
 
     #[no_mangle]
-    pub fn atan2(_: libc::c_double, _: libc::c_double) -> libc::c_double;
+    pub fn atan2(_: f64, _: f64) -> f64;
 
     #[no_mangle]
-    pub fn cos(_: libc::c_double) -> libc::c_double;
+    pub fn cos(_: f64) -> f64;
 
     #[no_mangle]
-    pub fn sin(_: libc::c_double) -> libc::c_double;
+    pub fn sin(_: f64) -> f64;
 
     #[no_mangle]
-    pub fn sqrt(_: libc::c_double) -> libc::c_double;
+    pub fn sqrt(_: f64) -> f64;
 
     #[no_mangle]
-    pub fn fabs(_: libc::c_double) -> libc::c_double;
+    pub fn fabs(_: f64) -> f64;
     #[no_mangle]
-    pub fn fflush(__stream: *mut crate::stdlib::FILE) -> libc::c_int;
+    pub fn fflush(__stream: *mut crate::stdlib::FILE) -> i32;
 
     #[no_mangle]
     pub fn fwrite(
         _: *const libc::c_void,
-        _: libc::c_ulong,
-        _: libc::c_ulong,
+        _: usize,
+        _: usize,
         _: *mut crate::stdlib::FILE,
-    ) -> libc::c_ulong;
+    ) -> usize;
 
     #[no_mangle]
-    pub fn ferror(__stream: *mut crate::stdlib::FILE) -> libc::c_int;
+    pub fn ferror(__stream: *mut crate::stdlib::FILE) -> i32;
 
     #[no_mangle]
     pub fn fread(
         _: *mut libc::c_void,
-        _: libc::c_ulong,
-        _: libc::c_ulong,
+        _: usize,
+        _: usize,
         _: *mut crate::stdlib::FILE,
-    ) -> libc::c_ulong;
+    ) -> usize;
 
     #[no_mangle]
     pub static mut stderr: *mut crate::stdlib::FILE;
 
     #[no_mangle]
-    pub fn fprintf(_: *mut crate::stdlib::FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
+    pub fn fprintf(_: *mut crate::stdlib::FILE, _: *const i8, _: ...) -> i32;
 
     #[no_mangle]
-    pub fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+    pub fn sprintf(_: *mut i8, _: *const i8, _: ...) -> i32;
 
     #[no_mangle]
     pub fn vsnprintf(
-        _: *mut libc::c_char,
-        _: libc::c_ulong,
-        _: *const libc::c_char,
+        _: *mut i8,
+        _: usize,
+        _: *const i8,
         _: ::std::ffi::VaList,
-    ) -> libc::c_int;
+    ) -> i32;
 
     #[no_mangle]
-    pub fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
+    pub fn sscanf(_: *const i8, _: *const i8, _: ...) -> i32;
     #[no_mangle]
-    pub fn malloc(_: libc::c_ulong) -> *mut libc::c_void;
+    pub fn malloc(_: usize) -> *mut libc::c_void;
 
     #[no_mangle]
     pub fn free(__ptr: *mut libc::c_void);
 
     #[no_mangle]
-    pub fn abs(_: libc::c_int) -> libc::c_int;
+    pub fn abs(_: i32) -> i32;
 
     #[no_mangle]
-    pub fn rand() -> libc::c_int;
+    pub fn rand() -> i32;
 
     #[no_mangle]
-    pub fn strtod(_: *const libc::c_char, _: *mut *mut libc::c_char) -> libc::c_double;
+    pub fn strtod(_: *const i8, _: *mut *mut i8) -> f64;
 
     #[no_mangle]
     pub fn qsort(
@@ -257,61 +257,61 @@ extern "C" {
     );
 
     #[no_mangle]
-    pub fn exit(_: libc::c_int) -> !;
+    pub fn exit(_: i32) -> !;
 
     #[no_mangle]
-    pub fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
+    pub fn getenv(__name: *const i8) -> *mut i8;
     #[no_mangle]
-    pub fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+    pub fn memset(_: *mut libc::c_void, _: i32, _: usize) -> *mut libc::c_void;
 
     #[no_mangle]
-    pub fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
+    pub fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: usize) -> i32;
 
     #[no_mangle]
-    pub fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong)
-        -> libc::c_int;
+    pub fn strncmp(_: *const i8, _: *const i8, _: usize)
+        -> i32;
 
     #[no_mangle]
-    pub fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+    pub fn strstr(_: *const i8, _: *const i8) -> *mut i8;
 
     #[no_mangle]
     pub fn memcpy(
         _: *mut libc::c_void,
         _: *const libc::c_void,
-        _: libc::c_ulong,
+        _: usize,
     ) -> *mut libc::c_void;
 
     #[no_mangle]
     pub fn memmove(
         _: *mut libc::c_void,
         _: *const libc::c_void,
-        _: libc::c_ulong,
+        _: usize,
     ) -> *mut libc::c_void;
 
     #[no_mangle]
-    pub fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+    pub fn strcpy(_: *mut i8, _: *const i8) -> *mut i8;
 
     #[no_mangle]
     pub fn strncpy(
-        _: *mut libc::c_char,
-        _: *const libc::c_char,
-        _: libc::c_ulong,
-    ) -> *mut libc::c_char;
+        _: *mut i8,
+        _: *const i8,
+        _: usize,
+    ) -> *mut i8;
 
     #[no_mangle]
-    pub fn strcat(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+    pub fn strcat(_: *mut i8, _: *const i8) -> *mut i8;
 
     #[no_mangle]
-    pub fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+    pub fn strcmp(_: *const i8, _: *const i8) -> i32;
 
     #[no_mangle]
-    pub fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+    pub fn strchr(_: *const i8, _: i32) -> *mut i8;
 
     #[no_mangle]
-    pub fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+    pub fn strrchr(_: *const i8, _: i32) -> *mut i8;
 
     #[no_mangle]
-    pub fn strlen(_: *const libc::c_char) -> libc::c_ulong;
+    pub fn strlen(_: *const i8) -> usize;
     pub type _IO_wide_data;
 
     pub type _IO_codecvt;
@@ -324,21 +324,21 @@ pub type FILE = crate::stdlib::_IO_FILE;
 // =============== BEGIN SDL_opengl_glext_h ================
 pub type GLsizeiptr = crate::stddef_h::ptrdiff_t;
 pub type GLintptr = crate::stddef_h::ptrdiff_t;
-pub type GLchar = libc::c_char;
+pub type GLchar = i8;
 // ================ END SDL_opengl_glext_h ================
 // =============== BEGIN SDL_opengl_h ================
-pub type GLenum = libc::c_uint;
-pub type GLboolean = libc::c_uchar;
-pub type GLbitfield = libc::c_uint;
+pub type GLenum = u32;
+pub type GLboolean = u8;
+pub type GLbitfield = u32;
 pub type GLvoid = ();
-pub type GLint = libc::c_int;
-pub type GLsizei = libc::c_int;
-pub type GLfloat = libc::c_float;
-pub type GLclampf = libc::c_float;
-pub type GLdouble = libc::c_double;
-pub type GLclampd = libc::c_double;
-pub type GLuint = libc::c_uint;
-pub type GLubyte = libc::c_uchar;
+pub type GLint = i32;
+pub type GLsizei = i32;
+pub type GLfloat = f32;
+pub type GLclampf = f32;
+pub type GLdouble = f64;
+pub type GLclampd = f64;
+pub type GLuint = u32;
+pub type GLubyte = u8;
 // ================ END SDL_opengl_h ================
 // =============== BEGIN SDL_pixels_h ================
 #[repr(C)]
@@ -352,10 +352,10 @@ pub struct SDL_Color {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct SDL_Palette {
-    pub ncolors: libc::c_int,
+    pub ncolors: i32,
     pub colors: *mut crate::stdlib::SDL_Color,
     pub version: crate::stdlib::Uint32,
-    pub refcount: libc::c_int,
+    pub refcount: i32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -377,7 +377,7 @@ pub struct SDL_PixelFormat {
     pub Gshift: crate::stdlib::Uint8,
     pub Bshift: crate::stdlib::Uint8,
     pub Ashift: crate::stdlib::Uint8,
-    pub refcount: libc::c_int,
+    pub refcount: i32,
     pub next: *mut crate::stdlib::SDL_PixelFormat,
 }
 pub const SDL_PIXELFORMAT_EXTERNAL_OES: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 542328143;
@@ -428,15 +428,15 @@ pub const SDL_PIXELFORMAT_UNKNOWN: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct SDL_Rect {
-    pub x: libc::c_int,
-    pub y: libc::c_int,
-    pub w: libc::c_int,
-    pub h: libc::c_int,
+    pub x: i32,
+    pub y: i32,
+    pub w: i32,
+    pub h: i32,
 }
 // ================ END SDL_rect_h ================
 // =============== BEGIN SDL_stdinc_h ================
 pub type Uint16 = crate::stdlib::uint16_t;
-pub type SDL_bool = libc::c_uint;
+pub type SDL_bool = u32;
 pub type Uint8 = crate::stdlib::uint8_t;
 pub type Uint32 = crate::stdlib::uint32_t;
 pub const SDL_TRUE: crate::stdlib::SDL_bool = 1;
@@ -448,16 +448,16 @@ pub const SDL_FALSE: crate::stdlib::SDL_bool = 0;
 pub struct SDL_Surface {
     pub flags: crate::stdlib::Uint32,
     pub format: *mut crate::stdlib::SDL_PixelFormat,
-    pub w: libc::c_int,
-    pub h: libc::c_int,
-    pub pitch: libc::c_int,
+    pub w: i32,
+    pub h: i32,
+    pub pitch: i32,
     pub pixels: *mut libc::c_void,
     pub userdata: *mut libc::c_void,
-    pub locked: libc::c_int,
+    pub locked: i32,
     pub lock_data: *mut libc::c_void,
     pub clip_rect: crate::stdlib::SDL_Rect,
     pub map: *mut crate::stdlib::SDL_BlitMap,
-    pub refcount: libc::c_int,
+    pub refcount: i32,
 }
 // ================ END SDL_surface_h ================
 // =============== BEGIN SDL_video_h ================
@@ -465,13 +465,13 @@ pub struct SDL_Surface {
 #[derive(Copy, Clone)]
 pub struct SDL_DisplayMode {
     pub format: crate::stdlib::Uint32,
-    pub w: libc::c_int,
-    pub h: libc::c_int,
-    pub refresh_rate: libc::c_int,
+    pub w: i32,
+    pub h: i32,
+    pub refresh_rate: i32,
     pub driverdata: *mut libc::c_void,
 }
 pub type SDL_GLContext = *mut libc::c_void;
-pub type SDL_GLattr = libc::c_uint;
+pub type SDL_GLattr = u32;
 pub const SDL_WINDOW_VULKAN: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 268435456;
 pub const SDL_WINDOW_POPUP_MENU: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 524288;
 pub const SDL_WINDOW_TOOLTIP: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 262144;
@@ -528,7 +528,7 @@ pub const SDL_GL_CONTEXT_PROFILE_CORE: crate::src::jpeg_8c::jerror::C2RustUnname
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct __sigset_t {
-    pub __val: [libc::c_ulong; 16],
+    pub __val: [usize; 16],
 }
 // ================ END __sigset_t_h ================
 // =============== BEGIN ctype_h ================
@@ -550,16 +550,16 @@ pub const _ISupper: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 256;
 #[derive(Copy, Clone)]
 pub struct __jmp_buf_tag {
     pub __jmpbuf: crate::stdlib::__jmp_buf,
-    pub __mask_was_saved: libc::c_int,
+    pub __mask_was_saved: i32,
     pub __saved_mask: crate::stdlib::__sigset_t,
 }
 pub type jmp_buf = [crate::stdlib::__jmp_buf_tag; 1];
 // ================ END include_setjmp_h ================
 // =============== BEGIN setjmp_h ================
-pub type __jmp_buf = [libc::c_long; 8];
+pub type __jmp_buf = [isize; 8];
 // ================ END setjmp_h ================
 // =============== BEGIN stdint_h ================
-pub type intptr_t = libc::c_long;
+pub type intptr_t = isize;
 // ================ END stdint_h ================
 // =============== BEGIN stdint_intn_h ================
 pub type int64_t = crate::stdlib::__int64_t;
@@ -573,32 +573,32 @@ pub type uint32_t = crate::stdlib::__uint32_t;
 // ================ END stdint_uintn_h ================
 // =============== BEGIN stdlib_h ================
 pub type __compar_fn_t =
-    Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
+    Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> i32>;
 // ================ END stdlib_h ================
 // =============== BEGIN struct_FILE_h ================
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct _IO_FILE {
-    pub _flags: libc::c_int,
-    pub _IO_read_ptr: *mut libc::c_char,
-    pub _IO_read_end: *mut libc::c_char,
-    pub _IO_read_base: *mut libc::c_char,
-    pub _IO_write_base: *mut libc::c_char,
-    pub _IO_write_ptr: *mut libc::c_char,
-    pub _IO_write_end: *mut libc::c_char,
-    pub _IO_buf_base: *mut libc::c_char,
-    pub _IO_buf_end: *mut libc::c_char,
-    pub _IO_save_base: *mut libc::c_char,
-    pub _IO_backup_base: *mut libc::c_char,
-    pub _IO_save_end: *mut libc::c_char,
+    pub _flags: i32,
+    pub _IO_read_ptr: *mut i8,
+    pub _IO_read_end: *mut i8,
+    pub _IO_read_base: *mut i8,
+    pub _IO_write_base: *mut i8,
+    pub _IO_write_ptr: *mut i8,
+    pub _IO_write_end: *mut i8,
+    pub _IO_buf_base: *mut i8,
+    pub _IO_buf_end: *mut i8,
+    pub _IO_save_base: *mut i8,
+    pub _IO_backup_base: *mut i8,
+    pub _IO_save_end: *mut i8,
     pub _markers: *mut crate::stdlib::_IO_marker,
     pub _chain: *mut crate::stdlib::_IO_FILE,
-    pub _fileno: libc::c_int,
-    pub _flags2: libc::c_int,
+    pub _fileno: i32,
+    pub _flags2: i32,
     pub _old_offset: crate::stdlib::__off_t,
-    pub _cur_column: libc::c_ushort,
-    pub _vtable_offset: libc::c_schar,
-    pub _shortbuf: [libc::c_char; 1],
+    pub _cur_column: u16,
+    pub _vtable_offset: i8,
+    pub _shortbuf: [i8; 1],
     pub _lock: *mut libc::c_void,
     pub _offset: crate::stdlib::__off64_t,
     pub _codecvt: *mut crate::stdlib::_IO_codecvt,
@@ -606,17 +606,17 @@ pub struct _IO_FILE {
     pub _freeres_list: *mut crate::stdlib::_IO_FILE,
     pub _freeres_buf: *mut libc::c_void,
     pub __pad5: crate::stddef_h::size_t,
-    pub _mode: libc::c_int,
-    pub _unused2: [libc::c_char; 20],
+    pub _mode: i32,
+    pub _unused2: [i8; 20],
 }
 pub type _IO_lock_t = ();
 // ================ END struct_FILE_h ================
 // =============== BEGIN types_h ================
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __uint16_t = libc::c_ushort;
-pub type __int64_t = libc::c_long;
-pub type __uint8_t = libc::c_uchar;
-pub type __int16_t = libc::c_short;
-pub type __int32_t = libc::c_int;
-pub type __uint32_t = libc::c_uint;
+pub type __off_t = isize;
+pub type __off64_t = isize;
+pub type __uint16_t = u16;
+pub type __int64_t = isize;
+pub type __uint8_t = u8;
+pub type __int16_t = i16;
+pub type __int32_t = i32;
+pub type __uint32_t = u32;

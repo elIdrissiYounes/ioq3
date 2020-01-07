@@ -93,7 +93,7 @@ pub use crate::jpeglib_h::J_DITHER_MODE;
 #[no_mangle]
 
 pub unsafe extern "C" fn jpeg_abort(mut cinfo: crate::jpeglib_h::j_common_ptr) {
-    let mut pool: libc::c_int = 0;
+    let mut pool: i32 = 0;
     /* Do nothing if called on a not-initialized or destroyed JPEG object. */
     if (*cinfo).mem.is_null() {
         return;
@@ -101,8 +101,8 @@ pub unsafe extern "C" fn jpeg_abort(mut cinfo: crate::jpeglib_h::j_common_ptr) {
     /* Releasing pools in reverse order might help avoid fragmentation
      * with some (brain-damaged) malloc libraries.
      */
-    pool = 2 as libc::c_int - 1 as libc::c_int;
-    while pool > 0 as libc::c_int {
+    pool = 2 - 1;
+    while pool > 0 {
         Some(
             (*(*cinfo).mem)
                 .free_pool
@@ -113,14 +113,14 @@ pub unsafe extern "C" fn jpeg_abort(mut cinfo: crate::jpeglib_h::j_common_ptr) {
     }
     /* Reset overall state for possible reuse of object */
     if (*cinfo).is_decompressor != 0 {
-        (*cinfo).global_state = 200 as libc::c_int;
+        (*cinfo).global_state = 200;
         /* Try to keep application from accessing now-deleted marker list.
          * A bit kludgy to do it here, but this is the most central place.
          */
         let ref mut fresh0 = (*(cinfo as crate::jpeglib_h::j_decompress_ptr)).marker_list;
         *fresh0 = 0 as crate::jpeglib_h::jpeg_saved_marker_ptr
     } else {
-        (*cinfo).global_state = 100 as libc::c_int
+        (*cinfo).global_state = 100
     };
 }
 /* Main entry points for compression */
@@ -185,7 +185,7 @@ pub unsafe extern "C" fn jpeg_destroy(mut cinfo: crate::jpeglib_h::j_common_ptr)
         .expect("non-null function pointer")(cinfo); /* be safe if jpeg_destroy is called twice */
     }
     (*cinfo).mem = 0 as *mut crate::jpeglib_h::jpeg_memory_mgr;
-    (*cinfo).global_state = 0 as libc::c_int;
+    (*cinfo).global_state = 0;
     /* mark it destroyed */
 }
 /*
@@ -205,10 +205,11 @@ pub unsafe extern "C" fn jpeg_alloc_quant_table(
     )
     .expect("non-null function pointer")(
         cinfo,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::jpeglib_h::JQUANT_TBL>() as libc::c_ulong,
+        0,
+        
+        ::std::mem::size_of::<crate::jpeglib_h::JQUANT_TBL>(),
     ) as *mut crate::jpeglib_h::JQUANT_TBL;
-    (*tbl).sent_table = 0 as libc::c_int;
+    (*tbl).sent_table = 0;
     return tbl;
 }
 /* Routine signature for application-supplied marker processing methods.
@@ -252,9 +253,10 @@ pub unsafe extern "C" fn jpeg_alloc_huff_table(
     )
     .expect("non-null function pointer")(
         cinfo,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::jpeglib_h::JHUFF_TBL>() as libc::c_ulong,
+        0,
+        
+        ::std::mem::size_of::<crate::jpeglib_h::JHUFF_TBL>(),
     ) as *mut crate::jpeglib_h::JHUFF_TBL;
-    (*tbl).sent_table = 0 as libc::c_int;
+    (*tbl).sent_table = 0;
     return tbl;
 }

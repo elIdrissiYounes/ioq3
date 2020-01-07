@@ -35,35 +35,31 @@ memory management
 ===============================================================================
 */
 
-static mut buffer: *mut crate::snd_local_h::sndBuffer =
-    0 as *const crate::snd_local_h::sndBuffer as *mut crate::snd_local_h::sndBuffer;
+static mut buffer: *mut crate::snd_local_h::sndBuffer = 0 as *mut crate::snd_local_h::sndBuffer;
 
-static mut freelist: *mut crate::snd_local_h::sndBuffer =
-    0 as *const crate::snd_local_h::sndBuffer as *mut crate::snd_local_h::sndBuffer;
+static mut freelist: *mut crate::snd_local_h::sndBuffer = 0 as *mut crate::snd_local_h::sndBuffer;
 
-static mut inUse: libc::c_int = 0 as libc::c_int;
+static mut inUse: i32 = 0;
 
-static mut totalInUse: libc::c_int = 0 as libc::c_int;
+static mut totalInUse: i32 = 0;
 #[no_mangle]
 
-pub static mut sfxScratchBuffer: *mut libc::c_short =
-    0 as *const libc::c_short as *mut libc::c_short;
+pub static mut sfxScratchBuffer: *mut i16 = 0 as *mut i16;
 #[no_mangle]
 
 pub static mut sfxScratchPointer: *mut crate::snd_local_h::sfx_t =
-    0 as *const crate::snd_local_h::sfx_t as *mut crate::snd_local_h::sfx_t;
+    0 as *mut crate::snd_local_h::sfx_t;
 #[no_mangle]
 
-pub static mut sfxScratchIndex: libc::c_int = 0 as libc::c_int;
+pub static mut sfxScratchIndex: i32 = 0;
 #[no_mangle]
 
 pub unsafe extern "C" fn SND_free(mut v: *mut crate::snd_local_h::sndBuffer) {
     let ref mut fresh0 = *(v as *mut *mut crate::snd_local_h::sndBuffer);
     *fresh0 = freelist;
     freelist = v;
-    inUse = (inUse as libc::c_ulong)
-        .wrapping_add(::std::mem::size_of::<crate::snd_local_h::sndBuffer>() as libc::c_ulong)
-        as libc::c_int as libc::c_int;
+    inUse = (inUse as usize).wrapping_add(::std::mem::size_of::<crate::snd_local_h::sndBuffer>())
+        as i32;
 }
 #[no_mangle]
 
@@ -72,12 +68,11 @@ pub unsafe extern "C" fn SND_malloc() -> *mut crate::snd_local_h::sndBuffer {
     while freelist.is_null() {
         crate::src::client::snd_dma::S_FreeOldestSound();
     }
-    inUse = (inUse as libc::c_ulong)
-        .wrapping_sub(::std::mem::size_of::<crate::snd_local_h::sndBuffer>() as libc::c_ulong)
-        as libc::c_int as libc::c_int;
-    totalInUse = (totalInUse as libc::c_ulong)
-        .wrapping_add(::std::mem::size_of::<crate::snd_local_h::sndBuffer>() as libc::c_ulong)
-        as libc::c_int as libc::c_int;
+    inUse = (inUse as usize).wrapping_sub(::std::mem::size_of::<crate::snd_local_h::sndBuffer>())
+        as i32;
+    totalInUse = (totalInUse as usize)
+        .wrapping_add(::std::mem::size_of::<crate::snd_local_h::sndBuffer>())
+        as i32;
     v = freelist;
     freelist = *(freelist as *mut *mut crate::snd_local_h::sndBuffer);
     (*v).next = 0 as *mut crate::snd_local_h::sndBuffer_s;
@@ -90,27 +85,25 @@ pub unsafe extern "C" fn SND_setup() {
     let mut q: *mut crate::snd_local_h::sndBuffer = 0 as *mut crate::snd_local_h::sndBuffer;
     let mut cv: *mut crate::src::qcommon::q_shared::cvar_t =
         0 as *mut crate::src::qcommon::q_shared::cvar_t;
-    let mut scs: libc::c_int = 0;
+    let mut scs: i32 = 0;
     cv = crate::src::qcommon::cvar::Cvar_Get(
-        b"com_soundMegs\x00" as *const u8 as *const libc::c_char,
-        b"8\x00" as *const u8 as *const libc::c_char,
-        0x20 as libc::c_int | 0x1 as libc::c_int,
+        b"com_soundMegs\x00" as *const u8 as *const i8,
+        b"8\x00" as *const u8 as *const i8,
+        0x20 | 0x1,
     );
-    scs = (*cv).integer * 1536 as libc::c_int;
+    scs = (*cv).integer * 1536;
     buffer = crate::stdlib::malloc(
-        (scs as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<crate::snd_local_h::sndBuffer>() as libc::c_ulong),
+        (scs as usize).wrapping_mul(::std::mem::size_of::<crate::snd_local_h::sndBuffer>()),
     ) as *mut crate::snd_local_h::sndBuffer;
     // allocate the stack based hunk allocator
     sfxScratchBuffer = crate::stdlib::malloc(
-        (1024 as libc::c_int as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<libc::c_short>() as libc::c_ulong)
-            .wrapping_mul(4 as libc::c_int as libc::c_ulong),
-    ) as *mut libc::c_short; //Hunk_Alloc(SND_CHUNK_SIZE * sizeof(short) * 4);
+        (1024usize)
+            .wrapping_mul(::std::mem::size_of::<i16>())
+            .wrapping_mul(4usize),
+    ) as *mut i16; //Hunk_Alloc(SND_CHUNK_SIZE * sizeof(short) * 4);
     sfxScratchPointer = 0 as *mut crate::snd_local_h::sfx_t;
-    inUse = (scs as libc::c_ulong)
-        .wrapping_mul(::std::mem::size_of::<crate::snd_local_h::sndBuffer>() as libc::c_ulong)
-        as libc::c_int;
+    inUse =
+        (scs as usize).wrapping_mul(::std::mem::size_of::<crate::snd_local_h::sndBuffer>()) as i32;
     p = buffer;
     q = p.offset(scs as isize);
     loop {
@@ -119,13 +112,13 @@ pub unsafe extern "C" fn SND_setup() {
             break;
         }
         let ref mut fresh1 = *(q as *mut *mut crate::snd_local_h::sndBuffer);
-        *fresh1 = q.offset(-(1 as libc::c_int as isize))
+        *fresh1 = q.offset(-(1))
     }
     let ref mut fresh2 = *(q as *mut *mut crate::snd_local_h::sndBuffer);
     *fresh2 = 0 as *mut crate::snd_local_h::sndBuffer;
-    freelist = p.offset(scs as isize).offset(-(1 as libc::c_int as isize));
+    freelist = p.offset(scs as isize).offset(-(1));
     crate::src::qcommon::common::Com_Printf(
-        b"Sound memory manager started\n\x00" as *const u8 as *const libc::c_char,
+        b"Sound memory manager started\n\x00" as *const u8 as *const i8,
     );
 }
 #[no_mangle]
@@ -144,47 +137,44 @@ resample / decimate to the current source rate
 
 unsafe extern "C" fn ResampleSfx(
     mut sfx: *mut crate::snd_local_h::sfx_t,
-    mut channels: libc::c_int,
-    mut inrate: libc::c_int,
-    mut inwidth: libc::c_int,
-    mut samples: libc::c_int,
+    mut channels: i32,
+    mut inrate: i32,
+    mut inwidth: i32,
+    mut samples: i32,
     mut data: *mut crate::src::qcommon::q_shared::byte,
     mut compressed: crate::src::qcommon::q_shared::qboolean,
-) -> libc::c_int {
-    let mut outcount: libc::c_int = 0; // this is usually 0.5, 1, or 2
-    let mut srcsample: libc::c_int = 0;
-    let mut stepscale: libc::c_float = 0.;
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    let mut sample: libc::c_int = 0;
-    let mut samplefrac: libc::c_int = 0;
-    let mut fracstep: libc::c_int = 0;
-    let mut part: libc::c_int = 0;
+) -> i32 {
+    let mut outcount: i32 = 0; // this is usually 0.5, 1, or 2
+    let mut srcsample: i32 = 0;
+    let mut stepscale: f32 = 0.;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut sample: i32 = 0;
+    let mut samplefrac: i32 = 0;
+    let mut fracstep: i32 = 0;
+    let mut part: i32 = 0;
     let mut chunk: *mut crate::snd_local_h::sndBuffer = 0 as *mut crate::snd_local_h::sndBuffer;
-    stepscale = inrate as libc::c_float / crate::src::client::snd_dma::dma.speed as libc::c_float;
-    outcount = (samples as libc::c_float / stepscale) as libc::c_int;
-    srcsample = 0 as libc::c_int;
-    samplefrac = 0 as libc::c_int;
-    fracstep = (stepscale * 256 as libc::c_int as libc::c_float * channels as libc::c_float)
-        as libc::c_int;
+    stepscale = inrate as f32 / crate::src::client::snd_dma::dma.speed as f32;
+    outcount = (samples as f32 / stepscale) as i32;
+    srcsample = 0;
+    samplefrac = 0;
+    fracstep = (stepscale * 256f32 * channels as f32) as i32;
     chunk = (*sfx).soundData;
-    i = 0 as libc::c_int;
+    i = 0;
     while i < outcount {
-        srcsample += samplefrac >> 8 as libc::c_int;
-        samplefrac &= 255 as libc::c_int;
+        srcsample += samplefrac >> 8;
+        samplefrac &= 255;
         samplefrac += fracstep;
-        j = 0 as libc::c_int;
+        j = 0;
         while j < channels {
-            if inwidth == 2 as libc::c_int {
-                sample =
-                    *(data as *mut libc::c_short).offset((srcsample + j) as isize) as libc::c_int
+            if inwidth == 2 {
+                sample = *(data as *mut i16).offset((srcsample + j) as isize) as i32
             } else {
-                sample = (((*data.offset((srcsample + j) as isize) as libc::c_int
-                    - 128 as libc::c_int) as libc::c_uint)
-                    << 8 as libc::c_int) as libc::c_int
+                sample =
+                    (((*data.offset((srcsample + j) as isize) as i32 - 128) as u32) << 8) as i32
             }
-            part = i * channels + j & 1024 as libc::c_int - 1 as libc::c_int;
-            if part == 0 as libc::c_int {
+            part = i * channels + j & 1024 - 1;
+            if part == 0 {
                 let mut newchunk: *mut crate::snd_local_h::sndBuffer =
                     0 as *mut crate::snd_local_h::sndBuffer;
                 newchunk = SND_malloc();
@@ -195,7 +185,7 @@ unsafe extern "C" fn ResampleSfx(
                 }
                 chunk = newchunk
             }
-            (*chunk).sndChunk[part as usize] = sample as libc::c_short;
+            (*chunk).sndChunk[part as usize] = sample as i16;
             j += 1
         }
         i += 1
@@ -211,43 +201,39 @@ resample / decimate to the current source rate
 */
 
 unsafe extern "C" fn ResampleSfxRaw(
-    mut sfx: *mut libc::c_short,
-    mut channels: libc::c_int,
-    mut inrate: libc::c_int,
-    mut inwidth: libc::c_int,
-    mut samples: libc::c_int,
+    mut sfx: *mut i16,
+    mut channels: i32,
+    mut inrate: i32,
+    mut inwidth: i32,
+    mut samples: i32,
     mut data: *mut crate::src::qcommon::q_shared::byte,
-) -> libc::c_int {
-    let mut outcount: libc::c_int = 0; // this is usually 0.5, 1, or 2
-    let mut srcsample: libc::c_int = 0;
-    let mut stepscale: libc::c_float = 0.;
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    let mut sample: libc::c_int = 0;
-    let mut samplefrac: libc::c_int = 0;
-    let mut fracstep: libc::c_int = 0;
-    stepscale = inrate as libc::c_float / crate::src::client::snd_dma::dma.speed as libc::c_float;
-    outcount = (samples as libc::c_float / stepscale) as libc::c_int;
-    srcsample = 0 as libc::c_int;
-    samplefrac = 0 as libc::c_int;
-    fracstep = (stepscale * 256 as libc::c_int as libc::c_float * channels as libc::c_float)
-        as libc::c_int;
-    i = 0 as libc::c_int;
+) -> i32 {
+    let mut outcount: i32 = 0; // this is usually 0.5, 1, or 2
+    let mut srcsample: i32 = 0;
+    let mut stepscale: f32 = 0.;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut sample: i32 = 0;
+    let mut samplefrac: i32 = 0;
+    let mut fracstep: i32 = 0;
+    stepscale = inrate as f32 / crate::src::client::snd_dma::dma.speed as f32;
+    outcount = (samples as f32 / stepscale) as i32;
+    srcsample = 0;
+    samplefrac = 0;
+    fracstep = (stepscale * 256f32 * channels as f32) as i32;
+    i = 0;
     while i < outcount {
-        srcsample += samplefrac >> 8 as libc::c_int;
-        samplefrac &= 255 as libc::c_int;
+        srcsample += samplefrac >> 8;
+        samplefrac &= 255;
         samplefrac += fracstep;
-        j = 0 as libc::c_int;
+        j = 0;
         while j < channels {
-            if inwidth == 2 as libc::c_int {
-                sample =
-                    *(data as *mut libc::c_short).offset((srcsample + j) as isize) as libc::c_int
+            if inwidth == 2 {
+                sample = *(data as *mut i16).offset((srcsample + j) as isize) as i32
             } else {
-                sample = (*data.offset((srcsample + j) as isize) as libc::c_int
-                    - 128 as libc::c_int)
-                    << 8 as libc::c_int
+                sample = (*data.offset((srcsample + j) as isize) as i32 - 128) << 8
             }
-            *sfx.offset((i * channels + j) as isize) = sample as libc::c_short;
+            *sfx.offset((i * channels + j) as isize) = sample as i16;
             j += 1
         }
         i += 1
@@ -328,7 +314,7 @@ pub unsafe extern "C" fn S_LoadSound(
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut data: *mut crate::src::qcommon::q_shared::byte =
         0 as *mut crate::src::qcommon::q_shared::byte;
-    let mut samples: *mut libc::c_short = 0 as *mut libc::c_short;
+    let mut samples: *mut i16 = 0 as *mut i16;
     let mut info: crate::src::client::snd_codec::snd_info_t =
         crate::src::client::snd_codec::snd_info_t {
             rate: 0,
@@ -345,34 +331,31 @@ pub unsafe extern "C" fn S_LoadSound(
     if data.is_null() {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if info.width == 1 as libc::c_int {
+    if info.width == 1 {
         crate::src::qcommon::common::Com_DPrintf(
-            b"^3WARNING: %s is a 8 bit audio file\n\x00" as *const u8 as *const libc::c_char,
+            b"^3WARNING: %s is a 8 bit audio file\n\x00" as *const u8 as *const i8,
             (*sfx).soundName.as_mut_ptr(),
         );
     }
-    if info.rate != 22050 as libc::c_int {
+    if info.rate != 22050 {
         crate::src::qcommon::common::Com_DPrintf(
-            b"^3WARNING: %s is not a 22kHz audio file\n\x00" as *const u8 as *const libc::c_char,
+            b"^3WARNING: %s is not a 22kHz audio file\n\x00" as *const u8 as *const i8,
             (*sfx).soundName.as_mut_ptr(),
         );
     }
     samples = crate::src::qcommon::common::Hunk_AllocateTempMemory(
-        ((info.channels * info.samples) as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<libc::c_short>() as libc::c_ulong)
-            .wrapping_mul(2 as libc::c_int as libc::c_ulong) as libc::c_int,
-    ) as *mut libc::c_short;
-    (*sfx).lastTimeUsed = crate::src::qcommon::common::Com_Milliseconds() + 1 as libc::c_int;
+        ((info.channels * info.samples) as usize)
+            .wrapping_mul(::std::mem::size_of::<i16>())
+            .wrapping_mul(2usize) as i32,
+    ) as *mut i16;
+    (*sfx).lastTimeUsed = crate::src::qcommon::common::Com_Milliseconds() + 1;
     // each of these compression schemes works just fine
     // but the 16bit quality is much nicer and with a local
     // install assured we can rely upon the sound memory
     // manager to do the right thing for us and page
     // sound in as needed
-    if info.channels == 1 as libc::c_int
-        && (*sfx).soundCompressed as libc::c_uint
-            == crate::src::qcommon::q_shared::qtrue as libc::c_int as libc::c_uint
-    {
-        (*sfx).soundCompressionMethod = 1 as libc::c_int;
+    if info.channels == 1 && (*sfx).soundCompressed == crate::src::qcommon::q_shared::qtrue {
+        (*sfx).soundCompressionMethod = 1;
         (*sfx).soundData = 0 as *mut crate::snd_local_h::sndBuffer;
         (*sfx).soundLength = ResampleSfxRaw(
             samples,
@@ -384,7 +367,7 @@ pub unsafe extern "C" fn S_LoadSound(
         );
         crate::src::client::snd_adpcm::S_AdpcmEncodeSound(sfx, samples);
     } else {
-        (*sfx).soundCompressionMethod = 0 as libc::c_int;
+        (*sfx).soundCompressionMethod = 0;
         (*sfx).soundData = 0 as *mut crate::snd_local_h::sndBuffer;
         (*sfx).soundLength = ResampleSfx(
             sfx,
@@ -437,8 +420,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 pub unsafe extern "C" fn S_DisplayFreeMemory() {
     crate::src::qcommon::common::Com_Printf(
-        b"%d bytes free sound buffer memory, %d total used\n\x00" as *const u8
-            as *const libc::c_char,
+        b"%d bytes free sound buffer memory, %d total used\n\x00" as *const u8 as *const i8,
         inUse,
         totalInUse,
     );

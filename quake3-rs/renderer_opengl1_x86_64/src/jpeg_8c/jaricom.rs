@@ -145,460 +145,460 @@ pub use crate::jmorecfg_h::INT32;
 #[no_mangle]
 
 pub static mut jpeg_aritab: [crate::jmorecfg_h::INT32; 114] = [
-    (0x5a1d as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (1 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (1 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 1 as libc::c_int as libc::c_long,
-    (0x2586 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (2 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 14 as libc::c_int as libc::c_long,
-    (0x1114 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (3 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 16 as libc::c_int as libc::c_long,
-    (0x80b as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (4 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 18 as libc::c_int as libc::c_long,
-    (0x3d8 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (5 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 20 as libc::c_int as libc::c_long,
-    (0x1da as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (6 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 23 as libc::c_int as libc::c_long,
-    (0xe5 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (7 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 25 as libc::c_int as libc::c_long,
-    (0x6f as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (8 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 28 as libc::c_int as libc::c_long,
-    (0x36 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (9 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 30 as libc::c_int as libc::c_long,
-    (0x1a as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (10 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 33 as libc::c_int as libc::c_long,
-    (0xd as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (11 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 35 as libc::c_int as libc::c_long,
-    (0x6 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (12 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 9 as libc::c_int as libc::c_long,
-    (0x3 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (13 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 10 as libc::c_int as libc::c_long,
-    (0x1 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (13 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 12 as libc::c_int as libc::c_long,
-    (0x5a7f as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (15 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (1 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 15 as libc::c_int as libc::c_long,
-    (0x3f25 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (16 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 36 as libc::c_int as libc::c_long,
-    (0x2cf2 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (17 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 38 as libc::c_int as libc::c_long,
-    (0x207c as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (18 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 39 as libc::c_int as libc::c_long,
-    (0x17b9 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (19 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 40 as libc::c_int as libc::c_long,
-    (0x1182 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (20 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 42 as libc::c_int as libc::c_long,
-    (0xcef as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (21 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 43 as libc::c_int as libc::c_long,
-    (0x9a1 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (22 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 45 as libc::c_int as libc::c_long,
-    (0x72f as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (23 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 46 as libc::c_int as libc::c_long,
-    (0x55c as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (24 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 48 as libc::c_int as libc::c_long,
-    (0x406 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (25 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 49 as libc::c_int as libc::c_long,
-    (0x303 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (26 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 51 as libc::c_int as libc::c_long,
-    (0x240 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (27 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 52 as libc::c_int as libc::c_long,
-    (0x1b1 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (28 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 54 as libc::c_int as libc::c_long,
-    (0x144 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (29 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 56 as libc::c_int as libc::c_long,
-    (0xf5 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (30 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 57 as libc::c_int as libc::c_long,
-    (0xb7 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (31 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 59 as libc::c_int as libc::c_long,
-    (0x8a as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (32 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 60 as libc::c_int as libc::c_long,
-    (0x68 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (33 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 62 as libc::c_int as libc::c_long,
-    (0x4e as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (34 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 63 as libc::c_int as libc::c_long,
-    (0x3b as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (35 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 32 as libc::c_int as libc::c_long,
-    (0x2c as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (9 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 33 as libc::c_int as libc::c_long,
-    (0x5ae1 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (37 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (1 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 37 as libc::c_int as libc::c_long,
-    (0x484c as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (38 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 64 as libc::c_int as libc::c_long,
-    (0x3a0d as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (39 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 65 as libc::c_int as libc::c_long,
-    (0x2ef1 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (40 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 67 as libc::c_int as libc::c_long,
-    (0x261f as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (41 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 68 as libc::c_int as libc::c_long,
-    (0x1f33 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (42 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 69 as libc::c_int as libc::c_long,
-    (0x19a8 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (43 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 70 as libc::c_int as libc::c_long,
-    (0x1518 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (44 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 72 as libc::c_int as libc::c_long,
-    (0x1177 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (45 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 73 as libc::c_int as libc::c_long,
-    (0xe74 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (46 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 74 as libc::c_int as libc::c_long,
-    (0xbfb as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (47 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 75 as libc::c_int as libc::c_long,
-    (0x9f8 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (48 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 77 as libc::c_int as libc::c_long,
-    (0x861 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (49 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 78 as libc::c_int as libc::c_long,
-    (0x706 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (50 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 79 as libc::c_int as libc::c_long,
-    (0x5cd as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (51 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 48 as libc::c_int as libc::c_long,
-    (0x4de as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (52 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 50 as libc::c_int as libc::c_long,
-    (0x40f as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (53 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 50 as libc::c_int as libc::c_long,
-    (0x363 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (54 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 51 as libc::c_int as libc::c_long,
-    (0x2d4 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (55 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 52 as libc::c_int as libc::c_long,
-    (0x25c as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (56 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 53 as libc::c_int as libc::c_long,
-    (0x1f8 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (57 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 54 as libc::c_int as libc::c_long,
-    (0x1a4 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (58 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 55 as libc::c_int as libc::c_long,
-    (0x160 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (59 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 56 as libc::c_int as libc::c_long,
-    (0x125 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (60 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 57 as libc::c_int as libc::c_long,
-    (0xf6 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (61 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 58 as libc::c_int as libc::c_long,
-    (0xcb as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (62 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 59 as libc::c_int as libc::c_long,
-    (0xab as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (63 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 61 as libc::c_int as libc::c_long,
-    (0x8f as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (32 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 61 as libc::c_int as libc::c_long,
-    (0x5b12 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (65 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (1 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 65 as libc::c_int as libc::c_long,
-    (0x4d04 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (66 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 80 as libc::c_int as libc::c_long,
-    (0x412c as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (67 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 81 as libc::c_int as libc::c_long,
-    (0x37d8 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (68 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 82 as libc::c_int as libc::c_long,
-    (0x2fe8 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (69 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 83 as libc::c_int as libc::c_long,
-    (0x293c as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (70 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 84 as libc::c_int as libc::c_long,
-    (0x2379 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (71 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 86 as libc::c_int as libc::c_long,
-    (0x1edf as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (72 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 87 as libc::c_int as libc::c_long,
-    (0x1aa9 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (73 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 87 as libc::c_int as libc::c_long,
-    (0x174e as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (74 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 72 as libc::c_int as libc::c_long,
-    (0x1424 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (75 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 72 as libc::c_int as libc::c_long,
-    (0x119c as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (76 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 74 as libc::c_int as libc::c_long,
-    (0xf6b as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (77 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 74 as libc::c_int as libc::c_long,
-    (0xd51 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (78 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 75 as libc::c_int as libc::c_long,
-    (0xbb6 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (79 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 77 as libc::c_int as libc::c_long,
-    (0xa40 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (48 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 77 as libc::c_int as libc::c_long,
-    (0x5832 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (81 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (1 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 80 as libc::c_int as libc::c_long,
-    (0x4d1c as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (82 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 88 as libc::c_int as libc::c_long,
-    (0x438e as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (83 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 89 as libc::c_int as libc::c_long,
-    (0x3bdd as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (84 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 90 as libc::c_int as libc::c_long,
-    (0x34ee as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (85 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 91 as libc::c_int as libc::c_long,
-    (0x2eae as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (86 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 92 as libc::c_int as libc::c_long,
-    (0x299a as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (87 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 93 as libc::c_int as libc::c_long,
-    (0x2516 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (71 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 86 as libc::c_int as libc::c_long,
-    (0x5570 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (89 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (1 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 88 as libc::c_int as libc::c_long,
-    (0x4ca9 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (90 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 95 as libc::c_int as libc::c_long,
-    (0x44d9 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (91 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 96 as libc::c_int as libc::c_long,
-    (0x3e22 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (92 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 97 as libc::c_int as libc::c_long,
-    (0x3824 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (93 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 99 as libc::c_int as libc::c_long,
-    (0x32b4 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (94 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 99 as libc::c_int as libc::c_long,
-    (0x2e17 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (86 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 93 as libc::c_int as libc::c_long,
-    (0x56a8 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (96 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (1 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 95 as libc::c_int as libc::c_long,
-    (0x4f46 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (97 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 101 as libc::c_int as libc::c_long,
-    (0x47e5 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (98 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 102 as libc::c_int as libc::c_long,
-    (0x41cf as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (99 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 103 as libc::c_int as libc::c_long,
-    (0x3c3d as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (100 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 104 as libc::c_int as libc::c_long,
-    (0x375e as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (93 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 99 as libc::c_int as libc::c_long,
-    (0x5231 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (102 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 105 as libc::c_int as libc::c_long,
-    (0x4c0f as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (103 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 106 as libc::c_int as libc::c_long,
-    (0x4639 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (104 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 107 as libc::c_int as libc::c_long,
-    (0x415e as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (99 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 103 as libc::c_int as libc::c_long,
-    (0x5627 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (106 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (1 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 105 as libc::c_int as libc::c_long,
-    (0x50e7 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (107 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 108 as libc::c_int as libc::c_long,
-    (0x4b85 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (103 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 109 as libc::c_int as libc::c_long,
-    (0x5597 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (109 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 110 as libc::c_int as libc::c_long,
-    (0x504f as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (107 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 111 as libc::c_int as libc::c_long,
-    (0x5a10 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (111 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (1 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 110 as libc::c_int as libc::c_long,
-    (0x5522 as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (109 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 112 as libc::c_int as libc::c_long,
-    (0x59eb as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (111 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (1 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 112 as libc::c_int as libc::c_long,
-    (0x5a1d as libc::c_int as crate::jmorecfg_h::INT32) << 16 as libc::c_int
-        | (113 as libc::c_int as crate::jmorecfg_h::INT32) << 8 as libc::c_int
-        | (0 as libc::c_int as crate::jmorecfg_h::INT32) << 7 as libc::c_int
-        | 113 as libc::c_int as libc::c_long,
+    (0x5a1d) << 16
+        | (1) << 8
+        | (1) << 7
+        | 1,
+    (0x2586) << 16
+        | (2) << 8
+        | (0) << 7
+        | 14,
+    (0x1114) << 16
+        | (3) << 8
+        | (0) << 7
+        | 16,
+    (0x80b) << 16
+        | (4) << 8
+        | (0) << 7
+        | 18,
+    (0x3d8) << 16
+        | (5) << 8
+        | (0) << 7
+        | 20,
+    (0x1da) << 16
+        | (6) << 8
+        | (0) << 7
+        | 23,
+    (0xe5) << 16
+        | (7) << 8
+        | (0) << 7
+        | 25,
+    (0x6f) << 16
+        | (8) << 8
+        | (0) << 7
+        | 28,
+    (0x36) << 16
+        | (9) << 8
+        | (0) << 7
+        | 30,
+    (0x1a) << 16
+        | (10) << 8
+        | (0) << 7
+        | 33,
+    (0xd) << 16
+        | (11) << 8
+        | (0) << 7
+        | 35,
+    (0x6) << 16
+        | (12) << 8
+        | (0) << 7
+        | 9,
+    (0x3) << 16
+        | (13) << 8
+        | (0) << 7
+        | 10,
+    (0x1) << 16
+        | (13) << 8
+        | (0) << 7
+        | 12,
+    (0x5a7f) << 16
+        | (15) << 8
+        | (1) << 7
+        | 15,
+    (0x3f25) << 16
+        | (16) << 8
+        | (0) << 7
+        | 36,
+    (0x2cf2) << 16
+        | (17) << 8
+        | (0) << 7
+        | 38,
+    (0x207c) << 16
+        | (18) << 8
+        | (0) << 7
+        | 39,
+    (0x17b9) << 16
+        | (19) << 8
+        | (0) << 7
+        | 40,
+    (0x1182) << 16
+        | (20) << 8
+        | (0) << 7
+        | 42,
+    (0xcef) << 16
+        | (21) << 8
+        | (0) << 7
+        | 43,
+    (0x9a1) << 16
+        | (22) << 8
+        | (0) << 7
+        | 45,
+    (0x72f) << 16
+        | (23) << 8
+        | (0) << 7
+        | 46,
+    (0x55c) << 16
+        | (24) << 8
+        | (0) << 7
+        | 48,
+    (0x406) << 16
+        | (25) << 8
+        | (0) << 7
+        | 49,
+    (0x303) << 16
+        | (26) << 8
+        | (0) << 7
+        | 51,
+    (0x240) << 16
+        | (27) << 8
+        | (0) << 7
+        | 52,
+    (0x1b1) << 16
+        | (28) << 8
+        | (0) << 7
+        | 54,
+    (0x144) << 16
+        | (29) << 8
+        | (0) << 7
+        | 56,
+    (0xf5) << 16
+        | (30) << 8
+        | (0) << 7
+        | 57,
+    (0xb7) << 16
+        | (31) << 8
+        | (0) << 7
+        | 59,
+    (0x8a) << 16
+        | (32) << 8
+        | (0) << 7
+        | 60,
+    (0x68) << 16
+        | (33) << 8
+        | (0) << 7
+        | 62,
+    (0x4e) << 16
+        | (34) << 8
+        | (0) << 7
+        | 63,
+    (0x3b) << 16
+        | (35) << 8
+        | (0) << 7
+        | 32,
+    (0x2c) << 16
+        | (9) << 8
+        | (0) << 7
+        | 33,
+    (0x5ae1) << 16
+        | (37) << 8
+        | (1) << 7
+        | 37,
+    (0x484c) << 16
+        | (38) << 8
+        | (0) << 7
+        | 64,
+    (0x3a0d) << 16
+        | (39) << 8
+        | (0) << 7
+        | 65,
+    (0x2ef1) << 16
+        | (40) << 8
+        | (0) << 7
+        | 67,
+    (0x261f) << 16
+        | (41) << 8
+        | (0) << 7
+        | 68,
+    (0x1f33) << 16
+        | (42) << 8
+        | (0) << 7
+        | 69,
+    (0x19a8) << 16
+        | (43) << 8
+        | (0) << 7
+        | 70,
+    (0x1518) << 16
+        | (44) << 8
+        | (0) << 7
+        | 72,
+    (0x1177) << 16
+        | (45) << 8
+        | (0) << 7
+        | 73,
+    (0xe74) << 16
+        | (46) << 8
+        | (0) << 7
+        | 74,
+    (0xbfb) << 16
+        | (47) << 8
+        | (0) << 7
+        | 75,
+    (0x9f8) << 16
+        | (48) << 8
+        | (0) << 7
+        | 77,
+    (0x861) << 16
+        | (49) << 8
+        | (0) << 7
+        | 78,
+    (0x706) << 16
+        | (50) << 8
+        | (0) << 7
+        | 79,
+    (0x5cd) << 16
+        | (51) << 8
+        | (0) << 7
+        | 48,
+    (0x4de) << 16
+        | (52) << 8
+        | (0) << 7
+        | 50,
+    (0x40f) << 16
+        | (53) << 8
+        | (0) << 7
+        | 50,
+    (0x363) << 16
+        | (54) << 8
+        | (0) << 7
+        | 51,
+    (0x2d4) << 16
+        | (55) << 8
+        | (0) << 7
+        | 52,
+    (0x25c) << 16
+        | (56) << 8
+        | (0) << 7
+        | 53,
+    (0x1f8) << 16
+        | (57) << 8
+        | (0) << 7
+        | 54,
+    (0x1a4) << 16
+        | (58) << 8
+        | (0) << 7
+        | 55,
+    (0x160) << 16
+        | (59) << 8
+        | (0) << 7
+        | 56,
+    (0x125) << 16
+        | (60) << 8
+        | (0) << 7
+        | 57,
+    (0xf6) << 16
+        | (61) << 8
+        | (0) << 7
+        | 58,
+    (0xcb) << 16
+        | (62) << 8
+        | (0) << 7
+        | 59,
+    (0xab) << 16
+        | (63) << 8
+        | (0) << 7
+        | 61,
+    (0x8f) << 16
+        | (32) << 8
+        | (0) << 7
+        | 61,
+    (0x5b12) << 16
+        | (65) << 8
+        | (1) << 7
+        | 65,
+    (0x4d04) << 16
+        | (66) << 8
+        | (0) << 7
+        | 80,
+    (0x412c) << 16
+        | (67) << 8
+        | (0) << 7
+        | 81,
+    (0x37d8) << 16
+        | (68) << 8
+        | (0) << 7
+        | 82,
+    (0x2fe8) << 16
+        | (69) << 8
+        | (0) << 7
+        | 83,
+    (0x293c) << 16
+        | (70) << 8
+        | (0) << 7
+        | 84,
+    (0x2379) << 16
+        | (71) << 8
+        | (0) << 7
+        | 86,
+    (0x1edf) << 16
+        | (72) << 8
+        | (0) << 7
+        | 87,
+    (0x1aa9) << 16
+        | (73) << 8
+        | (0) << 7
+        | 87,
+    (0x174e) << 16
+        | (74) << 8
+        | (0) << 7
+        | 72,
+    (0x1424) << 16
+        | (75) << 8
+        | (0) << 7
+        | 72,
+    (0x119c) << 16
+        | (76) << 8
+        | (0) << 7
+        | 74,
+    (0xf6b) << 16
+        | (77) << 8
+        | (0) << 7
+        | 74,
+    (0xd51) << 16
+        | (78) << 8
+        | (0) << 7
+        | 75,
+    (0xbb6) << 16
+        | (79) << 8
+        | (0) << 7
+        | 77,
+    (0xa40) << 16
+        | (48) << 8
+        | (0) << 7
+        | 77,
+    (0x5832) << 16
+        | (81) << 8
+        | (1) << 7
+        | 80,
+    (0x4d1c) << 16
+        | (82) << 8
+        | (0) << 7
+        | 88,
+    (0x438e) << 16
+        | (83) << 8
+        | (0) << 7
+        | 89,
+    (0x3bdd) << 16
+        | (84) << 8
+        | (0) << 7
+        | 90,
+    (0x34ee) << 16
+        | (85) << 8
+        | (0) << 7
+        | 91,
+    (0x2eae) << 16
+        | (86) << 8
+        | (0) << 7
+        | 92,
+    (0x299a) << 16
+        | (87) << 8
+        | (0) << 7
+        | 93,
+    (0x2516) << 16
+        | (71) << 8
+        | (0) << 7
+        | 86,
+    (0x5570) << 16
+        | (89) << 8
+        | (1) << 7
+        | 88,
+    (0x4ca9) << 16
+        | (90) << 8
+        | (0) << 7
+        | 95,
+    (0x44d9) << 16
+        | (91) << 8
+        | (0) << 7
+        | 96,
+    (0x3e22) << 16
+        | (92) << 8
+        | (0) << 7
+        | 97,
+    (0x3824) << 16
+        | (93) << 8
+        | (0) << 7
+        | 99,
+    (0x32b4) << 16
+        | (94) << 8
+        | (0) << 7
+        | 99,
+    (0x2e17) << 16
+        | (86) << 8
+        | (0) << 7
+        | 93,
+    (0x56a8) << 16
+        | (96) << 8
+        | (1) << 7
+        | 95,
+    (0x4f46) << 16
+        | (97) << 8
+        | (0) << 7
+        | 101,
+    (0x47e5) << 16
+        | (98) << 8
+        | (0) << 7
+        | 102,
+    (0x41cf) << 16
+        | (99) << 8
+        | (0) << 7
+        | 103,
+    (0x3c3d) << 16
+        | (100) << 8
+        | (0) << 7
+        | 104,
+    (0x375e) << 16
+        | (93) << 8
+        | (0) << 7
+        | 99,
+    (0x5231) << 16
+        | (102) << 8
+        | (0) << 7
+        | 105,
+    (0x4c0f) << 16
+        | (103) << 8
+        | (0) << 7
+        | 106,
+    (0x4639) << 16
+        | (104) << 8
+        | (0) << 7
+        | 107,
+    (0x415e) << 16
+        | (99) << 8
+        | (0) << 7
+        | 103,
+    (0x5627) << 16
+        | (106) << 8
+        | (1) << 7
+        | 105,
+    (0x50e7) << 16
+        | (107) << 8
+        | (0) << 7
+        | 108,
+    (0x4b85) << 16
+        | (103) << 8
+        | (0) << 7
+        | 109,
+    (0x5597) << 16
+        | (109) << 8
+        | (0) << 7
+        | 110,
+    (0x504f) << 16
+        | (107) << 8
+        | (0) << 7
+        | 111,
+    (0x5a10) << 16
+        | (111) << 8
+        | (1) << 7
+        | 110,
+    (0x5522) << 16
+        | (109) << 8
+        | (0) << 7
+        | 112,
+    (0x59eb) << 16
+        | (111) << 8
+        | (1) << 7
+        | 112,
+    (0x5a1d) << 16
+        | (113) << 8
+        | (0) << 7
+        | 113,
 ];

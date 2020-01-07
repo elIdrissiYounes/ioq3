@@ -1,9 +1,9 @@
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct bot_match_s {
-    pub string: [libc::c_char; 256],
-    pub type_0: libc::c_int,
-    pub subtype: libc::c_int,
+    pub string: [i8; 256],
+    pub type_0: i32,
+    pub subtype: i32,
     pub variables: [crate::be_ai_chat_h::bot_matchvariable_t; 8],
 }
 // true if updated this frame
@@ -57,18 +57,18 @@ pub type bot_matchvariable_t = crate::be_ai_chat_h::bot_matchvariable_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct bot_matchvariable_s {
-    pub offset: libc::c_char,
-    pub length: libc::c_int,
+    pub offset: i8,
+    pub length: i32,
 }
 //returned to AI when a match is found
 pub type bot_match_t = crate::be_ai_chat_h::bot_match_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct bot_consolemessage_s {
-    pub handle: libc::c_int,
-    pub time: libc::c_float,
-    pub type_0: libc::c_int,
-    pub message: [libc::c_char; 256],
+    pub handle: i32,
+    pub time: f32,
+    pub type_0: i32,
+    pub message: [i8; 256],
     pub prev: *mut crate::be_ai_chat_h::bot_consolemessage_s,
     pub next: *mut crate::be_ai_chat_h::bot_consolemessage_s,
 }

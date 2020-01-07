@@ -1,6 +1,6 @@
-pub type powerup_t = libc::c_uint;
-pub type holdable_t = libc::c_uint;
-pub type weapon_t = libc::c_uint;
+pub type powerup_t = u32;
+pub type holdable_t = u32;
+pub type weapon_t = u32;
 pub const HI_NUM_HOLDABLE: crate::bg_public_h::holdable_t = 6;
 pub const HI_INVULNERABILITY: crate::bg_public_h::holdable_t = 5;
 pub const HI_PORTAL: crate::bg_public_h::holdable_t = 4;
@@ -13,20 +13,20 @@ pub const HI_NONE: crate::bg_public_h::holdable_t = 0;
 pub struct pmove_t {
     pub ps: *mut crate::src::qcommon::q_shared::playerState_t,
     pub cmd: crate::src::qcommon::q_shared::usercmd_t,
-    pub tracemask: libc::c_int,
-    pub debugLevel: libc::c_int,
+    pub tracemask: i32,
+    pub debugLevel: i32,
     pub noFootsteps: crate::src::qcommon::q_shared::qboolean,
     pub gauntletHit: crate::src::qcommon::q_shared::qboolean,
-    pub framecount: libc::c_int,
-    pub numtouch: libc::c_int,
-    pub touchents: [libc::c_int; 32],
+    pub framecount: i32,
+    pub numtouch: i32,
+    pub touchents: [i32; 32],
     pub mins: crate::src::qcommon::q_shared::vec3_t,
     pub maxs: crate::src::qcommon::q_shared::vec3_t,
-    pub watertype: libc::c_int,
-    pub waterlevel: libc::c_int,
-    pub xyspeed: libc::c_float,
-    pub pmove_fixed: libc::c_int,
-    pub pmove_msec: libc::c_int,
+    pub watertype: i32,
+    pub waterlevel: i32,
+    pub xyspeed: f32,
+    pub pmove_fixed: i32,
+    pub pmove_msec: i32,
     pub trace: Option<
         unsafe extern "C" fn(
             _: *mut crate::src::qcommon::q_shared::trace_t,
@@ -34,16 +34,12 @@ pub struct pmove_t {
             _: *const crate::src::qcommon::q_shared::vec_t,
             _: *const crate::src::qcommon::q_shared::vec_t,
             _: *const crate::src::qcommon::q_shared::vec_t,
-            _: libc::c_int,
-            _: libc::c_int,
+            _: i32,
+            _: i32,
         ) -> (),
     >,
-    pub pointcontents: Option<
-        unsafe extern "C" fn(
-            _: *const crate::src::qcommon::q_shared::vec_t,
-            _: libc::c_int,
-        ) -> libc::c_int,
-    >,
+    pub pointcontents:
+        Option<unsafe extern "C" fn(_: *const crate::src::qcommon::q_shared::vec_t, _: i32) -> i32>,
 }
 pub const LEGS_WALK: crate::bg_public_h::C2RustUnnamed_0 = 14;
 pub const LEGS_BACKWALK: crate::bg_public_h::C2RustUnnamed_0 = 33;
@@ -83,22 +79,22 @@ pub const BOTH_DEAD2: crate::bg_public_h::C2RustUnnamed_0 = 3;
 pub const BOTH_DEATH2: crate::bg_public_h::C2RustUnnamed_0 = 2;
 pub const BOTH_DEAD1: crate::bg_public_h::C2RustUnnamed_0 = 1;
 pub const BOTH_DEATH1: crate::bg_public_h::C2RustUnnamed_0 = 0;
-pub type C2RustUnnamed_0 = libc::c_uint;
-pub type team_t = libc::c_uint;
-pub type itemType_t = libc::c_uint;
+pub type C2RustUnnamed_0 = u32;
+pub type team_t = u32;
+pub type itemType_t = u32;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct gitem_s {
-    pub classname: *mut libc::c_char,
-    pub pickup_sound: *mut libc::c_char,
-    pub world_model: [*mut libc::c_char; 4],
-    pub icon: *mut libc::c_char,
-    pub pickup_name: *mut libc::c_char,
-    pub quantity: libc::c_int,
+    pub classname: *mut i8,
+    pub pickup_sound: *mut i8,
+    pub world_model: [*mut i8; 4],
+    pub icon: *mut i8,
+    pub pickup_name: *mut i8,
+    pub quantity: i32,
     pub giType: crate::bg_public_h::itemType_t,
-    pub giTag: libc::c_int,
-    pub precaches: *mut libc::c_char,
-    pub sounds: *mut libc::c_char,
+    pub giTag: i32,
+    pub precaches: *mut i8,
+    pub sounds: *mut i8,
 }
 pub type gitem_t = crate::bg_public_h::gitem_s;
 pub const GT_MAX_GAME_TYPE: crate::bg_public_h::C2RustUnnamed_0 = 8;

@@ -168,97 +168,71 @@ Bullets shot underwater
 pub unsafe extern "C" fn CG_BubbleTrail(
     mut start: *mut crate::src::qcommon::q_shared::vec_t,
     mut end: *mut crate::src::qcommon::q_shared::vec_t,
-    mut spacing: libc::c_float,
+    mut spacing: f32,
 ) {
     let mut move_0: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut vec: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut len: libc::c_float = 0.;
-    let mut i: libc::c_int = 0;
+    let mut len: f32 = 0.;
+    let mut i: i32 = 0;
     if crate::src::cgame::cg_main::cg_noProjectileTrail.integer != 0 {
         return;
     }
-    move_0[0 as libc::c_int as usize] = *start.offset(0 as libc::c_int as isize);
-    move_0[1 as libc::c_int as usize] = *start.offset(1 as libc::c_int as isize);
-    move_0[2 as libc::c_int as usize] = *start.offset(2 as libc::c_int as isize);
-    vec[0 as libc::c_int as usize] =
-        *end.offset(0 as libc::c_int as isize) - *start.offset(0 as libc::c_int as isize);
-    vec[1 as libc::c_int as usize] =
-        *end.offset(1 as libc::c_int as isize) - *start.offset(1 as libc::c_int as isize);
-    vec[2 as libc::c_int as usize] =
-        *end.offset(2 as libc::c_int as isize) - *start.offset(2 as libc::c_int as isize);
+    move_0[0] = *start.offset(0);
+    move_0[1] = *start.offset(1);
+    move_0[2] = *start.offset(2);
+    vec[0] = *end.offset(0) - *start.offset(0);
+    vec[1] = *end.offset(1) - *start.offset(1);
+    vec[2] = *end.offset(2) - *start.offset(2);
     len = crate::src::qcommon::q_math::VectorNormalize(vec.as_mut_ptr());
     // advance a random amount first
-    i = crate::stdlib::rand() % spacing as libc::c_int;
-    move_0[0 as libc::c_int as usize] =
-        move_0[0 as libc::c_int as usize] + vec[0 as libc::c_int as usize] * i as libc::c_float;
-    move_0[1 as libc::c_int as usize] =
-        move_0[1 as libc::c_int as usize] + vec[1 as libc::c_int as usize] * i as libc::c_float;
-    move_0[2 as libc::c_int as usize] =
-        move_0[2 as libc::c_int as usize] + vec[2 as libc::c_int as usize] * i as libc::c_float;
-    vec[0 as libc::c_int as usize] = vec[0 as libc::c_int as usize] * spacing;
-    vec[1 as libc::c_int as usize] = vec[1 as libc::c_int as usize] * spacing;
-    vec[2 as libc::c_int as usize] = vec[2 as libc::c_int as usize] * spacing;
-    while (i as libc::c_float) < len {
+    i = crate::stdlib::rand() % spacing as i32;
+    move_0[0] = move_0[0] + vec[0] * i as f32;
+    move_0[1] = move_0[1] + vec[1] * i as f32;
+    move_0[2] = move_0[2] + vec[2] * i as f32;
+    vec[0] = vec[0] * spacing;
+    vec[1] = vec[1] * spacing;
+    vec[2] = vec[2] * spacing;
+    while (i as f32) < len {
         let mut le: *mut crate::cg_local_h::localEntity_t =
             0 as *mut crate::cg_local_h::localEntity_t;
         let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
         le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
-        (*le).leFlags = crate::cg_local_h::LEF_PUFF_DONT_SCALE as libc::c_int;
+        (*le).leFlags = crate::cg_local_h::LEF_PUFF_DONT_SCALE as i32;
         (*le).leType = crate::cg_local_h::LE_MOVE_SCALE_FADE;
         (*le).startTime = crate::src::cgame::cg_main::cg.time;
-        (*le).endTime = ((crate::src::cgame::cg_main::cg.time + 1000 as libc::c_int)
-            as libc::c_float
-            + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float
-                * 250 as libc::c_int as libc::c_float) as libc::c_int;
-        (*le).lifeRate =
-            (1.0f64 / ((*le).endTime - (*le).startTime) as libc::c_double) as libc::c_float;
+        (*le).endTime = ((crate::src::cgame::cg_main::cg.time + 1000) as f32
+            + (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 * 250f32)
+            as i32;
+        (*le).lifeRate = (1.0 / ((*le).endTime - (*le).startTime) as f64) as f32;
         re = &mut (*le).refEntity;
-        (*re).shaderTime = crate::src::cgame::cg_main::cg.time as libc::c_float / 1000.0f32;
+        (*re).shaderTime = crate::src::cgame::cg_main::cg.time as f32 / 1000.0;
         (*re).reType = crate::tr_types_h::RT_SPRITE;
-        (*re).rotation = 0 as libc::c_int as libc::c_float;
-        (*re).radius = 3 as libc::c_int as libc::c_float;
+        (*re).rotation = 0f32;
+        (*re).radius = 3f32;
         (*re).customShader = crate::src::cgame::cg_main::cgs.media.waterBubbleShader;
-        (*re).shaderRGBA[0 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-        (*re).shaderRGBA[1 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-        (*re).shaderRGBA[2 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-        (*re).shaderRGBA[3 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-        (*le).color[3 as libc::c_int as usize] = 1.0f64 as libc::c_float;
+        (*re).shaderRGBA[0] = 0xff;
+        (*re).shaderRGBA[1] = 0xff;
+        (*re).shaderRGBA[2] = 0xff;
+        (*re).shaderRGBA[3] = 0xff;
+        (*le).color[3] = 1f32;
         (*le).pos.trType = crate::src::qcommon::q_shared::TR_LINEAR;
         (*le).pos.trTime = crate::src::cgame::cg_main::cg.time;
-        (*le).pos.trBase[0 as libc::c_int as usize] = move_0[0 as libc::c_int as usize];
-        (*le).pos.trBase[1 as libc::c_int as usize] = move_0[1 as libc::c_int as usize];
-        (*le).pos.trBase[2 as libc::c_int as usize] = move_0[2 as libc::c_int as usize];
-        (*le).pos.trDelta[0 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 5 as libc::c_int as libc::c_double)
-            as crate::src::qcommon::q_shared::vec_t;
-        (*le).pos.trDelta[1 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 5 as libc::c_int as libc::c_double)
-            as crate::src::qcommon::q_shared::vec_t;
-        (*le).pos.trDelta[2 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 5 as libc::c_int as libc::c_double
-            + 6 as libc::c_int as libc::c_double)
-            as crate::src::qcommon::q_shared::vec_t;
-        move_0[0 as libc::c_int as usize] =
-            move_0[0 as libc::c_int as usize] + vec[0 as libc::c_int as usize];
-        move_0[1 as libc::c_int as usize] =
-            move_0[1 as libc::c_int as usize] + vec[1 as libc::c_int as usize];
-        move_0[2 as libc::c_int as usize] =
-            move_0[2 as libc::c_int as usize] + vec[2 as libc::c_int as usize];
-        i = (i as libc::c_float + spacing) as libc::c_int
+        (*le).pos.trBase[0] = move_0[0];
+        (*le).pos.trBase[1] = move_0[1];
+        (*le).pos.trBase[2] = move_0[2];
+        (*le).pos.trDelta[0] = (2.0
+            * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+            * 5f64) as crate::src::qcommon::q_shared::vec_t;
+        (*le).pos.trDelta[1] = (2.0
+            * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+            * 5f64) as crate::src::qcommon::q_shared::vec_t;
+        (*le).pos.trDelta[2] =
+            (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 5f64
+                + 6f64) as crate::src::qcommon::q_shared::vec_t;
+        move_0[0] = move_0[0] + vec[0];
+        move_0[1] = move_0[1] + vec[1];
+        move_0[2] = move_0[2] + vec[2];
+        i = (i as f32 + spacing) as i32
     }
 }
 /*
@@ -273,18 +247,18 @@ Adds a smoke puff or blood trail localEntity.
 pub unsafe extern "C" fn CG_SmokePuff(
     mut p: *const crate::src::qcommon::q_shared::vec_t,
     mut vel: *const crate::src::qcommon::q_shared::vec_t,
-    mut radius: libc::c_float,
-    mut r: libc::c_float,
-    mut g: libc::c_float,
-    mut b: libc::c_float,
-    mut a: libc::c_float,
-    mut duration: libc::c_float,
-    mut startTime: libc::c_int,
-    mut fadeInTime: libc::c_int,
-    mut leFlags: libc::c_int,
+    mut radius: f32,
+    mut r: f32,
+    mut g: f32,
+    mut b: f32,
+    mut a: f32,
+    mut duration: f32,
+    mut startTime: i32,
+    mut fadeInTime: i32,
+    mut leFlags: i32,
     mut hShader: crate::src::qcommon::q_shared::qhandle_t,
 ) -> *mut crate::cg_local_h::localEntity_t {
-    static mut seed: libc::c_int = 0x92 as libc::c_int;
+    static mut seed: i32 = 0x92;
     let mut le: *mut crate::cg_local_h::localEntity_t = 0 as *mut crate::cg_local_h::localEntity_t;
     let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
     //	int fadeInTime = startTime + duration / 2;
@@ -292,62 +266,46 @@ pub unsafe extern "C" fn CG_SmokePuff(
     (*le).leFlags = leFlags;
     (*le).radius = radius;
     re = &mut (*le).refEntity;
-    (*re).rotation =
-        crate::src::qcommon::q_math::Q_random(&mut seed) * 360 as libc::c_int as libc::c_float;
+    (*re).rotation = crate::src::qcommon::q_math::Q_random(&mut seed) * 360f32;
     (*re).radius = radius;
-    (*re).shaderTime = startTime as libc::c_float / 1000.0f32;
+    (*re).shaderTime = startTime as f32 / 1000.0;
     (*le).leType = crate::cg_local_h::LE_MOVE_SCALE_FADE;
     (*le).startTime = startTime;
     (*le).fadeInTime = fadeInTime;
-    (*le).endTime = (startTime as libc::c_float + duration) as libc::c_int;
+    (*le).endTime = (startTime as f32 + duration) as i32;
     if fadeInTime > startTime {
-        (*le).lifeRate =
-            (1.0f64 / ((*le).endTime - (*le).fadeInTime) as libc::c_double) as libc::c_float
+        (*le).lifeRate = (1.0 / ((*le).endTime - (*le).fadeInTime) as f64) as f32
     } else {
-        (*le).lifeRate =
-            (1.0f64 / ((*le).endTime - (*le).startTime) as libc::c_double) as libc::c_float
+        (*le).lifeRate = (1.0 / ((*le).endTime - (*le).startTime) as f64) as f32
     }
-    (*le).color[0 as libc::c_int as usize] = r;
-    (*le).color[1 as libc::c_int as usize] = g;
-    (*le).color[2 as libc::c_int as usize] = b;
-    (*le).color[3 as libc::c_int as usize] = a;
+    (*le).color[0] = r;
+    (*le).color[1] = g;
+    (*le).color[2] = b;
+    (*le).color[3] = a;
     (*le).pos.trType = crate::src::qcommon::q_shared::TR_LINEAR;
     (*le).pos.trTime = startTime;
-    (*le).pos.trDelta[0 as libc::c_int as usize] = *vel.offset(0 as libc::c_int as isize);
-    (*le).pos.trDelta[1 as libc::c_int as usize] = *vel.offset(1 as libc::c_int as isize);
-    (*le).pos.trDelta[2 as libc::c_int as usize] = *vel.offset(2 as libc::c_int as isize);
-    (*le).pos.trBase[0 as libc::c_int as usize] = *p.offset(0 as libc::c_int as isize);
-    (*le).pos.trBase[1 as libc::c_int as usize] = *p.offset(1 as libc::c_int as isize);
-    (*le).pos.trBase[2 as libc::c_int as usize] = *p.offset(2 as libc::c_int as isize);
-    (*re).origin[0 as libc::c_int as usize] = *p.offset(0 as libc::c_int as isize);
-    (*re).origin[1 as libc::c_int as usize] = *p.offset(1 as libc::c_int as isize);
-    (*re).origin[2 as libc::c_int as usize] = *p.offset(2 as libc::c_int as isize);
+    (*le).pos.trDelta[0] = *vel.offset(0);
+    (*le).pos.trDelta[1] = *vel.offset(1);
+    (*le).pos.trDelta[2] = *vel.offset(2);
+    (*le).pos.trBase[0] = *p.offset(0);
+    (*le).pos.trBase[1] = *p.offset(1);
+    (*le).pos.trBase[2] = *p.offset(2);
+    (*re).origin[0] = *p.offset(0);
+    (*re).origin[1] = *p.offset(1);
+    (*re).origin[2] = *p.offset(2);
     (*re).customShader = hShader;
     // rage pro can't alpha fade, so use a different shader
-    if crate::src::cgame::cg_main::cgs.glconfig.hardwareType as libc::c_uint
-        == crate::tr_types_h::GLHW_RAGEPRO as libc::c_int as libc::c_uint
-    {
+    if crate::src::cgame::cg_main::cgs.glconfig.hardwareType == crate::tr_types_h::GLHW_RAGEPRO {
         (*re).customShader = crate::src::cgame::cg_main::cgs.media.smokePuffRageProShader;
-        (*re).shaderRGBA[0 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-        (*re).shaderRGBA[1 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-        (*re).shaderRGBA[2 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-        (*re).shaderRGBA[3 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte
+        (*re).shaderRGBA[0] = 0xff;
+        (*re).shaderRGBA[1] = 0xff;
+        (*re).shaderRGBA[2] = 0xff;
+        (*re).shaderRGBA[3] = 0xff
     } else {
-        (*re).shaderRGBA[0 as libc::c_int as usize] = ((*le).color[0 as libc::c_int as usize]
-            * 0xff as libc::c_int as libc::c_float)
-            as crate::src::qcommon::q_shared::byte;
-        (*re).shaderRGBA[1 as libc::c_int as usize] = ((*le).color[1 as libc::c_int as usize]
-            * 0xff as libc::c_int as libc::c_float)
-            as crate::src::qcommon::q_shared::byte;
-        (*re).shaderRGBA[2 as libc::c_int as usize] = ((*le).color[2 as libc::c_int as usize]
-            * 0xff as libc::c_int as libc::c_float)
-            as crate::src::qcommon::q_shared::byte;
-        (*re).shaderRGBA[3 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte
+        (*re).shaderRGBA[0] = ((*le).color[0] * 255f32) as crate::src::qcommon::q_shared::byte;
+        (*re).shaderRGBA[1] = ((*le).color[1] * 255f32) as crate::src::qcommon::q_shared::byte;
+        (*re).shaderRGBA[2] = ((*le).color[2] * 255f32) as crate::src::qcommon::q_shared::byte;
+        (*re).shaderRGBA[3] = 0xff
     }
     (*re).reType = crate::tr_types_h::RT_SPRITE;
     (*re).radius = (*le).radius;
@@ -366,26 +324,25 @@ pub unsafe extern "C" fn CG_SpawnEffect(mut org: *mut crate::src::qcommon::q_sha
     let mut le: *mut crate::cg_local_h::localEntity_t = 0 as *mut crate::cg_local_h::localEntity_t;
     let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
     le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
-    (*le).leFlags = 0 as libc::c_int;
+    (*le).leFlags = 0;
     (*le).leType = crate::cg_local_h::LE_FADE_RGB;
     (*le).startTime = crate::src::cgame::cg_main::cg.time;
-    (*le).endTime = crate::src::cgame::cg_main::cg.time + 500 as libc::c_int;
-    (*le).lifeRate =
-        (1.0f64 / ((*le).endTime - (*le).startTime) as libc::c_double) as libc::c_float;
-    (*le).color[3 as libc::c_int as usize] = 1.0f64 as libc::c_float;
-    (*le).color[2 as libc::c_int as usize] = (*le).color[3 as libc::c_int as usize];
-    (*le).color[1 as libc::c_int as usize] = (*le).color[2 as libc::c_int as usize];
-    (*le).color[0 as libc::c_int as usize] = (*le).color[1 as libc::c_int as usize];
+    (*le).endTime = crate::src::cgame::cg_main::cg.time + 500;
+    (*le).lifeRate = (1.0 / ((*le).endTime - (*le).startTime) as f64) as f32;
+    (*le).color[3] = 1f32;
+    (*le).color[2] = (*le).color[3];
+    (*le).color[1] = (*le).color[2];
+    (*le).color[0] = (*le).color[1];
     re = &mut (*le).refEntity;
     (*re).reType = crate::tr_types_h::RT_MODEL;
-    (*re).shaderTime = crate::src::cgame::cg_main::cg.time as libc::c_float / 1000.0f32;
+    (*re).shaderTime = crate::src::cgame::cg_main::cg.time as f32 / 1000.0;
     (*re).customShader = crate::src::cgame::cg_main::cgs.media.teleportEffectShader;
     (*re).hModel = crate::src::cgame::cg_main::cgs.media.teleportEffectModel;
     crate::src::qcommon::q_math::AxisClear((*re).axis.as_mut_ptr());
-    (*re).origin[0 as libc::c_int as usize] = *org.offset(0 as libc::c_int as isize);
-    (*re).origin[1 as libc::c_int as usize] = *org.offset(1 as libc::c_int as isize);
-    (*re).origin[2 as libc::c_int as usize] = *org.offset(2 as libc::c_int as isize);
-    (*re).origin[2 as libc::c_int as usize] -= 24 as libc::c_int as libc::c_float;
+    (*re).origin[0] = *org.offset(0);
+    (*re).origin[1] = *org.offset(1);
+    (*re).origin[2] = *org.offset(2);
+    (*re).origin[2] -= 24f32;
 }
 /*
 ==================
@@ -395,9 +352,9 @@ CG_ScorePlum
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_ScorePlum(
-    mut client: libc::c_int,
+    mut client: i32,
     mut org: *mut crate::src::qcommon::q_shared::vec_t,
-    mut score: libc::c_int,
+    mut score: i32,
 ) {
     let mut le: *mut crate::cg_local_h::localEntity_t = 0 as *mut crate::cg_local_h::localEntity_t;
     let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
@@ -408,42 +365,37 @@ pub unsafe extern "C" fn CG_ScorePlum(
         != crate::src::cgame::cg_main::cg
             .predictedPlayerState
             .clientNum
-        || crate::src::cgame::cg_main::cg_scorePlum.integer == 0 as libc::c_int
+        || crate::src::cgame::cg_main::cg_scorePlum.integer == 0
     {
         return;
     }
     le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
-    (*le).leFlags = 0 as libc::c_int;
+    (*le).leFlags = 0;
     (*le).leType = crate::cg_local_h::LE_SCOREPLUM;
     (*le).startTime = crate::src::cgame::cg_main::cg.time;
-    (*le).endTime = crate::src::cgame::cg_main::cg.time + 4000 as libc::c_int;
-    (*le).lifeRate =
-        (1.0f64 / ((*le).endTime - (*le).startTime) as libc::c_double) as libc::c_float;
-    (*le).color[3 as libc::c_int as usize] = 1.0f64 as libc::c_float;
-    (*le).color[2 as libc::c_int as usize] = (*le).color[3 as libc::c_int as usize];
-    (*le).color[1 as libc::c_int as usize] = (*le).color[2 as libc::c_int as usize];
-    (*le).color[0 as libc::c_int as usize] = (*le).color[1 as libc::c_int as usize];
-    (*le).radius = score as libc::c_float;
-    (*le).pos.trBase[0 as libc::c_int as usize] = *org.offset(0 as libc::c_int as isize);
-    (*le).pos.trBase[1 as libc::c_int as usize] = *org.offset(1 as libc::c_int as isize);
-    (*le).pos.trBase[2 as libc::c_int as usize] = *org.offset(2 as libc::c_int as isize);
-    if *org.offset(2 as libc::c_int as isize)
-        >= lastPos[2 as libc::c_int as usize] - 20 as libc::c_int as libc::c_float
-        && *org.offset(2 as libc::c_int as isize)
-            <= lastPos[2 as libc::c_int as usize] + 20 as libc::c_int as libc::c_float
-    {
-        (*le).pos.trBase[2 as libc::c_int as usize] -= 20 as libc::c_int as libc::c_float
+    (*le).endTime = crate::src::cgame::cg_main::cg.time + 4000;
+    (*le).lifeRate = (1.0 / ((*le).endTime - (*le).startTime) as f64) as f32;
+    (*le).color[3] = 1f32;
+    (*le).color[2] = (*le).color[3];
+    (*le).color[1] = (*le).color[2];
+    (*le).color[0] = (*le).color[1];
+    (*le).radius = score as f32;
+    (*le).pos.trBase[0] = *org.offset(0);
+    (*le).pos.trBase[1] = *org.offset(1);
+    (*le).pos.trBase[2] = *org.offset(2);
+    if *org.offset(2) >= lastPos[2] - 20f32 && *org.offset(2) <= lastPos[2] + 20f32 {
+        (*le).pos.trBase[2] -= 20f32
     }
     //CG_Printf( "Plum origin %i %i %i -- %i\n", (int)org[0], (int)org[1], (int)org[2], (int)Distance(org, lastPos));
-    lastPos[0 as libc::c_int as usize] = *org.offset(0 as libc::c_int as isize);
-    lastPos[1 as libc::c_int as usize] = *org.offset(1 as libc::c_int as isize);
-    lastPos[2 as libc::c_int as usize] = *org.offset(2 as libc::c_int as isize);
+    lastPos[0] = *org.offset(0);
+    lastPos[1] = *org.offset(1);
+    lastPos[2] = *org.offset(2);
     re = &mut (*le).refEntity;
     (*re).reType = crate::tr_types_h::RT_SPRITE;
-    (*re).radius = 16 as libc::c_int as libc::c_float;
-    angles[2 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    angles[1 as libc::c_int as usize] = angles[2 as libc::c_int as usize];
-    angles[0 as libc::c_int as usize] = angles[1 as libc::c_int as usize];
+    (*re).radius = 16f32;
+    angles[2] = 0f32;
+    angles[1] = angles[2];
+    angles[0] = angles[1];
     crate::src::qcommon::q_math::AnglesToAxis(
         angles.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         (*re).axis.as_mut_ptr(),
@@ -461,55 +413,46 @@ pub unsafe extern "C" fn CG_MakeExplosion(
     mut dir: *mut crate::src::qcommon::q_shared::vec_t,
     mut hModel: crate::src::qcommon::q_shared::qhandle_t,
     mut shader: crate::src::qcommon::q_shared::qhandle_t,
-    mut msec: libc::c_int,
+    mut msec: i32,
     mut isSprite: crate::src::qcommon::q_shared::qboolean,
 ) -> *mut crate::cg_local_h::localEntity_t {
-    let mut ang: libc::c_float = 0.;
+    let mut ang: f32 = 0.;
     let mut ex: *mut crate::cg_local_h::localEntity_t = 0 as *mut crate::cg_local_h::localEntity_t;
-    let mut offset: libc::c_int = 0;
+    let mut offset: i32 = 0;
     let mut tmpVec: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut newOrigin: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    if msec <= 0 as libc::c_int {
+    if msec <= 0 {
         crate::src::cgame::cg_main::CG_Error(
-            b"CG_MakeExplosion: msec = %i\x00" as *const u8 as *const libc::c_char,
+            b"CG_MakeExplosion: msec = %i\x00" as *const u8 as *const i8,
             msec,
         );
     }
     // skew the time a bit so they aren't all in sync
-    offset = crate::stdlib::rand() & 63 as libc::c_int;
+    offset = crate::stdlib::rand() & 63;
     ex = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
     if isSprite as u64 != 0 {
         (*ex).leType = crate::cg_local_h::LE_SPRITE_EXPLOSION;
         // randomly rotate sprite orientation
-        (*ex).refEntity.rotation = (crate::stdlib::rand() % 360 as libc::c_int) as libc::c_float;
-        tmpVec[0 as libc::c_int as usize] =
-            *dir.offset(0 as libc::c_int as isize) * 16 as libc::c_int as libc::c_float;
-        tmpVec[1 as libc::c_int as usize] =
-            *dir.offset(1 as libc::c_int as isize) * 16 as libc::c_int as libc::c_float;
-        tmpVec[2 as libc::c_int as usize] =
-            *dir.offset(2 as libc::c_int as isize) * 16 as libc::c_int as libc::c_float;
-        newOrigin[0 as libc::c_int as usize] =
-            tmpVec[0 as libc::c_int as usize] + *origin.offset(0 as libc::c_int as isize);
-        newOrigin[1 as libc::c_int as usize] =
-            tmpVec[1 as libc::c_int as usize] + *origin.offset(1 as libc::c_int as isize);
-        newOrigin[2 as libc::c_int as usize] =
-            tmpVec[2 as libc::c_int as usize] + *origin.offset(2 as libc::c_int as isize)
+        (*ex).refEntity.rotation = (crate::stdlib::rand() % 360) as f32;
+        tmpVec[0] = *dir.offset(0) * 16f32;
+        tmpVec[1] = *dir.offset(1) * 16f32;
+        tmpVec[2] = *dir.offset(2) * 16f32;
+        newOrigin[0] = tmpVec[0] + *origin.offset(0);
+        newOrigin[1] = tmpVec[1] + *origin.offset(1);
+        newOrigin[2] = tmpVec[2] + *origin.offset(2)
     } else {
         (*ex).leType = crate::cg_local_h::LE_EXPLOSION;
-        newOrigin[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
-        newOrigin[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
-        newOrigin[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
+        newOrigin[0] = *origin.offset(0);
+        newOrigin[1] = *origin.offset(1);
+        newOrigin[2] = *origin.offset(2);
         // set axis with random rotate
         if dir.is_null() {
             crate::src::qcommon::q_math::AxisClear((*ex).refEntity.axis.as_mut_ptr());
         } else {
-            ang = (crate::stdlib::rand() % 360 as libc::c_int) as libc::c_float;
-            (*ex).refEntity.axis[0 as libc::c_int as usize][0 as libc::c_int as usize] =
-                *dir.offset(0 as libc::c_int as isize);
-            (*ex).refEntity.axis[0 as libc::c_int as usize][1 as libc::c_int as usize] =
-                *dir.offset(1 as libc::c_int as isize);
-            (*ex).refEntity.axis[0 as libc::c_int as usize][2 as libc::c_int as usize] =
-                *dir.offset(2 as libc::c_int as isize);
+            ang = (crate::stdlib::rand() % 360) as f32;
+            (*ex).refEntity.axis[0][0] = *dir.offset(0);
+            (*ex).refEntity.axis[0][1] = *dir.offset(1);
+            (*ex).refEntity.axis[0][2] = *dir.offset(2);
             crate::src::qcommon::q_math::RotateAroundDirection(
                 (*ex).refEntity.axis.as_mut_ptr(),
                 ang,
@@ -519,19 +462,19 @@ pub unsafe extern "C" fn CG_MakeExplosion(
     (*ex).startTime = crate::src::cgame::cg_main::cg.time - offset;
     (*ex).endTime = (*ex).startTime + msec;
     // bias the time so all shader effects start correctly
-    (*ex).refEntity.shaderTime = (*ex).startTime as libc::c_float / 1000.0f32;
+    (*ex).refEntity.shaderTime = (*ex).startTime as f32 / 1000.0;
     (*ex).refEntity.hModel = hModel;
     (*ex).refEntity.customShader = shader;
     // set origin
-    (*ex).refEntity.origin[0 as libc::c_int as usize] = newOrigin[0 as libc::c_int as usize];
-    (*ex).refEntity.origin[1 as libc::c_int as usize] = newOrigin[1 as libc::c_int as usize];
-    (*ex).refEntity.origin[2 as libc::c_int as usize] = newOrigin[2 as libc::c_int as usize];
-    (*ex).refEntity.oldorigin[0 as libc::c_int as usize] = newOrigin[0 as libc::c_int as usize];
-    (*ex).refEntity.oldorigin[1 as libc::c_int as usize] = newOrigin[1 as libc::c_int as usize];
-    (*ex).refEntity.oldorigin[2 as libc::c_int as usize] = newOrigin[2 as libc::c_int as usize];
-    (*ex).color[2 as libc::c_int as usize] = 1.0f64 as libc::c_float;
-    (*ex).color[1 as libc::c_int as usize] = (*ex).color[2 as libc::c_int as usize];
-    (*ex).color[0 as libc::c_int as usize] = (*ex).color[1 as libc::c_int as usize];
+    (*ex).refEntity.origin[0] = newOrigin[0];
+    (*ex).refEntity.origin[1] = newOrigin[1];
+    (*ex).refEntity.origin[2] = newOrigin[2];
+    (*ex).refEntity.oldorigin[0] = newOrigin[0];
+    (*ex).refEntity.oldorigin[1] = newOrigin[1];
+    (*ex).refEntity.oldorigin[2] = newOrigin[2];
+    (*ex).color[2] = 1f32;
+    (*ex).color[1] = (*ex).color[2];
+    (*ex).color[0] = (*ex).color[1];
     return ex;
 }
 /*
@@ -545,7 +488,7 @@ This is the spurt of blood when a character gets hit
 
 pub unsafe extern "C" fn CG_Bleed(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-    mut entityNum: libc::c_int,
+    mut entityNum: i32,
 ) {
     let mut ex: *mut crate::cg_local_h::localEntity_t = 0 as *mut crate::cg_local_h::localEntity_t;
     if crate::src::cgame::cg_main::cg_blood.integer == 0 {
@@ -554,17 +497,17 @@ pub unsafe extern "C" fn CG_Bleed(
     ex = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
     (*ex).leType = crate::cg_local_h::LE_EXPLOSION;
     (*ex).startTime = crate::src::cgame::cg_main::cg.time;
-    (*ex).endTime = (*ex).startTime + 500 as libc::c_int;
-    (*ex).refEntity.origin[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
-    (*ex).refEntity.origin[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
-    (*ex).refEntity.origin[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
+    (*ex).endTime = (*ex).startTime + 500;
+    (*ex).refEntity.origin[0] = *origin.offset(0);
+    (*ex).refEntity.origin[1] = *origin.offset(1);
+    (*ex).refEntity.origin[2] = *origin.offset(2);
     (*ex).refEntity.reType = crate::tr_types_h::RT_SPRITE;
-    (*ex).refEntity.rotation = (crate::stdlib::rand() % 360 as libc::c_int) as libc::c_float;
-    (*ex).refEntity.radius = 24 as libc::c_int as libc::c_float;
+    (*ex).refEntity.rotation = (crate::stdlib::rand() % 360) as f32;
+    (*ex).refEntity.radius = 24f32;
     (*ex).refEntity.customShader = crate::src::cgame::cg_main::cgs.media.bloodExplosionShader;
     // don't show player's own blood in view
     if entityNum == (*crate::src::cgame::cg_main::cg.snap).ps.clientNum {
-        (*ex).refEntity.renderfx |= 0x2 as libc::c_int
+        (*ex).refEntity.renderfx |= 0x2
     };
 }
 /*
@@ -585,27 +528,25 @@ pub unsafe extern "C" fn CG_LaunchGib(
     re = &mut (*le).refEntity;
     (*le).leType = crate::cg_local_h::LE_FRAGMENT;
     (*le).startTime = crate::src::cgame::cg_main::cg.time;
-    (*le).endTime = (((*le).startTime + 5000 as libc::c_int) as libc::c_float
-        + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float
-            * 3000 as libc::c_int as libc::c_float) as libc::c_int;
-    (*re).origin[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
-    (*re).origin[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
-    (*re).origin[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
+    (*le).endTime = (((*le).startTime + 5000) as f32
+        + (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 * 3000f32) as i32;
+    (*re).origin[0] = *origin.offset(0);
+    (*re).origin[1] = *origin.offset(1);
+    (*re).origin[2] = *origin.offset(2);
     crate::src::qcommon::q_math::AxisCopy(
         crate::src::qcommon::q_math::axisDefault.as_mut_ptr(),
         (*re).axis.as_mut_ptr(),
     );
     (*re).hModel = hModel;
     (*le).pos.trType = crate::src::qcommon::q_shared::TR_GRAVITY;
-    (*le).pos.trBase[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
-    (*le).pos.trBase[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
-    (*le).pos.trBase[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
-    (*le).pos.trDelta[0 as libc::c_int as usize] = *velocity.offset(0 as libc::c_int as isize);
-    (*le).pos.trDelta[1 as libc::c_int as usize] = *velocity.offset(1 as libc::c_int as isize);
-    (*le).pos.trDelta[2 as libc::c_int as usize] = *velocity.offset(2 as libc::c_int as isize);
+    (*le).pos.trBase[0] = *origin.offset(0);
+    (*le).pos.trBase[1] = *origin.offset(1);
+    (*le).pos.trBase[2] = *origin.offset(2);
+    (*le).pos.trDelta[0] = *velocity.offset(0);
+    (*le).pos.trDelta[1] = *velocity.offset(1);
+    (*le).pos.trDelta[2] = *velocity.offset(2);
     (*le).pos.trTime = crate::src::cgame::cg_main::cg.time;
-    (*le).bounceFactor = 0.6f32;
+    (*le).bounceFactor = 0.6;
     (*le).leBounceSoundType = crate::cg_local_h::LEBS_BLOOD;
     (*le).leMarkType = crate::cg_local_h::LEMT_BLOOD;
 }
@@ -617,29 +558,19 @@ pub unsafe extern "C" fn CG_GibPlayer(mut playerOrigin: *mut crate::src::qcommon
     if crate::src::cgame::cg_main::cg_blood.integer == 0 {
         return;
     }
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (250f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 250f64)
         as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    if crate::stdlib::rand() & 1 as libc::c_int != 0 {
+    if crate::stdlib::rand() & 1 != 0 {
         CG_LaunchGib(
             origin.as_mut_ptr(),
             velocity.as_mut_ptr(),
@@ -656,243 +587,153 @@ pub unsafe extern "C" fn CG_GibPlayer(mut playerOrigin: *mut crate::src::qcommon
     if crate::src::cgame::cg_main::cg_gibs.integer == 0 {
         return;
     }
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 250 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (250f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 250f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchGib(
         origin.as_mut_ptr(),
         velocity.as_mut_ptr(),
         crate::src::cgame::cg_main::cgs.media.gibAbdomen,
     );
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 250 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (250f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 250f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchGib(
         origin.as_mut_ptr(),
         velocity.as_mut_ptr(),
         crate::src::cgame::cg_main::cgs.media.gibArm,
     );
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 250 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (250f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 250f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchGib(
         origin.as_mut_ptr(),
         velocity.as_mut_ptr(),
         crate::src::cgame::cg_main::cgs.media.gibChest,
     );
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 250 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (250f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 250f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchGib(
         origin.as_mut_ptr(),
         velocity.as_mut_ptr(),
         crate::src::cgame::cg_main::cgs.media.gibFist,
     );
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 250 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (250f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 250f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchGib(
         origin.as_mut_ptr(),
         velocity.as_mut_ptr(),
         crate::src::cgame::cg_main::cgs.media.gibFoot,
     );
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 250 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (250f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 250f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchGib(
         origin.as_mut_ptr(),
         velocity.as_mut_ptr(),
         crate::src::cgame::cg_main::cgs.media.gibForearm,
     );
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 250 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (250f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 250f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchGib(
         origin.as_mut_ptr(),
         velocity.as_mut_ptr(),
         crate::src::cgame::cg_main::cgs.media.gibIntestine,
     );
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 250 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (250f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 250f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchGib(
         origin.as_mut_ptr(),
         velocity.as_mut_ptr(),
         crate::src::cgame::cg_main::cgs.media.gibLeg,
     );
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 250 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 250 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 250f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (250f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 250f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchGib(
         origin.as_mut_ptr(),
@@ -918,27 +759,25 @@ pub unsafe extern "C" fn CG_LaunchExplode(
     re = &mut (*le).refEntity;
     (*le).leType = crate::cg_local_h::LE_FRAGMENT;
     (*le).startTime = crate::src::cgame::cg_main::cg.time;
-    (*le).endTime = (((*le).startTime + 10000 as libc::c_int) as libc::c_float
-        + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float
-            * 6000 as libc::c_int as libc::c_float) as libc::c_int;
-    (*re).origin[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
-    (*re).origin[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
-    (*re).origin[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
+    (*le).endTime = (((*le).startTime + 10000) as f32
+        + (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 * 6000f32) as i32;
+    (*re).origin[0] = *origin.offset(0);
+    (*re).origin[1] = *origin.offset(1);
+    (*re).origin[2] = *origin.offset(2);
     crate::src::qcommon::q_math::AxisCopy(
         crate::src::qcommon::q_math::axisDefault.as_mut_ptr(),
         (*re).axis.as_mut_ptr(),
     );
     (*re).hModel = hModel;
     (*le).pos.trType = crate::src::qcommon::q_shared::TR_GRAVITY;
-    (*le).pos.trBase[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
-    (*le).pos.trBase[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
-    (*le).pos.trBase[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
-    (*le).pos.trDelta[0 as libc::c_int as usize] = *velocity.offset(0 as libc::c_int as isize);
-    (*le).pos.trDelta[1 as libc::c_int as usize] = *velocity.offset(1 as libc::c_int as isize);
-    (*le).pos.trDelta[2 as libc::c_int as usize] = *velocity.offset(2 as libc::c_int as isize);
+    (*le).pos.trBase[0] = *origin.offset(0);
+    (*le).pos.trBase[1] = *origin.offset(1);
+    (*le).pos.trBase[2] = *origin.offset(2);
+    (*le).pos.trDelta[0] = *velocity.offset(0);
+    (*le).pos.trDelta[1] = *velocity.offset(1);
+    (*le).pos.trDelta[2] = *velocity.offset(2);
     (*le).pos.trTime = crate::src::cgame::cg_main::cg.time;
-    (*le).bounceFactor = 0.1f32;
+    (*le).bounceFactor = 0.1;
     (*le).leBounceSoundType = crate::cg_local_h::LEBS_BRASS;
     (*le).leMarkType = crate::cg_local_h::LEMT_NONE;
 }
@@ -1195,135 +1034,85 @@ pub unsafe extern "C" fn CG_BigExplode(
     if crate::src::cgame::cg_main::cg_blood.integer == 0 {
         return;
     }
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 100 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 100 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (150 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 100 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 100f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 100f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (150f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 100f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchExplode(
         origin.as_mut_ptr(),
         velocity.as_mut_ptr(),
         crate::src::cgame::cg_main::cgs.media.smoke2,
     );
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 100 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 100 as libc::c_int as libc::c_double)
-        as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (150 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 100 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 100f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] = (2.0
+        * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)
+        * 100f64) as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (150f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 100f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchExplode(
         origin.as_mut_ptr(),
         velocity.as_mut_ptr(),
         crate::src::cgame::cg_main::cgs.media.smoke2,
     );
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 100 as libc::c_int as libc::c_double
-        * 1.5f64) as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 100 as libc::c_int as libc::c_double
-        * 1.5f64) as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (150 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 100 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] =
+        (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 100f64 * 1.5)
+            as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] =
+        (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 100f64 * 1.5)
+            as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (150f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 100f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchExplode(
         origin.as_mut_ptr(),
         velocity.as_mut_ptr(),
         crate::src::cgame::cg_main::cgs.media.smoke2,
     );
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 100 as libc::c_int as libc::c_double
-        * 2.0f64) as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 100 as libc::c_int as libc::c_double
-        * 2.0f64) as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (150 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 100 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] =
+        (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 100f64 * 2.0)
+            as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] =
+        (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 100f64 * 2.0)
+            as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (150f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 100f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchExplode(
         origin.as_mut_ptr(),
         velocity.as_mut_ptr(),
         crate::src::cgame::cg_main::cgs.media.smoke2,
     );
-    origin[0 as libc::c_int as usize] = *playerOrigin.offset(0 as libc::c_int as isize);
-    origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
-    origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
-    velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 100 as libc::c_int as libc::c_double
-        * 2.5f64) as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 100 as libc::c_int as libc::c_double
-        * 2.5f64) as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (150 as libc::c_int as libc::c_double
-        + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64)
-            * 100 as libc::c_int as libc::c_double)
+    origin[0] = *playerOrigin.offset(0);
+    origin[1] = *playerOrigin.offset(1);
+    origin[2] = *playerOrigin.offset(2);
+    velocity[0] =
+        (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 100f64 * 2.5)
+            as crate::src::qcommon::q_shared::vec_t;
+    velocity[1] =
+        (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 100f64 * 2.5)
+            as crate::src::qcommon::q_shared::vec_t;
+    velocity[2] = (150f64
+        + 2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 100f64)
         as crate::src::qcommon::q_shared::vec_t;
     CG_LaunchExplode(
         origin.as_mut_ptr(),

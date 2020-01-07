@@ -2,12 +2,12 @@
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct code {
-    pub op: libc::c_uchar,
-    pub bits: libc::c_uchar,
-    pub val: libc::c_ushort,
+    pub op: u8,
+    pub bits: u8,
+    pub val: u16,
 }
 
-pub type codetype = libc::c_uint;
+pub type codetype = u32;
 
 pub const DISTS: crate::src::zlib::inftrees::codetype = 2;
 
@@ -18,7 +18,7 @@ use ::libc;
 
 #[no_mangle]
 
-pub static mut inflate_copyright: [libc::c_char; 47] = [
+pub static mut inflate_copyright: [i8; 47] = [
     32, 105, 110, 102, 108, 97, 116, 101, 32, 49, 46, 50, 46, 51, 32, 67, 111, 112, 121, 114, 105,
     103, 104, 116, 32, 49, 57, 57, 53, 45, 50, 48, 48, 53, 32, 77, 97, 114, 107, 32, 65, 100, 108,
     101, 114, 32, 0,
@@ -45,26 +45,26 @@ pub static mut inflate_copyright: [libc::c_char; 47] = [
 
 pub unsafe extern "C" fn inflate_table(
     mut type_0: crate::src::zlib::inftrees::codetype,
-    mut lens: *mut libc::c_ushort,
-    mut codes: libc::c_uint,
+    mut lens: *mut u16,
+    mut codes: u32,
     mut table: *mut *mut crate::src::zlib::inftrees::code,
-    mut bits: *mut libc::c_uint,
-    mut work: *mut libc::c_ushort,
-) -> libc::c_int {
-    let mut len: libc::c_uint = 0; /* a code's length in bits */
-    let mut sym: libc::c_uint = 0; /* index of code symbols */
-    let mut min: libc::c_uint = 0; /* minimum and maximum code lengths */
-    let mut max: libc::c_uint = 0; /* number of index bits for root table */
-    let mut root: libc::c_uint = 0; /* number of index bits for current table */
-    let mut curr: libc::c_uint = 0; /* code bits to drop for sub-table */
-    let mut drop_0: libc::c_uint = 0; /* number of prefix codes available */
-    let mut left: libc::c_int = 0; /* code entries in table used */
-    let mut used: libc::c_uint = 0; /* Huffman code */
-    let mut huff: libc::c_uint = 0; /* for incrementing code, index */
-    let mut incr: libc::c_uint = 0; /* index for replicating entries */
-    let mut fill: libc::c_uint = 0; /* low bits for current root entry */
-    let mut low: libc::c_uint = 0; /* mask for low root bits */
-    let mut mask: libc::c_uint = 0; /* table entry for duplication */
+    mut bits: *mut u32,
+    mut work: *mut u16,
+) -> i32 {
+    let mut len: u32 = 0; /* a code's length in bits */
+    let mut sym: u32 = 0; /* index of code symbols */
+    let mut min: u32 = 0; /* minimum and maximum code lengths */
+    let mut max: u32 = 0; /* number of index bits for root table */
+    let mut root: u32 = 0; /* number of index bits for current table */
+    let mut curr: u32 = 0; /* code bits to drop for sub-table */
+    let mut drop_0: u32 = 0; /* number of prefix codes available */
+    let mut left: i32 = 0; /* code entries in table used */
+    let mut used: u32 = 0; /* Huffman code */
+    let mut huff: u32 = 0; /* for incrementing code, index */
+    let mut incr: u32 = 0; /* index for replicating entries */
+    let mut fill: u32 = 0; /* low bits for current root entry */
+    let mut low: u32 = 0; /* mask for low root bits */
+    let mut mask: u32 = 0; /* table entry for duplication */
     let mut this: crate::src::zlib::inftrees::code = crate::src::zlib::inftrees::code {
         op: 0,
         bits: 0,
@@ -72,144 +72,26 @@ pub unsafe extern "C" fn inflate_table(
     }; /* next available space in table */
     let mut next: *mut crate::src::zlib::inftrees::code =
         0 as *mut crate::src::zlib::inftrees::code; /* base value table to use */
-    let mut base: *const libc::c_ushort = 0 as *const libc::c_ushort; /* extra bits table to use */
-    let mut extra: *const libc::c_ushort = 0 as *const libc::c_ushort; /* use base and extra for symbol > end */
-    let mut end: libc::c_int = 0; /* number of codes of each length */
-    let mut count: [libc::c_ushort; 16] = [0; 16]; /* offsets in table for each length */
-    let mut offs: [libc::c_ushort; 16] = [0; 16];
-    static mut lbase: [libc::c_ushort; 31] = [
-        3 as libc::c_int as libc::c_ushort,
-        4 as libc::c_int as libc::c_ushort,
-        5 as libc::c_int as libc::c_ushort,
-        6 as libc::c_int as libc::c_ushort,
-        7 as libc::c_int as libc::c_ushort,
-        8 as libc::c_int as libc::c_ushort,
-        9 as libc::c_int as libc::c_ushort,
-        10 as libc::c_int as libc::c_ushort,
-        11 as libc::c_int as libc::c_ushort,
-        13 as libc::c_int as libc::c_ushort,
-        15 as libc::c_int as libc::c_ushort,
-        17 as libc::c_int as libc::c_ushort,
-        19 as libc::c_int as libc::c_ushort,
-        23 as libc::c_int as libc::c_ushort,
-        27 as libc::c_int as libc::c_ushort,
-        31 as libc::c_int as libc::c_ushort,
-        35 as libc::c_int as libc::c_ushort,
-        43 as libc::c_int as libc::c_ushort,
-        51 as libc::c_int as libc::c_ushort,
-        59 as libc::c_int as libc::c_ushort,
-        67 as libc::c_int as libc::c_ushort,
-        83 as libc::c_int as libc::c_ushort,
-        99 as libc::c_int as libc::c_ushort,
-        115 as libc::c_int as libc::c_ushort,
-        131 as libc::c_int as libc::c_ushort,
-        163 as libc::c_int as libc::c_ushort,
-        195 as libc::c_int as libc::c_ushort,
-        227 as libc::c_int as libc::c_ushort,
-        258 as libc::c_int as libc::c_ushort,
-        0 as libc::c_int as libc::c_ushort,
-        0 as libc::c_int as libc::c_ushort,
+    let mut base: *const u16 = 0 as *const u16; /* extra bits table to use */
+    let mut extra: *const u16 = 0 as *const u16; /* use base and extra for symbol > end */
+    let mut end: i32 = 0; /* number of codes of each length */
+    let mut count: [u16; 16] = [0; 16]; /* offsets in table for each length */
+    let mut offs: [u16; 16] = [0; 16];
+    static mut lbase: [u16; 31] = [
+        3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115,
+        131, 163, 195, 227, 258, 0, 0,
     ];
-    static mut lext: [libc::c_ushort; 31] = [
-        16 as libc::c_int as libc::c_ushort,
-        16 as libc::c_int as libc::c_ushort,
-        16 as libc::c_int as libc::c_ushort,
-        16 as libc::c_int as libc::c_ushort,
-        16 as libc::c_int as libc::c_ushort,
-        16 as libc::c_int as libc::c_ushort,
-        16 as libc::c_int as libc::c_ushort,
-        16 as libc::c_int as libc::c_ushort,
-        17 as libc::c_int as libc::c_ushort,
-        17 as libc::c_int as libc::c_ushort,
-        17 as libc::c_int as libc::c_ushort,
-        17 as libc::c_int as libc::c_ushort,
-        18 as libc::c_int as libc::c_ushort,
-        18 as libc::c_int as libc::c_ushort,
-        18 as libc::c_int as libc::c_ushort,
-        18 as libc::c_int as libc::c_ushort,
-        19 as libc::c_int as libc::c_ushort,
-        19 as libc::c_int as libc::c_ushort,
-        19 as libc::c_int as libc::c_ushort,
-        19 as libc::c_int as libc::c_ushort,
-        20 as libc::c_int as libc::c_ushort,
-        20 as libc::c_int as libc::c_ushort,
-        20 as libc::c_int as libc::c_ushort,
-        20 as libc::c_int as libc::c_ushort,
-        21 as libc::c_int as libc::c_ushort,
-        21 as libc::c_int as libc::c_ushort,
-        21 as libc::c_int as libc::c_ushort,
-        21 as libc::c_int as libc::c_ushort,
-        16 as libc::c_int as libc::c_ushort,
-        201 as libc::c_int as libc::c_ushort,
-        196 as libc::c_int as libc::c_ushort,
+    static mut lext: [u16; 31] = [
+        16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20,
+        20, 21, 21, 21, 21, 16, 201, 196,
     ];
-    static mut dbase: [libc::c_ushort; 32] = [
-        1 as libc::c_int as libc::c_ushort,
-        2 as libc::c_int as libc::c_ushort,
-        3 as libc::c_int as libc::c_ushort,
-        4 as libc::c_int as libc::c_ushort,
-        5 as libc::c_int as libc::c_ushort,
-        7 as libc::c_int as libc::c_ushort,
-        9 as libc::c_int as libc::c_ushort,
-        13 as libc::c_int as libc::c_ushort,
-        17 as libc::c_int as libc::c_ushort,
-        25 as libc::c_int as libc::c_ushort,
-        33 as libc::c_int as libc::c_ushort,
-        49 as libc::c_int as libc::c_ushort,
-        65 as libc::c_int as libc::c_ushort,
-        97 as libc::c_int as libc::c_ushort,
-        129 as libc::c_int as libc::c_ushort,
-        193 as libc::c_int as libc::c_ushort,
-        257 as libc::c_int as libc::c_ushort,
-        385 as libc::c_int as libc::c_ushort,
-        513 as libc::c_int as libc::c_ushort,
-        769 as libc::c_int as libc::c_ushort,
-        1025 as libc::c_int as libc::c_ushort,
-        1537 as libc::c_int as libc::c_ushort,
-        2049 as libc::c_int as libc::c_ushort,
-        3073 as libc::c_int as libc::c_ushort,
-        4097 as libc::c_int as libc::c_ushort,
-        6145 as libc::c_int as libc::c_ushort,
-        8193 as libc::c_int as libc::c_ushort,
-        12289 as libc::c_int as libc::c_ushort,
-        16385 as libc::c_int as libc::c_ushort,
-        24577 as libc::c_int as libc::c_ushort,
-        0 as libc::c_int as libc::c_ushort,
-        0 as libc::c_int as libc::c_ushort,
+    static mut dbase: [u16; 32] = [
+        1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537,
+        2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577, 0, 0,
     ];
-    static mut dext: [libc::c_ushort; 32] = [
-        16 as libc::c_int as libc::c_ushort,
-        16 as libc::c_int as libc::c_ushort,
-        16 as libc::c_int as libc::c_ushort,
-        16 as libc::c_int as libc::c_ushort,
-        17 as libc::c_int as libc::c_ushort,
-        17 as libc::c_int as libc::c_ushort,
-        18 as libc::c_int as libc::c_ushort,
-        18 as libc::c_int as libc::c_ushort,
-        19 as libc::c_int as libc::c_ushort,
-        19 as libc::c_int as libc::c_ushort,
-        20 as libc::c_int as libc::c_ushort,
-        20 as libc::c_int as libc::c_ushort,
-        21 as libc::c_int as libc::c_ushort,
-        21 as libc::c_int as libc::c_ushort,
-        22 as libc::c_int as libc::c_ushort,
-        22 as libc::c_int as libc::c_ushort,
-        23 as libc::c_int as libc::c_ushort,
-        23 as libc::c_int as libc::c_ushort,
-        24 as libc::c_int as libc::c_ushort,
-        24 as libc::c_int as libc::c_ushort,
-        25 as libc::c_int as libc::c_ushort,
-        25 as libc::c_int as libc::c_ushort,
-        26 as libc::c_int as libc::c_ushort,
-        26 as libc::c_int as libc::c_ushort,
-        27 as libc::c_int as libc::c_ushort,
-        27 as libc::c_int as libc::c_ushort,
-        28 as libc::c_int as libc::c_ushort,
-        28 as libc::c_int as libc::c_ushort,
-        29 as libc::c_int as libc::c_ushort,
-        29 as libc::c_int as libc::c_ushort,
-        64 as libc::c_int as libc::c_ushort,
-        64 as libc::c_int as libc::c_ushort,
+    static mut dext: [u16; 32] = [
+        16, 16, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26,
+        26, 27, 27, 28, 28, 29, 29, 64, 64,
     ];
     /*
       Process a set of code lengths to create a canonical Huffman code.  The
@@ -242,12 +124,12 @@ pub unsafe extern "C" fn inflate_table(
       decoding tables.
     */
     /* accumulate lengths for codes (assumes lens[] all in 0..MAXBITS) */
-    len = 0 as libc::c_int as libc::c_uint;
-    while len <= 15 as libc::c_int as libc::c_uint {
-        count[len as usize] = 0 as libc::c_int as libc::c_ushort;
+    len = 0;
+    while len <= 15 {
+        count[len as usize] = 0;
         len = len.wrapping_add(1)
     }
-    sym = 0 as libc::c_int as libc::c_uint;
+    sym = 0;
     while sym < codes {
         count[*lens.offset(sym as isize) as usize] =
             count[*lens.offset(sym as isize) as usize].wrapping_add(1);
@@ -255,9 +137,9 @@ pub unsafe extern "C" fn inflate_table(
     }
     /* bound code lengths, force root to be within code lengths */
     root = *bits;
-    max = 15 as libc::c_int as libc::c_uint;
-    while max >= 1 as libc::c_int as libc::c_uint {
-        if count[max as usize] as libc::c_int != 0 as libc::c_int {
+    max = 15;
+    while max >= 1 {
+        if count[max as usize] as i32 != 0 {
             break;
         }
         max = max.wrapping_sub(1)
@@ -265,11 +147,11 @@ pub unsafe extern "C" fn inflate_table(
     if root > max {
         root = max
     }
-    if max == 0 as libc::c_int as libc::c_uint {
+    if max == 0 {
         /* no symbols to code at all */
-        this.op = 64 as libc::c_int as libc::c_uchar;
-        this.bits = 1 as libc::c_int as libc::c_uchar;
-        this.val = 0 as libc::c_int as libc::c_ushort; /* invalid code marker */
+        this.op = 64;
+        this.bits = 1;
+        this.val = 0; /* invalid code marker */
         /* no symbols, but wait for decoding to report error */
         let fresh0 = *table; /* make a table to force an error */
         *table = (*table).offset(1);
@@ -277,12 +159,12 @@ pub unsafe extern "C" fn inflate_table(
         let fresh1 = *table;
         *table = (*table).offset(1);
         *fresh1 = this;
-        *bits = 1 as libc::c_int as libc::c_uint;
-        return 0 as libc::c_int;
+        *bits = 1u32;
+        return 0i32;
     }
-    min = 1 as libc::c_int as libc::c_uint;
-    while min <= 15 as libc::c_int as libc::c_uint {
-        if count[min as usize] as libc::c_int != 0 as libc::c_int {
+    min = 1;
+    while min <= 15 {
+        if count[min as usize] as i32 != 0 {
             break;
         }
         min = min.wrapping_add(1)
@@ -291,41 +173,36 @@ pub unsafe extern "C" fn inflate_table(
         root = min
     }
     /* check for an over-subscribed or incomplete set of lengths */
-    left = 1 as libc::c_int;
-    len = 1 as libc::c_int as libc::c_uint;
-    while len <= 15 as libc::c_int as libc::c_uint {
-        left <<= 1 as libc::c_int;
-        left -= count[len as usize] as libc::c_int;
-        if left < 0 as libc::c_int {
-            return -(1 as libc::c_int);
+    left = 1;
+    len = 1;
+    while len <= 15 {
+        left <<= 1;
+        left -= count[len as usize] as i32;
+        if left < 0 {
+            return -(1i32);
         }
         len = len.wrapping_add(1)
         /* over-subscribed */
     } /* incomplete set */
-    if left > 0 as libc::c_int
-        && (type_0 as libc::c_uint
-            == crate::src::zlib::inftrees::CODES as libc::c_int as libc::c_uint
-            || max != 1 as libc::c_int as libc::c_uint)
-    {
-        return -(1 as libc::c_int);
+    if left > 0 && (type_0 == crate::src::zlib::inftrees::CODES || max != 1) {
+        return -(1i32);
     }
     /* generate offsets into symbol table for each length for sorting */
-    offs[1 as libc::c_int as usize] = 0 as libc::c_int as libc::c_ushort;
-    len = 1 as libc::c_int as libc::c_uint;
-    while len < 15 as libc::c_int as libc::c_uint {
-        offs[len.wrapping_add(1 as libc::c_int as libc::c_uint) as usize] =
-            (offs[len as usize] as libc::c_int + count[len as usize] as libc::c_int)
-                as libc::c_ushort;
+    offs[1] = 0;
+    len = 1;
+    while len < 15 {
+        offs[len.wrapping_add(1u32) as usize] =
+            (offs[len as usize] as i32 + count[len as usize] as i32) as u16;
         len = len.wrapping_add(1)
     }
     /* sort symbols by length, by symbol order within each length */
-    sym = 0 as libc::c_int as libc::c_uint;
+    sym = 0;
     while sym < codes {
-        if *lens.offset(sym as isize) as libc::c_int != 0 as libc::c_int {
+        if *lens.offset(sym as isize) as i32 != 0 {
             let fresh2 = offs[*lens.offset(sym as isize) as usize];
             offs[*lens.offset(sym as isize) as usize] =
                 offs[*lens.offset(sym as isize) as usize].wrapping_add(1);
-            *work.offset(fresh2 as isize) = sym as libc::c_ushort
+            *work.offset(fresh2 as isize) = sym as u16
         }
         sym = sym.wrapping_add(1)
     }
@@ -361,121 +238,115 @@ pub unsafe extern "C" fn inflate_table(
       in the rest of the decoding tables with invalid code markers.
     */
     /* set up for code type */
-    match type_0 as libc::c_uint {
+    match type_0 {
         0 => {
             extra = work; /* dummy value--not used */
             base = extra;
-            end = 19 as libc::c_int
+            end = 19
         }
         1 => {
             base = lbase.as_ptr();
-            base = base.offset(-(257 as libc::c_int as isize));
+            base = base.offset(-(257));
             extra = lext.as_ptr();
-            extra = extra.offset(-(257 as libc::c_int as isize));
-            end = 256 as libc::c_int
+            extra = extra.offset(-(257));
+            end = 256
         }
         _ => {
             /* DISTS */
             base = dbase.as_ptr();
             extra = dext.as_ptr();
-            end = -(1 as libc::c_int)
+            end = -(1)
         }
     }
     /* initialize state for loop */
-    huff = 0 as libc::c_int as libc::c_uint; /* starting code */
-    sym = 0 as libc::c_int as libc::c_uint; /* starting code symbol */
+    huff = 0; /* starting code */
+    sym = 0; /* starting code symbol */
     len = min; /* starting code length */
     next = *table; /* current table to fill in */
     curr = root; /* current table index bits */
-    drop_0 = 0 as libc::c_int as libc::c_uint; /* current bits to drop from code for index */
-    low = -(1 as libc::c_int) as libc::c_uint; /* trigger new sub-table when len > root */
-    used = (1 as libc::c_uint) << root; /* use root table entries */
-    mask = used.wrapping_sub(1 as libc::c_int as libc::c_uint); /* mask for comparing low */
+    drop_0 = 0; /* current bits to drop from code for index */
+    low = -(1i32) as u32; /* trigger new sub-table when len > root */
+    used = (1) << root; /* use root table entries */
+    mask = used.wrapping_sub(1u32); /* mask for comparing low */
     /* check available table space */
-    if type_0 as libc::c_uint == crate::src::zlib::inftrees::LENS as libc::c_int as libc::c_uint
-        && used >= (2048 as libc::c_int - 592 as libc::c_int) as libc::c_uint
-    {
-        return 1 as libc::c_int;
+    if type_0 == crate::src::zlib::inftrees::LENS && used >= (2048i32 - 592) as u32 {
+        return 1i32;
     }
     loop
     /* process all codes and make table entries */
     /* create table entry */
     {
-        this.bits = len.wrapping_sub(drop_0) as libc::c_uchar; /* end of block */
-        if (*work.offset(sym as isize) as libc::c_int) < end {
-            this.op = 0 as libc::c_int as libc::c_uchar;
+        this.bits = len.wrapping_sub(drop_0) as u8; /* end of block */
+        if (*work.offset(sym as isize) as i32) < end {
+            this.op = 0;
             this.val = *work.offset(sym as isize)
-        } else if *work.offset(sym as isize) as libc::c_int > end {
-            this.op = *extra.offset(*work.offset(sym as isize) as isize) as libc::c_uchar;
+        } else if *work.offset(sym as isize) as i32 > end {
+            this.op = *extra.offset(*work.offset(sym as isize) as isize) as u8;
             this.val = *base.offset(*work.offset(sym as isize) as isize)
         } else {
-            this.op = (32 as libc::c_int + 64 as libc::c_int) as libc::c_uchar;
-            this.val = 0 as libc::c_int as libc::c_ushort
+            this.op = (32i32 + 64) as u8;
+            this.val = 0
         }
         /* replicate for those indices with low len bits equal to huff */
-        incr = (1 as libc::c_uint) << len.wrapping_sub(drop_0); /* save offset to next table */
-        fill = (1 as libc::c_uint) << curr;
+        incr = (1) << len.wrapping_sub(drop_0); /* save offset to next table */
+        fill = (1) << curr;
         min = fill;
         loop {
             fill = fill.wrapping_sub(incr);
             *next.offset((huff >> drop_0).wrapping_add(fill) as isize) = this;
-            if !(fill != 0 as libc::c_int as libc::c_uint) {
+            if !(fill != 0) {
                 break;
             }
         }
         /* backwards increment the len-bit code huff */
-        incr = (1 as libc::c_uint) << len.wrapping_sub(1 as libc::c_int as libc::c_uint);
+        incr = (1) << len.wrapping_sub(1u32);
         while huff & incr != 0 {
-            incr >>= 1 as libc::c_int
+            incr >>= 1
         }
-        if incr != 0 as libc::c_int as libc::c_uint {
-            huff &= incr.wrapping_sub(1 as libc::c_int as libc::c_uint);
+        if incr != 0 {
+            huff &= incr.wrapping_sub(1u32);
             huff = huff.wrapping_add(incr)
         } else {
-            huff = 0 as libc::c_int as libc::c_uint
+            huff = 0
         }
         /* go to next symbol, update count, len */
         sym = sym.wrapping_add(1);
         count[len as usize] = count[len as usize].wrapping_sub(1);
-        if count[len as usize] as libc::c_int == 0 as libc::c_int {
+        if count[len as usize] as i32 == 0 {
             if len == max {
                 break;
             }
-            len = *lens.offset(*work.offset(sym as isize) as isize) as libc::c_uint
+            len = *lens.offset(*work.offset(sym as isize) as isize) as u32
         }
         /* create new sub-table if needed */
         if len > root && huff & mask != low {
             /* if first time, transition to sub-tables */
-            if drop_0 == 0 as libc::c_int as libc::c_uint {
+            if drop_0 == 0 {
                 drop_0 = root
             }
             /* increment past last table */
             next = next.offset(min as isize); /* here min is 1 << curr */
             /* determine length of next table */
             curr = len.wrapping_sub(drop_0);
-            left = (1 as libc::c_int) << curr;
+            left = (1) << curr;
             while curr.wrapping_add(drop_0) < max {
-                left -= count[curr.wrapping_add(drop_0) as usize] as libc::c_int;
-                if left <= 0 as libc::c_int {
+                left -= count[curr.wrapping_add(drop_0) as usize] as i32;
+                if left <= 0 {
                     break;
                 }
                 curr = curr.wrapping_add(1);
-                left <<= 1 as libc::c_int
+                left <<= 1
             }
             /* check for enough space */
-            used = used.wrapping_add((1 as libc::c_uint) << curr);
-            if type_0 as libc::c_uint
-                == crate::src::zlib::inftrees::LENS as libc::c_int as libc::c_uint
-                && used >= (2048 as libc::c_int - 592 as libc::c_int) as libc::c_uint
-            {
-                return 1 as libc::c_int;
+            used = used.wrapping_add((1u32) << curr);
+            if type_0 == crate::src::zlib::inftrees::LENS && used >= (2048i32 - 592) as u32 {
+                return 1i32;
             }
             /* point entry in root table to sub-table */
             low = huff & mask;
-            (*(*table).offset(low as isize)).op = curr as libc::c_uchar;
-            (*(*table).offset(low as isize)).bits = root as libc::c_uchar;
-            (*(*table).offset(low as isize)).val =
-                next.wrapping_offset_from(*table) as libc::c_long as libc::c_ushort
+            (*(*table).offset(low as isize)).op = curr as u8;
+            (*(*table).offset(low as isize)).bits = root as u8;
+            (*(*table).offset(low as isize)).val = next.wrapping_offset_from(*table) as u16
         }
     }
     /*
@@ -485,33 +356,33 @@ pub unsafe extern "C" fn inflate_table(
       through high index bits.  When the current sub-table is filled, the loop
       drops back to the root table to fill in any remaining entries there.
     */
-    this.op = 64 as libc::c_int as libc::c_uchar; /* invalid code marker */
-    this.bits = len.wrapping_sub(drop_0) as libc::c_uchar;
-    this.val = 0 as libc::c_int as libc::c_ushort;
-    while huff != 0 as libc::c_int as libc::c_uint {
+    this.op = 64; /* invalid code marker */
+    this.bits = len.wrapping_sub(drop_0) as u8;
+    this.val = 0;
+    while huff != 0 {
         /* when done with sub-table, drop back to root table */
-        if drop_0 != 0 as libc::c_int as libc::c_uint && huff & mask != low {
-            drop_0 = 0 as libc::c_int as libc::c_uint;
+        if drop_0 != 0 && huff & mask != low {
+            drop_0 = 0;
             len = root;
             next = *table;
-            this.bits = len as libc::c_uchar
+            this.bits = len as u8
         }
         /* put invalid code marker in table */
         *next.offset((huff >> drop_0) as isize) = this;
         /* backwards increment the len-bit code huff */
-        incr = (1 as libc::c_uint) << len.wrapping_sub(1 as libc::c_int as libc::c_uint);
+        incr = (1) << len.wrapping_sub(1u32);
         while huff & incr != 0 {
-            incr >>= 1 as libc::c_int
+            incr >>= 1
         }
-        if incr != 0 as libc::c_int as libc::c_uint {
-            huff &= incr.wrapping_sub(1 as libc::c_int as libc::c_uint);
+        if incr != 0 {
+            huff &= incr.wrapping_sub(1u32);
             huff = huff.wrapping_add(incr)
         } else {
-            huff = 0 as libc::c_int as libc::c_uint
+            huff = 0
         }
     }
     /* set return parameters */
     *table = (*table).offset(used as isize);
     *bits = root;
-    return 0 as libc::c_int;
+    return 0;
 }

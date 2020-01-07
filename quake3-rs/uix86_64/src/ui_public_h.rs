@@ -96,7 +96,7 @@ pub const UI_CVAR_SET: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 3;
 pub const UI_MILLISECONDS: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 2;
 pub const UI_PRINT: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 1;
 pub const UI_ERROR: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 0;
-pub type uiMenuCommand_t = libc::c_uint;
+pub type uiMenuCommand_t = u32;
 pub const UIMENU_POSTGAME: crate::ui_public_h::uiMenuCommand_t = 6;
 pub const UIMENU_TEAM: crate::ui_public_h::uiMenuCommand_t = 5;
 pub const UIMENU_BAD_CD_KEY: crate::ui_public_h::uiMenuCommand_t = 4;
@@ -131,11 +131,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #[derive(Copy, Clone)]
 pub struct uiClientState_t {
     pub connState: crate::src::qcommon::q_shared::connstate_t,
-    pub connectPacketCount: libc::c_int,
-    pub clientNum: libc::c_int,
-    pub servername: [libc::c_char; 1024],
-    pub updateInfoString: [libc::c_char; 1024],
-    pub messageString: [libc::c_char; 1024],
+    pub connectPacketCount: i32,
+    pub clientNum: i32,
+    pub servername: [i8; 1024],
+    pub updateInfoString: [i8; 1024],
+    pub messageString: [i8; 1024],
 }
 // if !overlay, the background will be drawn, otherwise it will be
 

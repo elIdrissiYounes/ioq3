@@ -4,10 +4,10 @@ pub mod qcommon_h {
 
     #[inline]
 
-    pub unsafe extern "C" fn _vmf(mut x: crate::stdlib::intptr_t) -> libc::c_float {
+    pub unsafe extern "C" fn _vmf(mut x: crate::stdlib::intptr_t) -> f32 {
         let mut fi: crate::src::qcommon::q_shared::floatint_t =
             crate::src::qcommon::q_shared::floatint_t { f: 0. };
-        fi.i = x as libc::c_int;
+        fi.i = x as i32;
         return fi.f;
     }
 
@@ -394,8 +394,7 @@ extern "C" {
 }
 #[no_mangle]
 
-pub static mut uivm: *mut crate::qcommon_h::vm_t =
-    0 as *const crate::qcommon_h::vm_t as *mut crate::qcommon_h::vm_t;
+pub static mut uivm: *mut crate::qcommon_h::vm_t = 0 as *mut crate::qcommon_h::vm_t;
 /*
 ====================
 GetClientState
@@ -408,19 +407,19 @@ unsafe extern "C" fn GetClientState(mut state: *mut crate::ui_public_h::uiClient
     crate::src::qcommon::q_shared::Q_strncpyz(
         (*state).servername.as_mut_ptr(),
         crate::src::client::cl_main::clc.servername.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 1024]>() as i32,
     );
     crate::src::qcommon::q_shared::Q_strncpyz(
         (*state).updateInfoString.as_mut_ptr(),
         crate::src::client::cl_main::cls
             .updateInfoString
             .as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 1024]>() as i32,
     );
     crate::src::qcommon::q_shared::Q_strncpyz(
         (*state).messageString.as_mut_ptr(),
         crate::src::client::cl_main::clc.serverMessage.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 1024]>() as i32,
     );
     (*state).clientNum = crate::src::client::cl_main::cl.snap.ps.clientNum;
 }
@@ -432,61 +431,56 @@ LAN_LoadCachedServers
 #[no_mangle]
 
 pub unsafe extern "C" fn LAN_LoadCachedServers() {
-    let mut size: libc::c_int = 0;
+    let mut size: i32 = 0;
     let mut fileIn: crate::src::qcommon::q_shared::fileHandle_t = 0;
-    crate::src::client::cl_main::cls.numfavoriteservers = 0 as libc::c_int;
+    crate::src::client::cl_main::cls.numfavoriteservers = 0;
     crate::src::client::cl_main::cls.numglobalservers =
         crate::src::client::cl_main::cls.numfavoriteservers;
-    crate::src::client::cl_main::cls.numGlobalServerAddresses = 0 as libc::c_int;
+    crate::src::client::cl_main::cls.numGlobalServerAddresses = 0;
     if crate::src::qcommon::files::FS_SV_FOpenFileRead(
-        b"servercache.dat\x00" as *const u8 as *const libc::c_char,
+        b"servercache.dat\x00" as *const u8 as *const i8,
         &mut fileIn,
     ) != 0
     {
         crate::src::qcommon::files::FS_Read(
-            &mut crate::src::client::cl_main::cls.numglobalservers as *mut libc::c_int
-                as *mut libc::c_void,
-            ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as libc::c_int,
+            &mut crate::src::client::cl_main::cls.numglobalservers as *mut i32 as *mut libc::c_void,
+            ::std::mem::size_of::<i32>() as i32,
             fileIn,
         );
         crate::src::qcommon::files::FS_Read(
-            &mut crate::src::client::cl_main::cls.numfavoriteservers as *mut libc::c_int
+            &mut crate::src::client::cl_main::cls.numfavoriteservers as *mut i32
                 as *mut libc::c_void,
-            ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as libc::c_int,
+            ::std::mem::size_of::<i32>() as i32,
             fileIn,
         );
         crate::src::qcommon::files::FS_Read(
-            &mut size as *mut libc::c_int as *mut libc::c_void,
-            ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as libc::c_int,
+            &mut size as *mut i32 as *mut libc::c_void,
+            ::std::mem::size_of::<i32>() as i32,
             fileIn,
         );
-        if size as libc::c_ulong
-            == (::std::mem::size_of::<[crate::client_h::serverInfo_t; 4096]>() as libc::c_ulong)
-                .wrapping_add(
-                    ::std::mem::size_of::<[crate::client_h::serverInfo_t; 128]>() as libc::c_ulong,
-                )
+        if size as usize
+            == (::std::mem::size_of::<[crate::client_h::serverInfo_t; 4096]>())
+                .wrapping_add(::std::mem::size_of::<[crate::client_h::serverInfo_t; 128]>())
         {
             crate::src::qcommon::files::FS_Read(
                 &mut crate::src::client::cl_main::cls.globalServers
                     as *mut [crate::client_h::serverInfo_t; 4096]
                     as *mut libc::c_void,
-                ::std::mem::size_of::<[crate::client_h::serverInfo_t; 4096]>() as libc::c_ulong
-                    as libc::c_int,
+                ::std::mem::size_of::<[crate::client_h::serverInfo_t; 4096]>() as i32,
                 fileIn,
             );
             crate::src::qcommon::files::FS_Read(
                 &mut crate::src::client::cl_main::cls.favoriteServers
                     as *mut [crate::client_h::serverInfo_t; 128]
                     as *mut libc::c_void,
-                ::std::mem::size_of::<[crate::client_h::serverInfo_t; 128]>() as libc::c_ulong
-                    as libc::c_int,
+                ::std::mem::size_of::<[crate::client_h::serverInfo_t; 128]>() as i32,
                 fileIn,
             );
         } else {
-            crate::src::client::cl_main::cls.numfavoriteservers = 0 as libc::c_int;
+            crate::src::client::cl_main::cls.numfavoriteservers = 0;
             crate::src::client::cl_main::cls.numglobalservers =
                 crate::src::client::cl_main::cls.numfavoriteservers;
-            crate::src::client::cl_main::cls.numGlobalServerAddresses = 0 as libc::c_int
+            crate::src::client::cl_main::cls.numGlobalServerAddresses = 0
         }
         crate::src::qcommon::files::FS_FCloseFile(fileIn);
     };
@@ -499,44 +493,39 @@ LAN_SaveServersToCache
 #[no_mangle]
 
 pub unsafe extern "C" fn LAN_SaveServersToCache() {
-    let mut size: libc::c_int = 0;
+    let mut size: i32 = 0;
     let mut fileOut: crate::src::qcommon::q_shared::fileHandle_t =
         crate::src::qcommon::files::FS_SV_FOpenFileWrite(
-            b"servercache.dat\x00" as *const u8 as *const libc::c_char,
+            b"servercache.dat\x00" as *const u8 as *const i8,
         );
     crate::src::qcommon::files::FS_Write(
-        &mut crate::src::client::cl_main::cls.numglobalservers as *mut libc::c_int
-            as *const libc::c_void,
-        ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as libc::c_int,
+        &mut crate::src::client::cl_main::cls.numglobalservers as *mut i32 as *const libc::c_void,
+        ::std::mem::size_of::<i32>() as i32,
         fileOut,
     );
     crate::src::qcommon::files::FS_Write(
-        &mut crate::src::client::cl_main::cls.numfavoriteservers as *mut libc::c_int
-            as *const libc::c_void,
-        ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as libc::c_int,
+        &mut crate::src::client::cl_main::cls.numfavoriteservers as *mut i32 as *const libc::c_void,
+        ::std::mem::size_of::<i32>() as i32,
         fileOut,
     );
-    size = (::std::mem::size_of::<[crate::client_h::serverInfo_t; 4096]>() as libc::c_ulong)
-        .wrapping_add(
-            ::std::mem::size_of::<[crate::client_h::serverInfo_t; 128]>() as libc::c_ulong,
-        ) as libc::c_int;
+    size = (::std::mem::size_of::<[crate::client_h::serverInfo_t; 4096]>())
+        .wrapping_add(::std::mem::size_of::<[crate::client_h::serverInfo_t; 128]>())
+        as i32;
     crate::src::qcommon::files::FS_Write(
-        &mut size as *mut libc::c_int as *const libc::c_void,
-        ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as libc::c_int,
+        &mut size as *mut i32 as *const libc::c_void,
+        ::std::mem::size_of::<i32>() as i32,
         fileOut,
     );
     crate::src::qcommon::files::FS_Write(
         &mut crate::src::client::cl_main::cls.globalServers
             as *mut [crate::client_h::serverInfo_t; 4096] as *const libc::c_void,
-        ::std::mem::size_of::<[crate::client_h::serverInfo_t; 4096]>() as libc::c_ulong
-            as libc::c_int,
+        ::std::mem::size_of::<[crate::client_h::serverInfo_t; 4096]>() as i32,
         fileOut,
     );
     crate::src::qcommon::files::FS_Write(
         &mut crate::src::client::cl_main::cls.favoriteServers
             as *mut [crate::client_h::serverInfo_t; 128] as *const libc::c_void,
-        ::std::mem::size_of::<[crate::client_h::serverInfo_t; 128]>() as libc::c_ulong
-            as libc::c_int,
+        ::std::mem::size_of::<[crate::client_h::serverInfo_t; 128]>() as i32,
         fileOut,
     );
     crate::src::qcommon::files::FS_FCloseFile(fileOut);
@@ -547,42 +536,39 @@ LAN_ResetPings
 ====================
 */
 
-unsafe extern "C" fn LAN_ResetPings(mut source: libc::c_int) {
-    let mut count: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
+unsafe extern "C" fn LAN_ResetPings(mut source: i32) {
+    let mut count: i32 = 0;
+    let mut i: i32 = 0;
     let mut servers: *mut crate::client_h::serverInfo_t = 0 as *mut crate::client_h::serverInfo_t;
-    count = 0 as libc::c_int;
+    count = 0;
     match source {
         0 => {
             servers = &mut *crate::src::client::cl_main::cls
                 .localServers
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize)
-                as *mut crate::client_h::serverInfo_t;
-            count = 128 as libc::c_int
+                .offset(0) as *mut crate::client_h::serverInfo_t;
+            count = 128
         }
         1 | 2 => {
             servers = &mut *crate::src::client::cl_main::cls
                 .globalServers
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize)
-                as *mut crate::client_h::serverInfo_t;
-            count = 4096 as libc::c_int
+                .offset(0) as *mut crate::client_h::serverInfo_t;
+            count = 4096
         }
         3 => {
             servers = &mut *crate::src::client::cl_main::cls
                 .favoriteServers
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize)
-                as *mut crate::client_h::serverInfo_t;
-            count = 128 as libc::c_int
+                .offset(0) as *mut crate::client_h::serverInfo_t;
+            count = 128
         }
         _ => {}
     }
     if !servers.is_null() {
-        i = 0 as libc::c_int;
+        i = 0;
         while i < count {
-            (*servers.offset(i as isize)).ping = -(1 as libc::c_int);
+            (*servers.offset(i as isize)).ping = -(1);
             i += 1
         }
     };
@@ -594,13 +580,13 @@ LAN_AddServer
 */
 
 unsafe extern "C" fn LAN_AddServer(
-    mut source: libc::c_int,
-    mut name: *const libc::c_char,
-    mut address: *const libc::c_char,
-) -> libc::c_int {
-    let mut max: libc::c_int = 0;
-    let mut count: *mut libc::c_int = 0 as *mut libc::c_int;
-    let mut i: libc::c_int = 0;
+    mut source: i32,
+    mut name: *const i8,
+    mut address: *const i8,
+) -> i32 {
+    let mut max: i32 = 0;
+    let mut count: *mut i32 = 0 as *mut i32;
+    let mut i: i32 = 0;
     let mut adr: crate::qcommon_h::netadr_t = crate::qcommon_h::netadr_t {
         type_0: crate::qcommon_h::NA_BAD,
         ip: [0; 4],
@@ -609,33 +595,30 @@ unsafe extern "C" fn LAN_AddServer(
         scope_id: 0,
     };
     let mut servers: *mut crate::client_h::serverInfo_t = 0 as *mut crate::client_h::serverInfo_t;
-    max = 128 as libc::c_int;
-    count = 0 as *mut libc::c_int;
+    max = 128;
+    count = 0 as *mut i32;
     match source {
         0 => {
             count = &mut crate::src::client::cl_main::cls.numlocalservers;
             servers = &mut *crate::src::client::cl_main::cls
                 .localServers
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize)
-                as *mut crate::client_h::serverInfo_t
+                .offset(0) as *mut crate::client_h::serverInfo_t
         }
         1 | 2 => {
-            max = 4096 as libc::c_int;
+            max = 4096;
             count = &mut crate::src::client::cl_main::cls.numglobalservers;
             servers = &mut *crate::src::client::cl_main::cls
                 .globalServers
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize)
-                as *mut crate::client_h::serverInfo_t
+                .offset(0) as *mut crate::client_h::serverInfo_t
         }
         3 => {
             count = &mut crate::src::client::cl_main::cls.numfavoriteservers;
             servers = &mut *crate::src::client::cl_main::cls
                 .favoriteServers
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize)
-                as *mut crate::client_h::serverInfo_t
+                .offset(0) as *mut crate::client_h::serverInfo_t
         }
         _ => {}
     }
@@ -645,7 +628,7 @@ unsafe extern "C" fn LAN_AddServer(
             &mut adr,
             crate::qcommon_h::NA_UNSPEC,
         );
-        i = 0 as libc::c_int;
+        i = 0;
         while i < *count {
             if crate::src::qcommon::net_ip::NET_CompareAdr((*servers.offset(i as isize)).adr, adr)
                 as u64
@@ -660,15 +643,15 @@ unsafe extern "C" fn LAN_AddServer(
             crate::src::qcommon::q_shared::Q_strncpyz(
                 (*servers.offset(*count as isize)).hostName.as_mut_ptr(),
                 name,
-                ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
+                ::std::mem::size_of::<[i8; 32]>() as i32,
             );
             (*servers.offset(*count as isize)).visible = crate::src::qcommon::q_shared::qtrue;
             *count += 1;
-            return 1 as libc::c_int;
+            return 1i32;
         }
-        return 0 as libc::c_int;
+        return 0i32;
     }
-    return -(1 as libc::c_int);
+    return -(1);
 }
 /*
 ====================
@@ -676,35 +659,32 @@ LAN_RemoveServer
 ====================
 */
 
-unsafe extern "C" fn LAN_RemoveServer(mut source: libc::c_int, mut addr: *const libc::c_char) {
-    let mut count: *mut libc::c_int = 0 as *mut libc::c_int;
-    let mut i: libc::c_int = 0;
+unsafe extern "C" fn LAN_RemoveServer(mut source: i32, mut addr: *const i8) {
+    let mut count: *mut i32 = 0 as *mut i32;
+    let mut i: i32 = 0;
     let mut servers: *mut crate::client_h::serverInfo_t = 0 as *mut crate::client_h::serverInfo_t;
-    count = 0 as *mut libc::c_int;
+    count = 0 as *mut i32;
     match source {
         0 => {
             count = &mut crate::src::client::cl_main::cls.numlocalservers;
             servers = &mut *crate::src::client::cl_main::cls
                 .localServers
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize)
-                as *mut crate::client_h::serverInfo_t
+                .offset(0) as *mut crate::client_h::serverInfo_t
         }
         1 | 2 => {
             count = &mut crate::src::client::cl_main::cls.numglobalservers;
             servers = &mut *crate::src::client::cl_main::cls
                 .globalServers
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize)
-                as *mut crate::client_h::serverInfo_t
+                .offset(0) as *mut crate::client_h::serverInfo_t
         }
         3 => {
             count = &mut crate::src::client::cl_main::cls.numfavoriteservers;
             servers = &mut *crate::src::client::cl_main::cls
                 .favoriteServers
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize)
-                as *mut crate::client_h::serverInfo_t
+                .offset(0) as *mut crate::client_h::serverInfo_t
         }
         _ => {}
     }
@@ -721,21 +701,20 @@ unsafe extern "C" fn LAN_RemoveServer(mut source: libc::c_int, mut addr: *const 
             &mut comp,
             crate::qcommon_h::NA_UNSPEC,
         );
-        i = 0 as libc::c_int;
+        i = 0;
         while i < *count {
             if crate::src::qcommon::net_ip::NET_CompareAdr(comp, (*servers.offset(i as isize)).adr)
                 as u64
                 != 0
             {
-                let mut j: libc::c_int = i;
-                while j < *count - 1 as libc::c_int {
+                let mut j: i32 = i;
+                while j < *count - 1 {
                     crate::stdlib::memcpy(
                         &mut *servers.offset(j as isize) as *mut crate::client_h::serverInfo_t
                             as *mut libc::c_void,
-                        &mut *servers.offset((j + 1 as libc::c_int) as isize)
-                            as *mut crate::client_h::serverInfo_t
+                        &mut *servers.offset((j + 1) as isize) as *mut crate::client_h::serverInfo_t
                             as *const libc::c_void,
-                        ::std::mem::size_of::<crate::client_h::serverInfo_t>() as libc::c_ulong,
+                        ::std::mem::size_of::<crate::client_h::serverInfo_t>(),
                     );
                     j += 1
                 }
@@ -753,14 +732,14 @@ LAN_GetServerCount
 ====================
 */
 
-unsafe extern "C" fn LAN_GetServerCount(mut source: libc::c_int) -> libc::c_int {
+unsafe extern "C" fn LAN_GetServerCount(mut source: i32) -> i32 {
     match source {
         0 => return crate::src::client::cl_main::cls.numlocalservers,
         1 | 2 => return crate::src::client::cl_main::cls.numglobalservers,
         3 => return crate::src::client::cl_main::cls.numfavoriteservers,
         _ => {}
     }
-    return 0 as libc::c_int;
+    return 0;
 }
 /*
 ====================
@@ -769,14 +748,14 @@ LAN_GetLocalServerAddressString
 */
 
 unsafe extern "C" fn LAN_GetServerAddressString(
-    mut source: libc::c_int,
-    mut n: libc::c_int,
-    mut buf: *mut libc::c_char,
-    mut buflen: libc::c_int,
+    mut source: i32,
+    mut n: i32,
+    mut buf: *mut i8,
+    mut buflen: i32,
 ) {
     match source {
         0 => {
-            if n >= 0 as libc::c_int && n < 128 as libc::c_int {
+            if n >= 0 && n < 128 {
                 crate::src::qcommon::q_shared::Q_strncpyz(
                     buf,
                     crate::src::qcommon::net_ip::NET_AdrToStringwPort(
@@ -788,7 +767,7 @@ unsafe extern "C" fn LAN_GetServerAddressString(
             }
         }
         1 | 2 => {
-            if n >= 0 as libc::c_int && n < 4096 as libc::c_int {
+            if n >= 0 && n < 4096 {
                 crate::src::qcommon::q_shared::Q_strncpyz(
                     buf,
                     crate::src::qcommon::net_ip::NET_AdrToStringwPort(
@@ -800,7 +779,7 @@ unsafe extern "C" fn LAN_GetServerAddressString(
             }
         }
         3 => {
-            if n >= 0 as libc::c_int && n < 128 as libc::c_int {
+            if n >= 0 && n < 128 {
                 crate::src::qcommon::q_shared::Q_strncpyz(
                     buf,
                     crate::src::qcommon::net_ip::NET_AdrToStringwPort(
@@ -813,7 +792,7 @@ unsafe extern "C" fn LAN_GetServerAddressString(
         }
         _ => {}
     }
-    *buf.offset(0 as libc::c_int as isize) = '\u{0}' as i32 as libc::c_char;
+    *buf.offset(0) = '\u{0}' as i8;
 }
 /*
 ====================
@@ -822,17 +801,17 @@ LAN_GetServerInfo
 */
 
 unsafe extern "C" fn LAN_GetServerInfo(
-    mut source: libc::c_int,
-    mut n: libc::c_int,
-    mut buf: *mut libc::c_char,
-    mut buflen: libc::c_int,
+    mut source: i32,
+    mut n: i32,
+    mut buf: *mut i8,
+    mut buflen: i32,
 ) {
-    let mut info: [libc::c_char; 1024] = [0; 1024];
+    let mut info: [i8; 1024] = [0; 1024];
     let mut server: *mut crate::client_h::serverInfo_t = 0 as *mut crate::client_h::serverInfo_t;
-    info[0 as libc::c_int as usize] = '\u{0}' as i32 as libc::c_char;
+    info[0] = '\u{0}' as i8;
     match source {
         0 => {
-            if n >= 0 as libc::c_int && n < 128 as libc::c_int {
+            if n >= 0 && n < 128 {
                 server = &mut *crate::src::client::cl_main::cls
                     .localServers
                     .as_mut_ptr()
@@ -841,7 +820,7 @@ unsafe extern "C" fn LAN_GetServerInfo(
             }
         }
         1 | 2 => {
-            if n >= 0 as libc::c_int && n < 4096 as libc::c_int {
+            if n >= 0 && n < 4096 {
                 server = &mut *crate::src::client::cl_main::cls
                     .globalServers
                     .as_mut_ptr()
@@ -850,7 +829,7 @@ unsafe extern "C" fn LAN_GetServerInfo(
             }
         }
         3 => {
-            if n >= 0 as libc::c_int && n < 128 as libc::c_int {
+            if n >= 0 && n < 128 {
                 server = &mut *crate::src::client::cl_main::cls
                     .favoriteServers
                     .as_mut_ptr()
@@ -861,110 +840,95 @@ unsafe extern "C" fn LAN_GetServerInfo(
         _ => {}
     }
     if !server.is_null() && !buf.is_null() {
-        *buf.offset(0 as libc::c_int as isize) = '\u{0}' as i32 as libc::c_char;
+        *buf.offset(0) = '\u{0}' as i8;
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"hostname\x00" as *const u8 as *const libc::c_char,
+            b"hostname\x00" as *const u8 as *const i8,
             (*server).hostName.as_mut_ptr(),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"mapname\x00" as *const u8 as *const libc::c_char,
+            b"mapname\x00" as *const u8 as *const i8,
             (*server).mapName.as_mut_ptr(),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"clients\x00" as *const u8 as *const libc::c_char,
-            crate::src::qcommon::q_shared::va(
-                b"%i\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-                (*server).clients,
-            ),
+            b"clients\x00" as *const u8 as *const i8,
+            crate::src::qcommon::q_shared::va(b"%i\x00" as *const u8 as *mut i8, (*server).clients),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"sv_maxclients\x00" as *const u8 as *const libc::c_char,
+            b"sv_maxclients\x00" as *const u8 as *const i8,
             crate::src::qcommon::q_shared::va(
-                b"%i\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"%i\x00" as *const u8 as *mut i8,
                 (*server).maxClients,
             ),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"ping\x00" as *const u8 as *const libc::c_char,
-            crate::src::qcommon::q_shared::va(
-                b"%i\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-                (*server).ping,
-            ),
+            b"ping\x00" as *const u8 as *const i8,
+            crate::src::qcommon::q_shared::va(b"%i\x00" as *const u8 as *mut i8, (*server).ping),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"minping\x00" as *const u8 as *const libc::c_char,
-            crate::src::qcommon::q_shared::va(
-                b"%i\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-                (*server).minPing,
-            ),
+            b"minping\x00" as *const u8 as *const i8,
+            crate::src::qcommon::q_shared::va(b"%i\x00" as *const u8 as *mut i8, (*server).minPing),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"maxping\x00" as *const u8 as *const libc::c_char,
-            crate::src::qcommon::q_shared::va(
-                b"%i\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-                (*server).maxPing,
-            ),
+            b"maxping\x00" as *const u8 as *const i8,
+            crate::src::qcommon::q_shared::va(b"%i\x00" as *const u8 as *mut i8, (*server).maxPing),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"game\x00" as *const u8 as *const libc::c_char,
+            b"game\x00" as *const u8 as *const i8,
             (*server).game.as_mut_ptr(),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"gametype\x00" as *const u8 as *const libc::c_char,
+            b"gametype\x00" as *const u8 as *const i8,
             crate::src::qcommon::q_shared::va(
-                b"%i\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"%i\x00" as *const u8 as *mut i8,
                 (*server).gameType,
             ),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"nettype\x00" as *const u8 as *const libc::c_char,
-            crate::src::qcommon::q_shared::va(
-                b"%i\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-                (*server).netType,
-            ),
+            b"nettype\x00" as *const u8 as *const i8,
+            crate::src::qcommon::q_shared::va(b"%i\x00" as *const u8 as *mut i8, (*server).netType),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"addr\x00" as *const u8 as *const libc::c_char,
+            b"addr\x00" as *const u8 as *const i8,
             crate::src::qcommon::net_ip::NET_AdrToStringwPort((*server).adr),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"punkbuster\x00" as *const u8 as *const libc::c_char,
+            b"punkbuster\x00" as *const u8 as *const i8,
             crate::src::qcommon::q_shared::va(
-                b"%i\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"%i\x00" as *const u8 as *mut i8,
                 (*server).punkbuster,
             ),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"g_needpass\x00" as *const u8 as *const libc::c_char,
+            b"g_needpass\x00" as *const u8 as *const i8,
             crate::src::qcommon::q_shared::va(
-                b"%i\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"%i\x00" as *const u8 as *mut i8,
                 (*server).g_needpass,
             ),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
-            b"g_humanplayers\x00" as *const u8 as *const libc::c_char,
+            b"g_humanplayers\x00" as *const u8 as *const i8,
             crate::src::qcommon::q_shared::va(
-                b"%i\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"%i\x00" as *const u8 as *mut i8,
                 (*server).g_humanplayers,
             ),
         );
         crate::src::qcommon::q_shared::Q_strncpyz(buf, info.as_mut_ptr(), buflen);
     } else if !buf.is_null() {
-        *buf.offset(0 as libc::c_int as isize) = '\u{0}' as i32 as libc::c_char
+        *buf.offset(0) = '\u{0}' as i8
     };
 }
 /*
@@ -973,11 +937,11 @@ LAN_GetServerPing
 ====================
 */
 
-unsafe extern "C" fn LAN_GetServerPing(mut source: libc::c_int, mut n: libc::c_int) -> libc::c_int {
+unsafe extern "C" fn LAN_GetServerPing(mut source: i32, mut n: i32) -> i32 {
     let mut server: *mut crate::client_h::serverInfo_t = 0 as *mut crate::client_h::serverInfo_t;
     match source {
         0 => {
-            if n >= 0 as libc::c_int && n < 128 as libc::c_int {
+            if n >= 0 && n < 128 {
                 server = &mut *crate::src::client::cl_main::cls
                     .localServers
                     .as_mut_ptr()
@@ -986,7 +950,7 @@ unsafe extern "C" fn LAN_GetServerPing(mut source: libc::c_int, mut n: libc::c_i
             }
         }
         1 | 2 => {
-            if n >= 0 as libc::c_int && n < 4096 as libc::c_int {
+            if n >= 0 && n < 4096 {
                 server = &mut *crate::src::client::cl_main::cls
                     .globalServers
                     .as_mut_ptr()
@@ -995,7 +959,7 @@ unsafe extern "C" fn LAN_GetServerPing(mut source: libc::c_int, mut n: libc::c_i
             }
         }
         3 => {
-            if n >= 0 as libc::c_int && n < 128 as libc::c_int {
+            if n >= 0 && n < 128 {
                 server = &mut *crate::src::client::cl_main::cls
                     .favoriteServers
                     .as_mut_ptr()
@@ -1008,7 +972,7 @@ unsafe extern "C" fn LAN_GetServerPing(mut source: libc::c_int, mut n: libc::c_i
     if !server.is_null() {
         return (*server).ping;
     }
-    return -(1 as libc::c_int);
+    return -(1);
 }
 /*
 ====================
@@ -1017,12 +981,12 @@ LAN_GetServerPtr
 */
 
 unsafe extern "C" fn LAN_GetServerPtr(
-    mut source: libc::c_int,
-    mut n: libc::c_int,
+    mut source: i32,
+    mut n: i32,
 ) -> *mut crate::client_h::serverInfo_t {
     match source {
         0 => {
-            if n >= 0 as libc::c_int && n < 128 as libc::c_int {
+            if n >= 0 && n < 128 {
                 return &mut *crate::src::client::cl_main::cls
                     .localServers
                     .as_mut_ptr()
@@ -1031,7 +995,7 @@ unsafe extern "C" fn LAN_GetServerPtr(
             }
         }
         1 | 2 => {
-            if n >= 0 as libc::c_int && n < 4096 as libc::c_int {
+            if n >= 0 && n < 4096 {
                 return &mut *crate::src::client::cl_main::cls
                     .globalServers
                     .as_mut_ptr()
@@ -1040,7 +1004,7 @@ unsafe extern "C" fn LAN_GetServerPtr(
             }
         }
         3 => {
-            if n >= 0 as libc::c_int && n < 128 as libc::c_int {
+            if n >= 0 && n < 128 {
                 return &mut *crate::src::client::cl_main::cls
                     .favoriteServers
                     .as_mut_ptr()
@@ -1059,23 +1023,23 @@ LAN_CompareServers
 */
 
 unsafe extern "C" fn LAN_CompareServers(
-    mut source: libc::c_int,
-    mut sortKey: libc::c_int,
-    mut sortDir: libc::c_int,
-    mut s1: libc::c_int,
-    mut s2: libc::c_int,
-) -> libc::c_int {
-    let mut res: libc::c_int = 0;
+    mut source: i32,
+    mut sortKey: i32,
+    mut sortDir: i32,
+    mut s1: i32,
+    mut s2: i32,
+) -> i32 {
+    let mut res: i32 = 0;
     let mut server1: *mut crate::client_h::serverInfo_t = 0 as *mut crate::client_h::serverInfo_t;
     let mut server2: *mut crate::client_h::serverInfo_t = 0 as *mut crate::client_h::serverInfo_t;
-    let mut clients1: libc::c_int = 0;
-    let mut clients2: libc::c_int = 0;
+    let mut clients1: i32 = 0;
+    let mut clients2: i32 = 0;
     server1 = LAN_GetServerPtr(source, s1);
     server2 = LAN_GetServerPtr(source, s2);
     if server1.is_null() || server2.is_null() {
-        return 0 as libc::c_int;
+        return 0i32;
     }
-    res = 0 as libc::c_int;
+    res = 0;
     match sortKey {
         0 => {
             res = crate::src::qcommon::q_shared::Q_stricmp(
@@ -1099,41 +1063,41 @@ unsafe extern "C" fn LAN_CompareServers(
                 clients2 = (*server2).clients
             }
             if clients1 < clients2 {
-                res = -(1 as libc::c_int)
+                res = -(1)
             } else if clients1 > clients2 {
-                res = 1 as libc::c_int
+                res = 1
             } else {
-                res = 0 as libc::c_int
+                res = 0
             }
         }
         3 => {
             if (*server1).gameType < (*server2).gameType {
-                res = -(1 as libc::c_int)
+                res = -(1)
             } else if (*server1).gameType > (*server2).gameType {
-                res = 1 as libc::c_int
+                res = 1
             } else {
-                res = 0 as libc::c_int
+                res = 0
             }
         }
         4 => {
             if (*server1).ping < (*server2).ping {
-                res = -(1 as libc::c_int)
+                res = -(1)
             } else if (*server1).ping > (*server2).ping {
-                res = 1 as libc::c_int
+                res = 1
             } else {
-                res = 0 as libc::c_int
+                res = 0
             }
         }
         _ => {}
     }
     if sortDir != 0 {
-        if res < 0 as libc::c_int {
-            return 1 as libc::c_int;
+        if res < 0 {
+            return 1i32;
         }
-        if res > 0 as libc::c_int {
-            return -(1 as libc::c_int);
+        if res > 0 {
+            return -(1i32);
         }
-        return 0 as libc::c_int;
+        return 0i32;
     }
     return res;
 }
@@ -1143,7 +1107,7 @@ LAN_GetPingQueueCount
 ====================
 */
 
-unsafe extern "C" fn LAN_GetPingQueueCount() -> libc::c_int {
+unsafe extern "C" fn LAN_GetPingQueueCount() -> i32 {
     return crate::src::client::cl_main::CL_GetPingQueueCount();
 }
 /*
@@ -1152,7 +1116,7 @@ LAN_ClearPing
 ====================
 */
 
-unsafe extern "C" fn LAN_ClearPing(mut n: libc::c_int) {
+unsafe extern "C" fn LAN_ClearPing(mut n: i32) {
     crate::src::client::cl_main::CL_ClearPing(n);
 }
 /*
@@ -1162,10 +1126,10 @@ LAN_GetPing
 */
 
 unsafe extern "C" fn LAN_GetPing(
-    mut n: libc::c_int,
-    mut buf: *mut libc::c_char,
-    mut buflen: libc::c_int,
-    mut pingtime: *mut libc::c_int,
+    mut n: i32,
+    mut buf: *mut i8,
+    mut buflen: i32,
+    mut pingtime: *mut i32,
 ) {
     crate::src::client::cl_main::CL_GetPing(n, buf, buflen, pingtime);
 }
@@ -1175,11 +1139,7 @@ LAN_GetPingInfo
 ====================
 */
 
-unsafe extern "C" fn LAN_GetPingInfo(
-    mut n: libc::c_int,
-    mut buf: *mut libc::c_char,
-    mut buflen: libc::c_int,
-) {
+unsafe extern "C" fn LAN_GetPingInfo(mut n: i32, mut buf: *mut i8, mut buflen: i32) {
     crate::src::client::cl_main::CL_GetPingInfo(n, buf, buflen);
 }
 /*
@@ -1189,12 +1149,12 @@ LAN_MarkServerVisible
 */
 
 unsafe extern "C" fn LAN_MarkServerVisible(
-    mut source: libc::c_int,
-    mut n: libc::c_int,
+    mut source: i32,
+    mut n: i32,
     mut visible: crate::src::qcommon::q_shared::qboolean,
 ) {
-    if n == -(1 as libc::c_int) {
-        let mut count: libc::c_int = 128 as libc::c_int;
+    if n == -(1) {
+        let mut count: i32 = 128;
         let mut server: *mut crate::client_h::serverInfo_t =
             0 as *mut crate::client_h::serverInfo_t;
         match source {
@@ -1202,28 +1162,25 @@ unsafe extern "C" fn LAN_MarkServerVisible(
                 server = &mut *crate::src::client::cl_main::cls
                     .localServers
                     .as_mut_ptr()
-                    .offset(0 as libc::c_int as isize)
-                    as *mut crate::client_h::serverInfo_t
+                    .offset(0) as *mut crate::client_h::serverInfo_t
             }
             1 | 2 => {
                 server = &mut *crate::src::client::cl_main::cls
                     .globalServers
                     .as_mut_ptr()
-                    .offset(0 as libc::c_int as isize)
-                    as *mut crate::client_h::serverInfo_t;
-                count = 4096 as libc::c_int
+                    .offset(0) as *mut crate::client_h::serverInfo_t;
+                count = 4096
             }
             3 => {
                 server = &mut *crate::src::client::cl_main::cls
                     .favoriteServers
                     .as_mut_ptr()
-                    .offset(0 as libc::c_int as isize)
-                    as *mut crate::client_h::serverInfo_t
+                    .offset(0) as *mut crate::client_h::serverInfo_t
             }
             _ => {}
         }
         if !server.is_null() {
-            n = 0 as libc::c_int;
+            n = 0;
             while n < count {
                 (*server.offset(n as isize)).visible = visible;
                 n += 1
@@ -1232,17 +1189,17 @@ unsafe extern "C" fn LAN_MarkServerVisible(
     } else {
         match source {
             0 => {
-                if n >= 0 as libc::c_int && n < 128 as libc::c_int {
+                if n >= 0 && n < 128 {
                     crate::src::client::cl_main::cls.localServers[n as usize].visible = visible
                 }
             }
             1 | 2 => {
-                if n >= 0 as libc::c_int && n < 4096 as libc::c_int {
+                if n >= 0 && n < 4096 {
                     crate::src::client::cl_main::cls.globalServers[n as usize].visible = visible
                 }
             }
             3 => {
-                if n >= 0 as libc::c_int && n < 128 as libc::c_int {
+                if n >= 0 && n < 128 {
                     crate::src::client::cl_main::cls.favoriteServers[n as usize].visible = visible
                 }
             }
@@ -1256,32 +1213,26 @@ LAN_ServerIsVisible
 =======================
 */
 
-unsafe extern "C" fn LAN_ServerIsVisible(
-    mut source: libc::c_int,
-    mut n: libc::c_int,
-) -> libc::c_int {
+unsafe extern "C" fn LAN_ServerIsVisible(mut source: i32, mut n: i32) -> i32 {
     match source {
         0 => {
-            if n >= 0 as libc::c_int && n < 128 as libc::c_int {
-                return crate::src::client::cl_main::cls.localServers[n as usize].visible
-                    as libc::c_int;
+            if n >= 0 && n < 128 {
+                return crate::src::client::cl_main::cls.localServers[n as usize].visible as i32;
             }
         }
         1 | 2 => {
-            if n >= 0 as libc::c_int && n < 4096 as libc::c_int {
-                return crate::src::client::cl_main::cls.globalServers[n as usize].visible
-                    as libc::c_int;
+            if n >= 0 && n < 4096 {
+                return crate::src::client::cl_main::cls.globalServers[n as usize].visible as i32;
             }
         }
         3 => {
-            if n >= 0 as libc::c_int && n < 128 as libc::c_int {
-                return crate::src::client::cl_main::cls.favoriteServers[n as usize].visible
-                    as libc::c_int;
+            if n >= 0 && n < 128 {
+                return crate::src::client::cl_main::cls.favoriteServers[n as usize].visible as i32;
             }
         }
         _ => {}
     }
-    return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    return crate::src::qcommon::q_shared::qfalse as i32;
 }
 /*
 =======================
@@ -1291,7 +1242,7 @@ LAN_UpdateVisiblePings
 #[no_mangle]
 
 pub unsafe extern "C" fn LAN_UpdateVisiblePings(
-    mut source: libc::c_int,
+    mut source: i32,
 ) -> crate::src::qcommon::q_shared::qboolean {
     return crate::src::client::cl_main::CL_UpdateVisiblePings_f(source);
 }
@@ -1303,10 +1254,10 @@ LAN_GetServerStatus
 #[no_mangle]
 
 pub unsafe extern "C" fn LAN_GetServerStatus(
-    mut serverAddress: *mut libc::c_char,
-    mut serverStatus: *mut libc::c_char,
-    mut maxLen: libc::c_int,
-) -> libc::c_int {
+    mut serverAddress: *mut i8,
+    mut serverStatus: *mut i8,
+    mut maxLen: i32,
+) -> i32 {
     return crate::src::client::cl_main::CL_ServerStatus(serverAddress, serverStatus, maxLen);
 }
 /*
@@ -1324,11 +1275,11 @@ CL_GetClipboardData
 ====================
 */
 
-unsafe extern "C" fn CL_GetClipboardData(mut buf: *mut libc::c_char, mut buflen: libc::c_int) {
-    let mut cbd: *mut libc::c_char = 0 as *mut libc::c_char;
+unsafe extern "C" fn CL_GetClipboardData(mut buf: *mut i8, mut buflen: i32) {
+    let mut cbd: *mut i8 = 0 as *mut i8;
     cbd = crate::src::sys::sys_main::Sys_GetClipboardData();
     if cbd.is_null() {
-        *buf = 0 as libc::c_int as libc::c_char;
+        *buf = 0i8;
         return;
     }
     crate::src::qcommon::q_shared::Q_strncpyz(buf, cbd, buflen);
@@ -1340,11 +1291,7 @@ Key_KeynumToStringBuf
 ====================
 */
 
-unsafe extern "C" fn Key_KeynumToStringBuf(
-    mut keynum: libc::c_int,
-    mut buf: *mut libc::c_char,
-    mut buflen: libc::c_int,
-) {
+unsafe extern "C" fn Key_KeynumToStringBuf(mut keynum: i32, mut buf: *mut i8, mut buflen: i32) {
     crate::src::qcommon::q_shared::Q_strncpyz(
         buf,
         crate::src::client::cl_keys::Key_KeynumToString(keynum),
@@ -1357,17 +1304,13 @@ Key_GetBindingBuf
 ====================
 */
 
-unsafe extern "C" fn Key_GetBindingBuf(
-    mut keynum: libc::c_int,
-    mut buf: *mut libc::c_char,
-    mut buflen: libc::c_int,
-) {
-    let mut value: *mut libc::c_char = 0 as *mut libc::c_char;
+unsafe extern "C" fn Key_GetBindingBuf(mut keynum: i32, mut buf: *mut i8, mut buflen: i32) {
+    let mut value: *mut i8 = 0 as *mut i8;
     value = crate::src::client::cl_keys::Key_GetBinding(keynum);
     if !value.is_null() {
         crate::src::qcommon::q_shared::Q_strncpyz(buf, value, buflen);
     } else {
-        *buf = 0 as libc::c_int as libc::c_char
+        *buf = 0i8
     };
 }
 /*
@@ -1376,30 +1319,26 @@ CLUI_GetCDKey
 ====================
 */
 
-unsafe extern "C" fn CLUI_GetCDKey(mut buf: *mut libc::c_char, mut buflen: libc::c_int) {
-    let mut gamedir: *const libc::c_char = 0 as *const libc::c_char;
-    gamedir = crate::src::qcommon::cvar::Cvar_VariableString(
-        b"fs_game\x00" as *const u8 as *const libc::c_char,
-    );
-    if UI_usesUniqueCDKey() as libc::c_uint != 0
-        && *gamedir.offset(0 as libc::c_int as isize) as libc::c_int != 0 as libc::c_int
-    {
+unsafe extern "C" fn CLUI_GetCDKey(mut buf: *mut i8, mut buflen: i32) {
+    let mut gamedir: *const i8 = 0 as *const i8;
+    gamedir =
+        crate::src::qcommon::cvar::Cvar_VariableString(b"fs_game\x00" as *const u8 as *const i8);
+    if UI_usesUniqueCDKey() != 0 && *gamedir.offset(0) as i32 != 0 {
         crate::stdlib::memcpy(
             buf as *mut libc::c_void,
             &mut *crate::src::qcommon::common::cl_cdkey
                 .as_mut_ptr()
-                .offset(16 as libc::c_int as isize) as *mut libc::c_char
-                as *const libc::c_void,
-            16 as libc::c_int as libc::c_ulong,
+                .offset(16) as *mut i8 as *const libc::c_void,
+            16,
         );
-        *buf.offset(16 as libc::c_int as isize) = 0 as libc::c_int as libc::c_char
+        *buf.offset(16) = 0i8
     } else {
         crate::stdlib::memcpy(
             buf as *mut libc::c_void,
             crate::src::qcommon::common::cl_cdkey.as_mut_ptr() as *const libc::c_void,
-            16 as libc::c_int as libc::c_ulong,
+            16,
         );
-        *buf.offset(16 as libc::c_int as isize) = 0 as libc::c_int as libc::c_char
+        *buf.offset(16) = 0i8
     };
 }
 /*
@@ -1408,34 +1347,29 @@ CLUI_SetCDKey
 ====================
 */
 
-unsafe extern "C" fn CLUI_SetCDKey(mut buf: *mut libc::c_char) {
-    let mut gamedir: *const libc::c_char = 0 as *const libc::c_char;
-    gamedir = crate::src::qcommon::cvar::Cvar_VariableString(
-        b"fs_game\x00" as *const u8 as *const libc::c_char,
-    );
-    if UI_usesUniqueCDKey() as libc::c_uint != 0
-        && *gamedir.offset(0 as libc::c_int as isize) as libc::c_int != 0 as libc::c_int
-    {
+unsafe extern "C" fn CLUI_SetCDKey(mut buf: *mut i8) {
+    let mut gamedir: *const i8 = 0 as *const i8;
+    gamedir =
+        crate::src::qcommon::cvar::Cvar_VariableString(b"fs_game\x00" as *const u8 as *const i8);
+    if UI_usesUniqueCDKey() != 0 && *gamedir.offset(0) as i32 != 0 {
         crate::stdlib::memcpy(
             &mut *crate::src::qcommon::common::cl_cdkey
                 .as_mut_ptr()
-                .offset(16 as libc::c_int as isize) as *mut libc::c_char
-                as *mut libc::c_void,
+                .offset(16) as *mut i8 as *mut libc::c_void,
             buf as *const libc::c_void,
-            16 as libc::c_int as libc::c_ulong,
+            16,
         );
-        crate::src::qcommon::common::cl_cdkey[32 as libc::c_int as usize] =
-            0 as libc::c_int as libc::c_char;
+        crate::src::qcommon::common::cl_cdkey[32] = 0;
         // set the flag so the fle will be written at the next opportunity
-        crate::src::qcommon::cvar::cvar_modifiedFlags |= 0x1 as libc::c_int
+        crate::src::qcommon::cvar::cvar_modifiedFlags |= 0x1
     } else {
         crate::stdlib::memcpy(
             crate::src::qcommon::common::cl_cdkey.as_mut_ptr() as *mut libc::c_void,
             buf as *const libc::c_void,
-            16 as libc::c_int as libc::c_ulong,
+            16,
         );
         // set the flag so the fle will be written at the next opportunity
-        crate::src::qcommon::cvar::cvar_modifiedFlags |= 0x1 as libc::c_int
+        crate::src::qcommon::cvar::cvar_modifiedFlags |= 0x1
     };
 }
 /*
@@ -1444,21 +1378,17 @@ GetConfigString
 ====================
 */
 
-unsafe extern "C" fn GetConfigString(
-    mut index: libc::c_int,
-    mut buf: *mut libc::c_char,
-    mut size: libc::c_int,
-) -> libc::c_int {
-    let mut offset: libc::c_int = 0;
-    if index < 0 as libc::c_int || index >= 1024 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+unsafe extern "C" fn GetConfigString(mut index: i32, mut buf: *mut i8, mut size: i32) -> i32 {
+    let mut offset: i32 = 0;
+    if index < 0 || index >= 1024 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     offset = crate::src::client::cl_main::cl.gameState.stringOffsets[index as usize];
     if offset == 0 {
         if size != 0 {
-            *buf.offset(0 as libc::c_int as isize) = 0 as libc::c_int as libc::c_char
+            *buf.offset(0) = 0i8
         }
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     crate::src::qcommon::q_shared::Q_strncpyz(
         buf,
@@ -1469,7 +1399,7 @@ unsafe extern "C" fn GetConfigString(
             .offset(offset as isize),
         size,
     );
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 /*
 ====================
@@ -1477,7 +1407,7 @@ FloatAsInt
 ====================
 */
 
-unsafe extern "C" fn FloatAsInt(mut f: libc::c_float) -> libc::c_int {
+unsafe extern "C" fn FloatAsInt(mut f: f32) -> i32 {
     let mut fi: crate::src::qcommon::q_shared::floatint_t =
         crate::src::qcommon::q_shared::floatint_t { f: 0. };
     fi.f = f;
@@ -1495,552 +1425,489 @@ The ui module is making a system call
 pub unsafe extern "C" fn CL_UISystemCalls(
     mut args: *mut crate::stdlib::intptr_t,
 ) -> crate::stdlib::intptr_t {
-    match *args.offset(0 as libc::c_int as isize) {
+    match *args.offset(0) {
         0 => {
             crate::src::qcommon::common::Com_Error(
-                crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-                b"%s\x00" as *const u8 as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
+                crate::src::qcommon::q_shared::ERR_DROP as i32,
+                b"%s\x00" as *const u8 as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1isize)) as *const i8,
             );
         }
         1 => {
             crate::src::qcommon::common::Com_Printf(
-                b"%s\x00" as *const u8 as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
+                b"%s\x00" as *const u8 as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1isize)) as *const i8,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         2 => return crate::src::sys::sys_unix::Sys_Milliseconds() as crate::stdlib::intptr_t,
         50 => {
             crate::src::qcommon::cvar::Cvar_Register(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1))
                     as *mut crate::src::qcommon::q_shared::vmCvar_t,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3 as libc::c_int as isize))
-                    as *const libc::c_char,
-                *args.offset(4 as libc::c_int as isize) as libc::c_int,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3)) as *const i8,
+                *args.offset(4) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         51 => {
             crate::src::qcommon::cvar::Cvar_Update(crate::src::qcommon::vm::VM_ArgPtr(
-                *args.offset(1 as libc::c_int as isize),
+                *args.offset(1),
             )
                 as *mut crate::src::qcommon::q_shared::vmCvar_t);
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         3 => {
             crate::src::qcommon::cvar::Cvar_SetSafe(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *const libc::c_char,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         4 => {
             return FloatAsInt(crate::src::qcommon::cvar::Cvar_VariableValue(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
             )) as crate::stdlib::intptr_t
         }
         5 => {
             crate::src::qcommon::cvar::Cvar_VariableStringBuffer(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *mut i8,
+                *args.offset(3) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         6 => {
             crate::src::qcommon::cvar::Cvar_SetValueSafe(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
-                _vmf(*args.offset(2 as libc::c_int as isize)),
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
+                _vmf(*args.offset(2)),
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         7 => {
             crate::src::qcommon::cvar::Cvar_Reset(crate::src::qcommon::vm::VM_ArgPtr(
-                *args.offset(1 as libc::c_int as isize),
-            ) as *const libc::c_char);
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+                *args.offset(1),
+            ) as *const i8);
+            return 0isize;
         }
         8 => {
             crate::src::qcommon::cvar::Cvar_Register(
                 0 as *mut crate::src::qcommon::q_shared::vmCvar_t,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *const libc::c_char,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
+                *args.offset(3) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         9 => {
             crate::src::qcommon::cvar::Cvar_InfoStringBuffer(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
+                *args.offset(1) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *mut i8,
+                *args.offset(3) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         10 => return crate::src::qcommon::cmd::Cmd_Argc() as crate::stdlib::intptr_t,
         11 => {
             crate::src::qcommon::cmd::Cmd_ArgvBuffer(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
+                *args.offset(1) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *mut i8,
+                *args.offset(3) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         12 => {
-            if *args.offset(1 as libc::c_int as isize)
-                == crate::src::qcommon::q_shared::EXEC_NOW as libc::c_int as libc::c_long
+            if *args.offset(1) == crate::src::qcommon::q_shared::EXEC_NOW as i32 as isize
                 && (crate::stdlib::strncmp(
-                    crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                        as *const libc::c_char,
-                    b"snd_restart\x00" as *const u8 as *const libc::c_char,
-                    11 as libc::c_int as libc::c_ulong,
+                    crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
+                    b"snd_restart\x00" as *const u8 as *const i8,
+                    11,
                 ) == 0
                     || crate::stdlib::strncmp(
-                        crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                            as *const libc::c_char,
-                        b"vid_restart\x00" as *const u8 as *const libc::c_char,
-                        11 as libc::c_int as libc::c_ulong,
+                        crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
+                        b"vid_restart\x00" as *const u8 as *const i8,
+                        11,
                     ) == 0
                     || crate::stdlib::strncmp(
-                        crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                            as *const libc::c_char,
-                        b"quit\x00" as *const u8 as *const libc::c_char,
-                        5 as libc::c_int as libc::c_ulong,
+                        crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
+                        b"quit\x00" as *const u8 as *const i8,
+                        5,
                     ) == 0)
             {
                 crate::src::qcommon::common::Com_Printf(
                     b"^3turning EXEC_NOW \'%.11s\' into EXEC_INSERT\n\x00" as *const u8
-                        as *const libc::c_char,
-                    crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                        as *const libc::c_char,
+                        as *const i8,
+                    crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2isize)) as *const i8,
                 );
-                *args.offset(1 as libc::c_int as isize) = crate::src::qcommon::q_shared::EXEC_INSERT
-                    as libc::c_int
-                    as crate::stdlib::intptr_t
+                *args.offset(1) =
+                    crate::src::qcommon::q_shared::EXEC_INSERT as i32 as crate::stdlib::intptr_t
             }
             crate::src::qcommon::cmd::Cbuf_ExecuteText(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *const libc::c_char,
+                *args.offset(1) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         13 => {
             return crate::src::qcommon::files::FS_FOpenFileByMode(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2))
                     as *mut crate::src::qcommon::q_shared::fileHandle_t,
-                *args.offset(3 as libc::c_int as isize) as crate::src::qcommon::q_shared::fsMode_t,
+                *args.offset(3) as crate::src::qcommon::q_shared::fsMode_t,
             ) as crate::stdlib::intptr_t
         }
         14 => {
             crate::src::qcommon::files::FS_Read(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize)),
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
-                *args.offset(3 as libc::c_int as isize)
-                    as crate::src::qcommon::q_shared::fileHandle_t,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)),
+                *args.offset(2) as i32,
+                *args.offset(3) as crate::src::qcommon::q_shared::fileHandle_t,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         15 => {
             crate::src::qcommon::files::FS_Write(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize)),
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
-                *args.offset(3 as libc::c_int as isize)
-                    as crate::src::qcommon::q_shared::fileHandle_t,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)),
+                *args.offset(2) as i32,
+                *args.offset(3) as crate::src::qcommon::q_shared::fileHandle_t,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         16 => {
-            crate::src::qcommon::files::FS_FCloseFile(*args.offset(1 as libc::c_int as isize)
-                as crate::src::qcommon::q_shared::fileHandle_t);
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            crate::src::qcommon::files::FS_FCloseFile(
+                *args.offset(1) as crate::src::qcommon::q_shared::fileHandle_t
+            );
+            return 0isize;
         }
         17 => {
             return crate::src::qcommon::files::FS_GetFileList(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(4 as libc::c_int as isize) as libc::c_int,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3)) as *mut i8,
+                *args.offset(4) as i32,
             ) as crate::stdlib::intptr_t
         }
         86 => {
             return crate::src::qcommon::files::FS_Seek(
-                *args.offset(1 as libc::c_int as isize)
-                    as crate::src::qcommon::q_shared::fileHandle_t,
-                *args.offset(2 as libc::c_int as isize),
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
+                *args.offset(1) as crate::src::qcommon::q_shared::fileHandle_t,
+                *args.offset(2),
+                *args.offset(3) as i32,
             ) as crate::stdlib::intptr_t
         }
         18 => {
             return crate::src::client::cl_main::re
                 .RegisterModel
                 .expect("non-null function pointer")(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
             ) as crate::stdlib::intptr_t
         }
         19 => {
             return crate::src::client::cl_main::re
                 .RegisterSkin
                 .expect("non-null function pointer")(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
             ) as crate::stdlib::intptr_t
         }
         20 => {
             return crate::src::client::cl_main::re
                 .RegisterShaderNoMip
                 .expect("non-null function pointer")(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
             ) as crate::stdlib::intptr_t
         }
         21 => {
             crate::src::client::cl_main::re
                 .ClearScene
                 .expect("non-null function pointer")();
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         22 => {
             crate::src::client::cl_main::re
                 .AddRefEntityToScene
                 .expect("non-null function pointer")(
                 crate::src::qcommon::vm::VM_ArgPtr(
-                *args.offset(1 as libc::c_int as isize),
+                *args.offset(1),
             )
                 as *const crate::tr_types_h::refEntity_t
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         23 => {
             crate::src::client::cl_main::re
                 .AddPolyToScene
                 .expect("non-null function pointer")(
-                *args.offset(1 as libc::c_int as isize) as crate::src::qcommon::q_shared::qhandle_t,
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3 as libc::c_int as isize))
+                *args.offset(1) as crate::src::qcommon::q_shared::qhandle_t,
+                *args.offset(2) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3))
                     as *const crate::tr_types_h::polyVert_t,
-                1 as libc::c_int,
+                1,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         24 => {
             crate::src::client::cl_main::re
                 .AddLightToScene
                 .expect("non-null function pointer")(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1))
                     as *const crate::src::qcommon::q_shared::vec_t,
-                _vmf(*args.offset(2 as libc::c_int as isize)),
-                _vmf(*args.offset(3 as libc::c_int as isize)),
-                _vmf(*args.offset(4 as libc::c_int as isize)),
-                _vmf(*args.offset(5 as libc::c_int as isize)),
+                _vmf(*args.offset(2)),
+                _vmf(*args.offset(3)),
+                _vmf(*args.offset(4)),
+                _vmf(*args.offset(5)),
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         25 => {
             crate::src::client::cl_main::re
                 .RenderScene
                 .expect("non-null function pointer")(
                 crate::src::qcommon::vm::VM_ArgPtr(
-                *args.offset(1 as libc::c_int as isize),
+                *args.offset(1),
             )
                 as *const crate::tr_types_h::refdef_t
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         26 => {
             crate::src::client::cl_main::re
                 .SetColor
                 .expect("non-null function pointer")(
                 crate::src::qcommon::vm::VM_ArgPtr(
-                *args.offset(1 as libc::c_int as isize),
-            )
-                as *const libc::c_float
+                *args.offset(1),
+            ) as *const f32
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         27 => {
             crate::src::client::cl_main::re
                 .DrawStretchPic
                 .expect("non-null function pointer")(
-                _vmf(*args.offset(1 as libc::c_int as isize)),
-                _vmf(*args.offset(2 as libc::c_int as isize)),
-                _vmf(*args.offset(3 as libc::c_int as isize)),
-                _vmf(*args.offset(4 as libc::c_int as isize)),
-                _vmf(*args.offset(5 as libc::c_int as isize)),
-                _vmf(*args.offset(6 as libc::c_int as isize)),
-                _vmf(*args.offset(7 as libc::c_int as isize)),
-                _vmf(*args.offset(8 as libc::c_int as isize)),
-                *args.offset(9 as libc::c_int as isize) as crate::src::qcommon::q_shared::qhandle_t,
+                _vmf(*args.offset(1)),
+                _vmf(*args.offset(2)),
+                _vmf(*args.offset(3)),
+                _vmf(*args.offset(4)),
+                _vmf(*args.offset(5)),
+                _vmf(*args.offset(6)),
+                _vmf(*args.offset(7)),
+                _vmf(*args.offset(8)),
+                *args.offset(9) as crate::src::qcommon::q_shared::qhandle_t,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         56 => {
             crate::src::client::cl_main::re
                 .ModelBounds
                 .expect("non-null function pointer")(
-                *args.offset(1 as libc::c_int as isize) as crate::src::qcommon::q_shared::qhandle_t,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
+                *args.offset(1) as crate::src::qcommon::q_shared::qhandle_t,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2))
                     as *mut crate::src::qcommon::q_shared::vec_t,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3 as libc::c_int as isize))
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3))
                     as *mut crate::src::qcommon::q_shared::vec_t,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         28 => {
             crate::src::client::cl_scrn::SCR_UpdateScreen();
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         29 => {
             crate::src::client::cl_main::re
                 .LerpTag
                 .expect("non-null function pointer")(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1))
                     as *mut crate::src::qcommon::q_shared::orientation_t,
-                *args.offset(2 as libc::c_int as isize) as crate::src::qcommon::q_shared::qhandle_t,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
-                *args.offset(4 as libc::c_int as isize) as libc::c_int,
-                _vmf(*args.offset(5 as libc::c_int as isize)),
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(6 as libc::c_int as isize))
-                    as *const libc::c_char,
+                *args.offset(2) as crate::src::qcommon::q_shared::qhandle_t,
+                *args.offset(3) as i32,
+                *args.offset(4) as i32,
+                _vmf(*args.offset(5)),
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(6)) as *const i8,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         31 => {
             return crate::src::client::snd_main::S_RegisterSound(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
-                *args.offset(2 as libc::c_int as isize) as crate::src::qcommon::q_shared::qboolean,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
+                *args.offset(2) as crate::src::qcommon::q_shared::qboolean,
             ) as crate::stdlib::intptr_t
         }
         32 => {
             crate::src::client::snd_main::S_StartLocalSound(
-                *args.offset(1 as libc::c_int as isize)
-                    as crate::src::qcommon::q_shared::sfxHandle_t,
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
+                *args.offset(1) as crate::src::qcommon::q_shared::sfxHandle_t,
+                *args.offset(2) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         33 => {
             Key_KeynumToStringBuf(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
+                *args.offset(1) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *mut i8,
+                *args.offset(3) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         34 => {
             Key_GetBindingBuf(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
+                *args.offset(1) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *mut i8,
+                *args.offset(3) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         35 => {
             crate::src::client::cl_keys::Key_SetBinding(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *const libc::c_char,
+                *args.offset(1) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         36 => {
-            return crate::src::client::cl_keys::Key_IsDown(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int
-            ) as crate::stdlib::intptr_t
+            return crate::src::client::cl_keys::Key_IsDown(*args.offset(1) as i32)
+                as crate::stdlib::intptr_t
         }
         37 => {
             return crate::src::client::cl_keys::Key_GetOverstrikeMode() as crate::stdlib::intptr_t
         }
         38 => {
             crate::src::client::cl_keys::Key_SetOverstrikeMode(
-                *args.offset(1 as libc::c_int as isize) as crate::src::qcommon::q_shared::qboolean,
+                *args.offset(1) as crate::src::qcommon::q_shared::qboolean
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         39 => {
             crate::src::client::cl_keys::Key_ClearStates();
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         40 => return crate::src::client::cl_keys::Key_GetCatcher() as crate::stdlib::intptr_t,
         41 => {
             // Don't allow the ui module to close the console
             crate::src::client::cl_keys::Key_SetCatcher(
-                (*args.offset(1 as libc::c_int as isize)
-                    | (crate::src::client::cl_keys::Key_GetCatcher() & 0x1 as libc::c_int)
-                        as libc::c_long) as libc::c_int,
+                (*args.offset(1) | (crate::src::client::cl_keys::Key_GetCatcher() & 0x1) as isize)
+                    as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         42 => {
             CL_GetClipboardData(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *mut i8,
+                *args.offset(2) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         44 => {
-            GetClientState(crate::src::qcommon::vm::VM_ArgPtr(
-                *args.offset(1 as libc::c_int as isize),
-            ) as *mut crate::ui_public_h::uiClientState_t);
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            GetClientState(crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1))
+                as *mut crate::ui_public_h::uiClientState_t);
+            return 0isize;
         }
         43 => {
-            CL_GetGlconfig(crate::src::qcommon::vm::VM_ArgPtr(
-                *args.offset(1 as libc::c_int as isize),
-            ) as *mut crate::tr_types_h::glconfig_t);
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            CL_GetGlconfig(crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1))
+                as *mut crate::tr_types_h::glconfig_t);
+            return 0isize;
         }
         45 => {
             return GetConfigString(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
+                *args.offset(1) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *mut i8,
+                *args.offset(3) as i32,
             ) as crate::stdlib::intptr_t
         }
         71 => {
             LAN_LoadCachedServers();
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         72 => {
             LAN_SaveServersToCache();
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         73 => {
             return LAN_AddServer(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3 as libc::c_int as isize))
-                    as *const libc::c_char,
+                *args.offset(1) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3)) as *const i8,
             ) as crate::stdlib::intptr_t
         }
         74 => {
             LAN_RemoveServer(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *const libc::c_char,
+                *args.offset(1) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         46 => return LAN_GetPingQueueCount() as crate::stdlib::intptr_t,
         47 => {
-            LAN_ClearPing(*args.offset(1 as libc::c_int as isize) as libc::c_int);
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            LAN_ClearPing(*args.offset(1) as i32);
+            return 0isize;
         }
         48 => {
             LAN_GetPing(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(4 as libc::c_int as isize))
-                    as *mut libc::c_int,
+                *args.offset(1) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *mut i8,
+                *args.offset(3) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(4)) as *mut i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         49 => {
             LAN_GetPingInfo(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
+                *args.offset(1) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *mut i8,
+                *args.offset(3) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
-        65 => {
-            return LAN_GetServerCount(*args.offset(1 as libc::c_int as isize) as libc::c_int)
-                as crate::stdlib::intptr_t
-        }
+        65 => return LAN_GetServerCount(*args.offset(1) as i32) as crate::stdlib::intptr_t,
         66 => {
             LAN_GetServerAddressString(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(4 as libc::c_int as isize) as libc::c_int,
+                *args.offset(1) as i32,
+                *args.offset(2) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3)) as *mut i8,
+                *args.offset(4) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         67 => {
             LAN_GetServerInfo(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(4 as libc::c_int as isize) as libc::c_int,
+                *args.offset(1) as i32,
+                *args.offset(2) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3)) as *mut i8,
+                *args.offset(4) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         83 => {
-            return LAN_GetServerPing(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
-            ) as crate::stdlib::intptr_t
+            return LAN_GetServerPing(*args.offset(1) as i32, *args.offset(2) as i32)
+                as crate::stdlib::intptr_t
         }
         68 => {
             LAN_MarkServerVisible(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
-                *args.offset(3 as libc::c_int as isize) as crate::src::qcommon::q_shared::qboolean,
+                *args.offset(1) as i32,
+                *args.offset(2) as i32,
+                *args.offset(3) as crate::src::qcommon::q_shared::qboolean,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         84 => {
-            return LAN_ServerIsVisible(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
-            ) as crate::stdlib::intptr_t
-        }
-        69 => {
-            return LAN_UpdateVisiblePings(*args.offset(1 as libc::c_int as isize) as libc::c_int)
+            return LAN_ServerIsVisible(*args.offset(1) as i32, *args.offset(2) as i32)
                 as crate::stdlib::intptr_t
         }
+        69 => return LAN_UpdateVisiblePings(*args.offset(1) as i32) as crate::stdlib::intptr_t,
         70 => {
-            LAN_ResetPings(*args.offset(1 as libc::c_int as isize) as libc::c_int);
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            LAN_ResetPings(*args.offset(1) as i32);
+            return 0isize;
         }
         82 => {
             return LAN_GetServerStatus(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *mut i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *mut i8,
+                *args.offset(3) as i32,
             ) as crate::stdlib::intptr_t
         }
         85 => {
             return LAN_CompareServers(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
-                *args.offset(4 as libc::c_int as isize) as libc::c_int,
-                *args.offset(5 as libc::c_int as isize) as libc::c_int,
+                *args.offset(1) as i32,
+                *args.offset(2) as i32,
+                *args.offset(3) as i32,
+                *args.offset(4) as i32,
+                *args.offset(5) as i32,
             ) as crate::stdlib::intptr_t
         }
         52 => {
@@ -2048,117 +1915,103 @@ pub unsafe extern "C" fn CL_UISystemCalls(
         }
         53 => {
             CLUI_GetCDKey(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *mut i8,
+                *args.offset(2) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         54 => {
-            CLUI_SetCDKey(crate::src::qcommon::vm::VM_ArgPtr(
-                *args.offset(1 as libc::c_int as isize),
-            ) as *mut libc::c_char);
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            CLUI_SetCDKey(crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *mut i8);
+            return 0isize;
         }
-        87 => return 0 as libc::c_int as crate::stdlib::intptr_t,
+        87 => return 0isize,
         55 => {
             crate::src::client::cl_main::re
                 .RegisterFont
                 .expect("non-null function pointer")(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3 as libc::c_int as isize))
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
+                *args.offset(2) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3))
                     as *mut crate::src::qcommon::q_shared::fontInfo_t,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         100 => {
             crate::stdlib::memset(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize)),
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
-                *args.offset(3 as libc::c_int as isize) as libc::c_ulong,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)),
+                *args.offset(2) as i32,
+                *args.offset(3) as usize,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         101 => {
             crate::stdlib::memcpy(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize)),
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize)),
-                *args.offset(3 as libc::c_int as isize) as libc::c_ulong,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)),
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)),
+                *args.offset(3) as usize,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         102 => {
             crate::stdlib::strncpy(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *const libc::c_char,
-                *args.offset(3 as libc::c_int as isize) as libc::c_ulong,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *mut i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
+                *args.offset(3) as usize,
             );
-            return *args.offset(1 as libc::c_int as isize);
+            return *args.offset(1isize);
         }
         103 => {
-            return FloatAsInt(crate::stdlib::sin(
-                _vmf(*args.offset(1 as libc::c_int as isize)) as libc::c_double
-            ) as libc::c_float) as crate::stdlib::intptr_t
+            return FloatAsInt(crate::stdlib::sin(_vmf(*args.offset(1)) as f64) as f32)
+                as crate::stdlib::intptr_t
         }
         104 => {
-            return FloatAsInt(crate::stdlib::cos(
-                _vmf(*args.offset(1 as libc::c_int as isize)) as libc::c_double
-            ) as libc::c_float) as crate::stdlib::intptr_t
+            return FloatAsInt(crate::stdlib::cos(_vmf(*args.offset(1)) as f64) as f32)
+                as crate::stdlib::intptr_t
         }
         105 => {
             return FloatAsInt(crate::stdlib::atan2(
-                _vmf(*args.offset(1 as libc::c_int as isize)) as libc::c_double,
-                _vmf(*args.offset(2 as libc::c_int as isize)) as libc::c_double,
-            ) as libc::c_float) as crate::stdlib::intptr_t
+                _vmf(*args.offset(1)) as f64,
+                _vmf(*args.offset(2)) as f64,
+            ) as f32) as crate::stdlib::intptr_t
         }
         106 => {
-            return FloatAsInt(crate::stdlib::sqrt(
-                _vmf(*args.offset(1 as libc::c_int as isize)) as libc::c_double
-            ) as libc::c_float) as crate::stdlib::intptr_t
+            return FloatAsInt(crate::stdlib::sqrt(_vmf(*args.offset(1)) as f64) as f32)
+                as crate::stdlib::intptr_t
         }
         107 => {
-            return FloatAsInt(crate::stdlib::floor(
-                _vmf(*args.offset(1 as libc::c_int as isize)) as libc::c_double
-            ) as libc::c_float) as crate::stdlib::intptr_t
+            return FloatAsInt(crate::stdlib::floor(_vmf(*args.offset(1)) as f64) as f32)
+                as crate::stdlib::intptr_t
         }
         108 => {
-            return FloatAsInt(crate::stdlib::ceil(
-                _vmf(*args.offset(1 as libc::c_int as isize)) as libc::c_double
-            ) as libc::c_float) as crate::stdlib::intptr_t
+            return FloatAsInt(crate::stdlib::ceil(_vmf(*args.offset(1)) as f64) as f32)
+                as crate::stdlib::intptr_t
         }
         57 => {
             return (*botlib_export)
                 .PC_AddGlobalDefine
                 .expect("non-null function pointer")(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *mut libc::c_char,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *mut i8,
             ) as crate::stdlib::intptr_t
         }
         58 => {
             return (*botlib_export)
                 .PC_LoadSourceHandle
                 .expect("non-null function pointer")(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
             ) as crate::stdlib::intptr_t
         }
         59 => {
             return (*botlib_export)
                 .PC_FreeSourceHandle
-                .expect("non-null function pointer")(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-            ) as crate::stdlib::intptr_t
+                .expect("non-null function pointer")(*args.offset(1) as i32)
+                as crate::stdlib::intptr_t
         }
         60 => {
             return (*botlib_export)
                 .PC_ReadTokenHandle
                 .expect("non-null function pointer")(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
+                *args.offset(1) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2))
                     as *mut crate::src::qcommon::q_shared::pc_token_t,
             ) as crate::stdlib::intptr_t
         }
@@ -2166,99 +2019,85 @@ pub unsafe extern "C" fn CL_UISystemCalls(
             return (*botlib_export)
                 .PC_SourceFileAndLine
                 .expect("non-null function pointer")(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *mut libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3 as libc::c_int as isize))
-                    as *mut libc::c_int,
+                *args.offset(1) as i32,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *mut i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3)) as *mut i32,
             ) as crate::stdlib::intptr_t
         }
         62 => {
             crate::src::client::snd_main::S_StopBackgroundTrack();
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         63 => {
             crate::src::client::snd_main::S_StartBackgroundTrack(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *const libc::c_char,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         64 => {
             return crate::src::qcommon::common::Com_RealTime(crate::src::qcommon::vm::VM_ArgPtr(
-                *args.offset(1 as libc::c_int as isize),
+                *args.offset(1),
             )
                 as *mut crate::src::qcommon::q_shared::qtime_t)
                 as crate::stdlib::intptr_t
         }
         75 => {
             crate::src::qcommon::common::Com_DPrintf(
-                b"UI_CIN_PlayCinematic\n\x00" as *const u8 as *const libc::c_char,
+                b"UI_CIN_PlayCinematic\n\x00" as *const u8 as *const i8,
             );
             return crate::src::client::cl_cin::CIN_PlayCinematic(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
-                *args.offset(4 as libc::c_int as isize) as libc::c_int,
-                *args.offset(5 as libc::c_int as isize) as libc::c_int,
-                *args.offset(6 as libc::c_int as isize) as libc::c_int,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1isize)) as *const i8,
+                *args.offset(2isize) as i32,
+                *args.offset(3isize) as i32,
+                *args.offset(4isize) as i32,
+                *args.offset(5isize) as i32,
+                *args.offset(6isize) as i32,
             ) as crate::stdlib::intptr_t;
         }
         76 => {
-            return crate::src::client::cl_cin::CIN_StopCinematic(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-            ) as crate::stdlib::intptr_t
+            return crate::src::client::cl_cin::CIN_StopCinematic(*args.offset(1) as i32)
+                as crate::stdlib::intptr_t
         }
         77 => {
-            return crate::src::client::cl_cin::CIN_RunCinematic(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-            ) as crate::stdlib::intptr_t
+            return crate::src::client::cl_cin::CIN_RunCinematic(*args.offset(1) as i32)
+                as crate::stdlib::intptr_t
         }
         78 => {
-            crate::src::client::cl_cin::CIN_DrawCinematic(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int
-            );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            crate::src::client::cl_cin::CIN_DrawCinematic(*args.offset(1) as i32);
+            return 0isize;
         }
         79 => {
             crate::src::client::cl_cin::CIN_SetExtents(
-                *args.offset(1 as libc::c_int as isize) as libc::c_int,
-                *args.offset(2 as libc::c_int as isize) as libc::c_int,
-                *args.offset(3 as libc::c_int as isize) as libc::c_int,
-                *args.offset(4 as libc::c_int as isize) as libc::c_int,
-                *args.offset(5 as libc::c_int as isize) as libc::c_int,
+                *args.offset(1) as i32,
+                *args.offset(2) as i32,
+                *args.offset(3) as i32,
+                *args.offset(4) as i32,
+                *args.offset(5) as i32,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         80 => {
             crate::src::client::cl_main::re
                 .RemapShader
                 .expect("non-null function pointer")(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3 as libc::c_int as isize))
-                    as *const libc::c_char,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(3)) as *const i8,
             );
-            return 0 as libc::c_int as crate::stdlib::intptr_t;
+            return 0isize;
         }
         81 => {
             return crate::src::client::cl_main::CL_CDKeyValidate(
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
-                    as *const libc::c_char,
-                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                    as *const libc::c_char,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1)) as *const i8,
+                crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2)) as *const i8,
             ) as crate::stdlib::intptr_t
         }
         _ => {
             crate::src::qcommon::common::Com_Error(
-                crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-                b"Bad UI system trap: %ld\x00" as *const u8 as *const libc::c_char,
-                *args.offset(0 as libc::c_int as isize),
+                crate::src::qcommon::q_shared::ERR_DROP as i32,
+                b"Bad UI system trap: %ld\x00" as *const u8 as *const i8,
+                *args.offset(0isize),
             );
         }
     };
@@ -2272,13 +2111,13 @@ CL_ShutdownUI
 
 pub unsafe extern "C" fn CL_ShutdownUI() {
     crate::src::client::cl_keys::Key_SetCatcher(
-        crate::src::client::cl_keys::Key_GetCatcher() & !(0x2 as libc::c_int),
+        crate::src::client::cl_keys::Key_GetCatcher() & !(0x2),
     );
     crate::src::client::cl_main::cls.uiStarted = crate::src::qcommon::q_shared::qfalse;
     if uivm.is_null() {
         return;
     }
-    crate::src::qcommon::vm::VM_Call(uivm, crate::ui_public_h::UI_SHUTDOWN as libc::c_int);
+    crate::src::qcommon::vm::VM_Call(uivm, crate::ui_public_h::UI_SHUTDOWN as i32);
     crate::src::qcommon::vm::VM_Free(uivm);
     uivm = 0 as *mut crate::qcommon_h::vm_t;
 }
@@ -2487,24 +2326,22 @@ no client connection is active at all
 #[no_mangle]
 
 pub unsafe extern "C" fn CL_InitUI() {
-    let mut v: libc::c_int = 0;
+    let mut v: i32 = 0;
     let mut interpret: crate::qcommon_h::vmInterpret_t = crate::qcommon_h::VMI_NATIVE;
     // load the dll or bytecode
-    interpret = crate::src::qcommon::cvar::Cvar_VariableValue(
-        b"vm_ui\x00" as *const u8 as *const libc::c_char,
-    ) as crate::qcommon_h::vmInterpret_t;
+    interpret =
+        crate::src::qcommon::cvar::Cvar_VariableValue(b"vm_ui\x00" as *const u8 as *const i8)
+            as crate::qcommon_h::vmInterpret_t;
     if crate::src::client::cl_parse::cl_connectedToPureServer != 0 {
         // if sv_pure is set we only allow qvms to be loaded
-        if interpret as libc::c_uint
-            != crate::qcommon_h::VMI_COMPILED as libc::c_int as libc::c_uint
-            && interpret as libc::c_uint
-                != crate::qcommon_h::VMI_BYTECODE as libc::c_int as libc::c_uint
+        if interpret != crate::qcommon_h::VMI_COMPILED
+            && interpret != crate::qcommon_h::VMI_BYTECODE
         {
             interpret = crate::qcommon_h::VMI_COMPILED
         }
     }
     uivm = crate::src::qcommon::vm::VM_Create(
-        b"ui\x00" as *const u8 as *const libc::c_char,
+        b"ui\x00" as *const u8 as *const i8,
         Some(
             CL_UISystemCalls
                 as unsafe extern "C" fn(_: *mut crate::stdlib::intptr_t) -> crate::stdlib::intptr_t,
@@ -2513,45 +2350,42 @@ pub unsafe extern "C" fn CL_InitUI() {
     );
     if uivm.is_null() {
         crate::src::qcommon::common::Com_Error(
-            crate::src::qcommon::q_shared::ERR_FATAL as libc::c_int,
-            b"VM_Create on UI failed\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::ERR_FATAL as i32,
+            b"VM_Create on UI failed\x00" as *const u8 as *const i8,
         );
     }
     // sanity check
-    v = crate::src::qcommon::vm::VM_Call(uivm, crate::ui_public_h::UI_GETAPIVERSION as libc::c_int)
-        as libc::c_int;
-    if v == 4 as libc::c_int {
+    v = crate::src::qcommon::vm::VM_Call(uivm, crate::ui_public_h::UI_GETAPIVERSION as i32) as i32;
+    if v == 4 {
         //		Com_Printf(S_COLOR_YELLOW "WARNING: loading old Quake III Arena User Interface version %d\n", v );
         // init for this gamestate
         crate::src::qcommon::vm::VM_Call(
             uivm,
-            crate::ui_public_h::UI_INIT as libc::c_int,
-            (crate::src::client::cl_main::clc.state as libc::c_uint
-                >= crate::src::qcommon::q_shared::CA_AUTHORIZING as libc::c_int as libc::c_uint
-                && (crate::src::client::cl_main::clc.state as libc::c_uint)
-                    < crate::src::qcommon::q_shared::CA_ACTIVE as libc::c_int as libc::c_uint)
-                as libc::c_int,
+            crate::ui_public_h::UI_INIT as i32,
+            (crate::src::client::cl_main::clc.state
+                >= crate::src::qcommon::q_shared::CA_AUTHORIZING
+                && (crate::src::client::cl_main::clc.state)
+                    < crate::src::qcommon::q_shared::CA_ACTIVE) as i32,
         );
-    } else if v != 6 as libc::c_int {
+    } else if v != 6 {
         // Free uivm now, so UI_SHUTDOWN doesn't get called later.
         crate::src::qcommon::vm::VM_Free(uivm);
         uivm = 0 as *mut crate::qcommon_h::vm_t;
         crate::src::qcommon::common::Com_Error(
-            crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-            b"User Interface is version %d, expected %d\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::ERR_DROP as i32,
+            b"User Interface is version %d, expected %d\x00" as *const u8 as *const i8,
             v,
-            6 as libc::c_int,
+            6i32,
         );
     } else {
         // init for this gamestate
         crate::src::qcommon::vm::VM_Call(
             uivm,
-            crate::ui_public_h::UI_INIT as libc::c_int,
-            (crate::src::client::cl_main::clc.state as libc::c_uint
-                >= crate::src::qcommon::q_shared::CA_AUTHORIZING as libc::c_int as libc::c_uint
-                && (crate::src::client::cl_main::clc.state as libc::c_uint)
-                    < crate::src::qcommon::q_shared::CA_ACTIVE as libc::c_int as libc::c_uint)
-                as libc::c_int,
+            crate::ui_public_h::UI_INIT as i32,
+            (crate::src::client::cl_main::clc.state
+                >= crate::src::qcommon::q_shared::CA_AUTHORIZING
+                && (crate::src::client::cl_main::clc.state)
+                    < crate::src::qcommon::q_shared::CA_ACTIVE) as i32,
         );
     };
 }
@@ -2561,9 +2395,9 @@ pub unsafe extern "C" fn UI_usesUniqueCDKey() -> crate::src::qcommon::q_shared::
     if !uivm.is_null() {
         return (crate::src::qcommon::vm::VM_Call(
             uivm,
-            crate::ui_public_h::UI_HASUNIQUECDKEY as libc::c_int,
-        ) == crate::src::qcommon::q_shared::qtrue as libc::c_int as libc::c_long)
-            as libc::c_int as crate::src::qcommon::q_shared::qboolean;
+            crate::ui_public_h::UI_HASUNIQUECDKEY as i32,
+        ) == crate::src::qcommon::q_shared::qtrue as i32 as isize)
+            as crate::src::qcommon::q_shared::qboolean;
     } else {
         return crate::src::qcommon::q_shared::qfalse;
     };
@@ -2932,7 +2766,7 @@ pub unsafe extern "C" fn UI_GameCommand() -> crate::src::qcommon::q_shared::qboo
     }
     return crate::src::qcommon::vm::VM_Call(
         uivm,
-        crate::ui_public_h::UI_CONSOLE_COMMAND as libc::c_int,
+        crate::ui_public_h::UI_CONSOLE_COMMAND as i32,
         crate::src::client::cl_main::cls.realtime,
     ) as crate::src::qcommon::q_shared::qboolean;
 }

@@ -289,12 +289,12 @@ pub struct confirmMenu_t {
     pub menu: crate::ui_local_h::menuframework_s,
     pub no: crate::ui_local_h::menutext_s,
     pub yes: crate::ui_local_h::menutext_s,
-    pub slashX: libc::c_int,
-    pub question: *const libc::c_char,
+    pub slashX: i32,
+    pub question: *const i8,
     pub draw: Option<unsafe extern "C" fn() -> ()>,
     pub action: Option<unsafe extern "C" fn(_: crate::src::qcommon::q_shared::qboolean) -> ()>,
-    pub style: libc::c_int,
-    pub lines: *mut *const libc::c_char,
+    pub style: i32,
+    pub lines: *mut *const i8,
 }
 
 static mut s_confirm: confirmMenu_t = confirmMenu_t {
@@ -302,7 +302,7 @@ static mut s_confirm: confirmMenu_t = confirmMenu_t {
         cursor: 0,
         cursor_prev: 0,
         nitems: 0,
-        items: [0 as *const libc::c_void as *mut libc::c_void; 64],
+        items: [0 as *mut libc::c_void; 64],
         draw: None,
         key: None,
         wrapAround: crate::src::qcommon::q_shared::qfalse,
@@ -312,7 +312,7 @@ static mut s_confirm: confirmMenu_t = confirmMenu_t {
     no: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -320,22 +320,21 @@ static mut s_confirm: confirmMenu_t = confirmMenu_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     yes: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -343,24 +342,23 @@ static mut s_confirm: confirmMenu_t = confirmMenu_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     slashX: 0,
-    question: 0 as *const libc::c_char,
+    question: 0 as *const i8,
     draw: None,
     action: None,
     style: 0,
-    lines: 0 as *const *const libc::c_char as *mut *const libc::c_char,
+    lines: 0 as *mut *const i8,
 };
 /*
 =================
@@ -368,13 +366,13 @@ ConfirmMenu_Event
 =================
 */
 
-unsafe extern "C" fn ConfirmMenu_Event(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
+unsafe extern "C" fn ConfirmMenu_Event(mut ptr: *mut libc::c_void, mut event: i32) {
     let mut result: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
-    if event != 3 as libc::c_int {
+    if event != 3 {
         return;
     }
     crate::src::q3_ui::ui_atoms::UI_PopMenu();
-    if (*(ptr as *mut crate::ui_local_h::menucommon_s)).id == 10 as libc::c_int {
+    if (*(ptr as *mut crate::ui_local_h::menucommon_s)).id == 10 {
         result = crate::src::qcommon::q_shared::qfalse
     } else {
         result = crate::src::qcommon::q_shared::qtrue
@@ -389,21 +387,19 @@ ConfirmMenu_Key
 =================
 */
 
-unsafe extern "C" fn ConfirmMenu_Key(
-    mut key: libc::c_int,
-) -> crate::src::qcommon::q_shared::sfxHandle_t {
+unsafe extern "C" fn ConfirmMenu_Key(mut key: i32) -> crate::src::qcommon::q_shared::sfxHandle_t {
     match key {
-        163 | 134 | 165 | 135 => key = crate::keycodes_h::K_TAB as libc::c_int,
+        163 | 134 | 165 | 135 => key = crate::keycodes_h::K_TAB as i32,
         110 | 78 => {
             ConfirmMenu_Event(
                 &mut s_confirm.no as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
-                3 as libc::c_int,
+                3i32,
             );
         }
         121 | 89 => {
             ConfirmMenu_Event(
                 &mut s_confirm.yes as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
-                3 as libc::c_int,
+                3i32,
             );
         }
         _ => {}
@@ -417,26 +413,26 @@ MessaheMenu_Draw
 */
 
 unsafe extern "C" fn MessageMenu_Draw() {
-    let mut i: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut y: i32 = 0;
     crate::src::q3_ui::ui_atoms::UI_DrawNamedPic(
-        142 as libc::c_int as libc::c_float,
-        118 as libc::c_int as libc::c_float,
-        359 as libc::c_int as libc::c_float,
-        256 as libc::c_int as libc::c_float,
-        b"menu/art/cut_frame\x00" as *const u8 as *const libc::c_char,
+        142f32,
+        118f32,
+        359f32,
+        256f32,
+        b"menu/art/cut_frame\x00" as *const u8 as *const i8,
     );
-    y = 188 as libc::c_int;
-    i = 0 as libc::c_int;
+    y = 188;
+    i = 0;
     while !(*s_confirm.lines.offset(i as isize)).is_null() {
         crate::src::q3_ui::ui_atoms::UI_DrawProportionalString(
-            320 as libc::c_int,
+            320,
             y,
             *s_confirm.lines.offset(i as isize),
             s_confirm.style,
             crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr(),
         );
-        y += 18 as libc::c_int;
+        y += 18;
         i += 1
     }
     crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut s_confirm.menu);
@@ -452,24 +448,24 @@ ConfirmMenu_Draw
 
 unsafe extern "C" fn ConfirmMenu_Draw() {
     crate::src::q3_ui::ui_atoms::UI_DrawNamedPic(
-        142 as libc::c_int as libc::c_float,
-        118 as libc::c_int as libc::c_float,
-        359 as libc::c_int as libc::c_float,
-        256 as libc::c_int as libc::c_float,
-        b"menu/art/cut_frame\x00" as *const u8 as *const libc::c_char,
+        142f32,
+        118f32,
+        359f32,
+        256f32,
+        b"menu/art/cut_frame\x00" as *const u8 as *const i8,
     );
     crate::src::q3_ui::ui_atoms::UI_DrawProportionalString(
-        320 as libc::c_int,
-        204 as libc::c_int,
+        320,
+        204,
         s_confirm.question,
         s_confirm.style,
         crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr(),
     );
     crate::src::q3_ui::ui_atoms::UI_DrawProportionalString(
         s_confirm.slashX,
-        265 as libc::c_int,
-        b"/\x00" as *const u8 as *const libc::c_char,
-        0 as libc::c_int | 0x2000 as libc::c_int,
+        265,
+        b"/\x00" as *const u8 as *const i8,
+        0 | 0x2000,
         crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr(),
     );
     crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut s_confirm.menu);
@@ -486,7 +482,7 @@ ConfirmMenu_Cache
 
 pub unsafe extern "C" fn ConfirmMenu_Cache() {
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/cut_frame\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/cut_frame\x00" as *const u8 as *const i8,
     );
 }
 /*
@@ -497,8 +493,8 @@ UI_ConfirmMenu_Stlye
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_ConfirmMenu_Style(
-    mut question: *const libc::c_char,
-    mut style: libc::c_int,
+    mut question: *const i8,
+    mut style: i32,
     mut draw: Option<unsafe extern "C" fn() -> ()>,
     mut action: Option<unsafe extern "C" fn(_: crate::src::qcommon::q_shared::qboolean) -> ()>,
 ) {
@@ -510,29 +506,29 @@ pub unsafe extern "C" fn UI_ConfirmMenu_Style(
         updateInfoString: [0; 1024],
         messageString: [0; 1024],
     };
-    let mut n1: libc::c_int = 0;
-    let mut n2: libc::c_int = 0;
-    let mut n3: libc::c_int = 0;
-    let mut l1: libc::c_int = 0;
-    let mut l2: libc::c_int = 0;
-    let mut l3: libc::c_int = 0;
+    let mut n1: i32 = 0;
+    let mut n2: i32 = 0;
+    let mut n3: i32 = 0;
+    let mut l1: i32 = 0;
+    let mut l2: i32 = 0;
+    let mut l3: i32 = 0;
     // zero set all our globals
     crate::stdlib::memset(
         &mut s_confirm as *mut confirmMenu_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<confirmMenu_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<confirmMenu_t>(),
     );
     ConfirmMenu_Cache();
     n1 = crate::src::q3_ui::ui_atoms::UI_ProportionalStringWidth(
-        b"YES/NO\x00" as *const u8 as *const libc::c_char,
+        b"YES/NO\x00" as *const u8 as *const i8,
     );
     n2 = crate::src::q3_ui::ui_atoms::UI_ProportionalStringWidth(
-        b"YES\x00" as *const u8 as *const libc::c_char,
-    ) + 3 as libc::c_int;
-    n3 = crate::src::q3_ui::ui_atoms::UI_ProportionalStringWidth(
-        b"/\x00" as *const u8 as *const libc::c_char,
-    ) + 3 as libc::c_int;
-    l1 = 320 as libc::c_int - n1 / 2 as libc::c_int;
+        b"YES\x00" as *const u8 as *const i8,
+    ) + 3;
+    n3 =
+        crate::src::q3_ui::ui_atoms::UI_ProportionalStringWidth(b"/\x00" as *const u8 as *const i8)
+            + 3;
+    l1 = 320 - n1 / 2;
     l2 = l1 + n2;
     l3 = l2 + n3;
     s_confirm.slashX = l2;
@@ -543,39 +539,35 @@ pub unsafe extern "C" fn UI_ConfirmMenu_Style(
     s_confirm.menu.draw = Some(ConfirmMenu_Draw as unsafe extern "C" fn() -> ());
     s_confirm.menu.key = Some(
         ConfirmMenu_Key
-            as unsafe extern "C" fn(_: libc::c_int) -> crate::src::qcommon::q_shared::sfxHandle_t,
+            as unsafe extern "C" fn(_: i32) -> crate::src::qcommon::q_shared::sfxHandle_t,
     );
     s_confirm.menu.wrapAround = crate::src::qcommon::q_shared::qtrue;
     crate::src::ui::ui_syscalls::trap_GetClientState(&mut cstate);
-    if cstate.connState as libc::c_uint
-        >= crate::src::qcommon::q_shared::CA_CONNECTED as libc::c_int as libc::c_uint
-    {
+    if cstate.connState >= crate::src::qcommon::q_shared::CA_CONNECTED {
         s_confirm.menu.fullscreen = crate::src::qcommon::q_shared::qfalse
     } else {
         s_confirm.menu.fullscreen = crate::src::qcommon::q_shared::qtrue
     }
-    s_confirm.yes.generic.type_0 = 9 as libc::c_int;
-    s_confirm.yes.generic.flags =
-        0x4 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
+    s_confirm.yes.generic.type_0 = 9;
+    s_confirm.yes.generic.flags = 0x4 | 0x100;
     s_confirm.yes.generic.callback =
-        Some(ConfirmMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_confirm.yes.generic.id = 11 as libc::c_int;
+        Some(ConfirmMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_confirm.yes.generic.id = 11;
     s_confirm.yes.generic.x = l1;
-    s_confirm.yes.generic.y = 264 as libc::c_int;
-    s_confirm.yes.string = b"YES\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    s_confirm.yes.generic.y = 264;
+    s_confirm.yes.string = b"YES\x00" as *const u8 as *mut i8;
     s_confirm.yes.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    s_confirm.yes.style = 0 as libc::c_int;
-    s_confirm.no.generic.type_0 = 9 as libc::c_int;
-    s_confirm.no.generic.flags =
-        0x4 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
+    s_confirm.yes.style = 0;
+    s_confirm.no.generic.type_0 = 9;
+    s_confirm.no.generic.flags = 0x4 | 0x100;
     s_confirm.no.generic.callback =
-        Some(ConfirmMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_confirm.no.generic.id = 10 as libc::c_int;
+        Some(ConfirmMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_confirm.no.generic.id = 10;
     s_confirm.no.generic.x = l3;
-    s_confirm.no.generic.y = 264 as libc::c_int;
-    s_confirm.no.string = b"NO\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    s_confirm.no.generic.y = 264;
+    s_confirm.no.string = b"NO\x00" as *const u8 as *mut i8;
     s_confirm.no.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    s_confirm.no.style = 0 as libc::c_int;
+    s_confirm.no.style = 0;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
         &mut s_confirm.menu,
         &mut s_confirm.yes as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
@@ -598,16 +590,11 @@ UI_ConfirmMenu
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_ConfirmMenu(
-    mut question: *const libc::c_char,
+    mut question: *const i8,
     mut draw: Option<unsafe extern "C" fn() -> ()>,
     mut action: Option<unsafe extern "C" fn(_: crate::src::qcommon::q_shared::qboolean) -> ()>,
 ) {
-    UI_ConfirmMenu_Style(
-        question,
-        0x1 as libc::c_int | 0x2000 as libc::c_int,
-        draw,
-        action,
-    );
+    UI_ConfirmMenu_Style(question, 0x1 | 0x2000, draw, action);
 }
 /*
 ===========================================================================
@@ -670,7 +657,7 @@ hacked over from Confirm stuff
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn UI_Message(mut lines: *mut *const libc::c_char) {
+pub unsafe extern "C" fn UI_Message(mut lines: *mut *const i8) {
     let mut cstate: crate::ui_public_h::uiClientState_t = crate::ui_public_h::uiClientState_t {
         connState: crate::src::qcommon::q_shared::CA_UNINITIALIZED,
         connectPacketCount: 0,
@@ -679,46 +666,43 @@ pub unsafe extern "C" fn UI_Message(mut lines: *mut *const libc::c_char) {
         updateInfoString: [0; 1024],
         messageString: [0; 1024],
     };
-    let mut n1: libc::c_int = 0;
-    let mut l1: libc::c_int = 0;
+    let mut n1: i32 = 0;
+    let mut l1: i32 = 0;
     // zero set all our globals
     crate::stdlib::memset(
         &mut s_confirm as *mut confirmMenu_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<confirmMenu_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<confirmMenu_t>(),
     );
     ConfirmMenu_Cache();
     n1 = crate::src::q3_ui::ui_atoms::UI_ProportionalStringWidth(
-        b"OK\x00" as *const u8 as *const libc::c_char,
+        b"OK\x00" as *const u8 as *const i8,
     );
-    l1 = 320 as libc::c_int - n1 / 2 as libc::c_int;
+    l1 = 320 - n1 / 2;
     s_confirm.lines = lines;
-    s_confirm.style = 0x1 as libc::c_int | 0x2000 as libc::c_int | 0x10 as libc::c_int;
+    s_confirm.style = 0x1 | 0x2000 | 0x10;
     s_confirm.menu.draw = Some(MessageMenu_Draw as unsafe extern "C" fn() -> ());
     s_confirm.menu.key = Some(
         ConfirmMenu_Key
-            as unsafe extern "C" fn(_: libc::c_int) -> crate::src::qcommon::q_shared::sfxHandle_t,
+            as unsafe extern "C" fn(_: i32) -> crate::src::qcommon::q_shared::sfxHandle_t,
     );
     s_confirm.menu.wrapAround = crate::src::qcommon::q_shared::qtrue;
     crate::src::ui::ui_syscalls::trap_GetClientState(&mut cstate);
-    if cstate.connState as libc::c_uint
-        >= crate::src::qcommon::q_shared::CA_CONNECTED as libc::c_int as libc::c_uint
-    {
+    if cstate.connState >= crate::src::qcommon::q_shared::CA_CONNECTED {
         s_confirm.menu.fullscreen = crate::src::qcommon::q_shared::qfalse
     } else {
         s_confirm.menu.fullscreen = crate::src::qcommon::q_shared::qtrue
     }
-    s_confirm.yes.generic.type_0 = 9 as libc::c_int;
-    s_confirm.yes.generic.flags =
-        0x4 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
+    s_confirm.yes.generic.type_0 = 9;
+    s_confirm.yes.generic.flags = 0x4 | 0x100;
     s_confirm.yes.generic.callback =
-        Some(ConfirmMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_confirm.yes.generic.id = 11 as libc::c_int;
+        Some(ConfirmMenu_Event as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_confirm.yes.generic.id = 11;
     s_confirm.yes.generic.x = l1;
-    s_confirm.yes.generic.y = 280 as libc::c_int;
-    s_confirm.yes.string = b"OK\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    s_confirm.yes.generic.y = 280;
+    s_confirm.yes.string = b"OK\x00" as *const u8 as *mut i8;
     s_confirm.yes.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    s_confirm.yes.style = 0 as libc::c_int;
+    s_confirm.yes.style = 0;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
         &mut s_confirm.menu,
         &mut s_confirm.yes as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,

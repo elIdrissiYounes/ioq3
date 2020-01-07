@@ -139,10 +139,10 @@ Adjusted for resolution and screen aspect ratio
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_AdjustFrom640(
-    mut x: *mut libc::c_float,
-    mut y: *mut libc::c_float,
-    mut w: *mut libc::c_float,
-    mut h: *mut libc::c_float,
+    mut x: *mut f32,
+    mut y: *mut f32,
+    mut w: *mut f32,
+    mut h: *mut f32,
 ) {
     // scale for screen sizes
     *x *= crate::src::cgame::cg_main::cgs.screenXScale;
@@ -160,11 +160,11 @@ Coordinates are 640*480 virtual values
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_FillRect(
-    mut x: libc::c_float,
-    mut y: libc::c_float,
-    mut width: libc::c_float,
-    mut height: libc::c_float,
-    mut color: *const libc::c_float,
+    mut x: f32,
+    mut y: f32,
+    mut width: f32,
+    mut height: f32,
+    mut color: *const f32,
 ) {
     crate::src::cgame::cg_syscalls::trap_R_SetColor(color);
     CG_AdjustFrom640(&mut x, &mut y, &mut width, &mut height);
@@ -173,13 +173,13 @@ pub unsafe extern "C" fn CG_FillRect(
         y,
         width,
         height,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
+        0f32,
+        0f32,
+        0f32,
+        0f32,
         crate::src::cgame::cg_main::cgs.media.whiteShader,
     );
-    crate::src::cgame::cg_syscalls::trap_R_SetColor(0 as *const libc::c_float);
+    crate::src::cgame::cg_syscalls::trap_R_SetColor(0 as *const f32);
 }
 /*
 ================
@@ -191,11 +191,11 @@ Coords are virtual 640x480
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_DrawSides(
-    mut x: libc::c_float,
-    mut y: libc::c_float,
-    mut w: libc::c_float,
-    mut h: libc::c_float,
-    mut size: libc::c_float,
+    mut x: f32,
+    mut y: f32,
+    mut w: f32,
+    mut h: f32,
+    mut size: f32,
 ) {
     CG_AdjustFrom640(&mut x, &mut y, &mut w, &mut h);
     size *= crate::src::cgame::cg_main::cgs.screenXScale;
@@ -204,10 +204,10 @@ pub unsafe extern "C" fn CG_DrawSides(
         y,
         size,
         h,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
+        0f32,
+        0f32,
+        0f32,
+        0f32,
         crate::src::cgame::cg_main::cgs.media.whiteShader,
     );
     crate::src::cgame::cg_syscalls::trap_R_DrawStretchPic(
@@ -215,21 +215,21 @@ pub unsafe extern "C" fn CG_DrawSides(
         y,
         size,
         h,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
+        0f32,
+        0f32,
+        0f32,
+        0f32,
         crate::src::cgame::cg_main::cgs.media.whiteShader,
     );
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_DrawTopBottom(
-    mut x: libc::c_float,
-    mut y: libc::c_float,
-    mut w: libc::c_float,
-    mut h: libc::c_float,
-    mut size: libc::c_float,
+    mut x: f32,
+    mut y: f32,
+    mut w: f32,
+    mut h: f32,
+    mut size: f32,
 ) {
     CG_AdjustFrom640(&mut x, &mut y, &mut w, &mut h);
     size *= crate::src::cgame::cg_main::cgs.screenYScale;
@@ -238,10 +238,10 @@ pub unsafe extern "C" fn CG_DrawTopBottom(
         y,
         w,
         size,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
+        0f32,
+        0f32,
+        0f32,
+        0f32,
         crate::src::cgame::cg_main::cgs.media.whiteShader,
     );
     crate::src::cgame::cg_syscalls::trap_R_DrawStretchPic(
@@ -249,10 +249,10 @@ pub unsafe extern "C" fn CG_DrawTopBottom(
         y + h - size,
         w,
         size,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
+        0f32,
+        0f32,
+        0f32,
+        0f32,
         crate::src::cgame::cg_main::cgs.media.whiteShader,
     );
 }
@@ -266,23 +266,17 @@ Coordinates are 640*480 virtual values
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_DrawRect(
-    mut x: libc::c_float,
-    mut y: libc::c_float,
-    mut width: libc::c_float,
-    mut height: libc::c_float,
-    mut size: libc::c_float,
-    mut color: *const libc::c_float,
+    mut x: f32,
+    mut y: f32,
+    mut width: f32,
+    mut height: f32,
+    mut size: f32,
+    mut color: *const f32,
 ) {
     crate::src::cgame::cg_syscalls::trap_R_SetColor(color);
     CG_DrawTopBottom(x, y, width, height, size);
-    CG_DrawSides(
-        x,
-        y + size,
-        width,
-        height - size * 2 as libc::c_int as libc::c_float,
-        size,
-    );
-    crate::src::cgame::cg_syscalls::trap_R_SetColor(0 as *const libc::c_float);
+    CG_DrawSides(x, y + size, width, height - size * 2f32, size);
+    crate::src::cgame::cg_syscalls::trap_R_SetColor(0 as *const f32);
 }
 /*
 ================
@@ -294,23 +288,15 @@ Coordinates are 640*480 virtual values
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_DrawPic(
-    mut x: libc::c_float,
-    mut y: libc::c_float,
-    mut width: libc::c_float,
-    mut height: libc::c_float,
+    mut x: f32,
+    mut y: f32,
+    mut width: f32,
+    mut height: f32,
     mut hShader: crate::src::qcommon::q_shared::qhandle_t,
 ) {
     CG_AdjustFrom640(&mut x, &mut y, &mut width, &mut height);
     crate::src::cgame::cg_syscalls::trap_R_DrawStretchPic(
-        x,
-        y,
-        width,
-        height,
-        0 as libc::c_int as libc::c_float,
-        0 as libc::c_int as libc::c_float,
-        1 as libc::c_int as libc::c_float,
-        1 as libc::c_int as libc::c_float,
-        hShader,
+        x, y, width, height, 0f32, 0f32, 1f32, 1f32, hShader,
     );
 }
 /*
@@ -323,35 +309,35 @@ Coordinates and size in 640*480 virtual screen size
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_DrawChar(
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut width: libc::c_int,
-    mut height: libc::c_int,
-    mut ch: libc::c_int,
+    mut x: i32,
+    mut y: i32,
+    mut width: i32,
+    mut height: i32,
+    mut ch: i32,
 ) {
-    let mut row: libc::c_int = 0;
-    let mut col: libc::c_int = 0;
-    let mut frow: libc::c_float = 0.;
-    let mut fcol: libc::c_float = 0.;
-    let mut size: libc::c_float = 0.;
-    let mut ax: libc::c_float = 0.;
-    let mut ay: libc::c_float = 0.;
-    let mut aw: libc::c_float = 0.;
-    let mut ah: libc::c_float = 0.;
-    ch &= 255 as libc::c_int;
+    let mut row: i32 = 0;
+    let mut col: i32 = 0;
+    let mut frow: f32 = 0.;
+    let mut fcol: f32 = 0.;
+    let mut size: f32 = 0.;
+    let mut ax: f32 = 0.;
+    let mut ay: f32 = 0.;
+    let mut aw: f32 = 0.;
+    let mut ah: f32 = 0.;
+    ch &= 255;
     if ch == ' ' as i32 {
         return;
     }
-    ax = x as libc::c_float;
-    ay = y as libc::c_float;
-    aw = width as libc::c_float;
-    ah = height as libc::c_float;
+    ax = x as f32;
+    ay = y as f32;
+    aw = width as f32;
+    ah = height as f32;
     CG_AdjustFrom640(&mut ax, &mut ay, &mut aw, &mut ah);
-    row = ch >> 4 as libc::c_int;
-    col = ch & 15 as libc::c_int;
-    frow = (row as libc::c_double * 0.0625f64) as libc::c_float;
-    fcol = (col as libc::c_double * 0.0625f64) as libc::c_float;
-    size = 0.0625f64 as libc::c_float;
+    row = ch >> 4;
+    col = ch & 15;
+    frow = (row as f64 * 0.0625) as f32;
+    fcol = (col as f64 * 0.0625) as f32;
+    size = 0.0625;
     crate::src::cgame::cg_syscalls::trap_R_DrawStretchPic(
         ax,
         ay,
@@ -377,44 +363,38 @@ Coordinates are at 640 by 480 virtual resolution
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_DrawStringExt(
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut string: *const libc::c_char,
-    mut setColor: *const libc::c_float,
+    mut x: i32,
+    mut y: i32,
+    mut string: *const i8,
+    mut setColor: *const f32,
     mut forceColor: crate::src::qcommon::q_shared::qboolean,
     mut shadow: crate::src::qcommon::q_shared::qboolean,
-    mut charWidth: libc::c_int,
-    mut charHeight: libc::c_int,
-    mut maxChars: libc::c_int,
+    mut charWidth: i32,
+    mut charHeight: i32,
+    mut maxChars: i32,
 ) {
     let mut color: crate::src::qcommon::q_shared::vec4_t = [0.; 4]; // do them all!
-    let mut s: *const libc::c_char = 0 as *const libc::c_char;
-    let mut xx: libc::c_int = 0;
-    let mut cnt: libc::c_int = 0;
-    if maxChars <= 0 as libc::c_int {
-        maxChars = 32767 as libc::c_int
+    let mut s: *const i8 = 0 as *const i8;
+    let mut xx: i32 = 0;
+    let mut cnt: i32 = 0;
+    if maxChars <= 0 {
+        maxChars = 32767
     }
     // draw the drop shadow
     if shadow as u64 != 0 {
-        color[2 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-        color[1 as libc::c_int as usize] = color[2 as libc::c_int as usize];
-        color[0 as libc::c_int as usize] = color[1 as libc::c_int as usize];
-        color[3 as libc::c_int as usize] = *setColor.offset(3 as libc::c_int as isize);
+        color[2] = 0f32;
+        color[1] = color[2];
+        color[0] = color[1];
+        color[3] = *setColor.offset(3);
         crate::src::cgame::cg_syscalls::trap_R_SetColor(color.as_mut_ptr());
         s = string;
         xx = x;
-        cnt = 0 as libc::c_int;
-        while *s as libc::c_int != 0 && cnt < maxChars {
+        cnt = 0;
+        while *s as i32 != 0 && cnt < maxChars {
             if crate::src::qcommon::q_shared::Q_IsColorString(s) as u64 != 0 {
-                s = s.offset(2 as libc::c_int as isize)
+                s = s.offset(2)
             } else {
-                CG_DrawChar(
-                    xx + 2 as libc::c_int,
-                    y + 2 as libc::c_int,
-                    charWidth,
-                    charHeight,
-                    *s as libc::c_int,
-                );
+                CG_DrawChar(xx + 2, y + 2, charWidth, charHeight, *s as i32);
                 cnt += 1;
                 xx += charWidth;
                 s = s.offset(1)
@@ -424,47 +404,44 @@ pub unsafe extern "C" fn CG_DrawStringExt(
     // draw the colored text
     s = string;
     xx = x;
-    cnt = 0 as libc::c_int;
+    cnt = 0;
     crate::src::cgame::cg_syscalls::trap_R_SetColor(setColor);
-    while *s as libc::c_int != 0 && cnt < maxChars {
+    while *s as i32 != 0 && cnt < maxChars {
         if crate::src::qcommon::q_shared::Q_IsColorString(s) as u64 != 0 {
             if forceColor as u64 == 0 {
                 crate::stdlib::memcpy(
                     color.as_mut_ptr() as *mut libc::c_void,
-                    crate::src::qcommon::q_math::g_color_table[(*s.offset(1 as libc::c_int as isize)
-                        as libc::c_int
-                        - '0' as i32
-                        & 0x7 as libc::c_int)
-                        as usize]
+                    crate::src::qcommon::q_math::g_color_table
+                        [(*s.offset(1) as i32 - '0' as i32 & 0x7) as usize]
                         .as_mut_ptr() as *const libc::c_void,
-                    ::std::mem::size_of::<crate::src::qcommon::q_shared::vec4_t>() as libc::c_ulong,
+                    ::std::mem::size_of::<crate::src::qcommon::q_shared::vec4_t>(),
                 );
-                color[3 as libc::c_int as usize] = *setColor.offset(3 as libc::c_int as isize);
+                color[3] = *setColor.offset(3);
                 crate::src::cgame::cg_syscalls::trap_R_SetColor(color.as_mut_ptr());
             }
-            s = s.offset(2 as libc::c_int as isize)
+            s = s.offset(2)
         } else {
-            CG_DrawChar(xx, y, charWidth, charHeight, *s as libc::c_int);
+            CG_DrawChar(xx, y, charWidth, charHeight, *s as i32);
             xx += charWidth;
             cnt += 1;
             s = s.offset(1)
         }
     }
-    crate::src::cgame::cg_syscalls::trap_R_SetColor(0 as *const libc::c_float);
+    crate::src::cgame::cg_syscalls::trap_R_SetColor(0 as *const f32);
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_DrawBigString(
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut s: *const libc::c_char,
-    mut alpha: libc::c_float,
+    mut x: i32,
+    mut y: i32,
+    mut s: *const i8,
+    mut alpha: f32,
 ) {
-    let mut color: [libc::c_float; 4] = [0.; 4];
-    color[2 as libc::c_int as usize] = 1.0f64 as libc::c_float;
-    color[1 as libc::c_int as usize] = color[2 as libc::c_int as usize];
-    color[0 as libc::c_int as usize] = color[1 as libc::c_int as usize];
-    color[3 as libc::c_int as usize] = alpha;
+    let mut color: [f32; 4] = [0.; 4];
+    color[2] = 1f32;
+    color[1] = color[2];
+    color[0] = color[1];
+    color[3] = alpha;
     CG_DrawStringExt(
         x,
         y,
@@ -472,44 +449,44 @@ pub unsafe extern "C" fn CG_DrawBigString(
         color.as_mut_ptr(),
         crate::src::qcommon::q_shared::qfalse,
         crate::src::qcommon::q_shared::qtrue,
-        16 as libc::c_int,
-        16 as libc::c_int,
-        0 as libc::c_int,
+        16,
+        16,
+        0,
     );
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_DrawBigStringColor(
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut s: *const libc::c_char,
+    mut x: i32,
+    mut y: i32,
+    mut s: *const i8,
     mut color: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
     CG_DrawStringExt(
         x,
         y,
         s,
-        color as *const libc::c_float,
+        color as *const f32,
         crate::src::qcommon::q_shared::qtrue,
         crate::src::qcommon::q_shared::qtrue,
-        16 as libc::c_int,
-        16 as libc::c_int,
-        0 as libc::c_int,
+        16,
+        16,
+        0,
     );
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_DrawSmallString(
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut s: *const libc::c_char,
-    mut alpha: libc::c_float,
+    mut x: i32,
+    mut y: i32,
+    mut s: *const i8,
+    mut alpha: f32,
 ) {
-    let mut color: [libc::c_float; 4] = [0.; 4];
-    color[2 as libc::c_int as usize] = 1.0f64 as libc::c_float;
-    color[1 as libc::c_int as usize] = color[2 as libc::c_int as usize];
-    color[0 as libc::c_int as usize] = color[1 as libc::c_int as usize];
-    color[3 as libc::c_int as usize] = alpha;
+    let mut color: [f32; 4] = [0.; 4];
+    color[2] = 1f32;
+    color[1] = color[2];
+    color[0] = color[1];
+    color[3] = alpha;
     CG_DrawStringExt(
         x,
         y,
@@ -517,29 +494,29 @@ pub unsafe extern "C" fn CG_DrawSmallString(
         color.as_mut_ptr(),
         crate::src::qcommon::q_shared::qfalse,
         crate::src::qcommon::q_shared::qfalse,
-        8 as libc::c_int,
-        16 as libc::c_int,
-        0 as libc::c_int,
+        8,
+        16,
+        0,
     );
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_DrawSmallStringColor(
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut s: *const libc::c_char,
+    mut x: i32,
+    mut y: i32,
+    mut s: *const i8,
     mut color: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
     CG_DrawStringExt(
         x,
         y,
         s,
-        color as *const libc::c_float,
+        color as *const f32,
         crate::src::qcommon::q_shared::qtrue,
         crate::src::qcommon::q_shared::qfalse,
-        8 as libc::c_int,
-        16 as libc::c_int,
-        0 as libc::c_int,
+        8,
+        16,
+        0,
     );
 }
 /*
@@ -551,12 +528,12 @@ Returns character count, skiping color escape codes
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn CG_DrawStrlen(mut str: *const libc::c_char) -> libc::c_int {
-    let mut s: *const libc::c_char = str;
-    let mut count: libc::c_int = 0 as libc::c_int;
+pub unsafe extern "C" fn CG_DrawStrlen(mut str: *const i8) -> i32 {
+    let mut s: *const i8 = str;
+    let mut count: i32 = 0;
     while *s != 0 {
         if crate::src::qcommon::q_shared::Q_IsColorString(s) as u64 != 0 {
-            s = s.offset(2 as libc::c_int as isize)
+            s = s.offset(2)
         } else {
             count += 1;
             s = s.offset(1)
@@ -574,30 +551,22 @@ refresh window.
 */
 
 unsafe extern "C" fn CG_TileClearBox(
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut w: libc::c_int,
-    mut h: libc::c_int,
+    mut x: i32,
+    mut y: i32,
+    mut w: i32,
+    mut h: i32,
     mut hShader: crate::src::qcommon::q_shared::qhandle_t,
 ) {
-    let mut s1: libc::c_float = 0.;
-    let mut t1: libc::c_float = 0.;
-    let mut s2: libc::c_float = 0.;
-    let mut t2: libc::c_float = 0.;
-    s1 = (x as libc::c_double / 64.0f64) as libc::c_float;
-    t1 = (y as libc::c_double / 64.0f64) as libc::c_float;
-    s2 = ((x + w) as libc::c_double / 64.0f64) as libc::c_float;
-    t2 = ((y + h) as libc::c_double / 64.0f64) as libc::c_float;
+    let mut s1: f32 = 0.;
+    let mut t1: f32 = 0.;
+    let mut s2: f32 = 0.;
+    let mut t2: f32 = 0.;
+    s1 = (x as f64 / 64.0) as f32;
+    t1 = (y as f64 / 64.0) as f32;
+    s2 = ((x + w) as f64 / 64.0) as f32;
+    t2 = ((y + h) as f64 / 64.0) as f32;
     crate::src::cgame::cg_syscalls::trap_R_DrawStretchPic(
-        x as libc::c_float,
-        y as libc::c_float,
-        w as libc::c_float,
-        h as libc::c_float,
-        s1,
-        t1,
-        s2,
-        t2,
-        hShader,
+        x as f32, y as f32, w as f32, h as f32, s1, t1, s2, t2, hShader,
     );
 }
 /*
@@ -610,16 +579,16 @@ Clear around a sized down screen
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_TileClear() {
-    let mut top: libc::c_int = 0;
-    let mut bottom: libc::c_int = 0;
-    let mut left: libc::c_int = 0;
-    let mut right: libc::c_int = 0;
-    let mut w: libc::c_int = 0;
-    let mut h: libc::c_int = 0;
+    let mut top: i32 = 0;
+    let mut bottom: i32 = 0;
+    let mut left: i32 = 0;
+    let mut right: i32 = 0;
+    let mut w: i32 = 0;
+    let mut h: i32 = 0;
     w = crate::src::cgame::cg_main::cgs.glconfig.vidWidth;
     h = crate::src::cgame::cg_main::cgs.glconfig.vidHeight;
-    if crate::src::cgame::cg_main::cg.refdef.x == 0 as libc::c_int
-        && crate::src::cgame::cg_main::cg.refdef.y == 0 as libc::c_int
+    if crate::src::cgame::cg_main::cg.refdef.x == 0
+        && crate::src::cgame::cg_main::cg.refdef.y == 0
         && crate::src::cgame::cg_main::cg.refdef.width == w
         && crate::src::cgame::cg_main::cg.refdef.height == h
     {
@@ -627,20 +596,20 @@ pub unsafe extern "C" fn CG_TileClear() {
         // full screen rendering
     }
     top = crate::src::cgame::cg_main::cg.refdef.y;
-    bottom = top + crate::src::cgame::cg_main::cg.refdef.height - 1 as libc::c_int;
+    bottom = top + crate::src::cgame::cg_main::cg.refdef.height - 1;
     left = crate::src::cgame::cg_main::cg.refdef.x;
-    right = left + crate::src::cgame::cg_main::cg.refdef.width - 1 as libc::c_int;
+    right = left + crate::src::cgame::cg_main::cg.refdef.width - 1;
     // clear above view screen
     CG_TileClearBox(
-        0 as libc::c_int,
-        0 as libc::c_int,
+        0,
+        0,
         w,
         top,
         crate::src::cgame::cg_main::cgs.media.backTileShader,
     );
     // clear below view screen
     CG_TileClearBox(
-        0 as libc::c_int,
+        0,
         bottom,
         w,
         h - bottom,
@@ -648,10 +617,10 @@ pub unsafe extern "C" fn CG_TileClear() {
     );
     // clear left of view screen
     CG_TileClearBox(
-        0 as libc::c_int,
+        0,
         top,
         left,
-        bottom - top + 1 as libc::c_int,
+        bottom - top + 1,
         crate::src::cgame::cg_main::cgs.media.backTileShader,
     );
     // clear right of view screen
@@ -659,7 +628,7 @@ pub unsafe extern "C" fn CG_TileClear() {
         right,
         top,
         w - right,
-        bottom - top + 1 as libc::c_int,
+        bottom - top + 1,
         crate::src::cgame::cg_main::cgs.media.backTileShader,
     );
 }
@@ -670,30 +639,25 @@ CG_FadeColor
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn CG_FadeColor(
-    mut startMsec: libc::c_int,
-    mut totalMsec: libc::c_int,
-) -> *mut libc::c_float {
+pub unsafe extern "C" fn CG_FadeColor(mut startMsec: i32, mut totalMsec: i32) -> *mut f32 {
     static mut color: crate::src::qcommon::q_shared::vec4_t = [0.; 4];
-    let mut t: libc::c_int = 0;
-    if startMsec == 0 as libc::c_int {
-        return 0 as *mut libc::c_float;
+    let mut t: i32 = 0;
+    if startMsec == 0 {
+        return 0 as *mut f32;
     }
     t = crate::src::cgame::cg_main::cg.time - startMsec;
     if t >= totalMsec {
-        return 0 as *mut libc::c_float;
+        return 0 as *mut f32;
     }
     // fade out
-    if totalMsec - t < 200 as libc::c_int {
-        color[3 as libc::c_int as usize] = ((totalMsec - t) as libc::c_double * 1.0f64
-            / 200 as libc::c_int as libc::c_double)
-            as crate::src::qcommon::q_shared::vec_t
+    if totalMsec - t < 200 {
+        color[3] = ((totalMsec - t) as f64 * 1.0 / 200f64) as crate::src::qcommon::q_shared::vec_t
     } else {
-        color[3 as libc::c_int as usize] = 1.0f64 as crate::src::qcommon::q_shared::vec_t
+        color[3] = 1f32
     }
-    color[2 as libc::c_int as usize] = 1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    color[1 as libc::c_int as usize] = color[2 as libc::c_int as usize];
-    color[0 as libc::c_int as usize] = color[1 as libc::c_int as usize];
+    color[2] = 1f32;
+    color[1] = color[2];
+    color[0] = color[1];
     return color.as_mut_ptr();
 }
 /*
@@ -703,31 +667,11 @@ CG_TeamColor
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn CG_TeamColor(mut team: libc::c_int) -> *mut libc::c_float {
-    static mut red: crate::src::qcommon::q_shared::vec4_t = [
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        0.2f32,
-        0.2f32,
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    ];
-    static mut blue: crate::src::qcommon::q_shared::vec4_t = [
-        0.2f32,
-        0.2f32,
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    ];
-    static mut other: crate::src::qcommon::q_shared::vec4_t = [
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    ];
-    static mut spectator: crate::src::qcommon::q_shared::vec4_t = [
-        0.7f32,
-        0.7f32,
-        0.7f32,
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    ];
+pub unsafe extern "C" fn CG_TeamColor(mut team: i32) -> *mut f32 {
+    static mut red: crate::src::qcommon::q_shared::vec4_t = [1f32, 0.2, 0.2, 1f32];
+    static mut blue: crate::src::qcommon::q_shared::vec4_t = [0.2, 0.2, 1f32, 1f32];
+    static mut other: crate::src::qcommon::q_shared::vec4_t = [1f32, 1f32, 1f32, 1f32];
+    static mut spectator: crate::src::qcommon::q_shared::vec4_t = [0.7, 0.7, 0.7, 1f32];
     match team {
         1 => return red.as_mut_ptr(),
         2 => return blue.as_mut_ptr(),
@@ -743,52 +687,45 @@ CG_GetColorForHealth
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_GetColorForHealth(
-    mut health: libc::c_int,
-    mut armor: libc::c_int,
+    mut health: i32,
+    mut armor: i32,
     mut hcolor: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut count: libc::c_int = 0;
-    let mut max: libc::c_int = 0;
+    let mut count: i32 = 0;
+    let mut max: i32 = 0;
     // calculate the total points of damage that can
     // be sustained at the current health / armor level
-    if health <= 0 as libc::c_int {
-        let ref mut fresh0 = *hcolor.offset(2 as libc::c_int as isize); // black
-        *fresh0 = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-        let ref mut fresh1 = *hcolor.offset(1 as libc::c_int as isize);
+    if health <= 0 {
+        let ref mut fresh0 = *hcolor.offset(2); // black
+        *fresh0 = 0f32;
+        let ref mut fresh1 = *hcolor.offset(1);
         *fresh1 = *fresh0;
-        *hcolor.offset(0 as libc::c_int as isize) = *fresh1;
-        *hcolor.offset(3 as libc::c_int as isize) =
-            1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
+        *hcolor.offset(0) = *fresh1;
+        *hcolor.offset(3) = 1f32;
         return;
     }
     count = armor;
-    max = (health as libc::c_double * 0.66f64 / (1.0f64 - 0.66f64)) as libc::c_int;
+    max = (health as f64 * 0.66 / (1.0 - 0.66)) as i32;
     if max < count {
         count = max
     }
     health += count;
     // set the color based on health
-    *hcolor.offset(0 as libc::c_int as isize) = 1.0f64 as crate::src::qcommon::q_shared::vec_t;
-    *hcolor.offset(3 as libc::c_int as isize) = 1.0f64 as crate::src::qcommon::q_shared::vec_t;
-    if health >= 100 as libc::c_int {
-        *hcolor.offset(2 as libc::c_int as isize) = 1.0f64 as crate::src::qcommon::q_shared::vec_t
-    } else if health < 66 as libc::c_int {
-        *hcolor.offset(2 as libc::c_int as isize) =
-            0 as libc::c_int as crate::src::qcommon::q_shared::vec_t
+    *hcolor.offset(0) = 1f32;
+    *hcolor.offset(3) = 1f32;
+    if health >= 100 {
+        *hcolor.offset(2) = 1f32
+    } else if health < 66 {
+        *hcolor.offset(2) = 0f32
     } else {
-        *hcolor.offset(2 as libc::c_int as isize) = ((health - 66 as libc::c_int) as libc::c_double
-            / 33.0f64)
-            as crate::src::qcommon::q_shared::vec_t
+        *hcolor.offset(2) = ((health - 66i32) as f64 / 33.0) as crate::src::qcommon::q_shared::vec_t
     }
-    if health > 60 as libc::c_int {
-        *hcolor.offset(1 as libc::c_int as isize) = 1.0f64 as crate::src::qcommon::q_shared::vec_t
-    } else if health < 30 as libc::c_int {
-        *hcolor.offset(1 as libc::c_int as isize) =
-            0 as libc::c_int as crate::src::qcommon::q_shared::vec_t
+    if health > 60 {
+        *hcolor.offset(1) = 1f32
+    } else if health < 30 {
+        *hcolor.offset(1) = 0f32
     } else {
-        *hcolor.offset(1 as libc::c_int as isize) = ((health - 30 as libc::c_int) as libc::c_double
-            / 30.0f64)
-            as crate::src::qcommon::q_shared::vec_t
+        *hcolor.offset(1) = ((health - 30i32) as f64 / 30.0) as crate::src::qcommon::q_shared::vec_t
     };
 }
 /*
@@ -800,10 +737,8 @@ CG_ColorForHealth
 
 pub unsafe extern "C" fn CG_ColorForHealth(mut hcolor: *mut crate::src::qcommon::q_shared::vec_t) {
     CG_GetColorForHealth(
-        (*crate::src::cgame::cg_main::cg.snap).ps.stats
-            [crate::bg_public_h::STAT_HEALTH as libc::c_int as usize],
-        (*crate::src::cgame::cg_main::cg.snap).ps.stats
-            [crate::bg_public_h::STAT_ARMOR as libc::c_int as usize],
+        (*crate::src::cgame::cg_main::cg.snap).ps.stats[crate::bg_public_h::STAT_HEALTH as usize],
+        (*crate::src::cgame::cg_main::cg.snap).ps.stats[crate::bg_public_h::STAT_ARMOR as usize],
         hcolor,
     );
 }
@@ -813,164 +748,164 @@ UI_DrawProportionalString2
 =================
 */
 
-static mut propMap: [[libc::c_int; 3]; 128] = [
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
-    [0 as libc::c_int, 0 as libc::c_int, 8 as libc::c_int],
-    [11 as libc::c_int, 122 as libc::c_int, 7 as libc::c_int],
-    [154 as libc::c_int, 181 as libc::c_int, 14 as libc::c_int],
-    [55 as libc::c_int, 122 as libc::c_int, 17 as libc::c_int],
-    [79 as libc::c_int, 122 as libc::c_int, 18 as libc::c_int],
-    [101 as libc::c_int, 122 as libc::c_int, 23 as libc::c_int],
-    [153 as libc::c_int, 122 as libc::c_int, 18 as libc::c_int],
-    [9 as libc::c_int, 93 as libc::c_int, 7 as libc::c_int],
-    [207 as libc::c_int, 122 as libc::c_int, 8 as libc::c_int],
-    [230 as libc::c_int, 122 as libc::c_int, 9 as libc::c_int],
-    [177 as libc::c_int, 122 as libc::c_int, 18 as libc::c_int],
-    [30 as libc::c_int, 152 as libc::c_int, 18 as libc::c_int],
-    [85 as libc::c_int, 181 as libc::c_int, 7 as libc::c_int],
-    [34 as libc::c_int, 93 as libc::c_int, 11 as libc::c_int],
-    [110 as libc::c_int, 181 as libc::c_int, 6 as libc::c_int],
-    [130 as libc::c_int, 152 as libc::c_int, 14 as libc::c_int],
-    [22 as libc::c_int, 64 as libc::c_int, 17 as libc::c_int],
-    [41 as libc::c_int, 64 as libc::c_int, 12 as libc::c_int],
-    [58 as libc::c_int, 64 as libc::c_int, 17 as libc::c_int],
-    [78 as libc::c_int, 64 as libc::c_int, 18 as libc::c_int],
-    [98 as libc::c_int, 64 as libc::c_int, 19 as libc::c_int],
-    [120 as libc::c_int, 64 as libc::c_int, 18 as libc::c_int],
-    [141 as libc::c_int, 64 as libc::c_int, 18 as libc::c_int],
-    [204 as libc::c_int, 64 as libc::c_int, 16 as libc::c_int],
-    [162 as libc::c_int, 64 as libc::c_int, 17 as libc::c_int],
-    [182 as libc::c_int, 64 as libc::c_int, 18 as libc::c_int],
-    [59 as libc::c_int, 181 as libc::c_int, 7 as libc::c_int],
-    [35 as libc::c_int, 181 as libc::c_int, 7 as libc::c_int],
-    [203 as libc::c_int, 152 as libc::c_int, 14 as libc::c_int],
-    [56 as libc::c_int, 93 as libc::c_int, 14 as libc::c_int],
-    [228 as libc::c_int, 152 as libc::c_int, 14 as libc::c_int],
-    [177 as libc::c_int, 181 as libc::c_int, 18 as libc::c_int],
-    [28 as libc::c_int, 122 as libc::c_int, 22 as libc::c_int],
-    [5 as libc::c_int, 4 as libc::c_int, 18 as libc::c_int],
-    [27 as libc::c_int, 4 as libc::c_int, 18 as libc::c_int],
-    [48 as libc::c_int, 4 as libc::c_int, 18 as libc::c_int],
-    [69 as libc::c_int, 4 as libc::c_int, 17 as libc::c_int],
-    [90 as libc::c_int, 4 as libc::c_int, 13 as libc::c_int],
-    [106 as libc::c_int, 4 as libc::c_int, 13 as libc::c_int],
-    [121 as libc::c_int, 4 as libc::c_int, 18 as libc::c_int],
-    [143 as libc::c_int, 4 as libc::c_int, 17 as libc::c_int],
-    [164 as libc::c_int, 4 as libc::c_int, 8 as libc::c_int],
-    [175 as libc::c_int, 4 as libc::c_int, 16 as libc::c_int],
-    [195 as libc::c_int, 4 as libc::c_int, 18 as libc::c_int],
-    [216 as libc::c_int, 4 as libc::c_int, 12 as libc::c_int],
-    [230 as libc::c_int, 4 as libc::c_int, 23 as libc::c_int],
-    [6 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [27 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [48 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [68 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [90 as libc::c_int, 34 as libc::c_int, 17 as libc::c_int],
-    [110 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [130 as libc::c_int, 34 as libc::c_int, 14 as libc::c_int],
-    [146 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [166 as libc::c_int, 34 as libc::c_int, 19 as libc::c_int],
-    [185 as libc::c_int, 34 as libc::c_int, 29 as libc::c_int],
-    [215 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [234 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [5 as libc::c_int, 64 as libc::c_int, 14 as libc::c_int],
-    [60 as libc::c_int, 152 as libc::c_int, 7 as libc::c_int],
-    [106 as libc::c_int, 151 as libc::c_int, 13 as libc::c_int],
-    [83 as libc::c_int, 152 as libc::c_int, 7 as libc::c_int],
-    [128 as libc::c_int, 122 as libc::c_int, 17 as libc::c_int],
-    [4 as libc::c_int, 152 as libc::c_int, 21 as libc::c_int],
-    [134 as libc::c_int, 181 as libc::c_int, 5 as libc::c_int],
-    [5 as libc::c_int, 4 as libc::c_int, 18 as libc::c_int],
-    [27 as libc::c_int, 4 as libc::c_int, 18 as libc::c_int],
-    [48 as libc::c_int, 4 as libc::c_int, 18 as libc::c_int],
-    [69 as libc::c_int, 4 as libc::c_int, 17 as libc::c_int],
-    [90 as libc::c_int, 4 as libc::c_int, 13 as libc::c_int],
-    [106 as libc::c_int, 4 as libc::c_int, 13 as libc::c_int],
-    [121 as libc::c_int, 4 as libc::c_int, 18 as libc::c_int],
-    [143 as libc::c_int, 4 as libc::c_int, 17 as libc::c_int],
-    [164 as libc::c_int, 4 as libc::c_int, 8 as libc::c_int],
-    [175 as libc::c_int, 4 as libc::c_int, 16 as libc::c_int],
-    [195 as libc::c_int, 4 as libc::c_int, 18 as libc::c_int],
-    [216 as libc::c_int, 4 as libc::c_int, 12 as libc::c_int],
-    [230 as libc::c_int, 4 as libc::c_int, 23 as libc::c_int],
-    [6 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [27 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [48 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [68 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [90 as libc::c_int, 34 as libc::c_int, 17 as libc::c_int],
-    [110 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [130 as libc::c_int, 34 as libc::c_int, 14 as libc::c_int],
-    [146 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [166 as libc::c_int, 34 as libc::c_int, 19 as libc::c_int],
-    [185 as libc::c_int, 34 as libc::c_int, 29 as libc::c_int],
-    [215 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [234 as libc::c_int, 34 as libc::c_int, 18 as libc::c_int],
-    [5 as libc::c_int, 64 as libc::c_int, 14 as libc::c_int],
-    [153 as libc::c_int, 152 as libc::c_int, 13 as libc::c_int],
-    [11 as libc::c_int, 181 as libc::c_int, 5 as libc::c_int],
-    [180 as libc::c_int, 152 as libc::c_int, 13 as libc::c_int],
-    [79 as libc::c_int, 93 as libc::c_int, 17 as libc::c_int],
-    [0 as libc::c_int, 0 as libc::c_int, -(1 as libc::c_int)],
+static mut propMap: [[i32; 3]; 128] = [
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, -(1)],
+    [0, 0, 8],
+    [11, 122, 7],
+    [154, 181, 14],
+    [55, 122, 17],
+    [79, 122, 18],
+    [101, 122, 23],
+    [153, 122, 18],
+    [9, 93, 7],
+    [207, 122, 8],
+    [230, 122, 9],
+    [177, 122, 18],
+    [30, 152, 18],
+    [85, 181, 7],
+    [34, 93, 11],
+    [110, 181, 6],
+    [130, 152, 14],
+    [22, 64, 17],
+    [41, 64, 12],
+    [58, 64, 17],
+    [78, 64, 18],
+    [98, 64, 19],
+    [120, 64, 18],
+    [141, 64, 18],
+    [204, 64, 16],
+    [162, 64, 17],
+    [182, 64, 18],
+    [59, 181, 7],
+    [35, 181, 7],
+    [203, 152, 14],
+    [56, 93, 14],
+    [228, 152, 14],
+    [177, 181, 18],
+    [28, 122, 22],
+    [5, 4, 18],
+    [27, 4, 18],
+    [48, 4, 18],
+    [69, 4, 17],
+    [90, 4, 13],
+    [106, 4, 13],
+    [121, 4, 18],
+    [143, 4, 17],
+    [164, 4, 8],
+    [175, 4, 16],
+    [195, 4, 18],
+    [216, 4, 12],
+    [230, 4, 23],
+    [6, 34, 18],
+    [27, 34, 18],
+    [48, 34, 18],
+    [68, 34, 18],
+    [90, 34, 17],
+    [110, 34, 18],
+    [130, 34, 14],
+    [146, 34, 18],
+    [166, 34, 19],
+    [185, 34, 29],
+    [215, 34, 18],
+    [234, 34, 18],
+    [5, 64, 14],
+    [60, 152, 7],
+    [106, 151, 13],
+    [83, 152, 7],
+    [128, 122, 17],
+    [4, 152, 21],
+    [134, 181, 5],
+    [5, 4, 18],
+    [27, 4, 18],
+    [48, 4, 18],
+    [69, 4, 17],
+    [90, 4, 13],
+    [106, 4, 13],
+    [121, 4, 18],
+    [143, 4, 17],
+    [164, 4, 8],
+    [175, 4, 16],
+    [195, 4, 18],
+    [216, 4, 12],
+    [230, 4, 23],
+    [6, 34, 18],
+    [27, 34, 18],
+    [48, 34, 18],
+    [68, 34, 18],
+    [90, 34, 17],
+    [110, 34, 18],
+    [130, 34, 14],
+    [146, 34, 18],
+    [166, 34, 19],
+    [185, 34, 29],
+    [215, 34, 18],
+    [234, 34, 18],
+    [5, 64, 14],
+    [153, 152, 13],
+    [11, 181, 5],
+    [180, 152, 13],
+    [79, 93, 17],
+    [0, 0, -(1)],
 ];
 
-static mut propMapB: [[libc::c_int; 3]; 26] = [
-    [11 as libc::c_int, 12 as libc::c_int, 33 as libc::c_int],
-    [49 as libc::c_int, 12 as libc::c_int, 31 as libc::c_int],
-    [85 as libc::c_int, 12 as libc::c_int, 31 as libc::c_int],
-    [120 as libc::c_int, 12 as libc::c_int, 30 as libc::c_int],
-    [156 as libc::c_int, 12 as libc::c_int, 21 as libc::c_int],
-    [183 as libc::c_int, 12 as libc::c_int, 21 as libc::c_int],
-    [207 as libc::c_int, 12 as libc::c_int, 32 as libc::c_int],
-    [13 as libc::c_int, 55 as libc::c_int, 30 as libc::c_int],
-    [49 as libc::c_int, 55 as libc::c_int, 13 as libc::c_int],
-    [66 as libc::c_int, 55 as libc::c_int, 29 as libc::c_int],
-    [101 as libc::c_int, 55 as libc::c_int, 31 as libc::c_int],
-    [135 as libc::c_int, 55 as libc::c_int, 21 as libc::c_int],
-    [158 as libc::c_int, 55 as libc::c_int, 40 as libc::c_int],
-    [204 as libc::c_int, 55 as libc::c_int, 32 as libc::c_int],
-    [12 as libc::c_int, 97 as libc::c_int, 31 as libc::c_int],
-    [48 as libc::c_int, 97 as libc::c_int, 31 as libc::c_int],
-    [82 as libc::c_int, 97 as libc::c_int, 30 as libc::c_int],
-    [118 as libc::c_int, 97 as libc::c_int, 30 as libc::c_int],
-    [153 as libc::c_int, 97 as libc::c_int, 30 as libc::c_int],
-    [185 as libc::c_int, 97 as libc::c_int, 25 as libc::c_int],
-    [213 as libc::c_int, 97 as libc::c_int, 30 as libc::c_int],
-    [11 as libc::c_int, 139 as libc::c_int, 32 as libc::c_int],
-    [42 as libc::c_int, 139 as libc::c_int, 51 as libc::c_int],
-    [93 as libc::c_int, 139 as libc::c_int, 32 as libc::c_int],
-    [126 as libc::c_int, 139 as libc::c_int, 31 as libc::c_int],
-    [158 as libc::c_int, 139 as libc::c_int, 25 as libc::c_int],
+static mut propMapB: [[i32; 3]; 26] = [
+    [11, 12, 33],
+    [49, 12, 31],
+    [85, 12, 31],
+    [120, 12, 30],
+    [156, 12, 21],
+    [183, 12, 21],
+    [207, 12, 32],
+    [13, 55, 30],
+    [49, 55, 13],
+    [66, 55, 29],
+    [101, 55, 31],
+    [135, 55, 21],
+    [158, 55, 40],
+    [204, 55, 32],
+    [12, 97, 31],
+    [48, 97, 31],
+    [82, 97, 30],
+    [118, 97, 30],
+    [153, 97, 30],
+    [185, 97, 25],
+    [213, 97, 30],
+    [11, 139, 32],
+    [42, 139, 51],
+    [93, 139, 32],
+    [126, 139, 31],
+    [158, 139, 25],
 ];
 /*
 =================
@@ -979,41 +914,39 @@ UI_DrawBannerString
 */
 
 unsafe extern "C" fn UI_DrawBannerString2(
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut str: *const libc::c_char,
+    mut x: i32,
+    mut y: i32,
+    mut str: *const i8,
     mut color: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut s: *const libc::c_char = 0 as *const libc::c_char;
-    let mut ch: libc::c_uchar = 0;
-    let mut ax: libc::c_float = 0.;
-    let mut ay: libc::c_float = 0.;
-    let mut aw: libc::c_float = 0.;
-    let mut ah: libc::c_float = 0.;
-    let mut frow: libc::c_float = 0.;
-    let mut fcol: libc::c_float = 0.;
-    let mut fwidth: libc::c_float = 0.;
-    let mut fheight: libc::c_float = 0.;
+    let mut s: *const i8 = 0 as *const i8;
+    let mut ch: u8 = 0;
+    let mut ax: f32 = 0.;
+    let mut ay: f32 = 0.;
+    let mut aw: f32 = 0.;
+    let mut ah: f32 = 0.;
+    let mut frow: f32 = 0.;
+    let mut fcol: f32 = 0.;
+    let mut fwidth: f32 = 0.;
+    let mut fheight: f32 = 0.;
     // draw the colored text
-    crate::src::cgame::cg_syscalls::trap_R_SetColor(color as *const libc::c_float);
-    ax = x as libc::c_float * crate::src::cgame::cg_main::cgs.screenXScale
+    crate::src::cgame::cg_syscalls::trap_R_SetColor(color as *const f32);
+    ax = x as f32 * crate::src::cgame::cg_main::cgs.screenXScale
         + crate::src::cgame::cg_main::cgs.screenXBias;
-    ay = y as libc::c_float * crate::src::cgame::cg_main::cgs.screenYScale;
+    ay = y as f32 * crate::src::cgame::cg_main::cgs.screenYScale;
     s = str;
     while *s != 0 {
-        ch = (*s as libc::c_int & 127 as libc::c_int) as libc::c_uchar;
-        if ch as libc::c_int == ' ' as i32 {
-            ax += (12 as libc::c_int as libc::c_float + 4 as libc::c_int as libc::c_float)
-                * crate::src::cgame::cg_main::cgs.screenXScale
-        } else if ch as libc::c_int >= 'A' as i32 && ch as libc::c_int <= 'Z' as i32 {
-            ch = (ch as libc::c_int - 'A' as i32) as libc::c_uchar;
-            fcol = propMapB[ch as usize][0 as libc::c_int as usize] as libc::c_float / 256.0f32;
-            frow = propMapB[ch as usize][1 as libc::c_int as usize] as libc::c_float / 256.0f32;
-            fwidth = propMapB[ch as usize][2 as libc::c_int as usize] as libc::c_float / 256.0f32;
-            fheight = 36 as libc::c_int as libc::c_float / 256.0f32;
-            aw = propMapB[ch as usize][2 as libc::c_int as usize] as libc::c_float
-                * crate::src::cgame::cg_main::cgs.screenXScale;
-            ah = 36 as libc::c_int as libc::c_float * crate::src::cgame::cg_main::cgs.screenYScale;
+        ch = (*s as i32 & 127) as u8;
+        if ch as i32 == ' ' as i32 {
+            ax += (12f32 + 4f32) * crate::src::cgame::cg_main::cgs.screenXScale
+        } else if ch as i32 >= 'A' as i32 && ch as i32 <= 'Z' as i32 {
+            ch = (ch as i32 - 'A' as i32) as u8;
+            fcol = propMapB[ch as usize][0] as f32 / 256.0;
+            frow = propMapB[ch as usize][1] as f32 / 256.0;
+            fwidth = propMapB[ch as usize][2] as f32 / 256.0;
+            fheight = 36f32 / 256.0;
+            aw = propMapB[ch as usize][2] as f32 * crate::src::cgame::cg_main::cgs.screenXScale;
+            ah = 36f32 * crate::src::cgame::cg_main::cgs.screenYScale;
             crate::src::cgame::cg_syscalls::trap_R_DrawStretchPic(
                 ax,
                 ay,
@@ -1025,123 +958,111 @@ unsafe extern "C" fn UI_DrawBannerString2(
                 frow + fheight,
                 crate::src::cgame::cg_main::cgs.media.charsetPropB,
             );
-            ax += aw
-                + 4 as libc::c_int as libc::c_float * crate::src::cgame::cg_main::cgs.screenXScale
+            ax += aw + 4f32 * crate::src::cgame::cg_main::cgs.screenXScale
         }
         s = s.offset(1)
     }
-    crate::src::cgame::cg_syscalls::trap_R_SetColor(0 as *const libc::c_float);
+    crate::src::cgame::cg_syscalls::trap_R_SetColor(0 as *const f32);
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_DrawBannerString(
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut str: *const libc::c_char,
-    mut style: libc::c_int,
+    mut x: i32,
+    mut y: i32,
+    mut str: *const i8,
+    mut style: i32,
     mut color: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut s: *const libc::c_char = 0 as *const libc::c_char;
-    let mut ch: libc::c_int = 0;
-    let mut width: libc::c_int = 0;
+    let mut s: *const i8 = 0 as *const i8;
+    let mut ch: i32 = 0;
+    let mut width: i32 = 0;
     let mut drawcolor: crate::src::qcommon::q_shared::vec4_t = [0.; 4];
     // find the width of the drawn text
     s = str;
-    width = 0 as libc::c_int;
+    width = 0;
     while *s != 0 {
-        ch = *s as libc::c_int;
+        ch = *s as i32;
         if ch == ' ' as i32 {
-            width += 12 as libc::c_int
+            width += 12
         } else if ch >= 'A' as i32 && ch <= 'Z' as i32 {
-            width +=
-                propMapB[(ch - 'A' as i32) as usize][2 as libc::c_int as usize] + 4 as libc::c_int
+            width += propMapB[(ch - 'A' as i32) as usize][2] + 4
         }
         s = s.offset(1)
     }
-    width -= 4 as libc::c_int;
-    match style & 0x7 as libc::c_int {
-        1 => x -= width / 2 as libc::c_int,
+    width -= 4;
+    match style & 0x7 {
+        1 => x -= width / 2,
         2 => x -= width,
         0 | _ => {}
     }
-    if style & 0x800 as libc::c_int != 0 {
-        drawcolor[2 as libc::c_int as usize] =
-            0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-        drawcolor[1 as libc::c_int as usize] = drawcolor[2 as libc::c_int as usize];
-        drawcolor[0 as libc::c_int as usize] = drawcolor[1 as libc::c_int as usize];
-        drawcolor[3 as libc::c_int as usize] = *color.offset(3 as libc::c_int as isize);
-        UI_DrawBannerString2(
-            x + 2 as libc::c_int,
-            y + 2 as libc::c_int,
-            str,
-            drawcolor.as_mut_ptr(),
-        );
+    if style & 0x800 != 0 {
+        drawcolor[2] = 0f32;
+        drawcolor[1] = drawcolor[2];
+        drawcolor[0] = drawcolor[1];
+        drawcolor[3] = *color.offset(3);
+        UI_DrawBannerString2(x + 2i32, y + 2i32, str, drawcolor.as_mut_ptr());
     }
     UI_DrawBannerString2(x, y, str, color);
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn UI_ProportionalStringWidth(mut str: *const libc::c_char) -> libc::c_int {
-    let mut s: *const libc::c_char = 0 as *const libc::c_char;
-    let mut ch: libc::c_int = 0;
-    let mut charWidth: libc::c_int = 0;
-    let mut width: libc::c_int = 0;
+pub unsafe extern "C" fn UI_ProportionalStringWidth(mut str: *const i8) -> i32 {
+    let mut s: *const i8 = 0 as *const i8;
+    let mut ch: i32 = 0;
+    let mut charWidth: i32 = 0;
+    let mut width: i32 = 0;
     s = str;
-    width = 0 as libc::c_int;
+    width = 0;
     while *s != 0 {
-        ch = *s as libc::c_int & 127 as libc::c_int;
-        charWidth = propMap[ch as usize][2 as libc::c_int as usize];
-        if charWidth != -(1 as libc::c_int) {
+        ch = *s as i32 & 127;
+        charWidth = propMap[ch as usize][2];
+        if charWidth != -(1) {
             width += charWidth;
-            width += 3 as libc::c_int
+            width += 3
         }
         s = s.offset(1)
     }
-    width -= 3 as libc::c_int;
+    width -= 3;
     return width;
 }
 
 unsafe extern "C" fn UI_DrawProportionalString2(
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut str: *const libc::c_char,
+    mut x: i32,
+    mut y: i32,
+    mut str: *const i8,
     mut color: *mut crate::src::qcommon::q_shared::vec_t,
-    mut sizeScale: libc::c_float,
+    mut sizeScale: f32,
     mut charset: crate::src::qcommon::q_shared::qhandle_t,
 ) {
-    let mut s: *const libc::c_char = 0 as *const libc::c_char;
-    let mut ch: libc::c_uchar = 0;
-    let mut ax: libc::c_float = 0.;
-    let mut ay: libc::c_float = 0.;
-    let mut aw: libc::c_float = 0.;
-    let mut ah: libc::c_float = 0.;
-    let mut frow: libc::c_float = 0.;
-    let mut fcol: libc::c_float = 0.;
-    let mut fwidth: libc::c_float = 0.;
-    let mut fheight: libc::c_float = 0.;
+    let mut s: *const i8 = 0 as *const i8;
+    let mut ch: u8 = 0;
+    let mut ax: f32 = 0.;
+    let mut ay: f32 = 0.;
+    let mut aw: f32 = 0.;
+    let mut ah: f32 = 0.;
+    let mut frow: f32 = 0.;
+    let mut fcol: f32 = 0.;
+    let mut fwidth: f32 = 0.;
+    let mut fheight: f32 = 0.;
     // draw the colored text
-    crate::src::cgame::cg_syscalls::trap_R_SetColor(color as *const libc::c_float);
-    ax = x as libc::c_float * crate::src::cgame::cg_main::cgs.screenXScale
+    crate::src::cgame::cg_syscalls::trap_R_SetColor(color as *const f32);
+    ax = x as f32 * crate::src::cgame::cg_main::cgs.screenXScale
         + crate::src::cgame::cg_main::cgs.screenXBias;
-    ay = y as libc::c_float * crate::src::cgame::cg_main::cgs.screenYScale;
+    ay = y as f32 * crate::src::cgame::cg_main::cgs.screenYScale;
     s = str;
     while *s != 0 {
-        ch = (*s as libc::c_int & 127 as libc::c_int) as libc::c_uchar;
-        if ch as libc::c_int == ' ' as i32 {
-            aw = 8 as libc::c_int as libc::c_float
-                * crate::src::cgame::cg_main::cgs.screenXScale
-                * sizeScale
-        } else if propMap[ch as usize][2 as libc::c_int as usize] != -(1 as libc::c_int) {
-            fcol = propMap[ch as usize][0 as libc::c_int as usize] as libc::c_float / 256.0f32;
-            frow = propMap[ch as usize][1 as libc::c_int as usize] as libc::c_float / 256.0f32;
-            fwidth = propMap[ch as usize][2 as libc::c_int as usize] as libc::c_float / 256.0f32;
-            fheight = 27 as libc::c_int as libc::c_float / 256.0f32;
-            aw = propMap[ch as usize][2 as libc::c_int as usize] as libc::c_float
+        ch = (*s as i32 & 127) as u8;
+        if ch as i32 == ' ' as i32 {
+            aw = 8f32 * crate::src::cgame::cg_main::cgs.screenXScale * sizeScale
+        } else if propMap[ch as usize][2] != -(1) {
+            fcol = propMap[ch as usize][0] as f32 / 256.0;
+            frow = propMap[ch as usize][1] as f32 / 256.0;
+            fwidth = propMap[ch as usize][2] as f32 / 256.0;
+            fheight = 27f32 / 256.0;
+            aw = propMap[ch as usize][2] as f32
                 * crate::src::cgame::cg_main::cgs.screenXScale
                 * sizeScale;
-            ah = 27 as libc::c_int as libc::c_float
-                * crate::src::cgame::cg_main::cgs.screenYScale
-                * sizeScale;
+            ah = 27f32 * crate::src::cgame::cg_main::cgs.screenYScale * sizeScale;
             crate::src::cgame::cg_syscalls::trap_R_DrawStretchPic(
                 ax,
                 ay,
@@ -1154,15 +1075,12 @@ unsafe extern "C" fn UI_DrawProportionalString2(
                 charset,
             );
         } else {
-            aw = 0 as libc::c_int as libc::c_float
+            aw = 0f32
         }
-        ax += aw
-            + 3 as libc::c_int as libc::c_float
-                * crate::src::cgame::cg_main::cgs.screenXScale
-                * sizeScale;
+        ax += aw + 3f32 * crate::src::cgame::cg_main::cgs.screenXScale * sizeScale;
         s = s.offset(1)
     }
-    crate::src::cgame::cg_syscalls::trap_R_SetColor(0 as *const libc::c_float);
+    crate::src::cgame::cg_syscalls::trap_R_SetColor(0 as *const f32);
 }
 /*
 =================
@@ -1171,11 +1089,11 @@ UI_ProportionalSizeScale
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn UI_ProportionalSizeScale(mut style: libc::c_int) -> libc::c_float {
-    if style & 0x10 as libc::c_int != 0 {
-        return 0.75f64 as libc::c_float;
+pub unsafe extern "C" fn UI_ProportionalSizeScale(mut style: i32) -> f32 {
+    if style & 0x10 != 0 {
+        return 0.75f32;
     }
-    return 1.00f64 as libc::c_float;
+    return 1f32;
 }
 /*
 ===========================================================================
@@ -1393,53 +1311,46 @@ UI_DrawProportionalString
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_DrawProportionalString(
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut str: *const libc::c_char,
-    mut style: libc::c_int,
+    mut x: i32,
+    mut y: i32,
+    mut str: *const i8,
+    mut style: i32,
     mut color: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
     let mut drawcolor: crate::src::qcommon::q_shared::vec4_t = [0.; 4];
-    let mut width: libc::c_int = 0;
-    let mut sizeScale: libc::c_float = 0.;
+    let mut width: i32 = 0;
+    let mut sizeScale: f32 = 0.;
     sizeScale = UI_ProportionalSizeScale(style);
-    match style & 0x7 as libc::c_int {
+    match style & 0x7 {
         1 => {
-            width = (UI_ProportionalStringWidth(str) as libc::c_float * sizeScale) as libc::c_int;
-            x -= width / 2 as libc::c_int
+            width = (UI_ProportionalStringWidth(str) as f32 * sizeScale) as i32;
+            x -= width / 2
         }
         2 => {
-            width = (UI_ProportionalStringWidth(str) as libc::c_float * sizeScale) as libc::c_int;
+            width = (UI_ProportionalStringWidth(str) as f32 * sizeScale) as i32;
             x -= width
         }
         0 | _ => {}
     }
-    if style & 0x800 as libc::c_int != 0 {
-        drawcolor[2 as libc::c_int as usize] =
-            0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-        drawcolor[1 as libc::c_int as usize] = drawcolor[2 as libc::c_int as usize];
-        drawcolor[0 as libc::c_int as usize] = drawcolor[1 as libc::c_int as usize];
-        drawcolor[3 as libc::c_int as usize] = *color.offset(3 as libc::c_int as isize);
+    if style & 0x800 != 0 {
+        drawcolor[2] = 0f32;
+        drawcolor[1] = drawcolor[2];
+        drawcolor[0] = drawcolor[1];
+        drawcolor[3] = *color.offset(3);
         UI_DrawProportionalString2(
-            x + 2 as libc::c_int,
-            y + 2 as libc::c_int,
+            x + 2i32,
+            y + 2i32,
             str,
             drawcolor.as_mut_ptr(),
             sizeScale,
             crate::src::cgame::cg_main::cgs.media.charsetProp,
         );
     }
-    if style & 0x2000 as libc::c_int != 0 {
-        drawcolor[0 as libc::c_int as usize] =
-            (*color.offset(0 as libc::c_int as isize) as libc::c_double * 0.8f64)
-                as crate::src::qcommon::q_shared::vec_t;
-        drawcolor[1 as libc::c_int as usize] =
-            (*color.offset(1 as libc::c_int as isize) as libc::c_double * 0.8f64)
-                as crate::src::qcommon::q_shared::vec_t;
-        drawcolor[2 as libc::c_int as usize] =
-            (*color.offset(2 as libc::c_int as isize) as libc::c_double * 0.8f64)
-                as crate::src::qcommon::q_shared::vec_t;
-        drawcolor[3 as libc::c_int as usize] = *color.offset(3 as libc::c_int as isize);
+    if style & 0x2000 != 0 {
+        drawcolor[0] = (*color.offset(0) as f64 * 0.8) as crate::src::qcommon::q_shared::vec_t;
+        drawcolor[1] = (*color.offset(1) as f64 * 0.8) as crate::src::qcommon::q_shared::vec_t;
+        drawcolor[2] = (*color.offset(2) as f64 * 0.8) as crate::src::qcommon::q_shared::vec_t;
+        drawcolor[3] = *color.offset(3);
         UI_DrawProportionalString2(
             x,
             y,
@@ -1450,17 +1361,11 @@ pub unsafe extern "C" fn UI_DrawProportionalString(
         );
         return;
     }
-    if style & 0x4000 as libc::c_int != 0 {
-        drawcolor[0 as libc::c_int as usize] =
-            (*color.offset(0 as libc::c_int as isize) as libc::c_double * 0.8f64)
-                as crate::src::qcommon::q_shared::vec_t;
-        drawcolor[1 as libc::c_int as usize] =
-            (*color.offset(1 as libc::c_int as isize) as libc::c_double * 0.8f64)
-                as crate::src::qcommon::q_shared::vec_t;
-        drawcolor[2 as libc::c_int as usize] =
-            (*color.offset(2 as libc::c_int as isize) as libc::c_double * 0.8f64)
-                as crate::src::qcommon::q_shared::vec_t;
-        drawcolor[3 as libc::c_int as usize] = *color.offset(3 as libc::c_int as isize);
+    if style & 0x4000 != 0 {
+        drawcolor[0] = (*color.offset(0) as f64 * 0.8) as crate::src::qcommon::q_shared::vec_t;
+        drawcolor[1] = (*color.offset(1) as f64 * 0.8) as crate::src::qcommon::q_shared::vec_t;
+        drawcolor[2] = (*color.offset(2) as f64 * 0.8) as crate::src::qcommon::q_shared::vec_t;
+        drawcolor[3] = *color.offset(3);
         UI_DrawProportionalString2(
             x,
             y,
@@ -1469,14 +1374,11 @@ pub unsafe extern "C" fn UI_DrawProportionalString(
             sizeScale,
             crate::src::cgame::cg_main::cgs.media.charsetProp,
         );
-        drawcolor[0 as libc::c_int as usize] = *color.offset(0 as libc::c_int as isize);
-        drawcolor[1 as libc::c_int as usize] = *color.offset(1 as libc::c_int as isize);
-        drawcolor[2 as libc::c_int as usize] = *color.offset(2 as libc::c_int as isize);
-        drawcolor[3 as libc::c_int as usize] = (0.5f64
-            + 0.5f64
-                * crate::stdlib::sin(
-                    (crate::src::cgame::cg_main::cg.time / 75 as libc::c_int) as libc::c_double,
-                ))
+        drawcolor[0] = *color.offset(0);
+        drawcolor[1] = *color.offset(1);
+        drawcolor[2] = *color.offset(2);
+        drawcolor[3] = (0.5
+            + 0.5 * crate::stdlib::sin((crate::src::cgame::cg_main::cg.time / 75) as f64))
             as crate::src::qcommon::q_shared::vec_t;
         UI_DrawProportionalString2(
             x,

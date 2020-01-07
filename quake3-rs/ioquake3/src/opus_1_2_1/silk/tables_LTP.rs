@@ -27,144 +27,32 @@ POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************/
 #[no_mangle]
 
-pub static mut silk_LTP_per_index_iCDF: [libc::c_uchar; 3] = [
-    179 as libc::c_int as libc::c_uchar,
-    99 as libc::c_int as libc::c_uchar,
-    0 as libc::c_int as libc::c_uchar,
+pub static mut silk_LTP_per_index_iCDF: [u8; 3] = [179, 99, 0];
+
+static mut silk_LTP_gain_iCDF_0: [u8; 8] = [71, 56, 43, 30, 21, 12, 6, 0];
+
+static mut silk_LTP_gain_iCDF_1: [u8; 16] = [
+    199, 165, 144, 124, 109, 96, 84, 71, 61, 51, 42, 32, 23, 15, 8, 0,
 ];
 
-static mut silk_LTP_gain_iCDF_0: [libc::c_uchar; 8] = [
-    71 as libc::c_int as libc::c_uchar,
-    56 as libc::c_int as libc::c_uchar,
-    43 as libc::c_int as libc::c_uchar,
-    30 as libc::c_int as libc::c_uchar,
-    21 as libc::c_int as libc::c_uchar,
-    12 as libc::c_int as libc::c_uchar,
-    6 as libc::c_int as libc::c_uchar,
-    0 as libc::c_int as libc::c_uchar,
+static mut silk_LTP_gain_iCDF_2: [u8; 32] = [
+    241, 225, 211, 199, 187, 175, 164, 153, 142, 132, 123, 114, 105, 96, 88, 80, 72, 64, 57, 50,
+    44, 38, 33, 29, 24, 20, 16, 12, 9, 5, 2, 0,
 ];
 
-static mut silk_LTP_gain_iCDF_1: [libc::c_uchar; 16] = [
-    199 as libc::c_int as libc::c_uchar,
-    165 as libc::c_int as libc::c_uchar,
-    144 as libc::c_int as libc::c_uchar,
-    124 as libc::c_int as libc::c_uchar,
-    109 as libc::c_int as libc::c_uchar,
-    96 as libc::c_int as libc::c_uchar,
-    84 as libc::c_int as libc::c_uchar,
-    71 as libc::c_int as libc::c_uchar,
-    61 as libc::c_int as libc::c_uchar,
-    51 as libc::c_int as libc::c_uchar,
-    42 as libc::c_int as libc::c_uchar,
-    32 as libc::c_int as libc::c_uchar,
-    23 as libc::c_int as libc::c_uchar,
-    15 as libc::c_int as libc::c_uchar,
-    8 as libc::c_int as libc::c_uchar,
-    0 as libc::c_int as libc::c_uchar,
+static mut silk_LTP_gain_BITS_Q5_0: [u8; 8] = [15, 131, 138, 138, 155, 155, 173, 173];
+
+static mut silk_LTP_gain_BITS_Q5_1: [u8; 16] = [
+    69, 93, 115, 118, 131, 138, 141, 138, 150, 150, 155, 150, 155, 160, 166, 160,
 ];
 
-static mut silk_LTP_gain_iCDF_2: [libc::c_uchar; 32] = [
-    241 as libc::c_int as libc::c_uchar,
-    225 as libc::c_int as libc::c_uchar,
-    211 as libc::c_int as libc::c_uchar,
-    199 as libc::c_int as libc::c_uchar,
-    187 as libc::c_int as libc::c_uchar,
-    175 as libc::c_int as libc::c_uchar,
-    164 as libc::c_int as libc::c_uchar,
-    153 as libc::c_int as libc::c_uchar,
-    142 as libc::c_int as libc::c_uchar,
-    132 as libc::c_int as libc::c_uchar,
-    123 as libc::c_int as libc::c_uchar,
-    114 as libc::c_int as libc::c_uchar,
-    105 as libc::c_int as libc::c_uchar,
-    96 as libc::c_int as libc::c_uchar,
-    88 as libc::c_int as libc::c_uchar,
-    80 as libc::c_int as libc::c_uchar,
-    72 as libc::c_int as libc::c_uchar,
-    64 as libc::c_int as libc::c_uchar,
-    57 as libc::c_int as libc::c_uchar,
-    50 as libc::c_int as libc::c_uchar,
-    44 as libc::c_int as libc::c_uchar,
-    38 as libc::c_int as libc::c_uchar,
-    33 as libc::c_int as libc::c_uchar,
-    29 as libc::c_int as libc::c_uchar,
-    24 as libc::c_int as libc::c_uchar,
-    20 as libc::c_int as libc::c_uchar,
-    16 as libc::c_int as libc::c_uchar,
-    12 as libc::c_int as libc::c_uchar,
-    9 as libc::c_int as libc::c_uchar,
-    5 as libc::c_int as libc::c_uchar,
-    2 as libc::c_int as libc::c_uchar,
-    0 as libc::c_int as libc::c_uchar,
-];
-
-static mut silk_LTP_gain_BITS_Q5_0: [libc::c_uchar; 8] = [
-    15 as libc::c_int as libc::c_uchar,
-    131 as libc::c_int as libc::c_uchar,
-    138 as libc::c_int as libc::c_uchar,
-    138 as libc::c_int as libc::c_uchar,
-    155 as libc::c_int as libc::c_uchar,
-    155 as libc::c_int as libc::c_uchar,
-    173 as libc::c_int as libc::c_uchar,
-    173 as libc::c_int as libc::c_uchar,
-];
-
-static mut silk_LTP_gain_BITS_Q5_1: [libc::c_uchar; 16] = [
-    69 as libc::c_int as libc::c_uchar,
-    93 as libc::c_int as libc::c_uchar,
-    115 as libc::c_int as libc::c_uchar,
-    118 as libc::c_int as libc::c_uchar,
-    131 as libc::c_int as libc::c_uchar,
-    138 as libc::c_int as libc::c_uchar,
-    141 as libc::c_int as libc::c_uchar,
-    138 as libc::c_int as libc::c_uchar,
-    150 as libc::c_int as libc::c_uchar,
-    150 as libc::c_int as libc::c_uchar,
-    155 as libc::c_int as libc::c_uchar,
-    150 as libc::c_int as libc::c_uchar,
-    155 as libc::c_int as libc::c_uchar,
-    160 as libc::c_int as libc::c_uchar,
-    166 as libc::c_int as libc::c_uchar,
-    160 as libc::c_int as libc::c_uchar,
-];
-
-static mut silk_LTP_gain_BITS_Q5_2: [libc::c_uchar; 32] = [
-    131 as libc::c_int as libc::c_uchar,
-    128 as libc::c_int as libc::c_uchar,
-    134 as libc::c_int as libc::c_uchar,
-    141 as libc::c_int as libc::c_uchar,
-    141 as libc::c_int as libc::c_uchar,
-    141 as libc::c_int as libc::c_uchar,
-    145 as libc::c_int as libc::c_uchar,
-    145 as libc::c_int as libc::c_uchar,
-    145 as libc::c_int as libc::c_uchar,
-    150 as libc::c_int as libc::c_uchar,
-    155 as libc::c_int as libc::c_uchar,
-    155 as libc::c_int as libc::c_uchar,
-    155 as libc::c_int as libc::c_uchar,
-    155 as libc::c_int as libc::c_uchar,
-    160 as libc::c_int as libc::c_uchar,
-    160 as libc::c_int as libc::c_uchar,
-    160 as libc::c_int as libc::c_uchar,
-    160 as libc::c_int as libc::c_uchar,
-    166 as libc::c_int as libc::c_uchar,
-    166 as libc::c_int as libc::c_uchar,
-    173 as libc::c_int as libc::c_uchar,
-    173 as libc::c_int as libc::c_uchar,
-    182 as libc::c_int as libc::c_uchar,
-    192 as libc::c_int as libc::c_uchar,
-    182 as libc::c_int as libc::c_uchar,
-    192 as libc::c_int as libc::c_uchar,
-    192 as libc::c_int as libc::c_uchar,
-    192 as libc::c_int as libc::c_uchar,
-    205 as libc::c_int as libc::c_uchar,
-    192 as libc::c_int as libc::c_uchar,
-    205 as libc::c_int as libc::c_uchar,
-    224 as libc::c_int as libc::c_uchar,
+static mut silk_LTP_gain_BITS_Q5_2: [u8; 32] = [
+    131, 128, 134, 141, 141, 141, 145, 145, 145, 150, 155, 155, 155, 155, 160, 160, 160, 160, 166,
+    166, 173, 173, 182, 192, 182, 192, 192, 192, 205, 192, 205, 224,
 ];
 #[no_mangle]
 
-pub static mut silk_LTP_gain_iCDF_ptrs: [*const libc::c_uchar; 3] = unsafe {
+pub static mut silk_LTP_gain_iCDF_ptrs: [*const u8; 3] = unsafe {
     [
         silk_LTP_gain_iCDF_0.as_ptr(),
         silk_LTP_gain_iCDF_1.as_ptr(),
@@ -173,7 +61,7 @@ pub static mut silk_LTP_gain_iCDF_ptrs: [*const libc::c_uchar; 3] = unsafe {
 };
 #[no_mangle]
 
-pub static mut silk_LTP_gain_BITS_Q5_ptrs: [*const libc::c_uchar; 3] = unsafe {
+pub static mut silk_LTP_gain_BITS_Q5_ptrs: [*const u8; 3] = unsafe {
     [
         silk_LTP_gain_BITS_Q5_0.as_ptr(),
         silk_LTP_gain_BITS_Q5_1.as_ptr(),
@@ -181,519 +69,104 @@ pub static mut silk_LTP_gain_BITS_Q5_ptrs: [*const libc::c_uchar; 3] = unsafe {
     ]
 };
 
-static mut silk_LTP_gain_vq_0: [[libc::c_schar; 5]; 8] = [
-    [
-        4 as libc::c_int as libc::c_schar,
-        6 as libc::c_int as libc::c_schar,
-        24 as libc::c_int as libc::c_schar,
-        7 as libc::c_int as libc::c_schar,
-        5 as libc::c_int as libc::c_schar,
-    ],
-    [
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-    ],
-    [
-        12 as libc::c_int as libc::c_schar,
-        28 as libc::c_int as libc::c_schar,
-        41 as libc::c_int as libc::c_schar,
-        13 as libc::c_int as libc::c_schar,
-        -(4 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        -(9 as libc::c_int) as libc::c_schar,
-        15 as libc::c_int as libc::c_schar,
-        42 as libc::c_int as libc::c_schar,
-        25 as libc::c_int as libc::c_schar,
-        14 as libc::c_int as libc::c_schar,
-    ],
-    [
-        1 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        62 as libc::c_int as libc::c_schar,
-        41 as libc::c_int as libc::c_schar,
-        -(9 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        -(10 as libc::c_int) as libc::c_schar,
-        37 as libc::c_int as libc::c_schar,
-        65 as libc::c_int as libc::c_schar,
-        -(4 as libc::c_int) as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(6 as libc::c_int) as libc::c_schar,
-        4 as libc::c_int as libc::c_schar,
-        66 as libc::c_int as libc::c_schar,
-        7 as libc::c_int as libc::c_schar,
-        -(8 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        16 as libc::c_int as libc::c_schar,
-        14 as libc::c_int as libc::c_schar,
-        38 as libc::c_int as libc::c_schar,
-        -(3 as libc::c_int) as libc::c_schar,
-        33 as libc::c_int as libc::c_schar,
-    ],
+static mut silk_LTP_gain_vq_0: [[i8; 5]; 8] = [
+    [4, 6, 24, 7, 5],
+    [0, 0, 2, 0, 0],
+    [12, 28, 41, 13, -4],
+    [-9, 15, 42, 25, 14],
+    [1, -2, 62, 41, -9],
+    [-10, 37, 65, -4, 3],
+    [-6, 4, 66, 7, -8],
+    [16, 14, 38, -3, 33],
 ];
 
-static mut silk_LTP_gain_vq_1: [[libc::c_schar; 5]; 16] = [
-    [
-        13 as libc::c_int as libc::c_schar,
-        22 as libc::c_int as libc::c_schar,
-        39 as libc::c_int as libc::c_schar,
-        23 as libc::c_int as libc::c_schar,
-        12 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(1 as libc::c_int) as libc::c_schar,
-        36 as libc::c_int as libc::c_schar,
-        64 as libc::c_int as libc::c_schar,
-        27 as libc::c_int as libc::c_schar,
-        -(6 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        -(7 as libc::c_int) as libc::c_schar,
-        10 as libc::c_int as libc::c_schar,
-        55 as libc::c_int as libc::c_schar,
-        43 as libc::c_int as libc::c_schar,
-        17 as libc::c_int as libc::c_schar,
-    ],
-    [
-        1 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        8 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-    ],
-    [
-        6 as libc::c_int as libc::c_schar,
-        -(11 as libc::c_int) as libc::c_schar,
-        74 as libc::c_int as libc::c_schar,
-        53 as libc::c_int as libc::c_schar,
-        -(9 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        -(12 as libc::c_int) as libc::c_schar,
-        55 as libc::c_int as libc::c_schar,
-        76 as libc::c_int as libc::c_schar,
-        -(12 as libc::c_int) as libc::c_schar,
-        8 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(3 as libc::c_int) as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        93 as libc::c_int as libc::c_schar,
-        27 as libc::c_int as libc::c_schar,
-        -(4 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        26 as libc::c_int as libc::c_schar,
-        39 as libc::c_int as libc::c_schar,
-        59 as libc::c_int as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        -(8 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        2 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        77 as libc::c_int as libc::c_schar,
-        11 as libc::c_int as libc::c_schar,
-        9 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(8 as libc::c_int) as libc::c_schar,
-        22 as libc::c_int as libc::c_schar,
-        44 as libc::c_int as libc::c_schar,
-        -(6 as libc::c_int) as libc::c_schar,
-        7 as libc::c_int as libc::c_schar,
-    ],
-    [
-        40 as libc::c_int as libc::c_schar,
-        9 as libc::c_int as libc::c_schar,
-        26 as libc::c_int as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        9 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(7 as libc::c_int) as libc::c_schar,
-        20 as libc::c_int as libc::c_schar,
-        101 as libc::c_int as libc::c_schar,
-        -(7 as libc::c_int) as libc::c_schar,
-        4 as libc::c_int as libc::c_schar,
-    ],
-    [
-        3 as libc::c_int as libc::c_schar,
-        -(8 as libc::c_int) as libc::c_schar,
-        42 as libc::c_int as libc::c_schar,
-        26 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(15 as libc::c_int) as libc::c_schar,
-        33 as libc::c_int as libc::c_schar,
-        68 as libc::c_int as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        23 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(2 as libc::c_int) as libc::c_schar,
-        55 as libc::c_int as libc::c_schar,
-        46 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        15 as libc::c_int as libc::c_schar,
-    ],
-    [
-        3 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        21 as libc::c_int as libc::c_schar,
-        16 as libc::c_int as libc::c_schar,
-        41 as libc::c_int as libc::c_schar,
-    ],
+static mut silk_LTP_gain_vq_1: [[i8; 5]; 16] = [
+    [13, 22, 39, 23, 12],
+    [-1, 36, 64, 27, -6],
+    [-7, 10, 55, 43, 17],
+    [1, 1, 8, 1, 1],
+    [6, -11, 74, 53, -9],
+    [-12, 55, 76, -12, 8],
+    [-3, 3, 93, 27, -4],
+    [26, 39, 59, 3, -8],
+    [2, 0, 77, 11, 9],
+    [-8, 22, 44, -6, 7],
+    [40, 9, 26, 3, 9],
+    [-7, 20, 101, -7, 4],
+    [3, -8, 42, 26, 0],
+    [-15, 33, 68, 2, 23],
+    [-2, 55, 46, -2, 15],
+    [3, -1, 21, 16, 41],
 ];
 
-static mut silk_LTP_gain_vq_2: [[libc::c_schar; 5]; 32] = [
-    [
-        -(6 as libc::c_int) as libc::c_schar,
-        27 as libc::c_int as libc::c_schar,
-        61 as libc::c_int as libc::c_schar,
-        39 as libc::c_int as libc::c_schar,
-        5 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(11 as libc::c_int) as libc::c_schar,
-        42 as libc::c_int as libc::c_schar,
-        88 as libc::c_int as libc::c_schar,
-        4 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(2 as libc::c_int) as libc::c_schar,
-        60 as libc::c_int as libc::c_schar,
-        65 as libc::c_int as libc::c_schar,
-        6 as libc::c_int as libc::c_schar,
-        -(4 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        -(1 as libc::c_int) as libc::c_schar,
-        -(5 as libc::c_int) as libc::c_schar,
-        73 as libc::c_int as libc::c_schar,
-        56 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(9 as libc::c_int) as libc::c_schar,
-        19 as libc::c_int as libc::c_schar,
-        94 as libc::c_int as libc::c_schar,
-        29 as libc::c_int as libc::c_schar,
-        -(9 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        0 as libc::c_int as libc::c_schar,
-        12 as libc::c_int as libc::c_schar,
-        99 as libc::c_int as libc::c_schar,
-        6 as libc::c_int as libc::c_schar,
-        4 as libc::c_int as libc::c_schar,
-    ],
-    [
-        8 as libc::c_int as libc::c_schar,
-        -(19 as libc::c_int) as libc::c_schar,
-        102 as libc::c_int as libc::c_schar,
-        46 as libc::c_int as libc::c_schar,
-        -(13 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        3 as libc::c_int as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        13 as libc::c_int as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-    ],
-    [
-        9 as libc::c_int as libc::c_schar,
-        -(21 as libc::c_int) as libc::c_schar,
-        84 as libc::c_int as libc::c_schar,
-        72 as libc::c_int as libc::c_schar,
-        -(18 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        -(11 as libc::c_int) as libc::c_schar,
-        46 as libc::c_int as libc::c_schar,
-        104 as libc::c_int as libc::c_schar,
-        -(22 as libc::c_int) as libc::c_schar,
-        8 as libc::c_int as libc::c_schar,
-    ],
-    [
-        18 as libc::c_int as libc::c_schar,
-        38 as libc::c_int as libc::c_schar,
-        48 as libc::c_int as libc::c_schar,
-        23 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(16 as libc::c_int) as libc::c_schar,
-        70 as libc::c_int as libc::c_schar,
-        83 as libc::c_int as libc::c_schar,
-        -(21 as libc::c_int) as libc::c_schar,
-        11 as libc::c_int as libc::c_schar,
-    ],
-    [
-        5 as libc::c_int as libc::c_schar,
-        -(11 as libc::c_int) as libc::c_schar,
-        117 as libc::c_int as libc::c_schar,
-        22 as libc::c_int as libc::c_schar,
-        -(8 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        -(6 as libc::c_int) as libc::c_schar,
-        23 as libc::c_int as libc::c_schar,
-        117 as libc::c_int as libc::c_schar,
-        -(12 as libc::c_int) as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-    ],
-    [
-        3 as libc::c_int as libc::c_schar,
-        -(8 as libc::c_int) as libc::c_schar,
-        95 as libc::c_int as libc::c_schar,
-        28 as libc::c_int as libc::c_schar,
-        4 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(10 as libc::c_int) as libc::c_schar,
-        15 as libc::c_int as libc::c_schar,
-        77 as libc::c_int as libc::c_schar,
-        60 as libc::c_int as libc::c_schar,
-        -(15 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        -(1 as libc::c_int) as libc::c_schar,
-        4 as libc::c_int as libc::c_schar,
-        124 as libc::c_int as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(4 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        3 as libc::c_int as libc::c_schar,
-        38 as libc::c_int as libc::c_schar,
-        84 as libc::c_int as libc::c_schar,
-        24 as libc::c_int as libc::c_schar,
-        -(25 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        2 as libc::c_int as libc::c_schar,
-        13 as libc::c_int as libc::c_schar,
-        42 as libc::c_int as libc::c_schar,
-        13 as libc::c_int as libc::c_schar,
-        31 as libc::c_int as libc::c_schar,
-    ],
-    [
-        21 as libc::c_int as libc::c_schar,
-        -(4 as libc::c_int) as libc::c_schar,
-        56 as libc::c_int as libc::c_schar,
-        46 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        -(1 as libc::c_int) as libc::c_schar,
-        35 as libc::c_int as libc::c_schar,
-        79 as libc::c_int as libc::c_schar,
-        -(13 as libc::c_int) as libc::c_schar,
-        19 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(7 as libc::c_int) as libc::c_schar,
-        65 as libc::c_int as libc::c_schar,
-        88 as libc::c_int as libc::c_schar,
-        -(9 as libc::c_int) as libc::c_schar,
-        -(14 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        20 as libc::c_int as libc::c_schar,
-        4 as libc::c_int as libc::c_schar,
-        81 as libc::c_int as libc::c_schar,
-        49 as libc::c_int as libc::c_schar,
-        -(29 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        20 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        75 as libc::c_int as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        -(17 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        5 as libc::c_int as libc::c_schar,
-        -(9 as libc::c_int) as libc::c_schar,
-        44 as libc::c_int as libc::c_schar,
-        92 as libc::c_int as libc::c_schar,
-        -(8 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        1 as libc::c_int as libc::c_schar,
-        -(3 as libc::c_int) as libc::c_schar,
-        22 as libc::c_int as libc::c_schar,
-        69 as libc::c_int as libc::c_schar,
-        31 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(6 as libc::c_int) as libc::c_schar,
-        95 as libc::c_int as libc::c_schar,
-        41 as libc::c_int as libc::c_schar,
-        -(12 as libc::c_int) as libc::c_schar,
-        5 as libc::c_int as libc::c_schar,
-    ],
-    [
-        39 as libc::c_int as libc::c_schar,
-        67 as libc::c_int as libc::c_schar,
-        16 as libc::c_int as libc::c_schar,
-        -(4 as libc::c_int) as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-    ],
-    [
-        0 as libc::c_int as libc::c_schar,
-        -(6 as libc::c_int) as libc::c_schar,
-        120 as libc::c_int as libc::c_schar,
-        55 as libc::c_int as libc::c_schar,
-        -(36 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        -(13 as libc::c_int) as libc::c_schar,
-        44 as libc::c_int as libc::c_schar,
-        122 as libc::c_int as libc::c_schar,
-        4 as libc::c_int as libc::c_schar,
-        -(24 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        81 as libc::c_int as libc::c_schar,
-        5 as libc::c_int as libc::c_schar,
-        11 as libc::c_int as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        7 as libc::c_int as libc::c_schar,
-    ],
-    [
-        2 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        9 as libc::c_int as libc::c_schar,
-        10 as libc::c_int as libc::c_schar,
-        88 as libc::c_int as libc::c_schar,
-    ],
+static mut silk_LTP_gain_vq_2: [[i8; 5]; 32] = [
+    [-6, 27, 61, 39, 5],
+    [-11, 42, 88, 4, 1],
+    [-2, 60, 65, 6, -4],
+    [-1, -5, 73, 56, 1],
+    [-9, 19, 94, 29, -9],
+    [0, 12, 99, 6, 4],
+    [8, -19, 102, 46, -13],
+    [3, 2, 13, 3, 2],
+    [9, -21, 84, 72, -18],
+    [-11, 46, 104, -22, 8],
+    [18, 38, 48, 23, 0],
+    [-16, 70, 83, -21, 11],
+    [5, -11, 117, 22, -8],
+    [-6, 23, 117, -12, 3],
+    [3, -8, 95, 28, 4],
+    [-10, 15, 77, 60, -15],
+    [-1, 4, 124, 2, -4],
+    [3, 38, 84, 24, -25],
+    [2, 13, 42, 13, 31],
+    [21, -4, 56, 46, -1],
+    [-1, 35, 79, -13, 19],
+    [-7, 65, 88, -9, -14],
+    [20, 4, 81, 49, -29],
+    [20, 0, 75, 3, -17],
+    [5, -9, 44, 92, -8],
+    [1, -3, 22, 69, 31],
+    [-6, 95, 41, -12, 5],
+    [39, 67, 16, -4, 1],
+    [0, -6, 120, 55, -36],
+    [-13, 44, 122, 4, -24],
+    [81, 5, 11, 3, 7],
+    [2, 0, 9, 10, 88],
 ];
 // Initialized in run_static_initializers
 #[no_mangle]
 
-pub static mut silk_LTP_vq_ptrs_Q7: [*const libc::c_schar; 3] = [0 as *const libc::c_schar; 3];
+pub static mut silk_LTP_vq_ptrs_Q7: [*const i8; 3] = [0 as *const i8; 3];
 /* Maximum frequency-dependent response of the pitch taps above,
 computed as max(abs(freqz(taps))) */
 
-static mut silk_LTP_gain_vq_0_gain: [libc::c_uchar; 8] = [
-    46 as libc::c_int as libc::c_uchar,
-    2 as libc::c_int as libc::c_uchar,
-    90 as libc::c_int as libc::c_uchar,
-    87 as libc::c_int as libc::c_uchar,
-    93 as libc::c_int as libc::c_uchar,
-    91 as libc::c_int as libc::c_uchar,
-    82 as libc::c_int as libc::c_uchar,
-    98 as libc::c_int as libc::c_uchar,
+static mut silk_LTP_gain_vq_0_gain: [u8; 8] = [46, 2, 90, 87, 93, 91, 82, 98];
+
+static mut silk_LTP_gain_vq_1_gain: [u8; 16] = [
+    109, 120, 118, 12, 113, 115, 117, 119, 99, 59, 87, 111, 63, 111, 112, 80,
 ];
 
-static mut silk_LTP_gain_vq_1_gain: [libc::c_uchar; 16] = [
-    109 as libc::c_int as libc::c_uchar,
-    120 as libc::c_int as libc::c_uchar,
-    118 as libc::c_int as libc::c_uchar,
-    12 as libc::c_int as libc::c_uchar,
-    113 as libc::c_int as libc::c_uchar,
-    115 as libc::c_int as libc::c_uchar,
-    117 as libc::c_int as libc::c_uchar,
-    119 as libc::c_int as libc::c_uchar,
-    99 as libc::c_int as libc::c_uchar,
-    59 as libc::c_int as libc::c_uchar,
-    87 as libc::c_int as libc::c_uchar,
-    111 as libc::c_int as libc::c_uchar,
-    63 as libc::c_int as libc::c_uchar,
-    111 as libc::c_int as libc::c_uchar,
-    112 as libc::c_int as libc::c_uchar,
-    80 as libc::c_int as libc::c_uchar,
-];
-
-static mut silk_LTP_gain_vq_2_gain: [libc::c_uchar; 32] = [
-    126 as libc::c_int as libc::c_uchar,
-    124 as libc::c_int as libc::c_uchar,
-    125 as libc::c_int as libc::c_uchar,
-    124 as libc::c_int as libc::c_uchar,
-    129 as libc::c_int as libc::c_uchar,
-    121 as libc::c_int as libc::c_uchar,
-    126 as libc::c_int as libc::c_uchar,
-    23 as libc::c_int as libc::c_uchar,
-    132 as libc::c_int as libc::c_uchar,
-    127 as libc::c_int as libc::c_uchar,
-    127 as libc::c_int as libc::c_uchar,
-    127 as libc::c_int as libc::c_uchar,
-    126 as libc::c_int as libc::c_uchar,
-    127 as libc::c_int as libc::c_uchar,
-    122 as libc::c_int as libc::c_uchar,
-    133 as libc::c_int as libc::c_uchar,
-    130 as libc::c_int as libc::c_uchar,
-    134 as libc::c_int as libc::c_uchar,
-    101 as libc::c_int as libc::c_uchar,
-    118 as libc::c_int as libc::c_uchar,
-    119 as libc::c_int as libc::c_uchar,
-    145 as libc::c_int as libc::c_uchar,
-    126 as libc::c_int as libc::c_uchar,
-    86 as libc::c_int as libc::c_uchar,
-    124 as libc::c_int as libc::c_uchar,
-    120 as libc::c_int as libc::c_uchar,
-    123 as libc::c_int as libc::c_uchar,
-    119 as libc::c_int as libc::c_uchar,
-    170 as libc::c_int as libc::c_uchar,
-    173 as libc::c_int as libc::c_uchar,
-    107 as libc::c_int as libc::c_uchar,
-    109 as libc::c_int as libc::c_uchar,
+static mut silk_LTP_gain_vq_2_gain: [u8; 32] = [
+    126, 124, 125, 124, 129, 121, 126, 23, 132, 127, 127, 127, 126, 127, 122, 133, 130, 134, 101,
+    118, 119, 145, 126, 86, 124, 120, 123, 119, 170, 173, 107, 109,
 ];
 // Initialized in run_static_initializers
 #[no_mangle]
 
-pub static mut silk_LTP_vq_gain_ptrs_Q7: [*const libc::c_uchar; 3] = [0 as *const libc::c_uchar; 3];
+pub static mut silk_LTP_vq_gain_ptrs_Q7: [*const u8; 3] = [0 as *const u8; 3];
 #[no_mangle]
 
-pub static mut silk_LTP_vq_sizes: [libc::c_schar; 3] = [
-    8 as libc::c_int as libc::c_schar,
-    16 as libc::c_int as libc::c_schar,
-    32 as libc::c_int as libc::c_schar,
-];
+pub static mut silk_LTP_vq_sizes: [i8; 3] = [8, 16, 32];
 unsafe extern "C" fn run_static_initializers() {
     silk_LTP_vq_ptrs_Q7 = [
-        &*(*silk_LTP_gain_vq_0
-            .as_ptr()
-            .offset(0 as libc::c_int as isize))
-        .as_ptr()
-        .offset(0 as libc::c_int as isize) as *const libc::c_schar as *mut libc::c_schar
-            as *const libc::c_schar,
-        &*(*silk_LTP_gain_vq_1
-            .as_ptr()
-            .offset(0 as libc::c_int as isize))
-        .as_ptr()
-        .offset(0 as libc::c_int as isize) as *const libc::c_schar as *mut libc::c_schar
-            as *const libc::c_schar,
-        &*(*silk_LTP_gain_vq_2
-            .as_ptr()
-            .offset(0 as libc::c_int as isize))
-        .as_ptr()
-        .offset(0 as libc::c_int as isize) as *const libc::c_schar as *mut libc::c_schar
-            as *const libc::c_schar,
+        &*(*silk_LTP_gain_vq_0.as_ptr().offset(0)).as_ptr().offset(0) as *const i8 as *const i8,
+        &*(*silk_LTP_gain_vq_1.as_ptr().offset(0)).as_ptr().offset(0) as *const i8 as *const i8,
+        &*(*silk_LTP_gain_vq_2.as_ptr().offset(0)).as_ptr().offset(0) as *const i8 as *const i8,
     ];
     silk_LTP_vq_gain_ptrs_Q7 = [
-        &*silk_LTP_gain_vq_0_gain
-            .as_ptr()
-            .offset(0 as libc::c_int as isize) as *const libc::c_uchar,
-        &*silk_LTP_gain_vq_1_gain
-            .as_ptr()
-            .offset(0 as libc::c_int as isize) as *const libc::c_uchar,
-        &*silk_LTP_gain_vq_2_gain
-            .as_ptr()
-            .offset(0 as libc::c_int as isize) as *const libc::c_uchar,
+        &*silk_LTP_gain_vq_0_gain.as_ptr().offset(0) as *const u8,
+        &*silk_LTP_gain_vq_1_gain.as_ptr().offset(0) as *const u8,
+        &*silk_LTP_gain_vq_2_gain.as_ptr().offset(0) as *const u8,
     ]
 }
 #[used]

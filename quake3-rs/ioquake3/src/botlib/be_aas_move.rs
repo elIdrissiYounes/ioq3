@@ -7,14 +7,14 @@ pub mod q_shared_h {
     pub unsafe extern "C" fn VectorCompare(
         mut v1: *const crate::src::qcommon::q_shared::vec_t,
         mut v2: *const crate::src::qcommon::q_shared::vec_t,
-    ) -> libc::c_int {
-        if *v1.offset(0 as libc::c_int as isize) != *v2.offset(0 as libc::c_int as isize)
-            || *v1.offset(1 as libc::c_int as isize) != *v2.offset(1 as libc::c_int as isize)
-            || *v1.offset(2 as libc::c_int as isize) != *v2.offset(2 as libc::c_int as isize)
+    ) -> i32 {
+        if *v1.offset(0) != *v2.offset(0)
+            || *v1.offset(1) != *v2.offset(1)
+            || *v1.offset(2) != *v2.offset(2)
         {
-            return 0 as libc::c_int;
+            return 0i32;
         }
-        return 1 as libc::c_int;
+        return 1;
     }
     #[inline]
 
@@ -22,10 +22,9 @@ pub mod q_shared_h {
         mut v: *const crate::src::qcommon::q_shared::vec_t,
     ) -> crate::src::qcommon::q_shared::vec_t {
         return crate::stdlib::sqrt(
-            (*v.offset(0 as libc::c_int as isize) * *v.offset(0 as libc::c_int as isize)
-                + *v.offset(1 as libc::c_int as isize) * *v.offset(1 as libc::c_int as isize)
-                + *v.offset(2 as libc::c_int as isize) * *v.offset(2 as libc::c_int as isize))
-                as libc::c_double,
+            (*v.offset(0) * *v.offset(0)
+                + *v.offset(1) * *v.offset(1)
+                + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
     use crate::stdlib::sqrt;
@@ -296,7 +295,7 @@ pub unsafe extern "C" fn AAS_DropToFloor(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut mins: *mut crate::src::qcommon::q_shared::vec_t,
     mut maxs: *mut crate::src::qcommon::q_shared::vec_t,
-) -> libc::c_int {
+) -> i32 {
     let mut end: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut trace: crate::botlib_h::bsp_trace_t = crate::botlib_h::bsp_trace_t {
         allsolid: crate::src::qcommon::q_shared::qfalse,
@@ -320,25 +319,18 @@ pub unsafe extern "C" fn AAS_DropToFloor(
         contents: 0,
         ent: 0,
     };
-    end[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
-    end[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
-    end[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
-    end[2 as libc::c_int as usize] -= 100 as libc::c_int as libc::c_float;
-    trace = crate::src::botlib::be_aas_bspq3::AAS_Trace(
-        origin,
-        mins,
-        maxs,
-        end.as_mut_ptr(),
-        0 as libc::c_int,
-        1 as libc::c_int,
-    );
+    end[0] = *origin.offset(0);
+    end[1] = *origin.offset(1);
+    end[2] = *origin.offset(2);
+    end[2] -= 100f32;
+    trace = crate::src::botlib::be_aas_bspq3::AAS_Trace(origin, mins, maxs, end.as_mut_ptr(), 0, 1);
     if trace.startsolid as u64 != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    *origin.offset(0 as libc::c_int as isize) = trace.endpos[0 as libc::c_int as usize];
-    *origin.offset(1 as libc::c_int as isize) = trace.endpos[1 as libc::c_int as usize];
-    *origin.offset(2 as libc::c_int as isize) = trace.endpos[2 as libc::c_int as usize];
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    *origin.offset(0) = trace.endpos[0];
+    *origin.offset(1) = trace.endpos[1];
+    *origin.offset(2) = trace.endpos[2];
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //
 //
@@ -352,155 +344,152 @@ pub unsafe extern "C" fn AAS_DropToFloor(
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_InitSettings() {
-    aassettings.phys_gravitydirection[0 as libc::c_int as usize] =
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    aassettings.phys_gravitydirection[1 as libc::c_int as usize] =
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    aassettings.phys_gravitydirection[2 as libc::c_int as usize] =
-        -(1 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+    aassettings.phys_gravitydirection[0] = 0f32;
+    aassettings.phys_gravitydirection[1] = 0f32;
+    aassettings.phys_gravitydirection[2] = -1f32;
     aassettings.phys_friction = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_friction\x00" as *const u8 as *const libc::c_char,
-        b"6\x00" as *const u8 as *const libc::c_char,
+        b"phys_friction\x00" as *const u8 as *const i8,
+        b"6\x00" as *const u8 as *const i8,
     );
     aassettings.phys_stopspeed = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_stopspeed\x00" as *const u8 as *const libc::c_char,
-        b"100\x00" as *const u8 as *const libc::c_char,
+        b"phys_stopspeed\x00" as *const u8 as *const i8,
+        b"100\x00" as *const u8 as *const i8,
     );
     aassettings.phys_gravity = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_gravity\x00" as *const u8 as *const libc::c_char,
-        b"800\x00" as *const u8 as *const libc::c_char,
+        b"phys_gravity\x00" as *const u8 as *const i8,
+        b"800\x00" as *const u8 as *const i8,
     );
     aassettings.phys_waterfriction = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_waterfriction\x00" as *const u8 as *const libc::c_char,
-        b"1\x00" as *const u8 as *const libc::c_char,
+        b"phys_waterfriction\x00" as *const u8 as *const i8,
+        b"1\x00" as *const u8 as *const i8,
     );
     aassettings.phys_watergravity = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_watergravity\x00" as *const u8 as *const libc::c_char,
-        b"400\x00" as *const u8 as *const libc::c_char,
+        b"phys_watergravity\x00" as *const u8 as *const i8,
+        b"400\x00" as *const u8 as *const i8,
     );
     aassettings.phys_maxvelocity = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_maxvelocity\x00" as *const u8 as *const libc::c_char,
-        b"320\x00" as *const u8 as *const libc::c_char,
+        b"phys_maxvelocity\x00" as *const u8 as *const i8,
+        b"320\x00" as *const u8 as *const i8,
     );
     aassettings.phys_maxwalkvelocity = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_maxwalkvelocity\x00" as *const u8 as *const libc::c_char,
-        b"320\x00" as *const u8 as *const libc::c_char,
+        b"phys_maxwalkvelocity\x00" as *const u8 as *const i8,
+        b"320\x00" as *const u8 as *const i8,
     );
     aassettings.phys_maxcrouchvelocity = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_maxcrouchvelocity\x00" as *const u8 as *const libc::c_char,
-        b"100\x00" as *const u8 as *const libc::c_char,
+        b"phys_maxcrouchvelocity\x00" as *const u8 as *const i8,
+        b"100\x00" as *const u8 as *const i8,
     );
     aassettings.phys_maxswimvelocity = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_maxswimvelocity\x00" as *const u8 as *const libc::c_char,
-        b"150\x00" as *const u8 as *const libc::c_char,
+        b"phys_maxswimvelocity\x00" as *const u8 as *const i8,
+        b"150\x00" as *const u8 as *const i8,
     );
     aassettings.phys_walkaccelerate = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_walkaccelerate\x00" as *const u8 as *const libc::c_char,
-        b"10\x00" as *const u8 as *const libc::c_char,
+        b"phys_walkaccelerate\x00" as *const u8 as *const i8,
+        b"10\x00" as *const u8 as *const i8,
     );
     aassettings.phys_airaccelerate = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_airaccelerate\x00" as *const u8 as *const libc::c_char,
-        b"1\x00" as *const u8 as *const libc::c_char,
+        b"phys_airaccelerate\x00" as *const u8 as *const i8,
+        b"1\x00" as *const u8 as *const i8,
     );
     aassettings.phys_swimaccelerate = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_swimaccelerate\x00" as *const u8 as *const libc::c_char,
-        b"4\x00" as *const u8 as *const libc::c_char,
+        b"phys_swimaccelerate\x00" as *const u8 as *const i8,
+        b"4\x00" as *const u8 as *const i8,
     );
     aassettings.phys_maxstep = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_maxstep\x00" as *const u8 as *const libc::c_char,
-        b"19\x00" as *const u8 as *const libc::c_char,
+        b"phys_maxstep\x00" as *const u8 as *const i8,
+        b"19\x00" as *const u8 as *const i8,
     );
     aassettings.phys_maxsteepness = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_maxsteepness\x00" as *const u8 as *const libc::c_char,
-        b"0.7\x00" as *const u8 as *const libc::c_char,
+        b"phys_maxsteepness\x00" as *const u8 as *const i8,
+        b"0.7\x00" as *const u8 as *const i8,
     );
     aassettings.phys_maxwaterjump = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_maxwaterjump\x00" as *const u8 as *const libc::c_char,
-        b"18\x00" as *const u8 as *const libc::c_char,
+        b"phys_maxwaterjump\x00" as *const u8 as *const i8,
+        b"18\x00" as *const u8 as *const i8,
     );
     aassettings.phys_maxbarrier = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_maxbarrier\x00" as *const u8 as *const libc::c_char,
-        b"33\x00" as *const u8 as *const libc::c_char,
+        b"phys_maxbarrier\x00" as *const u8 as *const i8,
+        b"33\x00" as *const u8 as *const i8,
     );
     aassettings.phys_jumpvel = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_jumpvel\x00" as *const u8 as *const libc::c_char,
-        b"270\x00" as *const u8 as *const libc::c_char,
+        b"phys_jumpvel\x00" as *const u8 as *const i8,
+        b"270\x00" as *const u8 as *const i8,
     );
     aassettings.phys_falldelta5 = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_falldelta5\x00" as *const u8 as *const libc::c_char,
-        b"40\x00" as *const u8 as *const libc::c_char,
+        b"phys_falldelta5\x00" as *const u8 as *const i8,
+        b"40\x00" as *const u8 as *const i8,
     );
     aassettings.phys_falldelta10 = crate::src::botlib::l_libvar::LibVarValue(
-        b"phys_falldelta10\x00" as *const u8 as *const libc::c_char,
-        b"60\x00" as *const u8 as *const libc::c_char,
+        b"phys_falldelta10\x00" as *const u8 as *const i8,
+        b"60\x00" as *const u8 as *const i8,
     );
     aassettings.rs_waterjump = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_waterjump\x00" as *const u8 as *const libc::c_char,
-        b"400\x00" as *const u8 as *const libc::c_char,
+        b"rs_waterjump\x00" as *const u8 as *const i8,
+        b"400\x00" as *const u8 as *const i8,
     );
     aassettings.rs_teleport = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_teleport\x00" as *const u8 as *const libc::c_char,
-        b"50\x00" as *const u8 as *const libc::c_char,
+        b"rs_teleport\x00" as *const u8 as *const i8,
+        b"50\x00" as *const u8 as *const i8,
     );
     aassettings.rs_barrierjump = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_barrierjump\x00" as *const u8 as *const libc::c_char,
-        b"100\x00" as *const u8 as *const libc::c_char,
+        b"rs_barrierjump\x00" as *const u8 as *const i8,
+        b"100\x00" as *const u8 as *const i8,
     );
     aassettings.rs_startcrouch = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_startcrouch\x00" as *const u8 as *const libc::c_char,
-        b"300\x00" as *const u8 as *const libc::c_char,
+        b"rs_startcrouch\x00" as *const u8 as *const i8,
+        b"300\x00" as *const u8 as *const i8,
     );
     aassettings.rs_startgrapple = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_startgrapple\x00" as *const u8 as *const libc::c_char,
-        b"500\x00" as *const u8 as *const libc::c_char,
+        b"rs_startgrapple\x00" as *const u8 as *const i8,
+        b"500\x00" as *const u8 as *const i8,
     );
     aassettings.rs_startwalkoffledge = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_startwalkoffledge\x00" as *const u8 as *const libc::c_char,
-        b"70\x00" as *const u8 as *const libc::c_char,
+        b"rs_startwalkoffledge\x00" as *const u8 as *const i8,
+        b"70\x00" as *const u8 as *const i8,
     );
     aassettings.rs_startjump = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_startjump\x00" as *const u8 as *const libc::c_char,
-        b"300\x00" as *const u8 as *const libc::c_char,
+        b"rs_startjump\x00" as *const u8 as *const i8,
+        b"300\x00" as *const u8 as *const i8,
     );
     aassettings.rs_rocketjump = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_rocketjump\x00" as *const u8 as *const libc::c_char,
-        b"500\x00" as *const u8 as *const libc::c_char,
+        b"rs_rocketjump\x00" as *const u8 as *const i8,
+        b"500\x00" as *const u8 as *const i8,
     );
     aassettings.rs_bfgjump = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_bfgjump\x00" as *const u8 as *const libc::c_char,
-        b"500\x00" as *const u8 as *const libc::c_char,
+        b"rs_bfgjump\x00" as *const u8 as *const i8,
+        b"500\x00" as *const u8 as *const i8,
     );
     aassettings.rs_jumppad = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_jumppad\x00" as *const u8 as *const libc::c_char,
-        b"250\x00" as *const u8 as *const libc::c_char,
+        b"rs_jumppad\x00" as *const u8 as *const i8,
+        b"250\x00" as *const u8 as *const i8,
     );
     aassettings.rs_aircontrolledjumppad = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_aircontrolledjumppad\x00" as *const u8 as *const libc::c_char,
-        b"300\x00" as *const u8 as *const libc::c_char,
+        b"rs_aircontrolledjumppad\x00" as *const u8 as *const i8,
+        b"300\x00" as *const u8 as *const i8,
     );
     aassettings.rs_funcbob = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_funcbob\x00" as *const u8 as *const libc::c_char,
-        b"300\x00" as *const u8 as *const libc::c_char,
+        b"rs_funcbob\x00" as *const u8 as *const i8,
+        b"300\x00" as *const u8 as *const i8,
     );
     aassettings.rs_startelevator = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_startelevator\x00" as *const u8 as *const libc::c_char,
-        b"50\x00" as *const u8 as *const libc::c_char,
+        b"rs_startelevator\x00" as *const u8 as *const i8,
+        b"50\x00" as *const u8 as *const i8,
     );
     aassettings.rs_falldamage5 = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_falldamage5\x00" as *const u8 as *const libc::c_char,
-        b"300\x00" as *const u8 as *const libc::c_char,
+        b"rs_falldamage5\x00" as *const u8 as *const i8,
+        b"300\x00" as *const u8 as *const i8,
     );
     aassettings.rs_falldamage10 = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_falldamage10\x00" as *const u8 as *const libc::c_char,
-        b"500\x00" as *const u8 as *const libc::c_char,
+        b"rs_falldamage10\x00" as *const u8 as *const i8,
+        b"500\x00" as *const u8 as *const i8,
     );
     aassettings.rs_maxfallheight = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_maxfallheight\x00" as *const u8 as *const libc::c_char,
-        b"0\x00" as *const u8 as *const libc::c_char,
+        b"rs_maxfallheight\x00" as *const u8 as *const i8,
+        b"0\x00" as *const u8 as *const i8,
     );
     aassettings.rs_maxjumpfallheight = crate::src::botlib::l_libvar::LibVarValue(
-        b"rs_maxjumpfallheight\x00" as *const u8 as *const libc::c_char,
-        b"450\x00" as *const u8 as *const libc::c_char,
+        b"rs_maxjumpfallheight\x00" as *const u8 as *const i8,
+        b"450\x00" as *const u8 as *const i8,
     );
 }
 //end of the function AAS_InitSettings
@@ -515,30 +504,30 @@ pub unsafe extern "C" fn AAS_InitSettings() {
 
 pub unsafe extern "C" fn AAS_AgainstLadder(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-) -> libc::c_int {
-    let mut areanum: libc::c_int = 0; //end if
-    let mut i: libc::c_int = 0;
-    let mut facenum: libc::c_int = 0;
-    let mut side: libc::c_int = 0;
+) -> i32 {
+    let mut areanum: i32 = 0; //end if
+    let mut i: i32 = 0;
+    let mut facenum: i32 = 0;
+    let mut side: i32 = 0;
     let mut org: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut plane: *mut crate::aasfile_h::aas_plane_t = 0 as *mut crate::aasfile_h::aas_plane_t;
     let mut face: *mut crate::aasfile_h::aas_face_t = 0 as *mut crate::aasfile_h::aas_face_t;
     let mut area: *mut crate::aasfile_h::aas_area_t = 0 as *mut crate::aasfile_h::aas_area_t;
-    org[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
-    org[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
-    org[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
+    org[0] = *origin.offset(0);
+    org[1] = *origin.offset(1);
+    org[2] = *origin.offset(2);
     areanum = crate::src::botlib::be_aas_sample::AAS_PointAreaNum(org.as_mut_ptr());
     if areanum == 0 {
-        org[0 as libc::c_int as usize] += 1 as libc::c_int as libc::c_float;
+        org[0] += 1f32;
         areanum = crate::src::botlib::be_aas_sample::AAS_PointAreaNum(org.as_mut_ptr());
         if areanum == 0 {
-            org[1 as libc::c_int as usize] += 1 as libc::c_int as libc::c_float;
+            org[1] += 1f32;
             areanum = crate::src::botlib::be_aas_sample::AAS_PointAreaNum(org.as_mut_ptr());
             if areanum == 0 {
-                org[0 as libc::c_int as usize] -= 2 as libc::c_int as libc::c_float;
+                org[0] -= 2f32;
                 areanum = crate::src::botlib::be_aas_sample::AAS_PointAreaNum(org.as_mut_ptr());
                 if areanum == 0 {
-                    org[1 as libc::c_int as usize] -= 2 as libc::c_int as libc::c_float;
+                    org[1] -= 2f32;
                     areanum = crate::src::botlib::be_aas_sample::AAS_PointAreaNum(org.as_mut_ptr())
                 }
                 //end if
@@ -549,47 +538,45 @@ pub unsafe extern "C" fn AAS_AgainstLadder(
     }
     //if in solid... wrrr shouldn't happen
     if areanum == 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //if not in a ladder area
     if (*crate::src::botlib::be_aas_main::aasworld
         .areasettings
         .offset(areanum as isize))
     .areaflags
-        & 2 as libc::c_int
+        & 2
         == 0
     {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //if a crouch only area
     if (*crate::src::botlib::be_aas_main::aasworld
         .areasettings
         .offset(areanum as isize))
     .presencetype
-        & 2 as libc::c_int
+        & 2
         == 0
     {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     area = &mut *crate::src::botlib::be_aas_main::aasworld
         .areas
         .offset(areanum as isize) as *mut crate::aasfile_h::aas_area_t; //end for
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*area).numfaces {
         facenum = *crate::src::botlib::be_aas_main::aasworld
             .faceindex
             .offset(((*area).firstface + i) as isize);
-        side = (facenum < 0 as libc::c_int) as libc::c_int;
+        side = (facenum < 0) as i32;
         face = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
-            .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(facenum)
-                    as isize,
-            ) as *mut crate::aasfile_h::aas_face_t;
+            .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(facenum) as isize)
+            as *mut crate::aasfile_h::aas_face_t;
         //end if
         //if the face isn't a ladder face
-        if !((*face).faceflags & 2 as libc::c_int == 0) {
+        if !((*face).faceflags & 2 == 0) {
             //get the plane the face is in
             plane = &mut *crate::src::botlib::be_aas_main::aasworld
                 .planes
@@ -597,29 +584,26 @@ pub unsafe extern "C" fn AAS_AgainstLadder(
                 as *mut crate::aasfile_h::aas_plane_t;
             //if the origin is pretty close to the plane
             if crate::stdlib::fabsf(
-                (*plane).normal[0 as libc::c_int as usize]
-                    * *origin.offset(0 as libc::c_int as isize)
-                    + (*plane).normal[1 as libc::c_int as usize]
-                        * *origin.offset(1 as libc::c_int as isize)
-                    + (*plane).normal[2 as libc::c_int as usize]
-                        * *origin.offset(2 as libc::c_int as isize)
+                (*plane).normal[0] * *origin.offset(0)
+                    + (*plane).normal[1] * *origin.offset(1)
+                    + (*plane).normal[2] * *origin.offset(2)
                     - (*plane).dist,
-            ) < 3 as libc::c_int as libc::c_float
+            ) < 3f32
             {
                 if crate::src::botlib::be_aas_sample::AAS_PointInsideFace(
                     crate::stdlib::abs(facenum),
                     origin,
-                    0.1f32,
+                    0.1,
                 ) as u64
                     != 0
                 {
-                    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                    return crate::src::qcommon::q_shared::qtrue as i32;
                 }
             }
         }
         i += 1
     }
-    return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    return crate::src::qcommon::q_shared::qfalse as i32;
 }
 //end of the function AAS_AgainstLadder
 //===========================================================================
@@ -633,9 +617,9 @@ pub unsafe extern "C" fn AAS_AgainstLadder(
 
 pub unsafe extern "C" fn AAS_OnGround(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-    mut presencetype: libc::c_int,
-    mut passent: libc::c_int,
-) -> libc::c_int {
+    mut presencetype: i32,
+    mut passent: i32,
+) -> i32 {
     let mut trace: crate::be_aas_h::aas_trace_t = crate::be_aas_h::aas_trace_t {
         startsolid: crate::src::qcommon::q_shared::qfalse,
         fraction: 0.,
@@ -646,16 +630,12 @@ pub unsafe extern "C" fn AAS_OnGround(
         planenum: 0,
     };
     let mut end: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut up: crate::src::qcommon::q_shared::vec3_t = [
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    ];
+    let mut up: crate::src::qcommon::q_shared::vec3_t = [0f32, 0f32, 1f32];
     let mut plane: *mut crate::aasfile_h::aas_plane_t = 0 as *mut crate::aasfile_h::aas_plane_t;
-    end[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
-    end[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
-    end[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
-    end[2 as libc::c_int as usize] -= 10 as libc::c_int as libc::c_float;
+    end[0] = *origin.offset(0);
+    end[1] = *origin.offset(1);
+    end[2] = *origin.offset(2);
+    end[2] -= 10f32;
     trace = crate::src::botlib::be_aas_sample::AAS_TraceClientBBox(
         origin,
         end.as_mut_ptr(),
@@ -664,29 +644,25 @@ pub unsafe extern "C" fn AAS_OnGround(
     );
     //if in solid
     if trace.startsolid as u64 != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //if nothing hit at all
-    if trace.fraction as libc::c_double >= 1.0f64 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if trace.fraction as f64 >= 1.0 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //if too far from the hit plane
-    if *origin.offset(2 as libc::c_int as isize) - trace.endpos[2 as libc::c_int as usize]
-        > 10 as libc::c_int as libc::c_float
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if *origin.offset(2) - trace.endpos[2] > 10f32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //check if the plane isn't too steep
     plane = crate::src::botlib::be_aas_sample::AAS_PlaneFromNum(trace.planenum);
-    if (*plane).normal[0 as libc::c_int as usize] * up[0 as libc::c_int as usize]
-        + (*plane).normal[1 as libc::c_int as usize] * up[1 as libc::c_int as usize]
-        + (*plane).normal[2 as libc::c_int as usize] * up[2 as libc::c_int as usize]
+    if (*plane).normal[0] * up[0] + (*plane).normal[1] * up[1] + (*plane).normal[2] * up[2]
         < aassettings.phys_maxsteepness
     {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //the bot is on the ground
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //end of the function AAS_OnGround
 //===========================================================================
@@ -700,19 +676,18 @@ pub unsafe extern "C" fn AAS_OnGround(
 
 pub unsafe extern "C" fn AAS_Swimming(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-) -> libc::c_int {
+) -> i32 {
     let mut testorg: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    testorg[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
-    testorg[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
-    testorg[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
-    testorg[2 as libc::c_int as usize] -= 2 as libc::c_int as libc::c_float;
-    if crate::src::botlib::be_aas_bspq3::AAS_PointContents(testorg.as_mut_ptr())
-        & (8 as libc::c_int | 16 as libc::c_int | 32 as libc::c_int)
+    testorg[0] = *origin.offset(0);
+    testorg[1] = *origin.offset(1);
+    testorg[2] = *origin.offset(2);
+    testorg[2] -= 2f32;
+    if crate::src::botlib::be_aas_bspq3::AAS_PointContents(testorg.as_mut_ptr()) & (8 | 16 | 32)
         != 0
     {
-        return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+        return crate::src::qcommon::q_shared::qtrue as i32;
     }
-    return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    return crate::src::qcommon::q_shared::qfalse as i32;
 }
 //end of the function AAS_Swimming
 //===========================================================================
@@ -722,29 +697,13 @@ pub unsafe extern "C" fn AAS_Swimming(
 // Changes Globals:		-
 //===========================================================================
 
-static mut VEC_UP: crate::src::qcommon::q_shared::vec3_t = [
-    0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    -(1 as libc::c_int) as crate::src::qcommon::q_shared::vec_t,
-    0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-];
+static mut VEC_UP: crate::src::qcommon::q_shared::vec3_t = [0f32, -1f32, 0f32];
 
-static mut MOVEDIR_UP: crate::src::qcommon::q_shared::vec3_t = [
-    0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-];
+static mut MOVEDIR_UP: crate::src::qcommon::q_shared::vec3_t = [0f32, 0f32, 1f32];
 
-static mut VEC_DOWN: crate::src::qcommon::q_shared::vec3_t = [
-    0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    -(2 as libc::c_int) as crate::src::qcommon::q_shared::vec_t,
-    0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-];
+static mut VEC_DOWN: crate::src::qcommon::q_shared::vec3_t = [0f32, -2f32, 0f32];
 
-static mut MOVEDIR_DOWN: crate::src::qcommon::q_shared::vec3_t = [
-    0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    -(1 as libc::c_int) as crate::src::qcommon::q_shared::vec_t,
-];
+static mut MOVEDIR_DOWN: crate::src::qcommon::q_shared::vec3_t = [0f32, 0f32, -1f32];
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_SetMovedir(
@@ -756,17 +715,17 @@ pub unsafe extern "C" fn AAS_SetMovedir(
         VEC_UP.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
     ) != 0
     {
-        *movedir.offset(0 as libc::c_int as isize) = MOVEDIR_UP[0 as libc::c_int as usize]; //end if
-        *movedir.offset(1 as libc::c_int as isize) = MOVEDIR_UP[1 as libc::c_int as usize]; //end else if
-        *movedir.offset(2 as libc::c_int as isize) = MOVEDIR_UP[2 as libc::c_int as usize]
+        *movedir.offset(0) = MOVEDIR_UP[0]; //end if
+        *movedir.offset(1) = MOVEDIR_UP[1]; //end else if
+        *movedir.offset(2) = MOVEDIR_UP[2]
     } else if VectorCompare(
         angles as *const crate::src::qcommon::q_shared::vec_t,
         VEC_DOWN.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
     ) != 0
     {
-        *movedir.offset(0 as libc::c_int as isize) = MOVEDIR_DOWN[0 as libc::c_int as usize];
-        *movedir.offset(1 as libc::c_int as isize) = MOVEDIR_DOWN[1 as libc::c_int as usize];
-        *movedir.offset(2 as libc::c_int as isize) = MOVEDIR_DOWN[2 as libc::c_int as usize]
+        *movedir.offset(0) = MOVEDIR_DOWN[0];
+        *movedir.offset(1) = MOVEDIR_DOWN[1];
+        *movedir.offset(2) = MOVEDIR_DOWN[2]
     } else {
         crate::src::qcommon::q_math::AngleVectors(
             angles as *const crate::src::qcommon::q_shared::vec_t,
@@ -813,52 +772,43 @@ pub unsafe extern "C" fn AAS_JumpReachRunStart(
         frames: 0,
     };
     //
-    hordir[0 as libc::c_int as usize] =
-        (*reach).start[0 as libc::c_int as usize] - (*reach).end[0 as libc::c_int as usize];
-    hordir[1 as libc::c_int as usize] =
-        (*reach).start[1 as libc::c_int as usize] - (*reach).end[1 as libc::c_int as usize];
-    hordir[2 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
+    hordir[0] = (*reach).start[0] - (*reach).end[0];
+    hordir[1] = (*reach).start[1] - (*reach).end[1];
+    hordir[2] = 0f32;
     crate::src::qcommon::q_math::VectorNormalize(hordir.as_mut_ptr());
     //start point
-    start[0 as libc::c_int as usize] = (*reach).start[0 as libc::c_int as usize];
-    start[1 as libc::c_int as usize] = (*reach).start[1 as libc::c_int as usize];
-    start[2 as libc::c_int as usize] = (*reach).start[2 as libc::c_int as usize];
-    start[2 as libc::c_int as usize] += 1 as libc::c_int as libc::c_float;
+    start[0] = (*reach).start[0];
+    start[1] = (*reach).start[1];
+    start[2] = (*reach).start[2];
+    start[2] += 1f32;
     //get command movement
-    cmdmove[0 as libc::c_int as usize] =
-        hordir[0 as libc::c_int as usize] * 400 as libc::c_int as libc::c_float;
-    cmdmove[1 as libc::c_int as usize] =
-        hordir[1 as libc::c_int as usize] * 400 as libc::c_int as libc::c_float;
-    cmdmove[2 as libc::c_int as usize] =
-        hordir[2 as libc::c_int as usize] * 400 as libc::c_int as libc::c_float;
+    cmdmove[0] = hordir[0] * 400f32;
+    cmdmove[1] = hordir[1] * 400f32;
+    cmdmove[2] = hordir[2] * 400f32;
     //
     AAS_PredictClientMovement(
         &mut move_0,
-        -(1 as libc::c_int),
+        -(1),
         start.as_mut_ptr(),
-        2 as libc::c_int,
-        crate::src::qcommon::q_shared::qtrue as libc::c_int,
+        2,
+        crate::src::qcommon::q_shared::qtrue as i32,
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr(),
         cmdmove.as_mut_ptr(),
-        1 as libc::c_int,
-        2 as libc::c_int,
-        0.1f32,
-        4 as libc::c_int
-            | 8 as libc::c_int
-            | 16 as libc::c_int
-            | 32 as libc::c_int
-            | 64 as libc::c_int,
-        0 as libc::c_int,
-        crate::src::qcommon::q_shared::qfalse as libc::c_int,
+        1,
+        2,
+        0.1,
+        4 | 8 | 16 | 32 | 64,
+        0,
+        crate::src::qcommon::q_shared::qfalse as i32,
     );
-    *runstart.offset(0 as libc::c_int as isize) = move_0.endpos[0 as libc::c_int as usize];
-    *runstart.offset(1 as libc::c_int as isize) = move_0.endpos[1 as libc::c_int as usize];
-    *runstart.offset(2 as libc::c_int as isize) = move_0.endpos[2 as libc::c_int as usize];
+    *runstart.offset(0) = move_0.endpos[0];
+    *runstart.offset(1) = move_0.endpos[1];
+    *runstart.offset(2) = move_0.endpos[2];
     //don't enter slime or lava and don't fall from too high
-    if move_0.stopevent & (8 as libc::c_int | 16 as libc::c_int | 32 as libc::c_int) != 0 {
-        *runstart.offset(0 as libc::c_int as isize) = start[0 as libc::c_int as usize];
-        *runstart.offset(1 as libc::c_int as isize) = start[1 as libc::c_int as usize];
-        *runstart.offset(2 as libc::c_int as isize) = start[2 as libc::c_int as usize]
+    if move_0.stopevent & (8 | 16 | 32) != 0 {
+        *runstart.offset(0) = start[0];
+        *runstart.offset(1) = start[1];
+        *runstart.offset(2) = start[2]
     };
     //end if
 }
@@ -874,8 +824,8 @@ pub unsafe extern "C" fn AAS_JumpReachRunStart(
 
 pub unsafe extern "C" fn AAS_WeaponJumpZVelocity(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-    mut radiusdamage: libc::c_float,
-) -> libc::c_float {
+    mut radiusdamage: f32,
+) -> f32 {
     let mut kvel: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut v: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut start: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -884,24 +834,12 @@ pub unsafe extern "C" fn AAS_WeaponJumpZVelocity(
     let mut right: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut viewangles: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut mass: libc::c_float = 0.;
-    let mut knockback: libc::c_float = 0.;
-    let mut points: libc::c_float = 0.;
-    let mut rocketoffset: crate::src::qcommon::q_shared::vec3_t = [
-        8 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        8 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        -(8 as libc::c_int) as crate::src::qcommon::q_shared::vec_t,
-    ];
-    let mut botmins: crate::src::qcommon::q_shared::vec3_t = [
-        -(16 as libc::c_int) as crate::src::qcommon::q_shared::vec_t,
-        -(16 as libc::c_int) as crate::src::qcommon::q_shared::vec_t,
-        -(24 as libc::c_int) as crate::src::qcommon::q_shared::vec_t,
-    ];
-    let mut botmaxs: crate::src::qcommon::q_shared::vec3_t = [
-        16 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        16 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        32 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    ];
+    let mut mass: f32 = 0.;
+    let mut knockback: f32 = 0.;
+    let mut points: f32 = 0.;
+    let mut rocketoffset: crate::src::qcommon::q_shared::vec3_t = [8f32, 8f32, -8f32];
+    let mut botmins: crate::src::qcommon::q_shared::vec3_t = [-16f32, -16f32, -24f32];
+    let mut botmaxs: crate::src::qcommon::q_shared::vec3_t = [16f32, 16f32, 32f32];
     let mut bsptrace: crate::botlib_h::bsp_trace_t = crate::botlib_h::bsp_trace_t {
         allsolid: crate::src::qcommon::q_shared::qfalse,
         startsolid: crate::src::qcommon::q_shared::qfalse,
@@ -925,105 +863,73 @@ pub unsafe extern "C" fn AAS_WeaponJumpZVelocity(
         ent: 0,
     };
     //look down (90 degrees)
-    viewangles[0 as libc::c_int as usize] =
-        90 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    viewangles[1 as libc::c_int as usize] =
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    viewangles[2 as libc::c_int as usize] =
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
+    viewangles[0] = 90f32;
+    viewangles[1] = 0f32;
+    viewangles[2] = 0f32;
     //get the start point shooting from
-    start[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize); //view offset Z
-    start[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
-    start[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
-    start[2 as libc::c_int as usize] += 8 as libc::c_int as libc::c_float;
+    start[0] = *origin.offset(0); //view offset Z
+    start[1] = *origin.offset(1);
+    start[2] = *origin.offset(2);
+    start[2] += 8f32;
     crate::src::qcommon::q_math::AngleVectors(
         viewangles.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         forward.as_mut_ptr(),
         right.as_mut_ptr(),
         0 as *mut crate::src::qcommon::q_shared::vec_t,
     );
-    start[0 as libc::c_int as usize] += forward[0 as libc::c_int as usize]
-        * rocketoffset[0 as libc::c_int as usize]
-        + right[0 as libc::c_int as usize] * rocketoffset[1 as libc::c_int as usize];
-    start[1 as libc::c_int as usize] += forward[1 as libc::c_int as usize]
-        * rocketoffset[0 as libc::c_int as usize]
-        + right[1 as libc::c_int as usize] * rocketoffset[1 as libc::c_int as usize];
-    start[2 as libc::c_int as usize] += forward[2 as libc::c_int as usize]
-        * rocketoffset[0 as libc::c_int as usize]
-        + right[2 as libc::c_int as usize] * rocketoffset[1 as libc::c_int as usize]
-        + rocketoffset[2 as libc::c_int as usize];
+    start[0] += forward[0] * rocketoffset[0] + right[0] * rocketoffset[1];
+    start[1] += forward[1] * rocketoffset[0] + right[1] * rocketoffset[1];
+    start[2] += forward[2] * rocketoffset[0] + right[2] * rocketoffset[1] + rocketoffset[2];
     //end point of the trace
-    end[0 as libc::c_int as usize] = start[0 as libc::c_int as usize]
-        + forward[0 as libc::c_int as usize] * 500 as libc::c_int as libc::c_float;
-    end[1 as libc::c_int as usize] = start[1 as libc::c_int as usize]
-        + forward[1 as libc::c_int as usize] * 500 as libc::c_int as libc::c_float;
-    end[2 as libc::c_int as usize] = start[2 as libc::c_int as usize]
-        + forward[2 as libc::c_int as usize] * 500 as libc::c_int as libc::c_float;
+    end[0] = start[0] + forward[0] * 500f32;
+    end[1] = start[1] + forward[1] * 500f32;
+    end[2] = start[2] + forward[2] * 500f32;
     //trace a line to get the impact point
     bsptrace = crate::src::botlib::be_aas_bspq3::AAS_Trace(
         start.as_mut_ptr(),
         0 as *mut crate::src::qcommon::q_shared::vec_t,
         0 as *mut crate::src::qcommon::q_shared::vec_t,
         end.as_mut_ptr(),
-        1 as libc::c_int,
-        1 as libc::c_int,
+        1,
+        1,
     );
     //calculate the damage the bot will get from the rocket impact
-    v[0 as libc::c_int as usize] =
-        botmins[0 as libc::c_int as usize] + botmaxs[0 as libc::c_int as usize];
-    v[1 as libc::c_int as usize] =
-        botmins[1 as libc::c_int as usize] + botmaxs[1 as libc::c_int as usize];
-    v[2 as libc::c_int as usize] =
-        botmins[2 as libc::c_int as usize] + botmaxs[2 as libc::c_int as usize];
-    v[0 as libc::c_int as usize] = (*origin.offset(0 as libc::c_int as isize) as libc::c_double
-        + v[0 as libc::c_int as usize] as libc::c_double * 0.5f64)
-        as crate::src::qcommon::q_shared::vec_t;
-    v[1 as libc::c_int as usize] = (*origin.offset(1 as libc::c_int as isize) as libc::c_double
-        + v[1 as libc::c_int as usize] as libc::c_double * 0.5f64)
-        as crate::src::qcommon::q_shared::vec_t;
-    v[2 as libc::c_int as usize] = (*origin.offset(2 as libc::c_int as isize) as libc::c_double
-        + v[2 as libc::c_int as usize] as libc::c_double * 0.5f64)
-        as crate::src::qcommon::q_shared::vec_t;
-    v[0 as libc::c_int as usize] =
-        bsptrace.endpos[0 as libc::c_int as usize] - v[0 as libc::c_int as usize];
-    v[1 as libc::c_int as usize] =
-        bsptrace.endpos[1 as libc::c_int as usize] - v[1 as libc::c_int as usize];
-    v[2 as libc::c_int as usize] =
-        bsptrace.endpos[2 as libc::c_int as usize] - v[2 as libc::c_int as usize];
+    v[0] = botmins[0] + botmaxs[0];
+    v[1] = botmins[1] + botmaxs[1];
+    v[2] = botmins[2] + botmaxs[2];
+    v[0] = (*origin.offset(0) as f64 + v[0] as f64 * 0.5) as crate::src::qcommon::q_shared::vec_t;
+    v[1] = (*origin.offset(1) as f64 + v[1] as f64 * 0.5) as crate::src::qcommon::q_shared::vec_t;
+    v[2] = (*origin.offset(2) as f64 + v[2] as f64 * 0.5) as crate::src::qcommon::q_shared::vec_t;
+    v[0] = bsptrace.endpos[0] - v[0];
+    v[1] = bsptrace.endpos[1] - v[1];
+    v[2] = bsptrace.endpos[2] - v[2];
     //
-    points = (radiusdamage as libc::c_double
-        - 0.5f64
-            * VectorLength(v.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t)
-                as libc::c_double) as libc::c_float;
-    if points < 0 as libc::c_int as libc::c_float {
-        points = 0 as libc::c_int as libc::c_float
+    points = (radiusdamage as f64
+        - 0.5 * VectorLength(v.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t) as f64)
+        as f32;
+    if points < 0f32 {
+        points = 0f32
     }
     //the owner of the rocket gets half the damage
-    points = (points as libc::c_double * 0.5f64) as libc::c_float;
+    points = (points as f64 * 0.5) as f32;
     //mass of the bot (p_client.c: PutClientInServer)
-    mass = 200 as libc::c_int as libc::c_float;
+    mass = 200f32;
     //knockback is the same as the damage points
     knockback = points;
     //direction of the damage (from trace.endpos to bot origin)
-    dir[0 as libc::c_int as usize] =
-        *origin.offset(0 as libc::c_int as isize) - bsptrace.endpos[0 as libc::c_int as usize];
-    dir[1 as libc::c_int as usize] =
-        *origin.offset(1 as libc::c_int as isize) - bsptrace.endpos[1 as libc::c_int as usize];
-    dir[2 as libc::c_int as usize] =
-        *origin.offset(2 as libc::c_int as isize) - bsptrace.endpos[2 as libc::c_int as usize];
+    dir[0] = *origin.offset(0) - bsptrace.endpos[0];
+    dir[1] = *origin.offset(1) - bsptrace.endpos[1];
+    dir[2] = *origin.offset(2) - bsptrace.endpos[2];
     crate::src::qcommon::q_math::VectorNormalize(dir.as_mut_ptr());
     //damage velocity
-    kvel[0 as libc::c_int as usize] = (dir[0 as libc::c_int as usize] as libc::c_double
-        * (1600.0f64 * knockback as libc::c_double / mass as libc::c_double))
+    kvel[0] = (dir[0] as f64 * (1600.0 * knockback as f64 / mass as f64))
         as crate::src::qcommon::q_shared::vec_t; //the rocket jump hack...
-    kvel[1 as libc::c_int as usize] = (dir[1 as libc::c_int as usize] as libc::c_double
-        * (1600.0f64 * knockback as libc::c_double / mass as libc::c_double))
+    kvel[1] = (dir[1] as f64 * (1600.0 * knockback as f64 / mass as f64))
         as crate::src::qcommon::q_shared::vec_t;
-    kvel[2 as libc::c_int as usize] = (dir[2 as libc::c_int as usize] as libc::c_double
-        * (1600.0f64 * knockback as libc::c_double / mass as libc::c_double))
+    kvel[2] = (dir[2] as f64 * (1600.0 * knockback as f64 / mass as f64))
         as crate::src::qcommon::q_shared::vec_t;
     //rocket impact velocity + jump velocity
-    return kvel[2 as libc::c_int as usize] + aassettings.phys_jumpvel;
+    return kvel[2] + aassettings.phys_jumpvel;
 }
 //end of the function AAS_WeaponJumpZVelocity
 //===========================================================================
@@ -1036,9 +942,9 @@ pub unsafe extern "C" fn AAS_WeaponJumpZVelocity(
 
 pub unsafe extern "C" fn AAS_RocketJumpZVelocity(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-) -> libc::c_float {
+) -> f32 {
     //rocket radius damage is 120 (p_weapon.c: Weapon_RocketLauncher_Fire)
-    return AAS_WeaponJumpZVelocity(origin, 120 as libc::c_int as libc::c_float);
+    return AAS_WeaponJumpZVelocity(origin, 120f32);
 }
 //end of the function AAS_RocketJumpZVelocity
 //===========================================================================
@@ -1051,9 +957,9 @@ pub unsafe extern "C" fn AAS_RocketJumpZVelocity(
 
 pub unsafe extern "C" fn AAS_BFGJumpZVelocity(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-) -> libc::c_float {
+) -> f32 {
     //bfg radius damage is 1000 (p_weapon.c: weapon_bfg_fire)
-    return AAS_WeaponJumpZVelocity(origin, 120 as libc::c_int as libc::c_float);
+    return AAS_WeaponJumpZVelocity(origin, 120f32);
 }
 //end of the function AAS_BFGJumpZVelocity
 //===========================================================================
@@ -1067,30 +973,29 @@ pub unsafe extern "C" fn AAS_BFGJumpZVelocity(
 
 pub unsafe extern "C" fn AAS_Accelerate(
     mut velocity: *mut crate::src::qcommon::q_shared::vec_t,
-    mut frametime: libc::c_float,
+    mut frametime: f32,
     mut wishdir: *mut crate::src::qcommon::q_shared::vec_t,
-    mut wishspeed: libc::c_float,
-    mut accel: libc::c_float,
+    mut wishspeed: f32,
+    mut accel: f32,
 ) {
     // q2 style
-    let mut i: libc::c_int = 0;
-    let mut addspeed: libc::c_float = 0.;
-    let mut accelspeed: libc::c_float = 0.;
-    let mut currentspeed: libc::c_float = 0.;
-    currentspeed = *velocity.offset(0 as libc::c_int as isize)
-        * *wishdir.offset(0 as libc::c_int as isize)
-        + *velocity.offset(1 as libc::c_int as isize) * *wishdir.offset(1 as libc::c_int as isize)
-        + *velocity.offset(2 as libc::c_int as isize) * *wishdir.offset(2 as libc::c_int as isize);
+    let mut i: i32 = 0;
+    let mut addspeed: f32 = 0.;
+    let mut accelspeed: f32 = 0.;
+    let mut currentspeed: f32 = 0.;
+    currentspeed = *velocity.offset(0) * *wishdir.offset(0)
+        + *velocity.offset(1) * *wishdir.offset(1)
+        + *velocity.offset(2) * *wishdir.offset(2);
     addspeed = wishspeed - currentspeed;
-    if addspeed <= 0 as libc::c_int as libc::c_float {
+    if addspeed <= 0f32 {
         return;
     }
     accelspeed = accel * frametime * wishspeed;
     if accelspeed > addspeed {
         accelspeed = addspeed
     }
-    i = 0 as libc::c_int;
-    while i < 3 as libc::c_int {
+    i = 0;
+    while i < 3 {
         let ref mut fresh0 = *velocity.offset(i as isize);
         *fresh0 += accelspeed * *wishdir.offset(i as isize);
         i += 1
@@ -1108,29 +1013,27 @@ pub unsafe extern "C" fn AAS_Accelerate(
 
 pub unsafe extern "C" fn AAS_ApplyFriction(
     mut vel: *mut crate::src::qcommon::q_shared::vec_t,
-    mut friction: libc::c_float,
-    mut stopspeed: libc::c_float,
-    mut frametime: libc::c_float,
+    mut friction: f32,
+    mut stopspeed: f32,
+    mut frametime: f32,
 ) {
-    let mut speed: libc::c_float = 0.;
-    let mut control: libc::c_float = 0.;
-    let mut newspeed: libc::c_float = 0.;
+    let mut speed: f32 = 0.;
+    let mut control: f32 = 0.;
+    let mut newspeed: f32 = 0.;
     //horizontal speed
     speed = crate::stdlib::sqrt(
-        (*vel.offset(0 as libc::c_int as isize) * *vel.offset(0 as libc::c_int as isize)
-            + *vel.offset(1 as libc::c_int as isize) * *vel.offset(1 as libc::c_int as isize))
-            as libc::c_double,
-    ) as libc::c_float;
+        (*vel.offset(0) * *vel.offset(0) + *vel.offset(1) * *vel.offset(1)) as f64,
+    ) as f32;
     if speed != 0. {
         control = if speed < stopspeed { stopspeed } else { speed };
         newspeed = speed - frametime * control * friction;
-        if newspeed < 0 as libc::c_int as libc::c_float {
-            newspeed = 0 as libc::c_int as libc::c_float
+        if newspeed < 0f32 {
+            newspeed = 0f32
         }
         newspeed /= speed;
-        let ref mut fresh1 = *vel.offset(0 as libc::c_int as isize);
+        let ref mut fresh1 = *vel.offset(0);
         *fresh1 *= newspeed;
-        let ref mut fresh2 = *vel.offset(1 as libc::c_int as isize);
+        let ref mut fresh2 = *vel.offset(1);
         *fresh2 *= newspeed
     };
     //end if
@@ -1148,17 +1051,17 @@ pub unsafe extern "C" fn AAS_ClipToBBox(
     mut trace: *mut crate::be_aas_h::aas_trace_t,
     mut start: *mut crate::src::qcommon::q_shared::vec_t,
     mut end: *mut crate::src::qcommon::q_shared::vec_t,
-    mut presencetype: libc::c_int,
+    mut presencetype: i32,
     mut mins: *mut crate::src::qcommon::q_shared::vec_t,
     mut maxs: *mut crate::src::qcommon::q_shared::vec_t,
-) -> libc::c_int {
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    let mut side: libc::c_int = 0;
-    let mut front: libc::c_float = 0.;
-    let mut back: libc::c_float = 0.;
-    let mut frac: libc::c_float = 0.;
-    let mut planedist: libc::c_float = 0.;
+) -> i32 {
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut side: i32 = 0;
+    let mut front: f32 = 0.;
+    let mut back: f32 = 0.;
+    let mut frac: f32 = 0.;
+    let mut planedist: f32 = 0.;
     let mut bboxmins: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut bboxmaxs: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut absmins: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -1170,49 +1073,40 @@ pub unsafe extern "C" fn AAS_ClipToBBox(
         bboxmins.as_mut_ptr(),
         bboxmaxs.as_mut_ptr(),
     );
-    absmins[0 as libc::c_int as usize] =
-        *mins.offset(0 as libc::c_int as isize) - bboxmaxs[0 as libc::c_int as usize];
-    absmins[1 as libc::c_int as usize] =
-        *mins.offset(1 as libc::c_int as isize) - bboxmaxs[1 as libc::c_int as usize];
-    absmins[2 as libc::c_int as usize] =
-        *mins.offset(2 as libc::c_int as isize) - bboxmaxs[2 as libc::c_int as usize];
-    absmaxs[0 as libc::c_int as usize] =
-        *maxs.offset(0 as libc::c_int as isize) - bboxmins[0 as libc::c_int as usize];
-    absmaxs[1 as libc::c_int as usize] =
-        *maxs.offset(1 as libc::c_int as isize) - bboxmins[1 as libc::c_int as usize];
-    absmaxs[2 as libc::c_int as usize] =
-        *maxs.offset(2 as libc::c_int as isize) - bboxmins[2 as libc::c_int as usize];
+    absmins[0] = *mins.offset(0) - bboxmaxs[0];
+    absmins[1] = *mins.offset(1) - bboxmaxs[1];
+    absmins[2] = *mins.offset(2) - bboxmaxs[2];
+    absmaxs[0] = *maxs.offset(0) - bboxmins[0];
+    absmaxs[1] = *maxs.offset(1) - bboxmins[1];
+    absmaxs[2] = *maxs.offset(2) - bboxmins[2];
     //
-    (*trace).endpos[0 as libc::c_int as usize] = *end.offset(0 as libc::c_int as isize); //end for
-    (*trace).endpos[1 as libc::c_int as usize] = *end.offset(1 as libc::c_int as isize);
-    (*trace).endpos[2 as libc::c_int as usize] = *end.offset(2 as libc::c_int as isize);
-    (*trace).fraction = 1 as libc::c_int as libc::c_float;
-    i = 0 as libc::c_int;
-    while i < 3 as libc::c_int {
+    (*trace).endpos[0] = *end.offset(0); //end for
+    (*trace).endpos[1] = *end.offset(1);
+    (*trace).endpos[2] = *end.offset(2);
+    (*trace).fraction = 1f32;
+    i = 0;
+    while i < 3 {
         if *start.offset(i as isize) < absmins[i as usize]
             && *end.offset(i as isize) < absmins[i as usize]
         {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
         if *start.offset(i as isize) > absmaxs[i as usize]
             && *end.offset(i as isize) > absmaxs[i as usize]
         {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
         i += 1
     }
     //check bounding box collision
-    dir[0 as libc::c_int as usize] =
-        *end.offset(0 as libc::c_int as isize) - *start.offset(0 as libc::c_int as isize); //end for
-    dir[1 as libc::c_int as usize] =
-        *end.offset(1 as libc::c_int as isize) - *start.offset(1 as libc::c_int as isize);
-    dir[2 as libc::c_int as usize] =
-        *end.offset(2 as libc::c_int as isize) - *start.offset(2 as libc::c_int as isize);
-    frac = 1 as libc::c_int as libc::c_float;
-    i = 0 as libc::c_int;
-    while i < 3 as libc::c_int {
+    dir[0] = *end.offset(0) - *start.offset(0); //end for
+    dir[1] = *end.offset(1) - *start.offset(1);
+    dir[2] = *end.offset(2) - *start.offset(2);
+    frac = 1f32;
+    i = 0;
+    while i < 3 {
         //get plane to test collision with for the current axis direction
-        if dir[i as usize] > 0 as libc::c_int as libc::c_float {
+        if dir[i as usize] > 0f32 {
             planedist = absmins[i as usize]
         } else {
             planedist = absmaxs[i as usize]
@@ -1223,9 +1117,9 @@ pub unsafe extern "C" fn AAS_ClipToBBox(
         back = *end.offset(i as isize) - planedist;
         frac = front / (front - back);
         //check if between bounding planes of next axis
-        side = i + 1 as libc::c_int;
-        if side > 2 as libc::c_int {
-            side = 0 as libc::c_int
+        side = i + 1;
+        if side > 2 {
+            side = 0
         }
         mid[side as usize] = *start.offset(side as isize) + dir[side as usize] * frac;
         if mid[side as usize] > absmins[side as usize]
@@ -1233,8 +1127,8 @@ pub unsafe extern "C" fn AAS_ClipToBBox(
         {
             //check if between bounding planes of next axis
             side += 1;
-            if side > 2 as libc::c_int {
-                side = 0 as libc::c_int
+            if side > 2 {
+                side = 0
             }
             mid[side as usize] = *start.offset(side as isize) + dir[side as usize] * frac;
             if mid[side as usize] > absmins[side as usize]
@@ -1248,22 +1142,22 @@ pub unsafe extern "C" fn AAS_ClipToBBox(
         i += 1
     }
     //if there was a collision
-    if i != 3 as libc::c_int {
+    if i != 3 {
         (*trace).startsolid = crate::src::qcommon::q_shared::qfalse; //end if
         (*trace).fraction = frac;
-        (*trace).ent = 0 as libc::c_int;
-        (*trace).planenum = 0 as libc::c_int;
-        (*trace).area = 0 as libc::c_int;
-        (*trace).lastarea = 0 as libc::c_int;
+        (*trace).ent = 0;
+        (*trace).planenum = 0;
+        (*trace).area = 0;
+        (*trace).lastarea = 0;
         //trace endpos
-        j = 0 as libc::c_int;
-        while j < 3 as libc::c_int {
+        j = 0;
+        while j < 3 {
             (*trace).endpos[j as usize] = *start.offset(j as isize) + dir[j as usize] * frac;
             j += 1
         }
-        return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+        return crate::src::qcommon::q_shared::qtrue as i32;
     }
-    return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    return crate::src::qcommon::q_shared::qfalse as i32;
 }
 //end of the function AAS_ClipToBBox
 //===========================================================================
@@ -1288,55 +1182,55 @@ pub unsafe extern "C" fn AAS_ClipToBBox(
 
 pub unsafe extern "C" fn AAS_ClientMovementPrediction(
     mut move_0: *mut crate::be_aas_h::aas_clientmove_s,
-    mut entnum: libc::c_int,
+    mut entnum: i32,
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-    mut presencetype: libc::c_int,
-    mut onground: libc::c_int,
+    mut presencetype: i32,
+    mut onground: i32,
     mut velocity: *mut crate::src::qcommon::q_shared::vec_t,
     mut cmdmove: *mut crate::src::qcommon::q_shared::vec_t,
-    mut cmdframes: libc::c_int,
-    mut maxframes: libc::c_int,
-    mut frametime: libc::c_float,
-    mut stopevent: libc::c_int,
-    mut stopareanum: libc::c_int,
+    mut cmdframes: i32,
+    mut maxframes: i32,
+    mut frametime: f32,
+    mut stopevent: i32,
+    mut stopareanum: i32,
     mut mins: *mut crate::src::qcommon::q_shared::vec_t,
     mut maxs: *mut crate::src::qcommon::q_shared::vec_t,
-    mut visualize: libc::c_int,
-) -> libc::c_int {
-    let mut phys_friction: libc::c_float = 0.;
-    let mut phys_stopspeed: libc::c_float = 0.;
-    let mut phys_gravity: libc::c_float = 0.;
-    let mut phys_waterfriction: libc::c_float = 0.;
-    let mut phys_watergravity: libc::c_float = 0.;
-    let mut phys_walkaccelerate: libc::c_float = 0.;
-    let mut phys_airaccelerate: libc::c_float = 0.;
-    let mut phys_swimaccelerate: libc::c_float = 0.;
-    let mut phys_maxwalkvelocity: libc::c_float = 0.;
-    let mut phys_maxcrouchvelocity: libc::c_float = 0.;
-    let mut phys_maxswimvelocity: libc::c_float = 0.;
-    let mut phys_maxstep: libc::c_float = 0.;
-    let mut phys_maxsteepness: libc::c_float = 0.;
-    let mut phys_jumpvel: libc::c_float = 0.;
-    let mut friction: libc::c_float = 0.;
-    let mut gravity: libc::c_float = 0.;
-    let mut delta: libc::c_float = 0.;
-    let mut maxvel: libc::c_float = 0.;
-    let mut wishspeed: libc::c_float = 0.;
-    let mut accelerate: libc::c_float = 0.;
+    mut visualize: i32,
+) -> i32 {
+    let mut phys_friction: f32 = 0.;
+    let mut phys_stopspeed: f32 = 0.;
+    let mut phys_gravity: f32 = 0.;
+    let mut phys_waterfriction: f32 = 0.;
+    let mut phys_watergravity: f32 = 0.;
+    let mut phys_walkaccelerate: f32 = 0.;
+    let mut phys_airaccelerate: f32 = 0.;
+    let mut phys_swimaccelerate: f32 = 0.;
+    let mut phys_maxwalkvelocity: f32 = 0.;
+    let mut phys_maxcrouchvelocity: f32 = 0.;
+    let mut phys_maxswimvelocity: f32 = 0.;
+    let mut phys_maxstep: f32 = 0.;
+    let mut phys_maxsteepness: f32 = 0.;
+    let mut phys_jumpvel: f32 = 0.;
+    let mut friction: f32 = 0.;
+    let mut gravity: f32 = 0.;
+    let mut delta: f32 = 0.;
+    let mut maxvel: f32 = 0.;
+    let mut wishspeed: f32 = 0.;
+    let mut accelerate: f32 = 0.;
     //float velchange, newvel;
     //int ax;
-    let mut n: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    let mut pc: libc::c_int = 0;
-    let mut step: libc::c_int = 0;
-    let mut swimming: libc::c_int = 0;
-    let mut crouch: libc::c_int = 0;
-    let mut event: libc::c_int = 0;
-    let mut jump_frame: libc::c_int = 0;
-    let mut areanum: libc::c_int = 0;
-    let mut areas: [libc::c_int; 20] = [0; 20];
-    let mut numareas: libc::c_int = 0;
+    let mut n: i32 = 0;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut pc: i32 = 0;
+    let mut step: i32 = 0;
+    let mut swimming: i32 = 0;
+    let mut crouch: i32 = 0;
+    let mut event: i32 = 0;
+    let mut jump_frame: i32 = 0;
+    let mut areanum: i32 = 0;
+    let mut areas: [i32; 20] = [0; 20];
+    let mut numareas: i32 = 0;
     let mut points: [crate::src::qcommon::q_shared::vec3_t; 20] = [[0.; 3]; 20];
     let mut org: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut end: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -1348,11 +1242,7 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
     let mut frame_test_vel: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut old_frame_test_vel: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut left_test_vel: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut up: crate::src::qcommon::q_shared::vec3_t = [
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    ];
+    let mut up: crate::src::qcommon::q_shared::vec3_t = [0f32, 0f32, 1f32];
     let mut plane: *mut crate::aasfile_h::aas_plane_t = 0 as *mut crate::aasfile_h::aas_plane_t;
     let mut plane2: *mut crate::aasfile_h::aas_plane_t = 0 as *mut crate::aasfile_h::aas_plane_t;
     let mut trace: crate::be_aas_h::aas_trace_t = crate::be_aas_h::aas_trace_t {
@@ -1373,7 +1263,7 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
         area: 0,
         planenum: 0,
     };
-    if frametime <= 0 as libc::c_int as libc::c_float {
+    if frametime <= 0f32 {
         frametime = 0.1f32
     }
     //
@@ -1394,31 +1284,27 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
     //
     crate::stdlib::memset(
         move_0 as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::be_aas_h::aas_clientmove_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::be_aas_h::aas_clientmove_t>(),
     );
     crate::stdlib::memset(
         &mut trace as *mut crate::be_aas_h::aas_trace_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::be_aas_h::aas_trace_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::be_aas_h::aas_trace_t>(),
     );
     //start at the current origin
-    org[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
-    org[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
-    org[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
-    org[2 as libc::c_int as usize] = (org[2 as libc::c_int as usize] as libc::c_double + 0.25f64)
-        as crate::src::qcommon::q_shared::vec_t;
+    org[0] = *origin.offset(0);
+    org[1] = *origin.offset(1);
+    org[2] = *origin.offset(2);
+    org[2] = (org[2] as f64 + 0.25) as crate::src::qcommon::q_shared::vec_t;
     //velocity to test for the first frame
-    frame_test_vel[0 as libc::c_int as usize] =
-        *velocity.offset(0 as libc::c_int as isize) * frametime;
-    frame_test_vel[1 as libc::c_int as usize] =
-        *velocity.offset(1 as libc::c_int as isize) * frametime;
-    frame_test_vel[2 as libc::c_int as usize] =
-        *velocity.offset(2 as libc::c_int as isize) * frametime;
+    frame_test_vel[0] = *velocity.offset(0) * frametime;
+    frame_test_vel[1] = *velocity.offset(1) * frametime;
+    frame_test_vel[2] = *velocity.offset(2) * frametime;
     //
-    jump_frame = -(1 as libc::c_int);
+    jump_frame = -(1);
     //predict a maximum of 'maxframes' ahead
-    n = 0 as libc::c_int; //end for
+    n = 0; //end for
     while n < maxframes {
         swimming = AAS_Swimming(org.as_mut_ptr());
         //end else if
@@ -1427,9 +1313,7 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
         } else {
             phys_gravity
         };
-        frame_test_vel[2 as libc::c_int as usize] = (frame_test_vel[2 as libc::c_int as usize]
-            as libc::c_double
-            - gravity as libc::c_double * 0.1f64 * frametime as libc::c_double)
+        frame_test_vel[2] = (frame_test_vel[2] as f64 - gravity as f64 * 0.1 * frametime as f64)
             as crate::src::qcommon::q_shared::vec_t;
         if onground != 0 || swimming != 0 {
             friction = if swimming != 0 {
@@ -1442,35 +1326,29 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
             //if on the ground or swimming
             //end if
             //apply friction
-            frame_test_vel[0 as libc::c_int as usize] = frame_test_vel[0 as libc::c_int as usize]
-                * (1 as libc::c_int as libc::c_float / frametime);
-            frame_test_vel[1 as libc::c_int as usize] = frame_test_vel[1 as libc::c_int as usize]
-                * (1 as libc::c_int as libc::c_float / frametime);
-            frame_test_vel[2 as libc::c_int as usize] = frame_test_vel[2 as libc::c_int as usize]
-                * (1 as libc::c_int as libc::c_float / frametime);
+            frame_test_vel[0] = frame_test_vel[0] * (1f32 / frametime);
+            frame_test_vel[1] = frame_test_vel[1] * (1f32 / frametime);
+            frame_test_vel[2] = frame_test_vel[2] * (1f32 / frametime);
             AAS_ApplyFriction(
                 frame_test_vel.as_mut_ptr(),
                 friction,
                 phys_stopspeed,
                 frametime,
             );
-            frame_test_vel[0 as libc::c_int as usize] =
-                frame_test_vel[0 as libc::c_int as usize] * frametime;
-            frame_test_vel[1 as libc::c_int as usize] =
-                frame_test_vel[1 as libc::c_int as usize] * frametime;
-            frame_test_vel[2 as libc::c_int as usize] =
-                frame_test_vel[2 as libc::c_int as usize] * frametime
+            frame_test_vel[0] = frame_test_vel[0] * frametime;
+            frame_test_vel[1] = frame_test_vel[1] * frametime;
+            frame_test_vel[2] = frame_test_vel[2] * frametime
         }
-        crouch = crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        crouch = crate::src::qcommon::q_shared::qfalse as i32;
         if n < cmdframes {
             //apply command movement
             //end if
             //ax = 0;
             maxvel = phys_maxwalkvelocity;
             accelerate = phys_airaccelerate;
-            wishdir[0 as libc::c_int as usize] = *cmdmove.offset(0 as libc::c_int as isize);
-            wishdir[1 as libc::c_int as usize] = *cmdmove.offset(1 as libc::c_int as isize);
-            wishdir[2 as libc::c_int as usize] = *cmdmove.offset(2 as libc::c_int as isize);
+            wishdir[0] = *cmdmove.offset(0);
+            wishdir[1] = *cmdmove.offset(1);
+            wishdir[2] = *cmdmove.offset(2);
             /*
             for (i = 0; i < ax; i++)
             {
@@ -1486,23 +1364,17 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
             */
             if onground != 0 {
                 //end if
-                if *cmdmove.offset(2 as libc::c_int as isize)
-                    < -(300 as libc::c_int) as libc::c_float
-                {
-                    crouch = crate::src::qcommon::q_shared::qtrue as libc::c_int; //end if
+                if *cmdmove.offset(2) < -300f32 {
+                    crouch = crate::src::qcommon::q_shared::qtrue as i32; //end if
                     maxvel = phys_maxcrouchvelocity
                 }
                 //end else
                 //ax = 2;
-                if swimming == 0
-                    && *cmdmove.offset(2 as libc::c_int as isize)
-                        > 1 as libc::c_int as libc::c_float
-                {
+                if swimming == 0 && *cmdmove.offset(2) > 1f32 {
                     //if not swimming and upmove is positive then jump
-                    frame_test_vel[2 as libc::c_int as usize] = (phys_jumpvel as libc::c_double
-                        - gravity as libc::c_double * 0.1f64 * frametime as libc::c_double
-                        + 5 as libc::c_int as libc::c_double)
-                        as crate::src::qcommon::q_shared::vec_t; //end if
+                    frame_test_vel[2] =
+                        (phys_jumpvel as f64 - gravity as f64 * 0.1 * frametime as f64 + 5f64)
+                            as crate::src::qcommon::q_shared::vec_t; //end if
                     jump_frame = n;
                     //jump velocity minus the gravity for one frame + 5 for safety
                     //jumping so air accelerate
@@ -1516,19 +1388,15 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
                 accelerate = phys_swimaccelerate
             //ax = 3;
             } else {
-                wishdir[2 as libc::c_int as usize] =
-                    0 as libc::c_int as crate::src::qcommon::q_shared::vec_t
+                wishdir[2] = 0f32
             }
             wishspeed = crate::src::qcommon::q_math::VectorNormalize(wishdir.as_mut_ptr());
             if wishspeed > maxvel {
                 wishspeed = maxvel
             }
-            frame_test_vel[0 as libc::c_int as usize] = frame_test_vel[0 as libc::c_int as usize]
-                * (1 as libc::c_int as libc::c_float / frametime);
-            frame_test_vel[1 as libc::c_int as usize] = frame_test_vel[1 as libc::c_int as usize]
-                * (1 as libc::c_int as libc::c_float / frametime);
-            frame_test_vel[2 as libc::c_int as usize] = frame_test_vel[2 as libc::c_int as usize]
-                * (1 as libc::c_int as libc::c_float / frametime);
+            frame_test_vel[0] = frame_test_vel[0] * (1f32 / frametime);
+            frame_test_vel[1] = frame_test_vel[1] * (1f32 / frametime);
+            frame_test_vel[2] = frame_test_vel[2] * (1f32 / frametime);
             AAS_Accelerate(
                 frame_test_vel.as_mut_ptr(),
                 frametime,
@@ -1536,40 +1404,31 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
                 wishspeed,
                 accelerate,
             );
-            frame_test_vel[0 as libc::c_int as usize] =
-                frame_test_vel[0 as libc::c_int as usize] * frametime;
-            frame_test_vel[1 as libc::c_int as usize] =
-                frame_test_vel[1 as libc::c_int as usize] * frametime;
-            frame_test_vel[2 as libc::c_int as usize] =
-                frame_test_vel[2 as libc::c_int as usize] * frametime
+            frame_test_vel[0] = frame_test_vel[0] * frametime;
+            frame_test_vel[1] = frame_test_vel[1] * frametime;
+            frame_test_vel[2] = frame_test_vel[2] * frametime
         }
         if crouch != 0 {
             //
             //end else
-            presencetype = 4 as libc::c_int
-        } else if presencetype == 4 as libc::c_int {
-            if crate::src::botlib::be_aas_sample::AAS_PointPresenceType(org.as_mut_ptr())
-                & 2 as libc::c_int
-                != 0
-            {
-                presencetype = 2 as libc::c_int
+            presencetype = 4
+        } else if presencetype == 4 {
+            if crate::src::botlib::be_aas_sample::AAS_PointPresenceType(org.as_mut_ptr()) & 2 != 0 {
+                presencetype = 2
             } //end if
               //end if
         }
-        lastorg[0 as libc::c_int as usize] = org[0 as libc::c_int as usize];
-        lastorg[1 as libc::c_int as usize] = org[1 as libc::c_int as usize];
-        lastorg[2 as libc::c_int as usize] = org[2 as libc::c_int as usize];
-        left_test_vel[0 as libc::c_int as usize] = frame_test_vel[0 as libc::c_int as usize];
-        left_test_vel[1 as libc::c_int as usize] = frame_test_vel[1 as libc::c_int as usize];
-        left_test_vel[2 as libc::c_int as usize] = frame_test_vel[2 as libc::c_int as usize];
-        j = 0 as libc::c_int;
+        lastorg[0] = org[0];
+        lastorg[1] = org[1];
+        lastorg[2] = org[2];
+        left_test_vel[0] = frame_test_vel[0];
+        left_test_vel[1] = frame_test_vel[1];
+        left_test_vel[2] = frame_test_vel[2];
+        j = 0;
         loop {
-            end[0 as libc::c_int as usize] =
-                org[0 as libc::c_int as usize] + left_test_vel[0 as libc::c_int as usize];
-            end[1 as libc::c_int as usize] =
-                org[1 as libc::c_int as usize] + left_test_vel[1 as libc::c_int as usize];
-            end[2 as libc::c_int as usize] =
-                org[2 as libc::c_int as usize] + left_test_vel[2 as libc::c_int as usize];
+            end[0] = org[0] + left_test_vel[0];
+            end[1] = org[1] + left_test_vel[1];
+            end[2] = org[2] + left_test_vel[2];
             //save the current origin
             //move linear during one frame
             //while there is a plane hit
@@ -1582,32 +1441,25 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
             if visualize != 0 {
                 if trace.startsolid as u64 != 0 {
                     botimport.Print.expect("non-null function pointer")(
-                        1 as libc::c_int,
-                        b"PredictMovement: start solid\n\x00" as *const u8 as *const libc::c_char
-                            as *mut libc::c_char,
+                        1i32,
+                        b"PredictMovement: start solid\n\x00" as *const u8 as *mut i8,
                     );
                 }
                 crate::src::botlib::be_aas_debug::AAS_DebugLine(
                     org.as_mut_ptr(),
                     trace.endpos.as_mut_ptr(),
-                    1 as libc::c_int,
+                    1i32,
                 );
             }
-            if stopevent
-                & (512 as libc::c_int
-                    | 128 as libc::c_int
-                    | 256 as libc::c_int
-                    | 4096 as libc::c_int)
-                != 0
-            {
+            if stopevent & (512 | 128 | 256 | 4096) != 0 {
                 numareas = crate::src::botlib::be_aas_sample::AAS_TraceAreas(
                     org.as_mut_ptr(),
                     trace.endpos.as_mut_ptr(),
                     areas.as_mut_ptr(),
                     points.as_mut_ptr(),
-                    20 as libc::c_int,
+                    20,
                 );
-                i = 0 as libc::c_int;
+                i = 0;
                 while i < numareas {
                     //trace a bounding box
                     //
@@ -1617,143 +1469,107 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
                     //
                     //end if
                     //end for
-                    if stopevent & 512 as libc::c_int != 0 {
+                    if stopevent & 512 != 0 {
                         if areas[i as usize] == stopareanum {
-                            (*move_0).endpos[0 as libc::c_int as usize] =
-                                points[i as usize][0 as libc::c_int as usize]; //end if
-                            (*move_0).endpos[1 as libc::c_int as usize] =
-                                points[i as usize][1 as libc::c_int as usize];
-                            (*move_0).endpos[2 as libc::c_int as usize] =
-                                points[i as usize][2 as libc::c_int as usize];
-                            (*move_0).velocity[0 as libc::c_int as usize] = frame_test_vel
-                                [0 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
-                            (*move_0).velocity[1 as libc::c_int as usize] = frame_test_vel
-                                [1 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
-                            (*move_0).velocity[2 as libc::c_int as usize] = frame_test_vel
-                                [2 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
+                            (*move_0).endpos[0] = points[i as usize][0]; //end if
+                            (*move_0).endpos[1] = points[i as usize][1];
+                            (*move_0).endpos[2] = points[i as usize][2];
+                            (*move_0).velocity[0] = frame_test_vel[0] * (1f32 / frametime);
+                            (*move_0).velocity[1] = frame_test_vel[1] * (1f32 / frametime);
+                            (*move_0).velocity[2] = frame_test_vel[2] * (1f32 / frametime);
                             (*move_0).endarea = areas[i as usize];
                             (*move_0).trace = trace;
-                            (*move_0).stopevent = 512 as libc::c_int;
+                            (*move_0).stopevent = 512;
                             (*move_0).presencetype = presencetype;
-                            (*move_0).endcontents = 0 as libc::c_int;
-                            (*move_0).time = n as libc::c_float * frametime;
+                            (*move_0).endcontents = 0;
+                            (*move_0).time = n as f32 * frametime;
                             (*move_0).frames = n;
-                            return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                            return crate::src::qcommon::q_shared::qtrue as i32;
                         }
                         //end if
                     }
                     //end if
-                    if stopevent & 128 as libc::c_int != 0 && n != 0 {
+                    if stopevent & 128 != 0 && n != 0 {
                         if (*crate::src::botlib::be_aas_main::aasworld
                             .areasettings
                             .offset(areas[i as usize] as isize))
                         .contents
-                            & 128 as libc::c_int
+                            & 128
                             != 0
                         {
-                            (*move_0).endpos[0 as libc::c_int as usize] =
-                                points[i as usize][0 as libc::c_int as usize];
-                            (*move_0).endpos[1 as libc::c_int as usize] =
-                                points[i as usize][1 as libc::c_int as usize];
-                            (*move_0).endpos[2 as libc::c_int as usize] =
-                                points[i as usize][2 as libc::c_int as usize];
-                            (*move_0).velocity[0 as libc::c_int as usize] = frame_test_vel
-                                [0 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
-                            (*move_0).velocity[1 as libc::c_int as usize] = frame_test_vel
-                                [1 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
-                            (*move_0).velocity[2 as libc::c_int as usize] = frame_test_vel
-                                [2 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
+                            (*move_0).endpos[0] = points[i as usize][0];
+                            (*move_0).endpos[1] = points[i as usize][1];
+                            (*move_0).endpos[2] = points[i as usize][2];
+                            (*move_0).velocity[0] = frame_test_vel[0] * (1f32 / frametime);
+                            (*move_0).velocity[1] = frame_test_vel[1] * (1f32 / frametime);
+                            (*move_0).velocity[2] = frame_test_vel[2] * (1f32 / frametime);
                             (*move_0).endarea = areas[i as usize];
                             (*move_0).trace = trace;
-                            (*move_0).stopevent = 128 as libc::c_int;
+                            (*move_0).stopevent = 128;
                             (*move_0).presencetype = presencetype;
-                            (*move_0).endcontents = 0 as libc::c_int;
-                            (*move_0).time = n as libc::c_float * frametime;
+                            (*move_0).endcontents = 0;
+                            (*move_0).time = n as f32 * frametime;
                             (*move_0).frames = n;
-                            return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                            return crate::src::qcommon::q_shared::qtrue as i32;
                         }
                         //NOTE: if not the first frame
                         //end if
                         //end if
                     } //end if
-                    if stopevent & 256 as libc::c_int != 0 {
+                    if stopevent & 256 != 0 {
                         if (*crate::src::botlib::be_aas_main::aasworld
                             .areasettings
                             .offset(areas[i as usize] as isize))
                         .contents
-                            & 64 as libc::c_int
+                            & 64
                             != 0
                         {
-                            (*move_0).endpos[0 as libc::c_int as usize] =
-                                points[i as usize][0 as libc::c_int as usize];
-                            (*move_0).endpos[1 as libc::c_int as usize] =
-                                points[i as usize][1 as libc::c_int as usize];
-                            (*move_0).endpos[2 as libc::c_int as usize] =
-                                points[i as usize][2 as libc::c_int as usize];
+                            (*move_0).endpos[0] = points[i as usize][0];
+                            (*move_0).endpos[1] = points[i as usize][1];
+                            (*move_0).endpos[2] = points[i as usize][2];
                             (*move_0).endarea = areas[i as usize];
-                            (*move_0).velocity[0 as libc::c_int as usize] = frame_test_vel
-                                [0 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
-                            (*move_0).velocity[1 as libc::c_int as usize] = frame_test_vel
-                                [1 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
-                            (*move_0).velocity[2 as libc::c_int as usize] = frame_test_vel
-                                [2 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
+                            (*move_0).velocity[0] = frame_test_vel[0] * (1f32 / frametime);
+                            (*move_0).velocity[1] = frame_test_vel[1] * (1f32 / frametime);
+                            (*move_0).velocity[2] = frame_test_vel[2] * (1f32 / frametime);
                             (*move_0).trace = trace;
-                            (*move_0).stopevent = 256 as libc::c_int;
+                            (*move_0).stopevent = 256;
                             (*move_0).presencetype = presencetype;
-                            (*move_0).endcontents = 0 as libc::c_int;
-                            (*move_0).time = n as libc::c_float * frametime;
+                            (*move_0).endcontents = 0;
+                            (*move_0).time = n as f32 * frametime;
                             (*move_0).frames = n;
-                            return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                            return crate::src::qcommon::q_shared::qtrue as i32;
                         }
                         //end if
                     }
-                    if stopevent & 4096 as libc::c_int != 0 {
+                    if stopevent & 4096 != 0 {
                         if (*crate::src::botlib::be_aas_main::aasworld
                             .areasettings
                             .offset(areas[i as usize] as isize))
                         .contents
-                            & 8 as libc::c_int
+                            & 8
                             != 0
                         {
-                            (*move_0).endpos[0 as libc::c_int as usize] =
-                                points[i as usize][0 as libc::c_int as usize];
-                            (*move_0).endpos[1 as libc::c_int as usize] =
-                                points[i as usize][1 as libc::c_int as usize];
-                            (*move_0).endpos[2 as libc::c_int as usize] =
-                                points[i as usize][2 as libc::c_int as usize];
+                            (*move_0).endpos[0] = points[i as usize][0];
+                            (*move_0).endpos[1] = points[i as usize][1];
+                            (*move_0).endpos[2] = points[i as usize][2];
                             (*move_0).endarea = areas[i as usize];
-                            (*move_0).velocity[0 as libc::c_int as usize] = frame_test_vel
-                                [0 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
-                            (*move_0).velocity[1 as libc::c_int as usize] = frame_test_vel
-                                [1 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
-                            (*move_0).velocity[2 as libc::c_int as usize] = frame_test_vel
-                                [2 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
+                            (*move_0).velocity[0] = frame_test_vel[0] * (1f32 / frametime);
+                            (*move_0).velocity[1] = frame_test_vel[1] * (1f32 / frametime);
+                            (*move_0).velocity[2] = frame_test_vel[2] * (1f32 / frametime);
                             (*move_0).trace = trace;
-                            (*move_0).stopevent = 4096 as libc::c_int;
+                            (*move_0).stopevent = 4096;
                             (*move_0).presencetype = presencetype;
-                            (*move_0).endcontents = 0 as libc::c_int;
-                            (*move_0).time = n as libc::c_float * frametime;
+                            (*move_0).endcontents = 0;
+                            (*move_0).time = n as f32 * frametime;
                             (*move_0).frames = n;
-                            return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                            return crate::src::qcommon::q_shared::qtrue as i32;
                         }
                         //end if
                     }
                     i += 1
                 }
             }
-            if stopevent & 2048 as libc::c_int != 0 {
+            if stopevent & 2048 != 0 {
                 if AAS_ClipToBBox(
                     &mut trace,
                     org.as_mut_ptr(),
@@ -1763,84 +1579,64 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
                     maxs,
                 ) != 0
                 {
-                    (*move_0).endpos[0 as libc::c_int as usize] =
-                        trace.endpos[0 as libc::c_int as usize];
-                    (*move_0).endpos[1 as libc::c_int as usize] =
-                        trace.endpos[1 as libc::c_int as usize];
-                    (*move_0).endpos[2 as libc::c_int as usize] =
-                        trace.endpos[2 as libc::c_int as usize];
+                    (*move_0).endpos[0] = trace.endpos[0];
+                    (*move_0).endpos[1] = trace.endpos[1];
+                    (*move_0).endpos[2] = trace.endpos[2];
                     (*move_0).endarea = crate::src::botlib::be_aas_sample::AAS_PointAreaNum(
                         (*move_0).endpos.as_mut_ptr(),
                     );
-                    (*move_0).velocity[0 as libc::c_int as usize] = frame_test_vel
-                        [0 as libc::c_int as usize]
-                        * (1 as libc::c_int as libc::c_float / frametime);
-                    (*move_0).velocity[1 as libc::c_int as usize] = frame_test_vel
-                        [1 as libc::c_int as usize]
-                        * (1 as libc::c_int as libc::c_float / frametime);
-                    (*move_0).velocity[2 as libc::c_int as usize] = frame_test_vel
-                        [2 as libc::c_int as usize]
-                        * (1 as libc::c_int as libc::c_float / frametime);
+                    (*move_0).velocity[0] = frame_test_vel[0] * (1f32 / frametime);
+                    (*move_0).velocity[1] = frame_test_vel[1] * (1f32 / frametime);
+                    (*move_0).velocity[2] = frame_test_vel[2] * (1f32 / frametime);
                     (*move_0).trace = trace;
-                    (*move_0).stopevent = 2048 as libc::c_int;
+                    (*move_0).stopevent = 2048;
                     (*move_0).presencetype = presencetype;
-                    (*move_0).endcontents = 0 as libc::c_int;
-                    (*move_0).time = n as libc::c_float * frametime;
+                    (*move_0).endcontents = 0;
+                    (*move_0).time = n as f32 * frametime;
                     (*move_0).frames = n;
-                    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                    return crate::src::qcommon::q_shared::qtrue as i32;
                 }
                 //
                 //end if
                 //end if
             }
-            org[0 as libc::c_int as usize] = trace.endpos[0 as libc::c_int as usize];
-            org[1 as libc::c_int as usize] = trace.endpos[1 as libc::c_int as usize];
-            org[2 as libc::c_int as usize] = trace.endpos[2 as libc::c_int as usize];
-            if (trace.fraction as libc::c_double) < 1.0f64 {
+            org[0] = trace.endpos[0];
+            org[1] = trace.endpos[1];
+            org[2] = trace.endpos[2];
+            if (trace.fraction as f64) < 1.0 {
                 //move the entity to the trace end point
                 //if there was a collision
                 //end if
                 //get the plane the bounding box collided with
                 plane = crate::src::botlib::be_aas_sample::AAS_PlaneFromNum(trace.planenum);
                 //end if
-                if stopevent & 1024 as libc::c_int != 0 {
-                    if (*plane).normal[0 as libc::c_int as usize] * up[0 as libc::c_int as usize]
-                        + (*plane).normal[1 as libc::c_int as usize] * up[1 as libc::c_int as usize]
-                        + (*plane).normal[2 as libc::c_int as usize] * up[2 as libc::c_int as usize]
+                if stopevent & 1024 != 0 {
+                    if (*plane).normal[0] * up[0]
+                        + (*plane).normal[1] * up[1]
+                        + (*plane).normal[2] * up[2]
                         > phys_maxsteepness
                     {
-                        start[0 as libc::c_int as usize] = org[0 as libc::c_int as usize];
-                        start[1 as libc::c_int as usize] = org[1 as libc::c_int as usize];
-                        start[2 as libc::c_int as usize] = org[2 as libc::c_int as usize];
-                        start[2 as libc::c_int as usize] =
-                            (start[2 as libc::c_int as usize] as libc::c_double + 0.5f64)
-                                as crate::src::qcommon::q_shared::vec_t;
+                        start[0] = org[0];
+                        start[1] = org[1];
+                        start[2] = org[2];
+                        start[2] = (start[2] as f64 + 0.5) as crate::src::qcommon::q_shared::vec_t;
                         if crate::src::botlib::be_aas_sample::AAS_PointAreaNum(start.as_mut_ptr())
                             == stopareanum
                         {
-                            (*move_0).endpos[0 as libc::c_int as usize] =
-                                start[0 as libc::c_int as usize];
-                            (*move_0).endpos[1 as libc::c_int as usize] =
-                                start[1 as libc::c_int as usize];
-                            (*move_0).endpos[2 as libc::c_int as usize] =
-                                start[2 as libc::c_int as usize];
+                            (*move_0).endpos[0] = start[0];
+                            (*move_0).endpos[1] = start[1];
+                            (*move_0).endpos[2] = start[2];
                             (*move_0).endarea = stopareanum;
-                            (*move_0).velocity[0 as libc::c_int as usize] = frame_test_vel
-                                [0 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
-                            (*move_0).velocity[1 as libc::c_int as usize] = frame_test_vel
-                                [1 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
-                            (*move_0).velocity[2 as libc::c_int as usize] = frame_test_vel
-                                [2 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
+                            (*move_0).velocity[0] = frame_test_vel[0] * (1f32 / frametime);
+                            (*move_0).velocity[1] = frame_test_vel[1] * (1f32 / frametime);
+                            (*move_0).velocity[2] = frame_test_vel[2] * (1f32 / frametime);
                             (*move_0).trace = trace;
-                            (*move_0).stopevent = 1024 as libc::c_int;
+                            (*move_0).stopevent = 1024;
                             (*move_0).presencetype = presencetype;
-                            (*move_0).endcontents = 0 as libc::c_int;
-                            (*move_0).time = n as libc::c_float * frametime;
+                            (*move_0).endcontents = 0;
+                            (*move_0).time = n as f32 * frametime;
                             (*move_0).frames = n;
-                            return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                            return crate::src::qcommon::q_shared::qtrue as i32;
                         }
                         //
                         //end if
@@ -1848,30 +1644,22 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
                     }
                     //end if
                 }
-                step = crate::src::qcommon::q_shared::qfalse as libc::c_int;
-                if (*plane).normal[2 as libc::c_int as usize] == 0 as libc::c_int as libc::c_float
-                    && (jump_frame < 0 as libc::c_int || n - jump_frame > 2 as libc::c_int)
-                {
+                step = crate::src::qcommon::q_shared::qfalse as i32;
+                if (*plane).normal[2] == 0f32 && (jump_frame < 0 || n - jump_frame > 2) {
                     //assume there's no step
                     //if it is a vertical plane and the bot didn't jump recently
                     //end if
                     //check for a step
-                    start[0 as libc::c_int as usize] = (org[0 as libc::c_int as usize]
-                        as libc::c_double
-                        + (*plane).normal[0 as libc::c_int as usize] as libc::c_double * -0.25f64)
+                    start[0] = (org[0] as f64 + (*plane).normal[0] as f64 * -0.25)
                         as crate::src::qcommon::q_shared::vec_t;
-                    start[1 as libc::c_int as usize] = (org[1 as libc::c_int as usize]
-                        as libc::c_double
-                        + (*plane).normal[1 as libc::c_int as usize] as libc::c_double * -0.25f64)
+                    start[1] = (org[1] as f64 + (*plane).normal[1] as f64 * -0.25)
                         as crate::src::qcommon::q_shared::vec_t;
-                    start[2 as libc::c_int as usize] = (org[2 as libc::c_int as usize]
-                        as libc::c_double
-                        + (*plane).normal[2 as libc::c_int as usize] as libc::c_double * -0.25f64)
+                    start[2] = (org[2] as f64 + (*plane).normal[2] as f64 * -0.25)
                         as crate::src::qcommon::q_shared::vec_t;
-                    stepend[0 as libc::c_int as usize] = start[0 as libc::c_int as usize];
-                    stepend[1 as libc::c_int as usize] = start[1 as libc::c_int as usize];
-                    stepend[2 as libc::c_int as usize] = start[2 as libc::c_int as usize];
-                    start[2 as libc::c_int as usize] += phys_maxstep;
+                    stepend[0] = start[0];
+                    stepend[1] = start[1];
+                    stepend[2] = start[2];
+                    start[2] += phys_maxstep;
                     steptrace = crate::src::botlib::be_aas_sample::AAS_TraceClientBBox(
                         start.as_mut_ptr(),
                         stepend.as_mut_ptr(),
@@ -1882,56 +1670,36 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
                     if steptrace.startsolid as u64 == 0 {
                         plane2 =
                             crate::src::botlib::be_aas_sample::AAS_PlaneFromNum(steptrace.planenum);
-                        if (*plane2).normal[0 as libc::c_int as usize]
-                            * up[0 as libc::c_int as usize]
-                            + (*plane2).normal[1 as libc::c_int as usize]
-                                * up[1 as libc::c_int as usize]
-                            + (*plane2).normal[2 as libc::c_int as usize]
-                                * up[2 as libc::c_int as usize]
+                        if (*plane2).normal[0] * up[0]
+                            + (*plane2).normal[1] * up[1]
+                            + (*plane2).normal[2] * up[2]
                             > phys_maxsteepness
                         {
-                            left_test_vel[0 as libc::c_int as usize] = end
-                                [0 as libc::c_int as usize]
-                                - steptrace.endpos[0 as libc::c_int as usize];
-                            left_test_vel[1 as libc::c_int as usize] = end
-                                [1 as libc::c_int as usize]
-                                - steptrace.endpos[1 as libc::c_int as usize];
-                            left_test_vel[2 as libc::c_int as usize] = end
-                                [2 as libc::c_int as usize]
-                                - steptrace.endpos[2 as libc::c_int as usize];
-                            left_test_vel[2 as libc::c_int as usize] =
-                                0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-                            frame_test_vel[2 as libc::c_int as usize] =
-                                0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
+                            left_test_vel[0] = end[0] - steptrace.endpos[0];
+                            left_test_vel[1] = end[1] - steptrace.endpos[1];
+                            left_test_vel[2] = end[2] - steptrace.endpos[2];
+                            left_test_vel[2] = 0f32;
+                            frame_test_vel[2] = 0f32;
                             //
                             //end if
                             //#ifdef AAS_MOVE_DEBUG
                             if visualize != 0 {
-                                if (steptrace.endpos[2 as libc::c_int as usize]
-                                    - org[2 as libc::c_int as usize])
-                                    as libc::c_double
-                                    > 0.125f64
-                                {
-                                    start[0 as libc::c_int as usize] =
-                                        org[0 as libc::c_int as usize]; //end if
-                                    start[1 as libc::c_int as usize] =
-                                        org[1 as libc::c_int as usize];
-                                    start[2 as libc::c_int as usize] =
-                                        org[2 as libc::c_int as usize];
-                                    start[2 as libc::c_int as usize] =
-                                        steptrace.endpos[2 as libc::c_int as usize];
+                                if (steptrace.endpos[2] - org[2]) as f64 > 0.125 {
+                                    start[0] = org[0]; //end if
+                                    start[1] = org[1];
+                                    start[2] = org[2];
+                                    start[2] = steptrace.endpos[2];
                                     crate::src::botlib::be_aas_debug::AAS_DebugLine(
                                         org.as_mut_ptr(),
                                         start.as_mut_ptr(),
-                                        3 as libc::c_int,
+                                        3i32,
                                     );
                                 }
                                 //end if
                             }
                             //#endif //AAS_MOVE_DEBUG
-                            org[2 as libc::c_int as usize] =
-                                steptrace.endpos[2 as libc::c_int as usize];
-                            step = crate::src::qcommon::q_shared::qtrue as libc::c_int
+                            org[2] = steptrace.endpos[2];
+                            step = crate::src::qcommon::q_shared::qtrue as i32
                         }
                     }
                 }
@@ -1939,140 +1707,103 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
                     //
                     //velocity left to test for this frame is the projection
                     //of the current test velocity into the hit plane
-                    left_test_vel[0 as libc::c_int as usize] = left_test_vel
-                        [0 as libc::c_int as usize]
-                        + (*plane).normal[0 as libc::c_int as usize]
-                            * -(left_test_vel[0 as libc::c_int as usize]
-                                * (*plane).normal[0 as libc::c_int as usize]
-                                + left_test_vel[1 as libc::c_int as usize]
-                                    * (*plane).normal[1 as libc::c_int as usize]
-                                + left_test_vel[2 as libc::c_int as usize]
-                                    * (*plane).normal[2 as libc::c_int as usize]);
-                    left_test_vel[1 as libc::c_int as usize] = left_test_vel
-                        [1 as libc::c_int as usize]
-                        + (*plane).normal[1 as libc::c_int as usize]
-                            * -(left_test_vel[0 as libc::c_int as usize]
-                                * (*plane).normal[0 as libc::c_int as usize]
-                                + left_test_vel[1 as libc::c_int as usize]
-                                    * (*plane).normal[1 as libc::c_int as usize]
-                                + left_test_vel[2 as libc::c_int as usize]
-                                    * (*plane).normal[2 as libc::c_int as usize]);
-                    left_test_vel[2 as libc::c_int as usize] = left_test_vel
-                        [2 as libc::c_int as usize]
-                        + (*plane).normal[2 as libc::c_int as usize]
-                            * -(left_test_vel[0 as libc::c_int as usize]
-                                * (*plane).normal[0 as libc::c_int as usize]
-                                + left_test_vel[1 as libc::c_int as usize]
-                                    * (*plane).normal[1 as libc::c_int as usize]
-                                + left_test_vel[2 as libc::c_int as usize]
-                                    * (*plane).normal[2 as libc::c_int as usize]);
+                    left_test_vel[0] = left_test_vel[0]
+                        + (*plane).normal[0]
+                            * -(left_test_vel[0] * (*plane).normal[0]
+                                + left_test_vel[1] * (*plane).normal[1]
+                                + left_test_vel[2] * (*plane).normal[2]);
+                    left_test_vel[1] = left_test_vel[1]
+                        + (*plane).normal[1]
+                            * -(left_test_vel[0] * (*plane).normal[0]
+                                + left_test_vel[1] * (*plane).normal[1]
+                                + left_test_vel[2] * (*plane).normal[2]);
+                    left_test_vel[2] = left_test_vel[2]
+                        + (*plane).normal[2]
+                            * -(left_test_vel[0] * (*plane).normal[0]
+                                + left_test_vel[1] * (*plane).normal[1]
+                                + left_test_vel[2] * (*plane).normal[2]);
                     //end if
-                    old_frame_test_vel[0 as libc::c_int as usize] =
-                        frame_test_vel[0 as libc::c_int as usize];
-                    old_frame_test_vel[1 as libc::c_int as usize] =
-                        frame_test_vel[1 as libc::c_int as usize];
-                    old_frame_test_vel[2 as libc::c_int as usize] =
-                        frame_test_vel[2 as libc::c_int as usize];
-                    frame_test_vel[0 as libc::c_int as usize] = frame_test_vel
-                        [0 as libc::c_int as usize]
-                        + (*plane).normal[0 as libc::c_int as usize]
-                            * -(frame_test_vel[0 as libc::c_int as usize]
-                                * (*plane).normal[0 as libc::c_int as usize]
-                                + frame_test_vel[1 as libc::c_int as usize]
-                                    * (*plane).normal[1 as libc::c_int as usize]
-                                + frame_test_vel[2 as libc::c_int as usize]
-                                    * (*plane).normal[2 as libc::c_int as usize]);
-                    frame_test_vel[1 as libc::c_int as usize] = frame_test_vel
-                        [1 as libc::c_int as usize]
-                        + (*plane).normal[1 as libc::c_int as usize]
-                            * -(frame_test_vel[0 as libc::c_int as usize]
-                                * (*plane).normal[0 as libc::c_int as usize]
-                                + frame_test_vel[1 as libc::c_int as usize]
-                                    * (*plane).normal[1 as libc::c_int as usize]
-                                + frame_test_vel[2 as libc::c_int as usize]
-                                    * (*plane).normal[2 as libc::c_int as usize]);
-                    frame_test_vel[2 as libc::c_int as usize] = frame_test_vel
-                        [2 as libc::c_int as usize]
-                        + (*plane).normal[2 as libc::c_int as usize]
-                            * -(frame_test_vel[0 as libc::c_int as usize]
-                                * (*plane).normal[0 as libc::c_int as usize]
-                                + frame_test_vel[1 as libc::c_int as usize]
-                                    * (*plane).normal[1 as libc::c_int as usize]
-                                + frame_test_vel[2 as libc::c_int as usize]
-                                    * (*plane).normal[2 as libc::c_int as usize]);
-                    if (*plane).normal[0 as libc::c_int as usize] * up[0 as libc::c_int as usize]
-                        + (*plane).normal[1 as libc::c_int as usize] * up[1 as libc::c_int as usize]
-                        + (*plane).normal[2 as libc::c_int as usize] * up[2 as libc::c_int as usize]
+                    old_frame_test_vel[0] = frame_test_vel[0];
+                    old_frame_test_vel[1] = frame_test_vel[1];
+                    old_frame_test_vel[2] = frame_test_vel[2];
+                    frame_test_vel[0] = frame_test_vel[0]
+                        + (*plane).normal[0]
+                            * -(frame_test_vel[0] * (*plane).normal[0]
+                                + frame_test_vel[1] * (*plane).normal[1]
+                                + frame_test_vel[2] * (*plane).normal[2]);
+                    frame_test_vel[1] = frame_test_vel[1]
+                        + (*plane).normal[1]
+                            * -(frame_test_vel[0] * (*plane).normal[0]
+                                + frame_test_vel[1] * (*plane).normal[1]
+                                + frame_test_vel[2] * (*plane).normal[2]);
+                    frame_test_vel[2] = frame_test_vel[2]
+                        + (*plane).normal[2]
+                            * -(frame_test_vel[0] * (*plane).normal[0]
+                                + frame_test_vel[1] * (*plane).normal[1]
+                                + frame_test_vel[2] * (*plane).normal[2]);
+                    if (*plane).normal[0] * up[0]
+                        + (*plane).normal[1] * up[1]
+                        + (*plane).normal[2] * up[2]
                         > phys_maxsteepness
                     {
-                        onground = crate::src::qcommon::q_shared::qtrue as libc::c_int
+                        onground = crate::src::qcommon::q_shared::qtrue as i32
                     }
-                    if stopevent & 32 as libc::c_int != 0 {
-                        delta = 0 as libc::c_int as libc::c_float;
+                    if stopevent & 32 != 0 {
+                        delta = 0f32;
                         //store the old velocity for landing check
                         //test velocity for the next frame is the projection
                         //of the velocity of the current frame into the hit plane
                         //check for a landing on an almost horizontal floor
                         //end if
                         //end if
-                        if old_frame_test_vel[2 as libc::c_int as usize]
-                            < 0 as libc::c_int as libc::c_float
-                            && frame_test_vel[2 as libc::c_int as usize]
-                                > old_frame_test_vel[2 as libc::c_int as usize]
+                        if old_frame_test_vel[2] < 0f32
+                            && frame_test_vel[2] > old_frame_test_vel[2]
                             && onground == 0
                         {
                             //end else
-                            delta = old_frame_test_vel[2 as libc::c_int as usize]
+                            delta = old_frame_test_vel[2]
                         } else if onground != 0 {
-                            delta = frame_test_vel[2 as libc::c_int as usize]
-                                - old_frame_test_vel[2 as libc::c_int as usize]
+                            delta = frame_test_vel[2] - old_frame_test_vel[2]
                         } //end if
                         if delta != 0. {
-                            delta = delta * 10 as libc::c_int as libc::c_float;
-                            delta =
-                                ((delta * delta) as libc::c_double * 0.0001f64) as libc::c_float;
+                            delta = delta * 10f32;
+                            delta = ((delta * delta) as f64 * 0.0001) as f32;
                             if swimming != 0 {
-                                delta = 0 as libc::c_int as libc::c_float
+                                delta = 0f32
                             }
                             //end if
-                            if delta > 40 as libc::c_int as libc::c_float {
-                                (*move_0).endpos[0 as libc::c_int as usize] =
-                                    org[0 as libc::c_int as usize];
-                                (*move_0).endpos[1 as libc::c_int as usize] =
-                                    org[1 as libc::c_int as usize];
-                                (*move_0).endpos[2 as libc::c_int as usize] =
-                                    org[2 as libc::c_int as usize];
+                            if delta > 40f32 {
+                                (*move_0).endpos[0] = org[0];
+                                (*move_0).endpos[1] = org[1];
+                                (*move_0).endpos[2] = org[2];
                                 (*move_0).endarea =
                                     crate::src::botlib::be_aas_sample::AAS_PointAreaNum(
                                         org.as_mut_ptr(),
                                     );
-                                (*move_0).velocity[0 as libc::c_int as usize] =
-                                    frame_test_vel[0 as libc::c_int as usize];
-                                (*move_0).velocity[1 as libc::c_int as usize] =
-                                    frame_test_vel[1 as libc::c_int as usize];
-                                (*move_0).velocity[2 as libc::c_int as usize] =
-                                    frame_test_vel[2 as libc::c_int as usize];
+                                (*move_0).velocity[0] = frame_test_vel[0];
+                                (*move_0).velocity[1] = frame_test_vel[1];
+                                (*move_0).velocity[2] = frame_test_vel[2];
                                 (*move_0).trace = trace;
-                                (*move_0).stopevent = 32 as libc::c_int;
+                                (*move_0).stopevent = 32;
                                 (*move_0).presencetype = presencetype;
-                                (*move_0).endcontents = 0 as libc::c_int;
-                                (*move_0).time = n as libc::c_float * frametime;
+                                (*move_0).endcontents = 0;
+                                (*move_0).time = n as f32 * frametime;
                                 (*move_0).frames = n;
-                                return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                                return crate::src::qcommon::q_shared::qtrue as i32;
                             }
                         }
                     }
                 }
             }
             j += 1;
-            if j > 20 as libc::c_int {
-                return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            if j > 20 {
+                return crate::src::qcommon::q_shared::qfalse as i32;
             }
-            if !((trace.fraction as libc::c_double) < 1.0f64) {
+            if !((trace.fraction as f64) < 1.0) {
                 break;
             }
         }
-        if frame_test_vel[2 as libc::c_int as usize] <= 10 as libc::c_int as libc::c_float {
+        if frame_test_vel[2] <= 10f32 {
             // never take falling damage if completely underwater
             /*
             if (ent->waterlevel == 3) return;
@@ -2083,96 +1814,84 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
             //if going down
             //end if
             //check for a liquid at the feet of the bot
-            feet[0 as libc::c_int as usize] = org[0 as libc::c_int as usize];
-            feet[1 as libc::c_int as usize] = org[1 as libc::c_int as usize];
-            feet[2 as libc::c_int as usize] = org[2 as libc::c_int as usize];
-            feet[2 as libc::c_int as usize] -= 22 as libc::c_int as libc::c_float;
+            feet[0] = org[0];
+            feet[1] = org[1];
+            feet[2] = org[2];
+            feet[2] -= 22f32;
             pc = crate::src::botlib::be_aas_bspq3::AAS_PointContents(feet.as_mut_ptr());
             //end if
-            event = 0 as libc::c_int;
-            if pc & 8 as libc::c_int != 0 {
-                event |= 16 as libc::c_int
+            event = 0;
+            if pc & 8 != 0 {
+                event |= 16
             }
-            if pc & 16 as libc::c_int != 0 {
-                event |= 8 as libc::c_int
+            if pc & 16 != 0 {
+                event |= 8
             }
-            if pc & 32 as libc::c_int != 0 {
-                event |= 4 as libc::c_int
+            if pc & 32 != 0 {
+                event |= 4
             }
             areanum = crate::src::botlib::be_aas_sample::AAS_PointAreaNum(org.as_mut_ptr());
             if (*crate::src::botlib::be_aas_main::aasworld
                 .areasettings
                 .offset(areanum as isize))
             .contents
-                & 2 as libc::c_int
+                & 2
                 != 0
             {
-                event |= 16 as libc::c_int
+                event |= 16
             }
             if (*crate::src::botlib::be_aas_main::aasworld
                 .areasettings
                 .offset(areanum as isize))
             .contents
-                & 4 as libc::c_int
+                & 4
                 != 0
             {
-                event |= 8 as libc::c_int
+                event |= 8
             }
             if (*crate::src::botlib::be_aas_main::aasworld
                 .areasettings
                 .offset(areanum as isize))
             .contents
-                & 1 as libc::c_int
+                & 1
                 != 0
             {
-                event |= 4 as libc::c_int
+                event |= 4
             }
             if event & stopevent != 0 {
-                (*move_0).endpos[0 as libc::c_int as usize] = org[0 as libc::c_int as usize];
-                (*move_0).endpos[1 as libc::c_int as usize] = org[1 as libc::c_int as usize];
-                (*move_0).endpos[2 as libc::c_int as usize] = org[2 as libc::c_int as usize];
+                (*move_0).endpos[0] = org[0];
+                (*move_0).endpos[1] = org[1];
+                (*move_0).endpos[2] = org[2];
                 (*move_0).endarea = areanum;
-                (*move_0).velocity[0 as libc::c_int as usize] = frame_test_vel
-                    [0 as libc::c_int as usize]
-                    * (1 as libc::c_int as libc::c_float / frametime);
-                (*move_0).velocity[1 as libc::c_int as usize] = frame_test_vel
-                    [1 as libc::c_int as usize]
-                    * (1 as libc::c_int as libc::c_float / frametime);
-                (*move_0).velocity[2 as libc::c_int as usize] = frame_test_vel
-                    [2 as libc::c_int as usize]
-                    * (1 as libc::c_int as libc::c_float / frametime);
+                (*move_0).velocity[0] = frame_test_vel[0] * (1f32 / frametime);
+                (*move_0).velocity[1] = frame_test_vel[1] * (1f32 / frametime);
+                (*move_0).velocity[2] = frame_test_vel[2] * (1f32 / frametime);
                 (*move_0).stopevent = event & stopevent;
                 (*move_0).presencetype = presencetype;
                 (*move_0).endcontents = pc;
-                (*move_0).time = n as libc::c_float * frametime;
+                (*move_0).time = n as f32 * frametime;
                 (*move_0).frames = n;
-                return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                return crate::src::qcommon::q_shared::qtrue as i32;
             }
         }
         onground = AAS_OnGround(org.as_mut_ptr(), presencetype, entnum);
         if onground != 0 {
-            if stopevent & 1 as libc::c_int != 0 {
-                (*move_0).endpos[0 as libc::c_int as usize] = org[0 as libc::c_int as usize];
-                (*move_0).endpos[1 as libc::c_int as usize] = org[1 as libc::c_int as usize];
-                (*move_0).endpos[2 as libc::c_int as usize] = org[2 as libc::c_int as usize];
+            if stopevent & 1 != 0 {
+                (*move_0).endpos[0] = org[0];
+                (*move_0).endpos[1] = org[1];
+                (*move_0).endpos[2] = org[2];
                 (*move_0).endarea =
                     crate::src::botlib::be_aas_sample::AAS_PointAreaNum(org.as_mut_ptr());
-                (*move_0).velocity[0 as libc::c_int as usize] = frame_test_vel
-                    [0 as libc::c_int as usize]
-                    * (1 as libc::c_int as libc::c_float / frametime);
-                (*move_0).velocity[1 as libc::c_int as usize] = frame_test_vel
-                    [1 as libc::c_int as usize]
-                    * (1 as libc::c_int as libc::c_float / frametime);
-                (*move_0).velocity[2 as libc::c_int as usize] = frame_test_vel
-                    [2 as libc::c_int as usize]
-                    * (1 as libc::c_int as libc::c_float / frametime);
+                (*move_0).velocity[0] = frame_test_vel[0] * (1f32 / frametime);
+                (*move_0).velocity[1] = frame_test_vel[1] * (1f32 / frametime);
+                (*move_0).velocity[2] = frame_test_vel[2] * (1f32 / frametime);
                 (*move_0).trace = trace;
-                (*move_0).stopevent = 1 as libc::c_int;
+                (*move_0).stopevent = 1;
                 (*move_0).presencetype = presencetype;
-                (*move_0).endcontents = 0 as libc::c_int;
-                (*move_0).time = n as libc::c_float * frametime;
+                (*move_0).endcontents = 0;
+                (*move_0).time = n as f32 * frametime;
                 (*move_0).frames = n;
-                return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                return crate::src::qcommon::q_shared::qtrue as i32;
             }
         //get event from pc
         //
@@ -2180,30 +1899,24 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
         //
         //if onground and on the ground for at least one whole frame
         //end if
-        } else if stopevent & 2 as libc::c_int != 0 {
-            (*move_0).endpos[0 as libc::c_int as usize] = org[0 as libc::c_int as usize]; //end else if
-            (*move_0).endpos[1 as libc::c_int as usize] = org[1 as libc::c_int as usize];
-            (*move_0).endpos[2 as libc::c_int as usize] = org[2 as libc::c_int as usize];
+        } else if stopevent & 2 != 0 {
+            (*move_0).endpos[0] = org[0]; //end else if
+            (*move_0).endpos[1] = org[1];
+            (*move_0).endpos[2] = org[2];
             (*move_0).endarea =
                 crate::src::botlib::be_aas_sample::AAS_PointAreaNum(org.as_mut_ptr());
-            (*move_0).velocity[0 as libc::c_int as usize] = frame_test_vel
-                [0 as libc::c_int as usize]
-                * (1 as libc::c_int as libc::c_float / frametime);
-            (*move_0).velocity[1 as libc::c_int as usize] = frame_test_vel
-                [1 as libc::c_int as usize]
-                * (1 as libc::c_int as libc::c_float / frametime);
-            (*move_0).velocity[2 as libc::c_int as usize] = frame_test_vel
-                [2 as libc::c_int as usize]
-                * (1 as libc::c_int as libc::c_float / frametime);
+            (*move_0).velocity[0] = frame_test_vel[0] * (1f32 / frametime);
+            (*move_0).velocity[1] = frame_test_vel[1] * (1f32 / frametime);
+            (*move_0).velocity[2] = frame_test_vel[2] * (1f32 / frametime);
             (*move_0).trace = trace;
-            (*move_0).stopevent = 2 as libc::c_int;
+            (*move_0).stopevent = 2;
             (*move_0).presencetype = presencetype;
-            (*move_0).endcontents = 0 as libc::c_int;
-            (*move_0).time = n as libc::c_float * frametime;
+            (*move_0).endcontents = 0;
+            (*move_0).time = n as f32 * frametime;
             (*move_0).frames = n;
-            return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+            return crate::src::qcommon::q_shared::qtrue as i32;
         } else {
-            if stopevent & 64 as libc::c_int != 0 {
+            if stopevent & 64 != 0 {
                 let mut gaptrace: crate::be_aas_h::aas_trace_t = crate::be_aas_h::aas_trace_t {
                     startsolid: crate::src::qcommon::q_shared::qfalse,
                     fraction: 0.,
@@ -2213,58 +1926,44 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
                     area: 0,
                     planenum: 0,
                 };
-                start[0 as libc::c_int as usize] = org[0 as libc::c_int as usize];
-                start[1 as libc::c_int as usize] = org[1 as libc::c_int as usize];
-                start[2 as libc::c_int as usize] = org[2 as libc::c_int as usize];
-                end[0 as libc::c_int as usize] = start[0 as libc::c_int as usize];
-                end[1 as libc::c_int as usize] = start[1 as libc::c_int as usize];
-                end[2 as libc::c_int as usize] = start[2 as libc::c_int as usize];
-                end[2 as libc::c_int as usize] -=
-                    48 as libc::c_int as libc::c_float + aassettings.phys_maxbarrier;
+                start[0] = org[0];
+                start[1] = org[1];
+                start[2] = org[2];
+                end[0] = start[0];
+                end[1] = start[1];
+                end[2] = start[2];
+                end[2] -= 48f32 + aassettings.phys_maxbarrier;
                 gaptrace = crate::src::botlib::be_aas_sample::AAS_TraceClientBBox(
                     start.as_mut_ptr(),
                     end.as_mut_ptr(),
-                    4 as libc::c_int,
-                    -(1 as libc::c_int),
+                    4,
+                    -(1),
                 );
                 //end if
                 if gaptrace.startsolid as u64 == 0 {
                     //if solid is found the bot cannot walk any further and will not fall into a gap
                     //if it is a gap (lower than one step height)
-                    if gaptrace.endpos[2 as libc::c_int as usize]
-                        < org[2 as libc::c_int as usize]
-                            - aassettings.phys_maxstep
-                            - 1 as libc::c_int as libc::c_float
-                    {
+                    if gaptrace.endpos[2] < org[2] - aassettings.phys_maxstep - 1f32 {
                         if crate::src::botlib::be_aas_bspq3::AAS_PointContents(end.as_mut_ptr())
-                            & 32 as libc::c_int
+                            & 32
                             == 0
                         {
-                            (*move_0).endpos[0 as libc::c_int as usize] =
-                                lastorg[0 as libc::c_int as usize];
-                            (*move_0).endpos[1 as libc::c_int as usize] =
-                                lastorg[1 as libc::c_int as usize];
-                            (*move_0).endpos[2 as libc::c_int as usize] =
-                                lastorg[2 as libc::c_int as usize];
+                            (*move_0).endpos[0] = lastorg[0];
+                            (*move_0).endpos[1] = lastorg[1];
+                            (*move_0).endpos[2] = lastorg[2];
                             (*move_0).endarea = crate::src::botlib::be_aas_sample::AAS_PointAreaNum(
                                 lastorg.as_mut_ptr(),
                             );
-                            (*move_0).velocity[0 as libc::c_int as usize] = frame_test_vel
-                                [0 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
-                            (*move_0).velocity[1 as libc::c_int as usize] = frame_test_vel
-                                [1 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
-                            (*move_0).velocity[2 as libc::c_int as usize] = frame_test_vel
-                                [2 as libc::c_int as usize]
-                                * (1 as libc::c_int as libc::c_float / frametime);
+                            (*move_0).velocity[0] = frame_test_vel[0] * (1f32 / frametime);
+                            (*move_0).velocity[1] = frame_test_vel[1] * (1f32 / frametime);
+                            (*move_0).velocity[2] = frame_test_vel[2] * (1f32 / frametime);
                             (*move_0).trace = trace;
-                            (*move_0).stopevent = 64 as libc::c_int;
+                            (*move_0).stopevent = 64;
                             (*move_0).presencetype = presencetype;
-                            (*move_0).endcontents = 0 as libc::c_int;
-                            (*move_0).time = n as libc::c_float * frametime;
+                            (*move_0).endcontents = 0;
+                            (*move_0).time = n as f32 * frametime;
                             (*move_0).frames = n;
-                            return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                            return crate::src::qcommon::q_shared::qtrue as i32;
                         }
                         //end if
                     }
@@ -2275,23 +1974,20 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
         n += 1
     }
     //
-    (*move_0).endpos[0 as libc::c_int as usize] = org[0 as libc::c_int as usize];
-    (*move_0).endpos[1 as libc::c_int as usize] = org[1 as libc::c_int as usize];
-    (*move_0).endpos[2 as libc::c_int as usize] = org[2 as libc::c_int as usize];
+    (*move_0).endpos[0] = org[0];
+    (*move_0).endpos[1] = org[1];
+    (*move_0).endpos[2] = org[2];
     (*move_0).endarea = crate::src::botlib::be_aas_sample::AAS_PointAreaNum(org.as_mut_ptr());
-    (*move_0).velocity[0 as libc::c_int as usize] =
-        frame_test_vel[0 as libc::c_int as usize] * (1 as libc::c_int as libc::c_float / frametime);
-    (*move_0).velocity[1 as libc::c_int as usize] =
-        frame_test_vel[1 as libc::c_int as usize] * (1 as libc::c_int as libc::c_float / frametime);
-    (*move_0).velocity[2 as libc::c_int as usize] =
-        frame_test_vel[2 as libc::c_int as usize] * (1 as libc::c_int as libc::c_float / frametime);
-    (*move_0).stopevent = 0 as libc::c_int;
+    (*move_0).velocity[0] = frame_test_vel[0] * (1f32 / frametime);
+    (*move_0).velocity[1] = frame_test_vel[1] * (1f32 / frametime);
+    (*move_0).velocity[2] = frame_test_vel[2] * (1f32 / frametime);
+    (*move_0).stopevent = 0;
     (*move_0).presencetype = presencetype;
-    (*move_0).endcontents = 0 as libc::c_int;
-    (*move_0).time = n as libc::c_float * frametime;
+    (*move_0).endcontents = 0;
+    (*move_0).time = n as f32 * frametime;
     (*move_0).frames = n;
     //
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //end of the function AAS_ClientMovementPrediction
 //===========================================================================
@@ -2304,19 +2000,19 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
 
 pub unsafe extern "C" fn AAS_PredictClientMovement(
     mut move_0: *mut crate::be_aas_h::aas_clientmove_s,
-    mut entnum: libc::c_int,
+    mut entnum: i32,
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-    mut presencetype: libc::c_int,
-    mut onground: libc::c_int,
+    mut presencetype: i32,
+    mut onground: i32,
     mut velocity: *mut crate::src::qcommon::q_shared::vec_t,
     mut cmdmove: *mut crate::src::qcommon::q_shared::vec_t,
-    mut cmdframes: libc::c_int,
-    mut maxframes: libc::c_int,
-    mut frametime: libc::c_float,
-    mut stopevent: libc::c_int,
-    mut stopareanum: libc::c_int,
-    mut visualize: libc::c_int,
-) -> libc::c_int {
+    mut cmdframes: i32,
+    mut maxframes: i32,
+    mut frametime: f32,
+    mut stopevent: i32,
+    mut stopareanum: i32,
+    mut visualize: i32,
+) -> i32 {
     let mut mins: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut maxs: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     return AAS_ClientMovementPrediction(
@@ -2348,19 +2044,19 @@ pub unsafe extern "C" fn AAS_PredictClientMovement(
 
 pub unsafe extern "C" fn AAS_ClientMovementHitBBox(
     mut move_0: *mut crate::be_aas_h::aas_clientmove_s,
-    mut entnum: libc::c_int,
+    mut entnum: i32,
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-    mut presencetype: libc::c_int,
-    mut onground: libc::c_int,
+    mut presencetype: i32,
+    mut onground: i32,
     mut velocity: *mut crate::src::qcommon::q_shared::vec_t,
     mut cmdmove: *mut crate::src::qcommon::q_shared::vec_t,
-    mut cmdframes: libc::c_int,
-    mut maxframes: libc::c_int,
-    mut frametime: libc::c_float,
+    mut cmdframes: i32,
+    mut maxframes: i32,
+    mut frametime: f32,
     mut mins: *mut crate::src::qcommon::q_shared::vec_t,
     mut maxs: *mut crate::src::qcommon::q_shared::vec_t,
-    mut visualize: libc::c_int,
-) -> libc::c_int {
+    mut visualize: i32,
+) -> i32 {
     return AAS_ClientMovementPrediction(
         move_0,
         entnum,
@@ -2372,8 +2068,8 @@ pub unsafe extern "C" fn AAS_ClientMovementHitBBox(
         cmdframes,
         maxframes,
         frametime,
-        2048 as libc::c_int,
-        0 as libc::c_int,
+        2048,
+        0,
         mins,
         maxs,
         visualize,
@@ -2389,7 +2085,7 @@ pub unsafe extern "C" fn AAS_ClientMovementHitBBox(
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_TestMovementPrediction(
-    mut entnum: libc::c_int,
+    mut entnum: i32,
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut dir: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
@@ -2414,41 +2110,37 @@ pub unsafe extern "C" fn AAS_TestMovementPrediction(
         time: 0.,
         frames: 0,
     };
-    velocity[2 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = velocity[2 as libc::c_int as usize];
-    velocity[0 as libc::c_int as usize] = velocity[1 as libc::c_int as usize];
+    velocity[2] = 0f32;
+    velocity[1] = velocity[2];
+    velocity[0] = velocity[1];
     if AAS_Swimming(origin) == 0 {
-        *dir.offset(2 as libc::c_int as isize) =
-            0 as libc::c_int as crate::src::qcommon::q_shared::vec_t
+        *dir.offset(2) = 0f32
     }
     crate::src::qcommon::q_math::VectorNormalize(dir);
-    cmdmove[0 as libc::c_int as usize] =
-        *dir.offset(0 as libc::c_int as isize) * 400 as libc::c_int as libc::c_float;
-    cmdmove[1 as libc::c_int as usize] =
-        *dir.offset(1 as libc::c_int as isize) * 400 as libc::c_int as libc::c_float;
-    cmdmove[2 as libc::c_int as usize] =
-        *dir.offset(2 as libc::c_int as isize) * 400 as libc::c_int as libc::c_float;
-    cmdmove[2 as libc::c_int as usize] = 224 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
+    cmdmove[0] = *dir.offset(0) * 400f32;
+    cmdmove[1] = *dir.offset(1) * 400f32;
+    cmdmove[2] = *dir.offset(2) * 400f32;
+    cmdmove[2] = 224f32;
     crate::src::botlib::be_aas_debug::AAS_ClearShownDebugLines();
     AAS_PredictClientMovement(
         &mut move_0,
         entnum,
         origin,
-        2 as libc::c_int,
-        crate::src::qcommon::q_shared::qtrue as libc::c_int,
+        2,
+        crate::src::qcommon::q_shared::qtrue as i32,
         velocity.as_mut_ptr(),
         cmdmove.as_mut_ptr(),
-        13 as libc::c_int,
-        13 as libc::c_int,
-        0.1f32,
-        1 as libc::c_int,
-        0 as libc::c_int,
-        crate::src::qcommon::q_shared::qtrue as libc::c_int,
+        13,
+        13,
+        0.1,
+        1,
+        0,
+        crate::src::qcommon::q_shared::qtrue as i32,
     );
-    if move_0.stopevent & 2 as libc::c_int != 0 {
+    if move_0.stopevent & 2 != 0 {
         botimport.Print.expect("non-null function pointer")(
-            1 as libc::c_int,
-            b"leave ground\n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            1i32,
+            b"leave ground\n\x00" as *const u8 as *mut i8,
         );
     };
     //end if
@@ -2468,61 +2160,52 @@ pub unsafe extern "C" fn AAS_TestMovementPrediction(
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_HorizontalVelocityForJump(
-    mut zvel: libc::c_float,
+    mut zvel: f32,
     mut start: *mut crate::src::qcommon::q_shared::vec_t,
     mut end: *mut crate::src::qcommon::q_shared::vec_t,
-    mut velocity: *mut libc::c_float,
-) -> libc::c_int {
-    let mut phys_gravity: libc::c_float = 0.;
-    let mut phys_maxvelocity: libc::c_float = 0.;
-    let mut maxjump: libc::c_float = 0.;
-    let mut height2fall: libc::c_float = 0.;
-    let mut t: libc::c_float = 0.;
-    let mut top: libc::c_float = 0.;
+    mut velocity: *mut f32,
+) -> i32 {
+    let mut phys_gravity: f32 = 0.;
+    let mut phys_maxvelocity: f32 = 0.;
+    let mut maxjump: f32 = 0.;
+    let mut height2fall: f32 = 0.;
+    let mut t: f32 = 0.;
+    let mut top: f32 = 0.;
     let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     phys_gravity = aassettings.phys_gravity;
     phys_maxvelocity = aassettings.phys_maxvelocity;
     //maximum height a player can jump with the given initial z velocity
-    maxjump = (0.5f64
-        * phys_gravity as libc::c_double
-        * (zvel / phys_gravity) as libc::c_double
-        * (zvel / phys_gravity) as libc::c_double) as libc::c_float;
+    maxjump =
+        (0.5 * phys_gravity as f64 * (zvel / phys_gravity) as f64 * (zvel / phys_gravity) as f64)
+            as f32;
     //top of the parabolic jump
-    top = *start.offset(2 as libc::c_int as isize) + maxjump;
+    top = *start.offset(2) + maxjump;
     //height the bot will fall from the top
-    height2fall = top - *end.offset(2 as libc::c_int as isize);
+    height2fall = top - *end.offset(2);
     //if the goal is to high to jump to
-    if height2fall < 0 as libc::c_int as libc::c_float {
+    if height2fall < 0f32 {
         *velocity = phys_maxvelocity; //end if
-        return 0 as libc::c_int;
+        return 0i32;
     }
     //time a player takes to fall the height
-    t = crate::stdlib::sqrt(
-        height2fall as libc::c_double / (0.5f64 * phys_gravity as libc::c_double),
-    ) as libc::c_float;
+    t = crate::stdlib::sqrt(height2fall as f64 / (0.5 * phys_gravity as f64)) as f32;
     //direction from start to end
-    dir[0 as libc::c_int as usize] =
-        *end.offset(0 as libc::c_int as isize) - *start.offset(0 as libc::c_int as isize);
-    dir[1 as libc::c_int as usize] =
-        *end.offset(1 as libc::c_int as isize) - *start.offset(1 as libc::c_int as isize);
-    dir[2 as libc::c_int as usize] =
-        *end.offset(2 as libc::c_int as isize) - *start.offset(2 as libc::c_int as isize);
+    dir[0] = *end.offset(0) - *start.offset(0);
+    dir[1] = *end.offset(1) - *start.offset(1);
+    dir[2] = *end.offset(2) - *start.offset(2);
     //
-    if t + zvel / phys_gravity == 0.0f32 {
+    if t + zvel / phys_gravity == 0.0 {
         *velocity = phys_maxvelocity;
-        return 0 as libc::c_int;
+        return 0i32;
     }
     //calculate horizontal speed
-    *velocity = (crate::stdlib::sqrt(
-        (dir[0 as libc::c_int as usize] * dir[0 as libc::c_int as usize]
-            + dir[1 as libc::c_int as usize] * dir[1 as libc::c_int as usize])
-            as libc::c_double,
-    ) / (t + zvel / phys_gravity) as libc::c_double) as libc::c_float;
+    *velocity = (crate::stdlib::sqrt((dir[0] * dir[0] + dir[1] * dir[1]) as f64)
+        / (t + zvel / phys_gravity) as f64) as f32;
     //the horizontal speed must be lower than the max speed
     if *velocity > phys_maxvelocity {
         *velocity = phys_maxvelocity; //end if
-        return 0 as libc::c_int;
+        return 0i32;
     }
-    return 1 as libc::c_int;
+    return 1;
 }
 //end of the function AAS_HorizontalVelocityForJump

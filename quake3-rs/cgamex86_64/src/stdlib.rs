@@ -1,6 +1,6 @@
 extern "C" {
     #[no_mangle]
-    pub fn __ctype_b_loc() -> *mut *const libc::c_ushort;
+    pub fn __ctype_b_loc() -> *mut *const u16;
 
     #[no_mangle]
     pub fn __ctype_tolower_loc() -> *mut *const crate::stdlib::__int32_t;
@@ -8,97 +8,76 @@ extern "C" {
     #[no_mangle]
     pub fn __ctype_toupper_loc() -> *mut *const crate::stdlib::__int32_t;
     #[no_mangle]
-    pub fn acos(_: libc::c_double) -> libc::c_double;
+    pub fn acos(_: f64) -> f64;
 
     #[no_mangle]
-    pub fn fabs(_: libc::c_double) -> libc::c_double;
+    pub fn fabs(_: f64) -> f64;
 
     #[no_mangle]
-    pub fn floor(_: libc::c_double) -> libc::c_double;
+    pub fn floor(_: f64) -> f64;
 
     #[no_mangle]
-    pub fn atan2(_: libc::c_double, _: libc::c_double) -> libc::c_double;
+    pub fn atan2(_: f64, _: f64) -> f64;
 
     #[no_mangle]
-    pub fn cos(_: libc::c_double) -> libc::c_double;
+    pub fn cos(_: f64) -> f64;
 
     #[no_mangle]
-    pub fn sin(_: libc::c_double) -> libc::c_double;
+    pub fn sin(_: f64) -> f64;
 
     #[no_mangle]
-    pub fn tan(_: libc::c_double) -> libc::c_double;
+    pub fn tan(_: f64) -> f64;
 
     #[no_mangle]
-    pub fn sqrt(_: libc::c_double) -> libc::c_double;
+    pub fn sqrt(_: f64) -> f64;
     #[no_mangle]
-    pub fn vsnprintf(
-        _: *mut libc::c_char,
-        _: libc::c_ulong,
-        _: *const libc::c_char,
-        _: ::std::ffi::VaList,
-    ) -> libc::c_int;
+    pub fn vsnprintf(_: *mut i8, _: usize, _: *const i8, _: ::std::ffi::VaList) -> i32;
     #[no_mangle]
-    pub fn strtol(
-        _: *const libc::c_char,
-        _: *mut *mut libc::c_char,
-        _: libc::c_int,
-    ) -> libc::c_long;
+    pub fn strtol(_: *const i8, _: *mut *mut i8, _: i32) -> isize;
 
     #[no_mangle]
-    pub fn strtod(_: *const libc::c_char, _: *mut *mut libc::c_char) -> libc::c_double;
+    pub fn strtod(_: *const i8, _: *mut *mut i8) -> f64;
 
     #[no_mangle]
-    pub fn rand() -> libc::c_int;
+    pub fn rand() -> i32;
 
     #[no_mangle]
-    pub fn abs(_: libc::c_int) -> libc::c_int;
+    pub fn abs(_: i32) -> i32;
 
     #[no_mangle]
-    pub fn exit(_: libc::c_int) -> !;
+    pub fn exit(_: i32) -> !;
     #[no_mangle]
-    pub fn memcpy(
-        _: *mut libc::c_void,
-        _: *const libc::c_void,
-        _: libc::c_ulong,
-    ) -> *mut libc::c_void;
+    pub fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: usize) -> *mut libc::c_void;
 
     #[no_mangle]
-    pub fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
+    pub fn strcmp(_: *const i8, _: *const i8) -> i32;
 
     #[no_mangle]
-    pub fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+    pub fn strchr(_: *const i8, _: i32) -> *mut i8;
 
     #[no_mangle]
-    pub fn memmove(
-        _: *mut libc::c_void,
-        _: *const libc::c_void,
-        _: libc::c_ulong,
-    ) -> *mut libc::c_void;
+    pub fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: usize) -> *mut libc::c_void;
 
     #[no_mangle]
-    pub fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+    pub fn strcpy(_: *mut i8, _: *const i8) -> *mut i8;
 
     #[no_mangle]
-    pub fn strcat(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+    pub fn strcat(_: *mut i8, _: *const i8) -> *mut i8;
 
     #[no_mangle]
-    pub fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
+    pub fn strrchr(_: *const i8, _: i32) -> *mut i8;
 
     #[no_mangle]
-    pub fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
+    pub fn memset(_: *mut libc::c_void, _: i32, _: usize) -> *mut libc::c_void;
 
     #[no_mangle]
-    pub fn strlen(_: *const libc::c_char) -> libc::c_ulong;
+    pub fn strlen(_: *const i8) -> usize;
 
     #[no_mangle]
-    pub fn strncpy(
-        _: *mut libc::c_char,
-        _: *const libc::c_char,
-        _: libc::c_ulong,
-    ) -> *mut libc::c_char;
+    pub fn strncpy(_: *mut i8, _: *const i8, _: usize) -> *mut i8;
 
     #[no_mangle]
-    pub fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+    pub fn strstr(_: *const i8, _: *const i8) -> *mut i8;
 }
 // =============== BEGIN ctype_h ================
 pub const _ISalnum: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 8;
@@ -115,7 +94,7 @@ pub const _ISlower: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 512;
 pub const _ISupper: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 256;
 // ================ END ctype_h ================
 // =============== BEGIN stdint_h ================
-pub type intptr_t = libc::c_long;
+pub type intptr_t = isize;
 // ================ END stdint_h ================
 // =============== BEGIN types_h ================
-pub type __int32_t = libc::c_int;
+pub type __int32_t = i32;

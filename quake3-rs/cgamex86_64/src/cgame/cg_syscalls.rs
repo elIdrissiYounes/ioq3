@@ -227,7 +227,7 @@ pub unsafe extern "C" fn dllEntry(
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn PASSFLOAT(mut x: libc::c_float) -> libc::c_int {
+pub unsafe extern "C" fn PASSFLOAT(mut x: f32) -> i32 {
     let mut fi: crate::src::qcommon::q_shared::floatint_t =
         crate::src::qcommon::q_shared::floatint_t { f: 0. };
     fi.f = x;
@@ -235,39 +235,39 @@ pub unsafe extern "C" fn PASSFLOAT(mut x: libc::c_float) -> libc::c_int {
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_Print(mut fmt: *const libc::c_char) {
+pub unsafe extern "C" fn trap_Print(mut fmt: *const i8) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_PRINT as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_PRINT as i32 as crate::stdlib::intptr_t,
         fmt,
     );
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_Error(mut fmt: *const libc::c_char) -> ! {
+pub unsafe extern "C" fn trap_Error(mut fmt: *const i8) -> ! {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_ERROR as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_ERROR as i32 as crate::stdlib::intptr_t,
         fmt,
     );
     // shut up GCC warning about returning functions, because we know better
-    crate::stdlib::exit(1 as libc::c_int);
+    crate::stdlib::exit(1);
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_Milliseconds() -> libc::c_int {
+pub unsafe extern "C" fn trap_Milliseconds() -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_MILLISECONDS as libc::c_int as crate::stdlib::intptr_t,
-    ) as libc::c_int;
+        crate::cg_public_h::CG_MILLISECONDS as i32 as crate::stdlib::intptr_t,
+    ) as i32;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_Cvar_Register(
     mut vmCvar: *mut crate::src::qcommon::q_shared::vmCvar_t,
-    mut varName: *const libc::c_char,
-    mut defaultValue: *const libc::c_char,
-    mut flags: libc::c_int,
+    mut varName: *const i8,
+    mut defaultValue: *const i8,
+    mut flags: i32,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CVAR_REGISTER as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CVAR_REGISTER as i32 as crate::stdlib::intptr_t,
         vmCvar,
         varName,
         defaultValue,
@@ -280,18 +280,15 @@ pub unsafe extern "C" fn trap_Cvar_Update(
     mut vmCvar: *mut crate::src::qcommon::q_shared::vmCvar_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CVAR_UPDATE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CVAR_UPDATE as i32 as crate::stdlib::intptr_t,
         vmCvar,
     );
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_Cvar_Set(
-    mut var_name: *const libc::c_char,
-    mut value: *const libc::c_char,
-) {
+pub unsafe extern "C" fn trap_Cvar_Set(mut var_name: *const i8, mut value: *const i8) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CVAR_SET as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CVAR_SET as i32 as crate::stdlib::intptr_t,
         var_name,
         value,
     );
@@ -299,12 +296,12 @@ pub unsafe extern "C" fn trap_Cvar_Set(
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_Cvar_VariableStringBuffer(
-    mut var_name: *const libc::c_char,
-    mut buffer: *mut libc::c_char,
-    mut bufsize: libc::c_int,
+    mut var_name: *const i8,
+    mut buffer: *mut i8,
+    mut bufsize: i32,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CVAR_VARIABLESTRINGBUFFER as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CVAR_VARIABLESTRINGBUFFER as i32 as crate::stdlib::intptr_t,
         var_name,
         buffer,
         bufsize,
@@ -312,20 +309,16 @@ pub unsafe extern "C" fn trap_Cvar_VariableStringBuffer(
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_Argc() -> libc::c_int {
+pub unsafe extern "C" fn trap_Argc() -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_ARGC as libc::c_int as crate::stdlib::intptr_t,
-    ) as libc::c_int;
+        crate::cg_public_h::CG_ARGC as i32 as crate::stdlib::intptr_t,
+    ) as i32;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_Argv(
-    mut n: libc::c_int,
-    mut buffer: *mut libc::c_char,
-    mut bufferLength: libc::c_int,
-) {
+pub unsafe extern "C" fn trap_Argv(mut n: i32, mut buffer: *mut i8, mut bufferLength: i32) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_ARGV as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_ARGV as i32 as crate::stdlib::intptr_t,
         n,
         buffer,
         bufferLength,
@@ -333,9 +326,9 @@ pub unsafe extern "C" fn trap_Argv(
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_Args(mut buffer: *mut libc::c_char, mut bufferLength: libc::c_int) {
+pub unsafe extern "C" fn trap_Args(mut buffer: *mut i8, mut bufferLength: i32) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_ARGS as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_ARGS as i32 as crate::stdlib::intptr_t,
         buffer,
         bufferLength,
     );
@@ -343,26 +336,26 @@ pub unsafe extern "C" fn trap_Args(mut buffer: *mut libc::c_char, mut bufferLeng
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_FS_FOpenFile(
-    mut qpath: *const libc::c_char,
+    mut qpath: *const i8,
     mut f: *mut crate::src::qcommon::q_shared::fileHandle_t,
     mut mode: crate::src::qcommon::q_shared::fsMode_t,
-) -> libc::c_int {
+) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_FS_FOPENFILE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_FS_FOPENFILE as i32 as crate::stdlib::intptr_t,
         qpath,
         f,
-        mode as libc::c_uint,
-    ) as libc::c_int;
+        mode,
+    ) as i32;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_FS_Read(
     mut buffer: *mut libc::c_void,
-    mut len: libc::c_int,
+    mut len: i32,
     mut f: crate::src::qcommon::q_shared::fileHandle_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_FS_READ as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_FS_READ as i32 as crate::stdlib::intptr_t,
         buffer,
         len,
         f,
@@ -372,11 +365,11 @@ pub unsafe extern "C" fn trap_FS_Read(
 
 pub unsafe extern "C" fn trap_FS_Write(
     mut buffer: *const libc::c_void,
-    mut len: libc::c_int,
+    mut len: i32,
     mut f: crate::src::qcommon::q_shared::fileHandle_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_FS_WRITE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_FS_WRITE as i32 as crate::stdlib::intptr_t,
         buffer,
         len,
         f,
@@ -386,7 +379,7 @@ pub unsafe extern "C" fn trap_FS_Write(
 
 pub unsafe extern "C" fn trap_FS_FCloseFile(mut f: crate::src::qcommon::q_shared::fileHandle_t) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_FS_FCLOSEFILE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_FS_FCLOSEFILE as i32 as crate::stdlib::intptr_t,
         f,
     );
 }
@@ -394,45 +387,45 @@ pub unsafe extern "C" fn trap_FS_FCloseFile(mut f: crate::src::qcommon::q_shared
 
 pub unsafe extern "C" fn trap_FS_Seek(
     mut f: crate::src::qcommon::q_shared::fileHandle_t,
-    mut offset: libc::c_long,
-    mut origin: libc::c_int,
-) -> libc::c_int {
+    mut offset: isize,
+    mut origin: i32,
+) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_FS_SEEK as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_FS_SEEK as i32 as crate::stdlib::intptr_t,
         f,
         offset,
         origin,
-    ) as libc::c_int;
+    ) as i32;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_SendConsoleCommand(mut text: *const libc::c_char) {
+pub unsafe extern "C" fn trap_SendConsoleCommand(mut text: *const i8) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_SENDCONSOLECOMMAND as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_SENDCONSOLECOMMAND as i32 as crate::stdlib::intptr_t,
         text,
     );
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_AddCommand(mut cmdName: *const libc::c_char) {
+pub unsafe extern "C" fn trap_AddCommand(mut cmdName: *const i8) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_ADDCOMMAND as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_ADDCOMMAND as i32 as crate::stdlib::intptr_t,
         cmdName,
     );
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_RemoveCommand(mut cmdName: *const libc::c_char) {
+pub unsafe extern "C" fn trap_RemoveCommand(mut cmdName: *const i8) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_REMOVECOMMAND as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_REMOVECOMMAND as i32 as crate::stdlib::intptr_t,
         cmdName,
     );
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_SendClientCommand(mut s: *const libc::c_char) {
+pub unsafe extern "C" fn trap_SendClientCommand(mut s: *const i8) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_SENDCLIENTCOMMAND as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_SENDCLIENTCOMMAND as i32 as crate::stdlib::intptr_t,
         s,
     );
 }
@@ -440,31 +433,31 @@ pub unsafe extern "C" fn trap_SendClientCommand(mut s: *const libc::c_char) {
 
 pub unsafe extern "C" fn trap_UpdateScreen() {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_UPDATESCREEN as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_UPDATESCREEN as i32 as crate::stdlib::intptr_t,
     );
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_CM_LoadMap(mut mapname: *const libc::c_char) {
+pub unsafe extern "C" fn trap_CM_LoadMap(mut mapname: *const i8) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CM_LOADMAP as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CM_LOADMAP as i32 as crate::stdlib::intptr_t,
         mapname,
     );
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_CM_NumInlineModels() -> libc::c_int {
+pub unsafe extern "C" fn trap_CM_NumInlineModels() -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CM_NUMINLINEMODELS as libc::c_int as crate::stdlib::intptr_t,
-    ) as libc::c_int;
+        crate::cg_public_h::CG_CM_NUMINLINEMODELS as i32 as crate::stdlib::intptr_t,
+    ) as i32;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_CM_InlineModel(
-    mut index: libc::c_int,
+    mut index: i32,
 ) -> crate::src::qcommon::q_shared::clipHandle_t {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CM_INLINEMODEL as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CM_INLINEMODEL as i32 as crate::stdlib::intptr_t,
         index,
     ) as crate::src::qcommon::q_shared::clipHandle_t;
 }
@@ -475,7 +468,7 @@ pub unsafe extern "C" fn trap_CM_TempBoxModel(
     mut maxs: *const crate::src::qcommon::q_shared::vec_t,
 ) -> crate::src::qcommon::q_shared::clipHandle_t {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CM_TEMPBOXMODEL as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CM_TEMPBOXMODEL as i32 as crate::stdlib::intptr_t,
         mins,
         maxs,
     ) as crate::src::qcommon::q_shared::clipHandle_t;
@@ -487,7 +480,7 @@ pub unsafe extern "C" fn trap_CM_TempCapsuleModel(
     mut maxs: *const crate::src::qcommon::q_shared::vec_t,
 ) -> crate::src::qcommon::q_shared::clipHandle_t {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CM_TEMPCAPSULEMODEL as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CM_TEMPCAPSULEMODEL as i32 as crate::stdlib::intptr_t,
         mins,
         maxs,
     ) as crate::src::qcommon::q_shared::clipHandle_t;
@@ -497,12 +490,12 @@ pub unsafe extern "C" fn trap_CM_TempCapsuleModel(
 pub unsafe extern "C" fn trap_CM_PointContents(
     mut p: *const crate::src::qcommon::q_shared::vec_t,
     mut model: crate::src::qcommon::q_shared::clipHandle_t,
-) -> libc::c_int {
+) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CM_POINTCONTENTS as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CM_POINTCONTENTS as i32 as crate::stdlib::intptr_t,
         p,
         model,
-    ) as libc::c_int;
+    ) as i32;
 }
 #[no_mangle]
 
@@ -511,15 +504,14 @@ pub unsafe extern "C" fn trap_CM_TransformedPointContents(
     mut model: crate::src::qcommon::q_shared::clipHandle_t,
     mut origin: *const crate::src::qcommon::q_shared::vec_t,
     mut angles: *const crate::src::qcommon::q_shared::vec_t,
-) -> libc::c_int {
+) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CM_TRANSFORMEDPOINTCONTENTS as libc::c_int
-            as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CM_TRANSFORMEDPOINTCONTENTS as i32 as crate::stdlib::intptr_t,
         p,
         model,
         origin,
         angles,
-    ) as libc::c_int;
+    ) as i32;
 }
 #[no_mangle]
 
@@ -530,10 +522,10 @@ pub unsafe extern "C" fn trap_CM_BoxTrace(
     mut mins: *const crate::src::qcommon::q_shared::vec_t,
     mut maxs: *const crate::src::qcommon::q_shared::vec_t,
     mut model: crate::src::qcommon::q_shared::clipHandle_t,
-    mut brushmask: libc::c_int,
+    mut brushmask: i32,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CM_BOXTRACE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CM_BOXTRACE as i32 as crate::stdlib::intptr_t,
         results,
         start,
         end,
@@ -552,10 +544,10 @@ pub unsafe extern "C" fn trap_CM_CapsuleTrace(
     mut mins: *const crate::src::qcommon::q_shared::vec_t,
     mut maxs: *const crate::src::qcommon::q_shared::vec_t,
     mut model: crate::src::qcommon::q_shared::clipHandle_t,
-    mut brushmask: libc::c_int,
+    mut brushmask: i32,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CM_CAPSULETRACE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CM_CAPSULETRACE as i32 as crate::stdlib::intptr_t,
         results,
         start,
         end,
@@ -574,12 +566,12 @@ pub unsafe extern "C" fn trap_CM_TransformedBoxTrace(
     mut mins: *const crate::src::qcommon::q_shared::vec_t,
     mut maxs: *const crate::src::qcommon::q_shared::vec_t,
     mut model: crate::src::qcommon::q_shared::clipHandle_t,
-    mut brushmask: libc::c_int,
+    mut brushmask: i32,
     mut origin: *const crate::src::qcommon::q_shared::vec_t,
     mut angles: *const crate::src::qcommon::q_shared::vec_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CM_TRANSFORMEDBOXTRACE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CM_TRANSFORMEDBOXTRACE as i32 as crate::stdlib::intptr_t,
         results,
         start,
         end,
@@ -600,12 +592,12 @@ pub unsafe extern "C" fn trap_CM_TransformedCapsuleTrace(
     mut mins: *const crate::src::qcommon::q_shared::vec_t,
     mut maxs: *const crate::src::qcommon::q_shared::vec_t,
     mut model: crate::src::qcommon::q_shared::clipHandle_t,
-    mut brushmask: libc::c_int,
+    mut brushmask: i32,
     mut origin: *const crate::src::qcommon::q_shared::vec_t,
     mut angles: *const crate::src::qcommon::q_shared::vec_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CM_TRANSFORMEDCAPSULETRACE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CM_TRANSFORMEDCAPSULETRACE as i32 as crate::stdlib::intptr_t,
         results,
         start,
         end,
@@ -620,16 +612,16 @@ pub unsafe extern "C" fn trap_CM_TransformedCapsuleTrace(
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_CM_MarkFragments(
-    mut numPoints: libc::c_int,
+    mut numPoints: i32,
     mut points: *const crate::src::qcommon::q_shared::vec3_t,
     mut projection: *const crate::src::qcommon::q_shared::vec_t,
-    mut maxPoints: libc::c_int,
+    mut maxPoints: i32,
     mut pointBuffer: *mut crate::src::qcommon::q_shared::vec_t,
-    mut maxFragments: libc::c_int,
+    mut maxFragments: i32,
     mut fragmentBuffer: *mut crate::src::qcommon::q_shared::markFragment_t,
-) -> libc::c_int {
+) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CM_MARKFRAGMENTS as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CM_MARKFRAGMENTS as i32 as crate::stdlib::intptr_t,
         numPoints,
         points,
         projection,
@@ -637,18 +629,18 @@ pub unsafe extern "C" fn trap_CM_MarkFragments(
         pointBuffer,
         maxFragments,
         fragmentBuffer,
-    ) as libc::c_int;
+    ) as i32;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_S_StartSound(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
-    mut entityNum: libc::c_int,
-    mut entchannel: libc::c_int,
+    mut entityNum: i32,
+    mut entchannel: i32,
     mut sfx: crate::src::qcommon::q_shared::sfxHandle_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_S_STARTSOUND as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_S_STARTSOUND as i32 as crate::stdlib::intptr_t,
         origin,
         entityNum,
         entchannel,
@@ -659,10 +651,10 @@ pub unsafe extern "C" fn trap_S_StartSound(
 
 pub unsafe extern "C" fn trap_S_StartLocalSound(
     mut sfx: crate::src::qcommon::q_shared::sfxHandle_t,
-    mut channelNum: libc::c_int,
+    mut channelNum: i32,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_S_STARTLOCALSOUND as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_S_STARTLOCALSOUND as i32 as crate::stdlib::intptr_t,
         sfx,
         channelNum,
     );
@@ -673,20 +665,20 @@ pub unsafe extern "C" fn trap_S_ClearLoopingSounds(
     mut killall: crate::src::qcommon::q_shared::qboolean,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_S_CLEARLOOPINGSOUNDS as libc::c_int as crate::stdlib::intptr_t,
-        killall as libc::c_uint,
+        crate::cg_public_h::CG_S_CLEARLOOPINGSOUNDS as i32 as crate::stdlib::intptr_t,
+        killall,
     );
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_S_AddLoopingSound(
-    mut entityNum: libc::c_int,
+    mut entityNum: i32,
     mut origin: *const crate::src::qcommon::q_shared::vec_t,
     mut velocity: *const crate::src::qcommon::q_shared::vec_t,
     mut sfx: crate::src::qcommon::q_shared::sfxHandle_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_S_ADDLOOPINGSOUND as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_S_ADDLOOPINGSOUND as i32 as crate::stdlib::intptr_t,
         entityNum,
         origin,
         velocity,
@@ -696,13 +688,13 @@ pub unsafe extern "C" fn trap_S_AddLoopingSound(
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_S_AddRealLoopingSound(
-    mut entityNum: libc::c_int,
+    mut entityNum: i32,
     mut origin: *const crate::src::qcommon::q_shared::vec_t,
     mut velocity: *const crate::src::qcommon::q_shared::vec_t,
     mut sfx: crate::src::qcommon::q_shared::sfxHandle_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_S_ADDREALLOOPINGSOUND as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_S_ADDREALLOOPINGSOUND as i32 as crate::stdlib::intptr_t,
         entityNum,
         origin,
         velocity,
@@ -711,20 +703,20 @@ pub unsafe extern "C" fn trap_S_AddRealLoopingSound(
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_S_StopLoopingSound(mut entityNum: libc::c_int) {
+pub unsafe extern "C" fn trap_S_StopLoopingSound(mut entityNum: i32) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_S_STOPLOOPINGSOUND as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_S_STOPLOOPINGSOUND as i32 as crate::stdlib::intptr_t,
         entityNum,
     );
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_S_UpdateEntityPosition(
-    mut entityNum: libc::c_int,
+    mut entityNum: i32,
     mut origin: *const crate::src::qcommon::q_shared::vec_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_S_UPDATEENTITYPOSITION as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_S_UPDATEENTITYPOSITION as i32 as crate::stdlib::intptr_t,
         entityNum,
         origin,
     );
@@ -732,13 +724,13 @@ pub unsafe extern "C" fn trap_S_UpdateEntityPosition(
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_S_Respatialize(
-    mut entityNum: libc::c_int,
+    mut entityNum: i32,
     mut origin: *const crate::src::qcommon::q_shared::vec_t,
     mut axis: *mut crate::src::qcommon::q_shared::vec3_t,
-    mut inwater: libc::c_int,
+    mut inwater: i32,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_S_RESPATIALIZE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_S_RESPATIALIZE as i32 as crate::stdlib::intptr_t,
         entityNum,
         origin,
         axis,
@@ -748,84 +740,81 @@ pub unsafe extern "C" fn trap_S_Respatialize(
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_S_RegisterSound(
-    mut sample: *const libc::c_char,
+    mut sample: *const i8,
     mut compressed: crate::src::qcommon::q_shared::qboolean,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_S_REGISTERSOUND as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_S_REGISTERSOUND as i32 as crate::stdlib::intptr_t,
         sample,
-        compressed as libc::c_uint,
+        compressed,
     ) as crate::src::qcommon::q_shared::sfxHandle_t;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_S_StartBackgroundTrack(
-    mut intro: *const libc::c_char,
-    mut loop_0: *const libc::c_char,
-) {
+pub unsafe extern "C" fn trap_S_StartBackgroundTrack(mut intro: *const i8, mut loop_0: *const i8) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_S_STARTBACKGROUNDTRACK as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_S_STARTBACKGROUNDTRACK as i32 as crate::stdlib::intptr_t,
         intro,
         loop_0,
     );
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_R_LoadWorldMap(mut mapname: *const libc::c_char) {
+pub unsafe extern "C" fn trap_R_LoadWorldMap(mut mapname: *const i8) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_LOADWORLDMAP as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_LOADWORLDMAP as i32 as crate::stdlib::intptr_t,
         mapname,
     );
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_R_RegisterModel(
-    mut name: *const libc::c_char,
+    mut name: *const i8,
 ) -> crate::src::qcommon::q_shared::qhandle_t {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_REGISTERMODEL as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_REGISTERMODEL as i32 as crate::stdlib::intptr_t,
         name,
     ) as crate::src::qcommon::q_shared::qhandle_t;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_R_RegisterSkin(
-    mut name: *const libc::c_char,
+    mut name: *const i8,
 ) -> crate::src::qcommon::q_shared::qhandle_t {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_REGISTERSKIN as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_REGISTERSKIN as i32 as crate::stdlib::intptr_t,
         name,
     ) as crate::src::qcommon::q_shared::qhandle_t;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_R_RegisterShader(
-    mut name: *const libc::c_char,
+    mut name: *const i8,
 ) -> crate::src::qcommon::q_shared::qhandle_t {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_REGISTERSHADER as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_REGISTERSHADER as i32 as crate::stdlib::intptr_t,
         name,
     ) as crate::src::qcommon::q_shared::qhandle_t;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_R_RegisterShaderNoMip(
-    mut name: *const libc::c_char,
+    mut name: *const i8,
 ) -> crate::src::qcommon::q_shared::qhandle_t {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_REGISTERSHADERNOMIP as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_REGISTERSHADERNOMIP as i32 as crate::stdlib::intptr_t,
         name,
     ) as crate::src::qcommon::q_shared::qhandle_t;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_R_RegisterFont(
-    mut fontName: *const libc::c_char,
-    mut pointSize: libc::c_int,
+    mut fontName: *const i8,
+    mut pointSize: i32,
     mut font: *mut crate::src::qcommon::q_shared::fontInfo_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_REGISTERFONT as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_REGISTERFONT as i32 as crate::stdlib::intptr_t,
         fontName,
         pointSize,
         font,
@@ -835,14 +824,14 @@ pub unsafe extern "C" fn trap_R_RegisterFont(
 
 pub unsafe extern "C" fn trap_R_ClearScene() {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_CLEARSCENE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_CLEARSCENE as i32 as crate::stdlib::intptr_t,
     );
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_R_AddRefEntityToScene(mut re: *const crate::tr_types_h::refEntity_t) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_ADDREFENTITYTOSCENE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_ADDREFENTITYTOSCENE as i32 as crate::stdlib::intptr_t,
         re,
     );
 }
@@ -850,11 +839,11 @@ pub unsafe extern "C" fn trap_R_AddRefEntityToScene(mut re: *const crate::tr_typ
 
 pub unsafe extern "C" fn trap_R_AddPolyToScene(
     mut hShader: crate::src::qcommon::q_shared::qhandle_t,
-    mut numVerts: libc::c_int,
+    mut numVerts: i32,
     mut verts: *const crate::tr_types_h::polyVert_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_ADDPOLYTOSCENE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_ADDPOLYTOSCENE as i32 as crate::stdlib::intptr_t,
         hShader,
         numVerts,
         verts,
@@ -864,12 +853,12 @@ pub unsafe extern "C" fn trap_R_AddPolyToScene(
 
 pub unsafe extern "C" fn trap_R_AddPolysToScene(
     mut hShader: crate::src::qcommon::q_shared::qhandle_t,
-    mut numVerts: libc::c_int,
+    mut numVerts: i32,
     mut verts: *const crate::tr_types_h::polyVert_t,
-    mut num: libc::c_int,
+    mut num: i32,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_ADDPOLYSTOSCENE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_ADDPOLYSTOSCENE as i32 as crate::stdlib::intptr_t,
         hShader,
         numVerts,
         verts,
@@ -883,26 +872,26 @@ pub unsafe extern "C" fn trap_R_LightForPoint(
     mut ambientLight: *mut crate::src::qcommon::q_shared::vec_t,
     mut directedLight: *mut crate::src::qcommon::q_shared::vec_t,
     mut lightDir: *mut crate::src::qcommon::q_shared::vec_t,
-) -> libc::c_int {
+) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_LIGHTFORPOINT as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_LIGHTFORPOINT as i32 as crate::stdlib::intptr_t,
         point,
         ambientLight,
         directedLight,
         lightDir,
-    ) as libc::c_int;
+    ) as i32;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_R_AddLightToScene(
     mut org: *const crate::src::qcommon::q_shared::vec_t,
-    mut intensity: libc::c_float,
-    mut r: libc::c_float,
-    mut g: libc::c_float,
-    mut b: libc::c_float,
+    mut intensity: f32,
+    mut r: f32,
+    mut g: f32,
+    mut b: f32,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_ADDLIGHTTOSCENE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_ADDLIGHTTOSCENE as i32 as crate::stdlib::intptr_t,
         org,
         PASSFLOAT(intensity),
         PASSFLOAT(r),
@@ -914,13 +903,13 @@ pub unsafe extern "C" fn trap_R_AddLightToScene(
 
 pub unsafe extern "C" fn trap_R_AddAdditiveLightToScene(
     mut org: *const crate::src::qcommon::q_shared::vec_t,
-    mut intensity: libc::c_float,
-    mut r: libc::c_float,
-    mut g: libc::c_float,
-    mut b: libc::c_float,
+    mut intensity: f32,
+    mut r: f32,
+    mut g: f32,
+    mut b: f32,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_ADDADDITIVELIGHTTOSCENE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_ADDADDITIVELIGHTTOSCENE as i32 as crate::stdlib::intptr_t,
         org,
         PASSFLOAT(intensity),
         PASSFLOAT(r),
@@ -932,33 +921,33 @@ pub unsafe extern "C" fn trap_R_AddAdditiveLightToScene(
 
 pub unsafe extern "C" fn trap_R_RenderScene(mut fd: *const crate::tr_types_h::refdef_t) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_RENDERSCENE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_RENDERSCENE as i32 as crate::stdlib::intptr_t,
         fd,
     );
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_R_SetColor(mut rgba: *const libc::c_float) {
+pub unsafe extern "C" fn trap_R_SetColor(mut rgba: *const f32) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_SETCOLOR as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_SETCOLOR as i32 as crate::stdlib::intptr_t,
         rgba,
     );
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_R_DrawStretchPic(
-    mut x: libc::c_float,
-    mut y: libc::c_float,
-    mut w: libc::c_float,
-    mut h: libc::c_float,
-    mut s1: libc::c_float,
-    mut t1: libc::c_float,
-    mut s2: libc::c_float,
-    mut t2: libc::c_float,
+    mut x: f32,
+    mut y: f32,
+    mut w: f32,
+    mut h: f32,
+    mut s1: f32,
+    mut t1: f32,
+    mut s2: f32,
+    mut t2: f32,
     mut hShader: crate::src::qcommon::q_shared::qhandle_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_DRAWSTRETCHPIC as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_DRAWSTRETCHPIC as i32 as crate::stdlib::intptr_t,
         PASSFLOAT(x),
         PASSFLOAT(y),
         PASSFLOAT(w),
@@ -978,7 +967,7 @@ pub unsafe extern "C" fn trap_R_ModelBounds(
     mut maxs: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_MODELBOUNDS as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_MODELBOUNDS as i32 as crate::stdlib::intptr_t,
         model,
         mins,
         maxs,
@@ -989,30 +978,30 @@ pub unsafe extern "C" fn trap_R_ModelBounds(
 pub unsafe extern "C" fn trap_R_LerpTag(
     mut tag: *mut crate::src::qcommon::q_shared::orientation_t,
     mut mod_0: crate::src::qcommon::q_shared::clipHandle_t,
-    mut startFrame: libc::c_int,
-    mut endFrame: libc::c_int,
-    mut frac: libc::c_float,
-    mut tagName: *const libc::c_char,
-) -> libc::c_int {
+    mut startFrame: i32,
+    mut endFrame: i32,
+    mut frac: f32,
+    mut tagName: *const i8,
+) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_LERPTAG as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_LERPTAG as i32 as crate::stdlib::intptr_t,
         tag,
         mod_0,
         startFrame,
         endFrame,
         PASSFLOAT(frac),
         tagName,
-    ) as libc::c_int;
+    ) as i32;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_R_RemapShader(
-    mut oldShader: *const libc::c_char,
-    mut newShader: *const libc::c_char,
-    mut timeOffset: *const libc::c_char,
+    mut oldShader: *const i8,
+    mut newShader: *const i8,
+    mut timeOffset: *const i8,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_REMAP_SHADER as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_REMAP_SHADER as i32 as crate::stdlib::intptr_t,
         oldShader,
         newShader,
         timeOffset,
@@ -1022,7 +1011,7 @@ pub unsafe extern "C" fn trap_R_RemapShader(
 
 pub unsafe extern "C" fn trap_GetGlconfig(mut glconfig: *mut crate::tr_types_h::glconfig_t) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_GETGLCONFIG as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_GETGLCONFIG as i32 as crate::stdlib::intptr_t,
         glconfig,
     );
 }
@@ -1032,18 +1021,18 @@ pub unsafe extern "C" fn trap_GetGameState(
     mut gamestate: *mut crate::src::qcommon::q_shared::gameState_t,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_GETGAMESTATE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_GETGAMESTATE as i32 as crate::stdlib::intptr_t,
         gamestate,
     );
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_GetCurrentSnapshotNumber(
-    mut snapshotNumber: *mut libc::c_int,
-    mut serverTime: *mut libc::c_int,
+    mut snapshotNumber: *mut i32,
+    mut serverTime: *mut i32,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_GETCURRENTSNAPSHOTNUMBER as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_GETCURRENTSNAPSHOTNUMBER as i32 as crate::stdlib::intptr_t,
         snapshotNumber,
         serverTime,
     );
@@ -1051,11 +1040,11 @@ pub unsafe extern "C" fn trap_GetCurrentSnapshotNumber(
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_GetSnapshot(
-    mut snapshotNumber: libc::c_int,
+    mut snapshotNumber: i32,
     mut snapshot: *mut crate::cg_public_h::snapshot_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_GETSNAPSHOT as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_GETSNAPSHOT as i32 as crate::stdlib::intptr_t,
         snapshotNumber,
         snapshot,
     ) as crate::src::qcommon::q_shared::qboolean;
@@ -1063,174 +1052,171 @@ pub unsafe extern "C" fn trap_GetSnapshot(
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_GetServerCommand(
-    mut serverCommandNumber: libc::c_int,
+    mut serverCommandNumber: i32,
 ) -> crate::src::qcommon::q_shared::qboolean {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_GETSERVERCOMMAND as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_GETSERVERCOMMAND as i32 as crate::stdlib::intptr_t,
         serverCommandNumber,
     ) as crate::src::qcommon::q_shared::qboolean;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_GetCurrentCmdNumber() -> libc::c_int {
+pub unsafe extern "C" fn trap_GetCurrentCmdNumber() -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_GETCURRENTCMDNUMBER as libc::c_int as crate::stdlib::intptr_t,
-    ) as libc::c_int;
+        crate::cg_public_h::CG_GETCURRENTCMDNUMBER as i32 as crate::stdlib::intptr_t,
+    ) as i32;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_GetUserCmd(
-    mut cmdNumber: libc::c_int,
+    mut cmdNumber: i32,
     mut ucmd: *mut crate::src::qcommon::q_shared::usercmd_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_GETUSERCMD as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_GETUSERCMD as i32 as crate::stdlib::intptr_t,
         cmdNumber,
         ucmd,
     ) as crate::src::qcommon::q_shared::qboolean;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_SetUserCmdValue(
-    mut stateValue: libc::c_int,
-    mut sensitivityScale: libc::c_float,
-) {
+pub unsafe extern "C" fn trap_SetUserCmdValue(mut stateValue: i32, mut sensitivityScale: f32) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_SETUSERCMDVALUE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_SETUSERCMDVALUE as i32 as crate::stdlib::intptr_t,
         stateValue,
         PASSFLOAT(sensitivityScale),
     );
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn testPrintInt(mut string: *mut libc::c_char, mut i: libc::c_int) {
+pub unsafe extern "C" fn testPrintInt(mut string: *mut i8, mut i: i32) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_TESTPRINTINT as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_TESTPRINTINT as i32 as crate::stdlib::intptr_t,
         string,
         i,
     );
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn testPrintFloat(mut string: *mut libc::c_char, mut f: libc::c_float) {
+pub unsafe extern "C" fn testPrintFloat(mut string: *mut i8, mut f: f32) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_TESTPRINTFLOAT as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_TESTPRINTFLOAT as i32 as crate::stdlib::intptr_t,
         string,
         PASSFLOAT(f),
     );
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_MemoryRemaining() -> libc::c_int {
+pub unsafe extern "C" fn trap_MemoryRemaining() -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_MEMORY_REMAINING as libc::c_int as crate::stdlib::intptr_t,
-    ) as libc::c_int;
+        crate::cg_public_h::CG_MEMORY_REMAINING as i32 as crate::stdlib::intptr_t,
+    ) as i32;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_Key_IsDown(
-    mut keynum: libc::c_int,
+    mut keynum: i32,
 ) -> crate::src::qcommon::q_shared::qboolean {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_KEY_ISDOWN as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_KEY_ISDOWN as i32 as crate::stdlib::intptr_t,
         keynum,
     ) as crate::src::qcommon::q_shared::qboolean;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_Key_GetCatcher() -> libc::c_int {
+pub unsafe extern "C" fn trap_Key_GetCatcher() -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_KEY_GETCATCHER as libc::c_int as crate::stdlib::intptr_t,
-    ) as libc::c_int;
+        crate::cg_public_h::CG_KEY_GETCATCHER as i32 as crate::stdlib::intptr_t,
+    ) as i32;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_Key_SetCatcher(mut catcher: libc::c_int) {
+pub unsafe extern "C" fn trap_Key_SetCatcher(mut catcher: i32) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_KEY_SETCATCHER as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_KEY_SETCATCHER as i32 as crate::stdlib::intptr_t,
         catcher,
     );
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_Key_GetKey(mut binding: *const libc::c_char) -> libc::c_int {
+pub unsafe extern "C" fn trap_Key_GetKey(mut binding: *const i8) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_KEY_GETKEY as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_KEY_GETKEY as i32 as crate::stdlib::intptr_t,
         binding,
-    ) as libc::c_int;
+    ) as i32;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_PC_AddGlobalDefine(mut define: *mut libc::c_char) -> libc::c_int {
+pub unsafe extern "C" fn trap_PC_AddGlobalDefine(mut define: *mut i8) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_PC_ADD_GLOBAL_DEFINE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_PC_ADD_GLOBAL_DEFINE as i32 as crate::stdlib::intptr_t,
         define,
-    ) as libc::c_int;
+    ) as i32;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_PC_LoadSource(mut filename: *const libc::c_char) -> libc::c_int {
+pub unsafe extern "C" fn trap_PC_LoadSource(mut filename: *const i8) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_PC_LOAD_SOURCE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_PC_LOAD_SOURCE as i32 as crate::stdlib::intptr_t,
         filename,
-    ) as libc::c_int;
+    ) as i32;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_PC_FreeSource(mut handle: libc::c_int) -> libc::c_int {
+pub unsafe extern "C" fn trap_PC_FreeSource(mut handle: i32) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_PC_FREE_SOURCE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_PC_FREE_SOURCE as i32 as crate::stdlib::intptr_t,
         handle,
-    ) as libc::c_int;
+    ) as i32;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_PC_ReadToken(
-    mut handle: libc::c_int,
+    mut handle: i32,
     mut pc_token: *mut crate::src::qcommon::q_shared::pc_token_t,
-) -> libc::c_int {
+) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_PC_READ_TOKEN as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_PC_READ_TOKEN as i32 as crate::stdlib::intptr_t,
         handle,
         pc_token,
-    ) as libc::c_int;
+    ) as i32;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_PC_SourceFileAndLine(
-    mut handle: libc::c_int,
-    mut filename: *mut libc::c_char,
-    mut line: *mut libc::c_int,
-) -> libc::c_int {
+    mut handle: i32,
+    mut filename: *mut i8,
+    mut line: *mut i32,
+) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_PC_SOURCE_FILE_AND_LINE as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_PC_SOURCE_FILE_AND_LINE as i32 as crate::stdlib::intptr_t,
         handle,
         filename,
         line,
-    ) as libc::c_int;
+    ) as i32;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_S_StopBackgroundTrack() {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_S_STOPBACKGROUNDTRACK as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_S_STOPBACKGROUNDTRACK as i32 as crate::stdlib::intptr_t,
     );
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_RealTime(
     mut qtime: *mut crate::src::qcommon::q_shared::qtime_t,
-) -> libc::c_int {
+) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_REAL_TIME as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_REAL_TIME as i32 as crate::stdlib::intptr_t,
         qtime,
-    ) as libc::c_int;
+    ) as i32;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_SnapVector(mut v: *mut libc::c_float) {
+pub unsafe extern "C" fn trap_SnapVector(mut v: *mut f32) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_SNAPVECTOR as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_SNAPVECTOR as i32 as crate::stdlib::intptr_t,
         v,
     );
 }
@@ -1238,32 +1224,32 @@ pub unsafe extern "C" fn trap_SnapVector(mut v: *mut libc::c_float) {
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_CIN_PlayCinematic(
-    mut arg0: *const libc::c_char,
-    mut xpos: libc::c_int,
-    mut ypos: libc::c_int,
-    mut width: libc::c_int,
-    mut height: libc::c_int,
-    mut bits: libc::c_int,
-) -> libc::c_int {
+    mut arg0: *const i8,
+    mut xpos: i32,
+    mut ypos: i32,
+    mut width: i32,
+    mut height: i32,
+    mut bits: i32,
+) -> i32 {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CIN_PLAYCINEMATIC as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CIN_PLAYCINEMATIC as i32 as crate::stdlib::intptr_t,
         arg0,
         xpos,
         ypos,
         width,
         height,
         bits,
-    ) as libc::c_int;
+    ) as i32;
 }
 // stops playing the cinematic and ends it.  should always return FMV_EOF
 // cinematics must be stopped in reverse order of when they are started
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_CIN_StopCinematic(
-    mut handle: libc::c_int,
+    mut handle: i32,
 ) -> crate::src::qcommon::q_shared::e_status {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CIN_STOPCINEMATIC as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CIN_STOPCINEMATIC as i32 as crate::stdlib::intptr_t,
         handle,
     ) as crate::src::qcommon::q_shared::e_status;
 }
@@ -1271,19 +1257,19 @@ pub unsafe extern "C" fn trap_CIN_StopCinematic(
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_CIN_RunCinematic(
-    mut handle: libc::c_int,
+    mut handle: i32,
 ) -> crate::src::qcommon::q_shared::e_status {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CIN_RUNCINEMATIC as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CIN_RUNCINEMATIC as i32 as crate::stdlib::intptr_t,
         handle,
     ) as crate::src::qcommon::q_shared::e_status;
 }
 // draws the current frame
 #[no_mangle]
 
-pub unsafe extern "C" fn trap_CIN_DrawCinematic(mut handle: libc::c_int) {
+pub unsafe extern "C" fn trap_CIN_DrawCinematic(mut handle: i32) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CIN_DRAWCINEMATIC as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CIN_DRAWCINEMATIC as i32 as crate::stdlib::intptr_t,
         handle,
     );
 }
@@ -1291,14 +1277,14 @@ pub unsafe extern "C" fn trap_CIN_DrawCinematic(mut handle: libc::c_int) {
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_CIN_SetExtents(
-    mut handle: libc::c_int,
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut w: libc::c_int,
-    mut h: libc::c_int,
+    mut handle: i32,
+    mut x: i32,
+    mut y: i32,
+    mut w: i32,
+    mut h: i32,
 ) {
     syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_CIN_SETEXTENTS as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_CIN_SETEXTENTS as i32 as crate::stdlib::intptr_t,
         handle,
         x,
         y,
@@ -1342,11 +1328,11 @@ qboolean trap_getCameraInfo( int time, vec3_t *origin, vec3_t *angles) {
 #[no_mangle]
 
 pub unsafe extern "C" fn trap_GetEntityToken(
-    mut buffer: *mut libc::c_char,
-    mut bufferSize: libc::c_int,
+    mut buffer: *mut i8,
+    mut bufferSize: i32,
 ) -> crate::src::qcommon::q_shared::qboolean {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_GET_ENTITY_TOKEN as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_GET_ENTITY_TOKEN as i32 as crate::stdlib::intptr_t,
         buffer,
         bufferSize,
     ) as crate::src::qcommon::q_shared::qboolean;
@@ -1453,7 +1439,7 @@ pub unsafe extern "C" fn trap_R_inPVS(
     mut p2: *const crate::src::qcommon::q_shared::vec_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
     return syscall.expect("non-null function pointer")(
-        crate::cg_public_h::CG_R_INPVS as libc::c_int as crate::stdlib::intptr_t,
+        crate::cg_public_h::CG_R_INPVS as i32 as crate::stdlib::intptr_t,
         p1,
         p2,
     ) as crate::src::qcommon::q_shared::qboolean;
@@ -1462,7 +1448,7 @@ unsafe extern "C" fn run_static_initializers() {
     syscall = ::std::mem::transmute::<
         libc::intptr_t,
         Option<unsafe extern "C" fn(_: crate::stdlib::intptr_t, _: ...) -> crate::stdlib::intptr_t>,
-    >(-(1 as libc::c_int) as libc::intptr_t)
+    >(-1isize)
 }
 #[used]
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]

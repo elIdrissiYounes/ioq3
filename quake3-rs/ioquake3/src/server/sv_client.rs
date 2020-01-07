@@ -3,12 +3,8 @@ use ::libc;
 pub mod stdlib_h {
     #[inline]
 
-    pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
-            __nptr,
-            0 as *mut libc::c_void as *mut *mut libc::c_char,
-            10 as libc::c_int,
-        ) as libc::c_int;
+    pub unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
+        return crate::stdlib::strtol(__nptr, 0 as *mut *mut i8, 10) as i32;
     }
 }
 
@@ -239,7 +235,7 @@ pub use crate::vm_local_h::vm_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct ucmd_t {
-    pub name: *mut libc::c_char,
+    pub name: *mut i8,
     pub func: Option<unsafe extern "C" fn(_: *mut crate::server_h::client_t) -> ()>,
 }
 /*
@@ -270,38 +266,31 @@ v4-only auth server for these new types of connections.
 #[no_mangle]
 
 pub unsafe extern "C" fn SV_GetChallenge(mut from: crate::qcommon_h::netadr_t) {
-    let mut i: libc::c_int = 0;
-    let mut oldest: libc::c_int = 0;
-    let mut oldestTime: libc::c_int = 0;
-    let mut oldestClientTime: libc::c_int = 0;
-    let mut clientChallenge: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut oldest: i32 = 0;
+    let mut oldestTime: i32 = 0;
+    let mut oldestClientTime: i32 = 0;
+    let mut clientChallenge: i32 = 0;
     let mut challenge: *mut crate::server_h::challenge_t = 0 as *mut crate::server_h::challenge_t;
     let mut wasfound: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
-    let mut gameName: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut gameName: *mut i8 = 0 as *mut i8;
     let mut gameMismatch: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     // ignore if we are in single player
-    if crate::src::qcommon::cvar::Cvar_VariableValue(
-        b"g_gametype\x00" as *const u8 as *const libc::c_char,
-    ) == crate::bg_public_h::GT_SINGLE_PLAYER as libc::c_int as libc::c_float
+    if crate::src::qcommon::cvar::Cvar_VariableValue(b"g_gametype\x00" as *const u8 as *const i8)
+        == crate::bg_public_h::GT_SINGLE_PLAYER as i32 as f32
         || crate::src::qcommon::cvar::Cvar_VariableValue(
-            b"ui_singlePlayerActive\x00" as *const u8 as *const libc::c_char,
+            b"ui_singlePlayerActive\x00" as *const u8 as *const i8,
         ) != 0.
     {
         return;
     }
     // Prevent using getchallenge as an amplifier
-    if crate::src::server::sv_main::SVC_RateLimitAddress(
-        from,
-        10 as libc::c_int,
-        1000 as libc::c_int,
-    ) as u64
-        != 0
-    {
+    if crate::src::server::sv_main::SVC_RateLimitAddress(from, 10, 1000) as u64 != 0 {
         crate::src::qcommon::common::Com_DPrintf(
             b"SV_GetChallenge: rate limit from %s exceeded, dropping request\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             crate::src::qcommon::net_ip::NET_AdrToString(from),
         );
         return;
@@ -310,18 +299,18 @@ pub unsafe extern "C" fn SV_GetChallenge(mut from: crate::qcommon_h::netadr_t) {
     // excess outbound bandwidth usage when being flooded inbound
     if crate::src::server::sv_main::SVC_RateLimit(
         &mut crate::src::server::sv_main::outboundLeakyBucket,
-        10 as libc::c_int,
-        100 as libc::c_int,
+        10,
+        100,
     ) as u64
         != 0
     {
         crate::src::qcommon::common::Com_DPrintf(
             b"SV_GetChallenge: rate limit exceeded, dropping request\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
         );
         return;
     }
-    gameName = crate::src::qcommon::cmd::Cmd_Argv(2 as libc::c_int);
+    gameName = crate::src::qcommon::cmd::Cmd_Argv(2);
     // gamename is optional for legacy protocol
     if (*crate::src::qcommon::common::com_legacyprotocol).integer != 0 && *gameName == 0 {
         gameMismatch = crate::src::qcommon::q_shared::qfalse
@@ -330,41 +319,39 @@ pub unsafe extern "C" fn SV_GetChallenge(mut from: crate::qcommon_h::netadr_t) {
             || crate::stdlib::strcmp(
                 gameName,
                 (*crate::src::qcommon::common::com_gamename).string,
-            ) != 0 as libc::c_int) as libc::c_int
-            as crate::src::qcommon::q_shared::qboolean
+            ) != 0) as crate::src::qcommon::q_shared::qboolean
     }
     // reject client if the gamename string sent by the client doesn't match ours
     if gameMismatch as u64 != 0 {
         crate::src::qcommon::net_chan::NET_OutOfBandPrint(
             crate::qcommon_h::NS_SERVER,
             from,
-            b"print\nGame mismatch: This is a %s server\n\x00" as *const u8 as *const libc::c_char,
+            b"print\nGame mismatch: This is a %s server\n\x00" as *const u8 as *const i8,
             (*crate::src::qcommon::common::com_gamename).string,
         );
         return;
     }
-    oldest = 0 as libc::c_int;
-    oldestTime = 0x7fffffff as libc::c_int;
+    oldest = 0;
+    oldestTime = 0x7fffffff;
     oldestClientTime = oldestTime;
     // see if we already have a challenge for this ip
     challenge = &mut *crate::src::server::sv_main::svs
         .challenges
         .as_mut_ptr()
-        .offset(0 as libc::c_int as isize) as *mut crate::server_h::challenge_t;
-    clientChallenge = atoi(crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int));
-    i = 0 as libc::c_int;
-    while i < 2048 as libc::c_int {
+        .offset(0) as *mut crate::server_h::challenge_t;
+    clientChallenge = atoi(crate::src::qcommon::cmd::Cmd_Argv(1));
+    i = 0;
+    while i < 2048 {
         if (*challenge).connected as u64 == 0
-            && crate::src::qcommon::net_ip::NET_CompareAdr(from, (*challenge).adr) as libc::c_uint
-                != 0
+            && crate::src::qcommon::net_ip::NET_CompareAdr(from, (*challenge).adr) != 0
         {
             wasfound = crate::src::qcommon::q_shared::qtrue;
             if (*challenge).time < oldestClientTime {
                 oldestClientTime = (*challenge).time
             }
         }
-        if wasfound as libc::c_uint != 0 && i >= 2048 as libc::c_int / 2 as libc::c_int {
-            i = 2048 as libc::c_int;
+        if wasfound != 0 && i >= 2048 / 2 {
+            i = 2048;
             break;
         } else {
             if (*challenge).time < oldestTime {
@@ -375,7 +362,7 @@ pub unsafe extern "C" fn SV_GetChallenge(mut from: crate::qcommon_h::netadr_t) {
             challenge = challenge.offset(1)
         }
     }
-    if i == 2048 as libc::c_int {
+    if i == 2048 {
         // this is the first time this client has asked for a challenge
         challenge = &mut *crate::src::server::sv_main::svs
             .challenges
@@ -387,91 +374,80 @@ pub unsafe extern "C" fn SV_GetChallenge(mut from: crate::qcommon_h::netadr_t) {
         (*challenge).connected = crate::src::qcommon::q_shared::qfalse
     }
     // always generate a new challenge number, so the client cannot circumvent sv_maxping
-    (*challenge).challenge = ((crate::stdlib::rand() as libc::c_uint) << 16 as libc::c_int
-        ^ crate::stdlib::rand() as libc::c_uint
-        ^ crate::src::server::sv_main::svs.time as libc::c_uint)
-        as libc::c_int;
+    (*challenge).challenge = ((crate::stdlib::rand() as u32) << 16
+        ^ crate::stdlib::rand() as u32
+        ^ crate::src::server::sv_main::svs.time as u32) as i32;
     (*challenge).wasrefused = crate::src::qcommon::q_shared::qfalse;
     (*challenge).time = crate::src::server::sv_main::svs.time;
     // Drop the authorize stuff if this client is coming in via v6 as the auth server does not support ipv6.
     // Drop also for addresses coming in on local LAN and for stand-alone games independent from id's assets.
-    if (*challenge).adr.type_0 as libc::c_uint
-        == crate::qcommon_h::NA_IP as libc::c_int as libc::c_uint
+    if (*challenge).adr.type_0 == crate::qcommon_h::NA_IP
         && (*crate::src::qcommon::common::com_standalone).integer == 0
         && crate::src::qcommon::net_ip::Sys_IsLANAddress(from) as u64 == 0
     {
         // look up the authorize server's IP
-        if crate::src::server::sv_main::svs.authorizeAddress.type_0 as libc::c_uint
-            == crate::qcommon_h::NA_BAD as libc::c_int as libc::c_uint
-        {
+        if crate::src::server::sv_main::svs.authorizeAddress.type_0 == crate::qcommon_h::NA_BAD {
             crate::src::qcommon::common::Com_Printf(
-                b"Resolving %s\n\x00" as *const u8 as *const libc::c_char,
-                b"authorize.quake3arena.com\x00" as *const u8 as *const libc::c_char,
+                b"Resolving %s\n\x00" as *const u8 as *const i8,
+                b"authorize.quake3arena.com\x00" as *const u8 as *const i8,
             );
             if crate::src::qcommon::net_chan::NET_StringToAdr(
-                b"authorize.quake3arena.com\x00" as *const u8 as *const libc::c_char,
+                b"authorize.quake3arena.com\x00" as *const u8 as *const i8,
                 &mut crate::src::server::sv_main::svs.authorizeAddress,
                 crate::qcommon_h::NA_IP,
             ) != 0
             {
                 crate::src::server::sv_main::svs.authorizeAddress.port =
-                    crate::src::qcommon::q_shared::ShortSwap(27952 as libc::c_int as libc::c_short)
-                        as libc::c_ushort;
+                    crate::src::qcommon::q_shared::ShortSwap(27952) as u16;
                 crate::src::qcommon::common::Com_Printf(
-                    b"%s resolved to %i.%i.%i.%i:%i\n\x00" as *const u8 as *const libc::c_char,
-                    b"authorize.quake3arena.com\x00" as *const u8 as *const libc::c_char,
-                    crate::src::server::sv_main::svs.authorizeAddress.ip[0 as libc::c_int as usize]
-                        as libc::c_int,
-                    crate::src::server::sv_main::svs.authorizeAddress.ip[1 as libc::c_int as usize]
-                        as libc::c_int,
-                    crate::src::server::sv_main::svs.authorizeAddress.ip[2 as libc::c_int as usize]
-                        as libc::c_int,
-                    crate::src::server::sv_main::svs.authorizeAddress.ip[3 as libc::c_int as usize]
-                        as libc::c_int,
+                    b"%s resolved to %i.%i.%i.%i:%i\n\x00" as *const u8 as *const i8,
+                    b"authorize.quake3arena.com\x00" as *const u8 as *const i8,
+                    crate::src::server::sv_main::svs.authorizeAddress.ip[0usize] as i32,
+                    crate::src::server::sv_main::svs.authorizeAddress.ip[1usize] as i32,
+                    crate::src::server::sv_main::svs.authorizeAddress.ip[2usize] as i32,
+                    crate::src::server::sv_main::svs.authorizeAddress.ip[3usize] as i32,
                     crate::src::qcommon::q_shared::ShortSwap(
-                        crate::src::server::sv_main::svs.authorizeAddress.port as libc::c_short,
-                    ) as libc::c_int,
+                        crate::src::server::sv_main::svs.authorizeAddress.port as i16,
+                    ) as i32,
                 );
             }
         }
         // we couldn't contact the auth server, let them in.
-        if crate::src::server::sv_main::svs.authorizeAddress.type_0 as libc::c_uint
-            == crate::qcommon_h::NA_BAD as libc::c_int as libc::c_uint
-        {
+        if crate::src::server::sv_main::svs.authorizeAddress.type_0 == crate::qcommon_h::NA_BAD {
             crate::src::qcommon::common::Com_Printf(
-                b"Couldn\'t resolve auth server address\n\x00" as *const u8 as *const libc::c_char,
+                b"Couldn\'t resolve auth server address\n\x00" as *const u8 as *const i8,
             );
-        } else if crate::src::server::sv_main::svs.time - oldestClientTime > 5000 as libc::c_int {
+        } else if crate::src::server::sv_main::svs.time - oldestClientTime > 5000 {
             crate::src::qcommon::common::Com_DPrintf(
-                b"authorize server timed out\n\x00" as *const u8 as *const libc::c_char,
+                b"authorize server timed out\n\x00" as *const u8 as *const i8,
             );
         } else {
             // if they have been challenging for a long time and we
             // haven't heard anything from the authorize server, go ahead and
             // let them in, assuming the id server is down
             // otherwise send their ip to the authorize server
-            let mut game: *const libc::c_char = 0 as *const libc::c_char;
+            let mut game: *const i8 = 0 as *const i8;
             crate::src::qcommon::common::Com_DPrintf(
-                b"sending getIpAuthorize for %s\n\x00" as *const u8 as *const libc::c_char,
+                b"sending getIpAuthorize for %s\n\x00" as *const u8 as *const i8,
                 crate::src::qcommon::net_ip::NET_AdrToString(from),
             );
             game = crate::src::qcommon::cvar::Cvar_VariableString(
-                b"fs_game\x00" as *const u8 as *const libc::c_char,
+                b"fs_game\x00" as *const u8 as *const i8,
             );
-            if *game.offset(0 as libc::c_int as isize) as libc::c_int == 0 as libc::c_int {
-                game = b"baseq3\x00" as *const u8 as *const libc::c_char
+            if *game.offset(0) as i32 == 0 {
+                game = b"baseq3\x00" as *const u8 as *const i8
             }
             // the 0 is for backwards compatibility with obsolete sv_allowanonymous flags
             // getIpAuthorize <challenge> <IP> <game> 0 <auth-flag>
             crate::src::qcommon::net_chan::NET_OutOfBandPrint(
                 crate::qcommon_h::NS_SERVER,
                 crate::src::server::sv_main::svs.authorizeAddress,
-                b"getIpAuthorize %i %i.%i.%i.%i %s 0 %s\x00" as *const u8 as *const libc::c_char,
+                b"getIpAuthorize %i %i.%i.%i.%i %s 0 %s\x00" as *const u8 as *const i8,
                 (*challenge).challenge,
-                from.ip[0 as libc::c_int as usize] as libc::c_int,
-                from.ip[1 as libc::c_int as usize] as libc::c_int,
-                from.ip[2 as libc::c_int as usize] as libc::c_int,
-                from.ip[3 as libc::c_int as usize] as libc::c_int,
+                from.ip[0usize] as i32,
+                from.ip[1usize] as i32,
+                from.ip[2usize] as i32,
+                from.ip[3usize] as i32,
                 game,
                 (*crate::src::server::sv_main::sv_strictAuth).string,
             );
@@ -482,7 +458,7 @@ pub unsafe extern "C" fn SV_GetChallenge(mut from: crate::qcommon_h::netadr_t) {
     crate::src::qcommon::net_chan::NET_OutOfBandPrint(
         crate::qcommon_h::NS_SERVER,
         (*challenge).adr,
-        b"challengeResponse %d %d %d\x00" as *const u8 as *const libc::c_char,
+        b"challengeResponse %d %d %d\x00" as *const u8 as *const i8,
         (*challenge).challenge,
         clientChallenge,
         (*crate::src::qcommon::common::com_protocol).integer,
@@ -500,10 +476,10 @@ challengeResponse to it
 #[no_mangle]
 
 pub unsafe extern "C" fn SV_AuthorizeIpPacket(mut from: crate::qcommon_h::netadr_t) {
-    let mut challenge: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
-    let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut r: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut challenge: i32 = 0;
+    let mut i: i32 = 0;
+    let mut s: *mut i8 = 0 as *mut i8;
+    let mut r: *mut i8 = 0 as *mut i8;
     let mut challengeptr: *mut crate::server_h::challenge_t =
         0 as *mut crate::server_h::challenge_t;
     if crate::src::qcommon::net_ip::NET_CompareBaseAdr(
@@ -513,22 +489,21 @@ pub unsafe extern "C" fn SV_AuthorizeIpPacket(mut from: crate::qcommon_h::netadr
         == 0
     {
         crate::src::qcommon::common::Com_Printf(
-            b"SV_AuthorizeIpPacket: not from authorize server\n\x00" as *const u8
-                as *const libc::c_char,
+            b"SV_AuthorizeIpPacket: not from authorize server\n\x00" as *const u8 as *const i8,
         );
         return;
     }
-    challenge = atoi(crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int));
-    i = 0 as libc::c_int;
-    while i < 2048 as libc::c_int {
+    challenge = atoi(crate::src::qcommon::cmd::Cmd_Argv(1));
+    i = 0;
+    while i < 2048 {
         if crate::src::server::sv_main::svs.challenges[i as usize].challenge == challenge {
             break;
         }
         i += 1
     }
-    if i == 2048 as libc::c_int {
+    if i == 2048 {
         crate::src::qcommon::common::Com_Printf(
-            b"SV_AuthorizeIpPacket: challenge not found\n\x00" as *const u8 as *const libc::c_char,
+            b"SV_AuthorizeIpPacket: challenge not found\n\x00" as *const u8 as *const i8,
         );
         return;
     }
@@ -538,64 +513,54 @@ pub unsafe extern "C" fn SV_AuthorizeIpPacket(mut from: crate::qcommon_h::netadr
         .offset(i as isize) as *mut crate::server_h::challenge_t;
     // send a packet back to the original client
     (*challengeptr).pingTime = crate::src::server::sv_main::svs.time; // reason
-    s = crate::src::qcommon::cmd::Cmd_Argv(2 as libc::c_int);
-    r = crate::src::qcommon::cmd::Cmd_Argv(3 as libc::c_int);
-    if crate::src::qcommon::q_shared::Q_stricmp(s, b"demo\x00" as *const u8 as *const libc::c_char)
-        == 0
-    {
+    s = crate::src::qcommon::cmd::Cmd_Argv(2);
+    r = crate::src::qcommon::cmd::Cmd_Argv(3);
+    if crate::src::qcommon::q_shared::Q_stricmp(s, b"demo\x00" as *const u8 as *const i8) == 0 {
         // they are a demo client trying to connect to a real server
         crate::src::qcommon::net_chan::NET_OutOfBandPrint(
             crate::qcommon_h::NS_SERVER,
             (*challengeptr).adr,
-            b"print\nServer is not a demo server\n\x00" as *const u8 as *const libc::c_char,
+            b"print\nServer is not a demo server\n\x00" as *const u8 as *const i8,
         );
         // clear the challenge record so it won't timeout and let them through
         crate::stdlib::memset(
             challengeptr as *mut libc::c_void,
-            0 as libc::c_int,
-            ::std::mem::size_of::<crate::server_h::challenge_t>() as libc::c_ulong,
+            0,
+            ::std::mem::size_of::<crate::server_h::challenge_t>(),
         );
         return;
     }
-    if crate::src::qcommon::q_shared::Q_stricmp(
-        s,
-        b"accept\x00" as *const u8 as *const libc::c_char,
-    ) == 0
-    {
+    if crate::src::qcommon::q_shared::Q_stricmp(s, b"accept\x00" as *const u8 as *const i8) == 0 {
         crate::src::qcommon::net_chan::NET_OutOfBandPrint(
             crate::qcommon_h::NS_SERVER,
             (*challengeptr).adr,
-            b"challengeResponse %d %d %d\x00" as *const u8 as *const libc::c_char,
+            b"challengeResponse %d %d %d\x00" as *const u8 as *const i8,
             (*challengeptr).challenge,
             (*challengeptr).clientChallenge,
             (*crate::src::qcommon::common::com_protocol).integer,
         );
         return;
     }
-    if crate::src::qcommon::q_shared::Q_stricmp(
-        s,
-        b"unknown\x00" as *const u8 as *const libc::c_char,
-    ) == 0
-    {
+    if crate::src::qcommon::q_shared::Q_stricmp(s, b"unknown\x00" as *const u8 as *const i8) == 0 {
         if r.is_null() {
             crate::src::qcommon::net_chan::NET_OutOfBandPrint(
                 crate::qcommon_h::NS_SERVER,
                 (*challengeptr).adr,
-                b"print\nAwaiting CD key authorization\n\x00" as *const u8 as *const libc::c_char,
+                b"print\nAwaiting CD key authorization\n\x00" as *const u8 as *const i8,
             );
         } else {
             crate::src::qcommon::net_chan::NET_OutOfBandPrint(
                 crate::qcommon_h::NS_SERVER,
                 (*challengeptr).adr,
-                b"print\n%s\n\x00" as *const u8 as *const libc::c_char,
+                b"print\n%s\n\x00" as *const u8 as *const i8,
                 r,
             );
         }
         // clear the challenge record so it won't timeout and let them through
         crate::stdlib::memset(
             challengeptr as *mut libc::c_void,
-            0 as libc::c_int,
-            ::std::mem::size_of::<crate::server_h::challenge_t>() as libc::c_ulong,
+            0,
+            ::std::mem::size_of::<crate::server_h::challenge_t>(),
         );
         return;
     }
@@ -604,21 +569,21 @@ pub unsafe extern "C" fn SV_AuthorizeIpPacket(mut from: crate::qcommon_h::netadr
         crate::src::qcommon::net_chan::NET_OutOfBandPrint(
             crate::qcommon_h::NS_SERVER,
             (*challengeptr).adr,
-            b"print\nSomeone is using this CD Key\n\x00" as *const u8 as *const libc::c_char,
+            b"print\nSomeone is using this CD Key\n\x00" as *const u8 as *const i8,
         );
     } else {
         crate::src::qcommon::net_chan::NET_OutOfBandPrint(
             crate::qcommon_h::NS_SERVER,
             (*challengeptr).adr,
-            b"print\n%s\n\x00" as *const u8 as *const libc::c_char,
+            b"print\n%s\n\x00" as *const u8 as *const i8,
             r,
         );
     }
     // clear the challenge record so it won't timeout and let them through
     crate::stdlib::memset(
         challengeptr as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::server_h::challenge_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::server_h::challenge_t>(),
     );
 }
 /*
@@ -633,7 +598,7 @@ unsafe extern "C" fn SV_IsBanned(
     mut from: *mut crate::qcommon_h::netadr_t,
     mut isexception: crate::src::qcommon::q_shared::qboolean,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut index: libc::c_int = 0;
+    let mut index: i32 = 0;
     let mut curban: *mut crate::server_h::serverBan_t = 0 as *mut crate::server_h::serverBan_t;
     if isexception as u64 == 0 {
         // If this is a query for a ban, first check whether the client is excepted
@@ -641,12 +606,12 @@ unsafe extern "C" fn SV_IsBanned(
             return crate::src::qcommon::q_shared::qfalse;
         }
     }
-    index = 0 as libc::c_int;
+    index = 0;
     while index < crate::src::server::sv_main::serverBansCount {
         curban = &mut *crate::src::server::sv_main::serverBans
             .as_mut_ptr()
             .offset(index as isize) as *mut crate::server_h::serverBan_t;
-        if (*curban).isexception as libc::c_uint == isexception as libc::c_uint {
+        if (*curban).isexception == isexception {
             if crate::src::qcommon::net_ip::NET_CompareBaseAdrMask(
                 (*curban).ip,
                 *from,
@@ -672,8 +637,8 @@ A "connect" OOB command has been received
 
 pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) {
     let mut current_block: u64;
-    let mut userinfo: [libc::c_char; 1024] = [0; 1024];
-    let mut i: libc::c_int = 0;
+    let mut userinfo: [i8; 1024] = [0; 1024];
+    let mut i: i32 = 0;
     let mut cl: *mut crate::server_h::client_t = 0 as *mut crate::server_h::client_t;
     let mut newcl: *mut crate::server_h::client_t = 0 as *mut crate::server_h::client_t;
     let mut temp: crate::server_h::client_t = crate::server_h::client_t {
@@ -707,7 +672,7 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
         downloadClientBlock: 0,
         downloadCurrentBlock: 0,
         downloadXmitBlock: 0,
-        downloadBlocks: [0 as *mut libc::c_uchar; 48],
+        downloadBlocks: [0 as *mut u8; 48],
         downloadBlockSize: [0; 48],
         downloadEOF: crate::src::qcommon::q_shared::qfalse,
         downloadSendTime: 0,
@@ -818,83 +783,77 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
     };
     let mut ent: *mut crate::g_public_h::sharedEntity_t =
         0 as *mut crate::g_public_h::sharedEntity_t;
-    let mut clientNum: libc::c_int = 0;
-    let mut version: libc::c_int = 0;
-    let mut qport: libc::c_int = 0;
-    let mut challenge: libc::c_int = 0;
-    let mut password: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut startIndex: libc::c_int = 0;
+    let mut clientNum: i32 = 0;
+    let mut version: i32 = 0;
+    let mut qport: i32 = 0;
+    let mut challenge: i32 = 0;
+    let mut password: *mut i8 = 0 as *mut i8;
+    let mut startIndex: i32 = 0;
     let mut denied: crate::stdlib::intptr_t = 0;
-    let mut count: libc::c_int = 0;
-    let mut ip: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut count: i32 = 0;
+    let mut ip: *mut i8 = 0 as *mut i8;
     let mut compat: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
     crate::src::qcommon::common::Com_DPrintf(
-        b"SVC_DirectConnect ()\n\x00" as *const u8 as *const libc::c_char,
+        b"SVC_DirectConnect ()\n\x00" as *const u8 as *const i8,
     );
     // Check whether this client is banned.
     if SV_IsBanned(&mut from, crate::src::qcommon::q_shared::qfalse) as u64 != 0 {
         crate::src::qcommon::net_chan::NET_OutOfBandPrint(
             crate::qcommon_h::NS_SERVER,
             from,
-            b"print\nYou are banned from this server.\n\x00" as *const u8 as *const libc::c_char,
+            b"print\nYou are banned from this server.\n\x00" as *const u8 as *const i8,
         );
         return;
     }
     crate::src::qcommon::q_shared::Q_strncpyz(
         userinfo.as_mut_ptr(),
-        crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int),
-        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+        crate::src::qcommon::cmd::Cmd_Argv(1),
+        ::std::mem::size_of::<[i8; 1024]>() as i32,
     );
     version = atoi(crate::src::qcommon::q_shared::Info_ValueForKey(
         userinfo.as_mut_ptr(),
-        b"protocol\x00" as *const u8 as *const libc::c_char,
+        b"protocol\x00" as *const u8 as *const i8,
     ));
-    if version > 0 as libc::c_int
-        && (*crate::src::qcommon::common::com_legacyprotocol).integer == version
-    {
+    if version > 0 && (*crate::src::qcommon::common::com_legacyprotocol).integer == version {
         compat = crate::src::qcommon::q_shared::qtrue
     } else if version != (*crate::src::qcommon::common::com_protocol).integer {
         crate::src::qcommon::net_chan::NET_OutOfBandPrint(
             crate::qcommon_h::NS_SERVER,
             from,
             b"print\nServer uses protocol version %i (yours is %i).\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             (*crate::src::qcommon::common::com_protocol).integer,
             version,
         );
         crate::src::qcommon::common::Com_DPrintf(
-            b"    rejected connect from version %i\n\x00" as *const u8 as *const libc::c_char,
+            b"    rejected connect from version %i\n\x00" as *const u8 as *const i8,
             version,
         );
         return;
     }
     challenge = atoi(crate::src::qcommon::q_shared::Info_ValueForKey(
         userinfo.as_mut_ptr(),
-        b"challenge\x00" as *const u8 as *const libc::c_char,
+        b"challenge\x00" as *const u8 as *const i8,
     ));
     qport = atoi(crate::src::qcommon::q_shared::Info_ValueForKey(
         userinfo.as_mut_ptr(),
-        b"qport\x00" as *const u8 as *const libc::c_char,
+        b"qport\x00" as *const u8 as *const i8,
     ));
     // quick reject
-    i = 0 as libc::c_int;
+    i = 0;
     cl = crate::src::server::sv_main::svs.clients;
     while i < (*crate::src::server::sv_main::sv_maxclients).integer {
-        if !((*cl).state as libc::c_uint == crate::server_h::CS_FREE as libc::c_int as libc::c_uint)
-        {
+        if !((*cl).state == crate::server_h::CS_FREE) {
             if crate::src::qcommon::net_ip::NET_CompareBaseAdr(from, (*cl).netchan.remoteAddress)
-                as libc::c_uint
                 != 0
                 && ((*cl).netchan.qport == qport
-                    || from.port as libc::c_int == (*cl).netchan.remoteAddress.port as libc::c_int)
+                    || from.port as i32 == (*cl).netchan.remoteAddress.port as i32)
             {
                 if crate::src::server::sv_main::svs.time - (*cl).lastConnectTime
-                    < (*crate::src::server::sv_main::sv_reconnectlimit).integer
-                        * 1000 as libc::c_int
+                    < (*crate::src::server::sv_main::sv_reconnectlimit).integer * 1000
                 {
                     crate::src::qcommon::common::Com_DPrintf(
-                        b"%s:reconnect rejected : too soon\n\x00" as *const u8
-                            as *const libc::c_char,
+                        b"%s:reconnect rejected : too soon\n\x00" as *const u8 as *const i8,
                         crate::src::qcommon::net_ip::NET_AdrToString(from),
                     );
                     return;
@@ -907,32 +866,32 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
     }
     // don't let "ip" overflow userinfo string
     if crate::src::qcommon::net_ip::NET_IsLocalAddress(from) as u64 != 0 {
-        ip = b"localhost\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+        ip = b"localhost\x00" as *const u8 as *mut i8
     } else {
-        ip = crate::src::qcommon::net_ip::NET_AdrToString(from) as *mut libc::c_char
+        ip = crate::src::qcommon::net_ip::NET_AdrToString(from) as *mut i8
     }
     if crate::stdlib::strlen(ip)
         .wrapping_add(crate::stdlib::strlen(userinfo.as_mut_ptr()))
-        .wrapping_add(4 as libc::c_int as libc::c_ulong)
-        >= 1024 as libc::c_int as libc::c_ulong
+        .wrapping_add(4usize)
+        >= 1024usize
     {
         crate::src::qcommon::net_chan::NET_OutOfBandPrint(crate::qcommon_h::NS_SERVER, from,
                            b"print\nUserinfo string length exceeded.  Try removing setu cvars from your config.\n\x00"
-                               as *const u8 as *const libc::c_char);
+                               as *const u8 as *const i8);
         return;
     }
     crate::src::qcommon::q_shared::Info_SetValueForKey(
         userinfo.as_mut_ptr(),
-        b"ip\x00" as *const u8 as *const libc::c_char,
+        b"ip\x00" as *const u8 as *const i8,
         ip,
     );
     // see if the challenge is valid (LAN clients don't need to challenge)
     if crate::src::qcommon::net_ip::NET_IsLocalAddress(from) as u64 == 0 {
-        let mut ping: libc::c_int = 0;
+        let mut ping: i32 = 0;
         let mut challengeptr: *mut crate::server_h::challenge_t =
             0 as *mut crate::server_h::challenge_t;
-        i = 0 as libc::c_int;
-        while i < 2048 as libc::c_int {
+        i = 0;
+        while i < 2048 {
             if crate::src::qcommon::net_ip::NET_CompareAdr(
                 from,
                 crate::src::server::sv_main::svs.challenges[i as usize].adr,
@@ -945,12 +904,11 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
             }
             i += 1
         }
-        if i == 2048 as libc::c_int {
+        if i == 2048 {
             crate::src::qcommon::net_chan::NET_OutOfBandPrint(
                 crate::qcommon_h::NS_SERVER,
                 from,
-                b"print\nNo or bad challenge for your address.\n\x00" as *const u8
-                    as *const libc::c_char,
+                b"print\nNo or bad challenge for your address.\n\x00" as *const u8 as *const i8,
             );
             return;
         }
@@ -966,34 +924,30 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
         // never reject a LAN client based on ping
         if crate::src::qcommon::net_ip::Sys_IsLANAddress(from) as u64 == 0 {
             if (*crate::src::server::sv_main::sv_minPing).value != 0.
-                && (ping as libc::c_float) < (*crate::src::server::sv_main::sv_minPing).value
+                && (ping as f32) < (*crate::src::server::sv_main::sv_minPing).value
             {
                 crate::src::qcommon::net_chan::NET_OutOfBandPrint(
                     crate::qcommon_h::NS_SERVER,
                     from,
-                    b"print\nServer is for high pings only\n\x00" as *const u8
-                        as *const libc::c_char,
+                    b"print\nServer is for high pings only\n\x00" as *const u8 as *const i8,
                 );
                 crate::src::qcommon::common::Com_DPrintf(
-                    b"Client %i rejected on a too low ping\n\x00" as *const u8
-                        as *const libc::c_char,
+                    b"Client %i rejected on a too low ping\n\x00" as *const u8 as *const i8,
                     i,
                 );
                 (*challengeptr).wasrefused = crate::src::qcommon::q_shared::qtrue;
                 return;
             }
             if (*crate::src::server::sv_main::sv_maxPing).value != 0.
-                && ping as libc::c_float > (*crate::src::server::sv_main::sv_maxPing).value
+                && ping as f32 > (*crate::src::server::sv_main::sv_maxPing).value
             {
                 crate::src::qcommon::net_chan::NET_OutOfBandPrint(
                     crate::qcommon_h::NS_SERVER,
                     from,
-                    b"print\nServer is for low pings only\n\x00" as *const u8
-                        as *const libc::c_char,
+                    b"print\nServer is for low pings only\n\x00" as *const u8 as *const i8,
                 );
                 crate::src::qcommon::common::Com_DPrintf(
-                    b"Client %i rejected on a too high ping\n\x00" as *const u8
-                        as *const libc::c_char,
+                    b"Client %i rejected on a too high ping\n\x00" as *const u8 as *const i8,
                     i,
                 );
                 (*challengeptr).wasrefused = crate::src::qcommon::q_shared::qtrue;
@@ -1001,8 +955,7 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
             }
         }
         crate::src::qcommon::common::Com_Printf(
-            b"Client %i connecting with %i challenge ping\n\x00" as *const u8
-                as *const libc::c_char,
+            b"Client %i connecting with %i challenge ping\n\x00" as *const u8 as *const i8,
             i,
             ping,
         );
@@ -1011,27 +964,25 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
     newcl = &mut temp;
     crate::stdlib::memset(
         newcl as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::server_h::client_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::server_h::client_t>(),
     );
     // if there is already a slot for this ip, reuse it
-    i = 0 as libc::c_int;
+    i = 0;
     cl = crate::src::server::sv_main::svs.clients;
     loop {
         if !(i < (*crate::src::server::sv_main::sv_maxclients).integer) {
             current_block = 479107131381816815;
             break;
         }
-        if !((*cl).state as libc::c_uint == crate::server_h::CS_FREE as libc::c_int as libc::c_uint)
-        {
+        if !((*cl).state == crate::server_h::CS_FREE) {
             if crate::src::qcommon::net_ip::NET_CompareBaseAdr(from, (*cl).netchan.remoteAddress)
-                as libc::c_uint
                 != 0
                 && ((*cl).netchan.qport == qport
-                    || from.port as libc::c_int == (*cl).netchan.remoteAddress.port as libc::c_int)
+                    || from.port as i32 == (*cl).netchan.remoteAddress.port as i32)
             {
                 crate::src::qcommon::common::Com_Printf(
-                    b"%s:reconnect\n\x00" as *const u8 as *const libc::c_char,
+                    b"%s:reconnect\n\x00" as *const u8 as *const i8,
                     crate::src::qcommon::net_ip::NET_AdrToString(from),
                 );
                 newcl = cl;
@@ -1056,15 +1007,15 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
             // check for privateClient password
             password = crate::src::qcommon::q_shared::Info_ValueForKey(
                 userinfo.as_mut_ptr(),
-                b"password\x00" as *const u8 as *const libc::c_char,
+                b"password\x00" as *const u8 as *const i8,
             );
-            if *password as libc::c_int != 0
+            if *password as i32 != 0
                 && crate::stdlib::strcmp(
                     password,
                     (*crate::src::server::sv_main::sv_privatePassword).string,
                 ) == 0
             {
-                startIndex = 0 as libc::c_int
+                startIndex = 0
             } else {
                 // skip past the reserved slots
                 startIndex = (*crate::src::server::sv_main::sv_privateClients).integer
@@ -1074,9 +1025,7 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
             while i < (*crate::src::server::sv_main::sv_maxclients).integer {
                 cl = &mut *crate::src::server::sv_main::svs.clients.offset(i as isize)
                     as *mut crate::server_h::client_t;
-                if (*cl).state as libc::c_uint
-                    == crate::server_h::CS_FREE as libc::c_int as libc::c_uint
-                {
+                if (*cl).state == crate::server_h::CS_FREE {
                     newcl = cl;
                     break;
                 } else {
@@ -1085,14 +1034,12 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
             }
             if newcl.is_null() {
                 if crate::src::qcommon::net_ip::NET_IsLocalAddress(from) as u64 != 0 {
-                    count = 0 as libc::c_int;
+                    count = 0;
                     i = startIndex;
                     while i < (*crate::src::server::sv_main::sv_maxclients).integer {
                         cl = &mut *crate::src::server::sv_main::svs.clients.offset(i as isize)
                             as *mut crate::server_h::client_t;
-                        if (*cl).netchan.remoteAddress.type_0 as libc::c_uint
-                            == crate::qcommon_h::NA_BOT as libc::c_int as libc::c_uint
-                        {
+                        if (*cl).netchan.remoteAddress.type_0 == crate::qcommon_h::NA_BOT {
                             count += 1
                         }
                         i += 1
@@ -1101,37 +1048,35 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
                     if count >= (*crate::src::server::sv_main::sv_maxclients).integer - startIndex {
                         SV_DropClient(
                             &mut *crate::src::server::sv_main::svs.clients.offset(
-                                ((*crate::src::server::sv_main::sv_maxclients).integer
-                                    - 1 as libc::c_int) as isize,
+                                ((*crate::src::server::sv_main::sv_maxclients).integer - 1)
+                                    as isize,
                             ),
-                            b"only bots on server\x00" as *const u8 as *const libc::c_char,
+                            b"only bots on server\x00" as *const u8 as *const i8,
                         );
                         newcl = &mut *crate::src::server::sv_main::svs.clients.offset(
-                            ((*crate::src::server::sv_main::sv_maxclients).integer
-                                - 1 as libc::c_int) as isize,
+                            ((*crate::src::server::sv_main::sv_maxclients).integer - 1) as isize,
                         ) as *mut crate::server_h::client_t
                     } else {
                         crate::src::qcommon::common::Com_Error(
-                            crate::src::qcommon::q_shared::ERR_FATAL as libc::c_int,
-                            b"server is full on local connect\x00" as *const u8
-                                as *const libc::c_char,
+                            crate::src::qcommon::q_shared::ERR_FATAL as i32,
+                            b"server is full on local connect\x00" as *const u8 as *const i8,
                         );
                     }
                 } else {
                     crate::src::qcommon::net_chan::NET_OutOfBandPrint(
                         crate::qcommon_h::NS_SERVER,
                         from,
-                        b"print\nServer is full.\n\x00" as *const u8 as *const libc::c_char,
+                        b"print\nServer is full.\n\x00" as *const u8 as *const i8,
                     );
                     crate::src::qcommon::common::Com_DPrintf(
-                        b"Rejected a connection.\n\x00" as *const u8 as *const libc::c_char,
+                        b"Rejected a connection.\n\x00" as *const u8 as *const i8,
                     );
                     return;
                 }
             }
             // we got a newcl, so reset the reliableSequence and reliableAcknowledge
-            (*cl).reliableAcknowledge = 0 as libc::c_int;
-            (*cl).reliableSequence = 0 as libc::c_int
+            (*cl).reliableAcknowledge = 0;
+            (*cl).reliableSequence = 0
         }
         _ => {}
     }
@@ -1144,8 +1089,7 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
     // accept the new client
     // this is the only place a client_t is ever initialized
     *newcl = temp;
-    clientNum = newcl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long
-        as libc::c_int;
+    clientNum = newcl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32;
     ent = crate::src::server::sv_game::SV_GentityNum(clientNum);
     (*newcl).gentity = ent;
     // save the challenge
@@ -1166,29 +1110,29 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
     crate::src::qcommon::q_shared::Q_strncpyz(
         (*newcl).userinfo.as_mut_ptr(),
         userinfo.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 1024]>() as i32,
     );
     // get the game a chance to reject this connection or modify the userinfo
     denied = crate::src::qcommon::vm::VM_Call(
         crate::src::server::sv_main::gvm,
-        crate::g_public_h::GAME_CLIENT_CONNECT as libc::c_int,
+        crate::g_public_h::GAME_CLIENT_CONNECT as i32,
         clientNum,
-        crate::src::qcommon::q_shared::qtrue as libc::c_int,
-        crate::src::qcommon::q_shared::qfalse as libc::c_int,
+        crate::src::qcommon::q_shared::qtrue as i32,
+        crate::src::qcommon::q_shared::qfalse as i32,
     ); // firstTime = qtrue
     if denied != 0 {
         // we can't just use VM_ArgPtr, because that is only valid inside a VM_Call
-        let mut str: *mut libc::c_char =
+        let mut str: *mut i8 =
             crate::src::qcommon::vm::VM_ExplicitArgPtr(crate::src::server::sv_main::gvm, denied)
-                as *mut libc::c_char;
+                as *mut i8;
         crate::src::qcommon::net_chan::NET_OutOfBandPrint(
             crate::qcommon_h::NS_SERVER,
             from,
-            b"print\n%s\n\x00" as *const u8 as *const libc::c_char,
+            b"print\n%s\n\x00" as *const u8 as *const i8,
             str,
         );
         crate::src::qcommon::common::Com_DPrintf(
-            b"Game rejected a connection: %s.\n\x00" as *const u8 as *const libc::c_char,
+            b"Game rejected a connection: %s.\n\x00" as *const u8 as *const i8,
             str,
         );
         return;
@@ -1198,36 +1142,36 @@ pub unsafe extern "C" fn SV_DirectConnect(mut from: crate::qcommon_h::netadr_t) 
     crate::src::qcommon::net_chan::NET_OutOfBandPrint(
         crate::qcommon_h::NS_SERVER,
         from,
-        b"connectResponse %d\x00" as *const u8 as *const libc::c_char,
+        b"connectResponse %d\x00" as *const u8 as *const i8,
         challenge,
     );
     crate::src::qcommon::common::Com_DPrintf(
-        b"Going from CS_FREE to CS_CONNECTED for %s\n\x00" as *const u8 as *const libc::c_char,
+        b"Going from CS_FREE to CS_CONNECTED for %s\n\x00" as *const u8 as *const i8,
         (*newcl).name.as_mut_ptr(),
     );
     (*newcl).state = crate::server_h::CS_CONNECTED;
-    (*newcl).lastSnapshotTime = 0 as libc::c_int;
+    (*newcl).lastSnapshotTime = 0;
     (*newcl).lastPacketTime = crate::src::server::sv_main::svs.time;
     (*newcl).lastConnectTime = crate::src::server::sv_main::svs.time;
     // when we receive the first packet from the client, we will
     // notice that it is from a different serverid and that the
     // gamestate message was not just sent, forcing a retransmit
-    (*newcl).gamestateMessageNum = -(1 as libc::c_int);
+    (*newcl).gamestateMessageNum = -(1);
     // if this was the first client on the server, or the last client
     // the server can hold, send a heartbeat to the master.
-    count = 0 as libc::c_int;
-    i = 0 as libc::c_int;
+    count = 0;
+    i = 0;
     cl = crate::src::server::sv_main::svs.clients;
     while i < (*crate::src::server::sv_main::sv_maxclients).integer {
-        if (*crate::src::server::sv_main::svs.clients.offset(i as isize)).state as libc::c_uint
-            >= crate::server_h::CS_CONNECTED as libc::c_int as libc::c_uint
+        if (*crate::src::server::sv_main::svs.clients.offset(i as isize)).state
+            >= crate::server_h::CS_CONNECTED
         {
             count += 1
         }
         i += 1;
         cl = cl.offset(1)
     }
-    if count == 1 as libc::c_int || count == (*crate::src::server::sv_main::sv_maxclients).integer {
+    if count == 1 || count == (*crate::src::server::sv_main::sv_maxclients).integer {
         crate::src::server::sv_ccmds::SV_Heartbeat_f();
     };
 }
@@ -1241,23 +1185,20 @@ Destructor for data allocated in a client structure
 #[no_mangle]
 
 pub unsafe extern "C" fn SV_FreeClient(mut client: *mut crate::server_h::client_t) {
-    let mut index: libc::c_int = 0;
+    let mut index: i32 = 0;
     index = (*client).queuedVoipIndex;
     while index < (*client).queuedVoipPackets {
-        index = (index as libc::c_ulong).wrapping_rem(
-            (::std::mem::size_of::<[*mut crate::server_h::voipServerPacket_t; 64]>()
-                as libc::c_ulong)
-                .wrapping_div(
-                    ::std::mem::size_of::<*mut crate::server_h::voipServerPacket_t>()
-                        as libc::c_ulong,
-                ),
-        ) as libc::c_int as libc::c_int;
+        index = (index as usize).wrapping_rem(
+            (::std::mem::size_of::<[*mut crate::server_h::voipServerPacket_t; 64]>()).wrapping_div(
+                ::std::mem::size_of::<*mut crate::server_h::voipServerPacket_t>(),
+            ),
+        ) as i32;
         crate::src::qcommon::common::Z_Free(
             (*client).voipPacket[index as usize] as *mut libc::c_void,
         );
         index += 1
     }
-    (*client).queuedVoipPackets = 0 as libc::c_int;
+    (*client).queuedVoipPackets = 0;
     crate::src::server::sv_net_chan::SV_Netchan_FreeQueue(client);
     SV_CloseDownload(client);
 }
@@ -1274,16 +1215,14 @@ or crashing -- SV_FinalMessage() will handle that
 
 pub unsafe extern "C" fn SV_DropClient(
     mut drop_0: *mut crate::server_h::client_t,
-    mut reason: *const libc::c_char,
+    mut reason: *const i8,
 ) {
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     let mut challenge: *mut crate::server_h::challenge_t = 0 as *mut crate::server_h::challenge_t;
-    let isBot: crate::src::qcommon::q_shared::qboolean =
-        ((*drop_0).netchan.remoteAddress.type_0 as libc::c_uint
-            == crate::qcommon_h::NA_BOT as libc::c_int as libc::c_uint) as libc::c_int
-            as crate::src::qcommon::q_shared::qboolean;
-    if (*drop_0).state as libc::c_uint == crate::server_h::CS_ZOMBIE as libc::c_int as libc::c_uint
-    {
+    let isBot: crate::src::qcommon::q_shared::qboolean = ((*drop_0).netchan.remoteAddress.type_0
+        == crate::qcommon_h::NA_BOT)
+        as crate::src::qcommon::q_shared::qboolean;
+    if (*drop_0).state == crate::server_h::CS_ZOMBIE {
         return;
         // already dropped
     }
@@ -1292,10 +1231,9 @@ pub unsafe extern "C" fn SV_DropClient(
         challenge = &mut *crate::src::server::sv_main::svs
             .challenges
             .as_mut_ptr()
-            .offset(0 as libc::c_int as isize)
-            as *mut crate::server_h::challenge_t;
-        i = 0 as libc::c_int;
-        while i < 2048 as libc::c_int {
+            .offset(0) as *mut crate::server_h::challenge_t;
+        i = 0;
+        while i < 2048 {
             if crate::src::qcommon::net_ip::NET_CompareAdr(
                 (*drop_0).netchan.remoteAddress,
                 (*challenge).adr,
@@ -1304,8 +1242,8 @@ pub unsafe extern "C" fn SV_DropClient(
             {
                 crate::stdlib::memset(
                     challenge as *mut libc::c_void,
-                    0 as libc::c_int,
-                    ::std::mem::size_of::<crate::server_h::challenge_t>() as libc::c_ulong,
+                    0,
+                    ::std::mem::size_of::<crate::server_h::challenge_t>(),
                 );
                 break;
             } else {
@@ -1319,7 +1257,7 @@ pub unsafe extern "C" fn SV_DropClient(
     // tell everyone why they got dropped
     crate::src::server::sv_main::SV_SendServerCommand(
         0 as *mut crate::server_h::client_t,
-        b"print \"%s^7 %s\n\"\x00" as *const u8 as *const libc::c_char,
+        b"print \"%s^7 %s\n\"\x00" as *const u8 as *const i8,
         (*drop_0).name.as_mut_ptr(),
         reason,
     );
@@ -1327,25 +1265,24 @@ pub unsafe extern "C" fn SV_DropClient(
     // this will remove the body, among other things
     crate::src::qcommon::vm::VM_Call(
         crate::src::server::sv_main::gvm,
-        crate::g_public_h::GAME_CLIENT_DISCONNECT as libc::c_int,
-        drop_0.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long,
+        crate::g_public_h::GAME_CLIENT_DISCONNECT as i32,
+        drop_0.wrapping_offset_from(crate::src::server::sv_main::svs.clients),
     );
     // add the disconnect command
     crate::src::server::sv_main::SV_SendServerCommand(
         drop_0,
-        b"disconnect \"%s\"\x00" as *const u8 as *const libc::c_char,
+        b"disconnect \"%s\"\x00" as *const u8 as *const i8,
         reason,
     );
     if isBot as u64 != 0 {
         crate::src::server::sv_bot::SV_BotFreeClient(
-            drop_0.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long
-                as libc::c_int,
+            drop_0.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32,
         );
         // bots shouldn't go zombie, as there's no real net connection.
         (*drop_0).state = crate::server_h::CS_FREE
     } else {
         crate::src::qcommon::common::Com_DPrintf(
-            b"Going to CS_ZOMBIE for %s\n\x00" as *const u8 as *const libc::c_char,
+            b"Going to CS_ZOMBIE for %s\n\x00" as *const u8 as *const i8,
             (*drop_0).name.as_mut_ptr(),
         );
         (*drop_0).state = crate::server_h::CS_ZOMBIE
@@ -1353,18 +1290,17 @@ pub unsafe extern "C" fn SV_DropClient(
     }
     // nuke user info
     crate::src::server::sv_init::SV_SetUserinfo(
-        drop_0.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long
-            as libc::c_int,
-        b"\x00" as *const u8 as *const libc::c_char,
+        drop_0.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32,
+        b"\x00" as *const u8 as *const i8,
     );
     // if this was the last client on the server, send a heartbeat
     // to the master so it is known the server is empty
     // send a heartbeat now so the master will get up to date info
     // if there is already a slot for this ip, reuse it
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*crate::src::server::sv_main::sv_maxclients).integer {
-        if (*crate::src::server::sv_main::svs.clients.offset(i as isize)).state as libc::c_uint
-            >= crate::server_h::CS_CONNECTED as libc::c_int as libc::c_uint
+        if (*crate::src::server::sv_main::svs.clients.offset(i as isize)).state
+            >= crate::server_h::CS_CONNECTED
         {
             break;
         }
@@ -1387,7 +1323,7 @@ the wrong gamestate.
 */
 
 unsafe extern "C" fn SV_SendClientGameState(mut client: *mut crate::server_h::client_t) {
-    let mut start: libc::c_int = 0;
+    let mut start: i32 = 0;
     let mut base: *mut crate::src::qcommon::q_shared::entityState_t =
         0 as *mut crate::src::qcommon::q_shared::entityState_t;
     let mut nullstate: crate::src::qcommon::q_shared::entityState_t =
@@ -1445,15 +1381,15 @@ unsafe extern "C" fn SV_SendClientGameState(mut client: *mut crate::server_h::cl
     };
     let mut msgBuffer: [crate::src::qcommon::q_shared::byte; 16384] = [0; 16384];
     crate::src::qcommon::common::Com_DPrintf(
-        b"SV_SendClientGameState() for %s\n\x00" as *const u8 as *const libc::c_char,
+        b"SV_SendClientGameState() for %s\n\x00" as *const u8 as *const i8,
         (*client).name.as_mut_ptr(),
     );
     crate::src::qcommon::common::Com_DPrintf(
-        b"Going from CS_CONNECTED to CS_PRIMED for %s\n\x00" as *const u8 as *const libc::c_char,
+        b"Going from CS_CONNECTED to CS_PRIMED for %s\n\x00" as *const u8 as *const i8,
         (*client).name.as_mut_ptr(),
     );
     (*client).state = crate::server_h::CS_PRIMED;
-    (*client).pureAuthentic = 0 as libc::c_int;
+    (*client).pureAuthentic = 0;
     (*client).gotCP = crate::src::qcommon::q_shared::qfalse;
     // when we receive the first packet from the client, we will
     // notice that it is from a different serverid and that the
@@ -1462,8 +1398,7 @@ unsafe extern "C" fn SV_SendClientGameState(mut client: *mut crate::server_h::cl
     crate::src::qcommon::msg::MSG_Init(
         &mut msg,
         msgBuffer.as_mut_ptr(),
-        ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 16384]>() as libc::c_ulong
-            as libc::c_int,
+        ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 16384]>() as i32,
     );
     // NOTE, MRE: all server->client messages now acknowledge
     // let the client know which reliable clientCommands we have received
@@ -1474,21 +1409,15 @@ unsafe extern "C" fn SV_SendClientGameState(mut client: *mut crate::server_h::cl
     // the client side
     crate::src::server::sv_snapshot::SV_UpdateServerCommandsToClient(client, &mut msg);
     // send the gamestate
-    crate::src::qcommon::msg::MSG_WriteByte(
-        &mut msg,
-        crate::qcommon_h::svc_gamestate as libc::c_int,
-    );
+    crate::src::qcommon::msg::MSG_WriteByte(&mut msg, crate::qcommon_h::svc_gamestate as i32);
     crate::src::qcommon::msg::MSG_WriteLong(&mut msg, (*client).reliableSequence);
     // write the configstrings
-    start = 0 as libc::c_int;
-    while start < 1024 as libc::c_int {
-        if *crate::src::server::sv_main::sv.configstrings[start as usize]
-            .offset(0 as libc::c_int as isize)
-            != 0
-        {
+    start = 0;
+    while start < 1024 {
+        if *crate::src::server::sv_main::sv.configstrings[start as usize].offset(0) != 0 {
             crate::src::qcommon::msg::MSG_WriteByte(
                 &mut msg,
-                crate::qcommon_h::svc_configstring as libc::c_int,
+                crate::qcommon_h::svc_configstring as i32,
             );
             crate::src::qcommon::msg::MSG_WriteShort(&mut msg, start);
             crate::src::qcommon::msg::MSG_WriteBigString(
@@ -1501,11 +1430,11 @@ unsafe extern "C" fn SV_SendClientGameState(mut client: *mut crate::server_h::cl
     // write the baselines
     crate::stdlib::memset(
         &mut nullstate as *mut crate::src::qcommon::q_shared::entityState_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::src::qcommon::q_shared::entityState_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::src::qcommon::q_shared::entityState_t>(),
     );
-    start = 0 as libc::c_int;
-    while start < (1 as libc::c_int) << 10 as libc::c_int {
+    start = 0;
+    while start < (1) << 10 {
         base = &mut (*crate::src::server::sv_main::sv
             .svEntities
             .as_mut_ptr()
@@ -1514,7 +1443,7 @@ unsafe extern "C" fn SV_SendClientGameState(mut client: *mut crate::server_h::cl
         if !((*base).number == 0) {
             crate::src::qcommon::msg::MSG_WriteByte(
                 &mut msg,
-                crate::qcommon_h::svc_baseline as libc::c_int,
+                crate::qcommon_h::svc_baseline as i32,
             );
             crate::src::qcommon::msg::MSG_WriteDeltaEntity(
                 &mut msg,
@@ -1525,11 +1454,10 @@ unsafe extern "C" fn SV_SendClientGameState(mut client: *mut crate::server_h::cl
         }
         start += 1
     }
-    crate::src::qcommon::msg::MSG_WriteByte(&mut msg, crate::qcommon_h::svc_EOF as libc::c_int);
+    crate::src::qcommon::msg::MSG_WriteByte(&mut msg, crate::qcommon_h::svc_EOF as i32);
     crate::src::qcommon::msg::MSG_WriteLong(
         &mut msg,
-        client.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long
-            as libc::c_int,
+        client.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32,
     );
     // write the checksum feed
     crate::src::qcommon::msg::MSG_WriteLong(&mut msg, crate::src::server::sv_main::sv.checksumFeed);
@@ -1547,11 +1475,11 @@ pub unsafe extern "C" fn SV_ClientEnterWorld(
     mut client: *mut crate::server_h::client_t,
     mut cmd: *mut crate::src::qcommon::q_shared::usercmd_t,
 ) {
-    let mut clientNum: libc::c_int = 0;
+    let mut clientNum: i32 = 0;
     let mut ent: *mut crate::g_public_h::sharedEntity_t =
         0 as *mut crate::g_public_h::sharedEntity_t;
     crate::src::qcommon::common::Com_DPrintf(
-        b"Going from CS_PRIMED to CS_ACTIVE for %s\n\x00" as *const u8 as *const libc::c_char,
+        b"Going from CS_PRIMED to CS_ACTIVE for %s\n\x00" as *const u8 as *const i8,
         (*client).name.as_mut_ptr(),
     );
     (*client).state = crate::server_h::CS_ACTIVE;
@@ -1559,33 +1487,32 @@ pub unsafe extern "C" fn SV_ClientEnterWorld(
     // no longer sent when the client is CS_PRIMED
     crate::src::server::sv_init::SV_UpdateConfigstrings(client);
     // set up the entity for the client
-    clientNum = client.wrapping_offset_from(crate::src::server::sv_main::svs.clients)
-        as libc::c_long as libc::c_int; // generate a snapshot immediately
+    clientNum = client.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32; // generate a snapshot immediately
     ent = crate::src::server::sv_game::SV_GentityNum(clientNum);
     (*ent).s.number = clientNum;
     (*client).gentity = ent;
-    (*client).deltaMessage = -(1 as libc::c_int);
-    (*client).lastSnapshotTime = 0 as libc::c_int;
+    (*client).deltaMessage = -(1);
+    (*client).lastSnapshotTime = 0;
     if !cmd.is_null() {
         crate::stdlib::memcpy(
             &mut (*client).lastUsercmd as *mut crate::src::qcommon::q_shared::usercmd_t
                 as *mut libc::c_void,
             cmd as *const libc::c_void,
-            ::std::mem::size_of::<crate::src::qcommon::q_shared::usercmd_t>() as libc::c_ulong,
+            ::std::mem::size_of::<crate::src::qcommon::q_shared::usercmd_t>(),
         );
     } else {
         crate::stdlib::memset(
             &mut (*client).lastUsercmd as *mut crate::src::qcommon::q_shared::usercmd_t
                 as *mut libc::c_void,
             '\u{0}' as i32,
-            ::std::mem::size_of::<crate::src::qcommon::q_shared::usercmd_t>() as libc::c_ulong,
+            ::std::mem::size_of::<crate::src::qcommon::q_shared::usercmd_t>(),
         );
     }
     // call the game begin function
     crate::src::qcommon::vm::VM_Call(
         crate::src::server::sv_main::gvm,
-        crate::g_public_h::GAME_CLIENT_BEGIN as libc::c_int,
-        client.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long,
+        crate::g_public_h::GAME_CLIENT_BEGIN as i32,
+        client.wrapping_offset_from(crate::src::server::sv_main::svs.clients),
     );
 }
 /*
@@ -1626,21 +1553,21 @@ clear/free any download vars
 */
 
 unsafe extern "C" fn SV_CloseDownload(mut cl: *mut crate::server_h::client_t) {
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     // EOF
     if (*cl).download != 0 {
         crate::src::qcommon::files::FS_FCloseFile((*cl).download);
     }
-    (*cl).download = 0 as libc::c_int;
-    *(*cl).downloadName.as_mut_ptr() = 0 as libc::c_int as libc::c_char;
+    (*cl).download = 0;
+    *(*cl).downloadName.as_mut_ptr() = 0i8;
     // Free the temporary buffer space
-    i = 0 as libc::c_int;
-    while i < 48 as libc::c_int {
+    i = 0;
+    while i < 48 {
         if !(*cl).downloadBlocks[i as usize].is_null() {
             crate::src::qcommon::common::Z_Free(
                 (*cl).downloadBlocks[i as usize] as *mut libc::c_void,
             );
-            (*cl).downloadBlocks[i as usize] = 0 as *mut libc::c_uchar
+            (*cl).downloadBlocks[i as usize] = 0 as *mut u8
         }
         i += 1
     }
@@ -1656,9 +1583,8 @@ Abort a download if in progress
 unsafe extern "C" fn SV_StopDownload_f(mut cl: *mut crate::server_h::client_t) {
     if *(*cl).downloadName.as_mut_ptr() != 0 {
         crate::src::qcommon::common::Com_DPrintf(
-            b"clientDownload: %d : file \"%s\" aborted\n\x00" as *const u8 as *const libc::c_char,
-            cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long
-                as libc::c_int,
+            b"clientDownload: %d : file \"%s\" aborted\n\x00" as *const u8 as *const i8,
+            cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32,
             (*cl).downloadName.as_mut_ptr(),
         );
     }
@@ -1673,11 +1599,11 @@ Downloads are finished
 */
 
 unsafe extern "C" fn SV_DoneDownload_f(mut cl: *mut crate::server_h::client_t) {
-    if (*cl).state as libc::c_uint == crate::server_h::CS_ACTIVE as libc::c_int as libc::c_uint {
+    if (*cl).state == crate::server_h::CS_ACTIVE {
         return;
     }
     crate::src::qcommon::common::Com_DPrintf(
-        b"clientDownload: %s Done\n\x00" as *const u8 as *const libc::c_char,
+        b"clientDownload: %s Done\n\x00" as *const u8 as *const i8,
         (*cl).name.as_mut_ptr(),
     );
     // resend the game state to update any clients that entered during the download
@@ -1693,24 +1619,18 @@ the same as cl->downloadClientBlock
 */
 
 unsafe extern "C" fn SV_NextDownload_f(mut cl: *mut crate::server_h::client_t) {
-    let mut block: libc::c_int = atoi(crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int));
+    let mut block: i32 = atoi(crate::src::qcommon::cmd::Cmd_Argv(1));
     if block == (*cl).downloadClientBlock {
         crate::src::qcommon::common::Com_DPrintf(
-            b"clientDownload: %d : client acknowledge of block %d\n\x00" as *const u8
-                as *const libc::c_char,
-            cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long
-                as libc::c_int,
+            b"clientDownload: %d : client acknowledge of block %d\n\x00" as *const u8 as *const i8,
+            cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32,
             block,
         );
         // Find out if we are done.  A zero-length block indicates EOF
-        if (*cl).downloadBlockSize[((*cl).downloadClientBlock % 48 as libc::c_int) as usize]
-            == 0 as libc::c_int
-        {
+        if (*cl).downloadBlockSize[((*cl).downloadClientBlock % 48i32) as usize] == 0 {
             crate::src::qcommon::common::Com_Printf(
-                b"clientDownload: %d : file \"%s\" completed\n\x00" as *const u8
-                    as *const libc::c_char,
-                cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long
-                    as libc::c_int,
+                b"clientDownload: %d : file \"%s\" completed\n\x00" as *const u8 as *const i8,
+                cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32,
                 (*cl).downloadName.as_mut_ptr(),
             );
             SV_CloseDownload(cl);
@@ -1723,10 +1643,7 @@ unsafe extern "C" fn SV_NextDownload_f(mut cl: *mut crate::server_h::client_t) {
     // We aren't getting an acknowledge for the correct block, drop the client
     // FIXME: this is bad... the client will never parse the disconnect message
     //			because the cgame isn't loaded yet
-    SV_DropClient(
-        cl,
-        b"broken download\x00" as *const u8 as *const libc::c_char,
-    );
+    SV_DropClient(cl, b"broken download\x00" as *const u8 as *const i8);
 }
 /*
 ==================
@@ -1741,8 +1658,8 @@ unsafe extern "C" fn SV_BeginDownload_f(mut cl: *mut crate::server_h::client_t) 
     // the file itself
     crate::src::qcommon::q_shared::Q_strncpyz(
         (*cl).downloadName.as_mut_ptr(),
-        crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int),
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+        crate::src::qcommon::cmd::Cmd_Argv(1),
+        ::std::mem::size_of::<[i8; 64]>() as i32,
     );
 }
 /*
@@ -1758,15 +1675,15 @@ Fill up msg with data, return number of download blocks added
 pub unsafe extern "C" fn SV_WriteDownloadToClient(
     mut cl: *mut crate::server_h::client_t,
     mut msg: *mut crate::qcommon_h::msg_t,
-) -> libc::c_int {
-    let mut curindex: libc::c_int = 0; // Nothing being downloaded
-    let mut unreferenced: libc::c_int = 1 as libc::c_int;
-    let mut errorMessage: [libc::c_char; 1024] = [0; 1024];
-    let mut pakbuf: [libc::c_char; 64] = [0; 64];
-    let mut pakptr: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut numRefPaks: libc::c_int = 0;
+) -> i32 {
+    let mut curindex: i32 = 0; // Nothing being downloaded
+    let mut unreferenced: i32 = 1;
+    let mut errorMessage: [i8; 1024] = [0; 1024];
+    let mut pakbuf: [i8; 64] = [0; 64];
+    let mut pakptr: *mut i8 = 0 as *mut i8;
+    let mut numRefPaks: i32 = 0;
     if *(*cl).downloadName.as_mut_ptr() == 0 {
-        return 0 as libc::c_int;
+        return 0i32;
     }
     if (*cl).download == 0 {
         let mut idPack: crate::src::qcommon::q_shared::qboolean =
@@ -1776,26 +1693,26 @@ pub unsafe extern "C" fn SV_WriteDownloadToClient(
         // Chop off filename extension.
         crate::src::qcommon::q_shared::Com_sprintf(
             pakbuf.as_mut_ptr(),
-            ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
-            b"%s\x00" as *const u8 as *const libc::c_char,
+            ::std::mem::size_of::<[i8; 64]>() as i32,
+            b"%s\x00" as *const u8 as *const i8,
             (*cl).downloadName.as_mut_ptr(),
         );
         pakptr = crate::stdlib::strrchr(pakbuf.as_mut_ptr(), '.' as i32);
         if !pakptr.is_null() {
-            *pakptr = '\u{0}' as i32 as libc::c_char;
+            *pakptr = '\u{0}' as i8;
             // Check for pk3 filename extension
             if crate::src::qcommon::q_shared::Q_stricmp(
-                pakptr.offset(1 as libc::c_int as isize),
-                b"pk3\x00" as *const u8 as *const libc::c_char,
+                pakptr.offset(1),
+                b"pk3\x00" as *const u8 as *const i8,
             ) == 0
             {
-                let mut referencedPaks: *const libc::c_char =
+                let mut referencedPaks: *const i8 =
                     crate::src::qcommon::files::FS_ReferencedPakNames();
                 // Check whether the file appears in the list of referenced
                 // paks to prevent downloading of arbitrary files.
                 crate::src::qcommon::cmd::Cmd_TokenizeStringIgnoreQuotes(referencedPaks);
                 numRefPaks = crate::src::qcommon::cmd::Cmd_Argc();
-                curindex = 0 as libc::c_int;
+                curindex = 0;
                 while curindex < numRefPaks {
                     if crate::src::qcommon::files::FS_FilenameCompare(
                         crate::src::qcommon::cmd::Cmd_Argv(curindex),
@@ -1803,24 +1720,21 @@ pub unsafe extern "C" fn SV_WriteDownloadToClient(
                     ) as u64
                         == 0
                     {
-                        unreferenced = 0 as libc::c_int;
+                        unreferenced = 0;
                         // now that we know the file is referenced,
                         // check whether it's legal to download it.
                         missionPack = crate::src::qcommon::files::FS_idPak(
                             pakbuf.as_mut_ptr(),
-                            b"missionpack\x00" as *const u8 as *const libc::c_char
-                                as *mut libc::c_char,
-                            4 as libc::c_int,
+                            b"missionpack\x00" as *const u8 as *mut i8,
+                            4,
                         );
                         idPack = missionPack;
-                        idPack = (idPack as libc::c_uint != 0
+                        idPack = (idPack != 0
                             || crate::src::qcommon::files::FS_idPak(
                                 pakbuf.as_mut_ptr(),
-                                b"baseq3\x00" as *const u8 as *const libc::c_char
-                                    as *mut libc::c_char,
-                                9 as libc::c_int,
-                            ) as libc::c_uint
-                                != 0) as libc::c_int
+                                b"baseq3\x00" as *const u8 as *mut i8,
+                                9,
+                            ) != 0)
                             as crate::src::qcommon::q_shared::qboolean;
                         break;
                     } else {
@@ -1829,85 +1743,79 @@ pub unsafe extern "C" fn SV_WriteDownloadToClient(
                 }
             }
         }
-        (*cl).download = 0 as libc::c_int;
+        (*cl).download = 0;
         // We open the file here
-        if (*crate::src::server::sv_main::sv_allowDownload).integer & 1 as libc::c_int == 0
-            || (*crate::src::server::sv_main::sv_allowDownload).integer & 4 as libc::c_int != 0
-            || idPack as libc::c_uint != 0
+        if (*crate::src::server::sv_main::sv_allowDownload).integer & 1 == 0
+            || (*crate::src::server::sv_main::sv_allowDownload).integer & 4 != 0
+            || idPack != 0
             || unreferenced != 0
             || {
                 (*cl).downloadSize = crate::src::qcommon::files::FS_SV_FOpenFileRead(
                     (*cl).downloadName.as_mut_ptr(),
                     &mut (*cl).download,
-                ) as libc::c_int;
-                ((*cl).downloadSize) < 0 as libc::c_int
+                ) as i32;
+                ((*cl).downloadSize) < 0
             }
         {
             // cannot auto-download file
             if unreferenced != 0 {
                 crate::src::qcommon::common::Com_Printf(
                     b"clientDownload: %d : \"%s\" is not referenced and cannot be downloaded.\n\x00"
-                        as *const u8 as *const libc::c_char,
-                    cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients)
-                        as libc::c_long as libc::c_int,
+                        as *const u8 as *const i8,
+                    cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32,
                     (*cl).downloadName.as_mut_ptr(),
                 );
                 crate::src::qcommon::q_shared::Com_sprintf(
                     errorMessage.as_mut_ptr(),
-                    ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+                    ::std::mem::size_of::<[i8; 1024]>() as i32,
                     b"File \"%s\" is not referenced and cannot be downloaded.\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     (*cl).downloadName.as_mut_ptr(),
                 );
             } else if idPack as u64 != 0 {
                 crate::src::qcommon::common::Com_Printf(
                     b"clientDownload: %d : \"%s\" cannot download id pk3 files\n\x00" as *const u8
-                        as *const libc::c_char,
-                    cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients)
-                        as libc::c_long as libc::c_int,
+                        as *const i8,
+                    cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32,
                     (*cl).downloadName.as_mut_ptr(),
                 );
                 if missionPack as u64 != 0 {
                     crate::src::qcommon::q_shared::Com_sprintf(errorMessage.as_mut_ptr(),
-                                ::std::mem::size_of::<[libc::c_char; 1024]>()
-                                    as libc::c_ulong as libc::c_int,
+                                
+                                ::std::mem::size_of::<[i8; 1024]>() as i32,
                                 b"Cannot autodownload Team Arena file \"%s\"\nThe Team Arena mission pack can be found in your local game store.\x00"
-                                    as *const u8 as *const libc::c_char,
+                                    as *const u8 as *const i8,
                                 (*cl).downloadName.as_mut_ptr());
                 } else {
                     crate::src::qcommon::q_shared::Com_sprintf(
                         errorMessage.as_mut_ptr(),
-                        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong
-                            as libc::c_int,
-                        b"Cannot autodownload id pk3 file \"%s\"\x00" as *const u8
-                            as *const libc::c_char,
+                        ::std::mem::size_of::<[i8; 1024]>() as i32,
+                        b"Cannot autodownload id pk3 file \"%s\"\x00" as *const u8 as *const i8,
                         (*cl).downloadName.as_mut_ptr(),
                     );
                 }
-            } else if (*crate::src::server::sv_main::sv_allowDownload).integer & 1 as libc::c_int
-                == 0
-                || (*crate::src::server::sv_main::sv_allowDownload).integer & 4 as libc::c_int != 0
+            } else if (*crate::src::server::sv_main::sv_allowDownload).integer & 1 == 0
+                || (*crate::src::server::sv_main::sv_allowDownload).integer & 4 != 0
             {
                 crate::src::qcommon::common::Com_Printf(
                     b"clientDownload: %d : \"%s\" download disabled\n\x00" as *const u8
-                        as *const libc::c_char,
-                    cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients)
-                        as libc::c_long as libc::c_int,
+                        as *const i8,
+                    cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32,
                     (*cl).downloadName.as_mut_ptr(),
                 );
                 if (*crate::src::server::sv_main::sv_pure).integer != 0 {
                     crate::src::qcommon::q_shared::Com_sprintf(errorMessage.as_mut_ptr(),
-                                ::std::mem::size_of::<[libc::c_char; 1024]>()
-                                    as libc::c_ulong as libc::c_int,
+                                
+                                ::std::mem::size_of::<[i8; 1024]>() as i32,
                                 b"Could not download \"%s\" because autodownloading is disabled on the server.\n\nYou will need to get this file elsewhere before you can connect to this pure server.\n\x00"
-                                    as *const u8 as *const libc::c_char,
+                                    as *const u8 as *const i8,
                                 (*cl).downloadName.as_mut_ptr());
                 } else {
                     crate::src::qcommon::q_shared::Com_sprintf(errorMessage.as_mut_ptr(),
-                                ::std::mem::size_of::<[libc::c_char; 1024]>()
-                                    as libc::c_ulong as libc::c_int,
+                                
+                                ::std::mem::size_of::<[i8; 1024]>() as i32,
                                 b"Could not download \"%s\" because autodownloading is disabled on the server.\n\nThe server you are connecting to is not a pure server, set autodownload to No in your settings and you might be able to join the game anyway.\n\x00"
-                                    as *const u8 as *const libc::c_char,
+                                    as *const u8 as *const i8,
                                 (*cl).downloadName.as_mut_ptr());
                 }
             } else {
@@ -1915,60 +1823,55 @@ pub unsafe extern "C" fn SV_WriteDownloadToClient(
                 //   if the pk3 is referenced, it must have been found somewhere in the filesystem
                 crate::src::qcommon::common::Com_Printf(
                     b"clientDownload: %d : \"%s\" file not found on server\n\x00" as *const u8
-                        as *const libc::c_char,
-                    cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients)
-                        as libc::c_long as libc::c_int,
+                        as *const i8,
+                    cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32,
                     (*cl).downloadName.as_mut_ptr(),
                 ); // client is expecting block zero
                 crate::src::qcommon::q_shared::Com_sprintf(
                     errorMessage.as_mut_ptr(),
-                    ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+                    ::std::mem::size_of::<[i8; 1024]>() as i32,
                     b"File \"%s\" not found on server for autodownloading.\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     (*cl).downloadName.as_mut_ptr(),
                 ); // illegal file size
             }
-            crate::src::qcommon::msg::MSG_WriteByte(
-                msg,
-                crate::qcommon_h::svc_download as libc::c_int,
-            );
-            crate::src::qcommon::msg::MSG_WriteShort(msg, 0 as libc::c_int);
-            crate::src::qcommon::msg::MSG_WriteLong(msg, -(1 as libc::c_int));
+            crate::src::qcommon::msg::MSG_WriteByte(msg, crate::qcommon_h::svc_download as i32);
+            crate::src::qcommon::msg::MSG_WriteShort(msg, 0);
+            crate::src::qcommon::msg::MSG_WriteLong(msg, -(1));
             crate::src::qcommon::msg::MSG_WriteString(msg, errorMessage.as_mut_ptr());
-            *(*cl).downloadName.as_mut_ptr() = 0 as libc::c_int as libc::c_char;
+            *(*cl).downloadName.as_mut_ptr() = 0i8;
             if (*cl).download != 0 {
                 crate::src::qcommon::files::FS_FCloseFile((*cl).download);
             }
-            return 1 as libc::c_int;
+            return 1i32;
         }
         crate::src::qcommon::common::Com_Printf(
-            b"clientDownload: %d : beginning \"%s\"\n\x00" as *const u8 as *const libc::c_char,
-            cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long
-                as libc::c_int,
+            b"clientDownload: %d : beginning \"%s\"\n\x00" as *const u8 as *const i8,
+            cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32,
             (*cl).downloadName.as_mut_ptr(),
         );
         // Init
-        (*cl).downloadXmitBlock = 0 as libc::c_int;
+        (*cl).downloadXmitBlock = 0;
         (*cl).downloadClientBlock = (*cl).downloadXmitBlock;
         (*cl).downloadCurrentBlock = (*cl).downloadClientBlock;
-        (*cl).downloadCount = 0 as libc::c_int;
+        (*cl).downloadCount = 0;
         (*cl).downloadEOF = crate::src::qcommon::q_shared::qfalse
     }
     // Perform any reads that we need to
-    while (*cl).downloadCurrentBlock - (*cl).downloadClientBlock < 48 as libc::c_int
+    while (*cl).downloadCurrentBlock - (*cl).downloadClientBlock < 48
         && (*cl).downloadSize != (*cl).downloadCount
     {
-        curindex = (*cl).downloadCurrentBlock % 48 as libc::c_int;
+        curindex = (*cl).downloadCurrentBlock % 48;
         if (*cl).downloadBlocks[curindex as usize].is_null() {
             (*cl).downloadBlocks[curindex as usize] =
-                crate::src::qcommon::common::Z_Malloc(1024 as libc::c_int) as *mut libc::c_uchar
+                crate::src::qcommon::common::Z_Malloc(1024) as *mut u8
         }
         (*cl).downloadBlockSize[curindex as usize] = crate::src::qcommon::files::FS_Read(
             (*cl).downloadBlocks[curindex as usize] as *mut libc::c_void,
-            1024 as libc::c_int,
+            1024,
             (*cl).download,
         );
-        if (*cl).downloadBlockSize[curindex as usize] < 0 as libc::c_int {
+        if (*cl).downloadBlockSize[curindex as usize] < 0 {
             // EOF right now
             (*cl).downloadCount = (*cl).downloadSize;
             break;
@@ -1981,33 +1884,32 @@ pub unsafe extern "C" fn SV_WriteDownloadToClient(
     // Check to see if we have eof condition and add the EOF block
     if (*cl).downloadCount == (*cl).downloadSize
         && (*cl).downloadEOF as u64 == 0
-        && (*cl).downloadCurrentBlock - (*cl).downloadClientBlock < 48 as libc::c_int
+        && (*cl).downloadCurrentBlock - (*cl).downloadClientBlock < 48
     {
-        (*cl).downloadBlockSize[((*cl).downloadCurrentBlock % 48 as libc::c_int) as usize] =
-            0 as libc::c_int;
+        (*cl).downloadBlockSize[((*cl).downloadCurrentBlock % 48i32) as usize] = 0;
         (*cl).downloadCurrentBlock += 1;
         (*cl).downloadEOF = crate::src::qcommon::q_shared::qtrue
         // We have added the EOF block
     } // Nothing to transmit
     if (*cl).downloadClientBlock == (*cl).downloadCurrentBlock {
-        return 0 as libc::c_int;
+        return 0i32;
     }
     // Write out the next section of the file, if we have already reached our window,
     // automatically start retransmitting
     if (*cl).downloadXmitBlock == (*cl).downloadCurrentBlock {
         // We have transmitted the complete window, should we start resending?
-        if crate::src::server::sv_main::svs.time - (*cl).downloadSendTime > 1000 as libc::c_int {
+        if crate::src::server::sv_main::svs.time - (*cl).downloadSendTime > 1000 {
             (*cl).downloadXmitBlock = (*cl).downloadClientBlock
         } else {
-            return 0 as libc::c_int;
+            return 0i32;
         }
     }
     // Send current block
-    curindex = (*cl).downloadXmitBlock % 48 as libc::c_int;
-    crate::src::qcommon::msg::MSG_WriteByte(msg, crate::qcommon_h::svc_download as libc::c_int);
+    curindex = (*cl).downloadXmitBlock % 48;
+    crate::src::qcommon::msg::MSG_WriteByte(msg, crate::qcommon_h::svc_download as i32);
     crate::src::qcommon::msg::MSG_WriteShort(msg, (*cl).downloadXmitBlock);
     // block zero is special, contains file size
-    if (*cl).downloadXmitBlock == 0 as libc::c_int {
+    if (*cl).downloadXmitBlock == 0 {
         crate::src::qcommon::msg::MSG_WriteLong(msg, (*cl).downloadSize);
     }
     crate::src::qcommon::msg::MSG_WriteShort(msg, (*cl).downloadBlockSize[curindex as usize]);
@@ -2020,16 +1922,15 @@ pub unsafe extern "C" fn SV_WriteDownloadToClient(
         );
     }
     crate::src::qcommon::common::Com_DPrintf(
-        b"clientDownload: %d : writing block %d\n\x00" as *const u8 as *const libc::c_char,
-        cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long
-            as libc::c_int,
+        b"clientDownload: %d : writing block %d\n\x00" as *const u8 as *const i8,
+        cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32,
         (*cl).downloadXmitBlock,
     );
     // Move on to the next block
     // It will get sent with next snap shot.  The rate will keep us in line.
     (*cl).downloadXmitBlock += 1;
     (*cl).downloadSendTime = crate::src::server::sv_main::svs.time;
-    return 1 as libc::c_int;
+    return 1;
 }
 /*
 ==================
@@ -2041,12 +1942,12 @@ Return the shortest time interval for sending next packet to client
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn SV_SendQueuedMessages() -> libc::c_int {
-    let mut i: libc::c_int = 0;
-    let mut retval: libc::c_int = -(1 as libc::c_int);
-    let mut nextFragT: libc::c_int = 0;
+pub unsafe extern "C" fn SV_SendQueuedMessages() -> i32 {
+    let mut i: i32 = 0;
+    let mut retval: i32 = -(1);
+    let mut nextFragT: i32 = 0;
     let mut cl: *mut crate::server_h::client_t = 0 as *mut crate::server_h::client_t;
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*crate::src::server::sv_main::sv_maxclients).integer {
         cl = &mut *crate::src::server::sv_main::svs.clients.offset(i as isize)
             as *mut crate::server_h::client_t;
@@ -2055,9 +1956,7 @@ pub unsafe extern "C" fn SV_SendQueuedMessages() -> libc::c_int {
             if nextFragT == 0 {
                 nextFragT = crate::src::server::sv_net_chan::SV_Netchan_TransmitNextFragment(cl)
             }
-            if nextFragT >= 0 as libc::c_int
-                && (retval == -(1 as libc::c_int) || retval > nextFragT)
-            {
+            if nextFragT >= 0 && (retval == -(1) || retval > nextFragT) {
                 retval = nextFragT
             }
         }
@@ -2074,10 +1973,10 @@ Send one round of download messages to all clients
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn SV_SendDownloadMessages() -> libc::c_int {
-    let mut i: libc::c_int = 0;
-    let mut numDLs: libc::c_int = 0 as libc::c_int;
-    let mut retval: libc::c_int = 0;
+pub unsafe extern "C" fn SV_SendDownloadMessages() -> i32 {
+    let mut i: i32 = 0;
+    let mut numDLs: i32 = 0;
+    let mut retval: i32 = 0;
     let mut cl: *mut crate::server_h::client_t = 0 as *mut crate::server_h::client_t;
     let mut msg: crate::qcommon_h::msg_t = crate::qcommon_h::msg_t {
         allowoverflow: crate::src::qcommon::q_shared::qfalse,
@@ -2090,25 +1989,20 @@ pub unsafe extern "C" fn SV_SendDownloadMessages() -> libc::c_int {
         bit: 0,
     };
     let mut msgBuffer: [crate::src::qcommon::q_shared::byte; 16384] = [0; 16384];
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*crate::src::server::sv_main::sv_maxclients).integer {
         cl = &mut *crate::src::server::sv_main::svs.clients.offset(i as isize)
             as *mut crate::server_h::client_t;
-        if (*cl).state as libc::c_uint != 0 && *(*cl).downloadName.as_mut_ptr() as libc::c_int != 0
-        {
+        if (*cl).state != 0 && *(*cl).downloadName.as_mut_ptr() as i32 != 0 {
             crate::src::qcommon::msg::MSG_Init(
                 &mut msg,
                 msgBuffer.as_mut_ptr(),
-                ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 16384]>()
-                    as libc::c_ulong as libc::c_int,
+                ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 16384]>() as i32,
             );
             crate::src::qcommon::msg::MSG_WriteLong(&mut msg, (*cl).lastClientCommand);
             retval = SV_WriteDownloadToClient(cl, &mut msg);
             if retval != 0 {
-                crate::src::qcommon::msg::MSG_WriteByte(
-                    &mut msg,
-                    crate::qcommon_h::svc_EOF as libc::c_int,
-                );
+                crate::src::qcommon::msg::MSG_WriteByte(&mut msg, crate::qcommon_h::svc_EOF as i32);
                 crate::src::server::sv_net_chan::SV_Netchan_Transmit(cl, &mut msg);
                 numDLs += retval
             }
@@ -2126,7 +2020,7 @@ The client is going to disconnect, so remove the connection immediately  FIXME: 
 */
 
 unsafe extern "C" fn SV_Disconnect_f(mut cl: *mut crate::server_h::client_t) {
-    SV_DropClient(cl, b"disconnected\x00" as *const u8 as *const libc::c_char);
+    SV_DropClient(cl, b"disconnected\x00" as *const u8 as *const i8);
 }
 /*
 =================
@@ -2143,41 +2037,39 @@ This routine would be a bit simpler with a goto but i abstained
 */
 
 unsafe extern "C" fn SV_VerifyPaks_f(mut cl: *mut crate::server_h::client_t) {
-    let mut nChkSum1: libc::c_int = 0;
-    let mut nChkSum2: libc::c_int = 0;
-    let mut nClientPaks: libc::c_int = 0;
-    let mut nServerPaks: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    let mut nCurArg: libc::c_int = 0;
-    let mut nClientChkSum: [libc::c_int; 1024] = [0; 1024];
-    let mut nServerChkSum: [libc::c_int; 1024] = [0; 1024];
-    let mut pPaks: *const libc::c_char = 0 as *const libc::c_char;
-    let mut pArg: *const libc::c_char = 0 as *const libc::c_char;
+    let mut nChkSum1: i32 = 0;
+    let mut nChkSum2: i32 = 0;
+    let mut nClientPaks: i32 = 0;
+    let mut nServerPaks: i32 = 0;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut nCurArg: i32 = 0;
+    let mut nClientChkSum: [i32; 1024] = [0; 1024];
+    let mut nServerChkSum: [i32; 1024] = [0; 1024];
+    let mut pPaks: *const i8 = 0 as *const i8;
+    let mut pArg: *const i8 = 0 as *const i8;
     let mut bGood: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qtrue;
     // if we are pure, we "expect" the client to load certain things from
     // certain pk3 files, namely we want the client to have loaded the
     // ui and cgame that we think should be loaded based on the pure setting
     //
-    if (*crate::src::server::sv_main::sv_pure).integer != 0 as libc::c_int {
-        nChkSum2 = 0 as libc::c_int;
+    if (*crate::src::server::sv_main::sv_pure).integer != 0 {
+        nChkSum2 = 0;
         nChkSum1 = nChkSum2;
         // we run the game, so determine which cgame and ui the client "should" be running
         bGood = (crate::src::qcommon::files::FS_FileIsInPAK(
-            b"vm/cgame.qvm\x00" as *const u8 as *const libc::c_char,
+            b"vm/cgame.qvm\x00" as *const u8 as *const i8,
             &mut nChkSum1,
-        ) == 1 as libc::c_int) as libc::c_int
-            as crate::src::qcommon::q_shared::qboolean;
+        ) == 1) as crate::src::qcommon::q_shared::qboolean;
         if bGood as u64 != 0 {
             bGood = (crate::src::qcommon::files::FS_FileIsInPAK(
-                b"vm/ui.qvm\x00" as *const u8 as *const libc::c_char,
+                b"vm/ui.qvm\x00" as *const u8 as *const i8,
                 &mut nChkSum2,
-            ) == 1 as libc::c_int) as libc::c_int
-                as crate::src::qcommon::q_shared::qboolean
+            ) == 1) as crate::src::qcommon::q_shared::qboolean
         }
         nClientPaks = crate::src::qcommon::cmd::Cmd_Argc();
         // start at arg 2 ( skip serverId cl_paks )
-        nCurArg = 1 as libc::c_int;
+        nCurArg = 1;
         let fresh0 = nCurArg;
         nCurArg = nCurArg + 1;
         pArg = crate::src::qcommon::cmd::Cmd_Argv(fresh0);
@@ -2185,8 +2077,7 @@ unsafe extern "C" fn SV_VerifyPaks_f(mut cl: *mut crate::server_h::client_t) {
             bGood = crate::src::qcommon::q_shared::qfalse
         } else if atoi(pArg) < crate::src::server::sv_main::sv.checksumFeedServerId {
             crate::src::qcommon::common::Com_DPrintf(
-                b"ignoring outdated cp command from client %s\n\x00" as *const u8
-                    as *const libc::c_char,
+                b"ignoring outdated cp command from client %s\n\x00" as *const u8 as *const i8,
                 (*cl).name.as_mut_ptr(),
             );
             return;
@@ -2198,35 +2089,32 @@ unsafe extern "C" fn SV_VerifyPaks_f(mut cl: *mut crate::server_h::client_t) {
         if bGood as u64 != 0 {
             // must be at least 6: "cl_paks cgame ui @ firstref ... numChecksums"
             // numChecksums is encoded
-            if nClientPaks < 6 as libc::c_int {
+            if nClientPaks < 6 {
                 bGood = crate::src::qcommon::q_shared::qfalse
             } else {
                 // verify first to be the cgame checksum
                 let fresh1 = nCurArg;
                 nCurArg = nCurArg + 1;
                 pArg = crate::src::qcommon::cmd::Cmd_Argv(fresh1);
-                if pArg.is_null() || *pArg as libc::c_int == '@' as i32 || atoi(pArg) != nChkSum1 {
+                if pArg.is_null() || *pArg as i32 == '@' as i32 || atoi(pArg) != nChkSum1 {
                     bGood = crate::src::qcommon::q_shared::qfalse
                 } else {
                     // verify the second to be the ui checksum
                     let fresh2 = nCurArg;
                     nCurArg = nCurArg + 1;
                     pArg = crate::src::qcommon::cmd::Cmd_Argv(fresh2);
-                    if pArg.is_null()
-                        || *pArg as libc::c_int == '@' as i32
-                        || atoi(pArg) != nChkSum2
-                    {
+                    if pArg.is_null() || *pArg as i32 == '@' as i32 || atoi(pArg) != nChkSum2 {
                         bGood = crate::src::qcommon::q_shared::qfalse
                     } else {
                         // should be sitting at the delimeter now
                         let fresh3 = nCurArg;
                         nCurArg = nCurArg + 1;
                         pArg = crate::src::qcommon::cmd::Cmd_Argv(fresh3);
-                        if *pArg as libc::c_int != '@' as i32 {
+                        if *pArg as i32 != '@' as i32 {
                             bGood = crate::src::qcommon::q_shared::qfalse
                         } else {
                             // store checksums since tokenization is not re-entrant
-                            i = 0 as libc::c_int;
+                            i = 0;
                             while nCurArg < nClientPaks {
                                 let fresh4 = nCurArg;
                                 nCurArg = nCurArg + 1;
@@ -2235,12 +2123,12 @@ unsafe extern "C" fn SV_VerifyPaks_f(mut cl: *mut crate::server_h::client_t) {
                                 i += 1
                             }
                             // store number to compare against (minus one cause the last is the number of checksums)
-                            nClientPaks = i - 1 as libc::c_int;
+                            nClientPaks = i - 1;
                             // make sure none of the client check sums are the same
                             // so the client can't send 5 the same checksums
-                            i = 0 as libc::c_int;
+                            i = 0;
                             while i < nClientPaks {
-                                j = 0 as libc::c_int;
+                                j = 0;
                                 while j < nClientPaks {
                                     if !(i == j) {
                                         if nClientChkSum[i as usize] == nClientChkSum[j as usize] {
@@ -2250,35 +2138,29 @@ unsafe extern "C" fn SV_VerifyPaks_f(mut cl: *mut crate::server_h::client_t) {
                                     }
                                     j += 1
                                 }
-                                if bGood as libc::c_uint
-                                    == crate::src::qcommon::q_shared::qfalse as libc::c_int
-                                        as libc::c_uint
-                                {
+                                if bGood == crate::src::qcommon::q_shared::qfalse {
                                     break;
                                 }
                                 i += 1
                             }
-                            if !(bGood as libc::c_uint
-                                == crate::src::qcommon::q_shared::qfalse as libc::c_int
-                                    as libc::c_uint)
-                            {
+                            if !(bGood == crate::src::qcommon::q_shared::qfalse) {
                                 // get the pure checksums of the pk3 files loaded by the server
                                 pPaks = crate::src::qcommon::files::FS_LoadedPakPureChecksums();
                                 crate::src::qcommon::cmd::Cmd_TokenizeString(pPaks);
                                 nServerPaks = crate::src::qcommon::cmd::Cmd_Argc();
-                                if nServerPaks > 1024 as libc::c_int {
-                                    nServerPaks = 1024 as libc::c_int
+                                if nServerPaks > 1024 {
+                                    nServerPaks = 1024
                                 }
-                                i = 0 as libc::c_int;
+                                i = 0;
                                 while i < nServerPaks {
                                     nServerChkSum[i as usize] =
                                         atoi(crate::src::qcommon::cmd::Cmd_Argv(i));
                                     i += 1
                                 }
                                 // check if the client has provided any pure checksums of pk3 files not loaded by the server
-                                i = 0 as libc::c_int;
+                                i = 0;
                                 while i < nClientPaks {
-                                    j = 0 as libc::c_int;
+                                    j = 0;
                                     while j < nServerPaks {
                                         if nClientChkSum[i as usize] == nServerChkSum[j as usize] {
                                             break;
@@ -2292,13 +2174,10 @@ unsafe extern "C" fn SV_VerifyPaks_f(mut cl: *mut crate::server_h::client_t) {
                                         i += 1
                                     }
                                 }
-                                if !(bGood as libc::c_uint
-                                    == crate::src::qcommon::q_shared::qfalse as libc::c_int
-                                        as libc::c_uint)
-                                {
+                                if !(bGood == crate::src::qcommon::q_shared::qfalse) {
                                     // check if the number of checksums was correct
                                     nChkSum1 = crate::src::server::sv_main::sv.checksumFeed;
-                                    i = 0 as libc::c_int;
+                                    i = 0;
                                     while i < nClientPaks {
                                         nChkSum1 ^= nClientChkSum[i as usize];
                                         i += 1
@@ -2316,16 +2195,16 @@ unsafe extern "C" fn SV_VerifyPaks_f(mut cl: *mut crate::server_h::client_t) {
         }
         (*cl).gotCP = crate::src::qcommon::q_shared::qtrue;
         if bGood as u64 != 0 {
-            (*cl).pureAuthentic = 1 as libc::c_int
+            (*cl).pureAuthentic = 1
         } else {
-            (*cl).pureAuthentic = 0 as libc::c_int;
-            (*cl).lastSnapshotTime = 0 as libc::c_int;
+            (*cl).pureAuthentic = 0;
+            (*cl).lastSnapshotTime = 0;
             (*cl).state = crate::server_h::CS_ACTIVE;
             crate::src::server::sv_snapshot::SV_SendClientSnapshot(cl);
             SV_DropClient(
                 cl,
                 b"Unpure client detected. Invalid .PK3 files referenced!\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
             );
         }
     };
@@ -2337,7 +2216,7 @@ SV_ResetPureClient_f
 */
 
 unsafe extern "C" fn SV_ResetPureClient_f(mut cl: *mut crate::server_h::client_t) {
-    (*cl).pureAuthentic = 0 as libc::c_int;
+    (*cl).pureAuthentic = 0;
     (*cl).gotCP = crate::src::qcommon::q_shared::qfalse;
 }
 /*
@@ -2351,82 +2230,78 @@ into a more C friendly form.
 #[no_mangle]
 
 pub unsafe extern "C" fn SV_UserinfoChanged(mut cl: *mut crate::server_h::client_t) {
-    let mut val: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut ip: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut i: libc::c_int = 0;
-    let mut len: libc::c_int = 0;
+    let mut val: *mut i8 = 0 as *mut i8;
+    let mut ip: *mut i8 = 0 as *mut i8;
+    let mut i: i32 = 0;
+    let mut len: i32 = 0;
     // name for C code
     crate::src::qcommon::q_shared::Q_strncpyz(
         (*cl).name.as_mut_ptr(),
         crate::src::qcommon::q_shared::Info_ValueForKey(
             (*cl).userinfo.as_mut_ptr(),
-            b"name\x00" as *const u8 as *const libc::c_char,
+            b"name\x00" as *const u8 as *const i8,
         ),
-        ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 32]>() as i32,
     );
     // rate command
     // if the client is on the same subnet as the server and we aren't running an
     // internet public server, assume they don't need a rate choke
-    if crate::src::qcommon::net_ip::Sys_IsLANAddress((*cl).netchan.remoteAddress) as libc::c_uint
-        != 0
-        && (*crate::src::qcommon::common::com_dedicated).integer != 2 as libc::c_int
-        && (*crate::src::server::sv_main::sv_lanForceRate).integer == 1 as libc::c_int
+    if crate::src::qcommon::net_ip::Sys_IsLANAddress((*cl).netchan.remoteAddress) != 0
+        && (*crate::src::qcommon::common::com_dedicated).integer != 2
+        && (*crate::src::server::sv_main::sv_lanForceRate).integer == 1
     {
-        (*cl).rate = 99999 as libc::c_int
+        (*cl).rate = 99999
     // lans should not rate limit
     } else {
         val = crate::src::qcommon::q_shared::Info_ValueForKey(
             (*cl).userinfo.as_mut_ptr(),
-            b"rate\x00" as *const u8 as *const libc::c_char,
+            b"rate\x00" as *const u8 as *const i8,
         );
         if crate::stdlib::strlen(val) != 0 {
             i = atoi(val);
             (*cl).rate = i;
-            if (*cl).rate < 1000 as libc::c_int {
-                (*cl).rate = 1000 as libc::c_int
-            } else if (*cl).rate > 90000 as libc::c_int {
-                (*cl).rate = 90000 as libc::c_int
+            if (*cl).rate < 1000 {
+                (*cl).rate = 1000
+            } else if (*cl).rate > 90000 {
+                (*cl).rate = 90000
             }
         } else {
-            (*cl).rate = 3000 as libc::c_int
+            (*cl).rate = 3000
         }
     }
     val = crate::src::qcommon::q_shared::Info_ValueForKey(
         (*cl).userinfo.as_mut_ptr(),
-        b"handicap\x00" as *const u8 as *const libc::c_char,
+        b"handicap\x00" as *const u8 as *const i8,
     );
     if crate::stdlib::strlen(val) != 0 {
         i = atoi(val);
-        if i <= 0 as libc::c_int
-            || i > 100 as libc::c_int
-            || crate::stdlib::strlen(val) > 4 as libc::c_int as libc::c_ulong
-        {
+        if i <= 0 || i > 100 || crate::stdlib::strlen(val) > 4 {
             crate::src::qcommon::q_shared::Info_SetValueForKey(
                 (*cl).userinfo.as_mut_ptr(),
-                b"handicap\x00" as *const u8 as *const libc::c_char,
-                b"100\x00" as *const u8 as *const libc::c_char,
+                b"handicap\x00" as *const u8 as *const i8,
+                b"100\x00" as *const u8 as *const i8,
             );
         }
     }
     // snaps command
     val = crate::src::qcommon::q_shared::Info_ValueForKey(
         (*cl).userinfo.as_mut_ptr(),
-        b"snaps\x00" as *const u8 as *const libc::c_char,
+        b"snaps\x00" as *const u8 as *const i8,
     );
     if crate::stdlib::strlen(val) != 0 {
         i = atoi(val);
-        if i < 1 as libc::c_int {
-            i = 1 as libc::c_int
+        if i < 1 {
+            i = 1
         } else if i > (*crate::src::server::sv_main::sv_fps).integer {
             i = (*crate::src::server::sv_main::sv_fps).integer
         }
-        i = 1000 as libc::c_int / i
+        i = 1000 / i
     } else {
-        i = 50 as libc::c_int
+        i = 50
     }
     if i != (*cl).snapshotMsec {
         // Reset last sent snapshot so we avoid desync between server frame time and snapshot send time
-        (*cl).lastSnapshotTime = 0 as libc::c_int;
+        (*cl).lastSnapshotTime = 0;
         (*cl).snapshotMsec = i
     }
     if (*cl).compat as u64 != 0 {
@@ -2434,46 +2309,42 @@ pub unsafe extern "C" fn SV_UserinfoChanged(mut cl: *mut crate::server_h::client
     } else {
         val = crate::src::qcommon::q_shared::Info_ValueForKey(
             (*cl).userinfo.as_mut_ptr(),
-            b"cl_voipProtocol\x00" as *const u8 as *const libc::c_char,
+            b"cl_voipProtocol\x00" as *const u8 as *const i8,
         );
-        (*cl).hasVoip = (crate::src::qcommon::q_shared::Q_stricmp(
-            val,
-            b"opus\x00" as *const u8 as *const libc::c_char,
-        ) == 0) as libc::c_int as crate::src::qcommon::q_shared::qboolean
+        (*cl).hasVoip =
+            (crate::src::qcommon::q_shared::Q_stricmp(val, b"opus\x00" as *const u8 as *const i8)
+                == 0) as crate::src::qcommon::q_shared::qboolean
     }
     // TTimo
     // maintain the IP information
     // the banning code relies on this being consistently present
     if crate::src::qcommon::net_ip::NET_IsLocalAddress((*cl).netchan.remoteAddress) as u64 != 0 {
-        ip = b"localhost\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+        ip = b"localhost\x00" as *const u8 as *mut i8
     } else {
-        ip = crate::src::qcommon::net_ip::NET_AdrToString((*cl).netchan.remoteAddress)
-            as *mut libc::c_char
+        ip = crate::src::qcommon::net_ip::NET_AdrToString((*cl).netchan.remoteAddress) as *mut i8
     }
     val = crate::src::qcommon::q_shared::Info_ValueForKey(
         (*cl).userinfo.as_mut_ptr(),
-        b"ip\x00" as *const u8 as *const libc::c_char,
+        b"ip\x00" as *const u8 as *const i8,
     );
-    if *val.offset(0 as libc::c_int as isize) != 0 {
+    if *val.offset(0) != 0 {
         len = crate::stdlib::strlen(ip)
             .wrapping_sub(crate::stdlib::strlen(val))
-            .wrapping_add(crate::stdlib::strlen((*cl).userinfo.as_mut_ptr()))
-            as libc::c_int
+            .wrapping_add(crate::stdlib::strlen((*cl).userinfo.as_mut_ptr())) as i32
     } else {
         len = crate::stdlib::strlen(ip)
-            .wrapping_add(4 as libc::c_int as libc::c_ulong)
-            .wrapping_add(crate::stdlib::strlen((*cl).userinfo.as_mut_ptr()))
-            as libc::c_int
+            .wrapping_add(4usize)
+            .wrapping_add(crate::stdlib::strlen((*cl).userinfo.as_mut_ptr())) as i32
     }
-    if len >= 1024 as libc::c_int {
+    if len >= 1024 {
         SV_DropClient(
             cl,
-            b"userinfo string length exceeded\x00" as *const u8 as *const libc::c_char,
+            b"userinfo string length exceeded\x00" as *const u8 as *const i8,
         );
     } else {
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             (*cl).userinfo.as_mut_ptr(),
-            b"ip\x00" as *const u8 as *const libc::c_char,
+            b"ip\x00" as *const u8 as *const i8,
             ip,
         );
     };
@@ -2487,26 +2358,26 @@ SV_UpdateUserinfo_f
 unsafe extern "C" fn SV_UpdateUserinfo_f(mut cl: *mut crate::server_h::client_t) {
     crate::src::qcommon::q_shared::Q_strncpyz(
         (*cl).userinfo.as_mut_ptr(),
-        crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int),
-        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+        crate::src::qcommon::cmd::Cmd_Argv(1),
+        ::std::mem::size_of::<[i8; 1024]>() as i32,
     );
     SV_UserinfoChanged(cl);
     // call prog code to allow overrides
     crate::src::qcommon::vm::VM_Call(
         crate::src::server::sv_main::gvm,
-        crate::g_public_h::GAME_CLIENT_USERINFO_CHANGED as libc::c_int,
-        cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long,
+        crate::g_public_h::GAME_CLIENT_USERINFO_CHANGED as i32,
+        cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients),
     );
 }
 
 unsafe extern "C" fn SV_UpdateVoipIgnore(
     mut cl: *mut crate::server_h::client_t,
-    mut idstr: *const libc::c_char,
+    mut idstr: *const i8,
     mut ignore: crate::src::qcommon::q_shared::qboolean,
 ) {
-    if *idstr as libc::c_int >= '0' as i32 && *idstr as libc::c_int <= '9' as i32 {
-        let id: libc::c_int = atoi(idstr);
-        if id >= 0 as libc::c_int && id < 64 as libc::c_int {
+    if *idstr as i32 >= '0' as i32 && *idstr as i32 <= '9' as i32 {
+        let id: i32 = atoi(idstr);
+        if id >= 0 && id < 64 {
             (*cl).ignoreVoipFromClient[id as usize] = ignore
         }
     };
@@ -2518,30 +2389,22 @@ SV_Voip_f
 */
 
 unsafe extern "C" fn SV_Voip_f(mut cl: *mut crate::server_h::client_t) {
-    let mut cmd: *const libc::c_char = crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int);
-    if crate::stdlib::strcmp(cmd, b"ignore\x00" as *const u8 as *const libc::c_char)
-        == 0 as libc::c_int
-    {
+    let mut cmd: *const i8 = crate::src::qcommon::cmd::Cmd_Argv(1);
+    if crate::stdlib::strcmp(cmd, b"ignore\x00" as *const u8 as *const i8) == 0 {
         SV_UpdateVoipIgnore(
             cl,
-            crate::src::qcommon::cmd::Cmd_Argv(2 as libc::c_int),
+            crate::src::qcommon::cmd::Cmd_Argv(2i32),
             crate::src::qcommon::q_shared::qtrue,
         );
-    } else if crate::stdlib::strcmp(cmd, b"unignore\x00" as *const u8 as *const libc::c_char)
-        == 0 as libc::c_int
-    {
+    } else if crate::stdlib::strcmp(cmd, b"unignore\x00" as *const u8 as *const i8) == 0 {
         SV_UpdateVoipIgnore(
             cl,
-            crate::src::qcommon::cmd::Cmd_Argv(2 as libc::c_int),
+            crate::src::qcommon::cmd::Cmd_Argv(2i32),
             crate::src::qcommon::q_shared::qfalse,
         );
-    } else if crate::stdlib::strcmp(cmd, b"muteall\x00" as *const u8 as *const libc::c_char)
-        == 0 as libc::c_int
-    {
+    } else if crate::stdlib::strcmp(cmd, b"muteall\x00" as *const u8 as *const i8) == 0 {
         (*cl).muteAllVoip = crate::src::qcommon::q_shared::qtrue
-    } else if crate::stdlib::strcmp(cmd, b"unmuteall\x00" as *const u8 as *const libc::c_char)
-        == 0 as libc::c_int
-    {
+    } else if crate::stdlib::strcmp(cmd, b"unmuteall\x00" as *const u8 as *const i8) == 0 {
         (*cl).muteAllVoip = crate::src::qcommon::q_shared::qfalse
     };
 }
@@ -2550,7 +2413,7 @@ static mut ucmds: [ucmd_t; 10] = unsafe {
     [
         {
             let mut init = ucmd_t {
-                name: b"userinfo\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                name: b"userinfo\x00" as *const u8 as *mut i8,
                 func: Some(
                     SV_UpdateUserinfo_f
                         as unsafe extern "C" fn(_: *mut crate::server_h::client_t) -> (),
@@ -2560,7 +2423,7 @@ static mut ucmds: [ucmd_t; 10] = unsafe {
         },
         {
             let mut init = ucmd_t {
-                name: b"disconnect\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                name: b"disconnect\x00" as *const u8 as *mut i8,
                 func: Some(
                     SV_Disconnect_f
                         as unsafe extern "C" fn(_: *mut crate::server_h::client_t) -> (),
@@ -2570,7 +2433,7 @@ static mut ucmds: [ucmd_t; 10] = unsafe {
         },
         {
             let mut init = ucmd_t {
-                name: b"cp\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                name: b"cp\x00" as *const u8 as *mut i8,
                 func: Some(
                     SV_VerifyPaks_f
                         as unsafe extern "C" fn(_: *mut crate::server_h::client_t) -> (),
@@ -2580,7 +2443,7 @@ static mut ucmds: [ucmd_t; 10] = unsafe {
         },
         {
             let mut init = ucmd_t {
-                name: b"vdr\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                name: b"vdr\x00" as *const u8 as *mut i8,
                 func: Some(
                     SV_ResetPureClient_f
                         as unsafe extern "C" fn(_: *mut crate::server_h::client_t) -> (),
@@ -2590,7 +2453,7 @@ static mut ucmds: [ucmd_t; 10] = unsafe {
         },
         {
             let mut init = ucmd_t {
-                name: b"download\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                name: b"download\x00" as *const u8 as *mut i8,
                 func: Some(
                     SV_BeginDownload_f
                         as unsafe extern "C" fn(_: *mut crate::server_h::client_t) -> (),
@@ -2600,7 +2463,7 @@ static mut ucmds: [ucmd_t; 10] = unsafe {
         },
         {
             let mut init = ucmd_t {
-                name: b"nextdl\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                name: b"nextdl\x00" as *const u8 as *mut i8,
                 func: Some(
                     SV_NextDownload_f
                         as unsafe extern "C" fn(_: *mut crate::server_h::client_t) -> (),
@@ -2610,7 +2473,7 @@ static mut ucmds: [ucmd_t; 10] = unsafe {
         },
         {
             let mut init = ucmd_t {
-                name: b"stopdl\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                name: b"stopdl\x00" as *const u8 as *mut i8,
                 func: Some(
                     SV_StopDownload_f
                         as unsafe extern "C" fn(_: *mut crate::server_h::client_t) -> (),
@@ -2620,7 +2483,7 @@ static mut ucmds: [ucmd_t; 10] = unsafe {
         },
         {
             let mut init = ucmd_t {
-                name: b"donedl\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                name: b"donedl\x00" as *const u8 as *mut i8,
                 func: Some(
                     SV_DoneDownload_f
                         as unsafe extern "C" fn(_: *mut crate::server_h::client_t) -> (),
@@ -2630,7 +2493,7 @@ static mut ucmds: [ucmd_t; 10] = unsafe {
         },
         {
             let mut init = ucmd_t {
-                name: b"voip\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                name: b"voip\x00" as *const u8 as *mut i8,
                 func: Some(
                     SV_Voip_f as unsafe extern "C" fn(_: *mut crate::server_h::client_t) -> (),
                 ),
@@ -2639,7 +2502,7 @@ static mut ucmds: [ucmd_t; 10] = unsafe {
         },
         {
             let mut init = ucmd_t {
-                name: 0 as *const libc::c_char as *mut libc::c_char,
+                name: 0 as *mut i8,
                 func: None,
             };
             init
@@ -2657,7 +2520,7 @@ Also called by bot code
 
 pub unsafe extern "C" fn SV_ExecuteClientCommand(
     mut cl: *mut crate::server_h::client_t,
-    mut s: *const libc::c_char,
+    mut s: *const i8,
     mut clientOK: crate::src::qcommon::q_shared::qboolean,
 ) {
     let mut u: *mut ucmd_t = 0 as *mut ucmd_t;
@@ -2667,11 +2530,7 @@ pub unsafe extern "C" fn SV_ExecuteClientCommand(
     // see if it is a server level command
     u = ucmds.as_mut_ptr();
     while !(*u).name.is_null() {
-        if crate::stdlib::strcmp(
-            crate::src::qcommon::cmd::Cmd_Argv(0 as libc::c_int),
-            (*u).name,
-        ) == 0
-        {
+        if crate::stdlib::strcmp(crate::src::qcommon::cmd::Cmd_Argv(0), (*u).name) == 0 {
             (*u).func.expect("non-null function pointer")(cl);
             bProcessed = crate::src::qcommon::q_shared::qtrue;
             break;
@@ -2682,25 +2541,22 @@ pub unsafe extern "C" fn SV_ExecuteClientCommand(
     if clientOK as u64 != 0 {
         // pass unknown strings to the game
         if (*u).name.is_null()
-            && crate::src::server::sv_main::sv.state as libc::c_uint
-                == crate::server_h::SS_GAME as libc::c_int as libc::c_uint
-            && ((*cl).state as libc::c_uint
-                == crate::server_h::CS_ACTIVE as libc::c_int as libc::c_uint
-                || (*cl).state as libc::c_uint
-                    == crate::server_h::CS_PRIMED as libc::c_int as libc::c_uint)
+            && crate::src::server::sv_main::sv.state == crate::server_h::SS_GAME
+            && ((*cl).state == crate::server_h::CS_ACTIVE
+                || (*cl).state == crate::server_h::CS_PRIMED)
         {
             crate::src::qcommon::cmd::Cmd_Args_Sanitize();
             crate::src::qcommon::vm::VM_Call(
                 crate::src::server::sv_main::gvm,
-                crate::g_public_h::GAME_CLIENT_COMMAND as libc::c_int,
-                cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long,
+                crate::g_public_h::GAME_CLIENT_COMMAND as i32,
+                cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients),
             );
         }
     } else if bProcessed as u64 == 0 {
         crate::src::qcommon::common::Com_DPrintf(
-            b"client text ignored for %s: %s\n\x00" as *const u8 as *const libc::c_char,
+            b"client text ignored for %s: %s\n\x00" as *const u8 as *const i8,
             (*cl).name.as_mut_ptr(),
-            crate::src::qcommon::cmd::Cmd_Argv(0 as libc::c_int),
+            crate::src::qcommon::cmd::Cmd_Argv(0i32),
         );
     };
 }
@@ -2714,8 +2570,8 @@ unsafe extern "C" fn SV_ClientCommand(
     mut cl: *mut crate::server_h::client_t,
     mut msg: *mut crate::qcommon_h::msg_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut seq: libc::c_int = 0;
-    let mut s: *const libc::c_char = 0 as *const libc::c_char;
+    let mut seq: i32 = 0;
+    let mut s: *const i8 = 0 as *const i8;
     let mut clientOk: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qtrue;
     seq = crate::src::qcommon::msg::MSG_ReadLong(msg);
@@ -2725,22 +2581,19 @@ unsafe extern "C" fn SV_ClientCommand(
         return crate::src::qcommon::q_shared::qtrue;
     }
     crate::src::qcommon::common::Com_DPrintf(
-        b"clientCommand: %s : %i : %s\n\x00" as *const u8 as *const libc::c_char,
+        b"clientCommand: %s : %i : %s\n\x00" as *const u8 as *const i8,
         (*cl).name.as_mut_ptr(),
         seq,
         s,
     );
     // drop the connection if we have somehow lost commands
-    if seq > (*cl).lastClientCommand + 1 as libc::c_int {
+    if seq > (*cl).lastClientCommand + 1 {
         crate::src::qcommon::common::Com_Printf(
-            b"Client %s lost %i clientCommands\n\x00" as *const u8 as *const libc::c_char,
+            b"Client %s lost %i clientCommands\n\x00" as *const u8 as *const i8,
             (*cl).name.as_mut_ptr(),
-            seq - (*cl).lastClientCommand + 1 as libc::c_int,
+            seq - (*cl).lastClientCommand + 1i32,
         );
-        SV_DropClient(
-            cl,
-            b"Lost reliable commands\x00" as *const u8 as *const libc::c_char,
-        );
+        SV_DropClient(cl, b"Lost reliable commands\x00" as *const u8 as *const i8);
         return crate::src::qcommon::q_shared::qfalse;
     }
     // malicious users may try using too many string commands
@@ -2751,7 +2604,7 @@ unsafe extern "C" fn SV_ClientCommand(
     // We don't do this when the client hasn't been active yet since it's
     // normal to spam a lot of commands when downloading
     if (*crate::src::qcommon::common::com_cl_running).integer == 0
-        && (*cl).state as libc::c_uint >= crate::server_h::CS_ACTIVE as libc::c_int as libc::c_uint
+        && (*cl).state >= crate::server_h::CS_ACTIVE
         && (*crate::src::server::sv_main::sv_floodProtect).integer != 0
         && crate::src::server::sv_main::svs.time < (*cl).nextReliableTime
     {
@@ -2760,13 +2613,13 @@ unsafe extern "C" fn SV_ClientCommand(
         clientOk = crate::src::qcommon::q_shared::qfalse
     }
     // don't allow another command for one second
-    (*cl).nextReliableTime = crate::src::server::sv_main::svs.time + 1000 as libc::c_int;
+    (*cl).nextReliableTime = crate::src::server::sv_main::svs.time + 1000;
     SV_ExecuteClientCommand(cl, s, clientOk);
     (*cl).lastClientCommand = seq;
     crate::src::qcommon::q_shared::Com_sprintf(
         (*cl).lastClientCommandString.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
-        b"%s\x00" as *const u8 as *const libc::c_char,
+        ::std::mem::size_of::<[i8; 1024]>() as i32,
+        b"%s\x00" as *const u8 as *const i8,
         s,
     );
     return crate::src::qcommon::q_shared::qtrue;
@@ -2787,14 +2640,14 @@ pub unsafe extern "C" fn SV_ClientThink(
     mut cmd: *mut crate::src::qcommon::q_shared::usercmd_t,
 ) {
     (*cl).lastUsercmd = *cmd;
-    if (*cl).state as libc::c_uint != crate::server_h::CS_ACTIVE as libc::c_int as libc::c_uint {
+    if (*cl).state != crate::server_h::CS_ACTIVE {
         return;
         // may have been kicked during the last usercmd
     }
     crate::src::qcommon::vm::VM_Call(
         crate::src::server::sv_main::gvm,
-        crate::g_public_h::GAME_CLIENT_THINK as libc::c_int,
-        cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long,
+        crate::g_public_h::GAME_CLIENT_THINK as i32,
+        cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients),
     );
 }
 /*
@@ -2815,9 +2668,9 @@ unsafe extern "C" fn SV_UserMove(
     mut msg: *mut crate::qcommon_h::msg_t,
     mut delta: crate::src::qcommon::q_shared::qboolean,
 ) {
-    let mut i: libc::c_int = 0;
-    let mut key: libc::c_int = 0;
-    let mut cmdCount: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut key: i32 = 0;
+    let mut cmdCount: i32 = 0;
     let mut nullcmd: crate::src::qcommon::q_shared::usercmd_t =
         crate::src::qcommon::q_shared::usercmd_t {
             serverTime: 0,
@@ -2845,18 +2698,16 @@ unsafe extern "C" fn SV_UserMove(
     if delta as u64 != 0 {
         (*cl).deltaMessage = (*cl).messageAcknowledge
     } else {
-        (*cl).deltaMessage = -(1 as libc::c_int)
+        (*cl).deltaMessage = -(1)
     }
     cmdCount = crate::src::qcommon::msg::MSG_ReadByte(msg);
-    if cmdCount < 1 as libc::c_int {
-        crate::src::qcommon::common::Com_Printf(
-            b"cmdCount < 1\n\x00" as *const u8 as *const libc::c_char,
-        );
+    if cmdCount < 1 {
+        crate::src::qcommon::common::Com_Printf(b"cmdCount < 1\n\x00" as *const u8 as *const i8);
         return;
     }
-    if cmdCount > 32 as libc::c_int {
+    if cmdCount > 32 {
         crate::src::qcommon::common::Com_Printf(
-            b"cmdCount > MAX_PACKET_USERCMDS\n\x00" as *const u8 as *const libc::c_char,
+            b"cmdCount > MAX_PACKET_USERCMDS\n\x00" as *const u8 as *const i8,
         );
         return;
     }
@@ -2866,18 +2717,16 @@ unsafe extern "C" fn SV_UserMove(
     key ^= (*cl).messageAcknowledge;
     // also use the last acknowledged server command in the key
     key ^= crate::src::qcommon::msg::MSG_HashKey(
-        (*cl).reliableCommands
-            [((*cl).reliableAcknowledge & 64 as libc::c_int - 1 as libc::c_int) as usize]
-            .as_mut_ptr(),
-        32 as libc::c_int,
+        (*cl).reliableCommands[((*cl).reliableAcknowledge & 64i32 - 1) as usize].as_mut_ptr(),
+        32,
     );
     crate::stdlib::memset(
         &mut nullcmd as *mut crate::src::qcommon::q_shared::usercmd_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::src::qcommon::q_shared::usercmd_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::src::qcommon::q_shared::usercmd_t>(),
     );
     oldcmd = &mut nullcmd;
-    i = 0 as libc::c_int;
+    i = 0;
     while i < cmdCount {
         cmd = &mut *cmds.as_mut_ptr().offset(i as isize)
             as *mut crate::src::qcommon::q_shared::usercmd_t;
@@ -2886,22 +2735,20 @@ unsafe extern "C" fn SV_UserMove(
         i += 1
     }
     // save time for ping calculation
-    (*cl).frames[((*cl).messageAcknowledge & 32 as libc::c_int - 1 as libc::c_int) as usize]
-        .messageAcked = crate::src::server::sv_main::svs.time;
+    (*cl).frames[((*cl).messageAcknowledge & 32i32 - 1) as usize].messageAcked =
+        crate::src::server::sv_main::svs.time;
     // TTimo
     // catch the no-cp-yet situation before SV_ClientEnterWorld
     // if CS_ACTIVE, then it's time to trigger a new gamestate emission
     // if not, then we are getting remaining parasite usermove commands, which we should ignore
-    if (*crate::src::server::sv_main::sv_pure).integer != 0 as libc::c_int
-        && (*cl).pureAuthentic == 0 as libc::c_int
+    if (*crate::src::server::sv_main::sv_pure).integer != 0
+        && (*cl).pureAuthentic == 0
         && (*cl).gotCP as u64 == 0
     {
-        if (*cl).state as libc::c_uint == crate::server_h::CS_ACTIVE as libc::c_int as libc::c_uint
-        {
+        if (*cl).state == crate::server_h::CS_ACTIVE {
             // we didn't get a cp yet, don't assume anything and just send the gamestate all over again
             crate::src::qcommon::common::Com_DPrintf(
-                b"%s: didn\'t get cp command, resending gamestate\n\x00" as *const u8
-                    as *const libc::c_char,
+                b"%s: didn\'t get cp command, resending gamestate\n\x00" as *const u8 as *const i8,
                 (*cl).name.as_mut_ptr(),
             );
             SV_SendClientGameState(cl);
@@ -2910,35 +2757,29 @@ unsafe extern "C" fn SV_UserMove(
     }
     // if this is the first usercmd we have received
     // this gamestate, put the client into the world
-    if (*cl).state as libc::c_uint == crate::server_h::CS_PRIMED as libc::c_int as libc::c_uint {
-        SV_ClientEnterWorld(
-            cl,
-            &mut *cmds.as_mut_ptr().offset(0 as libc::c_int as isize),
-        );
+    if (*cl).state == crate::server_h::CS_PRIMED {
+        SV_ClientEnterWorld(cl, &mut *cmds.as_mut_ptr().offset(0isize));
         // the moves can be processed normaly
     }
     // a bad cp command was sent, drop the client
-    if (*crate::src::server::sv_main::sv_pure).integer != 0 as libc::c_int
-        && (*cl).pureAuthentic == 0 as libc::c_int
-    {
+    if (*crate::src::server::sv_main::sv_pure).integer != 0 && (*cl).pureAuthentic == 0 {
         SV_DropClient(
             cl,
-            b"Cannot validate pure client!\x00" as *const u8 as *const libc::c_char,
+            b"Cannot validate pure client!\x00" as *const u8 as *const i8,
         );
         return;
     }
-    if (*cl).state as libc::c_uint != crate::server_h::CS_ACTIVE as libc::c_int as libc::c_uint {
-        (*cl).deltaMessage = -(1 as libc::c_int);
+    if (*cl).state != crate::server_h::CS_ACTIVE {
+        (*cl).deltaMessage = -(1);
         return;
     }
     // usually, the first couple commands will be duplicates
     // of ones we have previously received, but the servertimes
     // in the commands will cause them to be immediately discarded
-    i = 0 as libc::c_int;
+    i = 0;
     while i < cmdCount {
         // if this is a cmd from before a map_restart ignore it
-        if !(cmds[i as usize].serverTime > cmds[(cmdCount - 1 as libc::c_int) as usize].serverTime)
-        {
+        if !(cmds[i as usize].serverTime > cmds[(cmdCount - 1) as usize].serverTime) {
             // extremely lagged or cmd from before a map_restart
             //if ( cmds[i].serverTime > svs.time + 3000 ) {
             //	continue;
@@ -2982,46 +2823,39 @@ unsafe extern "C" fn SV_UserVoip(
     mut msg: *mut crate::qcommon_h::msg_t,
     mut ignoreData: crate::src::qcommon::q_shared::qboolean,
 ) {
-    let mut sender: libc::c_int = 0; // short/invalid packet, bail.
-    let mut generation: libc::c_int = 0;
-    let mut sequence: libc::c_int = 0;
-    let mut frames: libc::c_int = 0;
-    let mut packetsize: libc::c_int = 0;
+    let mut sender: i32 = 0; // short/invalid packet, bail.
+    let mut generation: i32 = 0;
+    let mut sequence: i32 = 0;
+    let mut frames: i32 = 0;
+    let mut packetsize: i32 = 0;
     let mut recips: [crate::stdlib::uint8_t; 8] = [0; 8];
-    let mut flags: libc::c_int = 0;
+    let mut flags: i32 = 0;
     let mut encoded: [crate::src::qcommon::q_shared::byte; 4000] = [0; 4000];
     let mut client: *mut crate::server_h::client_t = 0 as *mut crate::server_h::client_t;
     let mut packet: *mut crate::server_h::voipServerPacket_t =
         0 as *mut crate::server_h::voipServerPacket_t;
-    let mut i: libc::c_int = 0;
-    sender = cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long
-        as libc::c_int;
+    let mut i: i32 = 0;
+    sender = cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32;
     generation = crate::src::qcommon::msg::MSG_ReadByte(msg);
     sequence = crate::src::qcommon::msg::MSG_ReadLong(msg);
     frames = crate::src::qcommon::msg::MSG_ReadByte(msg);
     crate::src::qcommon::msg::MSG_ReadData(
         msg,
         recips.as_mut_ptr() as *mut libc::c_void,
-        ::std::mem::size_of::<[crate::stdlib::uint8_t; 8]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[crate::stdlib::uint8_t; 8]>() as i32,
     );
     flags = crate::src::qcommon::msg::MSG_ReadByte(msg);
     packetsize = crate::src::qcommon::msg::MSG_ReadShort(msg);
     if (*msg).readcount > (*msg).cursize {
         return;
     }
-    if packetsize as libc::c_ulong
-        > ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 4000]>() as libc::c_ulong
-    {
+    if packetsize as usize > ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 4000]>() {
         // overlarge packet?
-        let mut bytesleft: libc::c_int = packetsize;
+        let mut bytesleft: i32 = packetsize;
         while bytesleft != 0 {
-            let mut br: libc::c_int = bytesleft;
-            if br as libc::c_ulong
-                > ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 4000]>()
-                    as libc::c_ulong
-            {
-                br = ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 4000]>()
-                    as libc::c_ulong as libc::c_int
+            let mut br: i32 = bytesleft;
+            if br as usize > ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 4000]>() {
+                br = ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 4000]>() as i32
             }
             crate::src::qcommon::msg::MSG_ReadData(
                 msg,
@@ -3038,19 +2872,17 @@ unsafe extern "C" fn SV_UserVoip(
         encoded.as_mut_ptr() as *mut libc::c_void,
         packetsize,
     );
-    if ignoreData as libc::c_uint != 0 || SV_ShouldIgnoreVoipSender(cl) as libc::c_uint != 0 {
+    if ignoreData != 0 || SV_ShouldIgnoreVoipSender(cl) != 0 {
         return;
     }
     // !!! FIXME: see if we read past end of msg...
     // !!! FIXME: reject if not opus data.
     // !!! FIXME: decide if this is bogus data?
     // decide who needs this VoIP packet sent to them...
-    i = 0 as libc::c_int; // no VoIP allowed if downloading, to save bandwidth.
+    i = 0; // no VoIP allowed if downloading, to save bandwidth.
     client = crate::src::server::sv_main::svs.clients; // not addressed to this player.
     while i < (*crate::src::server::sv_main::sv_maxclients).integer {
-        if !((*client).state as libc::c_uint
-            != crate::server_h::CS_ACTIVE as libc::c_int as libc::c_uint)
-        {
+        if !((*client).state != crate::server_h::CS_ACTIVE) {
             if !(i == sender) {
                 if !((*client).hasVoip as u64 == 0) {
                     if !((*client).muteAllVoip as u64 != 0) {
@@ -3058,43 +2890,36 @@ unsafe extern "C" fn SV_UserVoip(
                             if !(*(*cl).downloadName.as_mut_ptr() != 0) {
                                 if crate::src::qcommon::common::Com_IsVoipTarget(
                                     recips.as_mut_ptr(),
-                                    ::std::mem::size_of::<[crate::stdlib::uint8_t; 8]>()
-                                        as libc::c_ulong
-                                        as libc::c_int,
+                                    ::std::mem::size_of::<[crate::stdlib::uint8_t; 8]>() as i32,
                                     i,
                                 ) as u64
                                     != 0
                                 {
-                                    flags |= 0x2 as libc::c_int
+                                    flags |= 0x2
                                 } else {
-                                    flags &= !(0x2 as libc::c_int)
+                                    flags &= !(0x2)
                                 }
-                                if !(flags & (0x1 as libc::c_int | 0x2 as libc::c_int) == 0) {
+                                if !(flags & (0x1 | 0x2) == 0) {
                                     // Transmit this packet to the client.
-                                    if (*client).queuedVoipPackets as libc::c_ulong
+                                    if (*client).queuedVoipPackets as usize
                                         >= (::std::mem::size_of::<
                                             [*mut crate::server_h::voipServerPacket_t; 64],
-                                        >()
-                                            as libc::c_ulong)
-                                            .wrapping_div(::std::mem::size_of::<
-                                                *mut crate::server_h::voipServerPacket_t,
-                                            >(
-                                            )
-                                                as libc::c_ulong)
+                                        >())
+                                        .wrapping_div(::std::mem::size_of::<
+                                            *mut crate::server_h::voipServerPacket_t,
+                                        >())
                                     {
                                         crate::src::qcommon::common::Com_Printf(
                                             b"Too many VoIP packets queued for client #%d\n\x00"
                                                 as *const u8
-                                                as *const libc::c_char,
+                                                as *const i8,
                                             i,
                                         );
                                     // no room for another packet right now.
                                     } else {
                                         packet = crate::src::qcommon::common::Z_Malloc(
                                             ::std::mem::size_of::<crate::server_h::voipServerPacket_t>(
-                                            )
-                                                as libc::c_ulong
-                                                as libc::c_int,
+                                            ) as i32,
                                         )
                                             as *mut crate::server_h::voipServerPacket_t;
                                         (*packet).sender = sender;
@@ -3106,23 +2931,21 @@ unsafe extern "C" fn SV_UserVoip(
                                         crate::stdlib::memcpy(
                                             (*packet).data.as_mut_ptr() as *mut libc::c_void,
                                             encoded.as_mut_ptr() as *const libc::c_void,
-                                            packetsize as libc::c_ulong,
+                                            packetsize as usize,
                                         );
                                         (*client).voipPacket[(((*client).queuedVoipIndex
                                             + (*client).queuedVoipPackets)
-                                            as libc::c_ulong)
+                                            as usize)
                                             .wrapping_rem(
                                                 (::std::mem::size_of::<
                                                     [*mut crate::server_h::voipServerPacket_t; 64],
-                                                >()
-                                                    as libc::c_ulong)
-                                                    .wrapping_div(::std::mem::size_of::<
-                                                        *mut crate::server_h::voipServerPacket_t,
-                                                    >(
-                                                    )
-                                                        as libc::c_ulong),
-                                            )
-                                            as usize] = packet;
+                                                >(
+                                                ))
+                                                .wrapping_div(::std::mem::size_of::<
+                                                    *mut crate::server_h::voipServerPacket_t,
+                                                >(
+                                                )),
+                                            )] = packet;
                                         (*client).queuedVoipPackets += 1
                                     }
                                 }
@@ -3290,12 +3113,12 @@ pub unsafe extern "C" fn SV_ExecuteClientMessage(
     mut cl: *mut crate::server_h::client_t,
     mut msg: *mut crate::qcommon_h::msg_t,
 ) {
-    let mut c: libc::c_int = 0;
-    let mut serverId: libc::c_int = 0;
+    let mut c: i32 = 0;
+    let mut serverId: i32 = 0;
     crate::src::qcommon::msg::MSG_Bitstream(msg);
     serverId = crate::src::qcommon::msg::MSG_ReadLong(msg);
     (*cl).messageAcknowledge = crate::src::qcommon::msg::MSG_ReadLong(msg);
-    if (*cl).messageAcknowledge < 0 as libc::c_int {
+    if (*cl).messageAcknowledge < 0 {
         // usually only hackers create messages like this
         // it is more annoying for them to let them hanging
         return;
@@ -3304,7 +3127,7 @@ pub unsafe extern "C" fn SV_ExecuteClientMessage(
     // NOTE: when the client message is fux0red the acknowledgement numbers
     // can be out of range, this could cause the server to send thousands of server
     // commands which the server thinks are not yet acknowledged in SV_UpdateServerCommandsToClient
-    if (*cl).reliableAcknowledge < (*cl).reliableSequence - 64 as libc::c_int {
+    if (*cl).reliableAcknowledge < (*cl).reliableSequence - 64 {
         // usually only hackers create messages like this
         // it is more annoying for them to let them hanging
         (*cl).reliableAcknowledge = (*cl).reliableSequence;
@@ -3326,7 +3149,7 @@ pub unsafe extern "C" fn SV_ExecuteClientMessage(
         && *(*cl).downloadName.as_mut_ptr() == 0
         && crate::stdlib::strstr(
             (*cl).lastClientCommandString.as_mut_ptr(),
-            b"nextdl\x00" as *const u8 as *const libc::c_char,
+            b"nextdl\x00" as *const u8 as *const i8,
         )
         .is_null()
     {
@@ -3337,18 +3160,18 @@ pub unsafe extern "C" fn SV_ExecuteClientMessage(
             // they just haven't caught the map_restart yet
             crate::src::qcommon::common::Com_DPrintf(
                 b"%s : ignoring pre map_restart / outdated client message\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 (*cl).name.as_mut_ptr(),
             );
             return;
         }
         // if we can tell that the client has dropped the last
         // gamestate we sent them, resend it
-        if (*cl).state as libc::c_uint != crate::server_h::CS_ACTIVE as libc::c_int as libc::c_uint
+        if (*cl).state != crate::server_h::CS_ACTIVE
             && (*cl).messageAcknowledge > (*cl).gamestateMessageNum
         {
             crate::src::qcommon::common::Com_DPrintf(
-                b"%s : dropped gamestate, resending\n\x00" as *const u8 as *const libc::c_char,
+                b"%s : dropped gamestate, resending\n\x00" as *const u8 as *const i8,
                 (*cl).name.as_mut_ptr(),
             );
             SV_SendClientGameState(cl);
@@ -3359,51 +3182,49 @@ pub unsafe extern "C" fn SV_ExecuteClientMessage(
     // safe to start sending it the real time again
     if (*cl).oldServerTime != 0 && serverId == crate::src::server::sv_main::sv.serverId {
         crate::src::qcommon::common::Com_DPrintf(
-            b"%s acknowledged gamestate\n\x00" as *const u8 as *const libc::c_char,
+            b"%s acknowledged gamestate\n\x00" as *const u8 as *const i8,
             (*cl).name.as_mut_ptr(),
         );
-        (*cl).oldServerTime = 0 as libc::c_int
+        (*cl).oldServerTime = 0
     }
     loop
     // read optional clientCommand strings
     {
         c = crate::src::qcommon::msg::MSG_ReadByte(msg);
-        if c == crate::qcommon_h::clc_EOF as libc::c_int {
+        if c == crate::qcommon_h::clc_EOF as i32 {
             break;
         }
-        if c != crate::qcommon_h::clc_clientCommand as libc::c_int {
+        if c != crate::qcommon_h::clc_clientCommand as i32 {
             break;
         }
         if SV_ClientCommand(cl, msg) as u64 == 0 {
             return;
             // we couldn't execute it because of the flood protection
         }
-        if (*cl).state as libc::c_uint == crate::server_h::CS_ZOMBIE as libc::c_int as libc::c_uint
-        {
+        if (*cl).state == crate::server_h::CS_ZOMBIE {
             return;
             // disconnect command
         }
     }
     // skip legacy speex voip data
-    if c == crate::qcommon_h::clc_voipSpeex as libc::c_int {
+    if c == crate::qcommon_h::clc_voipSpeex as i32 {
         SV_UserVoip(cl, msg, crate::src::qcommon::q_shared::qtrue);
         c = crate::src::qcommon::msg::MSG_ReadByte(msg)
     }
     // read optional voip data
-    if c == crate::qcommon_h::clc_voipOpus as libc::c_int {
+    if c == crate::qcommon_h::clc_voipOpus as i32 {
         SV_UserVoip(cl, msg, crate::src::qcommon::q_shared::qfalse);
         c = crate::src::qcommon::msg::MSG_ReadByte(msg)
     }
     // read the usercmd_t
-    if c == crate::qcommon_h::clc_move as libc::c_int {
+    if c == crate::qcommon_h::clc_move as i32 {
         SV_UserMove(cl, msg, crate::src::qcommon::q_shared::qtrue);
-    } else if c == crate::qcommon_h::clc_moveNoDelta as libc::c_int {
+    } else if c == crate::qcommon_h::clc_moveNoDelta as i32 {
         SV_UserMove(cl, msg, crate::src::qcommon::q_shared::qfalse);
-    } else if c != crate::qcommon_h::clc_EOF as libc::c_int {
+    } else if c != crate::qcommon_h::clc_EOF as i32 {
         crate::src::qcommon::common::Com_Printf(
-            b"WARNING: bad command byte for client %i\n\x00" as *const u8 as *const libc::c_char,
-            cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long
-                as libc::c_int,
+            b"WARNING: bad command byte for client %i\n\x00" as *const u8 as *const i8,
+            cl.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as i32,
         );
     };
     //	if ( msg->readcount != msg->cursize ) {

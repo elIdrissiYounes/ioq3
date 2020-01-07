@@ -295,7 +295,7 @@ pub struct skillMenuInfo_t {
     pub art_skillPic: crate::ui_local_h::menubitmap_s,
     pub item_back: crate::ui_local_h::menubitmap_s,
     pub item_fight: crate::ui_local_h::menubitmap_s,
-    pub arenaInfo: *const libc::c_char,
+    pub arenaInfo: *const i8,
     pub skillpics: [crate::src::qcommon::q_shared::qhandle_t; 5],
     pub nightmareSound: crate::src::qcommon::q_shared::sfxHandle_t,
     pub silenceSound: crate::src::qcommon::q_shared::sfxHandle_t,
@@ -306,7 +306,7 @@ static mut skillMenuInfo: skillMenuInfo_t = skillMenuInfo_t {
         cursor: 0,
         cursor_prev: 0,
         nitems: 0,
-        items: [0 as *const libc::c_void as *mut libc::c_void; 64],
+        items: [0 as *mut libc::c_void; 64],
         draw: None,
         key: None,
         wrapAround: crate::src::qcommon::q_shared::qfalse,
@@ -316,7 +316,7 @@ static mut skillMenuInfo: skillMenuInfo_t = skillMenuInfo_t {
     art_frame: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -324,26 +324,25 @@ static mut skillMenuInfo: skillMenuInfo_t = skillMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     art_banner: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -351,22 +350,21 @@ static mut skillMenuInfo: skillMenuInfo_t = skillMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     item_baby: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -374,22 +372,21 @@ static mut skillMenuInfo: skillMenuInfo_t = skillMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     item_easy: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -397,22 +394,21 @@ static mut skillMenuInfo: skillMenuInfo_t = skillMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     item_medium: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -420,22 +416,21 @@ static mut skillMenuInfo: skillMenuInfo_t = skillMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     item_hard: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -443,22 +438,21 @@ static mut skillMenuInfo: skillMenuInfo_t = skillMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     item_nightmare: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -466,22 +460,21 @@ static mut skillMenuInfo: skillMenuInfo_t = skillMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     art_skillPic: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -489,26 +482,25 @@ static mut skillMenuInfo: skillMenuInfo_t = skillMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     item_back: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -516,26 +508,25 @@ static mut skillMenuInfo: skillMenuInfo_t = skillMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     item_fight: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -543,30 +534,29 @@ static mut skillMenuInfo: skillMenuInfo_t = skillMenuInfo_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
-    arenaInfo: 0 as *const libc::c_char,
+    arenaInfo: 0 as *const i8,
     skillpics: [0; 5],
     nightmareSound: 0,
     silenceSound: 0,
 };
 
 unsafe extern "C" fn SetSkillColor(
-    mut skill: libc::c_int,
+    mut skill: i32,
     mut color: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
     match skill {
@@ -584,39 +574,35 @@ UI_SPSkillMenu_SkillEvent
 =================
 */
 
-unsafe extern "C" fn UI_SPSkillMenu_SkillEvent(
-    mut ptr: *mut libc::c_void,
-    mut notification: libc::c_int,
-) {
-    let mut id: libc::c_int = 0;
-    let mut skill: libc::c_int = 0;
-    if notification != 3 as libc::c_int {
+unsafe extern "C" fn UI_SPSkillMenu_SkillEvent(mut ptr: *mut libc::c_void, mut notification: i32) {
+    let mut id: i32 = 0;
+    let mut skill: i32 = 0;
+    if notification != 3 {
         return;
     }
     SetSkillColor(
         crate::src::ui::ui_syscalls::trap_Cvar_VariableValue(
-            b"g_spSkill\x00" as *const u8 as *const libc::c_char,
-        ) as libc::c_int,
+            b"g_spSkill\x00" as *const u8 as *const i8,
+        ) as i32,
         crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr(),
     );
     id = (*(ptr as *mut crate::ui_local_h::menucommon_s)).id;
-    skill = id - 10 as libc::c_int + 1 as libc::c_int;
+    skill = id - 10 + 1;
     crate::src::ui::ui_syscalls::trap_Cvar_SetValue(
-        b"g_spSkill\x00" as *const u8 as *const libc::c_char,
-        skill as libc::c_float,
+        b"g_spSkill\x00" as *const u8 as *const i8,
+        skill as f32,
     );
     SetSkillColor(skill, crate::src::q3_ui::ui_qmenu::color_white.as_mut_ptr());
-    skillMenuInfo.art_skillPic.shader =
-        skillMenuInfo.skillpics[(skill - 1 as libc::c_int) as usize];
-    if id == 14 as libc::c_int {
+    skillMenuInfo.art_skillPic.shader = skillMenuInfo.skillpics[(skill - 1) as usize];
+    if id == 14 {
         crate::src::ui::ui_syscalls::trap_S_StartLocalSound(
             skillMenuInfo.nightmareSound,
-            crate::src::qcommon::q_shared::CHAN_ANNOUNCER as libc::c_int,
+            crate::src::qcommon::q_shared::CHAN_ANNOUNCER as i32,
         );
     } else {
         crate::src::ui::ui_syscalls::trap_S_StartLocalSound(
             skillMenuInfo.silenceSound,
-            crate::src::qcommon::q_shared::CHAN_ANNOUNCER as libc::c_int,
+            crate::src::qcommon::q_shared::CHAN_ANNOUNCER as i32,
         );
     };
 }
@@ -626,11 +612,8 @@ UI_SPSkillMenu_FightEvent
 =================
 */
 
-unsafe extern "C" fn UI_SPSkillMenu_FightEvent(
-    mut ptr: *mut libc::c_void,
-    mut notification: libc::c_int,
-) {
-    if notification != 3 as libc::c_int {
+unsafe extern "C" fn UI_SPSkillMenu_FightEvent(mut ptr: *mut libc::c_void, mut notification: i32) {
+    if notification != 3 {
         return;
     }
     crate::src::q3_ui::ui_sparena::UI_SPArena_Start(skillMenuInfo.arenaInfo);
@@ -641,16 +624,13 @@ UI_SPSkillMenu_BackEvent
 =================
 */
 
-unsafe extern "C" fn UI_SPSkillMenu_BackEvent(
-    mut ptr: *mut libc::c_void,
-    mut notification: libc::c_int,
-) {
-    if notification != 3 as libc::c_int {
+unsafe extern "C" fn UI_SPSkillMenu_BackEvent(mut ptr: *mut libc::c_void, mut notification: i32) {
+    if notification != 3 {
         return;
     }
     crate::src::ui::ui_syscalls::trap_S_StartLocalSound(
         skillMenuInfo.silenceSound,
-        crate::src::qcommon::q_shared::CHAN_ANNOUNCER as libc::c_int,
+        crate::src::qcommon::q_shared::CHAN_ANNOUNCER as i32,
     );
     crate::src::q3_ui::ui_atoms::UI_PopMenu();
 }
@@ -661,14 +641,12 @@ UI_SPSkillMenu_Key
 */
 
 unsafe extern "C" fn UI_SPSkillMenu_Key(
-    mut key: libc::c_int,
+    mut key: i32,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
-    if key == crate::keycodes_h::K_MOUSE2 as libc::c_int
-        || key == crate::keycodes_h::K_ESCAPE as libc::c_int
-    {
+    if key == crate::keycodes_h::K_MOUSE2 as i32 || key == crate::keycodes_h::K_ESCAPE as i32 {
         crate::src::ui::ui_syscalls::trap_S_StartLocalSound(
             skillMenuInfo.silenceSound,
-            crate::src::qcommon::q_shared::CHAN_ANNOUNCER as libc::c_int,
+            crate::src::qcommon::q_shared::CHAN_ANNOUNCER as i32,
         );
     }
     return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(&mut skillMenuInfo.menu, key);
@@ -682,46 +660,41 @@ UI_SPSkillMenu_Cache
 
 pub unsafe extern "C" fn UI_SPSkillMenu_Cache() {
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/cut_frame\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/cut_frame\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/back_0.tga\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/back_0.tga\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/back_1.tga\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/back_1.tga\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/fight_0\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/fight_0\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/fight_1\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/fight_1\x00" as *const u8 as *const i8,
     );
-    skillMenuInfo.skillpics[0 as libc::c_int as usize] =
-        crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"menu/art/level_complete1\x00" as *const u8 as *const libc::c_char,
-        );
-    skillMenuInfo.skillpics[1 as libc::c_int as usize] =
-        crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"menu/art/level_complete2\x00" as *const u8 as *const libc::c_char,
-        );
-    skillMenuInfo.skillpics[2 as libc::c_int as usize] =
-        crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"menu/art/level_complete3\x00" as *const u8 as *const libc::c_char,
-        );
-    skillMenuInfo.skillpics[3 as libc::c_int as usize] =
-        crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"menu/art/level_complete4\x00" as *const u8 as *const libc::c_char,
-        );
-    skillMenuInfo.skillpics[4 as libc::c_int as usize] =
-        crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"menu/art/level_complete5\x00" as *const u8 as *const libc::c_char,
-        );
+    skillMenuInfo.skillpics[0] = crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
+        b"menu/art/level_complete1\x00" as *const u8 as *const i8,
+    );
+    skillMenuInfo.skillpics[1] = crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
+        b"menu/art/level_complete2\x00" as *const u8 as *const i8,
+    );
+    skillMenuInfo.skillpics[2] = crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
+        b"menu/art/level_complete3\x00" as *const u8 as *const i8,
+    );
+    skillMenuInfo.skillpics[3] = crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
+        b"menu/art/level_complete4\x00" as *const u8 as *const i8,
+    );
+    skillMenuInfo.skillpics[4] = crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
+        b"menu/art/level_complete5\x00" as *const u8 as *const i8,
+    );
     skillMenuInfo.nightmareSound = crate::src::ui::ui_syscalls::trap_S_RegisterSound(
-        b"sound/misc/nightmare.wav\x00" as *const u8 as *const libc::c_char,
+        b"sound/misc/nightmare.wav\x00" as *const u8 as *const i8,
         crate::src::qcommon::q_shared::qfalse,
     );
     skillMenuInfo.silenceSound = crate::src::ui::ui_syscalls::trap_S_RegisterSound(
-        b"sound/misc/silence.wav\x00" as *const u8 as *const libc::c_char,
+        b"sound/misc/silence.wav\x00" as *const u8 as *const i8,
         crate::src::qcommon::q_shared::qfalse,
     );
 }
@@ -732,144 +705,110 @@ UI_SPSkillMenu_Init
 */
 
 unsafe extern "C" fn UI_SPSkillMenu_Init() {
-    let mut skill: libc::c_int = 0;
+    let mut skill: i32 = 0;
     crate::stdlib::memset(
         &mut skillMenuInfo as *mut skillMenuInfo_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<skillMenuInfo_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<skillMenuInfo_t>(),
     );
     skillMenuInfo.menu.fullscreen = crate::src::qcommon::q_shared::qtrue;
     skillMenuInfo.menu.key = Some(
         UI_SPSkillMenu_Key
-            as unsafe extern "C" fn(_: libc::c_int) -> crate::src::qcommon::q_shared::sfxHandle_t,
+            as unsafe extern "C" fn(_: i32) -> crate::src::qcommon::q_shared::sfxHandle_t,
     );
     UI_SPSkillMenu_Cache();
-    skillMenuInfo.art_frame.generic.type_0 = 6 as libc::c_int;
-    skillMenuInfo.art_frame.generic.name =
-        b"menu/art/cut_frame\x00" as *const u8 as *const libc::c_char;
-    skillMenuInfo.art_frame.generic.flags =
-        0x4 as libc::c_int as libc::c_uint | 0x4000 as libc::c_int as libc::c_uint;
-    skillMenuInfo.art_frame.generic.x = 142 as libc::c_int;
-    skillMenuInfo.art_frame.generic.y = 118 as libc::c_int;
-    skillMenuInfo.art_frame.width = 359 as libc::c_int;
-    skillMenuInfo.art_frame.height = 256 as libc::c_int;
-    skillMenuInfo.art_banner.generic.type_0 = 10 as libc::c_int;
-    skillMenuInfo.art_banner.generic.flags = 0x8 as libc::c_int as libc::c_uint;
-    skillMenuInfo.art_banner.generic.x = 320 as libc::c_int;
-    skillMenuInfo.art_banner.generic.y = 16 as libc::c_int;
-    skillMenuInfo.art_banner.string =
-        b"DIFFICULTY\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    skillMenuInfo.art_frame.generic.type_0 = 6;
+    skillMenuInfo.art_frame.generic.name = b"menu/art/cut_frame\x00" as *const u8 as *const i8;
+    skillMenuInfo.art_frame.generic.flags = 0x4 | 0x4000;
+    skillMenuInfo.art_frame.generic.x = 142;
+    skillMenuInfo.art_frame.generic.y = 118;
+    skillMenuInfo.art_frame.width = 359;
+    skillMenuInfo.art_frame.height = 256;
+    skillMenuInfo.art_banner.generic.type_0 = 10;
+    skillMenuInfo.art_banner.generic.flags = 0x8;
+    skillMenuInfo.art_banner.generic.x = 320;
+    skillMenuInfo.art_banner.generic.y = 16;
+    skillMenuInfo.art_banner.string = b"DIFFICULTY\x00" as *const u8 as *mut i8;
     skillMenuInfo.art_banner.color = crate::src::q3_ui::ui_qmenu::color_white.as_mut_ptr();
-    skillMenuInfo.art_banner.style = 0x1 as libc::c_int;
-    skillMenuInfo.item_baby.generic.type_0 = 9 as libc::c_int;
-    skillMenuInfo.item_baby.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    skillMenuInfo.item_baby.generic.x = 320 as libc::c_int;
-    skillMenuInfo.item_baby.generic.y = 170 as libc::c_int;
-    skillMenuInfo.item_baby.generic.callback = Some(
-        UI_SPSkillMenu_SkillEvent
-            as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    skillMenuInfo.item_baby.generic.id = 10 as libc::c_int;
-    skillMenuInfo.item_baby.string =
-        b"I Can Win\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    skillMenuInfo.art_banner.style = 0x1;
+    skillMenuInfo.item_baby.generic.type_0 = 9;
+    skillMenuInfo.item_baby.generic.flags = 0x8 | 0x100;
+    skillMenuInfo.item_baby.generic.x = 320;
+    skillMenuInfo.item_baby.generic.y = 170;
+    skillMenuInfo.item_baby.generic.callback =
+        Some(UI_SPSkillMenu_SkillEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    skillMenuInfo.item_baby.generic.id = 10;
+    skillMenuInfo.item_baby.string = b"I Can Win\x00" as *const u8 as *mut i8;
     skillMenuInfo.item_baby.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    skillMenuInfo.item_baby.style = 0x1 as libc::c_int;
-    skillMenuInfo.item_easy.generic.type_0 = 9 as libc::c_int;
-    skillMenuInfo.item_easy.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    skillMenuInfo.item_easy.generic.x = 320 as libc::c_int;
-    skillMenuInfo.item_easy.generic.y = 198 as libc::c_int;
-    skillMenuInfo.item_easy.generic.callback = Some(
-        UI_SPSkillMenu_SkillEvent
-            as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    skillMenuInfo.item_easy.generic.id = 11 as libc::c_int;
-    skillMenuInfo.item_easy.string =
-        b"Bring It On\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    skillMenuInfo.item_baby.style = 0x1;
+    skillMenuInfo.item_easy.generic.type_0 = 9;
+    skillMenuInfo.item_easy.generic.flags = 0x8 | 0x100;
+    skillMenuInfo.item_easy.generic.x = 320;
+    skillMenuInfo.item_easy.generic.y = 198;
+    skillMenuInfo.item_easy.generic.callback =
+        Some(UI_SPSkillMenu_SkillEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    skillMenuInfo.item_easy.generic.id = 11;
+    skillMenuInfo.item_easy.string = b"Bring It On\x00" as *const u8 as *mut i8;
     skillMenuInfo.item_easy.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    skillMenuInfo.item_easy.style = 0x1 as libc::c_int;
-    skillMenuInfo.item_medium.generic.type_0 = 9 as libc::c_int;
-    skillMenuInfo.item_medium.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    skillMenuInfo.item_medium.generic.x = 320 as libc::c_int;
-    skillMenuInfo.item_medium.generic.y = 227 as libc::c_int;
-    skillMenuInfo.item_medium.generic.callback = Some(
-        UI_SPSkillMenu_SkillEvent
-            as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    skillMenuInfo.item_medium.generic.id = 12 as libc::c_int;
-    skillMenuInfo.item_medium.string =
-        b"Hurt Me Plenty\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    skillMenuInfo.item_easy.style = 0x1;
+    skillMenuInfo.item_medium.generic.type_0 = 9;
+    skillMenuInfo.item_medium.generic.flags = 0x8 | 0x100;
+    skillMenuInfo.item_medium.generic.x = 320;
+    skillMenuInfo.item_medium.generic.y = 227;
+    skillMenuInfo.item_medium.generic.callback =
+        Some(UI_SPSkillMenu_SkillEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    skillMenuInfo.item_medium.generic.id = 12;
+    skillMenuInfo.item_medium.string = b"Hurt Me Plenty\x00" as *const u8 as *mut i8;
     skillMenuInfo.item_medium.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    skillMenuInfo.item_medium.style = 0x1 as libc::c_int;
-    skillMenuInfo.item_hard.generic.type_0 = 9 as libc::c_int;
-    skillMenuInfo.item_hard.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    skillMenuInfo.item_hard.generic.x = 320 as libc::c_int;
-    skillMenuInfo.item_hard.generic.y = 255 as libc::c_int;
-    skillMenuInfo.item_hard.generic.callback = Some(
-        UI_SPSkillMenu_SkillEvent
-            as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    skillMenuInfo.item_hard.generic.id = 13 as libc::c_int;
-    skillMenuInfo.item_hard.string =
-        b"Hardcore\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    skillMenuInfo.item_medium.style = 0x1;
+    skillMenuInfo.item_hard.generic.type_0 = 9;
+    skillMenuInfo.item_hard.generic.flags = 0x8 | 0x100;
+    skillMenuInfo.item_hard.generic.x = 320;
+    skillMenuInfo.item_hard.generic.y = 255;
+    skillMenuInfo.item_hard.generic.callback =
+        Some(UI_SPSkillMenu_SkillEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    skillMenuInfo.item_hard.generic.id = 13;
+    skillMenuInfo.item_hard.string = b"Hardcore\x00" as *const u8 as *mut i8;
     skillMenuInfo.item_hard.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    skillMenuInfo.item_hard.style = 0x1 as libc::c_int;
-    skillMenuInfo.item_nightmare.generic.type_0 = 9 as libc::c_int;
-    skillMenuInfo.item_nightmare.generic.flags =
-        0x8 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    skillMenuInfo.item_nightmare.generic.x = 320 as libc::c_int;
-    skillMenuInfo.item_nightmare.generic.y = 283 as libc::c_int;
-    skillMenuInfo.item_nightmare.generic.callback = Some(
-        UI_SPSkillMenu_SkillEvent
-            as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    skillMenuInfo.item_nightmare.generic.id = 14 as libc::c_int;
-    skillMenuInfo.item_nightmare.string =
-        b"NIGHTMARE!\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    skillMenuInfo.item_hard.style = 0x1;
+    skillMenuInfo.item_nightmare.generic.type_0 = 9;
+    skillMenuInfo.item_nightmare.generic.flags = 0x8 | 0x100;
+    skillMenuInfo.item_nightmare.generic.x = 320;
+    skillMenuInfo.item_nightmare.generic.y = 283;
+    skillMenuInfo.item_nightmare.generic.callback =
+        Some(UI_SPSkillMenu_SkillEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    skillMenuInfo.item_nightmare.generic.id = 14;
+    skillMenuInfo.item_nightmare.string = b"NIGHTMARE!\x00" as *const u8 as *mut i8;
     skillMenuInfo.item_nightmare.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
-    skillMenuInfo.item_nightmare.style = 0x1 as libc::c_int;
-    skillMenuInfo.item_back.generic.type_0 = 6 as libc::c_int;
-    skillMenuInfo.item_back.generic.name =
-        b"menu/art/back_0.tga\x00" as *const u8 as *const libc::c_char;
-    skillMenuInfo.item_back.generic.flags =
-        0x4 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    skillMenuInfo.item_back.generic.x = 0 as libc::c_int;
-    skillMenuInfo.item_back.generic.y = 480 as libc::c_int - 64 as libc::c_int;
-    skillMenuInfo.item_back.generic.callback = Some(
-        UI_SPSkillMenu_BackEvent
-            as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    skillMenuInfo.item_back.generic.id = 15 as libc::c_int;
-    skillMenuInfo.item_back.width = 128 as libc::c_int;
-    skillMenuInfo.item_back.height = 64 as libc::c_int;
-    skillMenuInfo.item_back.focuspic =
-        b"menu/art/back_1.tga\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-    skillMenuInfo.art_skillPic.generic.type_0 = 6 as libc::c_int;
-    skillMenuInfo.art_skillPic.generic.flags =
-        0x4 as libc::c_int as libc::c_uint | 0x4000 as libc::c_int as libc::c_uint;
-    skillMenuInfo.art_skillPic.generic.x = 320 as libc::c_int - 64 as libc::c_int;
-    skillMenuInfo.art_skillPic.generic.y = 368 as libc::c_int;
-    skillMenuInfo.art_skillPic.width = 128 as libc::c_int;
-    skillMenuInfo.art_skillPic.height = 96 as libc::c_int;
-    skillMenuInfo.item_fight.generic.type_0 = 6 as libc::c_int;
-    skillMenuInfo.item_fight.generic.name =
-        b"menu/art/fight_0\x00" as *const u8 as *const libc::c_char;
-    skillMenuInfo.item_fight.generic.flags =
-        0x10 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    skillMenuInfo.item_fight.generic.callback = Some(
-        UI_SPSkillMenu_FightEvent
-            as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> (),
-    );
-    skillMenuInfo.item_fight.generic.id = 16 as libc::c_int;
-    skillMenuInfo.item_fight.generic.x = 640 as libc::c_int;
-    skillMenuInfo.item_fight.generic.y = 480 as libc::c_int - 64 as libc::c_int;
-    skillMenuInfo.item_fight.width = 128 as libc::c_int;
-    skillMenuInfo.item_fight.height = 64 as libc::c_int;
-    skillMenuInfo.item_fight.focuspic =
-        b"menu/art/fight_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    skillMenuInfo.item_nightmare.style = 0x1;
+    skillMenuInfo.item_back.generic.type_0 = 6;
+    skillMenuInfo.item_back.generic.name = b"menu/art/back_0.tga\x00" as *const u8 as *const i8;
+    skillMenuInfo.item_back.generic.flags = 0x4 | 0x100;
+    skillMenuInfo.item_back.generic.x = 0;
+    skillMenuInfo.item_back.generic.y = 480 - 64;
+    skillMenuInfo.item_back.generic.callback =
+        Some(UI_SPSkillMenu_BackEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    skillMenuInfo.item_back.generic.id = 15;
+    skillMenuInfo.item_back.width = 128;
+    skillMenuInfo.item_back.height = 64;
+    skillMenuInfo.item_back.focuspic = b"menu/art/back_1.tga\x00" as *const u8 as *mut i8;
+    skillMenuInfo.art_skillPic.generic.type_0 = 6;
+    skillMenuInfo.art_skillPic.generic.flags = 0x4 | 0x4000;
+    skillMenuInfo.art_skillPic.generic.x = 320 - 64;
+    skillMenuInfo.art_skillPic.generic.y = 368;
+    skillMenuInfo.art_skillPic.width = 128;
+    skillMenuInfo.art_skillPic.height = 96;
+    skillMenuInfo.item_fight.generic.type_0 = 6;
+    skillMenuInfo.item_fight.generic.name = b"menu/art/fight_0\x00" as *const u8 as *const i8;
+    skillMenuInfo.item_fight.generic.flags = 0x10 | 0x100;
+    skillMenuInfo.item_fight.generic.callback =
+        Some(UI_SPSkillMenu_FightEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    skillMenuInfo.item_fight.generic.id = 16;
+    skillMenuInfo.item_fight.generic.x = 640;
+    skillMenuInfo.item_fight.generic.y = 480 - 64;
+    skillMenuInfo.item_fight.width = 128;
+    skillMenuInfo.item_fight.height = 64;
+    skillMenuInfo.item_fight.focuspic = b"menu/art/fight_1\x00" as *const u8 as *mut i8;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
         &mut skillMenuInfo.menu,
         &mut skillMenuInfo.art_frame as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
@@ -913,19 +852,18 @@ unsafe extern "C" fn UI_SPSkillMenu_Init() {
         &mut skillMenuInfo.item_fight as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     skill = crate::src::qcommon::q_shared::Com_Clamp(
-        1 as libc::c_int as libc::c_float,
-        5 as libc::c_int as libc::c_float,
+        1f32,
+        5f32,
         crate::src::ui::ui_syscalls::trap_Cvar_VariableValue(
-            b"g_spSkill\x00" as *const u8 as *const libc::c_char,
+            b"g_spSkill\x00" as *const u8 as *const i8,
         ),
-    ) as libc::c_int;
+    ) as i32;
     SetSkillColor(skill, crate::src::q3_ui::ui_qmenu::color_white.as_mut_ptr());
-    skillMenuInfo.art_skillPic.shader =
-        skillMenuInfo.skillpics[(skill - 1 as libc::c_int) as usize];
-    if skill == 5 as libc::c_int {
+    skillMenuInfo.art_skillPic.shader = skillMenuInfo.skillpics[(skill - 1) as usize];
+    if skill == 5 {
         crate::src::ui::ui_syscalls::trap_S_StartLocalSound(
             skillMenuInfo.nightmareSound,
-            crate::src::qcommon::q_shared::CHAN_ANNOUNCER as libc::c_int,
+            crate::src::qcommon::q_shared::CHAN_ANNOUNCER as i32,
         );
     };
 }
@@ -1063,7 +1001,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 #[no_mangle]
 
-pub unsafe extern "C" fn UI_SPSkillMenu(mut arenaInfo: *const libc::c_char) {
+pub unsafe extern "C" fn UI_SPSkillMenu(mut arenaInfo: *const i8) {
     UI_SPSkillMenu_Init();
     skillMenuInfo.arenaInfo = arenaInfo;
     crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut skillMenuInfo.menu);

@@ -225,7 +225,7 @@ pub struct my_memory_mgr {
     pub large_list: [large_pool_ptr; 2],
     pub virt_sarray_list: crate::jpeglib_h::jvirt_sarray_ptr,
     pub virt_barray_list: crate::jpeglib_h::jvirt_barray_ptr,
-    pub total_space_allocated: libc::c_long,
+    pub total_space_allocated: isize,
     pub last_rowsperchunk: crate::jmorecfg_h::JDIMENSION,
 }
 
@@ -235,7 +235,7 @@ pub type large_pool_ptr = *mut large_pool_struct;
 #[derive(Copy, Clone)]
 pub union large_pool_struct {
     pub hdr: C2RustUnnamed_70,
-    pub dummy: libc::c_double,
+    pub dummy: f64,
 }
 
 #[repr(C)]
@@ -320,7 +320,7 @@ pub type small_pool_ptr = *mut small_pool_struct;
 #[derive(Copy, Clone)]
 pub union small_pool_struct {
     pub hdr: C2RustUnnamed_71,
-    pub dummy: libc::c_double,
+    pub dummy: f64,
 }
 
 #[repr(C)]
@@ -348,13 +348,13 @@ pub type large_pool_hdr = large_pool_struct;
 
 unsafe extern "C" fn out_of_memory(
     mut cinfo: crate::jpeglib_h::j_common_ptr,
-    mut which: libc::c_int,
+    mut which: i32,
 )
 /* Report an out-of-memory error and stop execution */
 /* If we compiled MEM_STATS support, report alloc requests before dying */
 {
-    (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_OUT_OF_MEMORY as libc::c_int;
-    (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = which;
+    (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_OUT_OF_MEMORY as i32;
+    (*(*cinfo).err).msg_parm.i[0] = which;
     Some(
         (*(*cinfo).err)
             .error_exit
@@ -376,47 +376,47 @@ unsafe extern "C" fn out_of_memory(
  */
 
 static mut first_pool_slop: [crate::stddef_h::size_t; 2] = [
-    1600 as libc::c_int as crate::stddef_h::size_t,
-    16000 as libc::c_int as crate::stddef_h::size_t,
+    1600,
+    16000,
 ];
 
 static mut extra_pool_slop: [crate::stddef_h::size_t; 2] = [
-    0 as libc::c_int as crate::stddef_h::size_t,
-    5000 as libc::c_int as crate::stddef_h::size_t,
+    0,
+    5000,
 ];
 /* greater than 0 to avoid futile looping */
 
 unsafe extern "C" fn alloc_small(
     mut cinfo: crate::jpeglib_h::j_common_ptr,
-    mut pool_id: libc::c_int,
+    mut pool_id: i32,
     mut sizeofobject: crate::stddef_h::size_t,
 ) -> *mut libc::c_void
 /* Allocate a "small" object */ {
     let mut mem: my_mem_ptr = (*cinfo).mem as my_mem_ptr;
     let mut hdr_ptr: small_pool_ptr = 0 as *mut small_pool_struct;
     let mut prev_hdr_ptr: small_pool_ptr = 0 as *mut small_pool_struct;
-    let mut data_ptr: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut data_ptr: *mut i8 = 0 as *mut i8;
     let mut odd_bytes: crate::stddef_h::size_t = 0;
     let mut min_request: crate::stddef_h::size_t = 0;
     let mut slop: crate::stddef_h::size_t = 0;
     /* Check for unsatisfiable request (do now to ensure no overflow below) */
     if sizeofobject
-        > (1000000000 as libc::c_long as libc::c_ulong)
-            .wrapping_sub(::std::mem::size_of::<small_pool_hdr>() as libc::c_ulong)
+        > (1000000000 as usize)
+            .wrapping_sub(::std::mem::size_of::<small_pool_hdr>())
     {
-        out_of_memory(cinfo, 1 as libc::c_int); /* request exceeds malloc's ability */
+        out_of_memory(cinfo, 1i32); /* request exceeds malloc's ability */
     }
     /* Round up the requested size to a multiple of SIZEOF(ALIGN_TYPE) */
-    odd_bytes = sizeofobject.wrapping_rem(::std::mem::size_of::<libc::c_double>() as libc::c_ulong);
-    if odd_bytes > 0 as libc::c_int as libc::c_ulong {
-        sizeofobject = (sizeofobject as libc::c_ulong).wrapping_add(
-            (::std::mem::size_of::<libc::c_double>() as libc::c_ulong).wrapping_sub(odd_bytes),
-        ) as crate::stddef_h::size_t as crate::stddef_h::size_t
+    odd_bytes = sizeofobject.wrapping_rem(::std::mem::size_of::<f64>());
+    if odd_bytes > 0 {
+        sizeofobject =  (sizeofobject).wrapping_add(
+            (::std::mem::size_of::<f64>()).wrapping_sub(odd_bytes),
+        )
     }
     /* See if space is available in any existing pool */
-    if pool_id < 0 as libc::c_int || pool_id >= 2 as libc::c_int {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_POOL_ID as libc::c_int; /* safety check */
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = pool_id; /* found pool with enough space */
+    if pool_id < 0 || pool_id >= 2 {
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_POOL_ID as i32; /* safety check */
+        (*(*cinfo).err).msg_parm.i[0] = pool_id; /* found pool with enough space */
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -437,7 +437,7 @@ unsafe extern "C" fn alloc_small(
     if hdr_ptr.is_null() {
         /* min_request is what we need now, slop is what will be leftover */
         min_request =
-            sizeofobject.wrapping_add(::std::mem::size_of::<small_pool_hdr>() as libc::c_ulong);
+            sizeofobject.wrapping_add(::std::mem::size_of::<small_pool_hdr>());
         if prev_hdr_ptr.is_null() {
             /* first pool in class? */
             slop = first_pool_slop[pool_id as usize]
@@ -445,8 +445,8 @@ unsafe extern "C" fn alloc_small(
             slop = extra_pool_slop[pool_id as usize]
         }
         /* Don't ask for more than MAX_ALLOC_CHUNK */
-        if slop > (1000000000 as libc::c_long as libc::c_ulong).wrapping_sub(min_request) {
-            slop = (1000000000 as libc::c_long as libc::c_ulong).wrapping_sub(min_request)
+        if slop > (1000000000 as usize).wrapping_sub(min_request) {
+            slop = (1000000000 as usize).wrapping_sub(min_request)
         }
         loop
         /* Try to get space, if fail reduce slop and try again */
@@ -458,19 +458,17 @@ unsafe extern "C" fn alloc_small(
             if !hdr_ptr.is_null() {
                 break;
             }
-            slop = (slop as libc::c_ulong).wrapping_div(2 as libc::c_int as libc::c_ulong)
-                as crate::stddef_h::size_t as crate::stddef_h::size_t;
-            if slop < 50 as libc::c_int as libc::c_ulong {
+            slop =  (slop).wrapping_div(2usize);
+            if slop < 50 {
                 /* give up when it gets real small */
-                out_of_memory(cinfo, 2 as libc::c_int);
+                out_of_memory(cinfo, 2i32);
             }
         }
-        (*mem).total_space_allocated = ((*mem).total_space_allocated as libc::c_ulong)
-            .wrapping_add(min_request.wrapping_add(slop))
-            as libc::c_long as libc::c_long;
+        (*mem).total_space_allocated =  ((*mem).total_space_allocated as usize)
+            .wrapping_add(min_request.wrapping_add(slop)) as isize;
         /* Success, initialize the new pool header and add to end of list */
         (*hdr_ptr).hdr.next = 0 as small_pool_ptr;
-        (*hdr_ptr).hdr.bytes_used = 0 as libc::c_int as crate::stddef_h::size_t;
+        (*hdr_ptr).hdr.bytes_used = 0;
         (*hdr_ptr).hdr.bytes_left = sizeofobject.wrapping_add(slop);
         if prev_hdr_ptr.is_null() {
             /* first pool in class? */
@@ -480,14 +478,12 @@ unsafe extern "C" fn alloc_small(
         }
     }
     /* OK, allocate the object from the current pool */
-    data_ptr = hdr_ptr.offset(1 as libc::c_int as isize) as *mut libc::c_char; /* point to first data byte in pool */
+    data_ptr = hdr_ptr.offset(1) as *mut i8; /* point to first data byte in pool */
     data_ptr = data_ptr.offset((*hdr_ptr).hdr.bytes_used as isize); /* point to place for object */
-    (*hdr_ptr).hdr.bytes_used = ((*hdr_ptr).hdr.bytes_used as libc::c_ulong)
-        .wrapping_add(sizeofobject) as crate::stddef_h::size_t
-        as crate::stddef_h::size_t;
-    (*hdr_ptr).hdr.bytes_left = ((*hdr_ptr).hdr.bytes_left as libc::c_ulong)
-        .wrapping_sub(sizeofobject) as crate::stddef_h::size_t
-        as crate::stddef_h::size_t;
+    (*hdr_ptr).hdr.bytes_used =  ((*hdr_ptr).hdr.bytes_used)
+        .wrapping_add(sizeofobject);
+    (*hdr_ptr).hdr.bytes_left =  ((*hdr_ptr).hdr.bytes_left)
+        .wrapping_sub(sizeofobject);
     return data_ptr as *mut libc::c_void;
 }
 /*
@@ -506,7 +502,7 @@ unsafe extern "C" fn alloc_small(
 
 unsafe extern "C" fn alloc_large(
     mut cinfo: crate::jpeglib_h::j_common_ptr,
-    mut pool_id: libc::c_int,
+    mut pool_id: i32,
     mut sizeofobject: crate::stddef_h::size_t,
 ) -> *mut libc::c_void
 /* Allocate a "large" object */ {
@@ -515,22 +511,22 @@ unsafe extern "C" fn alloc_large(
     let mut odd_bytes: crate::stddef_h::size_t = 0;
     /* Check for unsatisfiable request (do now to ensure no overflow below) */
     if sizeofobject
-        > (1000000000 as libc::c_long as libc::c_ulong)
-            .wrapping_sub(::std::mem::size_of::<large_pool_hdr>() as libc::c_ulong)
+        > (1000000000 as usize)
+            .wrapping_sub(::std::mem::size_of::<large_pool_hdr>())
     {
-        out_of_memory(cinfo, 3 as libc::c_int); /* request exceeds malloc's ability */
+        out_of_memory(cinfo, 3i32); /* request exceeds malloc's ability */
     }
     /* Round up the requested size to a multiple of SIZEOF(ALIGN_TYPE) */
-    odd_bytes = sizeofobject.wrapping_rem(::std::mem::size_of::<libc::c_double>() as libc::c_ulong);
-    if odd_bytes > 0 as libc::c_int as libc::c_ulong {
-        sizeofobject = (sizeofobject as libc::c_ulong).wrapping_add(
-            (::std::mem::size_of::<libc::c_double>() as libc::c_ulong).wrapping_sub(odd_bytes),
-        ) as crate::stddef_h::size_t as crate::stddef_h::size_t
+    odd_bytes = sizeofobject.wrapping_rem(::std::mem::size_of::<f64>());
+    if odd_bytes > 0 {
+        sizeofobject =  (sizeofobject).wrapping_add(
+            (::std::mem::size_of::<f64>()).wrapping_sub(odd_bytes),
+        )
     }
     /* Always make a new pool */
-    if pool_id < 0 as libc::c_int || pool_id >= 2 as libc::c_int {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_POOL_ID as libc::c_int; /* safety check */
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = pool_id; /* jpeg_get_large failed */
+    if pool_id < 0 || pool_id >= 2 {
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_POOL_ID as i32; /* safety check */
+        (*(*cinfo).err).msg_parm.i[0] = pool_id; /* jpeg_get_large failed */
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -540,23 +536,23 @@ unsafe extern "C" fn alloc_large(
     }
     hdr_ptr = crate::src::jpeg_8c::jmemnobs::jpeg_get_large(
         cinfo,
-        sizeofobject.wrapping_add(::std::mem::size_of::<large_pool_hdr>() as libc::c_ulong),
+        sizeofobject.wrapping_add(::std::mem::size_of::<large_pool_hdr>()),
     ) as large_pool_ptr;
     if hdr_ptr.is_null() {
-        out_of_memory(cinfo, 4 as libc::c_int);
+        out_of_memory(cinfo, 4i32);
     }
-    (*mem).total_space_allocated = ((*mem).total_space_allocated as libc::c_ulong).wrapping_add(
-        sizeofobject.wrapping_add(::std::mem::size_of::<large_pool_hdr>() as libc::c_ulong),
-    ) as libc::c_long as libc::c_long;
+    (*mem).total_space_allocated =  ((*mem).total_space_allocated as usize).wrapping_add(
+        sizeofobject.wrapping_add(::std::mem::size_of::<large_pool_hdr>()),
+    ) as isize;
     /* Success, initialize the new pool header and add to list */
     (*hdr_ptr).hdr.next = (*mem).large_list[pool_id as usize];
     /* We maintain space counts in each pool header for statistical purposes,
      * even though they are not needed for allocation.
      */
     (*hdr_ptr).hdr.bytes_used = sizeofobject;
-    (*hdr_ptr).hdr.bytes_left = 0 as libc::c_int as crate::stddef_h::size_t;
+    (*hdr_ptr).hdr.bytes_left = 0;
     (*mem).large_list[pool_id as usize] = hdr_ptr;
-    return hdr_ptr.offset(1 as libc::c_int as isize) as *mut libc::c_void;
+    return hdr_ptr.offset(1) as *mut libc::c_void;
     /* point to first data byte in pool */
 }
 /*
@@ -574,7 +570,7 @@ unsafe extern "C" fn alloc_large(
 
 unsafe extern "C" fn alloc_sarray(
     mut cinfo: crate::jpeglib_h::j_common_ptr,
-    mut pool_id: libc::c_int,
+    mut pool_id: i32,
     mut samplesperrow: crate::jmorecfg_h::JDIMENSION,
     mut numrows: crate::jmorecfg_h::JDIMENSION,
 ) -> crate::jpeglib_h::JSAMPARRAY
@@ -585,16 +581,16 @@ unsafe extern "C" fn alloc_sarray(
     let mut rowsperchunk: crate::jmorecfg_h::JDIMENSION = 0;
     let mut currow: crate::jmorecfg_h::JDIMENSION = 0;
     let mut i: crate::jmorecfg_h::JDIMENSION = 0;
-    let mut ltemp: libc::c_long = 0;
+    let mut ltemp: isize = 0;
     /* Calculate max # of rows allowed in one allocation chunk */
-    ltemp = (1000000000 as libc::c_long as libc::c_ulong)
-        .wrapping_sub(::std::mem::size_of::<large_pool_hdr>() as libc::c_ulong)
+    ltemp = (1000000000 as usize)
+        .wrapping_sub(::std::mem::size_of::<large_pool_hdr>())
         .wrapping_div(
-            (samplesperrow as libc::c_long as libc::c_ulong)
-                .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>() as libc::c_ulong),
-        ) as libc::c_long;
-    if ltemp <= 0 as libc::c_int as libc::c_long {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_WIDTH_OVERFLOW as libc::c_int;
+            (samplesperrow as usize)
+                .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()),
+        ) as isize;
+    if ltemp <= 0 {
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_WIDTH_OVERFLOW as i32;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -602,7 +598,7 @@ unsafe extern "C" fn alloc_sarray(
         )
         .expect("non-null function pointer")(cinfo);
     }
-    if ltemp < numrows as libc::c_long {
+    if ltemp < numrows as isize {
         rowsperchunk = ltemp as crate::jmorecfg_h::JDIMENSION
     } else {
         rowsperchunk = numrows
@@ -612,11 +608,11 @@ unsafe extern "C" fn alloc_sarray(
     result = alloc_small(
         cinfo,
         pool_id,
-        (numrows as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JSAMPROW>() as libc::c_ulong),
+        (numrows as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JSAMPROW>()),
     ) as crate::jpeglib_h::JSAMPARRAY;
     /* Get the rows themselves (large objects) */
-    currow = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
+    currow = 0;
     while currow < numrows {
         rowsperchunk = if rowsperchunk < numrows.wrapping_sub(currow) {
             rowsperchunk
@@ -628,10 +624,10 @@ unsafe extern "C" fn alloc_sarray(
             pool_id,
             (rowsperchunk as crate::stddef_h::size_t)
                 .wrapping_mul(samplesperrow as crate::stddef_h::size_t)
-                .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>() as libc::c_ulong),
+                .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()),
         ) as crate::jpeglib_h::JSAMPROW;
         i = rowsperchunk;
-        while i > 0 as libc::c_int as libc::c_uint {
+        while i > 0 {
             let fresh0 = currow;
             currow = currow.wrapping_add(1);
             let ref mut fresh1 = *result.offset(fresh0 as isize);
@@ -649,7 +645,7 @@ unsafe extern "C" fn alloc_sarray(
 
 unsafe extern "C" fn alloc_barray(
     mut cinfo: crate::jpeglib_h::j_common_ptr,
-    mut pool_id: libc::c_int,
+    mut pool_id: i32,
     mut blocksperrow: crate::jmorecfg_h::JDIMENSION,
     mut numrows: crate::jmorecfg_h::JDIMENSION,
 ) -> crate::jpeglib_h::JBLOCKARRAY
@@ -660,16 +656,16 @@ unsafe extern "C" fn alloc_barray(
     let mut rowsperchunk: crate::jmorecfg_h::JDIMENSION = 0;
     let mut currow: crate::jmorecfg_h::JDIMENSION = 0;
     let mut i: crate::jmorecfg_h::JDIMENSION = 0;
-    let mut ltemp: libc::c_long = 0;
+    let mut ltemp: isize = 0;
     /* Calculate max # of rows allowed in one allocation chunk */
-    ltemp = (1000000000 as libc::c_long as libc::c_ulong)
-        .wrapping_sub(::std::mem::size_of::<large_pool_hdr>() as libc::c_ulong)
+    ltemp = (1000000000 as usize)
+        .wrapping_sub(::std::mem::size_of::<large_pool_hdr>())
         .wrapping_div(
-            (blocksperrow as libc::c_long as libc::c_ulong)
-                .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>() as libc::c_ulong),
-        ) as libc::c_long;
-    if ltemp <= 0 as libc::c_int as libc::c_long {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_WIDTH_OVERFLOW as libc::c_int;
+            (blocksperrow as usize)
+                .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>()),
+        ) as isize;
+    if ltemp <= 0 {
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_WIDTH_OVERFLOW as i32;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -677,7 +673,7 @@ unsafe extern "C" fn alloc_barray(
         )
         .expect("non-null function pointer")(cinfo);
     }
-    if ltemp < numrows as libc::c_long {
+    if ltemp < numrows as isize {
         rowsperchunk = ltemp as crate::jmorecfg_h::JDIMENSION
     } else {
         rowsperchunk = numrows
@@ -687,11 +683,11 @@ unsafe extern "C" fn alloc_barray(
     result = alloc_small(
         cinfo,
         pool_id,
-        (numrows as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCKROW>() as libc::c_ulong),
+        (numrows as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCKROW>()),
     ) as crate::jpeglib_h::JBLOCKARRAY;
     /* Get the rows themselves (large objects) */
-    currow = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
+    currow = 0;
     while currow < numrows {
         rowsperchunk = if rowsperchunk < numrows.wrapping_sub(currow) {
             rowsperchunk
@@ -703,10 +699,10 @@ unsafe extern "C" fn alloc_barray(
             pool_id,
             (rowsperchunk as crate::stddef_h::size_t)
                 .wrapping_mul(blocksperrow as crate::stddef_h::size_t)
-                .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>() as libc::c_ulong),
+                .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>()),
         ) as crate::jpeglib_h::JBLOCKROW;
         i = rowsperchunk;
-        while i > 0 as libc::c_int as libc::c_uint {
+        while i > 0 {
             let fresh2 = currow;
             currow = currow.wrapping_add(1);
             let ref mut fresh3 = *result.offset(fresh2 as isize);
@@ -755,7 +751,7 @@ unsafe extern "C" fn alloc_barray(
 
 unsafe extern "C" fn request_virt_sarray(
     mut cinfo: crate::jpeglib_h::j_common_ptr,
-    mut pool_id: libc::c_int,
+    mut pool_id: i32,
     mut pre_zero: crate::jmorecfg_h::boolean,
     mut samplesperrow: crate::jmorecfg_h::JDIMENSION,
     mut numrows: crate::jmorecfg_h::JDIMENSION,
@@ -765,9 +761,9 @@ unsafe extern "C" fn request_virt_sarray(
     let mut mem: my_mem_ptr = (*cinfo).mem as my_mem_ptr;
     let mut result: crate::jpeglib_h::jvirt_sarray_ptr = 0 as *mut jvirt_sarray_control;
     /* Only IMAGE-lifetime virtual arrays are currently supported */
-    if pool_id != 1 as libc::c_int {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_POOL_ID as libc::c_int; /* safety check */
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = pool_id;
+    if pool_id != 1 {
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_POOL_ID as i32; /* safety check */
+        (*(*cinfo).err).msg_parm.i[0] = pool_id;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -779,14 +775,15 @@ unsafe extern "C" fn request_virt_sarray(
     result = alloc_small(
         cinfo,
         pool_id,
-        ::std::mem::size_of::<jvirt_sarray_control>() as libc::c_ulong,
+        
+        ::std::mem::size_of::<jvirt_sarray_control>(),
     ) as crate::jpeglib_h::jvirt_sarray_ptr; /* marks array not yet realized */
     (*result).mem_buffer = 0 as crate::jpeglib_h::JSAMPARRAY; /* no associated backing-store object */
     (*result).rows_in_array = numrows; /* add to list of virtual arrays */
     (*result).samplesperrow = samplesperrow;
     (*result).maxaccess = maxaccess;
     (*result).pre_zero = pre_zero;
-    (*result).b_s_open = 0 as libc::c_int;
+    (*result).b_s_open = 0;
     (*result).next = (*mem).virt_sarray_list;
     (*mem).virt_sarray_list = result;
     return result;
@@ -794,7 +791,7 @@ unsafe extern "C" fn request_virt_sarray(
 
 unsafe extern "C" fn request_virt_barray(
     mut cinfo: crate::jpeglib_h::j_common_ptr,
-    mut pool_id: libc::c_int,
+    mut pool_id: i32,
     mut pre_zero: crate::jmorecfg_h::boolean,
     mut blocksperrow: crate::jmorecfg_h::JDIMENSION,
     mut numrows: crate::jmorecfg_h::JDIMENSION,
@@ -804,9 +801,9 @@ unsafe extern "C" fn request_virt_barray(
     let mut mem: my_mem_ptr = (*cinfo).mem as my_mem_ptr;
     let mut result: crate::jpeglib_h::jvirt_barray_ptr = 0 as *mut jvirt_barray_control;
     /* Only IMAGE-lifetime virtual arrays are currently supported */
-    if pool_id != 1 as libc::c_int {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_POOL_ID as libc::c_int; /* safety check */
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = pool_id;
+    if pool_id != 1 {
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_POOL_ID as i32; /* safety check */
+        (*(*cinfo).err).msg_parm.i[0] = pool_id;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -818,14 +815,15 @@ unsafe extern "C" fn request_virt_barray(
     result = alloc_small(
         cinfo,
         pool_id,
-        ::std::mem::size_of::<jvirt_barray_control>() as libc::c_ulong,
+        
+        ::std::mem::size_of::<jvirt_barray_control>(),
     ) as crate::jpeglib_h::jvirt_barray_ptr; /* marks array not yet realized */
     (*result).mem_buffer = 0 as crate::jpeglib_h::JBLOCKARRAY; /* no associated backing-store object */
     (*result).rows_in_array = numrows; /* add to list of virtual arrays */
     (*result).blocksperrow = blocksperrow;
     (*result).maxaccess = maxaccess;
     (*result).pre_zero = pre_zero;
-    (*result).b_s_open = 0 as libc::c_int;
+    (*result).b_s_open = 0;
     (*result).next = (*mem).virt_barray_list;
     (*mem).virt_barray_list = result;
     return result;
@@ -835,37 +833,39 @@ unsafe extern "C" fn realize_virt_arrays(mut cinfo: crate::jpeglib_h::j_common_p
 /* Allocate the in-memory buffers for any unrealized virtual arrays */
 {
     let mut mem: my_mem_ptr = (*cinfo).mem as my_mem_ptr;
-    let mut space_per_minheight: libc::c_long = 0;
-    let mut maximum_space: libc::c_long = 0;
-    let mut avail_mem: libc::c_long = 0;
-    let mut minheights: libc::c_long = 0;
-    let mut max_minheights: libc::c_long = 0;
+    let mut space_per_minheight: isize = 0;
+    let mut maximum_space: isize = 0;
+    let mut avail_mem: isize = 0;
+    let mut minheights: isize = 0;
+    let mut max_minheights: isize = 0;
     let mut sptr: crate::jpeglib_h::jvirt_sarray_ptr = 0 as *mut jvirt_sarray_control;
     let mut bptr: crate::jpeglib_h::jvirt_barray_ptr = 0 as *mut jvirt_barray_control;
     /* Compute the minimum space needed (maxaccess rows in each buffer)
      * and the maximum space needed (full image height in each buffer).
      * These may be of use to the system-dependent jpeg_mem_available routine.
      */
-    space_per_minheight = 0 as libc::c_int as libc::c_long;
-    maximum_space = 0 as libc::c_int as libc::c_long;
+    space_per_minheight = 0;
+    maximum_space = 0;
     sptr = (*mem).virt_sarray_list;
     while !sptr.is_null() {
         if (*sptr).mem_buffer.is_null() {
             /* if not realized yet */
-            space_per_minheight = (space_per_minheight as libc::c_ulong).wrapping_add(
-                (((*sptr).maxaccess as libc::c_long * (*sptr).samplesperrow as libc::c_long)
-                    as libc::c_ulong)
+            space_per_minheight =  (space_per_minheight as usize).wrapping_add(
+                (((*sptr).maxaccess as isize * (*sptr).samplesperrow as isize)
+                    as usize)
                     .wrapping_mul(
-                        ::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>() as libc::c_ulong
+                        
+                        ::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()
                     ),
-            ) as libc::c_long as libc::c_long;
-            maximum_space = (maximum_space as libc::c_ulong).wrapping_add(
-                (((*sptr).rows_in_array as libc::c_long * (*sptr).samplesperrow as libc::c_long)
-                    as libc::c_ulong)
+            ) as isize;
+            maximum_space =  (maximum_space as usize).wrapping_add(
+                (((*sptr).rows_in_array as isize * (*sptr).samplesperrow as isize)
+                    as usize)
                     .wrapping_mul(
-                        ::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>() as libc::c_ulong
+                        
+                        ::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()
                     ),
-            ) as libc::c_long as libc::c_long
+            ) as isize
         }
         sptr = (*sptr).next
     }
@@ -873,24 +873,26 @@ unsafe extern "C" fn realize_virt_arrays(mut cinfo: crate::jpeglib_h::j_common_p
     while !bptr.is_null() {
         if (*bptr).mem_buffer.is_null() {
             /* if not realized yet */
-            space_per_minheight = (space_per_minheight as libc::c_ulong).wrapping_add(
-                (((*bptr).maxaccess as libc::c_long * (*bptr).blocksperrow as libc::c_long)
-                    as libc::c_ulong)
+            space_per_minheight =  (space_per_minheight as usize).wrapping_add(
+                (((*bptr).maxaccess as isize * (*bptr).blocksperrow as isize)
+                    as usize)
                     .wrapping_mul(
-                        ::std::mem::size_of::<crate::jpeglib_h::JBLOCK>() as libc::c_ulong
+                        
+                        ::std::mem::size_of::<crate::jpeglib_h::JBLOCK>()
                     ),
-            ) as libc::c_long as libc::c_long; /* no unrealized arrays, no work */
-            maximum_space = (maximum_space as libc::c_ulong).wrapping_add(
-                (((*bptr).rows_in_array as libc::c_long * (*bptr).blocksperrow as libc::c_long)
-                    as libc::c_ulong)
+            ) as isize; /* no unrealized arrays, no work */
+            maximum_space =  (maximum_space as usize).wrapping_add(
+                (((*bptr).rows_in_array as isize * (*bptr).blocksperrow as isize)
+                    as usize)
                     .wrapping_mul(
-                        ::std::mem::size_of::<crate::jpeglib_h::JBLOCK>() as libc::c_ulong
+                        
+                        ::std::mem::size_of::<crate::jpeglib_h::JBLOCK>()
                     ),
-            ) as libc::c_long as libc::c_long
+            ) as isize
         }
         bptr = (*bptr).next
     }
-    if space_per_minheight <= 0 as libc::c_int as libc::c_long {
+    if space_per_minheight <= 0 {
         return;
     }
     /* Determine amount of memory to actually use; this is system-dependent. */
@@ -905,14 +907,14 @@ unsafe extern "C" fn realize_virt_arrays(mut cinfo: crate::jpeglib_h::j_common_p
      * in each buffer.
      */
     if avail_mem >= maximum_space {
-        max_minheights = 1000000000 as libc::c_long
+        max_minheights = 1000000000 as isize
     } else {
         max_minheights = avail_mem / space_per_minheight;
         /* If there doesn't seem to be enough space, try to get the minimum
          * anyway.  This allows a "stub" implementation of jpeg_mem_available().
          */
-        if max_minheights <= 0 as libc::c_int as libc::c_long {
-            max_minheights = 1 as libc::c_int as libc::c_long
+        if max_minheights <= 0 {
+            max_minheights = 1
         }
     }
     /* Allocate the in-memory buffers and initialize backing store as needed. */
@@ -920,36 +922,36 @@ unsafe extern "C" fn realize_virt_arrays(mut cinfo: crate::jpeglib_h::j_common_p
     while !sptr.is_null() {
         if (*sptr).mem_buffer.is_null() {
             /* if not realized yet */
-            minheights = ((*sptr).rows_in_array as libc::c_long - 1 as libc::c_long)
-                / (*sptr).maxaccess as libc::c_long
-                + 1 as libc::c_long;
+            minheights = ((*sptr).rows_in_array as isize - 1)
+                / (*sptr).maxaccess as isize
+                + 1;
             if minheights <= max_minheights {
                 /* This buffer fits in memory */
                 (*sptr).rows_in_mem = (*sptr).rows_in_array
             } else {
                 /* It doesn't fit in memory, create backing store. */
-                (*sptr).rows_in_mem = (max_minheights * (*sptr).maxaccess as libc::c_long)
+                (*sptr).rows_in_mem = (max_minheights * (*sptr).maxaccess as isize)
                     as crate::jmorecfg_h::JDIMENSION;
                 crate::src::jpeg_8c::jmemnobs::jpeg_open_backing_store(
                     cinfo,
                     &mut (*sptr).b_s_info,
-                    (*sptr).rows_in_array as libc::c_long
-                        * (*sptr).samplesperrow as libc::c_long
-                        * ::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>() as libc::c_ulong
-                            as libc::c_long,
+                    (*sptr).rows_in_array as isize
+                        * (*sptr).samplesperrow as isize
+                        *  ::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()
+                            as isize,
                 );
-                (*sptr).b_s_open = 1 as libc::c_int
+                (*sptr).b_s_open = 1
             }
             (*sptr).mem_buffer = alloc_sarray(
                 cinfo,
-                1 as libc::c_int,
+                1,
                 (*sptr).samplesperrow,
                 (*sptr).rows_in_mem,
             );
             (*sptr).rowsperchunk = (*mem).last_rowsperchunk;
-            (*sptr).cur_start_row = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
-            (*sptr).first_undef_row = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
-            (*sptr).dirty = 0 as libc::c_int
+            (*sptr).cur_start_row = 0;
+            (*sptr).first_undef_row = 0;
+            (*sptr).dirty = 0
         }
         sptr = (*sptr).next
     }
@@ -957,36 +959,36 @@ unsafe extern "C" fn realize_virt_arrays(mut cinfo: crate::jpeglib_h::j_common_p
     while !bptr.is_null() {
         if (*bptr).mem_buffer.is_null() {
             /* if not realized yet */
-            minheights = ((*bptr).rows_in_array as libc::c_long - 1 as libc::c_long)
-                / (*bptr).maxaccess as libc::c_long
-                + 1 as libc::c_long;
+            minheights = ((*bptr).rows_in_array as isize - 1)
+                / (*bptr).maxaccess as isize
+                + 1;
             if minheights <= max_minheights {
                 /* This buffer fits in memory */
                 (*bptr).rows_in_mem = (*bptr).rows_in_array
             } else {
                 /* It doesn't fit in memory, create backing store. */
-                (*bptr).rows_in_mem = (max_minheights * (*bptr).maxaccess as libc::c_long)
+                (*bptr).rows_in_mem = (max_minheights * (*bptr).maxaccess as isize)
                     as crate::jmorecfg_h::JDIMENSION;
                 crate::src::jpeg_8c::jmemnobs::jpeg_open_backing_store(
                     cinfo,
                     &mut (*bptr).b_s_info,
-                    (*bptr).rows_in_array as libc::c_long
-                        * (*bptr).blocksperrow as libc::c_long
-                        * ::std::mem::size_of::<crate::jpeglib_h::JBLOCK>() as libc::c_ulong
-                            as libc::c_long,
+                    (*bptr).rows_in_array as isize
+                        * (*bptr).blocksperrow as isize
+                        *  ::std::mem::size_of::<crate::jpeglib_h::JBLOCK>()
+                            as isize,
                 );
-                (*bptr).b_s_open = 1 as libc::c_int
+                (*bptr).b_s_open = 1
             }
             (*bptr).mem_buffer = alloc_barray(
                 cinfo,
-                1 as libc::c_int,
+                1,
                 (*bptr).blocksperrow,
                 (*bptr).rows_in_mem,
             );
             (*bptr).rowsperchunk = (*mem).last_rowsperchunk;
-            (*bptr).cur_start_row = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
-            (*bptr).first_undef_row = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
-            (*bptr).dirty = 0 as libc::c_int
+            (*bptr).cur_start_row = 0;
+            (*bptr).first_undef_row = 0;
+            (*bptr).dirty = 0
         }
         bptr = (*bptr).next
     }
@@ -999,39 +1001,39 @@ unsafe extern "C" fn do_sarray_io(
 )
 /* Do backing store read or write of a virtual sample array */
 {
-    let mut bytesperrow: libc::c_long = 0;
-    let mut file_offset: libc::c_long = 0;
-    let mut byte_count: libc::c_long = 0;
-    let mut rows: libc::c_long = 0;
-    let mut thisrow: libc::c_long = 0;
-    let mut i: libc::c_long = 0;
-    bytesperrow = ((*ptr).samplesperrow as libc::c_long as libc::c_ulong)
-        .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>() as libc::c_ulong)
-        as libc::c_long;
-    file_offset = (*ptr).cur_start_row as libc::c_long * bytesperrow;
+    let mut bytesperrow: isize = 0;
+    let mut file_offset: isize = 0;
+    let mut byte_count: isize = 0;
+    let mut rows: isize = 0;
+    let mut thisrow: isize = 0;
+    let mut i: isize = 0;
+    bytesperrow = ((*ptr).samplesperrow as usize)
+        .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>())
+        as isize;
+    file_offset = (*ptr).cur_start_row as isize * bytesperrow;
     /* Loop to read or write each allocation chunk in mem_buffer */
-    i = 0 as libc::c_int as libc::c_long;
-    while i < (*ptr).rows_in_mem as libc::c_long {
+    i = 0;
+    while i < (*ptr).rows_in_mem as isize {
         /* One chunk, but check for short chunk at end of buffer */
-        rows = if ((*ptr).rowsperchunk as libc::c_long) < (*ptr).rows_in_mem as libc::c_long - i {
-            (*ptr).rowsperchunk as libc::c_long
+        rows = if ((*ptr).rowsperchunk as isize) < (*ptr).rows_in_mem as isize - i {
+            (*ptr).rowsperchunk as isize
         } else {
-            ((*ptr).rows_in_mem as libc::c_long) - i
+            ((*ptr).rows_in_mem as isize) - i
         };
         /* Transfer no more than is currently defined */
-        thisrow = (*ptr).cur_start_row as libc::c_long + i;
-        rows = if rows < (*ptr).first_undef_row as libc::c_long - thisrow {
+        thisrow = (*ptr).cur_start_row as isize + i;
+        rows = if rows < (*ptr).first_undef_row as isize - thisrow {
             rows
         } else {
-            ((*ptr).first_undef_row as libc::c_long) - thisrow
+            ((*ptr).first_undef_row as isize) - thisrow
         };
         /* Transfer no more than fits in file */
-        rows = if rows < (*ptr).rows_in_array as libc::c_long - thisrow {
+        rows = if rows < (*ptr).rows_in_array as isize - thisrow {
             rows
         } else {
-            ((*ptr).rows_in_array as libc::c_long) - thisrow
+            ((*ptr).rows_in_array as isize) - thisrow
         };
-        if rows <= 0 as libc::c_int as libc::c_long {
+        if rows <= 0 {
             break;
         }
         byte_count = rows * bytesperrow;
@@ -1045,7 +1047,7 @@ unsafe extern "C" fn do_sarray_io(
             .expect("non-null function pointer")(
                 cinfo,
                 &mut (*ptr).b_s_info,
-                *(*ptr).mem_buffer.offset(i as isize) as *mut libc::c_void,
+                *(*ptr).mem_buffer.offset(i) as *mut libc::c_void,
                 file_offset,
                 byte_count,
             );
@@ -1059,13 +1061,13 @@ unsafe extern "C" fn do_sarray_io(
             .expect("non-null function pointer")(
                 cinfo,
                 &mut (*ptr).b_s_info,
-                *(*ptr).mem_buffer.offset(i as isize) as *mut libc::c_void,
+                *(*ptr).mem_buffer.offset(i) as *mut libc::c_void,
                 file_offset,
                 byte_count,
             );
         }
         file_offset += byte_count;
-        i += (*ptr).rowsperchunk as libc::c_long
+        i += (*ptr).rowsperchunk as isize
     }
 }
 
@@ -1076,39 +1078,39 @@ unsafe extern "C" fn do_barray_io(
 )
 /* Do backing store read or write of a virtual coefficient-block array */
 {
-    let mut bytesperrow: libc::c_long = 0;
-    let mut file_offset: libc::c_long = 0;
-    let mut byte_count: libc::c_long = 0;
-    let mut rows: libc::c_long = 0;
-    let mut thisrow: libc::c_long = 0;
-    let mut i: libc::c_long = 0;
-    bytesperrow = ((*ptr).blocksperrow as libc::c_long as libc::c_ulong)
-        .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>() as libc::c_ulong)
-        as libc::c_long;
-    file_offset = (*ptr).cur_start_row as libc::c_long * bytesperrow;
+    let mut bytesperrow: isize = 0;
+    let mut file_offset: isize = 0;
+    let mut byte_count: isize = 0;
+    let mut rows: isize = 0;
+    let mut thisrow: isize = 0;
+    let mut i: isize = 0;
+    bytesperrow = ((*ptr).blocksperrow as usize)
+        .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>())
+        as isize;
+    file_offset = (*ptr).cur_start_row as isize * bytesperrow;
     /* Loop to read or write each allocation chunk in mem_buffer */
-    i = 0 as libc::c_int as libc::c_long;
-    while i < (*ptr).rows_in_mem as libc::c_long {
+    i = 0;
+    while i < (*ptr).rows_in_mem as isize {
         /* One chunk, but check for short chunk at end of buffer */
-        rows = if ((*ptr).rowsperchunk as libc::c_long) < (*ptr).rows_in_mem as libc::c_long - i {
-            (*ptr).rowsperchunk as libc::c_long
+        rows = if ((*ptr).rowsperchunk as isize) < (*ptr).rows_in_mem as isize - i {
+            (*ptr).rowsperchunk as isize
         } else {
-            ((*ptr).rows_in_mem as libc::c_long) - i
+            ((*ptr).rows_in_mem as isize) - i
         };
         /* Transfer no more than is currently defined */
-        thisrow = (*ptr).cur_start_row as libc::c_long + i;
-        rows = if rows < (*ptr).first_undef_row as libc::c_long - thisrow {
+        thisrow = (*ptr).cur_start_row as isize + i;
+        rows = if rows < (*ptr).first_undef_row as isize - thisrow {
             rows
         } else {
-            ((*ptr).first_undef_row as libc::c_long) - thisrow
+            ((*ptr).first_undef_row as isize) - thisrow
         };
         /* Transfer no more than fits in file */
-        rows = if rows < (*ptr).rows_in_array as libc::c_long - thisrow {
+        rows = if rows < (*ptr).rows_in_array as isize - thisrow {
             rows
         } else {
-            ((*ptr).rows_in_array as libc::c_long) - thisrow
+            ((*ptr).rows_in_array as isize) - thisrow
         };
-        if rows <= 0 as libc::c_int as libc::c_long {
+        if rows <= 0 {
             break;
         }
         byte_count = rows * bytesperrow;
@@ -1122,7 +1124,7 @@ unsafe extern "C" fn do_barray_io(
             .expect("non-null function pointer")(
                 cinfo,
                 &mut (*ptr).b_s_info,
-                *(*ptr).mem_buffer.offset(i as isize) as *mut libc::c_void,
+                *(*ptr).mem_buffer.offset(i) as *mut libc::c_void,
                 file_offset,
                 byte_count,
             );
@@ -1136,13 +1138,13 @@ unsafe extern "C" fn do_barray_io(
             .expect("non-null function pointer")(
                 cinfo,
                 &mut (*ptr).b_s_info,
-                *(*ptr).mem_buffer.offset(i as isize) as *mut libc::c_void,
+                *(*ptr).mem_buffer.offset(i) as *mut libc::c_void,
                 file_offset,
                 byte_count,
             );
         }
         file_offset += byte_count;
-        i += (*ptr).rowsperchunk as libc::c_long
+        i += (*ptr).rowsperchunk as isize
     }
 }
 
@@ -1162,7 +1164,7 @@ unsafe extern "C" fn access_virt_sarray(
     if end_row > (*ptr).rows_in_array || num_rows > (*ptr).maxaccess || (*ptr).mem_buffer.is_null()
     {
         (*(*cinfo).err).msg_code =
-            crate::src::jpeg_8c::jerror::JERR_BAD_VIRTUAL_ACCESS as libc::c_int;
+            crate::src::jpeg_8c::jerror::JERR_BAD_VIRTUAL_ACCESS as i32;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -1175,7 +1177,7 @@ unsafe extern "C" fn access_virt_sarray(
         || end_row > (*ptr).cur_start_row.wrapping_add((*ptr).rows_in_mem)
     {
         if (*ptr).b_s_open == 0 {
-            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_VIRTUAL_BUG as libc::c_int;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_VIRTUAL_BUG as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -1185,8 +1187,8 @@ unsafe extern "C" fn access_virt_sarray(
         }
         /* Flush old buffer contents if necessary */
         if (*ptr).dirty != 0 {
-            do_sarray_io(cinfo, ptr, 1 as libc::c_int);
-            (*ptr).dirty = 0 as libc::c_int
+            do_sarray_io(cinfo, ptr, 1);
+            (*ptr).dirty = 0
         }
         /* Decide what part of virtual array to access.
          * Algorithm: if target address > current window, assume forward scan,
@@ -1199,10 +1201,10 @@ unsafe extern "C" fn access_virt_sarray(
             (*ptr).cur_start_row = start_row
         } else {
             /* use long arithmetic here to avoid overflow & unsigned problems */
-            let mut ltemp: libc::c_long = 0; /* don't fall off front end of file */
-            ltemp = end_row as libc::c_long - (*ptr).rows_in_mem as libc::c_long;
-            if ltemp < 0 as libc::c_int as libc::c_long {
-                ltemp = 0 as libc::c_int as libc::c_long
+            let mut ltemp: isize = 0; /* don't fall off front end of file */
+            ltemp = end_row as isize - (*ptr).rows_in_mem as isize;
+            if ltemp < 0 {
+                ltemp = 0
             }
             (*ptr).cur_start_row = ltemp as crate::jmorecfg_h::JDIMENSION
         }
@@ -1210,7 +1212,7 @@ unsafe extern "C" fn access_virt_sarray(
          * During the initial write pass, we will do no actual read
          * because the selected part is all undefined.
          */
-        do_sarray_io(cinfo, ptr, 0 as libc::c_int);
+        do_sarray_io(cinfo, ptr, 0i32);
     }
     /* Ensure the accessed part of the array is defined; prezero if needed.
      * To improve locality of access, we only prezero the part of the array
@@ -1221,7 +1223,7 @@ unsafe extern "C" fn access_virt_sarray(
             if writable != 0 {
                 /* writer skipped over a section of array */
                 (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_VIRTUAL_ACCESS as libc::c_int;
+                    crate::src::jpeg_8c::jerror::JERR_BAD_VIRTUAL_ACCESS as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -1240,13 +1242,9 @@ unsafe extern "C" fn access_virt_sarray(
         if (*ptr).pre_zero != 0 {
             let mut bytesperrow: crate::stddef_h::size_t = ((*ptr).samplesperrow
                 as crate::stddef_h::size_t)
-                .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>() as libc::c_ulong);
-            undef_row = (undef_row as libc::c_uint).wrapping_sub((*ptr).cur_start_row)
-                as crate::jmorecfg_h::JDIMENSION
-                as crate::jmorecfg_h::JDIMENSION;
-            end_row = (end_row as libc::c_uint).wrapping_sub((*ptr).cur_start_row)
-                as crate::jmorecfg_h::JDIMENSION
-                as crate::jmorecfg_h::JDIMENSION;
+                .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>());
+            undef_row =  (undef_row).wrapping_sub((*ptr).cur_start_row);
+            end_row =  (end_row).wrapping_sub((*ptr).cur_start_row);
             while undef_row < end_row {
                 crate::src::jpeg_8c::jutils::jzero_far(
                     *(*ptr).mem_buffer.offset(undef_row as isize) as *mut libc::c_void,
@@ -1257,7 +1255,7 @@ unsafe extern "C" fn access_virt_sarray(
         } else if writable == 0 {
             /* reader looking at undefined data */
             (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_BAD_VIRTUAL_ACCESS as libc::c_int;
+                crate::src::jpeg_8c::jerror::JERR_BAD_VIRTUAL_ACCESS as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -1268,7 +1266,7 @@ unsafe extern "C" fn access_virt_sarray(
     }
     /* Flag the buffer dirty if caller will write in it */
     if writable != 0 {
-        (*ptr).dirty = 1 as libc::c_int
+        (*ptr).dirty = 1
     }
     /* Return address of proper part of the buffer */
     return (*ptr)
@@ -1292,7 +1290,7 @@ unsafe extern "C" fn access_virt_barray(
     if end_row > (*ptr).rows_in_array || num_rows > (*ptr).maxaccess || (*ptr).mem_buffer.is_null()
     {
         (*(*cinfo).err).msg_code =
-            crate::src::jpeg_8c::jerror::JERR_BAD_VIRTUAL_ACCESS as libc::c_int;
+            crate::src::jpeg_8c::jerror::JERR_BAD_VIRTUAL_ACCESS as i32;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -1305,7 +1303,7 @@ unsafe extern "C" fn access_virt_barray(
         || end_row > (*ptr).cur_start_row.wrapping_add((*ptr).rows_in_mem)
     {
         if (*ptr).b_s_open == 0 {
-            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_VIRTUAL_BUG as libc::c_int;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_VIRTUAL_BUG as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -1315,8 +1313,8 @@ unsafe extern "C" fn access_virt_barray(
         }
         /* Flush old buffer contents if necessary */
         if (*ptr).dirty != 0 {
-            do_barray_io(cinfo, ptr, 1 as libc::c_int);
-            (*ptr).dirty = 0 as libc::c_int
+            do_barray_io(cinfo, ptr, 1);
+            (*ptr).dirty = 0
         }
         /* Decide what part of virtual array to access.
          * Algorithm: if target address > current window, assume forward scan,
@@ -1329,10 +1327,10 @@ unsafe extern "C" fn access_virt_barray(
             (*ptr).cur_start_row = start_row
         } else {
             /* use long arithmetic here to avoid overflow & unsigned problems */
-            let mut ltemp: libc::c_long = 0; /* don't fall off front end of file */
-            ltemp = end_row as libc::c_long - (*ptr).rows_in_mem as libc::c_long;
-            if ltemp < 0 as libc::c_int as libc::c_long {
-                ltemp = 0 as libc::c_int as libc::c_long
+            let mut ltemp: isize = 0; /* don't fall off front end of file */
+            ltemp = end_row as isize - (*ptr).rows_in_mem as isize;
+            if ltemp < 0 {
+                ltemp = 0
             }
             (*ptr).cur_start_row = ltemp as crate::jmorecfg_h::JDIMENSION
         }
@@ -1340,7 +1338,7 @@ unsafe extern "C" fn access_virt_barray(
          * During the initial write pass, we will do no actual read
          * because the selected part is all undefined.
          */
-        do_barray_io(cinfo, ptr, 0 as libc::c_int);
+        do_barray_io(cinfo, ptr, 0i32);
     }
     /* Ensure the accessed part of the array is defined; prezero if needed.
      * To improve locality of access, we only prezero the part of the array
@@ -1351,7 +1349,7 @@ unsafe extern "C" fn access_virt_barray(
             if writable != 0 {
                 /* writer skipped over a section of array */
                 (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_VIRTUAL_ACCESS as libc::c_int;
+                    crate::src::jpeg_8c::jerror::JERR_BAD_VIRTUAL_ACCESS as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -1370,13 +1368,9 @@ unsafe extern "C" fn access_virt_barray(
         if (*ptr).pre_zero != 0 {
             let mut bytesperrow: crate::stddef_h::size_t = ((*ptr).blocksperrow
                 as crate::stddef_h::size_t)
-                .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>() as libc::c_ulong);
-            undef_row = (undef_row as libc::c_uint).wrapping_sub((*ptr).cur_start_row)
-                as crate::jmorecfg_h::JDIMENSION
-                as crate::jmorecfg_h::JDIMENSION;
-            end_row = (end_row as libc::c_uint).wrapping_sub((*ptr).cur_start_row)
-                as crate::jmorecfg_h::JDIMENSION
-                as crate::jmorecfg_h::JDIMENSION;
+                .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>());
+            undef_row =  (undef_row).wrapping_sub((*ptr).cur_start_row);
+            end_row =  (end_row).wrapping_sub((*ptr).cur_start_row);
             while undef_row < end_row {
                 crate::src::jpeg_8c::jutils::jzero_far(
                     *(*ptr).mem_buffer.offset(undef_row as isize) as *mut libc::c_void,
@@ -1387,7 +1381,7 @@ unsafe extern "C" fn access_virt_barray(
         } else if writable == 0 {
             /* reader looking at undefined data */
             (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_BAD_VIRTUAL_ACCESS as libc::c_int;
+                crate::src::jpeg_8c::jerror::JERR_BAD_VIRTUAL_ACCESS as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -1398,7 +1392,7 @@ unsafe extern "C" fn access_virt_barray(
     }
     /* Flag the buffer dirty if caller will write in it */
     if writable != 0 {
-        (*ptr).dirty = 1 as libc::c_int
+        (*ptr).dirty = 1
     }
     /* Return address of proper part of the buffer */
     return (*ptr)
@@ -1411,15 +1405,15 @@ unsafe extern "C" fn access_virt_barray(
 
 unsafe extern "C" fn free_pool(
     mut cinfo: crate::jpeglib_h::j_common_ptr,
-    mut pool_id: libc::c_int,
+    mut pool_id: i32,
 ) {
     let mut mem: my_mem_ptr = (*cinfo).mem as my_mem_ptr; /* safety check */
     let mut shdr_ptr: small_pool_ptr = 0 as *mut small_pool_struct;
     let mut lhdr_ptr: large_pool_ptr = 0 as *mut large_pool_struct;
     let mut space_freed: crate::stddef_h::size_t = 0;
-    if pool_id < 0 as libc::c_int || pool_id >= 2 as libc::c_int {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_POOL_ID as libc::c_int;
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = pool_id;
+    if pool_id < 0 || pool_id >= 2 {
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_POOL_ID as i32;
+        (*(*cinfo).err).msg_parm.i[0] = pool_id;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -1428,14 +1422,14 @@ unsafe extern "C" fn free_pool(
         .expect("non-null function pointer")(cinfo);
     }
     /* If freeing IMAGE pool, close any virtual arrays first */
-    if pool_id == 1 as libc::c_int {
+    if pool_id == 1 {
         let mut sptr: crate::jpeglib_h::jvirt_sarray_ptr = 0 as *mut jvirt_sarray_control;
         let mut bptr: crate::jpeglib_h::jvirt_barray_ptr = 0 as *mut jvirt_barray_control;
         sptr = (*mem).virt_sarray_list;
         while !sptr.is_null() {
             if (*sptr).b_s_open != 0 {
                 /* there may be no backing store */
-                (*sptr).b_s_open = 0 as libc::c_int; /* prevent recursive close if error */
+                (*sptr).b_s_open = 0; /* prevent recursive close if error */
                 Some(
                     (*sptr)
                         .b_s_info
@@ -1451,7 +1445,7 @@ unsafe extern "C" fn free_pool(
         while !bptr.is_null() {
             if (*bptr).b_s_open != 0 {
                 /* there may be no backing store */
-                (*bptr).b_s_open = 0 as libc::c_int; /* prevent recursive close if error */
+                (*bptr).b_s_open = 0; /* prevent recursive close if error */
                 Some(
                     (*bptr)
                         .b_s_info
@@ -1473,15 +1467,15 @@ unsafe extern "C" fn free_pool(
             .hdr
             .bytes_used
             .wrapping_add((*lhdr_ptr).hdr.bytes_left)
-            .wrapping_add(::std::mem::size_of::<large_pool_hdr>() as libc::c_ulong);
+            .wrapping_add(::std::mem::size_of::<large_pool_hdr>());
         crate::src::jpeg_8c::jmemnobs::jpeg_free_large(
             cinfo,
             lhdr_ptr as *mut libc::c_void,
             space_freed,
         );
-        (*mem).total_space_allocated = ((*mem).total_space_allocated as libc::c_ulong)
-            .wrapping_sub(space_freed) as libc::c_long
-            as libc::c_long;
+        (*mem).total_space_allocated =  ((*mem).total_space_allocated as usize)
+            .wrapping_sub(space_freed)
+            as isize;
         lhdr_ptr = next_lhdr_ptr
     }
     /* Release small objects */
@@ -1493,15 +1487,15 @@ unsafe extern "C" fn free_pool(
             .hdr
             .bytes_used
             .wrapping_add((*shdr_ptr).hdr.bytes_left)
-            .wrapping_add(::std::mem::size_of::<small_pool_hdr>() as libc::c_ulong);
+            .wrapping_add(::std::mem::size_of::<small_pool_hdr>());
         crate::src::jpeg_8c::jmemnobs::jpeg_free_small(
             cinfo,
             shdr_ptr as *mut libc::c_void,
             space_freed,
         );
-        (*mem).total_space_allocated = ((*mem).total_space_allocated as libc::c_ulong)
-            .wrapping_sub(space_freed) as libc::c_long
-            as libc::c_long;
+        (*mem).total_space_allocated =  ((*mem).total_space_allocated as usize)
+            .wrapping_sub(space_freed)
+            as isize;
         shdr_ptr = next_shdr_ptr
     }
 }
@@ -1511,13 +1505,13 @@ unsafe extern "C" fn free_pool(
  */
 
 unsafe extern "C" fn self_destruct(mut cinfo: crate::jpeglib_h::j_common_ptr) {
-    let mut pool: libc::c_int = 0;
+    let mut pool: i32 = 0;
     /* Close all backing store, release all memory.
      * Releasing pools in reverse order might help avoid fragmentation
      * with some (brain-damaged) malloc libraries.
      */
-    pool = 2 as libc::c_int - 1 as libc::c_int;
-    while pool >= 0 as libc::c_int {
+    pool = 2 - 1;
+    while pool >= 0 {
         free_pool(cinfo, pool);
         pool -= 1
     }
@@ -1525,7 +1519,8 @@ unsafe extern "C" fn self_destruct(mut cinfo: crate::jpeglib_h::j_common_ptr) {
     crate::src::jpeg_8c::jmemnobs::jpeg_free_small(
         cinfo,
         (*cinfo).mem as *mut libc::c_void,
-        ::std::mem::size_of::<my_memory_mgr>() as libc::c_ulong,
+        
+        ::std::mem::size_of::<my_memory_mgr>(),
     ); /* ensures I will be called only once */
     (*cinfo).mem = 0 as *mut crate::jpeglib_h::jpeg_memory_mgr;
     crate::src::jpeg_8c::jmemnobs::jpeg_mem_term(cinfo);
@@ -1539,8 +1534,8 @@ unsafe extern "C" fn self_destruct(mut cinfo: crate::jpeglib_h::j_common_ptr) {
 
 pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_ptr) {
     let mut mem: my_mem_ptr = 0 as *mut my_memory_mgr; /* for safety if init fails */
-    let mut max_to_use: libc::c_long = 0;
-    let mut pool: libc::c_int = 0;
+    let mut max_to_use: isize = 0;
+    let mut pool: i32 = 0;
     let mut test_mac: crate::stddef_h::size_t = 0;
     (*cinfo).mem = 0 as *mut crate::jpeglib_h::jpeg_memory_mgr;
     /* Check for configuration errors.
@@ -1550,12 +1545,12 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
      * in common if and only if X is a power of 2, ie has only one one-bit.
      * Some compilers may give an "unreachable code" warning here; ignore it.
      */
-    if ::std::mem::size_of::<libc::c_double>() as libc::c_ulong
-        & (::std::mem::size_of::<libc::c_double>() as libc::c_ulong)
-            .wrapping_sub(1 as libc::c_int as libc::c_ulong)
-        != 0 as libc::c_int as libc::c_ulong
+    if  ::std::mem::size_of::<f64>()
+        & (::std::mem::size_of::<f64>())
+            .wrapping_sub(1usize)
+        != 0
     {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_ALIGN_TYPE as libc::c_int;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_ALIGN_TYPE as i32;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -1568,13 +1563,13 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
      * Again, an "unreachable code" warning may be ignored here.
      * But a "constant too large" warning means you need to fix MAX_ALLOC_CHUNK.
      */
-    test_mac = 1000000000 as libc::c_long as crate::stddef_h::size_t; /* system-dependent initialization */
-    if test_mac as libc::c_long != 1000000000 as libc::c_long
-        || (1000000000 as libc::c_long as libc::c_ulong)
-            .wrapping_rem(::std::mem::size_of::<libc::c_double>() as libc::c_ulong)
-            != 0 as libc::c_int as libc::c_ulong
+    test_mac =  1000000000 as crate::stddef_h::size_t; /* system-dependent initialization */
+    if test_mac as isize != 1000000000 as isize
+        || (1000000000 as usize)
+            .wrapping_rem(::std::mem::size_of::<f64>())
+            != 0usize
     {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_ALLOC_CHUNK as libc::c_int;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_ALLOC_CHUNK as i32;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -1586,12 +1581,13 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
     /* Attempt to allocate memory manager's control block */
     mem = crate::src::jpeg_8c::jmemnobs::jpeg_get_small(
         cinfo,
-        ::std::mem::size_of::<my_memory_mgr>() as libc::c_ulong,
+        
+        ::std::mem::size_of::<my_memory_mgr>(),
     ) as my_mem_ptr; /* system-dependent cleanup */
     if mem.is_null() {
         crate::src::jpeg_8c::jmemnobs::jpeg_mem_term(cinfo);
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_OUT_OF_MEMORY as libc::c_int;
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = 0 as libc::c_int;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_OUT_OF_MEMORY as i32;
+        (*(*cinfo).err).msg_parm.i[0] = 0;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -1604,7 +1600,7 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
         alloc_small
             as unsafe extern "C" fn(
                 _: crate::jpeglib_h::j_common_ptr,
-                _: libc::c_int,
+                _: i32,
                 _: crate::stddef_h::size_t,
             ) -> *mut libc::c_void,
     );
@@ -1612,7 +1608,7 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
         alloc_large
             as unsafe extern "C" fn(
                 _: crate::jpeglib_h::j_common_ptr,
-                _: libc::c_int,
+                _: i32,
                 _: crate::stddef_h::size_t,
             ) -> *mut libc::c_void,
     );
@@ -1620,7 +1616,7 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
         alloc_sarray
             as unsafe extern "C" fn(
                 _: crate::jpeglib_h::j_common_ptr,
-                _: libc::c_int,
+                _: i32,
                 _: crate::jmorecfg_h::JDIMENSION,
                 _: crate::jmorecfg_h::JDIMENSION,
             ) -> crate::jpeglib_h::JSAMPARRAY,
@@ -1629,7 +1625,7 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
         alloc_barray
             as unsafe extern "C" fn(
                 _: crate::jpeglib_h::j_common_ptr,
-                _: libc::c_int,
+                _: i32,
                 _: crate::jmorecfg_h::JDIMENSION,
                 _: crate::jmorecfg_h::JDIMENSION,
             ) -> crate::jpeglib_h::JBLOCKARRAY,
@@ -1638,7 +1634,7 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
         request_virt_sarray
             as unsafe extern "C" fn(
                 _: crate::jpeglib_h::j_common_ptr,
-                _: libc::c_int,
+                _: i32,
                 _: crate::jmorecfg_h::boolean,
                 _: crate::jmorecfg_h::JDIMENSION,
                 _: crate::jmorecfg_h::JDIMENSION,
@@ -1649,7 +1645,7 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
         request_virt_barray
             as unsafe extern "C" fn(
                 _: crate::jpeglib_h::j_common_ptr,
-                _: libc::c_int,
+                _: i32,
                 _: crate::jmorecfg_h::boolean,
                 _: crate::jmorecfg_h::JDIMENSION,
                 _: crate::jmorecfg_h::JDIMENSION,
@@ -1679,16 +1675,16 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
             ) -> crate::jpeglib_h::JBLOCKARRAY,
     );
     (*mem).pub_0.free_pool = Some(
-        free_pool as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: libc::c_int) -> (),
+        free_pool as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: i32) -> (),
     );
     (*mem).pub_0.self_destruct =
         Some(self_destruct as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr) -> ());
     /* Make MAX_ALLOC_CHUNK accessible to other modules */
-    (*mem).pub_0.max_alloc_chunk = 1000000000 as libc::c_long;
+    (*mem).pub_0.max_alloc_chunk = 1000000000 as isize;
     /* Initialize working state */
     (*mem).pub_0.max_memory_to_use = max_to_use;
-    pool = 2 as libc::c_int - 1 as libc::c_int;
-    while pool >= 0 as libc::c_int {
+    pool = 2 - 1;
+    while pool >= 0 {
         (*mem).small_list[pool as usize] = 0 as small_pool_ptr;
         (*mem).large_list[pool as usize] = 0 as large_pool_ptr;
         pool -= 1
@@ -1696,7 +1692,8 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
     (*mem).virt_sarray_list = 0 as crate::jpeglib_h::jvirt_sarray_ptr;
     (*mem).virt_barray_list = 0 as crate::jpeglib_h::jvirt_barray_ptr;
     (*mem).total_space_allocated =
-        ::std::mem::size_of::<my_memory_mgr>() as libc::c_ulong as libc::c_long;
+        
+        ::std::mem::size_of::<my_memory_mgr>() as isize;
     /* Declare ourselves open for business */
     (*cinfo).mem = &mut (*mem).pub_0;
     /* Check for an environment variable JPEGMEM; if found, override the
@@ -1705,21 +1702,21 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
      * If your system doesn't support getenv(), define NO_GETENV to disable
      * this feature.
      */
-    let mut memenv: *mut libc::c_char = 0 as *mut libc::c_char;
-    memenv = crate::stdlib::getenv(b"JPEGMEM\x00" as *const u8 as *const libc::c_char);
+    let mut memenv: *mut i8 = 0 as *mut i8;
+    memenv = crate::stdlib::getenv(b"JPEGMEM\x00" as *const u8 as *const i8);
     if !memenv.is_null() {
-        let mut ch: libc::c_char = 'x' as i32 as libc::c_char;
+        let mut ch: i8 =  'x' as i8;
         if crate::stdlib::sscanf(
             memenv,
-            b"%ld%c\x00" as *const u8 as *const libc::c_char,
-            &mut max_to_use as *mut libc::c_long,
-            &mut ch as *mut libc::c_char,
-        ) > 0 as libc::c_int
+            b"%ld%c\x00" as *const u8 as *const i8,
+            &mut max_to_use as *mut isize,
+            &mut ch as *mut i8,
+        ) > 0
         {
-            if ch as libc::c_int == 'm' as i32 || ch as libc::c_int == 'M' as i32 {
-                max_to_use *= 1000 as libc::c_long
+            if ch as i32 == 'm' as i32 || ch as i32 == 'M' as i32 {
+                max_to_use *= 1000
             }
-            (*mem).pub_0.max_memory_to_use = max_to_use * 1000 as libc::c_long
+            (*mem).pub_0.max_memory_to_use = max_to_use * 1000
         }
     };
 }

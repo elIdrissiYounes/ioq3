@@ -27,328 +27,51 @@ POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************/
 #[no_mangle]
 
-pub static mut silk_CB_lags_stage2_10_ms: [[libc::c_schar; 3]; 2] = [
+pub static mut silk_CB_lags_stage2_10_ms: [[i8; 3]; 2] = [[0, 1, 0], [0, 0, 1]];
+#[no_mangle]
+
+pub static mut silk_CB_lags_stage3_10_ms: [[i8; 12]; 2] = [
+    [0, 0, 1, -1, 1, -1, 2, -2, 2, -2, 3, -3],
+    [0, 1, 0, 1, -1, 2, -1, 2, -2, 3, -2, 3],
+];
+#[no_mangle]
+
+pub static mut silk_Lag_range_stage3_10_ms: [[i8; 2]; 2] = [[-3, 7], [-2, 7]];
+#[no_mangle]
+
+pub static mut silk_CB_lags_stage2: [[i8; 11]; 4] = [
+    [0, 2, -1, -1, -1, 0, 0, 1, 1, 0, 1],
+    [0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, -1, 2, 1, 0, 1, 1, 0, 0, -1, -1],
+];
+#[no_mangle]
+
+pub static mut silk_CB_lags_stage3: [[i8; 34]; 4] = [
     [
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
+        0, 0, 1, -1, 0, 1, -1, 0, -1, 1, -2, 2, -2, -2, 2, -3, 2, 3, -3, -4, 3, -4, 4, 4, -5, 5,
+        -6, -5, 6, -7, 6, 5, 8, -9,
     ],
     [
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
+        0, 0, 1, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 1, -1, 0, 1, -1, -1, 1, -1, 2, 1, -1, 2, -2, -2,
+        2, -2, 2, 2, 3, -3,
+    ],
+    [
+        0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, -1, 1, 0, 0, 2, 1, -1, 2, -1, -1, 2, -1, 2, 2,
+        -1, 3, -2, -2, -2, 3,
+    ],
+    [
+        0, 1, 0, 0, 1, 0, 1, -1, 2, -1, 2, -1, 2, 3, -2, 3, -2, -2, 4, 4, -3, 5, -3, -4, 6, -4, 6,
+        5, -5, 8, -6, -5, -7, 9,
     ],
 ];
 #[no_mangle]
 
-pub static mut silk_CB_lags_stage3_10_ms: [[libc::c_schar; 12]; 2] = [
-    [
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        -(3 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-    ],
+pub static mut silk_Lag_range_stage3: [[[i8; 2]; 4]; 3] = [
+    [[-5, 8], [-1, 6], [-1, 6], [-4, 10]],
+    [[-6, 10], [-2, 6], [-1, 6], [-5, 10]],
+    [[-9, 12], [-3, 7], [-2, 7], [-7, 13]],
 ];
 #[no_mangle]
 
-pub static mut silk_Lag_range_stage3_10_ms: [[libc::c_schar; 2]; 2] = [
-    [
-        -(3 as libc::c_int) as libc::c_schar,
-        7 as libc::c_int as libc::c_schar,
-    ],
-    [
-        -(2 as libc::c_int) as libc::c_schar,
-        7 as libc::c_int as libc::c_schar,
-    ],
-];
-#[no_mangle]
-
-pub static mut silk_CB_lags_stage2: [[libc::c_schar; 11]; 4] = [
-    [
-        0 as libc::c_int as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-    ],
-    [
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-    ],
-    [
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-    ],
-    [
-        0 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-    ],
-];
-#[no_mangle]
-
-pub static mut silk_CB_lags_stage3: [[libc::c_schar; 34]; 4] = [
-    [
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(3 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        -(3 as libc::c_int) as libc::c_schar,
-        -(4 as libc::c_int) as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        -(4 as libc::c_int) as libc::c_schar,
-        4 as libc::c_int as libc::c_schar,
-        4 as libc::c_int as libc::c_schar,
-        -(5 as libc::c_int) as libc::c_schar,
-        5 as libc::c_int as libc::c_schar,
-        -(6 as libc::c_int) as libc::c_schar,
-        -(5 as libc::c_int) as libc::c_schar,
-        6 as libc::c_int as libc::c_schar,
-        -(7 as libc::c_int) as libc::c_schar,
-        6 as libc::c_int as libc::c_schar,
-        5 as libc::c_int as libc::c_schar,
-        8 as libc::c_int as libc::c_schar,
-        -(9 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        -(3 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-    ],
-    [
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        4 as libc::c_int as libc::c_schar,
-        4 as libc::c_int as libc::c_schar,
-        -(3 as libc::c_int) as libc::c_schar,
-        5 as libc::c_int as libc::c_schar,
-        -(3 as libc::c_int) as libc::c_schar,
-        -(4 as libc::c_int) as libc::c_schar,
-        6 as libc::c_int as libc::c_schar,
-        -(4 as libc::c_int) as libc::c_schar,
-        6 as libc::c_int as libc::c_schar,
-        5 as libc::c_int as libc::c_schar,
-        -(5 as libc::c_int) as libc::c_schar,
-        8 as libc::c_int as libc::c_schar,
-        -(6 as libc::c_int) as libc::c_schar,
-        -(5 as libc::c_int) as libc::c_schar,
-        -(7 as libc::c_int) as libc::c_schar,
-        9 as libc::c_int as libc::c_schar,
-    ],
-];
-#[no_mangle]
-
-pub static mut silk_Lag_range_stage3: [[[libc::c_schar; 2]; 4]; 3] = [
-    [
-        [
-            -(5 as libc::c_int) as libc::c_schar,
-            8 as libc::c_int as libc::c_schar,
-        ],
-        [
-            -(1 as libc::c_int) as libc::c_schar,
-            6 as libc::c_int as libc::c_schar,
-        ],
-        [
-            -(1 as libc::c_int) as libc::c_schar,
-            6 as libc::c_int as libc::c_schar,
-        ],
-        [
-            -(4 as libc::c_int) as libc::c_schar,
-            10 as libc::c_int as libc::c_schar,
-        ],
-    ],
-    [
-        [
-            -(6 as libc::c_int) as libc::c_schar,
-            10 as libc::c_int as libc::c_schar,
-        ],
-        [
-            -(2 as libc::c_int) as libc::c_schar,
-            6 as libc::c_int as libc::c_schar,
-        ],
-        [
-            -(1 as libc::c_int) as libc::c_schar,
-            6 as libc::c_int as libc::c_schar,
-        ],
-        [
-            -(5 as libc::c_int) as libc::c_schar,
-            10 as libc::c_int as libc::c_schar,
-        ],
-    ],
-    [
-        [
-            -(9 as libc::c_int) as libc::c_schar,
-            12 as libc::c_int as libc::c_schar,
-        ],
-        [
-            -(3 as libc::c_int) as libc::c_schar,
-            7 as libc::c_int as libc::c_schar,
-        ],
-        [
-            -(2 as libc::c_int) as libc::c_schar,
-            7 as libc::c_int as libc::c_schar,
-        ],
-        [
-            -(7 as libc::c_int) as libc::c_schar,
-            13 as libc::c_int as libc::c_schar,
-        ],
-    ],
-];
-#[no_mangle]
-
-pub static mut silk_nb_cbk_searchs_stage3: [libc::c_schar; 3] = [
-    16 as libc::c_int as libc::c_schar,
-    24 as libc::c_int as libc::c_schar,
-    34 as libc::c_int as libc::c_schar,
-];
+pub static mut silk_nb_cbk_searchs_stage3: [i8; 3] = [16, 24, 34];

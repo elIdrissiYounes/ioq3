@@ -1,20 +1,20 @@
-pub type powerup_t = libc::c_uint;
-pub type holdable_t = libc::c_uint;
-pub type weapon_t = libc::c_uint;
-pub type itemType_t = libc::c_uint;
+pub type powerup_t = u32;
+pub type holdable_t = u32;
+pub type weapon_t = u32;
+pub type itemType_t = u32;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct gitem_s {
-    pub classname: *mut libc::c_char,
-    pub pickup_sound: *mut libc::c_char,
-    pub world_model: [*mut libc::c_char; 4],
-    pub icon: *mut libc::c_char,
-    pub pickup_name: *mut libc::c_char,
-    pub quantity: libc::c_int,
+    pub classname: *mut i8,
+    pub pickup_sound: *mut i8,
+    pub world_model: [*mut i8; 4],
+    pub icon: *mut i8,
+    pub pickup_name: *mut i8,
+    pub quantity: i32,
     pub giType: crate::bg_public_h::itemType_t,
-    pub giTag: libc::c_int,
-    pub precaches: *mut libc::c_char,
-    pub sounds: *mut libc::c_char,
+    pub giTag: i32,
+    pub precaches: *mut i8,
+    pub sounds: *mut i8,
 }
 pub type gitem_t = crate::bg_public_h::gitem_s;
 pub const GT_MAX_GAME_TYPE: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 8;
@@ -204,13 +204,13 @@ pub const ET_GENERAL: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 0;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct animation_s {
-    pub firstFrame: libc::c_int,
-    pub numFrames: libc::c_int,
-    pub loopFrames: libc::c_int,
-    pub frameLerp: libc::c_int,
-    pub initialLerp: libc::c_int,
-    pub reversed: libc::c_int,
-    pub flipflop: libc::c_int,
+    pub firstFrame: i32,
+    pub numFrames: i32,
+    pub loopFrames: i32,
+    pub frameLerp: i32,
+    pub initialLerp: i32,
+    pub reversed: i32,
+    pub flipflop: i32,
 }
 pub type animation_t = crate::bg_public_h::animation_s;
 pub const MAX_TOTALANIMATIONS: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 37;

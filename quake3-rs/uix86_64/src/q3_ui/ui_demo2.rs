@@ -289,9 +289,9 @@ pub struct demos_t {
     pub right: crate::ui_local_h::menubitmap_s,
     pub back: crate::ui_local_h::menubitmap_s,
     pub go: crate::ui_local_h::menubitmap_s,
-    pub numDemos: libc::c_int,
-    pub names: [libc::c_char; 32768],
-    pub demolist: [*mut libc::c_char; 1024],
+    pub numDemos: i32,
+    pub names: [i8; 32768],
+    pub demolist: [*mut i8; 1024],
 }
 
 static mut s_demos: demos_t = demos_t {
@@ -299,7 +299,7 @@ static mut s_demos: demos_t = demos_t {
         cursor: 0,
         cursor_prev: 0,
         nitems: 0,
-        items: [0 as *const libc::c_void as *mut libc::c_void; 64],
+        items: [0 as *mut libc::c_void; 64],
         draw: None,
         key: None,
         wrapAround: crate::src::qcommon::q_shared::qfalse,
@@ -309,7 +309,7 @@ static mut s_demos: demos_t = demos_t {
     banner: crate::ui_local_h::menutext_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -317,22 +317,21 @@ static mut s_demos: demos_t = demos_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        string: 0 as *const libc::c_char as *mut libc::c_char,
+        string: 0 as *mut i8,
         style: 0,
-        color: 0 as *const libc::c_float as *mut libc::c_float,
+        color: 0 as *mut f32,
     },
     framel: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -340,26 +339,25 @@ static mut s_demos: demos_t = demos_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     framer: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -367,26 +365,25 @@ static mut s_demos: demos_t = demos_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     list: crate::ui_local_h::menulist_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -394,8 +391,7 @@ static mut s_demos: demos_t = demos_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
@@ -406,7 +402,7 @@ static mut s_demos: demos_t = demos_t {
         curvalue: 0,
         numitems: 0,
         top: 0,
-        itemnames: 0 as *const *const libc::c_char as *mut *const libc::c_char,
+        itemnames: 0 as *mut *const i8,
         width: 0,
         height: 0,
         columns: 0,
@@ -415,7 +411,7 @@ static mut s_demos: demos_t = demos_t {
     arrows: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -423,26 +419,25 @@ static mut s_demos: demos_t = demos_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     left: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -450,26 +445,25 @@ static mut s_demos: demos_t = demos_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     right: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -477,26 +471,25 @@ static mut s_demos: demos_t = demos_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     back: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -504,26 +497,25 @@ static mut s_demos: demos_t = demos_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     go: crate::ui_local_h::menubitmap_s {
         generic: crate::ui_local_h::menucommon_s {
             type_0: 0,
-            name: 0 as *const libc::c_char,
+            name: 0 as *const i8,
             id: 0,
             x: 0,
             y: 0,
@@ -531,25 +523,24 @@ static mut s_demos: demos_t = demos_t {
             top: 0,
             right: 0,
             bottom: 0,
-            parent: 0 as *const crate::ui_local_h::menuframework_s
-                as *mut crate::ui_local_h::menuframework_s,
+            parent: 0 as *mut crate::ui_local_h::menuframework_s,
             menuPosition: 0,
             flags: 0,
             callback: None,
             statusbar: None,
             ownerdraw: None,
         },
-        focuspic: 0 as *const libc::c_char as *mut libc::c_char,
-        errorpic: 0 as *const libc::c_char as *mut libc::c_char,
+        focuspic: 0 as *mut i8,
+        errorpic: 0 as *mut i8,
         shader: 0,
         focusshader: 0,
         width: 0,
         height: 0,
-        focuscolor: 0 as *const libc::c_float as *mut libc::c_float,
+        focuscolor: 0 as *mut f32,
     },
     numDemos: 0,
     names: [0; 32768],
-    demolist: [0 as *const libc::c_char as *mut libc::c_char; 1024],
+    demolist: [0 as *mut i8; 1024],
 };
 /*
 ===============
@@ -557,17 +548,17 @@ Demos_MenuEvent
 ===============
 */
 
-unsafe extern "C" fn Demos_MenuEvent(mut ptr: *mut libc::c_void, mut event: libc::c_int) {
-    if event != 3 as libc::c_int {
+unsafe extern "C" fn Demos_MenuEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+    if event != 3 {
         return;
     }
     match (*(ptr as *mut crate::ui_local_h::menucommon_s)).id {
         11 => {
             crate::src::q3_ui::ui_atoms::UI_ForceMenuOff();
             crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText(
-                crate::src::qcommon::q_shared::EXEC_APPEND as libc::c_int,
+                crate::src::qcommon::q_shared::EXEC_APPEND as i32,
                 crate::src::qcommon::q_shared::va(
-                    b"demo %s\n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                    b"demo %s\n\x00" as *const u8 as *mut i8,
                     *s_demos
                         .list
                         .itemnames
@@ -581,13 +572,13 @@ unsafe extern "C" fn Demos_MenuEvent(mut ptr: *mut libc::c_void, mut event: libc
         14 => {
             crate::src::q3_ui::ui_qmenu::ScrollList_Key(
                 &mut s_demos.list,
-                crate::keycodes_h::K_LEFTARROW as libc::c_int,
+                crate::keycodes_h::K_LEFTARROW as i32,
             );
         }
         13 => {
             crate::src::q3_ui::ui_qmenu::ScrollList_Key(
                 &mut s_demos.list,
-                crate::keycodes_h::K_RIGHTARROW as libc::c_int,
+                crate::keycodes_h::K_RIGHTARROW as i32,
             );
         }
         _ => {}
@@ -600,185 +591,174 @@ Demos_MenuInit
 */
 
 unsafe extern "C" fn Demos_MenuInit() {
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    let mut len: libc::c_int = 0;
-    let mut demoname: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut extension: [libc::c_char; 32] = [0; 32];
-    let mut protocol: libc::c_int = 0;
-    let mut protocolLegacy: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut len: i32 = 0;
+    let mut demoname: *mut i8 = 0 as *mut i8;
+    let mut extension: [i8; 32] = [0; 32];
+    let mut protocol: i32 = 0;
+    let mut protocolLegacy: i32 = 0;
     crate::stdlib::memset(
         &mut s_demos as *mut demos_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<demos_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<demos_t>(),
     );
     Demos_Cache();
     s_demos.menu.fullscreen = crate::src::qcommon::q_shared::qtrue;
     s_demos.menu.wrapAround = crate::src::qcommon::q_shared::qtrue;
-    s_demos.banner.generic.type_0 = 10 as libc::c_int;
-    s_demos.banner.generic.x = 320 as libc::c_int;
-    s_demos.banner.generic.y = 16 as libc::c_int;
-    s_demos.banner.string = b"DEMOS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    s_demos.banner.generic.type_0 = 10;
+    s_demos.banner.generic.x = 320;
+    s_demos.banner.generic.y = 16;
+    s_demos.banner.string = b"DEMOS\x00" as *const u8 as *mut i8;
     s_demos.banner.color = crate::src::q3_ui::ui_qmenu::color_white.as_mut_ptr();
-    s_demos.banner.style = 0x1 as libc::c_int;
-    s_demos.framel.generic.type_0 = 6 as libc::c_int;
-    s_demos.framel.generic.name = b"menu/art/frame2_l\x00" as *const u8 as *const libc::c_char;
-    s_demos.framel.generic.flags = 0x4000 as libc::c_int as libc::c_uint;
-    s_demos.framel.generic.x = 0 as libc::c_int;
-    s_demos.framel.generic.y = 78 as libc::c_int;
-    s_demos.framel.width = 256 as libc::c_int;
-    s_demos.framel.height = 329 as libc::c_int;
-    s_demos.framer.generic.type_0 = 6 as libc::c_int;
-    s_demos.framer.generic.name = b"menu/art/frame1_r\x00" as *const u8 as *const libc::c_char;
-    s_demos.framer.generic.flags = 0x4000 as libc::c_int as libc::c_uint;
-    s_demos.framer.generic.x = 376 as libc::c_int;
-    s_demos.framer.generic.y = 76 as libc::c_int;
-    s_demos.framer.width = 256 as libc::c_int;
-    s_demos.framer.height = 334 as libc::c_int;
-    s_demos.arrows.generic.type_0 = 6 as libc::c_int;
-    s_demos.arrows.generic.name = b"menu/art/arrows_horz_0\x00" as *const u8 as *const libc::c_char;
-    s_demos.arrows.generic.flags = 0x4000 as libc::c_int as libc::c_uint;
-    s_demos.arrows.generic.x = 320 as libc::c_int - 128 as libc::c_int / 2 as libc::c_int;
-    s_demos.arrows.generic.y = 400 as libc::c_int;
-    s_demos.arrows.width = 128 as libc::c_int;
-    s_demos.arrows.height = 48 as libc::c_int;
-    s_demos.left.generic.type_0 = 6 as libc::c_int;
-    s_demos.left.generic.flags = 0x4 as libc::c_int as libc::c_uint
-        | 0x100 as libc::c_int as libc::c_uint
-        | 0x800 as libc::c_int as libc::c_uint;
-    s_demos.left.generic.x = 320 as libc::c_int - 128 as libc::c_int / 2 as libc::c_int;
-    s_demos.left.generic.y = 400 as libc::c_int;
-    s_demos.left.generic.id = 14 as libc::c_int;
+    s_demos.banner.style = 0x1;
+    s_demos.framel.generic.type_0 = 6;
+    s_demos.framel.generic.name = b"menu/art/frame2_l\x00" as *const u8 as *const i8;
+    s_demos.framel.generic.flags = 0x4000;
+    s_demos.framel.generic.x = 0;
+    s_demos.framel.generic.y = 78;
+    s_demos.framel.width = 256;
+    s_demos.framel.height = 329;
+    s_demos.framer.generic.type_0 = 6;
+    s_demos.framer.generic.name = b"menu/art/frame1_r\x00" as *const u8 as *const i8;
+    s_demos.framer.generic.flags = 0x4000;
+    s_demos.framer.generic.x = 376;
+    s_demos.framer.generic.y = 76;
+    s_demos.framer.width = 256;
+    s_demos.framer.height = 334;
+    s_demos.arrows.generic.type_0 = 6;
+    s_demos.arrows.generic.name = b"menu/art/arrows_horz_0\x00" as *const u8 as *const i8;
+    s_demos.arrows.generic.flags = 0x4000;
+    s_demos.arrows.generic.x = 320 - 128 / 2;
+    s_demos.arrows.generic.y = 400;
+    s_demos.arrows.width = 128;
+    s_demos.arrows.height = 48;
+    s_demos.left.generic.type_0 = 6;
+    s_demos.left.generic.flags = 0x4 | 0x100 | 0x800;
+    s_demos.left.generic.x = 320 - 128 / 2;
+    s_demos.left.generic.y = 400;
+    s_demos.left.generic.id = 14;
     s_demos.left.generic.callback =
-        Some(Demos_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_demos.left.width = 128 as libc::c_int / 2 as libc::c_int;
-    s_demos.left.height = 48 as libc::c_int;
-    s_demos.left.focuspic =
-        b"menu/art/arrows_horz_left\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-    s_demos.right.generic.type_0 = 6 as libc::c_int;
-    s_demos.right.generic.flags = 0x4 as libc::c_int as libc::c_uint
-        | 0x100 as libc::c_int as libc::c_uint
-        | 0x800 as libc::c_int as libc::c_uint;
-    s_demos.right.generic.x = 320 as libc::c_int;
-    s_demos.right.generic.y = 400 as libc::c_int;
-    s_demos.right.generic.id = 13 as libc::c_int;
+        Some(Demos_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_demos.left.width = 128 / 2;
+    s_demos.left.height = 48;
+    s_demos.left.focuspic = b"menu/art/arrows_horz_left\x00" as *const u8 as *mut i8;
+    s_demos.right.generic.type_0 = 6;
+    s_demos.right.generic.flags = 0x4 | 0x100 | 0x800;
+    s_demos.right.generic.x = 320;
+    s_demos.right.generic.y = 400;
+    s_demos.right.generic.id = 13;
     s_demos.right.generic.callback =
-        Some(Demos_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_demos.right.width = 128 as libc::c_int / 2 as libc::c_int;
-    s_demos.right.height = 48 as libc::c_int;
-    s_demos.right.focuspic =
-        b"menu/art/arrows_horz_right\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-    s_demos.back.generic.type_0 = 6 as libc::c_int;
-    s_demos.back.generic.name = b"menu/art/back_0\x00" as *const u8 as *const libc::c_char;
-    s_demos.back.generic.flags =
-        0x4 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    s_demos.back.generic.id = 10 as libc::c_int;
+        Some(Demos_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_demos.right.width = 128 / 2;
+    s_demos.right.height = 48;
+    s_demos.right.focuspic = b"menu/art/arrows_horz_right\x00" as *const u8 as *mut i8;
+    s_demos.back.generic.type_0 = 6;
+    s_demos.back.generic.name = b"menu/art/back_0\x00" as *const u8 as *const i8;
+    s_demos.back.generic.flags = 0x4 | 0x100;
+    s_demos.back.generic.id = 10;
     s_demos.back.generic.callback =
-        Some(Demos_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_demos.back.generic.x = 0 as libc::c_int;
-    s_demos.back.generic.y = 480 as libc::c_int - 64 as libc::c_int;
-    s_demos.back.width = 128 as libc::c_int;
-    s_demos.back.height = 64 as libc::c_int;
-    s_demos.back.focuspic =
-        b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-    s_demos.go.generic.type_0 = 6 as libc::c_int;
-    s_demos.go.generic.name = b"menu/art/play_0\x00" as *const u8 as *const libc::c_char;
-    s_demos.go.generic.flags =
-        0x10 as libc::c_int as libc::c_uint | 0x100 as libc::c_int as libc::c_uint;
-    s_demos.go.generic.id = 11 as libc::c_int;
+        Some(Demos_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_demos.back.generic.x = 0;
+    s_demos.back.generic.y = 480 - 64;
+    s_demos.back.width = 128;
+    s_demos.back.height = 64;
+    s_demos.back.focuspic = b"menu/art/back_1\x00" as *const u8 as *mut i8;
+    s_demos.go.generic.type_0 = 6;
+    s_demos.go.generic.name = b"menu/art/play_0\x00" as *const u8 as *const i8;
+    s_demos.go.generic.flags = 0x10 | 0x100;
+    s_demos.go.generic.id = 11;
     s_demos.go.generic.callback =
-        Some(Demos_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_demos.go.generic.x = 640 as libc::c_int;
-    s_demos.go.generic.y = 480 as libc::c_int - 64 as libc::c_int;
-    s_demos.go.width = 128 as libc::c_int;
-    s_demos.go.height = 64 as libc::c_int;
-    s_demos.go.focuspic =
-        b"menu/art/play_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-    s_demos.list.generic.type_0 = 8 as libc::c_int;
-    s_demos.list.generic.flags = 0x100 as libc::c_int as libc::c_uint;
+        Some(Demos_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_demos.go.generic.x = 640;
+    s_demos.go.generic.y = 480 - 64;
+    s_demos.go.width = 128;
+    s_demos.go.height = 64;
+    s_demos.go.focuspic = b"menu/art/play_1\x00" as *const u8 as *mut i8;
+    s_demos.list.generic.type_0 = 8;
+    s_demos.list.generic.flags = 0x100;
     s_demos.list.generic.callback =
-        Some(Demos_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ());
-    s_demos.list.generic.id = 12 as libc::c_int;
-    s_demos.list.generic.x = 118 as libc::c_int;
-    s_demos.list.generic.y = 130 as libc::c_int;
-    s_demos.list.width = 16 as libc::c_int;
-    s_demos.list.height = 14 as libc::c_int;
-    s_demos.list.itemnames = s_demos.demolist.as_mut_ptr() as *mut *const libc::c_char;
-    s_demos.list.columns = 3 as libc::c_int;
+        Some(Demos_MenuEvent as unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ());
+    s_demos.list.generic.id = 12;
+    s_demos.list.generic.x = 118;
+    s_demos.list.generic.y = 130;
+    s_demos.list.width = 16;
+    s_demos.list.height = 14;
+    s_demos.list.itemnames = s_demos.demolist.as_mut_ptr() as *mut *const i8;
+    s_demos.list.columns = 3;
     protocolLegacy = crate::src::ui::ui_syscalls::trap_Cvar_VariableValue(
-        b"com_legacyprotocol\x00" as *const u8 as *const libc::c_char,
-    ) as libc::c_int;
+        b"com_legacyprotocol\x00" as *const u8 as *const i8,
+    ) as i32;
     protocol = crate::src::ui::ui_syscalls::trap_Cvar_VariableValue(
-        b"com_protocol\x00" as *const u8 as *const libc::c_char,
-    ) as libc::c_int;
+        b"com_protocol\x00" as *const u8 as *const i8,
+    ) as i32;
     if protocol == 0 {
         protocol = crate::src::ui::ui_syscalls::trap_Cvar_VariableValue(
-            b"protocol\x00" as *const u8 as *const libc::c_char,
-        ) as libc::c_int
+            b"protocol\x00" as *const u8 as *const i8,
+        ) as i32
     }
     if protocolLegacy == protocol {
-        protocolLegacy = 0 as libc::c_int
+        protocolLegacy = 0
     }
     crate::src::qcommon::q_shared::Com_sprintf(
         extension.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
-        b".%s%d\x00" as *const u8 as *const libc::c_char,
-        b"dm_\x00" as *const u8 as *const libc::c_char,
+        ::std::mem::size_of::<[i8; 32]>() as i32,
+        b".%s%d\x00" as *const u8 as *const i8,
+        b"dm_\x00" as *const u8 as *const i8,
         protocol,
     );
     s_demos.numDemos = crate::src::ui::ui_syscalls::trap_FS_GetFileList(
-        b"demos\x00" as *const u8 as *const libc::c_char,
+        b"demos\x00" as *const u8 as *const i8,
         extension.as_mut_ptr(),
         s_demos.names.as_mut_ptr(),
-        (::std::mem::size_of::<[libc::c_char; 32768]>() as libc::c_ulong)
-            .wrapping_div(::std::mem::size_of::<libc::c_char>() as libc::c_ulong)
-            as libc::c_int,
+        (::std::mem::size_of::<[i8; 32768]>()).wrapping_div(::std::mem::size_of::<i8>()) as i32,
     );
     demoname = s_demos.names.as_mut_ptr();
-    i = 0 as libc::c_int;
-    j = 0 as libc::c_int;
-    while j < 2 as libc::c_int {
-        if s_demos.numDemos > 1024 as libc::c_int {
-            s_demos.numDemos = 1024 as libc::c_int
+    i = 0;
+    j = 0;
+    while j < 2 {
+        if s_demos.numDemos > 1024 {
+            s_demos.numDemos = 1024
         }
         while i < s_demos.numDemos {
             let ref mut fresh0 = *s_demos.list.itemnames.offset(i as isize);
             *fresh0 = demoname;
-            len = crate::stdlib::strlen(demoname) as libc::c_int;
-            demoname = demoname.offset((len + 1 as libc::c_int) as isize);
+            len = crate::stdlib::strlen(demoname) as i32;
+            demoname = demoname.offset((len + 1) as isize);
             i += 1
         }
         if j == 0 {
-            if !(protocolLegacy > 0 as libc::c_int && s_demos.numDemos < 1024 as libc::c_int) {
+            if !(protocolLegacy > 0 && s_demos.numDemos < 1024) {
                 break;
             }
             crate::src::qcommon::q_shared::Com_sprintf(
                 extension.as_mut_ptr(),
-                ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
-                b".%s%d\x00" as *const u8 as *const libc::c_char,
-                b"dm_\x00" as *const u8 as *const libc::c_char,
+                ::std::mem::size_of::<[i8; 32]>() as i32,
+                b".%s%d\x00" as *const u8 as *const i8,
+                b"dm_\x00" as *const u8 as *const i8,
                 protocolLegacy,
             );
-            s_demos.numDemos += crate::src::ui::ui_syscalls::trap_FS_GetFileList(
-                b"demos\x00" as *const u8 as *const libc::c_char,
-                extension.as_mut_ptr(),
-                demoname,
-                (::std::mem::size_of::<[libc::c_char; 32768]>() as libc::c_ulong)
-                    .wrapping_div(::std::mem::size_of::<libc::c_char>() as libc::c_ulong)
-                    .wrapping_sub(demoname.wrapping_offset_from(s_demos.names.as_mut_ptr())
-                        as libc::c_long as libc::c_ulong) as libc::c_int,
-            )
+            s_demos.numDemos +=
+                crate::src::ui::ui_syscalls::trap_FS_GetFileList(
+                    b"demos\x00" as *const u8 as *const i8,
+                    extension.as_mut_ptr(),
+                    demoname,
+                    (::std::mem::size_of::<[i8; 32768]>())
+                        .wrapping_div(::std::mem::size_of::<i8>())
+                        .wrapping_sub(
+                            demoname.wrapping_offset_from(s_demos.names.as_mut_ptr()) as usize
+                        ) as i32,
+                )
         }
         j += 1
     }
     s_demos.list.numitems = s_demos.numDemos;
     if s_demos.numDemos == 0 {
-        let ref mut fresh1 = *s_demos.list.itemnames.offset(0 as libc::c_int as isize);
-        *fresh1 = b"No Demos Found.\x00" as *const u8 as *const libc::c_char;
-        s_demos.list.numitems = 1 as libc::c_int;
+        let ref mut fresh1 = *s_demos.list.itemnames.offset(0);
+        *fresh1 = b"No Demos Found.\x00" as *const u8 as *const i8;
+        s_demos.list.numitems = 1;
         //degenerate case, not selectable
-        s_demos.go.generic.flags |=
-            0x4000 as libc::c_int as libc::c_uint | 0x1000 as libc::c_int as libc::c_uint
+        s_demos.go.generic.flags |= 0x4000 | 0x1000
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
         &mut s_demos.menu,
@@ -826,31 +806,31 @@ Demos_Cache
 
 pub unsafe extern "C" fn Demos_Cache() {
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/back_0\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/back_0\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/back_1\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/back_1\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/play_0\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/play_0\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/play_1\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/play_1\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/frame2_l\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/frame2_l\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/frame1_r\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/frame1_r\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/arrows_horz_0\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/arrows_horz_0\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/arrows_horz_left\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/arrows_horz_left\x00" as *const u8 as *const i8,
     );
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/arrows_horz_right\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/arrows_horz_right\x00" as *const u8 as *const i8,
     );
 }
 /*

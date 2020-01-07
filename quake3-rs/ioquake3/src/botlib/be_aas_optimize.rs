@@ -106,21 +106,21 @@ pub type optimized_t = optimized_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct optimized_s {
-    pub numvertexes: libc::c_int,
+    pub numvertexes: i32,
     pub vertexes: *mut crate::aasfile_h::aas_vertex_t,
-    pub numedges: libc::c_int,
+    pub numedges: i32,
     pub edges: *mut crate::aasfile_h::aas_edge_t,
-    pub edgeindexsize: libc::c_int,
+    pub edgeindexsize: i32,
     pub edgeindex: *mut crate::aasfile_h::aas_edgeindex_t,
-    pub numfaces: libc::c_int,
+    pub numfaces: i32,
     pub faces: *mut crate::aasfile_h::aas_face_t,
-    pub faceindexsize: libc::c_int,
+    pub faceindexsize: i32,
     pub faceindex: *mut crate::aasfile_h::aas_faceindex_t,
-    pub numareas: libc::c_int,
+    pub numareas: i32,
     pub areas: *mut crate::aasfile_h::aas_area_t,
-    pub vertexoptimizeindex: *mut libc::c_int,
-    pub edgeoptimizeindex: *mut libc::c_int,
-    pub faceoptimizeindex: *mut libc::c_int,
+    pub vertexoptimizeindex: *mut i32,
+    pub edgeoptimizeindex: *mut i32,
+    pub faceoptimizeindex: *mut i32,
 }
 //vertexes
 //edges
@@ -137,8 +137,8 @@ pub struct optimized_s {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_KeepEdge(mut edge: *mut crate::aasfile_h::aas_edge_t) -> libc::c_int {
-    return 1 as libc::c_int;
+pub unsafe extern "C" fn AAS_KeepEdge(mut edge: *mut crate::aasfile_h::aas_edge_t) -> i32 {
+    return 1;
 }
 //end of the function AAS_KeepFace
 //===========================================================================
@@ -151,27 +151,25 @@ pub unsafe extern "C" fn AAS_KeepEdge(mut edge: *mut crate::aasfile_h::aas_edge_
 
 pub unsafe extern "C" fn AAS_OptimizeEdge(
     mut optimized: *mut optimized_t,
-    mut edgenum: libc::c_int,
-) -> libc::c_int {
-    let mut i: libc::c_int = 0; //end if
-    let mut optedgenum: libc::c_int = 0;
+    mut edgenum: i32,
+) -> i32 {
+    let mut i: i32 = 0; //end if
+    let mut optedgenum: i32 = 0;
     let mut edge: *mut crate::aasfile_h::aas_edge_t = 0 as *mut crate::aasfile_h::aas_edge_t;
     let mut optedge: *mut crate::aasfile_h::aas_edge_t = 0 as *mut crate::aasfile_h::aas_edge_t;
     edge = &mut *crate::src::botlib::be_aas_main::aasworld
         .edges
-        .offset(
-            (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum)
-                as isize,
-        ) as *mut crate::aasfile_h::aas_edge_t;
+        .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(edgenum) as isize)
+        as *mut crate::aasfile_h::aas_edge_t;
     if AAS_KeepEdge(edge) == 0 {
-        return 0 as libc::c_int;
+        return 0i32;
     }
     optedgenum = *(*optimized)
         .edgeoptimizeindex
         .offset(crate::stdlib::abs(edgenum) as isize);
     if optedgenum != 0 {
         //keep the edge reversed sign
-        if edgenum > 0 as libc::c_int {
+        if edgenum > 0 {
             return optedgenum;
         } else {
             return -optedgenum;
@@ -179,8 +177,8 @@ pub unsafe extern "C" fn AAS_OptimizeEdge(
     } //end for
     optedge = &mut *(*optimized).edges.offset((*optimized).numedges as isize)
         as *mut crate::aasfile_h::aas_edge_t; //end if
-    i = 0 as libc::c_int;
-    while i < 2 as libc::c_int {
+    i = 0;
+    while i < 2 {
         if *(*optimized)
             .vertexoptimizeindex
             .offset((*edge).v[i as usize] as isize)
@@ -192,22 +190,22 @@ pub unsafe extern "C" fn AAS_OptimizeEdge(
         } else {
             (*(*optimized)
                 .vertexes
-                .offset((*optimized).numvertexes as isize))[0 as libc::c_int as usize] =
+                .offset((*optimized).numvertexes as isize))[0] =
                 (*crate::src::botlib::be_aas_main::aasworld
                     .vertexes
-                    .offset((*edge).v[i as usize] as isize))[0 as libc::c_int as usize];
+                    .offset((*edge).v[i as usize] as isize))[0];
             (*(*optimized)
                 .vertexes
-                .offset((*optimized).numvertexes as isize))[1 as libc::c_int as usize] =
+                .offset((*optimized).numvertexes as isize))[1] =
                 (*crate::src::botlib::be_aas_main::aasworld
                     .vertexes
-                    .offset((*edge).v[i as usize] as isize))[1 as libc::c_int as usize];
+                    .offset((*edge).v[i as usize] as isize))[1];
             (*(*optimized)
                 .vertexes
-                .offset((*optimized).numvertexes as isize))[2 as libc::c_int as usize] =
+                .offset((*optimized).numvertexes as isize))[2] =
                 (*crate::src::botlib::be_aas_main::aasworld
                     .vertexes
-                    .offset((*edge).v[i as usize] as isize))[2 as libc::c_int as usize];
+                    .offset((*edge).v[i as usize] as isize))[2];
             (*optedge).v[i as usize] = (*optimized).numvertexes;
             *(*optimized)
                 .vertexoptimizeindex
@@ -223,7 +221,7 @@ pub unsafe extern "C" fn AAS_OptimizeEdge(
     optedgenum = (*optimized).numedges;
     (*optimized).numedges += 1;
     //keep the edge reversed sign
-    if edgenum > 0 as libc::c_int {
+    if edgenum > 0 {
         return optedgenum;
     } else {
         return -optedgenum;
@@ -238,11 +236,11 @@ pub unsafe extern "C" fn AAS_OptimizeEdge(
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_KeepFace(mut face: *mut crate::aasfile_h::aas_face_t) -> libc::c_int {
-    if (*face).faceflags & 2 as libc::c_int == 0 {
-        return 0 as libc::c_int;
+pub unsafe extern "C" fn AAS_KeepFace(mut face: *mut crate::aasfile_h::aas_face_t) -> i32 {
+    if (*face).faceflags & 2 == 0 {
+        return 0i32;
     } else {
-        return 1 as libc::c_int;
+        return 1i32;
     };
 }
 //end of the function AAS_KeepFace
@@ -256,29 +254,27 @@ pub unsafe extern "C" fn AAS_KeepFace(mut face: *mut crate::aasfile_h::aas_face_
 
 pub unsafe extern "C" fn AAS_OptimizeFace(
     mut optimized: *mut optimized_t,
-    mut facenum: libc::c_int,
-) -> libc::c_int {
-    let mut i: libc::c_int = 0; //end if
-    let mut edgenum: libc::c_int = 0;
-    let mut optedgenum: libc::c_int = 0;
-    let mut optfacenum: libc::c_int = 0;
+    mut facenum: i32,
+) -> i32 {
+    let mut i: i32 = 0; //end if
+    let mut edgenum: i32 = 0;
+    let mut optedgenum: i32 = 0;
+    let mut optfacenum: i32 = 0;
     let mut face: *mut crate::aasfile_h::aas_face_t = 0 as *mut crate::aasfile_h::aas_face_t;
     let mut optface: *mut crate::aasfile_h::aas_face_t = 0 as *mut crate::aasfile_h::aas_face_t;
     face = &mut *crate::src::botlib::be_aas_main::aasworld
         .faces
-        .offset(
-            (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(facenum)
-                as isize,
-        ) as *mut crate::aasfile_h::aas_face_t;
+        .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(facenum) as isize)
+        as *mut crate::aasfile_h::aas_face_t;
     if AAS_KeepFace(face) == 0 {
-        return 0 as libc::c_int;
+        return 0i32;
     }
     optfacenum = *(*optimized)
         .faceoptimizeindex
         .offset(crate::stdlib::abs(facenum) as isize);
     if optfacenum != 0 {
         //keep the face side sign
-        if facenum > 0 as libc::c_int {
+        if facenum > 0 {
             return optfacenum;
         } else {
             return -optfacenum;
@@ -289,11 +285,11 @@ pub unsafe extern "C" fn AAS_OptimizeFace(
     crate::stdlib::memcpy(
         optface as *mut libc::c_void,
         face as *const libc::c_void,
-        ::std::mem::size_of::<crate::aasfile_h::aas_face_t>() as libc::c_ulong,
+        ::std::mem::size_of::<crate::aasfile_h::aas_face_t>(),
     );
-    (*optface).numedges = 0 as libc::c_int;
+    (*optface).numedges = 0;
     (*optface).firstedge = (*optimized).edgeindexsize;
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*face).numedges {
         edgenum = *crate::src::botlib::be_aas_main::aasworld
             .edgeindex
@@ -315,7 +311,7 @@ pub unsafe extern "C" fn AAS_OptimizeFace(
     optfacenum = (*optimized).numfaces;
     (*optimized).numfaces += 1;
     //keep the face side sign
-    if facenum > 0 as libc::c_int {
+    if facenum > 0 {
         return optfacenum;
     } else {
         return -optfacenum;
@@ -330,13 +326,10 @@ pub unsafe extern "C" fn AAS_OptimizeFace(
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_OptimizeArea(
-    mut optimized: *mut optimized_t,
-    mut areanum: libc::c_int,
-) {
-    let mut i: libc::c_int = 0;
-    let mut facenum: libc::c_int = 0;
-    let mut optfacenum: libc::c_int = 0;
+pub unsafe extern "C" fn AAS_OptimizeArea(mut optimized: *mut optimized_t, mut areanum: i32) {
+    let mut i: i32 = 0;
+    let mut facenum: i32 = 0;
+    let mut optfacenum: i32 = 0;
     let mut area: *mut crate::aasfile_h::aas_area_t = 0 as *mut crate::aasfile_h::aas_area_t;
     let mut optarea: *mut crate::aasfile_h::aas_area_t = 0 as *mut crate::aasfile_h::aas_area_t;
     area = &mut *crate::src::botlib::be_aas_main::aasworld
@@ -347,11 +340,11 @@ pub unsafe extern "C" fn AAS_OptimizeArea(
     crate::stdlib::memcpy(
         optarea as *mut libc::c_void,
         area as *const libc::c_void,
-        ::std::mem::size_of::<crate::aasfile_h::aas_area_t>() as libc::c_ulong,
+        ::std::mem::size_of::<crate::aasfile_h::aas_area_t>(),
     );
-    (*optarea).numfaces = 0 as libc::c_int;
+    (*optarea).numfaces = 0;
     (*optarea).firstface = (*optimized).faceindexsize;
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*area).numfaces {
         facenum = *crate::src::botlib::be_aas_main::aasworld
             .faceindex
@@ -380,50 +373,48 @@ pub unsafe extern "C" fn AAS_OptimizeArea(
 
 pub unsafe extern "C" fn AAS_OptimizeAlloc(mut optimized: *mut optimized_t) {
     (*optimized).vertexes = crate::src::botlib::l_memory::GetClearedMemory(
-        (crate::src::botlib::be_aas_main::aasworld.numvertexes as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<crate::aasfile_h::aas_vertex_t>() as libc::c_ulong),
+        (crate::src::botlib::be_aas_main::aasworld.numvertexes as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::aasfile_h::aas_vertex_t>()),
     ) as *mut crate::aasfile_h::aas_vertex_t; //edge zero is a dummy
-    (*optimized).numvertexes = 0 as libc::c_int; //face zero is a dummy
+    (*optimized).numvertexes = 0; //face zero is a dummy
     (*optimized).edges = crate::src::botlib::l_memory::GetClearedMemory(
-        (crate::src::botlib::be_aas_main::aasworld.numedges as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<crate::aasfile_h::aas_edge_t>() as libc::c_ulong),
+        (crate::src::botlib::be_aas_main::aasworld.numedges as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::aasfile_h::aas_edge_t>()),
     ) as *mut crate::aasfile_h::aas_edge_t;
-    (*optimized).numedges = 1 as libc::c_int;
+    (*optimized).numedges = 1;
     (*optimized).edgeindex = crate::src::botlib::l_memory::GetClearedMemory(
-        (crate::src::botlib::be_aas_main::aasworld.edgeindexsize as libc::c_ulong).wrapping_mul(
-            ::std::mem::size_of::<crate::aasfile_h::aas_edgeindex_t>() as libc::c_ulong,
-        ),
+        (crate::src::botlib::be_aas_main::aasworld.edgeindexsize as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::aasfile_h::aas_edgeindex_t>()),
     ) as *mut crate::aasfile_h::aas_edgeindex_t;
-    (*optimized).edgeindexsize = 0 as libc::c_int;
+    (*optimized).edgeindexsize = 0;
     (*optimized).faces = crate::src::botlib::l_memory::GetClearedMemory(
-        (crate::src::botlib::be_aas_main::aasworld.numfaces as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<crate::aasfile_h::aas_face_t>() as libc::c_ulong),
+        (crate::src::botlib::be_aas_main::aasworld.numfaces as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::aasfile_h::aas_face_t>()),
     ) as *mut crate::aasfile_h::aas_face_t;
-    (*optimized).numfaces = 1 as libc::c_int;
+    (*optimized).numfaces = 1;
     (*optimized).faceindex = crate::src::botlib::l_memory::GetClearedMemory(
-        (crate::src::botlib::be_aas_main::aasworld.faceindexsize as libc::c_ulong).wrapping_mul(
-            ::std::mem::size_of::<crate::aasfile_h::aas_faceindex_t>() as libc::c_ulong,
-        ),
+        (crate::src::botlib::be_aas_main::aasworld.faceindexsize as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::aasfile_h::aas_faceindex_t>()),
     ) as *mut crate::aasfile_h::aas_faceindex_t;
-    (*optimized).faceindexsize = 0 as libc::c_int;
+    (*optimized).faceindexsize = 0;
     (*optimized).areas = crate::src::botlib::l_memory::GetClearedMemory(
-        (crate::src::botlib::be_aas_main::aasworld.numareas as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<crate::aasfile_h::aas_area_t>() as libc::c_ulong),
+        (crate::src::botlib::be_aas_main::aasworld.numareas as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::aasfile_h::aas_area_t>()),
     ) as *mut crate::aasfile_h::aas_area_t;
     (*optimized).numareas = crate::src::botlib::be_aas_main::aasworld.numareas;
     //
     (*optimized).vertexoptimizeindex = crate::src::botlib::l_memory::GetClearedMemory(
-        (crate::src::botlib::be_aas_main::aasworld.numvertexes as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong),
-    ) as *mut libc::c_int;
+        (crate::src::botlib::be_aas_main::aasworld.numvertexes as usize)
+            .wrapping_mul(::std::mem::size_of::<i32>()),
+    ) as *mut i32;
     (*optimized).edgeoptimizeindex = crate::src::botlib::l_memory::GetClearedMemory(
-        (crate::src::botlib::be_aas_main::aasworld.numedges as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong),
-    ) as *mut libc::c_int;
+        (crate::src::botlib::be_aas_main::aasworld.numedges as usize)
+            .wrapping_mul(::std::mem::size_of::<i32>()),
+    ) as *mut i32;
     (*optimized).faceoptimizeindex = crate::src::botlib::l_memory::GetClearedMemory(
-        (crate::src::botlib::be_aas_main::aasworld.numfaces as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong),
-    ) as *mut libc::c_int;
+        (crate::src::botlib::be_aas_main::aasworld.numfaces as usize)
+            .wrapping_mul(::std::mem::size_of::<i32>()),
+    ) as *mut i32;
 }
 //end of the function AAS_OptimizeAlloc
 //===========================================================================
@@ -562,8 +553,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_Optimize() {
-    let mut i: libc::c_int = 0; //end for
-    let mut sign: libc::c_int = 0;
+    let mut i: i32 = 0; //end for
+    let mut sign: i32 = 0;
     let mut optimized: optimized_t = optimized_t {
         numvertexes: 0,
         vertexes: 0 as *mut crate::aasfile_h::aas_vertex_t,
@@ -577,18 +568,18 @@ pub unsafe extern "C" fn AAS_Optimize() {
         faceindex: 0 as *mut crate::aasfile_h::aas_faceindex_t,
         numareas: 0,
         areas: 0 as *mut crate::aasfile_h::aas_area_t,
-        vertexoptimizeindex: 0 as *mut libc::c_int,
-        edgeoptimizeindex: 0 as *mut libc::c_int,
-        faceoptimizeindex: 0 as *mut libc::c_int,
+        vertexoptimizeindex: 0 as *mut i32,
+        edgeoptimizeindex: 0 as *mut i32,
+        faceoptimizeindex: 0 as *mut i32,
     };
     AAS_OptimizeAlloc(&mut optimized);
-    i = 1 as libc::c_int;
+    i = 1;
     while i < crate::src::botlib::be_aas_main::aasworld.numareas {
         AAS_OptimizeArea(&mut optimized, i);
         i += 1
     }
     //reset the reachability face pointers
-    i = 0 as libc::c_int; //end for
+    i = 0; //end for
     while i < crate::src::botlib::be_aas_main::aasworld.reachabilitysize {
         //NOTE: for TRAVEL_ELEVATOR the facenum is the model number of
         //		the elevator
@@ -596,24 +587,24 @@ pub unsafe extern "C" fn AAS_Optimize() {
             .reachability
             .offset(i as isize))
         .traveltype
-            & 0xffffff as libc::c_int
-            == 11 as libc::c_int)
+            & 0xffffff
+            == 11)
         {
             //NOTE: for TRAVEL_JUMPPAD the facenum is the Z velocity and the edgenum is the hor velocity
             if !((*crate::src::botlib::be_aas_main::aasworld
                 .reachability
                 .offset(i as isize))
             .traveltype
-                & 0xffffff as libc::c_int
-                == 18 as libc::c_int)
+                & 0xffffff
+                == 18)
             {
                 //NOTE: for TRAVEL_FUNCBOB the facenum and edgenum contain other coded information
                 if !((*crate::src::botlib::be_aas_main::aasworld
                     .reachability
                     .offset(i as isize))
                 .traveltype
-                    & 0xffffff as libc::c_int
-                    == 19 as libc::c_int)
+                    & 0xffffff
+                    == 19)
                 {
                     //
                     sign = (*crate::src::botlib::be_aas_main::aasworld
@@ -629,7 +620,7 @@ pub unsafe extern "C" fn AAS_Optimize() {
                             .offset(i as isize))
                         .facenum,
                     ) as isize);
-                    if sign < 0 as libc::c_int {
+                    if sign < 0 {
                         (*crate::src::botlib::be_aas_main::aasworld
                             .reachability
                             .offset(i as isize))
@@ -651,7 +642,7 @@ pub unsafe extern "C" fn AAS_Optimize() {
                             .offset(i as isize))
                         .edgenum,
                     ) as isize);
-                    if sign < 0 as libc::c_int {
+                    if sign < 0 {
                         (*crate::src::botlib::be_aas_main::aasworld
                             .reachability
                             .offset(i as isize))
@@ -671,8 +662,8 @@ pub unsafe extern "C" fn AAS_Optimize() {
     crate::src::botlib::be_interface::botimport
         .Print
         .expect("non-null function pointer")(
-        1 as libc::c_int,
-        b"AAS data optimized.\n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        1,
+        b"AAS data optimized.\n\x00" as *const u8 as *mut i8,
     );
 }
 //end of the function AAS_Optimize

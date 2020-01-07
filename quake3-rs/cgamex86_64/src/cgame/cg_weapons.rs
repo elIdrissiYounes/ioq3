@@ -8,10 +8,9 @@ pub mod q_shared_h {
         mut v: *const crate::src::qcommon::q_shared::vec_t,
     ) -> crate::src::qcommon::q_shared::vec_t {
         return crate::stdlib::sqrt(
-            (*v.offset(0 as libc::c_int as isize) * *v.offset(0 as libc::c_int as isize)
-                + *v.offset(1 as libc::c_int as isize) * *v.offset(1 as libc::c_int as isize)
-                + *v.offset(2 as libc::c_int as isize) * *v.offset(2 as libc::c_int as isize))
-                as libc::c_double,
+            (*v.offset(0) * *v.offset(0)
+                + *v.offset(1) * *v.offset(1)
+                + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
     #[inline]
@@ -21,12 +20,9 @@ pub mod q_shared_h {
         mut p2: *const crate::src::qcommon::q_shared::vec_t,
     ) -> crate::src::qcommon::q_shared::vec_t {
         let mut v: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-        v[0 as libc::c_int as usize] =
-            *p2.offset(0 as libc::c_int as isize) - *p1.offset(0 as libc::c_int as isize);
-        v[1 as libc::c_int as usize] =
-            *p2.offset(1 as libc::c_int as isize) - *p1.offset(1 as libc::c_int as isize);
-        v[2 as libc::c_int as usize] =
-            *p2.offset(2 as libc::c_int as isize) - *p1.offset(2 as libc::c_int as isize);
+        v[0] = *p2.offset(0) - *p1.offset(0);
+        v[1] = *p2.offset(1) - *p1.offset(1);
+        v[2] = *p2.offset(2) - *p1.offset(2);
         return VectorLength(v.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t);
     }
     #[inline]
@@ -36,15 +32,9 @@ pub mod q_shared_h {
         mut v2: *const crate::src::qcommon::q_shared::vec_t,
         mut cross: *mut crate::src::qcommon::q_shared::vec_t,
     ) {
-        *cross.offset(0 as libc::c_int as isize) = *v1.offset(1 as libc::c_int as isize)
-            * *v2.offset(2 as libc::c_int as isize)
-            - *v1.offset(2 as libc::c_int as isize) * *v2.offset(1 as libc::c_int as isize);
-        *cross.offset(1 as libc::c_int as isize) = *v1.offset(2 as libc::c_int as isize)
-            * *v2.offset(0 as libc::c_int as isize)
-            - *v1.offset(0 as libc::c_int as isize) * *v2.offset(2 as libc::c_int as isize);
-        *cross.offset(2 as libc::c_int as isize) = *v1.offset(0 as libc::c_int as isize)
-            * *v2.offset(1 as libc::c_int as isize)
-            - *v1.offset(1 as libc::c_int as isize) * *v2.offset(0 as libc::c_int as isize);
+        *cross.offset(0) = *v1.offset(1) * *v2.offset(2) - *v1.offset(2) * *v2.offset(1);
+        *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
+        *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
     use crate::stdlib::sqrt;
 
@@ -54,12 +44,8 @@ pub mod q_shared_h {
 pub mod stdlib_h {
     #[inline]
 
-    pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
-            __nptr,
-            0 as *mut libc::c_void as *mut *mut libc::c_char,
-            10 as libc::c_int,
-        ) as libc::c_int;
+    pub unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
+        return crate::stdlib::strtol(__nptr, 0 as *mut *mut i8, 10) as i32;
     }
 }
 
@@ -435,127 +421,72 @@ unsafe extern "C" fn CG_MachineGunEjectBrass(mut cent: *mut crate::cg_local_h::c
     let mut xvelocity: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut offset: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut xoffset: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut waterScale: libc::c_float = 1.0f32;
+    let mut waterScale: f32 = 1.0;
     let mut v: [crate::src::qcommon::q_shared::vec3_t; 3] = [[0.; 3]; 3];
-    if crate::src::cgame::cg_main::cg_brassTime.integer <= 0 as libc::c_int {
+    if crate::src::cgame::cg_main::cg_brassTime.integer <= 0 {
         return;
     }
     le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
     re = &mut (*le).refEntity;
-    velocity[0 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (-(50 as libc::c_int) as libc::c_double
-        + 40 as libc::c_int as libc::c_double
-            * (2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                    / 0x7fff as libc::c_int as libc::c_float)
-                    as libc::c_double
-                    - 0.5f64)))
+    velocity[0] = 0f32;
+    velocity[1] = (-50f64
+        + 40f64 * (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)))
         as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (100 as libc::c_int as libc::c_double
-        + 50 as libc::c_int as libc::c_double
-            * (2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                    / 0x7fff as libc::c_int as libc::c_float)
-                    as libc::c_double
-                    - 0.5f64)))
+    velocity[2] = (100f64
+        + 50f64 * (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)))
         as crate::src::qcommon::q_shared::vec_t;
     (*le).leType = crate::cg_local_h::LE_FRAGMENT;
     (*le).startTime = crate::src::cgame::cg_main::cg.time;
-    (*le).endTime = (((*le).startTime + crate::src::cgame::cg_main::cg_brassTime.integer)
-        as libc::c_float
-        + (crate::src::cgame::cg_main::cg_brassTime.integer / 4 as libc::c_int) as libc::c_float
-            * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float)) as libc::c_int;
+    (*le).endTime = (((*le).startTime + crate::src::cgame::cg_main::cg_brassTime.integer) as f32
+        + (crate::src::cgame::cg_main::cg_brassTime.integer / 4) as f32
+            * ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32)) as i32;
     (*le).pos.trType = crate::src::qcommon::q_shared::TR_GRAVITY;
-    (*le).pos.trTime =
-        crate::src::cgame::cg_main::cg.time - (crate::stdlib::rand() & 15 as libc::c_int);
+    (*le).pos.trTime = crate::src::cgame::cg_main::cg.time - (crate::stdlib::rand() & 15);
     crate::src::qcommon::q_math::AnglesToAxis(
         (*cent).lerpAngles.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         v.as_mut_ptr(),
     );
-    offset[0 as libc::c_int as usize] = 8 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    offset[1 as libc::c_int as usize] = -(4 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
-    offset[2 as libc::c_int as usize] = 24 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    xoffset[0 as libc::c_int as usize] = offset[0 as libc::c_int as usize]
-        * v[0 as libc::c_int as usize][0 as libc::c_int as usize]
-        + offset[1 as libc::c_int as usize]
-            * v[1 as libc::c_int as usize][0 as libc::c_int as usize]
-        + offset[2 as libc::c_int as usize]
-            * v[2 as libc::c_int as usize][0 as libc::c_int as usize];
-    xoffset[1 as libc::c_int as usize] = offset[0 as libc::c_int as usize]
-        * v[0 as libc::c_int as usize][1 as libc::c_int as usize]
-        + offset[1 as libc::c_int as usize]
-            * v[1 as libc::c_int as usize][1 as libc::c_int as usize]
-        + offset[2 as libc::c_int as usize]
-            * v[2 as libc::c_int as usize][1 as libc::c_int as usize];
-    xoffset[2 as libc::c_int as usize] = offset[0 as libc::c_int as usize]
-        * v[0 as libc::c_int as usize][2 as libc::c_int as usize]
-        + offset[1 as libc::c_int as usize]
-            * v[1 as libc::c_int as usize][2 as libc::c_int as usize]
-        + offset[2 as libc::c_int as usize]
-            * v[2 as libc::c_int as usize][2 as libc::c_int as usize];
-    (*re).origin[0 as libc::c_int as usize] =
-        (*cent).lerpOrigin[0 as libc::c_int as usize] + xoffset[0 as libc::c_int as usize];
-    (*re).origin[1 as libc::c_int as usize] =
-        (*cent).lerpOrigin[1 as libc::c_int as usize] + xoffset[1 as libc::c_int as usize];
-    (*re).origin[2 as libc::c_int as usize] =
-        (*cent).lerpOrigin[2 as libc::c_int as usize] + xoffset[2 as libc::c_int as usize];
-    (*le).pos.trBase[0 as libc::c_int as usize] = (*re).origin[0 as libc::c_int as usize];
-    (*le).pos.trBase[1 as libc::c_int as usize] = (*re).origin[1 as libc::c_int as usize];
-    (*le).pos.trBase[2 as libc::c_int as usize] = (*re).origin[2 as libc::c_int as usize];
+    offset[0] = 8f32;
+    offset[1] = -4f32;
+    offset[2] = 24f32;
+    xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
+    xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
+    xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
+    (*re).origin[0] = (*cent).lerpOrigin[0] + xoffset[0];
+    (*re).origin[1] = (*cent).lerpOrigin[1] + xoffset[1];
+    (*re).origin[2] = (*cent).lerpOrigin[2] + xoffset[2];
+    (*le).pos.trBase[0] = (*re).origin[0];
+    (*le).pos.trBase[1] = (*re).origin[1];
+    (*le).pos.trBase[2] = (*re).origin[2];
     if crate::src::cgame::cg_predict::CG_PointContents(
         (*re).origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        -(1 as libc::c_int),
-    ) & 32 as libc::c_int
+        -(1),
+    ) & 32
         != 0
     {
-        waterScale = 0.10f32
+        waterScale = 0.10
     }
-    xvelocity[0 as libc::c_int as usize] = velocity[0 as libc::c_int as usize]
-        * v[0 as libc::c_int as usize][0 as libc::c_int as usize]
-        + velocity[1 as libc::c_int as usize]
-            * v[1 as libc::c_int as usize][0 as libc::c_int as usize]
-        + velocity[2 as libc::c_int as usize]
-            * v[2 as libc::c_int as usize][0 as libc::c_int as usize];
-    xvelocity[1 as libc::c_int as usize] = velocity[0 as libc::c_int as usize]
-        * v[0 as libc::c_int as usize][1 as libc::c_int as usize]
-        + velocity[1 as libc::c_int as usize]
-            * v[1 as libc::c_int as usize][1 as libc::c_int as usize]
-        + velocity[2 as libc::c_int as usize]
-            * v[2 as libc::c_int as usize][1 as libc::c_int as usize];
-    xvelocity[2 as libc::c_int as usize] = velocity[0 as libc::c_int as usize]
-        * v[0 as libc::c_int as usize][2 as libc::c_int as usize]
-        + velocity[1 as libc::c_int as usize]
-            * v[1 as libc::c_int as usize][2 as libc::c_int as usize]
-        + velocity[2 as libc::c_int as usize]
-            * v[2 as libc::c_int as usize][2 as libc::c_int as usize];
-    (*le).pos.trDelta[0 as libc::c_int as usize] =
-        xvelocity[0 as libc::c_int as usize] * waterScale;
-    (*le).pos.trDelta[1 as libc::c_int as usize] =
-        xvelocity[1 as libc::c_int as usize] * waterScale;
-    (*le).pos.trDelta[2 as libc::c_int as usize] =
-        xvelocity[2 as libc::c_int as usize] * waterScale;
+    xvelocity[0] = velocity[0] * v[0][0] + velocity[1] * v[1][0] + velocity[2] * v[2][0];
+    xvelocity[1] = velocity[0] * v[0][1] + velocity[1] * v[1][1] + velocity[2] * v[2][1];
+    xvelocity[2] = velocity[0] * v[0][2] + velocity[1] * v[1][2] + velocity[2] * v[2][2];
+    (*le).pos.trDelta[0] = xvelocity[0] * waterScale;
+    (*le).pos.trDelta[1] = xvelocity[1] * waterScale;
+    (*le).pos.trDelta[2] = xvelocity[2] * waterScale;
     crate::src::qcommon::q_math::AxisCopy(
         crate::src::qcommon::q_math::axisDefault.as_mut_ptr(),
         (*re).axis.as_mut_ptr(),
     );
     (*re).hModel = crate::src::cgame::cg_main::cgs.media.machinegunBrassModel;
-    (*le).bounceFactor = (0.4f64 * waterScale as libc::c_double) as libc::c_float;
+    (*le).bounceFactor = (0.4 * waterScale as f64) as f32;
     (*le).angles.trType = crate::src::qcommon::q_shared::TR_LINEAR;
     (*le).angles.trTime = crate::src::cgame::cg_main::cg.time;
-    (*le).angles.trBase[0 as libc::c_int as usize] =
-        (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
-    (*le).angles.trBase[1 as libc::c_int as usize] =
-        (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
-    (*le).angles.trBase[2 as libc::c_int as usize] =
-        (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
-    (*le).angles.trDelta[0 as libc::c_int as usize] =
-        2 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    (*le).angles.trDelta[1 as libc::c_int as usize] =
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    (*le).angles.trDelta[2 as libc::c_int as usize] =
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    (*le).leFlags = crate::cg_local_h::LEF_TUMBLE as libc::c_int;
+    (*le).angles.trBase[0] = (crate::stdlib::rand() & 31) as crate::src::qcommon::q_shared::vec_t;
+    (*le).angles.trBase[1] = (crate::stdlib::rand() & 31) as crate::src::qcommon::q_shared::vec_t;
+    (*le).angles.trBase[2] = (crate::stdlib::rand() & 31) as crate::src::qcommon::q_shared::vec_t;
+    (*le).angles.trDelta[0] = 2f32;
+    (*le).angles.trDelta[1] = 1f32;
+    (*le).angles.trDelta[2] = 0f32;
+    (*le).leFlags = crate::cg_local_h::LEF_TUMBLE as i32;
     (*le).leBounceSoundType = crate::cg_local_h::LEBS_BRASS;
     (*le).leMarkType = crate::cg_local_h::LEMT_NONE;
 }
@@ -573,151 +504,88 @@ unsafe extern "C" fn CG_ShotgunEjectBrass(mut cent: *mut crate::cg_local_h::cent
     let mut offset: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut xoffset: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut v: [crate::src::qcommon::q_shared::vec3_t; 3] = [[0.; 3]; 3];
-    let mut i: libc::c_int = 0;
-    if crate::src::cgame::cg_main::cg_brassTime.integer <= 0 as libc::c_int {
+    let mut i: i32 = 0;
+    if crate::src::cgame::cg_main::cg_brassTime.integer <= 0 {
         return;
     }
-    i = 0 as libc::c_int;
-    while i < 2 as libc::c_int {
-        let mut waterScale: libc::c_float = 1.0f32;
+    i = 0;
+    while i < 2 {
+        let mut waterScale: f32 = 1.0;
         le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
         re = &mut (*le).refEntity;
-        velocity[0 as libc::c_int as usize] = (60 as libc::c_int as libc::c_double
-            + 60 as libc::c_int as libc::c_double
-                * (2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                        / 0x7fff as libc::c_int as libc::c_float)
-                        as libc::c_double
-                        - 0.5f64)))
+        velocity[0] = (60f64
+            + 60f64 * (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)))
             as crate::src::qcommon::q_shared::vec_t;
-        if i == 0 as libc::c_int {
-            velocity[1 as libc::c_int as usize] = (40 as libc::c_int as libc::c_double
-                + 10 as libc::c_int as libc::c_double
-                    * (2.0f64
-                        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                            / 0x7fff as libc::c_int as libc::c_float)
-                            as libc::c_double
-                            - 0.5f64)))
+        if i == 0 {
+            velocity[1] = (40f64
+                + 10f64
+                    * (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)))
                 as crate::src::qcommon::q_shared::vec_t
         } else {
-            velocity[1 as libc::c_int as usize] = (-(40 as libc::c_int) as libc::c_double
-                + 10 as libc::c_int as libc::c_double
-                    * (2.0f64
-                        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                            / 0x7fff as libc::c_int as libc::c_float)
-                            as libc::c_double
-                            - 0.5f64)))
+            velocity[1] = (-40f64
+                + 10f64
+                    * (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)))
                 as crate::src::qcommon::q_shared::vec_t
         }
-        velocity[2 as libc::c_int as usize] = (100 as libc::c_int as libc::c_double
-            + 50 as libc::c_int as libc::c_double
-                * (2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                        / 0x7fff as libc::c_int as libc::c_float)
-                        as libc::c_double
-                        - 0.5f64)))
+        velocity[2] = (100f64
+            + 50f64 * (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)))
             as crate::src::qcommon::q_shared::vec_t;
         (*le).leType = crate::cg_local_h::LE_FRAGMENT;
         (*le).startTime = crate::src::cgame::cg_main::cg.time;
-        (*le).endTime = (((*le).startTime
-            + crate::src::cgame::cg_main::cg_brassTime.integer * 3 as libc::c_int)
-            as libc::c_float
-            + crate::src::cgame::cg_main::cg_brassTime.integer as libc::c_float
-                * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                    / 0x7fff as libc::c_int as libc::c_float))
-            as libc::c_int;
+        (*le).endTime =
+            (((*le).startTime + crate::src::cgame::cg_main::cg_brassTime.integer * 3) as f32
+                + crate::src::cgame::cg_main::cg_brassTime.integer as f32
+                    * ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32)) as i32;
         (*le).pos.trType = crate::src::qcommon::q_shared::TR_GRAVITY;
         (*le).pos.trTime = crate::src::cgame::cg_main::cg.time;
         crate::src::qcommon::q_math::AnglesToAxis(
             (*cent).lerpAngles.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             v.as_mut_ptr(),
         );
-        offset[0 as libc::c_int as usize] =
-            8 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-        offset[1 as libc::c_int as usize] =
-            0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-        offset[2 as libc::c_int as usize] =
-            24 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-        xoffset[0 as libc::c_int as usize] = offset[0 as libc::c_int as usize]
-            * v[0 as libc::c_int as usize][0 as libc::c_int as usize]
-            + offset[1 as libc::c_int as usize]
-                * v[1 as libc::c_int as usize][0 as libc::c_int as usize]
-            + offset[2 as libc::c_int as usize]
-                * v[2 as libc::c_int as usize][0 as libc::c_int as usize];
-        xoffset[1 as libc::c_int as usize] = offset[0 as libc::c_int as usize]
-            * v[0 as libc::c_int as usize][1 as libc::c_int as usize]
-            + offset[1 as libc::c_int as usize]
-                * v[1 as libc::c_int as usize][1 as libc::c_int as usize]
-            + offset[2 as libc::c_int as usize]
-                * v[2 as libc::c_int as usize][1 as libc::c_int as usize];
-        xoffset[2 as libc::c_int as usize] = offset[0 as libc::c_int as usize]
-            * v[0 as libc::c_int as usize][2 as libc::c_int as usize]
-            + offset[1 as libc::c_int as usize]
-                * v[1 as libc::c_int as usize][2 as libc::c_int as usize]
-            + offset[2 as libc::c_int as usize]
-                * v[2 as libc::c_int as usize][2 as libc::c_int as usize];
-        (*re).origin[0 as libc::c_int as usize] =
-            (*cent).lerpOrigin[0 as libc::c_int as usize] + xoffset[0 as libc::c_int as usize];
-        (*re).origin[1 as libc::c_int as usize] =
-            (*cent).lerpOrigin[1 as libc::c_int as usize] + xoffset[1 as libc::c_int as usize];
-        (*re).origin[2 as libc::c_int as usize] =
-            (*cent).lerpOrigin[2 as libc::c_int as usize] + xoffset[2 as libc::c_int as usize];
-        (*le).pos.trBase[0 as libc::c_int as usize] = (*re).origin[0 as libc::c_int as usize];
-        (*le).pos.trBase[1 as libc::c_int as usize] = (*re).origin[1 as libc::c_int as usize];
-        (*le).pos.trBase[2 as libc::c_int as usize] = (*re).origin[2 as libc::c_int as usize];
+        offset[0] = 8f32;
+        offset[1] = 0f32;
+        offset[2] = 24f32;
+        xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
+        xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
+        xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
+        (*re).origin[0] = (*cent).lerpOrigin[0] + xoffset[0];
+        (*re).origin[1] = (*cent).lerpOrigin[1] + xoffset[1];
+        (*re).origin[2] = (*cent).lerpOrigin[2] + xoffset[2];
+        (*le).pos.trBase[0] = (*re).origin[0];
+        (*le).pos.trBase[1] = (*re).origin[1];
+        (*le).pos.trBase[2] = (*re).origin[2];
         if crate::src::cgame::cg_predict::CG_PointContents(
             (*re).origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-            -(1 as libc::c_int),
-        ) & 32 as libc::c_int
+            -(1),
+        ) & 32
             != 0
         {
-            waterScale = 0.10f32
+            waterScale = 0.10
         }
-        xvelocity[0 as libc::c_int as usize] = velocity[0 as libc::c_int as usize]
-            * v[0 as libc::c_int as usize][0 as libc::c_int as usize]
-            + velocity[1 as libc::c_int as usize]
-                * v[1 as libc::c_int as usize][0 as libc::c_int as usize]
-            + velocity[2 as libc::c_int as usize]
-                * v[2 as libc::c_int as usize][0 as libc::c_int as usize];
-        xvelocity[1 as libc::c_int as usize] = velocity[0 as libc::c_int as usize]
-            * v[0 as libc::c_int as usize][1 as libc::c_int as usize]
-            + velocity[1 as libc::c_int as usize]
-                * v[1 as libc::c_int as usize][1 as libc::c_int as usize]
-            + velocity[2 as libc::c_int as usize]
-                * v[2 as libc::c_int as usize][1 as libc::c_int as usize];
-        xvelocity[2 as libc::c_int as usize] = velocity[0 as libc::c_int as usize]
-            * v[0 as libc::c_int as usize][2 as libc::c_int as usize]
-            + velocity[1 as libc::c_int as usize]
-                * v[1 as libc::c_int as usize][2 as libc::c_int as usize]
-            + velocity[2 as libc::c_int as usize]
-                * v[2 as libc::c_int as usize][2 as libc::c_int as usize];
-        (*le).pos.trDelta[0 as libc::c_int as usize] =
-            xvelocity[0 as libc::c_int as usize] * waterScale;
-        (*le).pos.trDelta[1 as libc::c_int as usize] =
-            xvelocity[1 as libc::c_int as usize] * waterScale;
-        (*le).pos.trDelta[2 as libc::c_int as usize] =
-            xvelocity[2 as libc::c_int as usize] * waterScale;
+        xvelocity[0] = velocity[0] * v[0][0] + velocity[1] * v[1][0] + velocity[2] * v[2][0];
+        xvelocity[1] = velocity[0] * v[0][1] + velocity[1] * v[1][1] + velocity[2] * v[2][1];
+        xvelocity[2] = velocity[0] * v[0][2] + velocity[1] * v[1][2] + velocity[2] * v[2][2];
+        (*le).pos.trDelta[0] = xvelocity[0] * waterScale;
+        (*le).pos.trDelta[1] = xvelocity[1] * waterScale;
+        (*le).pos.trDelta[2] = xvelocity[2] * waterScale;
         crate::src::qcommon::q_math::AxisCopy(
             crate::src::qcommon::q_math::axisDefault.as_mut_ptr(),
             (*re).axis.as_mut_ptr(),
         );
         (*re).hModel = crate::src::cgame::cg_main::cgs.media.shotgunBrassModel;
-        (*le).bounceFactor = 0.3f32;
+        (*le).bounceFactor = 0.3;
         (*le).angles.trType = crate::src::qcommon::q_shared::TR_LINEAR;
         (*le).angles.trTime = crate::src::cgame::cg_main::cg.time;
-        (*le).angles.trBase[0 as libc::c_int as usize] =
-            (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
-        (*le).angles.trBase[1 as libc::c_int as usize] =
-            (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
-        (*le).angles.trBase[2 as libc::c_int as usize] =
-            (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
-        (*le).angles.trDelta[0 as libc::c_int as usize] =
-            1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-        (*le).angles.trDelta[1 as libc::c_int as usize] =
-            0.5f64 as crate::src::qcommon::q_shared::vec_t;
-        (*le).angles.trDelta[2 as libc::c_int as usize] =
-            0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-        (*le).leFlags = crate::cg_local_h::LEF_TUMBLE as libc::c_int;
+        (*le).angles.trBase[0] =
+            (crate::stdlib::rand() & 31) as crate::src::qcommon::q_shared::vec_t;
+        (*le).angles.trBase[1] =
+            (crate::stdlib::rand() & 31) as crate::src::qcommon::q_shared::vec_t;
+        (*le).angles.trBase[2] =
+            (crate::stdlib::rand() & 31) as crate::src::qcommon::q_shared::vec_t;
+        (*le).angles.trDelta[0] = 1f32;
+        (*le).angles.trDelta[1] = 0.5;
+        (*le).angles.trDelta[2] = 0f32;
+        (*le).leFlags = crate::cg_local_h::LEF_TUMBLE as i32;
         (*le).leBounceSoundType = crate::cg_local_h::LEBS_BRASS;
         (*le).leMarkType = crate::cg_local_h::LEMT_NONE;
         i += 1
@@ -740,162 +608,118 @@ pub unsafe extern "C" fn CG_RailTrail(
     let mut move2: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut vec: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut temp: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut len: libc::c_float = 0.;
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    let mut skip: libc::c_int = 0;
+    let mut len: f32 = 0.;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut skip: i32 = 0;
     let mut le: *mut crate::cg_local_h::localEntity_t = 0 as *mut crate::cg_local_h::localEntity_t;
     let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
-    let ref mut fresh0 = *start.offset(2 as libc::c_int as isize);
-    *fresh0 -= 4 as libc::c_int as libc::c_float;
+    let ref mut fresh0 = *start.offset(2);
+    *fresh0 -= 4f32;
     le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
     re = &mut (*le).refEntity;
     (*le).leType = crate::cg_local_h::LE_FADE_RGB;
     (*le).startTime = crate::src::cgame::cg_main::cg.time;
-    (*le).endTime = (crate::src::cgame::cg_main::cg.time as libc::c_float
-        + crate::src::cgame::cg_main::cg_railTrailTime.value) as libc::c_int;
-    (*le).lifeRate =
-        (1.0f64 / ((*le).endTime - (*le).startTime) as libc::c_double) as libc::c_float;
-    (*re).shaderTime = crate::src::cgame::cg_main::cg.time as libc::c_float / 1000.0f32;
+    (*le).endTime = (crate::src::cgame::cg_main::cg.time as f32
+        + crate::src::cgame::cg_main::cg_railTrailTime.value) as i32;
+    (*le).lifeRate = (1.0 / ((*le).endTime - (*le).startTime) as f64) as f32;
+    (*re).shaderTime = crate::src::cgame::cg_main::cg.time as f32 / 1000.0;
     (*re).reType = crate::tr_types_h::RT_RAIL_CORE;
     (*re).customShader = crate::src::cgame::cg_main::cgs.media.railCoreShader;
-    (*re).origin[0 as libc::c_int as usize] = *start.offset(0 as libc::c_int as isize);
-    (*re).origin[1 as libc::c_int as usize] = *start.offset(1 as libc::c_int as isize);
-    (*re).origin[2 as libc::c_int as usize] = *start.offset(2 as libc::c_int as isize);
-    (*re).oldorigin[0 as libc::c_int as usize] = *end.offset(0 as libc::c_int as isize);
-    (*re).oldorigin[1 as libc::c_int as usize] = *end.offset(1 as libc::c_int as isize);
-    (*re).oldorigin[2 as libc::c_int as usize] = *end.offset(2 as libc::c_int as isize);
-    (*re).shaderRGBA[0 as libc::c_int as usize] = ((*ci).color1[0 as libc::c_int as usize]
-        * 255 as libc::c_int as libc::c_float)
-        as crate::src::qcommon::q_shared::byte;
-    (*re).shaderRGBA[1 as libc::c_int as usize] = ((*ci).color1[1 as libc::c_int as usize]
-        * 255 as libc::c_int as libc::c_float)
-        as crate::src::qcommon::q_shared::byte;
-    (*re).shaderRGBA[2 as libc::c_int as usize] = ((*ci).color1[2 as libc::c_int as usize]
-        * 255 as libc::c_int as libc::c_float)
-        as crate::src::qcommon::q_shared::byte;
-    (*re).shaderRGBA[3 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    (*le).color[0 as libc::c_int as usize] =
-        ((*ci).color1[0 as libc::c_int as usize] as libc::c_double * 0.75f64) as libc::c_float;
-    (*le).color[1 as libc::c_int as usize] =
-        ((*ci).color1[1 as libc::c_int as usize] as libc::c_double * 0.75f64) as libc::c_float;
-    (*le).color[2 as libc::c_int as usize] =
-        ((*ci).color1[2 as libc::c_int as usize] as libc::c_double * 0.75f64) as libc::c_float;
-    (*le).color[3 as libc::c_int as usize] = 1.0f32;
+    (*re).origin[0] = *start.offset(0);
+    (*re).origin[1] = *start.offset(1);
+    (*re).origin[2] = *start.offset(2);
+    (*re).oldorigin[0] = *end.offset(0);
+    (*re).oldorigin[1] = *end.offset(1);
+    (*re).oldorigin[2] = *end.offset(2);
+    (*re).shaderRGBA[0] = ((*ci).color1[0] * 255f32) as crate::src::qcommon::q_shared::byte;
+    (*re).shaderRGBA[1] = ((*ci).color1[1] * 255f32) as crate::src::qcommon::q_shared::byte;
+    (*re).shaderRGBA[2] = ((*ci).color1[2] * 255f32) as crate::src::qcommon::q_shared::byte;
+    (*re).shaderRGBA[3] = 255;
+    (*le).color[0] = ((*ci).color1[0] as f64 * 0.75) as f32;
+    (*le).color[1] = ((*ci).color1[1] as f64 * 0.75) as f32;
+    (*le).color[2] = ((*ci).color1[2] as f64 * 0.75) as f32;
+    (*le).color[3] = 1.0;
     crate::src::qcommon::q_math::AxisClear((*re).axis.as_mut_ptr());
     if crate::src::cgame::cg_main::cg_oldRail.integer != 0 {
         // nudge down a bit so it isn't exactly in center
-        (*re).origin[2 as libc::c_int as usize] -= 8 as libc::c_int as libc::c_float;
-        (*re).oldorigin[2 as libc::c_int as usize] -= 8 as libc::c_int as libc::c_float;
+        (*re).origin[2] -= 8f32;
+        (*re).oldorigin[2] -= 8f32;
         return;
     }
-    move_0[0 as libc::c_int as usize] = *start.offset(0 as libc::c_int as isize);
-    move_0[1 as libc::c_int as usize] = *start.offset(1 as libc::c_int as isize);
-    move_0[2 as libc::c_int as usize] = *start.offset(2 as libc::c_int as isize);
-    vec[0 as libc::c_int as usize] =
-        *end.offset(0 as libc::c_int as isize) - *start.offset(0 as libc::c_int as isize);
-    vec[1 as libc::c_int as usize] =
-        *end.offset(1 as libc::c_int as isize) - *start.offset(1 as libc::c_int as isize);
-    vec[2 as libc::c_int as usize] =
-        *end.offset(2 as libc::c_int as isize) - *start.offset(2 as libc::c_int as isize);
+    move_0[0] = *start.offset(0);
+    move_0[1] = *start.offset(1);
+    move_0[2] = *start.offset(2);
+    vec[0] = *end.offset(0) - *start.offset(0);
+    vec[1] = *end.offset(1) - *start.offset(1);
+    vec[2] = *end.offset(2) - *start.offset(2);
     len = crate::src::qcommon::q_math::VectorNormalize(vec.as_mut_ptr());
     crate::src::qcommon::q_math::PerpendicularVector(
         temp.as_mut_ptr(),
         vec.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
     );
-    i = 0 as libc::c_int;
-    while i < 36 as libc::c_int {
+    i = 0;
+    while i < 36 {
         crate::src::qcommon::q_math::RotatePointAroundVector(
             axis[i as usize].as_mut_ptr(),
             vec.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             temp.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-            (i * 10 as libc::c_int) as libc::c_float,
+            (i * 10) as f32,
         );
         i += 1
         //banshee 2.4 was 10
     }
-    move_0[0 as libc::c_int as usize] = move_0[0 as libc::c_int as usize]
-        + vec[0 as libc::c_int as usize] * 20 as libc::c_int as libc::c_float;
-    move_0[1 as libc::c_int as usize] = move_0[1 as libc::c_int as usize]
-        + vec[1 as libc::c_int as usize] * 20 as libc::c_int as libc::c_float;
-    move_0[2 as libc::c_int as usize] = move_0[2 as libc::c_int as usize]
-        + vec[2 as libc::c_int as usize] * 20 as libc::c_int as libc::c_float;
-    vec[0 as libc::c_int as usize] =
-        vec[0 as libc::c_int as usize] * 5 as libc::c_int as libc::c_float;
-    vec[1 as libc::c_int as usize] =
-        vec[1 as libc::c_int as usize] * 5 as libc::c_int as libc::c_float;
-    vec[2 as libc::c_int as usize] =
-        vec[2 as libc::c_int as usize] * 5 as libc::c_int as libc::c_float;
-    skip = -(1 as libc::c_int);
-    j = 18 as libc::c_int;
-    i = 0 as libc::c_int;
-    while (i as libc::c_float) < len {
+    move_0[0] = move_0[0] + vec[0] * 20f32;
+    move_0[1] = move_0[1] + vec[1] * 20f32;
+    move_0[2] = move_0[2] + vec[2] * 20f32;
+    vec[0] = vec[0] * 5f32;
+    vec[1] = vec[1] * 5f32;
+    vec[2] = vec[2] * 5f32;
+    skip = -(1);
+    j = 18;
+    i = 0;
+    while (i as f32) < len {
         if i != skip {
-            skip = i + 5 as libc::c_int;
+            skip = i + 5;
             le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
             re = &mut (*le).refEntity;
-            (*le).leFlags = crate::cg_local_h::LEF_PUFF_DONT_SCALE as libc::c_int;
+            (*le).leFlags = crate::cg_local_h::LEF_PUFF_DONT_SCALE as i32;
             (*le).leType = crate::cg_local_h::LE_MOVE_SCALE_FADE;
             (*le).startTime = crate::src::cgame::cg_main::cg.time;
-            (*le).endTime =
-                crate::src::cgame::cg_main::cg.time + (i >> 1 as libc::c_int) + 600 as libc::c_int;
-            (*le).lifeRate =
-                (1.0f64 / ((*le).endTime - (*le).startTime) as libc::c_double) as libc::c_float;
-            (*re).shaderTime = crate::src::cgame::cg_main::cg.time as libc::c_float / 1000.0f32;
+            (*le).endTime = crate::src::cgame::cg_main::cg.time + (i >> 1) + 600;
+            (*le).lifeRate = (1.0 / ((*le).endTime - (*le).startTime) as f64) as f32;
+            (*re).shaderTime = crate::src::cgame::cg_main::cg.time as f32 / 1000.0;
             (*re).reType = crate::tr_types_h::RT_SPRITE;
-            (*re).radius = 1.1f32;
+            (*re).radius = 1.1;
             (*re).customShader = crate::src::cgame::cg_main::cgs.media.railRingsShader;
-            (*re).shaderRGBA[0 as libc::c_int as usize] = ((*ci).color2[0 as libc::c_int as usize]
-                * 255 as libc::c_int as libc::c_float)
-                as crate::src::qcommon::q_shared::byte;
-            (*re).shaderRGBA[1 as libc::c_int as usize] = ((*ci).color2[1 as libc::c_int as usize]
-                * 255 as libc::c_int as libc::c_float)
-                as crate::src::qcommon::q_shared::byte;
-            (*re).shaderRGBA[2 as libc::c_int as usize] = ((*ci).color2[2 as libc::c_int as usize]
-                * 255 as libc::c_int as libc::c_float)
-                as crate::src::qcommon::q_shared::byte;
-            (*re).shaderRGBA[3 as libc::c_int as usize] =
-                255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-            (*le).color[0 as libc::c_int as usize] = ((*ci).color2[0 as libc::c_int as usize]
-                as libc::c_double
-                * 0.75f64) as libc::c_float;
-            (*le).color[1 as libc::c_int as usize] = ((*ci).color2[1 as libc::c_int as usize]
-                as libc::c_double
-                * 0.75f64) as libc::c_float;
-            (*le).color[2 as libc::c_int as usize] = ((*ci).color2[2 as libc::c_int as usize]
-                as libc::c_double
-                * 0.75f64) as libc::c_float;
-            (*le).color[3 as libc::c_int as usize] = 1.0f32;
+            (*re).shaderRGBA[0] = ((*ci).color2[0] * 255f32) as crate::src::qcommon::q_shared::byte;
+            (*re).shaderRGBA[1] = ((*ci).color2[1] * 255f32) as crate::src::qcommon::q_shared::byte;
+            (*re).shaderRGBA[2] = ((*ci).color2[2] * 255f32) as crate::src::qcommon::q_shared::byte;
+            (*re).shaderRGBA[3] = 255;
+            (*le).color[0] = ((*ci).color2[0] as f64 * 0.75) as f32;
+            (*le).color[1] = ((*ci).color2[1] as f64 * 0.75) as f32;
+            (*le).color[2] = ((*ci).color2[2] as f64 * 0.75) as f32;
+            (*le).color[3] = 1.0;
             (*le).pos.trType = crate::src::qcommon::q_shared::TR_LINEAR;
             (*le).pos.trTime = crate::src::cgame::cg_main::cg.time;
-            move2[0 as libc::c_int as usize] = move_0[0 as libc::c_int as usize];
-            move2[1 as libc::c_int as usize] = move_0[1 as libc::c_int as usize];
-            move2[2 as libc::c_int as usize] = move_0[2 as libc::c_int as usize];
-            move2[0 as libc::c_int as usize] = move2[0 as libc::c_int as usize]
-                + axis[j as usize][0 as libc::c_int as usize] * 4 as libc::c_int as libc::c_float;
-            move2[1 as libc::c_int as usize] = move2[1 as libc::c_int as usize]
-                + axis[j as usize][1 as libc::c_int as usize] * 4 as libc::c_int as libc::c_float;
-            move2[2 as libc::c_int as usize] = move2[2 as libc::c_int as usize]
-                + axis[j as usize][2 as libc::c_int as usize] * 4 as libc::c_int as libc::c_float;
-            (*le).pos.trBase[0 as libc::c_int as usize] = move2[0 as libc::c_int as usize];
-            (*le).pos.trBase[1 as libc::c_int as usize] = move2[1 as libc::c_int as usize];
-            (*le).pos.trBase[2 as libc::c_int as usize] = move2[2 as libc::c_int as usize];
-            (*le).pos.trDelta[0 as libc::c_int as usize] =
-                axis[j as usize][0 as libc::c_int as usize] * 6 as libc::c_int as libc::c_float;
-            (*le).pos.trDelta[1 as libc::c_int as usize] =
-                axis[j as usize][1 as libc::c_int as usize] * 6 as libc::c_int as libc::c_float;
-            (*le).pos.trDelta[2 as libc::c_int as usize] =
-                axis[j as usize][2 as libc::c_int as usize] * 6 as libc::c_int as libc::c_float
+            move2[0] = move_0[0];
+            move2[1] = move_0[1];
+            move2[2] = move_0[2];
+            move2[0] = move2[0] + axis[j as usize][0] * 4f32;
+            move2[1] = move2[1] + axis[j as usize][1] * 4f32;
+            move2[2] = move2[2] + axis[j as usize][2] * 4f32;
+            (*le).pos.trBase[0] = move2[0];
+            (*le).pos.trBase[1] = move2[1];
+            (*le).pos.trBase[2] = move2[2];
+            (*le).pos.trDelta[0] = axis[j as usize][0] * 6f32;
+            (*le).pos.trDelta[1] = axis[j as usize][1] * 6f32;
+            (*le).pos.trDelta[2] = axis[j as usize][2] * 6f32
         }
-        move_0[0 as libc::c_int as usize] =
-            move_0[0 as libc::c_int as usize] + vec[0 as libc::c_int as usize];
-        move_0[1 as libc::c_int as usize] =
-            move_0[1 as libc::c_int as usize] + vec[1 as libc::c_int as usize];
-        move_0[2 as libc::c_int as usize] =
-            move_0[2 as libc::c_int as usize] + vec[2 as libc::c_int as usize];
-        j = (j + 1 as libc::c_int) % 36 as libc::c_int;
-        i += 5 as libc::c_int
+        move_0[0] = move_0[0] + vec[0];
+        move_0[1] = move_0[1] + vec[1];
+        move_0[2] = move_0[2] + vec[2];
+        j = (j + 1) % 36;
+        i += 5
     }
 }
 /*
@@ -908,13 +732,13 @@ unsafe extern "C" fn CG_RocketTrail(
     mut ent: *mut crate::cg_local_h::centity_t,
     mut wi: *const crate::cg_local_h::weaponInfo_t,
 ) {
-    let mut step: libc::c_int = 0;
+    let mut step: i32 = 0;
     let mut origin: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut lastPos: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut t: libc::c_int = 0;
-    let mut startTime: libc::c_int = 0;
-    let mut contents: libc::c_int = 0;
-    let mut lastContents: libc::c_int = 0;
+    let mut t: i32 = 0;
+    let mut startTime: i32 = 0;
+    let mut contents: i32 = 0;
+    let mut lastContents: i32 = 0;
     let mut es: *mut crate::src::qcommon::q_shared::entityState_t =
         0 as *mut crate::src::qcommon::q_shared::entityState_t;
     let mut up: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -923,10 +747,10 @@ unsafe extern "C" fn CG_RocketTrail(
     if crate::src::cgame::cg_main::cg_noProjectileTrail.integer != 0 {
         return;
     }
-    up[0 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    up[1 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    up[2 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    step = 50 as libc::c_int;
+    up[0] = 0f32;
+    up[1] = 0f32;
+    up[2] = 0f32;
+    step = 50;
     es = &mut (*ent).currentState;
     startTime = (*ent).trailTime;
     t = step * ((startTime + step) / step);
@@ -937,12 +761,10 @@ unsafe extern "C" fn CG_RocketTrail(
     );
     contents = crate::src::cgame::cg_predict::CG_PointContents(
         origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        -(1 as libc::c_int),
+        -(1),
     );
     // if object (e.g. grenade) is stationary, don't toss up smoke
-    if (*es).pos.trType as libc::c_uint
-        == crate::src::qcommon::q_shared::TR_STATIONARY as libc::c_int as libc::c_uint
-    {
+    if (*es).pos.trType == crate::src::qcommon::q_shared::TR_STATIONARY {
         (*ent).trailTime = crate::src::cgame::cg_main::cg.time;
         return;
     }
@@ -953,15 +775,15 @@ unsafe extern "C" fn CG_RocketTrail(
     );
     lastContents = crate::src::cgame::cg_predict::CG_PointContents(
         lastPos.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        -(1 as libc::c_int),
+        -(1),
     );
     (*ent).trailTime = crate::src::cgame::cg_main::cg.time;
-    if contents & (32 as libc::c_int | 16 as libc::c_int | 8 as libc::c_int) != 0 {
-        if contents & lastContents & 32 as libc::c_int != 0 {
+    if contents & (32 | 16 | 8) != 0 {
+        if contents & lastContents & 32 != 0 {
             crate::src::cgame::cg_effects::CG_BubbleTrail(
                 lastPos.as_mut_ptr(),
                 origin.as_mut_ptr(),
-                8 as libc::c_int as libc::c_float,
+                8f32,
             );
         }
         return;
@@ -972,14 +794,14 @@ unsafe extern "C" fn CG_RocketTrail(
             lastPos.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             up.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             (*wi).trailRadius,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            0.33f32,
+            1f32,
+            1f32,
+            1f32,
+            0.33,
             (*wi).wiTrailTime,
             t,
-            0 as libc::c_int,
-            0 as libc::c_int,
+            0,
+            0,
             crate::src::cgame::cg_main::cgs.media.smokePuffShader,
         );
         // use the optimized local entity add
@@ -1007,7 +829,7 @@ unsafe extern "C" fn CG_PlasmaTrail(
     let mut offset: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut xoffset: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut v: [crate::src::qcommon::q_shared::vec3_t; 3] = [[0.; 3]; 3];
-    let mut waterScale: libc::c_float = 1.0f32;
+    let mut waterScale: f32 = 1.0;
     if crate::src::cgame::cg_main::cg_noProjectileTrail.integer != 0
         || crate::src::cgame::cg_main::cg_oldPlasma.integer != 0
     {
@@ -1021,148 +843,81 @@ unsafe extern "C" fn CG_PlasmaTrail(
     );
     le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
     re = &mut (*le).refEntity;
-    velocity[0 as libc::c_int as usize] = (60 as libc::c_int as libc::c_double
-        - 120 as libc::c_int as libc::c_double
-            * (2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                    / 0x7fff as libc::c_int as libc::c_float)
-                    as libc::c_double
-                    - 0.5f64)))
+    velocity[0] = (60f64
+        - 120f64 * (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)))
         as crate::src::qcommon::q_shared::vec_t;
-    velocity[1 as libc::c_int as usize] = (40 as libc::c_int as libc::c_double
-        - 80 as libc::c_int as libc::c_double
-            * (2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                    / 0x7fff as libc::c_int as libc::c_float)
-                    as libc::c_double
-                    - 0.5f64)))
+    velocity[1] = (40f64
+        - 80f64 * (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)))
         as crate::src::qcommon::q_shared::vec_t;
-    velocity[2 as libc::c_int as usize] = (100 as libc::c_int as libc::c_double
-        - 200 as libc::c_int as libc::c_double
-            * (2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                    / 0x7fff as libc::c_int as libc::c_float)
-                    as libc::c_double
-                    - 0.5f64)))
+    velocity[2] = (100f64
+        - 200f64 * (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5)))
         as crate::src::qcommon::q_shared::vec_t;
     (*le).leType = crate::cg_local_h::LE_MOVE_SCALE_FADE;
-    (*le).leFlags = crate::cg_local_h::LEF_TUMBLE as libc::c_int;
+    (*le).leFlags = crate::cg_local_h::LEF_TUMBLE as i32;
     (*le).leBounceSoundType = crate::cg_local_h::LEBS_NONE;
     (*le).leMarkType = crate::cg_local_h::LEMT_NONE;
     (*le).startTime = crate::src::cgame::cg_main::cg.time;
-    (*le).endTime = (*le).startTime + 600 as libc::c_int;
+    (*le).endTime = (*le).startTime + 600;
     (*le).pos.trType = crate::src::qcommon::q_shared::TR_GRAVITY;
     (*le).pos.trTime = crate::src::cgame::cg_main::cg.time;
     crate::src::qcommon::q_math::AnglesToAxis(
         (*cent).lerpAngles.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         v.as_mut_ptr(),
     );
-    offset[0 as libc::c_int as usize] = 2 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    offset[1 as libc::c_int as usize] = 2 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    offset[2 as libc::c_int as usize] = 2 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    xoffset[0 as libc::c_int as usize] = offset[0 as libc::c_int as usize]
-        * v[0 as libc::c_int as usize][0 as libc::c_int as usize]
-        + offset[1 as libc::c_int as usize]
-            * v[1 as libc::c_int as usize][0 as libc::c_int as usize]
-        + offset[2 as libc::c_int as usize]
-            * v[2 as libc::c_int as usize][0 as libc::c_int as usize];
-    xoffset[1 as libc::c_int as usize] = offset[0 as libc::c_int as usize]
-        * v[0 as libc::c_int as usize][1 as libc::c_int as usize]
-        + offset[1 as libc::c_int as usize]
-            * v[1 as libc::c_int as usize][1 as libc::c_int as usize]
-        + offset[2 as libc::c_int as usize]
-            * v[2 as libc::c_int as usize][1 as libc::c_int as usize];
-    xoffset[2 as libc::c_int as usize] = offset[0 as libc::c_int as usize]
-        * v[0 as libc::c_int as usize][2 as libc::c_int as usize]
-        + offset[1 as libc::c_int as usize]
-            * v[1 as libc::c_int as usize][2 as libc::c_int as usize]
-        + offset[2 as libc::c_int as usize]
-            * v[2 as libc::c_int as usize][2 as libc::c_int as usize];
-    (*re).origin[0 as libc::c_int as usize] =
-        origin[0 as libc::c_int as usize] + xoffset[0 as libc::c_int as usize];
-    (*re).origin[1 as libc::c_int as usize] =
-        origin[1 as libc::c_int as usize] + xoffset[1 as libc::c_int as usize];
-    (*re).origin[2 as libc::c_int as usize] =
-        origin[2 as libc::c_int as usize] + xoffset[2 as libc::c_int as usize];
-    (*le).pos.trBase[0 as libc::c_int as usize] = (*re).origin[0 as libc::c_int as usize];
-    (*le).pos.trBase[1 as libc::c_int as usize] = (*re).origin[1 as libc::c_int as usize];
-    (*le).pos.trBase[2 as libc::c_int as usize] = (*re).origin[2 as libc::c_int as usize];
+    offset[0] = 2f32;
+    offset[1] = 2f32;
+    offset[2] = 2f32;
+    xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
+    xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
+    xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
+    (*re).origin[0] = origin[0] + xoffset[0];
+    (*re).origin[1] = origin[1] + xoffset[1];
+    (*re).origin[2] = origin[2] + xoffset[2];
+    (*le).pos.trBase[0] = (*re).origin[0];
+    (*le).pos.trBase[1] = (*re).origin[1];
+    (*le).pos.trBase[2] = (*re).origin[2];
     if crate::src::cgame::cg_predict::CG_PointContents(
         (*re).origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        -(1 as libc::c_int),
-    ) & 32 as libc::c_int
+        -(1),
+    ) & 32
         != 0
     {
-        waterScale = 0.10f32
+        waterScale = 0.10
     }
-    xvelocity[0 as libc::c_int as usize] = velocity[0 as libc::c_int as usize]
-        * v[0 as libc::c_int as usize][0 as libc::c_int as usize]
-        + velocity[1 as libc::c_int as usize]
-            * v[1 as libc::c_int as usize][0 as libc::c_int as usize]
-        + velocity[2 as libc::c_int as usize]
-            * v[2 as libc::c_int as usize][0 as libc::c_int as usize];
-    xvelocity[1 as libc::c_int as usize] = velocity[0 as libc::c_int as usize]
-        * v[0 as libc::c_int as usize][1 as libc::c_int as usize]
-        + velocity[1 as libc::c_int as usize]
-            * v[1 as libc::c_int as usize][1 as libc::c_int as usize]
-        + velocity[2 as libc::c_int as usize]
-            * v[2 as libc::c_int as usize][1 as libc::c_int as usize];
-    xvelocity[2 as libc::c_int as usize] = velocity[0 as libc::c_int as usize]
-        * v[0 as libc::c_int as usize][2 as libc::c_int as usize]
-        + velocity[1 as libc::c_int as usize]
-            * v[1 as libc::c_int as usize][2 as libc::c_int as usize]
-        + velocity[2 as libc::c_int as usize]
-            * v[2 as libc::c_int as usize][2 as libc::c_int as usize];
-    (*le).pos.trDelta[0 as libc::c_int as usize] =
-        xvelocity[0 as libc::c_int as usize] * waterScale;
-    (*le).pos.trDelta[1 as libc::c_int as usize] =
-        xvelocity[1 as libc::c_int as usize] * waterScale;
-    (*le).pos.trDelta[2 as libc::c_int as usize] =
-        xvelocity[2 as libc::c_int as usize] * waterScale;
+    xvelocity[0] = velocity[0] * v[0][0] + velocity[1] * v[1][0] + velocity[2] * v[2][0];
+    xvelocity[1] = velocity[0] * v[0][1] + velocity[1] * v[1][1] + velocity[2] * v[2][1];
+    xvelocity[2] = velocity[0] * v[0][2] + velocity[1] * v[1][2] + velocity[2] * v[2][2];
+    (*le).pos.trDelta[0] = xvelocity[0] * waterScale;
+    (*le).pos.trDelta[1] = xvelocity[1] * waterScale;
+    (*le).pos.trDelta[2] = xvelocity[2] * waterScale;
     crate::src::qcommon::q_math::AxisCopy(
         crate::src::qcommon::q_math::axisDefault.as_mut_ptr(),
         (*re).axis.as_mut_ptr(),
     );
-    (*re).shaderTime = crate::src::cgame::cg_main::cg.time as libc::c_float / 1000.0f32;
+    (*re).shaderTime = crate::src::cgame::cg_main::cg.time as f32 / 1000.0;
     (*re).reType = crate::tr_types_h::RT_SPRITE;
-    (*re).radius = 0.25f32;
+    (*re).radius = 0.25;
     (*re).customShader = crate::src::cgame::cg_main::cgs.media.railRingsShader;
-    (*le).bounceFactor = 0.3f32;
-    (*re).shaderRGBA[0 as libc::c_int as usize] =
-        ((*wi).flashDlightColor[0 as libc::c_int as usize] * 63 as libc::c_int as libc::c_float)
-            as crate::src::qcommon::q_shared::byte;
-    (*re).shaderRGBA[1 as libc::c_int as usize] =
-        ((*wi).flashDlightColor[1 as libc::c_int as usize] * 63 as libc::c_int as libc::c_float)
-            as crate::src::qcommon::q_shared::byte;
-    (*re).shaderRGBA[2 as libc::c_int as usize] =
-        ((*wi).flashDlightColor[2 as libc::c_int as usize] * 63 as libc::c_int as libc::c_float)
-            as crate::src::qcommon::q_shared::byte;
-    (*re).shaderRGBA[3 as libc::c_int as usize] =
-        63 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    (*le).color[0 as libc::c_int as usize] = ((*wi).flashDlightColor[0 as libc::c_int as usize]
-        as libc::c_double
-        * 0.2f64) as libc::c_float;
-    (*le).color[1 as libc::c_int as usize] = ((*wi).flashDlightColor[1 as libc::c_int as usize]
-        as libc::c_double
-        * 0.2f64) as libc::c_float;
-    (*le).color[2 as libc::c_int as usize] = ((*wi).flashDlightColor[2 as libc::c_int as usize]
-        as libc::c_double
-        * 0.2f64) as libc::c_float;
-    (*le).color[3 as libc::c_int as usize] = 0.25f32;
+    (*le).bounceFactor = 0.3;
+    (*re).shaderRGBA[0] =
+        ((*wi).flashDlightColor[0] * 63f32) as crate::src::qcommon::q_shared::byte;
+    (*re).shaderRGBA[1] =
+        ((*wi).flashDlightColor[1] * 63f32) as crate::src::qcommon::q_shared::byte;
+    (*re).shaderRGBA[2] =
+        ((*wi).flashDlightColor[2] * 63f32) as crate::src::qcommon::q_shared::byte;
+    (*re).shaderRGBA[3] = 63;
+    (*le).color[0] = ((*wi).flashDlightColor[0] as f64 * 0.2) as f32;
+    (*le).color[1] = ((*wi).flashDlightColor[1] as f64 * 0.2) as f32;
+    (*le).color[2] = ((*wi).flashDlightColor[2] as f64 * 0.2) as f32;
+    (*le).color[3] = 0.25;
     (*le).angles.trType = crate::src::qcommon::q_shared::TR_LINEAR;
     (*le).angles.trTime = crate::src::cgame::cg_main::cg.time;
-    (*le).angles.trBase[0 as libc::c_int as usize] =
-        (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
-    (*le).angles.trBase[1 as libc::c_int as usize] =
-        (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
-    (*le).angles.trBase[2 as libc::c_int as usize] =
-        (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
-    (*le).angles.trDelta[0 as libc::c_int as usize] =
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    (*le).angles.trDelta[1 as libc::c_int as usize] =
-        0.5f64 as crate::src::qcommon::q_shared::vec_t;
-    (*le).angles.trDelta[2 as libc::c_int as usize] =
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
+    (*le).angles.trBase[0] = (crate::stdlib::rand() & 31) as crate::src::qcommon::q_shared::vec_t;
+    (*le).angles.trBase[1] = (crate::stdlib::rand() & 31) as crate::src::qcommon::q_shared::vec_t;
+    (*le).angles.trBase[2] = (crate::stdlib::rand() & 31) as crate::src::qcommon::q_shared::vec_t;
+    (*le).angles.trDelta[0] = 1f32;
+    (*le).angles.trDelta[1] = 0.5;
+    (*le).angles.trDelta[2] = 0f32;
 }
 /*
 ==========================
@@ -1211,20 +966,20 @@ pub unsafe extern "C" fn CG_GrappleTrail(
     (*ent).trailTime = crate::src::cgame::cg_main::cg.time;
     crate::stdlib::memset(
         &mut beam as *mut crate::tr_types_h::refEntity_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::tr_types_h::refEntity_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::tr_types_h::refEntity_t>(),
     );
     //FIXME adjust for muzzle position
-    beam.origin[0 as libc::c_int as usize] = crate::src::cgame::cg_main::cg_entities
+    beam.origin[0] = crate::src::cgame::cg_main::cg_entities
         [(*ent).currentState.otherEntityNum as usize]
-        .lerpOrigin[0 as libc::c_int as usize]; // Don't draw if close
-    beam.origin[1 as libc::c_int as usize] = crate::src::cgame::cg_main::cg_entities
+        .lerpOrigin[0]; // Don't draw if close
+    beam.origin[1] = crate::src::cgame::cg_main::cg_entities
         [(*ent).currentState.otherEntityNum as usize]
-        .lerpOrigin[1 as libc::c_int as usize];
-    beam.origin[2 as libc::c_int as usize] = crate::src::cgame::cg_main::cg_entities
+        .lerpOrigin[1];
+    beam.origin[2] = crate::src::cgame::cg_main::cg_entities
         [(*ent).currentState.otherEntityNum as usize]
-        .lerpOrigin[2 as libc::c_int as usize];
-    beam.origin[2 as libc::c_int as usize] += 26 as libc::c_int as libc::c_float;
+        .lerpOrigin[2];
+    beam.origin[2] += 26f32;
     crate::src::qcommon::q_math::AngleVectors(
         crate::src::cgame::cg_main::cg_entities[(*ent).currentState.otherEntityNum as usize]
             .lerpAngles
@@ -1233,33 +988,26 @@ pub unsafe extern "C" fn CG_GrappleTrail(
         0 as *mut crate::src::qcommon::q_shared::vec_t,
         up.as_mut_ptr(),
     );
-    beam.origin[0 as libc::c_int as usize] = beam.origin[0 as libc::c_int as usize]
-        + up[0 as libc::c_int as usize] * -(6 as libc::c_int) as libc::c_float;
-    beam.origin[1 as libc::c_int as usize] = beam.origin[1 as libc::c_int as usize]
-        + up[1 as libc::c_int as usize] * -(6 as libc::c_int) as libc::c_float;
-    beam.origin[2 as libc::c_int as usize] = beam.origin[2 as libc::c_int as usize]
-        + up[2 as libc::c_int as usize] * -(6 as libc::c_int) as libc::c_float;
-    beam.oldorigin[0 as libc::c_int as usize] = origin[0 as libc::c_int as usize];
-    beam.oldorigin[1 as libc::c_int as usize] = origin[1 as libc::c_int as usize];
-    beam.oldorigin[2 as libc::c_int as usize] = origin[2 as libc::c_int as usize];
+    beam.origin[0] = beam.origin[0] + up[0] * -6f32;
+    beam.origin[1] = beam.origin[1] + up[1] * -6f32;
+    beam.origin[2] = beam.origin[2] + up[2] * -6f32;
+    beam.oldorigin[0] = origin[0];
+    beam.oldorigin[1] = origin[1];
+    beam.oldorigin[2] = origin[2];
     if Distance(
         beam.origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         beam.oldorigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-    ) < 64 as libc::c_int as libc::c_float
+    ) < 64f32
     {
         return;
     }
     beam.reType = crate::tr_types_h::RT_LIGHTNING;
     beam.customShader = crate::src::cgame::cg_main::cgs.media.lightningShader;
     crate::src::qcommon::q_math::AxisClear(beam.axis.as_mut_ptr());
-    beam.shaderRGBA[0 as libc::c_int as usize] =
-        0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-    beam.shaderRGBA[1 as libc::c_int as usize] =
-        0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-    beam.shaderRGBA[2 as libc::c_int as usize] =
-        0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-    beam.shaderRGBA[3 as libc::c_int as usize] =
-        0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
+    beam.shaderRGBA[0] = 0xff;
+    beam.shaderRGBA[1] = 0xff;
+    beam.shaderRGBA[2] = 0xff;
+    beam.shaderRGBA[3] = 0xff;
     crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut beam);
 }
 /*
@@ -1283,19 +1031,19 @@ The server says this item is used on this level
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn CG_RegisterWeapon(mut weaponNum: libc::c_int) {
+pub unsafe extern "C" fn CG_RegisterWeapon(mut weaponNum: i32) {
     let mut weaponInfo: *mut crate::cg_local_h::weaponInfo_t =
         0 as *mut crate::cg_local_h::weaponInfo_t;
     let mut item: *mut crate::bg_public_h::gitem_t = 0 as *mut crate::bg_public_h::gitem_t;
     let mut ammo: *mut crate::bg_public_h::gitem_t = 0 as *mut crate::bg_public_h::gitem_t;
-    let mut path: [libc::c_char; 64] = [0; 64];
+    let mut path: [i8; 64] = [0; 64];
     let mut mins: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut maxs: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     weaponInfo = &mut *crate::src::cgame::cg_main::cg_weapons
         .as_mut_ptr()
         .offset(weaponNum as isize) as *mut crate::cg_local_h::weaponInfo_t;
-    if weaponNum == 0 as libc::c_int {
+    if weaponNum == 0 {
         return;
     }
     if (*weaponInfo).registered as u64 != 0 {
@@ -1303,18 +1051,15 @@ pub unsafe extern "C" fn CG_RegisterWeapon(mut weaponNum: libc::c_int) {
     }
     crate::stdlib::memset(
         weaponInfo as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::cg_local_h::weaponInfo_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::cg_local_h::weaponInfo_t>(),
     );
     (*weaponInfo).registered = crate::src::qcommon::q_shared::qtrue;
     item = crate::src::game::bg_misc::bg_itemlist
         .as_mut_ptr()
-        .offset(1 as libc::c_int as isize);
+        .offset(1);
     while !(*item).classname.is_null() {
-        if (*item).giType as libc::c_uint
-            == crate::bg_public_h::IT_WEAPON as libc::c_int as libc::c_uint
-            && (*item).giTag == weaponNum
-        {
+        if (*item).giType == crate::bg_public_h::IT_WEAPON && (*item).giTag == weaponNum {
             (*weaponInfo).item = item;
             break;
         } else {
@@ -1323,28 +1068,26 @@ pub unsafe extern "C" fn CG_RegisterWeapon(mut weaponNum: libc::c_int) {
     }
     if (*item).classname.is_null() {
         crate::src::cgame::cg_main::CG_Error(
-            b"Couldn\'t find weapon %i\x00" as *const u8 as *const libc::c_char,
+            b"Couldn\'t find weapon %i\x00" as *const u8 as *const i8,
             weaponNum,
         );
     }
     CG_RegisterItemVisuals(
-        item.wrapping_offset_from(crate::src::game::bg_misc::bg_itemlist.as_mut_ptr())
-            as libc::c_long as libc::c_int,
+        item.wrapping_offset_from(crate::src::game::bg_misc::bg_itemlist.as_mut_ptr()) as i32,
     );
     // load cmodel before model so filecache works
-    (*weaponInfo).weaponModel = crate::src::cgame::cg_syscalls::trap_R_RegisterModel(
-        (*item).world_model[0 as libc::c_int as usize],
-    );
+    (*weaponInfo).weaponModel =
+        crate::src::cgame::cg_syscalls::trap_R_RegisterModel((*item).world_model[0]);
     // calc midpoint for rotation
     crate::src::cgame::cg_syscalls::trap_R_ModelBounds(
         (*weaponInfo).weaponModel,
         mins.as_mut_ptr(),
         maxs.as_mut_ptr(),
     );
-    i = 0 as libc::c_int;
-    while i < 3 as libc::c_int {
-        (*weaponInfo).weaponMidpoint[i as usize] = (mins[i as usize] as libc::c_double
-            + 0.5f64 * (maxs[i as usize] - mins[i as usize]) as libc::c_double)
+    i = 0;
+    while i < 3 {
+        (*weaponInfo).weaponMidpoint[i as usize] = (mins[i as usize] as f64
+            + 0.5 * (maxs[i as usize] - mins[i as usize]) as f64)
             as crate::src::qcommon::q_shared::vec_t;
         i += 1
     }
@@ -1352,125 +1095,119 @@ pub unsafe extern "C" fn CG_RegisterWeapon(mut weaponNum: libc::c_int) {
     (*weaponInfo).ammoIcon = crate::src::cgame::cg_syscalls::trap_R_RegisterShader((*item).icon);
     ammo = crate::src::game::bg_misc::bg_itemlist
         .as_mut_ptr()
-        .offset(1 as libc::c_int as isize);
+        .offset(1);
     while !(*ammo).classname.is_null() {
-        if (*ammo).giType as libc::c_uint
-            == crate::bg_public_h::IT_AMMO as libc::c_int as libc::c_uint
-            && (*ammo).giTag == weaponNum
-        {
+        if (*ammo).giType == crate::bg_public_h::IT_AMMO && (*ammo).giTag == weaponNum {
             break;
         }
         ammo = ammo.offset(1)
     }
-    if !(*ammo).classname.is_null() && !(*ammo).world_model[0 as libc::c_int as usize].is_null() {
-        (*weaponInfo).ammoModel = crate::src::cgame::cg_syscalls::trap_R_RegisterModel(
-            (*ammo).world_model[0 as libc::c_int as usize],
-        )
+    if !(*ammo).classname.is_null() && !(*ammo).world_model[0].is_null() {
+        (*weaponInfo).ammoModel =
+            crate::src::cgame::cg_syscalls::trap_R_RegisterModel((*ammo).world_model[0])
     }
     crate::src::qcommon::q_shared::COM_StripExtension(
-        (*item).world_model[0 as libc::c_int as usize],
+        (*item).world_model[0],
         path.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 64]>() as i32,
     );
     crate::src::qcommon::q_shared::Q_strcat(
         path.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
-        b"_flash.md3\x00" as *const u8 as *const libc::c_char,
+        ::std::mem::size_of::<[i8; 64]>() as i32,
+        b"_flash.md3\x00" as *const u8 as *const i8,
     );
     (*weaponInfo).flashModel =
         crate::src::cgame::cg_syscalls::trap_R_RegisterModel(path.as_mut_ptr());
     crate::src::qcommon::q_shared::COM_StripExtension(
-        (*item).world_model[0 as libc::c_int as usize],
+        (*item).world_model[0],
         path.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 64]>() as i32,
     );
     crate::src::qcommon::q_shared::Q_strcat(
         path.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
-        b"_barrel.md3\x00" as *const u8 as *const libc::c_char,
+        ::std::mem::size_of::<[i8; 64]>() as i32,
+        b"_barrel.md3\x00" as *const u8 as *const i8,
     );
     (*weaponInfo).barrelModel =
         crate::src::cgame::cg_syscalls::trap_R_RegisterModel(path.as_mut_ptr());
     crate::src::qcommon::q_shared::COM_StripExtension(
-        (*item).world_model[0 as libc::c_int as usize],
+        (*item).world_model[0],
         path.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 64]>() as i32,
     );
     crate::src::qcommon::q_shared::Q_strcat(
         path.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
-        b"_hand.md3\x00" as *const u8 as *const libc::c_char,
+        ::std::mem::size_of::<[i8; 64]>() as i32,
+        b"_hand.md3\x00" as *const u8 as *const i8,
     );
     (*weaponInfo).handsModel =
         crate::src::cgame::cg_syscalls::trap_R_RegisterModel(path.as_mut_ptr());
     if (*weaponInfo).handsModel == 0 {
         (*weaponInfo).handsModel = crate::src::cgame::cg_syscalls::trap_R_RegisterModel(
-            b"models/weapons2/shotgun/shotgun_hand.md3\x00" as *const u8 as *const libc::c_char,
+            b"models/weapons2/shotgun/shotgun_hand.md3\x00" as *const u8 as *const i8,
         )
     }
     match weaponNum {
         1 => {
-            (*weaponInfo).flashDlightColor[0 as libc::c_int as usize] = 0.6f32;
-            (*weaponInfo).flashDlightColor[1 as libc::c_int as usize] = 0.6f32;
-            (*weaponInfo).flashDlightColor[2 as libc::c_int as usize] = 1.0f32;
+            (*weaponInfo).flashDlightColor[0] = 0.6;
+            (*weaponInfo).flashDlightColor[1] = 0.6;
+            (*weaponInfo).flashDlightColor[2] = 1.0;
             (*weaponInfo).firingSound = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                b"sound/weapons/melee/fstrun.wav\x00" as *const u8 as *const libc::c_char,
+                b"sound/weapons/melee/fstrun.wav\x00" as *const u8 as *const i8,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            (*weaponInfo).flashSound[0 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/melee/fstatck.wav\x00" as *const u8 as *const libc::c_char,
-                    crate::src::qcommon::q_shared::qfalse,
-                )
+            (*weaponInfo).flashSound[0] = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
+                b"sound/weapons/melee/fstatck.wav\x00" as *const u8 as *const i8,
+                crate::src::qcommon::q_shared::qfalse,
+            )
         }
         6 => {
-            (*weaponInfo).flashDlightColor[0 as libc::c_int as usize] = 0.6f32;
-            (*weaponInfo).flashDlightColor[1 as libc::c_int as usize] = 0.6f32;
-            (*weaponInfo).flashDlightColor[2 as libc::c_int as usize] = 1.0f32;
+            (*weaponInfo).flashDlightColor[0] = 0.6;
+            (*weaponInfo).flashDlightColor[1] = 0.6;
+            (*weaponInfo).flashDlightColor[2] = 1.0;
             (*weaponInfo).readySound = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                b"sound/weapons/melee/fsthum.wav\x00" as *const u8 as *const libc::c_char,
+                b"sound/weapons/melee/fsthum.wav\x00" as *const u8 as *const i8,
                 crate::src::qcommon::q_shared::qfalse,
             );
             (*weaponInfo).firingSound = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                b"sound/weapons/lightning/lg_hum.wav\x00" as *const u8 as *const libc::c_char,
+                b"sound/weapons/lightning/lg_hum.wav\x00" as *const u8 as *const i8,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            (*weaponInfo).flashSound[0 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/lightning/lg_fire.wav\x00" as *const u8 as *const libc::c_char,
-                    crate::src::qcommon::q_shared::qfalse,
-                );
+            (*weaponInfo).flashSound[0] = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
+                b"sound/weapons/lightning/lg_fire.wav\x00" as *const u8 as *const i8,
+                crate::src::qcommon::q_shared::qfalse,
+            );
             crate::src::cgame::cg_main::cgs.media.lightningShader =
                 crate::src::cgame::cg_syscalls::trap_R_RegisterShader(
-                    b"lightningBoltNew\x00" as *const u8 as *const libc::c_char,
+                    b"lightningBoltNew\x00" as *const u8 as *const i8,
                 );
             crate::src::cgame::cg_main::cgs
                 .media
                 .lightningExplosionModel = crate::src::cgame::cg_syscalls::trap_R_RegisterModel(
-                b"models/weaphits/crackle.md3\x00" as *const u8 as *const libc::c_char,
+                b"models/weaphits/crackle.md3\x00" as *const u8 as *const i8,
             );
             crate::src::cgame::cg_main::cgs.media.sfx_lghit1 =
                 crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/lightning/lg_hit.wav\x00" as *const u8 as *const libc::c_char,
+                    b"sound/weapons/lightning/lg_hit.wav\x00" as *const u8 as *const i8,
                     crate::src::qcommon::q_shared::qfalse,
                 );
             crate::src::cgame::cg_main::cgs.media.sfx_lghit2 =
                 crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/lightning/lg_hit2.wav\x00" as *const u8 as *const libc::c_char,
+                    b"sound/weapons/lightning/lg_hit2.wav\x00" as *const u8 as *const i8,
                     crate::src::qcommon::q_shared::qfalse,
                 );
             crate::src::cgame::cg_main::cgs.media.sfx_lghit3 =
                 crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/lightning/lg_hit3.wav\x00" as *const u8 as *const libc::c_char,
+                    b"sound/weapons/lightning/lg_hit3.wav\x00" as *const u8 as *const i8,
                     crate::src::qcommon::q_shared::qfalse,
                 )
         }
         10 => {
-            (*weaponInfo).flashDlightColor[0 as libc::c_int as usize] = 0.6f32;
-            (*weaponInfo).flashDlightColor[1 as libc::c_int as usize] = 0.6f32;
-            (*weaponInfo).flashDlightColor[2 as libc::c_int as usize] = 1.0f32;
+            (*weaponInfo).flashDlightColor[0] = 0.6;
+            (*weaponInfo).flashDlightColor[1] = 0.6;
+            (*weaponInfo).flashDlightColor[2] = 1.0;
             (*weaponInfo).missileModel = crate::src::cgame::cg_syscalls::trap_R_RegisterModel(
-                b"models/ammo/rocket/rocket.md3\x00" as *const u8 as *const libc::c_char,
+                b"models/ammo/rocket/rocket.md3\x00" as *const u8 as *const i8,
             );
             (*weaponInfo).missileTrailFunc = Some(
                 CG_GrappleTrail
@@ -1479,77 +1216,60 @@ pub unsafe extern "C" fn CG_RegisterWeapon(mut weaponNum: libc::c_int) {
                         _: *const crate::cg_local_h::weaponInfo_t,
                     ) -> (),
             );
-            (*weaponInfo).missileDlight = 200 as libc::c_int as libc::c_float;
-            (*weaponInfo).missileDlightColor[0 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).missileDlightColor[1 as libc::c_int as usize] = 0.75f32;
-            (*weaponInfo).missileDlightColor[2 as libc::c_int as usize] =
-                0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
+            (*weaponInfo).missileDlight = 200f32;
+            (*weaponInfo).missileDlightColor[0] = 1f32;
+            (*weaponInfo).missileDlightColor[1] = 0.75;
+            (*weaponInfo).missileDlightColor[2] = 0f32;
             (*weaponInfo).readySound = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                b"sound/weapons/melee/fsthum.wav\x00" as *const u8 as *const libc::c_char,
+                b"sound/weapons/melee/fsthum.wav\x00" as *const u8 as *const i8,
                 crate::src::qcommon::q_shared::qfalse,
             );
             (*weaponInfo).firingSound = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                b"sound/weapons/melee/fstrun.wav\x00" as *const u8 as *const libc::c_char,
+                b"sound/weapons/melee/fstrun.wav\x00" as *const u8 as *const i8,
                 crate::src::qcommon::q_shared::qfalse,
             );
             crate::src::cgame::cg_main::cgs.media.lightningShader =
                 crate::src::cgame::cg_syscalls::trap_R_RegisterShader(
-                    b"lightningBoltNew\x00" as *const u8 as *const libc::c_char,
+                    b"lightningBoltNew\x00" as *const u8 as *const i8,
                 )
         }
         2 => {
-            (*weaponInfo).flashDlightColor[0 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashDlightColor[1 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashDlightColor[2 as libc::c_int as usize] =
-                0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashSound[0 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/machinegun/machgf1b.wav\x00" as *const u8
-                        as *const libc::c_char,
-                    crate::src::qcommon::q_shared::qfalse,
-                );
-            (*weaponInfo).flashSound[1 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/machinegun/machgf2b.wav\x00" as *const u8
-                        as *const libc::c_char,
-                    crate::src::qcommon::q_shared::qfalse,
-                );
-            (*weaponInfo).flashSound[2 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/machinegun/machgf3b.wav\x00" as *const u8
-                        as *const libc::c_char,
-                    crate::src::qcommon::q_shared::qfalse,
-                );
-            (*weaponInfo).flashSound[3 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/machinegun/machgf4b.wav\x00" as *const u8
-                        as *const libc::c_char,
-                    crate::src::qcommon::q_shared::qfalse,
-                );
+            (*weaponInfo).flashDlightColor[0] = 1f32;
+            (*weaponInfo).flashDlightColor[1] = 1f32;
+            (*weaponInfo).flashDlightColor[2] = 0f32;
+            (*weaponInfo).flashSound[0] = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
+                b"sound/weapons/machinegun/machgf1b.wav\x00" as *const u8 as *const i8,
+                crate::src::qcommon::q_shared::qfalse,
+            );
+            (*weaponInfo).flashSound[1] = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
+                b"sound/weapons/machinegun/machgf2b.wav\x00" as *const u8 as *const i8,
+                crate::src::qcommon::q_shared::qfalse,
+            );
+            (*weaponInfo).flashSound[2] = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
+                b"sound/weapons/machinegun/machgf3b.wav\x00" as *const u8 as *const i8,
+                crate::src::qcommon::q_shared::qfalse,
+            );
+            (*weaponInfo).flashSound[3] = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
+                b"sound/weapons/machinegun/machgf4b.wav\x00" as *const u8 as *const i8,
+                crate::src::qcommon::q_shared::qfalse,
+            );
             (*weaponInfo).ejectBrassFunc = Some(
                 CG_MachineGunEjectBrass
                     as unsafe extern "C" fn(_: *mut crate::cg_local_h::centity_t) -> (),
             );
             crate::src::cgame::cg_main::cgs.media.bulletExplosionShader =
                 crate::src::cgame::cg_syscalls::trap_R_RegisterShader(
-                    b"bulletExplosion\x00" as *const u8 as *const libc::c_char,
+                    b"bulletExplosion\x00" as *const u8 as *const i8,
                 )
         }
         3 => {
-            (*weaponInfo).flashDlightColor[0 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashDlightColor[1 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashDlightColor[2 as libc::c_int as usize] =
-                0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashSound[0 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/shotgun/sshotf1b.wav\x00" as *const u8 as *const libc::c_char,
-                    crate::src::qcommon::q_shared::qfalse,
-                );
+            (*weaponInfo).flashDlightColor[0] = 1f32;
+            (*weaponInfo).flashDlightColor[1] = 1f32;
+            (*weaponInfo).flashDlightColor[2] = 0f32;
+            (*weaponInfo).flashSound[0] = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
+                b"sound/weapons/shotgun/sshotf1b.wav\x00" as *const u8 as *const i8,
+                crate::src::qcommon::q_shared::qfalse,
+            );
             (*weaponInfo).ejectBrassFunc = Some(
                 CG_ShotgunEjectBrass
                     as unsafe extern "C" fn(_: *mut crate::cg_local_h::centity_t) -> (),
@@ -1557,10 +1277,10 @@ pub unsafe extern "C" fn CG_RegisterWeapon(mut weaponNum: libc::c_int) {
         }
         5 => {
             (*weaponInfo).missileModel = crate::src::cgame::cg_syscalls::trap_R_RegisterModel(
-                b"models/ammo/rocket/rocket.md3\x00" as *const u8 as *const libc::c_char,
+                b"models/ammo/rocket/rocket.md3\x00" as *const u8 as *const i8,
             );
             (*weaponInfo).missileSound = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                b"sound/weapons/rocket/rockfly.wav\x00" as *const u8 as *const libc::c_char,
+                b"sound/weapons/rocket/rockfly.wav\x00" as *const u8 as *const i8,
                 crate::src::qcommon::q_shared::qfalse,
             );
             (*weaponInfo).missileTrailFunc = Some(
@@ -1570,32 +1290,27 @@ pub unsafe extern "C" fn CG_RegisterWeapon(mut weaponNum: libc::c_int) {
                         _: *const crate::cg_local_h::weaponInfo_t,
                     ) -> (),
             );
-            (*weaponInfo).missileDlight = 200 as libc::c_int as libc::c_float;
-            (*weaponInfo).wiTrailTime = 2000 as libc::c_int as libc::c_float;
-            (*weaponInfo).trailRadius = 64 as libc::c_int as libc::c_float;
-            (*weaponInfo).missileDlightColor[0 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).missileDlightColor[1 as libc::c_int as usize] = 0.75f32;
-            (*weaponInfo).missileDlightColor[2 as libc::c_int as usize] =
-                0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashDlightColor[0 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashDlightColor[1 as libc::c_int as usize] = 0.75f32;
-            (*weaponInfo).flashDlightColor[2 as libc::c_int as usize] =
-                0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashSound[0 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/rocket/rocklf1a.wav\x00" as *const u8 as *const libc::c_char,
-                    crate::src::qcommon::q_shared::qfalse,
-                );
+            (*weaponInfo).missileDlight = 200f32;
+            (*weaponInfo).wiTrailTime = 2000f32;
+            (*weaponInfo).trailRadius = 64f32;
+            (*weaponInfo).missileDlightColor[0] = 1f32;
+            (*weaponInfo).missileDlightColor[1] = 0.75;
+            (*weaponInfo).missileDlightColor[2] = 0f32;
+            (*weaponInfo).flashDlightColor[0] = 1f32;
+            (*weaponInfo).flashDlightColor[1] = 0.75;
+            (*weaponInfo).flashDlightColor[2] = 0f32;
+            (*weaponInfo).flashSound[0] = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
+                b"sound/weapons/rocket/rocklf1a.wav\x00" as *const u8 as *const i8,
+                crate::src::qcommon::q_shared::qfalse,
+            );
             crate::src::cgame::cg_main::cgs.media.rocketExplosionShader =
                 crate::src::cgame::cg_syscalls::trap_R_RegisterShader(
-                    b"rocketExplosion\x00" as *const u8 as *const libc::c_char,
+                    b"rocketExplosion\x00" as *const u8 as *const i8,
                 )
         }
         4 => {
             (*weaponInfo).missileModel = crate::src::cgame::cg_syscalls::trap_R_RegisterModel(
-                b"models/ammo/grenade1.md3\x00" as *const u8 as *const libc::c_char,
+                b"models/ammo/grenade1.md3\x00" as *const u8 as *const i8,
             );
             (*weaponInfo).missileTrailFunc = Some(
                 CG_GrenadeTrail
@@ -1604,21 +1319,18 @@ pub unsafe extern "C" fn CG_RegisterWeapon(mut weaponNum: libc::c_int) {
                         _: *const crate::cg_local_h::weaponInfo_t,
                     ) -> (),
             );
-            (*weaponInfo).wiTrailTime = 700 as libc::c_int as libc::c_float;
-            (*weaponInfo).trailRadius = 32 as libc::c_int as libc::c_float;
-            (*weaponInfo).flashDlightColor[0 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashDlightColor[1 as libc::c_int as usize] = 0.70f32;
-            (*weaponInfo).flashDlightColor[2 as libc::c_int as usize] =
-                0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashSound[0 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/grenade/grenlf1a.wav\x00" as *const u8 as *const libc::c_char,
-                    crate::src::qcommon::q_shared::qfalse,
-                );
+            (*weaponInfo).wiTrailTime = 700f32;
+            (*weaponInfo).trailRadius = 32f32;
+            (*weaponInfo).flashDlightColor[0] = 1f32;
+            (*weaponInfo).flashDlightColor[1] = 0.70;
+            (*weaponInfo).flashDlightColor[2] = 0f32;
+            (*weaponInfo).flashSound[0] = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
+                b"sound/weapons/grenade/grenlf1a.wav\x00" as *const u8 as *const i8,
+                crate::src::qcommon::q_shared::qfalse,
+            );
             crate::src::cgame::cg_main::cgs.media.grenadeExplosionShader =
                 crate::src::cgame::cg_syscalls::trap_R_RegisterShader(
-                    b"grenadeExplosion\x00" as *const u8 as *const libc::c_char,
+                    b"grenadeExplosion\x00" as *const u8 as *const i8,
                 )
         }
         8 => {
@@ -1631,93 +1343,82 @@ pub unsafe extern "C" fn CG_RegisterWeapon(mut weaponNum: libc::c_int) {
                     ) -> (),
             );
             (*weaponInfo).missileSound = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                b"sound/weapons/plasma/lasfly.wav\x00" as *const u8 as *const libc::c_char,
+                b"sound/weapons/plasma/lasfly.wav\x00" as *const u8 as *const i8,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            (*weaponInfo).flashDlightColor[0 as libc::c_int as usize] = 0.6f32;
-            (*weaponInfo).flashDlightColor[1 as libc::c_int as usize] = 0.6f32;
-            (*weaponInfo).flashDlightColor[2 as libc::c_int as usize] = 1.0f32;
-            (*weaponInfo).flashSound[0 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/plasma/hyprbf1a.wav\x00" as *const u8 as *const libc::c_char,
-                    crate::src::qcommon::q_shared::qfalse,
-                );
+            (*weaponInfo).flashDlightColor[0] = 0.6;
+            (*weaponInfo).flashDlightColor[1] = 0.6;
+            (*weaponInfo).flashDlightColor[2] = 1.0;
+            (*weaponInfo).flashSound[0] = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
+                b"sound/weapons/plasma/hyprbf1a.wav\x00" as *const u8 as *const i8,
+                crate::src::qcommon::q_shared::qfalse,
+            );
             crate::src::cgame::cg_main::cgs.media.plasmaExplosionShader =
                 crate::src::cgame::cg_syscalls::trap_R_RegisterShader(
-                    b"plasmaExplosion\x00" as *const u8 as *const libc::c_char,
+                    b"plasmaExplosion\x00" as *const u8 as *const i8,
                 );
             crate::src::cgame::cg_main::cgs.media.railRingsShader =
                 crate::src::cgame::cg_syscalls::trap_R_RegisterShader(
-                    b"railDisc\x00" as *const u8 as *const libc::c_char,
+                    b"railDisc\x00" as *const u8 as *const i8,
                 )
         }
         7 => {
             (*weaponInfo).readySound = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                b"sound/weapons/railgun/rg_hum.wav\x00" as *const u8 as *const libc::c_char,
+                b"sound/weapons/railgun/rg_hum.wav\x00" as *const u8 as *const i8,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            (*weaponInfo).flashDlightColor[0 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashDlightColor[1 as libc::c_int as usize] = 0.5f32;
-            (*weaponInfo).flashDlightColor[2 as libc::c_int as usize] =
-                0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashSound[0 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/railgun/railgf1a.wav\x00" as *const u8 as *const libc::c_char,
-                    crate::src::qcommon::q_shared::qfalse,
-                );
+            (*weaponInfo).flashDlightColor[0] = 1f32;
+            (*weaponInfo).flashDlightColor[1] = 0.5;
+            (*weaponInfo).flashDlightColor[2] = 0f32;
+            (*weaponInfo).flashSound[0] = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
+                b"sound/weapons/railgun/railgf1a.wav\x00" as *const u8 as *const i8,
+                crate::src::qcommon::q_shared::qfalse,
+            );
             crate::src::cgame::cg_main::cgs.media.railExplosionShader =
                 crate::src::cgame::cg_syscalls::trap_R_RegisterShader(
-                    b"railExplosion\x00" as *const u8 as *const libc::c_char,
+                    b"railExplosion\x00" as *const u8 as *const i8,
                 );
             crate::src::cgame::cg_main::cgs.media.railRingsShader =
                 crate::src::cgame::cg_syscalls::trap_R_RegisterShader(
-                    b"railDisc\x00" as *const u8 as *const libc::c_char,
+                    b"railDisc\x00" as *const u8 as *const i8,
                 );
             crate::src::cgame::cg_main::cgs.media.railCoreShader =
                 crate::src::cgame::cg_syscalls::trap_R_RegisterShader(
-                    b"railCore\x00" as *const u8 as *const libc::c_char,
+                    b"railCore\x00" as *const u8 as *const i8,
                 )
         }
         9 => {
             (*weaponInfo).readySound = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                b"sound/weapons/bfg/bfg_hum.wav\x00" as *const u8 as *const libc::c_char,
+                b"sound/weapons/bfg/bfg_hum.wav\x00" as *const u8 as *const i8,
                 crate::src::qcommon::q_shared::qfalse,
             );
-            (*weaponInfo).flashDlightColor[0 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashDlightColor[1 as libc::c_int as usize] = 0.7f32;
-            (*weaponInfo).flashDlightColor[2 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashSound[0 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/bfg/bfg_fire.wav\x00" as *const u8 as *const libc::c_char,
-                    crate::src::qcommon::q_shared::qfalse,
-                );
+            (*weaponInfo).flashDlightColor[0] = 1f32;
+            (*weaponInfo).flashDlightColor[1] = 0.7;
+            (*weaponInfo).flashDlightColor[2] = 1f32;
+            (*weaponInfo).flashSound[0] = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
+                b"sound/weapons/bfg/bfg_fire.wav\x00" as *const u8 as *const i8,
+                crate::src::qcommon::q_shared::qfalse,
+            );
             crate::src::cgame::cg_main::cgs.media.bfgExplosionShader =
                 crate::src::cgame::cg_syscalls::trap_R_RegisterShader(
-                    b"bfgExplosion\x00" as *const u8 as *const libc::c_char,
+                    b"bfgExplosion\x00" as *const u8 as *const i8,
                 );
             (*weaponInfo).missileModel = crate::src::cgame::cg_syscalls::trap_R_RegisterModel(
-                b"models/weaphits/bfg.md3\x00" as *const u8 as *const libc::c_char,
+                b"models/weaphits/bfg.md3\x00" as *const u8 as *const i8,
             );
             (*weaponInfo).missileSound = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                b"sound/weapons/rocket/rockfly.wav\x00" as *const u8 as *const libc::c_char,
+                b"sound/weapons/rocket/rockfly.wav\x00" as *const u8 as *const i8,
                 crate::src::qcommon::q_shared::qfalse,
             )
         }
         _ => {
-            (*weaponInfo).flashDlightColor[0 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashDlightColor[1 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashDlightColor[2 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            (*weaponInfo).flashSound[0 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
-                    b"sound/weapons/rocket/rocklf1a.wav\x00" as *const u8 as *const libc::c_char,
-                    crate::src::qcommon::q_shared::qfalse,
-                )
+            (*weaponInfo).flashDlightColor[0] = 1f32;
+            (*weaponInfo).flashDlightColor[1] = 1f32;
+            (*weaponInfo).flashDlightColor[2] = 1f32;
+            (*weaponInfo).flashSound[0] = crate::src::cgame::cg_syscalls::trap_S_RegisterSound(
+                b"sound/weapons/rocket/rocklf1a.wav\x00" as *const u8 as *const i8,
+                crate::src::qcommon::q_shared::qfalse,
+            )
         }
     };
 }
@@ -1730,15 +1431,14 @@ The server says this item is used on this level
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn CG_RegisterItemVisuals(mut itemNum: libc::c_int) {
+pub unsafe extern "C" fn CG_RegisterItemVisuals(mut itemNum: i32) {
     let mut itemInfo: *mut crate::cg_local_h::itemInfo_t = 0 as *mut crate::cg_local_h::itemInfo_t;
     let mut item: *mut crate::bg_public_h::gitem_t = 0 as *mut crate::bg_public_h::gitem_t;
-    if itemNum < 0 as libc::c_int || itemNum >= crate::src::game::bg_misc::bg_numItems {
+    if itemNum < 0 || itemNum >= crate::src::game::bg_misc::bg_numItems {
         crate::src::cgame::cg_main::CG_Error(
-            b"CG_RegisterItemVisuals: itemNum %d out of range [0-%d]\x00" as *const u8
-                as *const libc::c_char,
+            b"CG_RegisterItemVisuals: itemNum %d out of range [0-%d]\x00" as *const u8 as *const i8,
             itemNum,
-            crate::src::game::bg_misc::bg_numItems - 1 as libc::c_int,
+            crate::src::game::bg_misc::bg_numItems - 1i32,
         );
     }
     itemInfo = &mut *crate::src::cgame::cg_main::cg_items
@@ -1752,37 +1452,27 @@ pub unsafe extern "C" fn CG_RegisterItemVisuals(mut itemNum: libc::c_int) {
         .offset(itemNum as isize) as *mut crate::bg_public_h::gitem_t;
     crate::stdlib::memset(
         itemInfo as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::cg_local_h::itemInfo_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::cg_local_h::itemInfo_t>(),
     );
     (*itemInfo).registered = crate::src::qcommon::q_shared::qtrue;
-    (*itemInfo).models[0 as libc::c_int as usize] =
-        crate::src::cgame::cg_syscalls::trap_R_RegisterModel(
-            (*item).world_model[0 as libc::c_int as usize],
-        );
+    (*itemInfo).models[0] =
+        crate::src::cgame::cg_syscalls::trap_R_RegisterModel((*item).world_model[0]);
     (*itemInfo).icon = crate::src::cgame::cg_syscalls::trap_R_RegisterShader((*item).icon);
-    if (*item).giType as libc::c_uint
-        == crate::bg_public_h::IT_WEAPON as libc::c_int as libc::c_uint
-    {
+    if (*item).giType == crate::bg_public_h::IT_WEAPON {
         CG_RegisterWeapon((*item).giTag);
     }
     //
     // powerups have an accompanying ring or sphere
     //
-    if (*item).giType as libc::c_uint
-        == crate::bg_public_h::IT_POWERUP as libc::c_int as libc::c_uint
-        || (*item).giType as libc::c_uint
-            == crate::bg_public_h::IT_HEALTH as libc::c_int as libc::c_uint
-        || (*item).giType as libc::c_uint
-            == crate::bg_public_h::IT_ARMOR as libc::c_int as libc::c_uint
-        || (*item).giType as libc::c_uint
-            == crate::bg_public_h::IT_HOLDABLE as libc::c_int as libc::c_uint
+    if (*item).giType == crate::bg_public_h::IT_POWERUP
+        || (*item).giType == crate::bg_public_h::IT_HEALTH
+        || (*item).giType == crate::bg_public_h::IT_ARMOR
+        || (*item).giType == crate::bg_public_h::IT_HOLDABLE
     {
-        if !(*item).world_model[1 as libc::c_int as usize].is_null() {
-            (*itemInfo).models[1 as libc::c_int as usize] =
-                crate::src::cgame::cg_syscalls::trap_R_RegisterModel(
-                    (*item).world_model[1 as libc::c_int as usize],
-                )
+        if !(*item).world_model[1].is_null() {
+            (*itemInfo).models[1] =
+                crate::src::cgame::cg_syscalls::trap_R_RegisterModel((*item).world_model[1])
         }
     };
 }
@@ -1802,40 +1492,29 @@ CG_MapTorsoToWeaponFrame
 
 unsafe extern "C" fn CG_MapTorsoToWeaponFrame(
     mut ci: *mut crate::cg_local_h::clientInfo_t,
-    mut frame: libc::c_int,
-) -> libc::c_int {
+    mut frame: i32,
+) -> i32 {
     // change weapon
-    if frame >= (*ci).animations[crate::bg_public_h::TORSO_DROP as libc::c_int as usize].firstFrame
-        && frame
-            < (*ci).animations[crate::bg_public_h::TORSO_DROP as libc::c_int as usize].firstFrame
-                + 9 as libc::c_int
+    if frame >= (*ci).animations[crate::bg_public_h::TORSO_DROP as usize].firstFrame
+        && frame < (*ci).animations[crate::bg_public_h::TORSO_DROP as usize].firstFrame + 9
     {
-        return frame
-            - (*ci).animations[crate::bg_public_h::TORSO_DROP as libc::c_int as usize].firstFrame
-            + 6 as libc::c_int;
+        return frame - (*ci).animations[crate::bg_public_h::TORSO_DROP as usize].firstFrame + 6i32;
     }
     // stand attack
-    if frame
-        >= (*ci).animations[crate::bg_public_h::TORSO_ATTACK as libc::c_int as usize].firstFrame
-        && frame
-            < (*ci).animations[crate::bg_public_h::TORSO_ATTACK as libc::c_int as usize].firstFrame
-                + 6 as libc::c_int
+    if frame >= (*ci).animations[crate::bg_public_h::TORSO_ATTACK as usize].firstFrame
+        && frame < (*ci).animations[crate::bg_public_h::TORSO_ATTACK as usize].firstFrame + 6
     {
-        return 1 as libc::c_int + frame
-            - (*ci).animations[crate::bg_public_h::TORSO_ATTACK as libc::c_int as usize].firstFrame;
+        return 1i32 + frame
+            - (*ci).animations[crate::bg_public_h::TORSO_ATTACK as usize].firstFrame;
     }
     // stand attack 2
-    if frame
-        >= (*ci).animations[crate::bg_public_h::TORSO_ATTACK2 as libc::c_int as usize].firstFrame
-        && frame
-            < (*ci).animations[crate::bg_public_h::TORSO_ATTACK2 as libc::c_int as usize].firstFrame
-                + 6 as libc::c_int
+    if frame >= (*ci).animations[crate::bg_public_h::TORSO_ATTACK2 as usize].firstFrame
+        && frame < (*ci).animations[crate::bg_public_h::TORSO_ATTACK2 as usize].firstFrame + 6
     {
-        return 1 as libc::c_int + frame
-            - (*ci).animations[crate::bg_public_h::TORSO_ATTACK2 as libc::c_int as usize]
-                .firstFrame;
+        return 1i32 + frame
+            - (*ci).animations[crate::bg_public_h::TORSO_ATTACK2 as usize].firstFrame;
     }
-    return 0 as libc::c_int;
+    return 0;
 }
 /*
 ==============
@@ -1847,73 +1526,58 @@ unsafe extern "C" fn CG_CalculateWeaponPosition(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut angles: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut scale: libc::c_float = 0.;
-    let mut delta: libc::c_int = 0;
-    let mut fracsin: libc::c_float = 0.;
-    *origin.offset(0 as libc::c_int as isize) =
-        crate::src::cgame::cg_main::cg.refdef.vieworg[0 as libc::c_int as usize];
-    *origin.offset(1 as libc::c_int as isize) =
-        crate::src::cgame::cg_main::cg.refdef.vieworg[1 as libc::c_int as usize];
-    *origin.offset(2 as libc::c_int as isize) =
-        crate::src::cgame::cg_main::cg.refdef.vieworg[2 as libc::c_int as usize];
-    *angles.offset(0 as libc::c_int as isize) =
-        crate::src::cgame::cg_main::cg.refdefViewAngles[0 as libc::c_int as usize];
-    *angles.offset(1 as libc::c_int as isize) =
-        crate::src::cgame::cg_main::cg.refdefViewAngles[1 as libc::c_int as usize];
-    *angles.offset(2 as libc::c_int as isize) =
-        crate::src::cgame::cg_main::cg.refdefViewAngles[2 as libc::c_int as usize];
+    let mut scale: f32 = 0.;
+    let mut delta: i32 = 0;
+    let mut fracsin: f32 = 0.;
+    *origin.offset(0) = crate::src::cgame::cg_main::cg.refdef.vieworg[0];
+    *origin.offset(1) = crate::src::cgame::cg_main::cg.refdef.vieworg[1];
+    *origin.offset(2) = crate::src::cgame::cg_main::cg.refdef.vieworg[2];
+    *angles.offset(0) = crate::src::cgame::cg_main::cg.refdefViewAngles[0];
+    *angles.offset(1) = crate::src::cgame::cg_main::cg.refdefViewAngles[1];
+    *angles.offset(2) = crate::src::cgame::cg_main::cg.refdefViewAngles[2];
     // on odd legs, invert some angles
-    if crate::src::cgame::cg_main::cg.bobcycle & 1 as libc::c_int != 0 {
+    if crate::src::cgame::cg_main::cg.bobcycle & 1 != 0 {
         scale = -crate::src::cgame::cg_main::cg.xyspeed
     } else {
         scale = crate::src::cgame::cg_main::cg.xyspeed
     }
     // gun angles from bobbing
-    let ref mut fresh1 = *angles.offset(2 as libc::c_int as isize);
-    *fresh1 = (*fresh1 as libc::c_double
-        + (scale * crate::src::cgame::cg_main::cg.bobfracsin) as libc::c_double * 0.005f64)
+    let ref mut fresh1 = *angles.offset(2);
+    *fresh1 = (*fresh1 as f64 + (scale * crate::src::cgame::cg_main::cg.bobfracsin) as f64 * 0.005)
         as crate::src::qcommon::q_shared::vec_t;
-    let ref mut fresh2 = *angles.offset(1 as libc::c_int as isize);
-    *fresh2 = (*fresh2 as libc::c_double
-        + (scale * crate::src::cgame::cg_main::cg.bobfracsin) as libc::c_double * 0.01f64)
+    let ref mut fresh2 = *angles.offset(1);
+    *fresh2 = (*fresh2 as f64 + (scale * crate::src::cgame::cg_main::cg.bobfracsin) as f64 * 0.01)
         as crate::src::qcommon::q_shared::vec_t;
-    let ref mut fresh3 = *angles.offset(0 as libc::c_int as isize);
-    *fresh3 = (*fresh3 as libc::c_double
+    let ref mut fresh3 = *angles.offset(0);
+    *fresh3 = (*fresh3 as f64
         + (crate::src::cgame::cg_main::cg.xyspeed * crate::src::cgame::cg_main::cg.bobfracsin)
-            as libc::c_double
-            * 0.005f64) as crate::src::qcommon::q_shared::vec_t;
+            as f64
+            * 0.005) as crate::src::qcommon::q_shared::vec_t;
     // drop the weapon when landing
     delta = crate::src::cgame::cg_main::cg.time - crate::src::cgame::cg_main::cg.landTime;
-    if delta < 150 as libc::c_int {
-        let ref mut fresh4 = *origin.offset(2 as libc::c_int as isize);
-        *fresh4 = (*fresh4 as libc::c_double
-            + crate::src::cgame::cg_main::cg.landChange as libc::c_double
-                * 0.25f64
-                * delta as libc::c_double
-                / 150 as libc::c_int as libc::c_double)
+    if delta < 150 {
+        let ref mut fresh4 = *origin.offset(2);
+        *fresh4 = (*fresh4 as f64
+            + crate::src::cgame::cg_main::cg.landChange as f64 * 0.25 * delta as f64 / 150f64)
             as crate::src::qcommon::q_shared::vec_t
-    } else if delta < 150 as libc::c_int + 300 as libc::c_int {
-        let ref mut fresh5 = *origin.offset(2 as libc::c_int as isize);
-        *fresh5 = (*fresh5 as libc::c_double
-            + crate::src::cgame::cg_main::cg.landChange as libc::c_double
-                * 0.25f64
-                * (150 as libc::c_int + 300 as libc::c_int - delta) as libc::c_double
-                / 300 as libc::c_int as libc::c_double)
-            as crate::src::qcommon::q_shared::vec_t
+    } else if delta < 150 + 300 {
+        let ref mut fresh5 = *origin.offset(2);
+        *fresh5 = (*fresh5 as f64
+            + crate::src::cgame::cg_main::cg.landChange as f64 * 0.25 * (150 + 300 - delta) as f64
+                / 300f64) as crate::src::qcommon::q_shared::vec_t
     }
     // idle drift
-    scale = crate::src::cgame::cg_main::cg.xyspeed + 40 as libc::c_int as libc::c_float;
-    fracsin = crate::stdlib::sin(crate::src::cgame::cg_main::cg.time as libc::c_double * 0.001f64)
-        as libc::c_float;
-    let ref mut fresh6 = *angles.offset(2 as libc::c_int as isize);
-    *fresh6 = (*fresh6 as libc::c_double + (scale * fracsin) as libc::c_double * 0.01f64)
-        as crate::src::qcommon::q_shared::vec_t;
-    let ref mut fresh7 = *angles.offset(1 as libc::c_int as isize);
-    *fresh7 = (*fresh7 as libc::c_double + (scale * fracsin) as libc::c_double * 0.01f64)
-        as crate::src::qcommon::q_shared::vec_t;
-    let ref mut fresh8 = *angles.offset(0 as libc::c_int as isize);
-    *fresh8 = (*fresh8 as libc::c_double + (scale * fracsin) as libc::c_double * 0.01f64)
-        as crate::src::qcommon::q_shared::vec_t;
+    scale = crate::src::cgame::cg_main::cg.xyspeed + 40f32;
+    fracsin = crate::stdlib::sin(crate::src::cgame::cg_main::cg.time as f64 * 0.001) as f32;
+    let ref mut fresh6 = *angles.offset(2);
+    *fresh6 =
+        (*fresh6 as f64 + (scale * fracsin) as f64 * 0.01) as crate::src::qcommon::q_shared::vec_t;
+    let ref mut fresh7 = *angles.offset(1);
+    *fresh7 =
+        (*fresh7 as f64 + (scale * fracsin) as f64 * 0.01) as crate::src::qcommon::q_shared::vec_t;
+    let ref mut fresh8 = *angles.offset(0);
+    *fresh8 =
+        (*fresh8 as f64 + (scale * fracsin) as f64 * 0.01) as crate::src::qcommon::q_shared::vec_t;
 }
 /*
 ===============
@@ -1973,45 +1637,42 @@ unsafe extern "C" fn CG_LightningBolt(
     let mut forward: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut muzzlePoint: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut endPoint: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut anim: libc::c_int = 0;
-    if (*cent).currentState.weapon != crate::bg_public_h::WP_LIGHTNING as libc::c_int {
+    let mut anim: i32 = 0;
+    if (*cent).currentState.weapon != crate::bg_public_h::WP_LIGHTNING as i32 {
         return;
     }
     crate::stdlib::memset(
         &mut beam as *mut crate::tr_types_h::refEntity_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::tr_types_h::refEntity_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::tr_types_h::refEntity_t>(),
     );
     // CPMA  "true" lightning
     if (*cent).currentState.number
         == crate::src::cgame::cg_main::cg
             .predictedPlayerState
             .clientNum
-        && crate::src::cgame::cg_main::cg_trueLightning.value != 0 as libc::c_int as libc::c_float
+        && crate::src::cgame::cg_main::cg_trueLightning.value != 0f32
     {
         let mut angle: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-        let mut i: libc::c_int = 0;
-        i = 0 as libc::c_int;
-        while i < 3 as libc::c_int {
-            let mut a: libc::c_float = (*cent).lerpAngles[i as usize]
+        let mut i: i32 = 0;
+        i = 0;
+        while i < 3 {
+            let mut a: f32 = (*cent).lerpAngles[i as usize]
                 - crate::src::cgame::cg_main::cg.refdefViewAngles[i as usize];
-            if a > 180 as libc::c_int as libc::c_float {
-                a -= 360 as libc::c_int as libc::c_float
+            if a > 180f32 {
+                a -= 360f32
             }
-            if a < -(180 as libc::c_int) as libc::c_float {
-                a += 360 as libc::c_int as libc::c_float
+            if a < -180f32 {
+                a += 360f32
             }
-            angle[i as usize] = (crate::src::cgame::cg_main::cg.refdefViewAngles[i as usize]
-                as libc::c_double
-                + a as libc::c_double
-                    * (1.0f64
-                        - crate::src::cgame::cg_main::cg_trueLightning.value as libc::c_double))
+            angle[i as usize] = (crate::src::cgame::cg_main::cg.refdefViewAngles[i as usize] as f64
+                + a as f64 * (1.0 - crate::src::cgame::cg_main::cg_trueLightning.value as f64))
                 as crate::src::qcommon::q_shared::vec_t;
-            if angle[i as usize] < 0 as libc::c_int as libc::c_float {
-                angle[i as usize] += 360 as libc::c_int as libc::c_float
+            if angle[i as usize] < 0f32 {
+                angle[i as usize] += 360f32
             }
-            if angle[i as usize] > 360 as libc::c_int as libc::c_float {
-                angle[i as usize] -= 360 as libc::c_int as libc::c_float
+            if angle[i as usize] > 360f32 {
+                angle[i as usize] -= 360f32
             }
             i += 1
         }
@@ -2021,9 +1682,9 @@ unsafe extern "C" fn CG_LightningBolt(
             0 as *mut crate::src::qcommon::q_shared::vec_t,
             0 as *mut crate::src::qcommon::q_shared::vec_t,
         );
-        muzzlePoint[0 as libc::c_int as usize] = (*cent).lerpOrigin[0 as libc::c_int as usize];
-        muzzlePoint[1 as libc::c_int as usize] = (*cent).lerpOrigin[1 as libc::c_int as usize];
-        muzzlePoint[2 as libc::c_int as usize] = (*cent).lerpOrigin[2 as libc::c_int as usize]
+        muzzlePoint[0] = (*cent).lerpOrigin[0];
+        muzzlePoint[1] = (*cent).lerpOrigin[1];
+        muzzlePoint[2] = (*cent).lerpOrigin[2]
     //		VectorCopy(cg.refdef.vieworg, muzzlePoint );
     } else {
         // !CPMA
@@ -2033,31 +1694,25 @@ unsafe extern "C" fn CG_LightningBolt(
             0 as *mut crate::src::qcommon::q_shared::vec_t,
             0 as *mut crate::src::qcommon::q_shared::vec_t,
         );
-        muzzlePoint[0 as libc::c_int as usize] = (*cent).lerpOrigin[0 as libc::c_int as usize];
-        muzzlePoint[1 as libc::c_int as usize] = (*cent).lerpOrigin[1 as libc::c_int as usize];
-        muzzlePoint[2 as libc::c_int as usize] = (*cent).lerpOrigin[2 as libc::c_int as usize]
+        muzzlePoint[0] = (*cent).lerpOrigin[0];
+        muzzlePoint[1] = (*cent).lerpOrigin[1];
+        muzzlePoint[2] = (*cent).lerpOrigin[2]
     }
-    anim = (*cent).currentState.legsAnim & !(128 as libc::c_int);
-    if anim == crate::bg_public_h::LEGS_WALKCR as libc::c_int
-        || anim == crate::bg_public_h::LEGS_IDLECR as libc::c_int
+    anim = (*cent).currentState.legsAnim & !(128);
+    if anim == crate::bg_public_h::LEGS_WALKCR as i32
+        || anim == crate::bg_public_h::LEGS_IDLECR as i32
     {
-        muzzlePoint[2 as libc::c_int as usize] += 12 as libc::c_int as libc::c_float
+        muzzlePoint[2] += 12f32
     } else {
-        muzzlePoint[2 as libc::c_int as usize] += 26 as libc::c_int as libc::c_float
+        muzzlePoint[2] += 26f32
     }
-    muzzlePoint[0 as libc::c_int as usize] = muzzlePoint[0 as libc::c_int as usize]
-        + forward[0 as libc::c_int as usize] * 14 as libc::c_int as libc::c_float;
-    muzzlePoint[1 as libc::c_int as usize] = muzzlePoint[1 as libc::c_int as usize]
-        + forward[1 as libc::c_int as usize] * 14 as libc::c_int as libc::c_float;
-    muzzlePoint[2 as libc::c_int as usize] = muzzlePoint[2 as libc::c_int as usize]
-        + forward[2 as libc::c_int as usize] * 14 as libc::c_int as libc::c_float;
+    muzzlePoint[0] = muzzlePoint[0] + forward[0] * 14f32;
+    muzzlePoint[1] = muzzlePoint[1] + forward[1] * 14f32;
+    muzzlePoint[2] = muzzlePoint[2] + forward[2] * 14f32;
     // project forward by the lightning range
-    endPoint[0 as libc::c_int as usize] = muzzlePoint[0 as libc::c_int as usize]
-        + forward[0 as libc::c_int as usize] * 768 as libc::c_int as libc::c_float;
-    endPoint[1 as libc::c_int as usize] = muzzlePoint[1 as libc::c_int as usize]
-        + forward[1 as libc::c_int as usize] * 768 as libc::c_int as libc::c_float;
-    endPoint[2 as libc::c_int as usize] = muzzlePoint[2 as libc::c_int as usize]
-        + forward[2 as libc::c_int as usize] * 768 as libc::c_int as libc::c_float;
+    endPoint[0] = muzzlePoint[0] + forward[0] * 768f32;
+    endPoint[1] = muzzlePoint[1] + forward[1] * 768f32;
+    endPoint[2] = muzzlePoint[2] + forward[2] * 768f32;
     // see if it hit a wall
     crate::src::cgame::cg_predict::CG_Trace(
         &mut trace,
@@ -2068,52 +1723,43 @@ unsafe extern "C" fn CG_LightningBolt(
             as *const crate::src::qcommon::q_shared::vec_t,
         endPoint.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         (*cent).currentState.number,
-        1 as libc::c_int | 0x2000000 as libc::c_int | 0x4000000 as libc::c_int,
+        1 | 0x2000000 | 0x4000000,
     );
     // this is the endpoint
-    beam.oldorigin[0 as libc::c_int as usize] = trace.endpos[0 as libc::c_int as usize];
-    beam.oldorigin[1 as libc::c_int as usize] = trace.endpos[1 as libc::c_int as usize];
-    beam.oldorigin[2 as libc::c_int as usize] = trace.endpos[2 as libc::c_int as usize];
+    beam.oldorigin[0] = trace.endpos[0];
+    beam.oldorigin[1] = trace.endpos[1];
+    beam.oldorigin[2] = trace.endpos[2];
     // use the provided origin, even though it may be slightly
     // different than the muzzle origin
-    beam.origin[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
-    beam.origin[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
-    beam.origin[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
+    beam.origin[0] = *origin.offset(0);
+    beam.origin[1] = *origin.offset(1);
+    beam.origin[2] = *origin.offset(2);
     beam.reType = crate::tr_types_h::RT_LIGHTNING;
     beam.customShader = crate::src::cgame::cg_main::cgs.media.lightningShader;
     crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut beam);
     // add the impact flare if it hit something
-    if (trace.fraction as libc::c_double) < 1.0f64 {
+    if (trace.fraction as f64) < 1.0 {
         let mut angles: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
         let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-        dir[0 as libc::c_int as usize] =
-            beam.oldorigin[0 as libc::c_int as usize] - beam.origin[0 as libc::c_int as usize];
-        dir[1 as libc::c_int as usize] =
-            beam.oldorigin[1 as libc::c_int as usize] - beam.origin[1 as libc::c_int as usize];
-        dir[2 as libc::c_int as usize] =
-            beam.oldorigin[2 as libc::c_int as usize] - beam.origin[2 as libc::c_int as usize];
+        dir[0] = beam.oldorigin[0] - beam.origin[0];
+        dir[1] = beam.oldorigin[1] - beam.origin[1];
+        dir[2] = beam.oldorigin[2] - beam.origin[2];
         crate::src::qcommon::q_math::VectorNormalize(dir.as_mut_ptr());
         crate::stdlib::memset(
             &mut beam as *mut crate::tr_types_h::refEntity_t as *mut libc::c_void,
-            0 as libc::c_int,
-            ::std::mem::size_of::<crate::tr_types_h::refEntity_t>() as libc::c_ulong,
+            0,
+            ::std::mem::size_of::<crate::tr_types_h::refEntity_t>(),
         );
         beam.hModel = crate::src::cgame::cg_main::cgs
             .media
             .lightningExplosionModel;
-        beam.origin[0 as libc::c_int as usize] = trace.endpos[0 as libc::c_int as usize]
-            + dir[0 as libc::c_int as usize] * -(16 as libc::c_int) as libc::c_float;
-        beam.origin[1 as libc::c_int as usize] = trace.endpos[1 as libc::c_int as usize]
-            + dir[1 as libc::c_int as usize] * -(16 as libc::c_int) as libc::c_float;
-        beam.origin[2 as libc::c_int as usize] = trace.endpos[2 as libc::c_int as usize]
-            + dir[2 as libc::c_int as usize] * -(16 as libc::c_int) as libc::c_float;
+        beam.origin[0] = trace.endpos[0] + dir[0] * -16f32;
+        beam.origin[1] = trace.endpos[1] + dir[1] * -16f32;
+        beam.origin[2] = trace.endpos[2] + dir[2] * -16f32;
         // make a random orientation
-        angles[0 as libc::c_int as usize] =
-            (crate::stdlib::rand() % 360 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
-        angles[1 as libc::c_int as usize] =
-            (crate::stdlib::rand() % 360 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
-        angles[2 as libc::c_int as usize] =
-            (crate::stdlib::rand() % 360 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+        angles[0] = (crate::stdlib::rand() % 360) as crate::src::qcommon::q_shared::vec_t;
+        angles[1] = (crate::stdlib::rand() % 360) as crate::src::qcommon::q_shared::vec_t;
+        angles[2] = (crate::stdlib::rand() % 360) as crate::src::qcommon::q_shared::vec_t;
         crate::src::qcommon::q_math::AnglesToAxis(
             angles.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             beam.axis.as_mut_ptr(),
@@ -2122,35 +1768,25 @@ unsafe extern "C" fn CG_LightningBolt(
     };
 }
 
-unsafe extern "C" fn CG_MachinegunSpinAngle(
-    mut cent: *mut crate::cg_local_h::centity_t,
-) -> libc::c_float {
-    let mut delta: libc::c_int = 0;
-    let mut angle: libc::c_float = 0.;
-    let mut speed: libc::c_float = 0.;
+unsafe extern "C" fn CG_MachinegunSpinAngle(mut cent: *mut crate::cg_local_h::centity_t) -> f32 {
+    let mut delta: i32 = 0;
+    let mut angle: f32 = 0.;
+    let mut speed: f32 = 0.;
     delta = crate::src::cgame::cg_main::cg.time - (*cent).pe.barrelTime;
     if (*cent).pe.barrelSpinning as u64 != 0 {
-        angle = ((*cent).pe.barrelAngle as libc::c_double + delta as libc::c_double * 0.9f64)
-            as libc::c_float
+        angle = ((*cent).pe.barrelAngle as f64 + delta as f64 * 0.9) as f32
     } else {
-        if delta > 1000 as libc::c_int {
-            delta = 1000 as libc::c_int
+        if delta > 1000 {
+            delta = 1000
         }
-        speed = (0.5f64
-            * (0.9f64
-                + ((1000 as libc::c_int - delta) as libc::c_float
-                    / 1000 as libc::c_int as libc::c_float) as libc::c_double))
-            as libc::c_float;
-        angle = (*cent).pe.barrelAngle + delta as libc::c_float * speed
+        speed = (0.5 * (0.9 + ((1000 - delta) as f32 / 1000f32) as f64)) as f32;
+        angle = (*cent).pe.barrelAngle + delta as f32 * speed
     }
-    if (*cent).pe.barrelSpinning as libc::c_uint
-        == ((*cent).currentState.eFlags & 0x100 as libc::c_int == 0) as libc::c_int as libc::c_uint
-    {
+    if (*cent).pe.barrelSpinning == ((*cent).currentState.eFlags & 0x100 == 0) as u32 {
         (*cent).pe.barrelTime = crate::src::cgame::cg_main::cg.time;
         (*cent).pe.barrelAngle = crate::src::qcommon::q_math::AngleMod(angle);
-        (*cent).pe.barrelSpinning = ((*cent).currentState.eFlags & 0x100 as libc::c_int != 0)
-            as libc::c_int
-            as crate::src::qcommon::q_shared::qboolean
+        (*cent).pe.barrelSpinning =
+            ((*cent).currentState.eFlags & 0x100 != 0) as crate::src::qcommon::q_shared::qboolean
     }
     return angle;
 }
@@ -2162,19 +1798,19 @@ CG_AddWeaponWithPowerups
 
 unsafe extern "C" fn CG_AddWeaponWithPowerups(
     mut gun: *mut crate::tr_types_h::refEntity_t,
-    mut powerups: libc::c_int,
+    mut powerups: i32,
 ) {
     // add powerup effects
-    if powerups & (1 as libc::c_int) << crate::bg_public_h::PW_INVIS as libc::c_int != 0 {
+    if powerups & (1) << crate::bg_public_h::PW_INVIS as i32 != 0 {
         (*gun).customShader = crate::src::cgame::cg_main::cgs.media.invisShader;
         crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(gun);
     } else {
         crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(gun);
-        if powerups & (1 as libc::c_int) << crate::bg_public_h::PW_BATTLESUIT as libc::c_int != 0 {
+        if powerups & (1) << crate::bg_public_h::PW_BATTLESUIT as i32 != 0 {
             (*gun).customShader = crate::src::cgame::cg_main::cgs.media.battleWeaponShader;
             crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(gun);
         }
-        if powerups & (1 as libc::c_int) << crate::bg_public_h::PW_QUAD as libc::c_int != 0 {
+        if powerups & (1) << crate::bg_public_h::PW_QUAD as i32 != 0 {
             (*gun).customShader = crate::src::cgame::cg_main::cgs.media.quadWeaponShader;
             crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(gun);
         }
@@ -2195,7 +1831,7 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
     mut parent: *mut crate::tr_types_h::refEntity_t,
     mut ps: *mut crate::src::qcommon::q_shared::playerState_t,
     mut cent: *mut crate::cg_local_h::centity_t,
-    mut team: libc::c_int,
+    mut team: i32,
 ) {
     let mut gun: crate::tr_types_h::refEntity_t = crate::tr_types_h::refEntity_t {
         reType: crate::tr_types_h::RT_MODEL,
@@ -2275,57 +1911,43 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
             axis: [[0.; 3]; 3],
         };
     weaponNum = (*cent).currentState.weapon as crate::bg_public_h::weapon_t;
-    CG_RegisterWeapon(weaponNum as libc::c_int);
+    CG_RegisterWeapon(weaponNum as i32);
     weapon = &mut *crate::src::cgame::cg_main::cg_weapons
         .as_mut_ptr()
         .offset(weaponNum as isize) as *mut crate::cg_local_h::weaponInfo_t;
     // add the weapon
     crate::stdlib::memset(
         &mut gun as *mut crate::tr_types_h::refEntity_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::tr_types_h::refEntity_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::tr_types_h::refEntity_t>(),
     );
-    gun.lightingOrigin[0 as libc::c_int as usize] =
-        (*parent).lightingOrigin[0 as libc::c_int as usize];
-    gun.lightingOrigin[1 as libc::c_int as usize] =
-        (*parent).lightingOrigin[1 as libc::c_int as usize];
-    gun.lightingOrigin[2 as libc::c_int as usize] =
-        (*parent).lightingOrigin[2 as libc::c_int as usize];
+    gun.lightingOrigin[0] = (*parent).lightingOrigin[0];
+    gun.lightingOrigin[1] = (*parent).lightingOrigin[1];
+    gun.lightingOrigin[2] = (*parent).lightingOrigin[2];
     gun.shadowPlane = (*parent).shadowPlane;
     gun.renderfx = (*parent).renderfx;
     // set custom shading for railgun refire rate
-    if weaponNum as libc::c_uint == crate::bg_public_h::WP_RAILGUN as libc::c_int as libc::c_uint {
+    if weaponNum == crate::bg_public_h::WP_RAILGUN {
         let mut ci: *mut crate::cg_local_h::clientInfo_t = &mut *crate::src::cgame::cg_main::cgs
             .clientinfo
             .as_mut_ptr()
             .offset((*cent).currentState.clientNum as isize)
             as *mut crate::cg_local_h::clientInfo_t;
-        if (*cent).pe.railFireTime + 1500 as libc::c_int > crate::src::cgame::cg_main::cg.time {
-            let mut scale: libc::c_int = 255 as libc::c_int
-                * (crate::src::cgame::cg_main::cg.time - (*cent).pe.railFireTime)
-                / 1500 as libc::c_int;
-            gun.shaderRGBA[0 as libc::c_int as usize] = ((*ci).c1RGBA[0 as libc::c_int as usize]
-                as libc::c_int
-                * scale
-                >> 8 as libc::c_int)
-                as crate::src::qcommon::q_shared::byte;
-            gun.shaderRGBA[1 as libc::c_int as usize] = ((*ci).c1RGBA[1 as libc::c_int as usize]
-                as libc::c_int
-                * scale
-                >> 8 as libc::c_int)
-                as crate::src::qcommon::q_shared::byte;
-            gun.shaderRGBA[2 as libc::c_int as usize] = ((*ci).c1RGBA[2 as libc::c_int as usize]
-                as libc::c_int
-                * scale
-                >> 8 as libc::c_int)
-                as crate::src::qcommon::q_shared::byte;
-            gun.shaderRGBA[3 as libc::c_int as usize] =
-                255 as libc::c_int as crate::src::qcommon::q_shared::byte
+        if (*cent).pe.railFireTime + 1500 > crate::src::cgame::cg_main::cg.time {
+            let mut scale: i32 =
+                255 * (crate::src::cgame::cg_main::cg.time - (*cent).pe.railFireTime) / 1500;
+            gun.shaderRGBA[0] =
+                ((*ci).c1RGBA[0] as i32 * scale >> 8) as crate::src::qcommon::q_shared::byte;
+            gun.shaderRGBA[1] =
+                ((*ci).c1RGBA[1] as i32 * scale >> 8) as crate::src::qcommon::q_shared::byte;
+            gun.shaderRGBA[2] =
+                ((*ci).c1RGBA[2] as i32 * scale >> 8) as crate::src::qcommon::q_shared::byte;
+            gun.shaderRGBA[3] = 255
         } else {
-            gun.shaderRGBA[0 as libc::c_int as usize] = (*ci).c1RGBA[0 as libc::c_int as usize];
-            gun.shaderRGBA[1 as libc::c_int as usize] = (*ci).c1RGBA[1 as libc::c_int as usize];
-            gun.shaderRGBA[2 as libc::c_int as usize] = (*ci).c1RGBA[2 as libc::c_int as usize];
-            gun.shaderRGBA[3 as libc::c_int as usize] = (*ci).c1RGBA[3 as libc::c_int as usize]
+            gun.shaderRGBA[0] = (*ci).c1RGBA[0];
+            gun.shaderRGBA[1] = (*ci).c1RGBA[1];
+            gun.shaderRGBA[2] = (*ci).c1RGBA[2];
+            gun.shaderRGBA[3] = (*ci).c1RGBA[3]
         }
     }
     gun.hModel = (*weapon).weaponModel;
@@ -2334,8 +1956,8 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
     }
     if ps.is_null() {
         // add weapon ready sound
-        (*cent).pe.lightningFiring = crate::src::qcommon::q_shared::qfalse as libc::c_int;
-        if (*cent).currentState.eFlags & 0x100 as libc::c_int != 0 && (*weapon).firingSound != 0 {
+        (*cent).pe.lightningFiring = crate::src::qcommon::q_shared::qfalse as i32;
+        if (*cent).currentState.eFlags & 0x100 != 0 && (*weapon).firingSound != 0 {
             // lightning gun and guantlet make a different sound when fire is held down
             crate::src::cgame::cg_syscalls::trap_S_AddLoopingSound(
                 (*cent).currentState.number,
@@ -2344,7 +1966,7 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
                     as *const crate::src::qcommon::q_shared::vec_t,
                 (*weapon).firingSound,
             );
-            (*cent).pe.lightningFiring = crate::src::qcommon::q_shared::qtrue as libc::c_int
+            (*cent).pe.lightningFiring = crate::src::qcommon::q_shared::qtrue as i32
         } else if (*weapon).readySound != 0 {
             crate::src::cgame::cg_syscalls::trap_S_AddLoopingSound(
                 (*cent).currentState.number,
@@ -2360,52 +1982,28 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
         (*parent).hModel,
         (*parent).oldframe,
         (*parent).frame,
-        (1.0f64 - (*parent).backlerp as libc::c_double) as libc::c_float,
-        b"tag_weapon\x00" as *const u8 as *const libc::c_char,
+        (1.0 - (*parent).backlerp as f64) as f32,
+        b"tag_weapon\x00" as *const u8 as *const i8,
     );
-    gun.origin[0 as libc::c_int as usize] = (*parent).origin[0 as libc::c_int as usize];
-    gun.origin[1 as libc::c_int as usize] = (*parent).origin[1 as libc::c_int as usize];
-    gun.origin[2 as libc::c_int as usize] = (*parent).origin[2 as libc::c_int as usize];
-    gun.origin[0 as libc::c_int as usize] = gun.origin[0 as libc::c_int as usize]
-        + (*parent).axis[0 as libc::c_int as usize][0 as libc::c_int as usize]
-            * lerped.origin[0 as libc::c_int as usize];
-    gun.origin[1 as libc::c_int as usize] = gun.origin[1 as libc::c_int as usize]
-        + (*parent).axis[0 as libc::c_int as usize][1 as libc::c_int as usize]
-            * lerped.origin[0 as libc::c_int as usize];
-    gun.origin[2 as libc::c_int as usize] = gun.origin[2 as libc::c_int as usize]
-        + (*parent).axis[0 as libc::c_int as usize][2 as libc::c_int as usize]
-            * lerped.origin[0 as libc::c_int as usize];
+    gun.origin[0] = (*parent).origin[0];
+    gun.origin[1] = (*parent).origin[1];
+    gun.origin[2] = (*parent).origin[2];
+    gun.origin[0] = gun.origin[0] + (*parent).axis[0][0] * lerped.origin[0];
+    gun.origin[1] = gun.origin[1] + (*parent).axis[0][1] * lerped.origin[0];
+    gun.origin[2] = gun.origin[2] + (*parent).axis[0][2] * lerped.origin[0];
     // Make weapon appear left-handed for 2 and centered for 3
-    if !ps.is_null() && crate::src::cgame::cg_main::cg_drawGun.integer == 2 as libc::c_int {
-        gun.origin[0 as libc::c_int as usize] = gun.origin[0 as libc::c_int as usize]
-            + (*parent).axis[1 as libc::c_int as usize][0 as libc::c_int as usize]
-                * -lerped.origin[1 as libc::c_int as usize];
-        gun.origin[1 as libc::c_int as usize] = gun.origin[1 as libc::c_int as usize]
-            + (*parent).axis[1 as libc::c_int as usize][1 as libc::c_int as usize]
-                * -lerped.origin[1 as libc::c_int as usize];
-        gun.origin[2 as libc::c_int as usize] = gun.origin[2 as libc::c_int as usize]
-            + (*parent).axis[1 as libc::c_int as usize][2 as libc::c_int as usize]
-                * -lerped.origin[1 as libc::c_int as usize]
-    } else if ps.is_null() || crate::src::cgame::cg_main::cg_drawGun.integer != 3 as libc::c_int {
-        gun.origin[0 as libc::c_int as usize] = gun.origin[0 as libc::c_int as usize]
-            + (*parent).axis[1 as libc::c_int as usize][0 as libc::c_int as usize]
-                * lerped.origin[1 as libc::c_int as usize];
-        gun.origin[1 as libc::c_int as usize] = gun.origin[1 as libc::c_int as usize]
-            + (*parent).axis[1 as libc::c_int as usize][1 as libc::c_int as usize]
-                * lerped.origin[1 as libc::c_int as usize];
-        gun.origin[2 as libc::c_int as usize] = gun.origin[2 as libc::c_int as usize]
-            + (*parent).axis[1 as libc::c_int as usize][2 as libc::c_int as usize]
-                * lerped.origin[1 as libc::c_int as usize]
+    if !ps.is_null() && crate::src::cgame::cg_main::cg_drawGun.integer == 2 {
+        gun.origin[0] = gun.origin[0] + (*parent).axis[1][0] * -lerped.origin[1];
+        gun.origin[1] = gun.origin[1] + (*parent).axis[1][1] * -lerped.origin[1];
+        gun.origin[2] = gun.origin[2] + (*parent).axis[1][2] * -lerped.origin[1]
+    } else if ps.is_null() || crate::src::cgame::cg_main::cg_drawGun.integer != 3 {
+        gun.origin[0] = gun.origin[0] + (*parent).axis[1][0] * lerped.origin[1];
+        gun.origin[1] = gun.origin[1] + (*parent).axis[1][1] * lerped.origin[1];
+        gun.origin[2] = gun.origin[2] + (*parent).axis[1][2] * lerped.origin[1]
     }
-    gun.origin[0 as libc::c_int as usize] = gun.origin[0 as libc::c_int as usize]
-        + (*parent).axis[2 as libc::c_int as usize][0 as libc::c_int as usize]
-            * lerped.origin[2 as libc::c_int as usize];
-    gun.origin[1 as libc::c_int as usize] = gun.origin[1 as libc::c_int as usize]
-        + (*parent).axis[2 as libc::c_int as usize][1 as libc::c_int as usize]
-            * lerped.origin[2 as libc::c_int as usize];
-    gun.origin[2 as libc::c_int as usize] = gun.origin[2 as libc::c_int as usize]
-        + (*parent).axis[2 as libc::c_int as usize][2 as libc::c_int as usize]
-            * lerped.origin[2 as libc::c_int as usize];
+    gun.origin[0] = gun.origin[0] + (*parent).axis[2][0] * lerped.origin[2];
+    gun.origin[1] = gun.origin[1] + (*parent).axis[2][1] * lerped.origin[2];
+    gun.origin[2] = gun.origin[2] + (*parent).axis[2][2] * lerped.origin[2];
     crate::src::qcommon::q_math::MatrixMultiply(
         lerped.axis.as_mut_ptr(),
         (*parent).axis.as_mut_ptr(),
@@ -2417,23 +2015,18 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
     if (*weapon).barrelModel != 0 {
         crate::stdlib::memset(
             &mut barrel as *mut crate::tr_types_h::refEntity_t as *mut libc::c_void,
-            0 as libc::c_int,
-            ::std::mem::size_of::<crate::tr_types_h::refEntity_t>() as libc::c_ulong,
+            0,
+            ::std::mem::size_of::<crate::tr_types_h::refEntity_t>(),
         );
-        barrel.lightingOrigin[0 as libc::c_int as usize] =
-            (*parent).lightingOrigin[0 as libc::c_int as usize];
-        barrel.lightingOrigin[1 as libc::c_int as usize] =
-            (*parent).lightingOrigin[1 as libc::c_int as usize];
-        barrel.lightingOrigin[2 as libc::c_int as usize] =
-            (*parent).lightingOrigin[2 as libc::c_int as usize];
+        barrel.lightingOrigin[0] = (*parent).lightingOrigin[0];
+        barrel.lightingOrigin[1] = (*parent).lightingOrigin[1];
+        barrel.lightingOrigin[2] = (*parent).lightingOrigin[2];
         barrel.shadowPlane = (*parent).shadowPlane;
         barrel.renderfx = (*parent).renderfx;
         barrel.hModel = (*weapon).barrelModel;
-        angles[1 as libc::c_int as usize] =
-            0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-        angles[0 as libc::c_int as usize] =
-            0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-        angles[2 as libc::c_int as usize] = CG_MachinegunSpinAngle(cent);
+        angles[1] = 0f32;
+        angles[0] = 0f32;
+        angles[2] = CG_MachinegunSpinAngle(cent);
         crate::src::qcommon::q_math::AnglesToAxis(
             angles.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             barrel.axis.as_mut_ptr(),
@@ -2442,7 +2035,7 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
             &mut barrel,
             &mut gun,
             (*weapon).weaponModel,
-            b"tag_barrel\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"tag_barrel\x00" as *const u8 as *mut i8,
         );
         CG_AddWeaponWithPowerups(&mut barrel, (*cent).currentState.powerups);
     }
@@ -2455,56 +2048,45 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
     // then this is a fake player (like on the single player podiums), so
     // go ahead and use the cent
     if nonPredictedCent.wrapping_offset_from(crate::src::cgame::cg_main::cg_entities.as_mut_ptr())
-        as libc::c_long
-        != (*cent).currentState.clientNum as libc::c_long
+        != (*cent).currentState.clientNum as isize
     {
         nonPredictedCent = cent
     }
     // add the flash
-    if !((weaponNum as libc::c_uint
-        == crate::bg_public_h::WP_LIGHTNING as libc::c_int as libc::c_uint
-        || weaponNum as libc::c_uint
-            == crate::bg_public_h::WP_GAUNTLET as libc::c_int as libc::c_uint
-        || weaponNum as libc::c_uint
-            == crate::bg_public_h::WP_GRAPPLING_HOOK as libc::c_int as libc::c_uint)
-        && (*nonPredictedCent).currentState.eFlags & 0x100 as libc::c_int != 0)
+    if !((weaponNum == crate::bg_public_h::WP_LIGHTNING
+        || weaponNum == crate::bg_public_h::WP_GAUNTLET
+        || weaponNum == crate::bg_public_h::WP_GRAPPLING_HOOK)
+        && (*nonPredictedCent).currentState.eFlags & 0x100 != 0)
     {
         // impulse flash
-        if crate::src::cgame::cg_main::cg.time - (*cent).muzzleFlashTime > 20 as libc::c_int {
+        if crate::src::cgame::cg_main::cg.time - (*cent).muzzleFlashTime > 20 {
             return;
         }
     }
     crate::stdlib::memset(
         &mut flash as *mut crate::tr_types_h::refEntity_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::tr_types_h::refEntity_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::tr_types_h::refEntity_t>(),
     );
-    flash.lightingOrigin[0 as libc::c_int as usize] =
-        (*parent).lightingOrigin[0 as libc::c_int as usize];
-    flash.lightingOrigin[1 as libc::c_int as usize] =
-        (*parent).lightingOrigin[1 as libc::c_int as usize];
-    flash.lightingOrigin[2 as libc::c_int as usize] =
-        (*parent).lightingOrigin[2 as libc::c_int as usize];
+    flash.lightingOrigin[0] = (*parent).lightingOrigin[0];
+    flash.lightingOrigin[1] = (*parent).lightingOrigin[1];
+    flash.lightingOrigin[2] = (*parent).lightingOrigin[2];
     flash.shadowPlane = (*parent).shadowPlane;
     flash.renderfx = (*parent).renderfx;
     flash.hModel = (*weapon).flashModel;
     if flash.hModel == 0 {
         return;
     }
-    angles[1 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    angles[0 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    angles[2 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            - 0.5f64)
-        * 10 as libc::c_int as libc::c_double)
+    angles[1] = 0f32;
+    angles[0] = 0f32;
+    angles[2] = (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5) * 10f64)
         as crate::src::qcommon::q_shared::vec_t;
     crate::src::qcommon::q_math::AnglesToAxis(
         angles.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         flash.axis.as_mut_ptr(),
     );
     // colorize the railgun blast
-    if weaponNum as libc::c_uint == crate::bg_public_h::WP_RAILGUN as libc::c_int as libc::c_uint {
+    if weaponNum == crate::bg_public_h::WP_RAILGUN {
         let mut ci_0: *mut crate::cg_local_h::clientInfo_t =
             0 as *mut crate::cg_local_h::clientInfo_t;
         ci_0 = &mut *crate::src::cgame::cg_main::cgs
@@ -2512,25 +2094,19 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
             .as_mut_ptr()
             .offset((*cent).currentState.clientNum as isize)
             as *mut crate::cg_local_h::clientInfo_t;
-        flash.shaderRGBA[0 as libc::c_int as usize] = (255 as libc::c_int as libc::c_float
-            * (*ci_0).color1[0 as libc::c_int as usize])
-            as crate::src::qcommon::q_shared::byte;
-        flash.shaderRGBA[1 as libc::c_int as usize] = (255 as libc::c_int as libc::c_float
-            * (*ci_0).color1[1 as libc::c_int as usize])
-            as crate::src::qcommon::q_shared::byte;
-        flash.shaderRGBA[2 as libc::c_int as usize] = (255 as libc::c_int as libc::c_float
-            * (*ci_0).color1[2 as libc::c_int as usize])
-            as crate::src::qcommon::q_shared::byte
+        flash.shaderRGBA[0] = (255f32 * (*ci_0).color1[0]) as crate::src::qcommon::q_shared::byte;
+        flash.shaderRGBA[1] = (255f32 * (*ci_0).color1[1]) as crate::src::qcommon::q_shared::byte;
+        flash.shaderRGBA[2] = (255f32 * (*ci_0).color1[2]) as crate::src::qcommon::q_shared::byte
     }
     crate::src::cgame::cg_ents::CG_PositionRotatedEntityOnTag(
         &mut flash,
         &mut gun,
         (*weapon).weaponModel,
-        b"tag_flash\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"tag_flash\x00" as *const u8 as *mut i8,
     );
     crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut flash);
     if !ps.is_null()
-        || crate::src::cgame::cg_main::cg.renderingThirdPerson as libc::c_uint != 0
+        || crate::src::cgame::cg_main::cg.renderingThirdPerson != 0
         || (*cent).currentState.number
             != crate::src::cgame::cg_main::cg
                 .predictedPlayerState
@@ -2538,16 +2114,16 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
     {
         // add lightning bolt
         CG_LightningBolt(nonPredictedCent, flash.origin.as_mut_ptr());
-        if (*weapon).flashDlightColor[0 as libc::c_int as usize] != 0.
-            || (*weapon).flashDlightColor[1 as libc::c_int as usize] != 0.
-            || (*weapon).flashDlightColor[2 as libc::c_int as usize] != 0.
+        if (*weapon).flashDlightColor[0] != 0.
+            || (*weapon).flashDlightColor[1] != 0.
+            || (*weapon).flashDlightColor[2] != 0.
         {
             crate::src::cgame::cg_syscalls::trap_R_AddLightToScene(
                 flash.origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-                (300 as libc::c_int + (crate::stdlib::rand() & 31 as libc::c_int)) as libc::c_float,
-                (*weapon).flashDlightColor[0 as libc::c_int as usize],
-                (*weapon).flashDlightColor[1 as libc::c_int as usize],
-                (*weapon).flashDlightColor[2 as libc::c_int as usize],
+                (300i32 + (crate::stdlib::rand() & 31i32)) as f32,
+                (*weapon).flashDlightColor[0usize],
+                (*weapon).flashDlightColor[1usize],
+                (*weapon).flashDlightColor[2usize],
             );
         }
     };
@@ -2588,16 +2164,16 @@ pub unsafe extern "C" fn CG_AddViewWeapon(
     };
     let mut cent: *mut crate::cg_local_h::centity_t = 0 as *mut crate::cg_local_h::centity_t;
     let mut ci: *mut crate::cg_local_h::clientInfo_t = 0 as *mut crate::cg_local_h::clientInfo_t;
-    let mut fovOffset: libc::c_float = 0.;
+    let mut fovOffset: f32 = 0.;
     let mut angles: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut weapon: *mut crate::cg_local_h::weaponInfo_t =
         0 as *mut crate::cg_local_h::weaponInfo_t;
-    if (*ps).persistant[crate::bg_public_h::PERS_TEAM as libc::c_int as usize]
-        == crate::bg_public_h::TEAM_SPECTATOR as libc::c_int
+    if (*ps).persistant[crate::bg_public_h::PERS_TEAM as usize]
+        == crate::bg_public_h::TEAM_SPECTATOR as i32
     {
         return;
     }
-    if (*ps).pm_type == crate::bg_public_h::PM_INTERMISSION as libc::c_int {
+    if (*ps).pm_type == crate::bg_public_h::PM_INTERMISSION as i32 {
         return;
     }
     // no gun if in third person view or a camera is active
@@ -2608,26 +2184,14 @@ pub unsafe extern "C" fn CG_AddViewWeapon(
     // allow the gun to be completely removed
     if crate::src::cgame::cg_main::cg_drawGun.integer == 0 {
         let mut origin: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-        if crate::src::cgame::cg_main::cg.predictedPlayerState.eFlags & 0x100 as libc::c_int != 0 {
+        if crate::src::cgame::cg_main::cg.predictedPlayerState.eFlags & 0x100 != 0 {
             // special hack for lightning gun...
-            origin[0 as libc::c_int as usize] =
-                crate::src::cgame::cg_main::cg.refdef.vieworg[0 as libc::c_int as usize];
-            origin[1 as libc::c_int as usize] =
-                crate::src::cgame::cg_main::cg.refdef.vieworg[1 as libc::c_int as usize];
-            origin[2 as libc::c_int as usize] =
-                crate::src::cgame::cg_main::cg.refdef.vieworg[2 as libc::c_int as usize];
-            origin[0 as libc::c_int as usize] = origin[0 as libc::c_int as usize]
-                + crate::src::cgame::cg_main::cg.refdef.viewaxis[2 as libc::c_int as usize]
-                    [0 as libc::c_int as usize]
-                    * -(8 as libc::c_int) as libc::c_float;
-            origin[1 as libc::c_int as usize] = origin[1 as libc::c_int as usize]
-                + crate::src::cgame::cg_main::cg.refdef.viewaxis[2 as libc::c_int as usize]
-                    [1 as libc::c_int as usize]
-                    * -(8 as libc::c_int) as libc::c_float;
-            origin[2 as libc::c_int as usize] = origin[2 as libc::c_int as usize]
-                + crate::src::cgame::cg_main::cg.refdef.viewaxis[2 as libc::c_int as usize]
-                    [2 as libc::c_int as usize]
-                    * -(8 as libc::c_int) as libc::c_float;
+            origin[0] = crate::src::cgame::cg_main::cg.refdef.vieworg[0];
+            origin[1] = crate::src::cgame::cg_main::cg.refdef.vieworg[1];
+            origin[2] = crate::src::cgame::cg_main::cg.refdef.vieworg[2];
+            origin[0] = origin[0] + crate::src::cgame::cg_main::cg.refdef.viewaxis[2][0] * -8f32;
+            origin[1] = origin[1] + crate::src::cgame::cg_main::cg.refdef.viewaxis[2][1] * -8f32;
+            origin[2] = origin[2] + crate::src::cgame::cg_main::cg.refdef.viewaxis[2][2] * -8f32;
             CG_LightningBolt(
                 &mut *crate::src::cgame::cg_main::cg_entities
                     .as_mut_ptr()
@@ -2642,12 +2206,10 @@ pub unsafe extern "C" fn CG_AddViewWeapon(
         return;
     }
     // drop gun lower at higher fov
-    if crate::src::cgame::cg_main::cg_fov.integer > 90 as libc::c_int {
-        fovOffset = (-0.2f64
-            * (crate::src::cgame::cg_main::cg_fov.integer - 90 as libc::c_int) as libc::c_double)
-            as libc::c_float
+    if crate::src::cgame::cg_main::cg_fov.integer > 90 {
+        fovOffset = (-0.2 * (crate::src::cgame::cg_main::cg_fov.integer - 90) as f64) as f32
     } else {
-        fovOffset = 0 as libc::c_int as libc::c_float
+        fovOffset = 0f32
     } // &cg_entities[cg.snap->ps.clientNum];
     cent = &mut crate::src::cgame::cg_main::cg.predictedPlayerEntity;
     CG_RegisterWeapon((*ps).weapon);
@@ -2656,46 +2218,37 @@ pub unsafe extern "C" fn CG_AddViewWeapon(
         .offset((*ps).weapon as isize) as *mut crate::cg_local_h::weaponInfo_t;
     crate::stdlib::memset(
         &mut hand as *mut crate::tr_types_h::refEntity_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::tr_types_h::refEntity_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::tr_types_h::refEntity_t>(),
     );
     // set up gun position
     CG_CalculateWeaponPosition(hand.origin.as_mut_ptr(), angles.as_mut_ptr());
-    hand.origin[0 as libc::c_int as usize] = hand.origin[0 as libc::c_int as usize]
-        + crate::src::cgame::cg_main::cg.refdef.viewaxis[0 as libc::c_int as usize]
-            [0 as libc::c_int as usize]
+    hand.origin[0] = hand.origin[0]
+        + crate::src::cgame::cg_main::cg.refdef.viewaxis[0][0]
             * crate::src::cgame::cg_main::cg_gun_x.value;
-    hand.origin[1 as libc::c_int as usize] = hand.origin[1 as libc::c_int as usize]
-        + crate::src::cgame::cg_main::cg.refdef.viewaxis[0 as libc::c_int as usize]
-            [1 as libc::c_int as usize]
+    hand.origin[1] = hand.origin[1]
+        + crate::src::cgame::cg_main::cg.refdef.viewaxis[0][1]
             * crate::src::cgame::cg_main::cg_gun_x.value;
-    hand.origin[2 as libc::c_int as usize] = hand.origin[2 as libc::c_int as usize]
-        + crate::src::cgame::cg_main::cg.refdef.viewaxis[0 as libc::c_int as usize]
-            [2 as libc::c_int as usize]
+    hand.origin[2] = hand.origin[2]
+        + crate::src::cgame::cg_main::cg.refdef.viewaxis[0][2]
             * crate::src::cgame::cg_main::cg_gun_x.value;
-    hand.origin[0 as libc::c_int as usize] = hand.origin[0 as libc::c_int as usize]
-        + crate::src::cgame::cg_main::cg.refdef.viewaxis[1 as libc::c_int as usize]
-            [0 as libc::c_int as usize]
+    hand.origin[0] = hand.origin[0]
+        + crate::src::cgame::cg_main::cg.refdef.viewaxis[1][0]
             * crate::src::cgame::cg_main::cg_gun_y.value;
-    hand.origin[1 as libc::c_int as usize] = hand.origin[1 as libc::c_int as usize]
-        + crate::src::cgame::cg_main::cg.refdef.viewaxis[1 as libc::c_int as usize]
-            [1 as libc::c_int as usize]
+    hand.origin[1] = hand.origin[1]
+        + crate::src::cgame::cg_main::cg.refdef.viewaxis[1][1]
             * crate::src::cgame::cg_main::cg_gun_y.value;
-    hand.origin[2 as libc::c_int as usize] = hand.origin[2 as libc::c_int as usize]
-        + crate::src::cgame::cg_main::cg.refdef.viewaxis[1 as libc::c_int as usize]
-            [2 as libc::c_int as usize]
+    hand.origin[2] = hand.origin[2]
+        + crate::src::cgame::cg_main::cg.refdef.viewaxis[1][2]
             * crate::src::cgame::cg_main::cg_gun_y.value;
-    hand.origin[0 as libc::c_int as usize] = hand.origin[0 as libc::c_int as usize]
-        + crate::src::cgame::cg_main::cg.refdef.viewaxis[2 as libc::c_int as usize]
-            [0 as libc::c_int as usize]
+    hand.origin[0] = hand.origin[0]
+        + crate::src::cgame::cg_main::cg.refdef.viewaxis[2][0]
             * (crate::src::cgame::cg_main::cg_gun_z.value + fovOffset);
-    hand.origin[1 as libc::c_int as usize] = hand.origin[1 as libc::c_int as usize]
-        + crate::src::cgame::cg_main::cg.refdef.viewaxis[2 as libc::c_int as usize]
-            [1 as libc::c_int as usize]
+    hand.origin[1] = hand.origin[1]
+        + crate::src::cgame::cg_main::cg.refdef.viewaxis[2][1]
             * (crate::src::cgame::cg_main::cg_gun_z.value + fovOffset);
-    hand.origin[2 as libc::c_int as usize] = hand.origin[2 as libc::c_int as usize]
-        + crate::src::cgame::cg_main::cg.refdef.viewaxis[2 as libc::c_int as usize]
-            [2 as libc::c_int as usize]
+    hand.origin[2] = hand.origin[2]
+        + crate::src::cgame::cg_main::cg.refdef.viewaxis[2][2]
             * (crate::src::cgame::cg_main::cg_gun_z.value + fovOffset);
     crate::src::qcommon::q_math::AnglesToAxis(
         angles.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -2706,7 +2259,7 @@ pub unsafe extern "C" fn CG_AddViewWeapon(
         // development tool
         hand.oldframe = crate::src::cgame::cg_main::cg_gun_frame.integer;
         hand.frame = hand.oldframe;
-        hand.backlerp = 0 as libc::c_int as libc::c_float
+        hand.backlerp = 0f32
     } else {
         // get clientinfo for animation map
         ci = &mut *crate::src::cgame::cg_main::cgs
@@ -2719,13 +2272,13 @@ pub unsafe extern "C" fn CG_AddViewWeapon(
         hand.backlerp = (*cent).pe.torso.backlerp
     }
     hand.hModel = (*weapon).handsModel;
-    hand.renderfx = 0x8 as libc::c_int | 0x4 as libc::c_int | 0x1 as libc::c_int;
+    hand.renderfx = 0x8 | 0x4 | 0x1;
     // add everything onto the hand
     CG_AddPlayerWeapon(
         &mut hand,
         ps,
         &mut crate::src::cgame::cg_main::cg.predictedPlayerEntity,
-        (*ps).persistant[crate::bg_public_h::PERS_TEAM as libc::c_int as usize],
+        (*ps).persistant[crate::bg_public_h::PERS_TEAM as usize],
     );
 }
 /*
@@ -2743,77 +2296,77 @@ CG_DrawWeaponSelect
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_DrawWeaponSelect() {
-    let mut i: libc::c_int = 0;
-    let mut bits: libc::c_int = 0;
-    let mut count: libc::c_int = 0;
-    let mut x: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
-    let mut w: libc::c_int = 0;
-    let mut name: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut color: *mut libc::c_float = 0 as *mut libc::c_float;
+    let mut i: i32 = 0;
+    let mut bits: i32 = 0;
+    let mut count: i32 = 0;
+    let mut x: i32 = 0;
+    let mut y: i32 = 0;
+    let mut w: i32 = 0;
+    let mut name: *mut i8 = 0 as *mut i8;
+    let mut color: *mut f32 = 0 as *mut f32;
     // don't display if dead
     if crate::src::cgame::cg_main::cg.predictedPlayerState.stats
-        [crate::bg_public_h::STAT_HEALTH as libc::c_int as usize]
-        <= 0 as libc::c_int
+        [crate::bg_public_h::STAT_HEALTH as usize]
+        <= 0
     {
         return;
     }
     color = crate::src::cgame::cg_drawtools::CG_FadeColor(
         crate::src::cgame::cg_main::cg.weaponSelectTime,
-        1400 as libc::c_int,
+        1400,
     );
     if color.is_null() {
         return;
     }
     crate::src::cgame::cg_syscalls::trap_R_SetColor(color);
     // showing weapon select clears pickup item display, but not the blend blob
-    crate::src::cgame::cg_main::cg.itemPickupTime = 0 as libc::c_int;
+    crate::src::cgame::cg_main::cg.itemPickupTime = 0;
     // count the number of weapons owned
-    bits = (*crate::src::cgame::cg_main::cg.snap).ps.stats
-        [crate::bg_public_h::STAT_WEAPONS as libc::c_int as usize];
-    count = 0 as libc::c_int;
-    i = 1 as libc::c_int;
-    while i < 16 as libc::c_int {
-        if bits & (1 as libc::c_int) << i != 0 {
+    bits =
+        (*crate::src::cgame::cg_main::cg.snap).ps.stats[crate::bg_public_h::STAT_WEAPONS as usize];
+    count = 0;
+    i = 1;
+    while i < 16 {
+        if bits & (1) << i != 0 {
             count += 1
         }
         i += 1
     }
-    x = 320 as libc::c_int - count * 20 as libc::c_int;
-    y = 380 as libc::c_int;
-    i = 1 as libc::c_int;
-    while i < 16 as libc::c_int {
-        if !(bits & (1 as libc::c_int) << i == 0) {
+    x = 320 - count * 20;
+    y = 380;
+    i = 1;
+    while i < 16 {
+        if !(bits & (1) << i == 0) {
             CG_RegisterWeapon(i);
             // draw weapon icon
             crate::src::cgame::cg_drawtools::CG_DrawPic(
-                x as libc::c_float,
-                y as libc::c_float,
-                32 as libc::c_int as libc::c_float,
-                32 as libc::c_int as libc::c_float,
+                x as f32,
+                y as f32,
+                32f32,
+                32f32,
                 crate::src::cgame::cg_main::cg_weapons[i as usize].weaponIcon,
             );
             // draw selection marker
             if i == crate::src::cgame::cg_main::cg.weaponSelect {
                 crate::src::cgame::cg_drawtools::CG_DrawPic(
-                    (x - 4 as libc::c_int) as libc::c_float,
-                    (y - 4 as libc::c_int) as libc::c_float,
-                    40 as libc::c_int as libc::c_float,
-                    40 as libc::c_int as libc::c_float,
+                    (x - 4i32) as f32,
+                    (y - 4i32) as f32,
+                    40f32,
+                    40f32,
                     crate::src::cgame::cg_main::cgs.media.selectShader,
                 );
             }
             // no ammo cross on top
             if (*crate::src::cgame::cg_main::cg.snap).ps.ammo[i as usize] == 0 {
                 crate::src::cgame::cg_drawtools::CG_DrawPic(
-                    x as libc::c_float,
-                    y as libc::c_float,
-                    32 as libc::c_int as libc::c_float,
-                    32 as libc::c_int as libc::c_float,
+                    x as f32,
+                    y as f32,
+                    32f32,
+                    32f32,
                     crate::src::cgame::cg_main::cgs.media.noammoShader,
                 );
             }
-            x += 40 as libc::c_int
+            x += 40
         }
         i += 1
     }
@@ -2827,17 +2380,12 @@ pub unsafe extern "C" fn CG_DrawWeaponSelect() {
             .item)
             .pickup_name;
         if !name.is_null() {
-            w = crate::src::cgame::cg_drawtools::CG_DrawStrlen(name) * 16 as libc::c_int;
-            x = (640 as libc::c_int - w) / 2 as libc::c_int;
-            crate::src::cgame::cg_drawtools::CG_DrawBigStringColor(
-                x,
-                y - 22 as libc::c_int,
-                name,
-                color,
-            );
+            w = crate::src::cgame::cg_drawtools::CG_DrawStrlen(name) * 16;
+            x = (640 - w) / 2;
+            crate::src::cgame::cg_drawtools::CG_DrawBigStringColor(x, y - 22i32, name, color);
         }
     }
-    crate::src::cgame::cg_syscalls::trap_R_SetColor(0 as *const libc::c_float);
+    crate::src::cgame::cg_syscalls::trap_R_SetColor(0 as *const f32);
 }
 /*
 ===============
@@ -2845,15 +2393,12 @@ CG_WeaponSelectable
 ===============
 */
 
-unsafe extern "C" fn CG_WeaponSelectable(
-    mut i: libc::c_int,
-) -> crate::src::qcommon::q_shared::qboolean {
+unsafe extern "C" fn CG_WeaponSelectable(mut i: i32) -> crate::src::qcommon::q_shared::qboolean {
     if (*crate::src::cgame::cg_main::cg.snap).ps.ammo[i as usize] == 0 {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if (*crate::src::cgame::cg_main::cg.snap).ps.stats
-        [crate::bg_public_h::STAT_WEAPONS as libc::c_int as usize]
-        & (1 as libc::c_int) << i
+    if (*crate::src::cgame::cg_main::cg.snap).ps.stats[crate::bg_public_h::STAT_WEAPONS as usize]
+        & (1) << i
         == 0
     {
         return crate::src::qcommon::q_shared::qfalse;
@@ -2868,24 +2413,23 @@ CG_NextWeapon_f
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_NextWeapon_f() {
-    let mut i: libc::c_int = 0;
-    let mut original: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut original: i32 = 0;
     if crate::src::cgame::cg_main::cg.snap.is_null() {
         return;
     }
-    if (*crate::src::cgame::cg_main::cg.snap).ps.pm_flags & 4096 as libc::c_int != 0 {
+    if (*crate::src::cgame::cg_main::cg.snap).ps.pm_flags & 4096 != 0 {
         return;
     }
     crate::src::cgame::cg_main::cg.weaponSelectTime = crate::src::cgame::cg_main::cg.time;
     original = crate::src::cgame::cg_main::cg.weaponSelect;
-    i = 0 as libc::c_int;
-    while i < 16 as libc::c_int {
+    i = 0;
+    while i < 16 {
         crate::src::cgame::cg_main::cg.weaponSelect += 1;
-        if crate::src::cgame::cg_main::cg.weaponSelect == 16 as libc::c_int {
-            crate::src::cgame::cg_main::cg.weaponSelect = 0 as libc::c_int
+        if crate::src::cgame::cg_main::cg.weaponSelect == 16 {
+            crate::src::cgame::cg_main::cg.weaponSelect = 0
         }
-        if !(crate::src::cgame::cg_main::cg.weaponSelect
-            == crate::bg_public_h::WP_GAUNTLET as libc::c_int)
+        if !(crate::src::cgame::cg_main::cg.weaponSelect == crate::bg_public_h::WP_GAUNTLET as i32)
         {
             if CG_WeaponSelectable(crate::src::cgame::cg_main::cg.weaponSelect) as u64 != 0 {
                 break;
@@ -2894,7 +2438,7 @@ pub unsafe extern "C" fn CG_NextWeapon_f() {
         i += 1
         // never cycle to gauntlet
     }
-    if i == 16 as libc::c_int {
+    if i == 16 {
         crate::src::cgame::cg_main::cg.weaponSelect = original
     };
 }
@@ -2906,24 +2450,23 @@ CG_PrevWeapon_f
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_PrevWeapon_f() {
-    let mut i: libc::c_int = 0;
-    let mut original: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut original: i32 = 0;
     if crate::src::cgame::cg_main::cg.snap.is_null() {
         return;
     }
-    if (*crate::src::cgame::cg_main::cg.snap).ps.pm_flags & 4096 as libc::c_int != 0 {
+    if (*crate::src::cgame::cg_main::cg.snap).ps.pm_flags & 4096 != 0 {
         return;
     }
     crate::src::cgame::cg_main::cg.weaponSelectTime = crate::src::cgame::cg_main::cg.time;
     original = crate::src::cgame::cg_main::cg.weaponSelect;
-    i = 0 as libc::c_int;
-    while i < 16 as libc::c_int {
+    i = 0;
+    while i < 16 {
         crate::src::cgame::cg_main::cg.weaponSelect -= 1;
-        if crate::src::cgame::cg_main::cg.weaponSelect == -(1 as libc::c_int) {
-            crate::src::cgame::cg_main::cg.weaponSelect = 16 as libc::c_int - 1 as libc::c_int
+        if crate::src::cgame::cg_main::cg.weaponSelect == -(1) {
+            crate::src::cgame::cg_main::cg.weaponSelect = 16 - 1
         }
-        if !(crate::src::cgame::cg_main::cg.weaponSelect
-            == crate::bg_public_h::WP_GAUNTLET as libc::c_int)
+        if !(crate::src::cgame::cg_main::cg.weaponSelect == crate::bg_public_h::WP_GAUNTLET as i32)
         {
             if CG_WeaponSelectable(crate::src::cgame::cg_main::cg.weaponSelect) as u64 != 0 {
                 break;
@@ -2932,7 +2475,7 @@ pub unsafe extern "C" fn CG_PrevWeapon_f() {
         i += 1
         // never cycle to gauntlet
     }
-    if i == 16 as libc::c_int {
+    if i == 16 {
         crate::src::cgame::cg_main::cg.weaponSelect = original
     };
 }
@@ -2944,21 +2487,20 @@ CG_Weapon_f
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_Weapon_f() {
-    let mut num: libc::c_int = 0;
+    let mut num: i32 = 0;
     if crate::src::cgame::cg_main::cg.snap.is_null() {
         return;
     }
-    if (*crate::src::cgame::cg_main::cg.snap).ps.pm_flags & 4096 as libc::c_int != 0 {
+    if (*crate::src::cgame::cg_main::cg.snap).ps.pm_flags & 4096 != 0 {
         return;
     }
-    num = atoi(crate::src::cgame::cg_main::CG_Argv(1 as libc::c_int));
-    if num < 1 as libc::c_int || num > 16 as libc::c_int - 1 as libc::c_int {
+    num = atoi(crate::src::cgame::cg_main::CG_Argv(1));
+    if num < 1 || num > 16 - 1 {
         return;
     }
     crate::src::cgame::cg_main::cg.weaponSelectTime = crate::src::cgame::cg_main::cg.time;
-    if (*crate::src::cgame::cg_main::cg.snap).ps.stats
-        [crate::bg_public_h::STAT_WEAPONS as libc::c_int as usize]
-        & (1 as libc::c_int) << num
+    if (*crate::src::cgame::cg_main::cg.snap).ps.stats[crate::bg_public_h::STAT_WEAPONS as usize]
+        & (1) << num
         == 0
     {
         return;
@@ -2976,10 +2518,10 @@ The current weapon has just run out of ammo
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_OutOfAmmoChange() {
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     crate::src::cgame::cg_main::cg.weaponSelectTime = crate::src::cgame::cg_main::cg.time;
-    i = 16 as libc::c_int - 1 as libc::c_int;
-    while i > 0 as libc::c_int {
+    i = 16 - 1;
+    while i > 0 {
         if CG_WeaponSelectable(i) as u64 != 0 {
             crate::src::cgame::cg_main::cg.weaponSelect = i;
             break;
@@ -3007,15 +2549,15 @@ Caused by an EV_FIRE_WEAPON event
 pub unsafe extern "C" fn CG_FireWeapon(mut cent: *mut crate::cg_local_h::centity_t) {
     let mut ent: *mut crate::src::qcommon::q_shared::entityState_t =
         0 as *mut crate::src::qcommon::q_shared::entityState_t;
-    let mut c: libc::c_int = 0;
+    let mut c: i32 = 0;
     let mut weap: *mut crate::cg_local_h::weaponInfo_t = 0 as *mut crate::cg_local_h::weaponInfo_t;
     ent = &mut (*cent).currentState;
-    if (*ent).weapon == crate::bg_public_h::WP_NONE as libc::c_int {
+    if (*ent).weapon == crate::bg_public_h::WP_NONE as i32 {
         return;
     }
-    if (*ent).weapon >= crate::bg_public_h::WP_NUM_WEAPONS as libc::c_int {
+    if (*ent).weapon >= crate::bg_public_h::WP_NUM_WEAPONS as i32 {
         crate::src::cgame::cg_main::CG_Error(
-            b"CG_FireWeapon: ent->weapon >= WP_NUM_WEAPONS\x00" as *const u8 as *const libc::c_char,
+            b"CG_FireWeapon: ent->weapon >= WP_NUM_WEAPONS\x00" as *const u8 as *const i8,
         );
     }
     weap = &mut *crate::src::cgame::cg_main::cg_weapons
@@ -3025,49 +2567,44 @@ pub unsafe extern "C" fn CG_FireWeapon(mut cent: *mut crate::cg_local_h::centity
     // append the flash to the weapon model
     (*cent).muzzleFlashTime = crate::src::cgame::cg_main::cg.time;
     // lightning gun only does this this on initial press
-    if (*ent).weapon == crate::bg_public_h::WP_LIGHTNING as libc::c_int {
+    if (*ent).weapon == crate::bg_public_h::WP_LIGHTNING as i32 {
         if (*cent).pe.lightningFiring != 0 {
             return;
         }
     }
-    if (*ent).weapon == crate::bg_public_h::WP_RAILGUN as libc::c_int {
+    if (*ent).weapon == crate::bg_public_h::WP_RAILGUN as i32 {
         (*cent).pe.railFireTime = crate::src::cgame::cg_main::cg.time
     }
     // play quad sound if needed
-    if (*cent).currentState.powerups
-        & (1 as libc::c_int) << crate::bg_public_h::PW_QUAD as libc::c_int
-        != 0
-    {
+    if (*cent).currentState.powerups & (1) << crate::bg_public_h::PW_QUAD as i32 != 0 {
         crate::src::cgame::cg_syscalls::trap_S_StartSound(
             0 as *mut crate::src::qcommon::q_shared::vec_t,
             (*cent).currentState.number,
-            crate::src::qcommon::q_shared::CHAN_ITEM as libc::c_int,
+            crate::src::qcommon::q_shared::CHAN_ITEM as i32,
             crate::src::cgame::cg_main::cgs.media.quadSound,
         );
     }
     // play a sound
-    c = 0 as libc::c_int;
-    while c < 4 as libc::c_int {
+    c = 0;
+    while c < 4 {
         if (*weap).flashSound[c as usize] == 0 {
             break;
         }
         c += 1
     }
-    if c > 0 as libc::c_int {
+    if c > 0 {
         c = crate::stdlib::rand() % c;
         if (*weap).flashSound[c as usize] != 0 {
             crate::src::cgame::cg_syscalls::trap_S_StartSound(
                 0 as *mut crate::src::qcommon::q_shared::vec_t,
                 (*ent).number,
-                crate::src::qcommon::q_shared::CHAN_WEAPON as libc::c_int,
+                crate::src::qcommon::q_shared::CHAN_WEAPON as i32,
                 (*weap).flashSound[c as usize],
             );
         }
     }
     // do brass ejection
-    if (*weap).ejectBrassFunc.is_some()
-        && crate::src::cgame::cg_main::cg_brassTime.integer > 0 as libc::c_int
-    {
+    if (*weap).ejectBrassFunc.is_some() && crate::src::cgame::cg_main::cg_brassTime.integer > 0 {
         (*weap).ejectBrassFunc.expect("non-null function pointer")(cent);
     };
 }
@@ -3081,8 +2618,8 @@ Caused by an EV_MISSILE_MISS event, or directly by local bullet tracing
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_MissileHitWall(
-    mut weapon: libc::c_int,
-    mut clientNum: libc::c_int,
+    mut weapon: i32,
+    mut clientNum: i32,
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut dir: *mut crate::src::qcommon::q_shared::vec_t,
     mut soundType: crate::cg_local_h::impactSound_t,
@@ -3091,38 +2628,35 @@ pub unsafe extern "C" fn CG_MissileHitWall(
     let mut mark: crate::src::qcommon::q_shared::qhandle_t = 0;
     let mut shader: crate::src::qcommon::q_shared::qhandle_t = 0;
     let mut sfx: crate::src::qcommon::q_shared::sfxHandle_t = 0;
-    let mut radius: libc::c_float = 0.;
-    let mut light: libc::c_float = 0.;
+    let mut radius: f32 = 0.;
+    let mut light: f32 = 0.;
     let mut lightColor: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut le: *mut crate::cg_local_h::localEntity_t = 0 as *mut crate::cg_local_h::localEntity_t;
-    let mut r: libc::c_int = 0;
+    let mut r: i32 = 0;
     let mut alphaFade: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     let mut isSprite: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
-    let mut duration: libc::c_int = 0;
+    let mut duration: i32 = 0;
     let mut sprOrg: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut sprVel: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    mod_0 = 0 as libc::c_int;
-    shader = 0 as libc::c_int;
-    light = 0 as libc::c_int as libc::c_float;
-    lightColor[0 as libc::c_int as usize] =
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    lightColor[1 as libc::c_int as usize] =
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    lightColor[2 as libc::c_int as usize] =
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
+    mod_0 = 0;
+    shader = 0;
+    light = 0f32;
+    lightColor[0] = 1f32;
+    lightColor[1] = 1f32;
+    lightColor[2] = 0f32;
     // set defaults
     isSprite = crate::src::qcommon::q_shared::qfalse;
-    duration = 600 as libc::c_int;
+    duration = 600;
     match weapon {
         4 => {
             mod_0 = crate::src::cgame::cg_main::cgs.media.dishFlashModel;
             shader = crate::src::cgame::cg_main::cgs.media.grenadeExplosionShader;
             sfx = crate::src::cgame::cg_main::cgs.media.sfx_rockexp;
             mark = crate::src::cgame::cg_main::cgs.media.burnMarkShader;
-            radius = 64 as libc::c_int as libc::c_float;
-            light = 300 as libc::c_int as libc::c_float;
+            radius = 64f32;
+            light = 300f32;
             isSprite = crate::src::qcommon::q_shared::qtrue
         }
         5 => {
@@ -3130,35 +2664,28 @@ pub unsafe extern "C" fn CG_MissileHitWall(
             shader = crate::src::cgame::cg_main::cgs.media.rocketExplosionShader;
             sfx = crate::src::cgame::cg_main::cgs.media.sfx_rockexp;
             mark = crate::src::cgame::cg_main::cgs.media.burnMarkShader;
-            radius = 64 as libc::c_int as libc::c_float;
-            light = 300 as libc::c_int as libc::c_float;
+            radius = 64f32;
+            light = 300f32;
             isSprite = crate::src::qcommon::q_shared::qtrue;
-            duration = 1000 as libc::c_int;
-            lightColor[0 as libc::c_int as usize] =
-                1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            lightColor[1 as libc::c_int as usize] = 0.75f64 as crate::src::qcommon::q_shared::vec_t;
-            lightColor[2 as libc::c_int as usize] = 0.0f64 as crate::src::qcommon::q_shared::vec_t;
-            if crate::src::cgame::cg_main::cg_oldRocket.integer == 0 as libc::c_int {
+            duration = 1000;
+            lightColor[0] = 1f32;
+            lightColor[1] = 0.75;
+            lightColor[2] = 0f32;
+            if crate::src::cgame::cg_main::cg_oldRocket.integer == 0 {
                 // explosion sprite animation
-                sprOrg[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize)
-                    + *dir.offset(0 as libc::c_int as isize) * 24 as libc::c_int as libc::c_float;
-                sprOrg[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize)
-                    + *dir.offset(1 as libc::c_int as isize) * 24 as libc::c_int as libc::c_float;
-                sprOrg[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize)
-                    + *dir.offset(2 as libc::c_int as isize) * 24 as libc::c_int as libc::c_float;
-                sprVel[0 as libc::c_int as usize] =
-                    *dir.offset(0 as libc::c_int as isize) * 64 as libc::c_int as libc::c_float;
-                sprVel[1 as libc::c_int as usize] =
-                    *dir.offset(1 as libc::c_int as isize) * 64 as libc::c_int as libc::c_float;
-                sprVel[2 as libc::c_int as usize] =
-                    *dir.offset(2 as libc::c_int as isize) * 64 as libc::c_int as libc::c_float;
+                sprOrg[0] = *origin.offset(0) + *dir.offset(0) * 24f32;
+                sprOrg[1] = *origin.offset(1) + *dir.offset(1) * 24f32;
+                sprOrg[2] = *origin.offset(2) + *dir.offset(2) * 24f32;
+                sprVel[0] = *dir.offset(0) * 64f32;
+                sprVel[1] = *dir.offset(1) * 64f32;
+                sprVel[2] = *dir.offset(2) * 64f32;
                 crate::src::cgame::cg_particles::CG_ParticleExplosion(
-                    b"explode1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                    b"explode1\x00" as *const u8 as *mut i8,
                     sprOrg.as_mut_ptr(),
                     sprVel.as_mut_ptr(),
-                    1400 as libc::c_int,
-                    20 as libc::c_int,
-                    30 as libc::c_int,
+                    1400i32,
+                    20i32,
+                    30i32,
                 );
             }
         }
@@ -3168,63 +2695,63 @@ pub unsafe extern "C" fn CG_MissileHitWall(
             //sfx = cgs.media.sfx_railg;
             sfx = crate::src::cgame::cg_main::cgs.media.sfx_plasmaexp;
             mark = crate::src::cgame::cg_main::cgs.media.energyMarkShader;
-            radius = 24 as libc::c_int as libc::c_float
+            radius = 24f32
         }
         8 => {
             mod_0 = crate::src::cgame::cg_main::cgs.media.ringFlashModel;
             shader = crate::src::cgame::cg_main::cgs.media.plasmaExplosionShader;
             sfx = crate::src::cgame::cg_main::cgs.media.sfx_plasmaexp;
             mark = crate::src::cgame::cg_main::cgs.media.energyMarkShader;
-            radius = 16 as libc::c_int as libc::c_float
+            radius = 16f32
         }
         9 => {
             mod_0 = crate::src::cgame::cg_main::cgs.media.dishFlashModel;
             shader = crate::src::cgame::cg_main::cgs.media.bfgExplosionShader;
             sfx = crate::src::cgame::cg_main::cgs.media.sfx_rockexp;
             mark = crate::src::cgame::cg_main::cgs.media.burnMarkShader;
-            radius = 32 as libc::c_int as libc::c_float;
+            radius = 32f32;
             isSprite = crate::src::qcommon::q_shared::qtrue
         }
         3 => {
             mod_0 = crate::src::cgame::cg_main::cgs.media.bulletFlashModel;
             shader = crate::src::cgame::cg_main::cgs.media.bulletExplosionShader;
             mark = crate::src::cgame::cg_main::cgs.media.bulletMarkShader;
-            sfx = 0 as libc::c_int;
-            radius = 4 as libc::c_int as libc::c_float
+            sfx = 0;
+            radius = 4f32
         }
         2 => {
             mod_0 = crate::src::cgame::cg_main::cgs.media.bulletFlashModel;
             shader = crate::src::cgame::cg_main::cgs.media.bulletExplosionShader;
             mark = crate::src::cgame::cg_main::cgs.media.bulletMarkShader;
-            r = crate::stdlib::rand() & 3 as libc::c_int;
-            if r == 0 as libc::c_int {
+            r = crate::stdlib::rand() & 3;
+            if r == 0 {
                 sfx = crate::src::cgame::cg_main::cgs.media.sfx_ric1
-            } else if r == 1 as libc::c_int {
+            } else if r == 1 {
                 sfx = crate::src::cgame::cg_main::cgs.media.sfx_ric2
             } else {
                 sfx = crate::src::cgame::cg_main::cgs.media.sfx_ric3
             }
-            radius = 8 as libc::c_int as libc::c_float
+            radius = 8f32
         }
         6 | _ => {
             // no explosion at LG impact, it is added with the beam
-            r = crate::stdlib::rand() & 3 as libc::c_int;
-            if r < 2 as libc::c_int {
+            r = crate::stdlib::rand() & 3;
+            if r < 2 {
                 sfx = crate::src::cgame::cg_main::cgs.media.sfx_lghit2
-            } else if r == 2 as libc::c_int {
+            } else if r == 2 {
                 sfx = crate::src::cgame::cg_main::cgs.media.sfx_lghit1
             } else {
                 sfx = crate::src::cgame::cg_main::cgs.media.sfx_lghit3
             }
             mark = crate::src::cgame::cg_main::cgs.media.holeMarkShader;
-            radius = 12 as libc::c_int as libc::c_float
+            radius = 12f32
         }
     }
     if sfx != 0 {
         crate::src::cgame::cg_syscalls::trap_S_StartSound(
             origin,
-            ((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int,
-            crate::src::qcommon::q_shared::CHAN_AUTO as libc::c_int,
+            ((1i32) << 10i32) - 2i32,
+            crate::src::qcommon::q_shared::CHAN_AUTO as i32,
             sfx,
         );
     }
@@ -3236,40 +2763,33 @@ pub unsafe extern "C" fn CG_MissileHitWall(
             origin, dir, mod_0, shader, duration, isSprite,
         );
         (*le).light = light;
-        (*le).lightColor[0 as libc::c_int as usize] = lightColor[0 as libc::c_int as usize];
-        (*le).lightColor[1 as libc::c_int as usize] = lightColor[1 as libc::c_int as usize];
-        (*le).lightColor[2 as libc::c_int as usize] = lightColor[2 as libc::c_int as usize];
-        if weapon == crate::bg_public_h::WP_RAILGUN as libc::c_int {
+        (*le).lightColor[0] = lightColor[0];
+        (*le).lightColor[1] = lightColor[1];
+        (*le).lightColor[2] = lightColor[2];
+        if weapon == crate::bg_public_h::WP_RAILGUN as i32 {
             // colorize with client color
-            (*le).color[0 as libc::c_int as usize] = crate::src::cgame::cg_main::cgs.clientinfo
-                [clientNum as usize]
-                .color1[0 as libc::c_int as usize];
-            (*le).color[1 as libc::c_int as usize] = crate::src::cgame::cg_main::cgs.clientinfo
-                [clientNum as usize]
-                .color1[1 as libc::c_int as usize];
-            (*le).color[2 as libc::c_int as usize] = crate::src::cgame::cg_main::cgs.clientinfo
-                [clientNum as usize]
-                .color1[2 as libc::c_int as usize];
-            (*le).refEntity.shaderRGBA[0 as libc::c_int as usize] =
-                ((*le).color[0 as libc::c_int as usize] * 0xff as libc::c_int as libc::c_float)
-                    as crate::src::qcommon::q_shared::byte;
-            (*le).refEntity.shaderRGBA[1 as libc::c_int as usize] =
-                ((*le).color[1 as libc::c_int as usize] * 0xff as libc::c_int as libc::c_float)
-                    as crate::src::qcommon::q_shared::byte;
-            (*le).refEntity.shaderRGBA[2 as libc::c_int as usize] =
-                ((*le).color[2 as libc::c_int as usize] * 0xff as libc::c_int as libc::c_float)
-                    as crate::src::qcommon::q_shared::byte;
-            (*le).refEntity.shaderRGBA[3 as libc::c_int as usize] =
-                0xff as libc::c_int as crate::src::qcommon::q_shared::byte
+            (*le).color[0] =
+                crate::src::cgame::cg_main::cgs.clientinfo[clientNum as usize].color1[0];
+            (*le).color[1] =
+                crate::src::cgame::cg_main::cgs.clientinfo[clientNum as usize].color1[1];
+            (*le).color[2] =
+                crate::src::cgame::cg_main::cgs.clientinfo[clientNum as usize].color1[2];
+            (*le).refEntity.shaderRGBA[0] =
+                ((*le).color[0] * 255f32) as crate::src::qcommon::q_shared::byte;
+            (*le).refEntity.shaderRGBA[1] =
+                ((*le).color[1] * 255f32) as crate::src::qcommon::q_shared::byte;
+            (*le).refEntity.shaderRGBA[2] =
+                ((*le).color[2] * 255f32) as crate::src::qcommon::q_shared::byte;
+            (*le).refEntity.shaderRGBA[3] = 0xff
         }
     }
     //
     // impact mark
     //
-    alphaFade = (mark == crate::src::cgame::cg_main::cgs.media.energyMarkShader) as libc::c_int
+    alphaFade = (mark == crate::src::cgame::cg_main::cgs.media.energyMarkShader)
         as crate::src::qcommon::q_shared::qboolean; // plasma fades alpha, all others fade color
-    if weapon == crate::bg_public_h::WP_RAILGUN as libc::c_int {
-        let mut color: *mut libc::c_float = 0 as *mut libc::c_float;
+    if weapon == crate::bg_public_h::WP_RAILGUN as i32 {
+        let mut color: *mut f32 = 0 as *mut f32;
         // colorize with client color
         color = crate::src::cgame::cg_main::cgs.clientinfo[clientNum as usize]
             .color1
@@ -3278,13 +2798,11 @@ pub unsafe extern "C" fn CG_MissileHitWall(
             mark,
             origin as *const crate::src::qcommon::q_shared::vec_t,
             dir as *const crate::src::qcommon::q_shared::vec_t,
-            (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float
-                * 360 as libc::c_int as libc::c_float,
-            *color.offset(0 as libc::c_int as isize),
-            *color.offset(1 as libc::c_int as isize),
-            *color.offset(2 as libc::c_int as isize),
-            1 as libc::c_int as libc::c_float,
+            (crate::stdlib::rand() & 0x7fffi32) as f32 / 32767f32 * 360f32,
+            *color.offset(0isize),
+            *color.offset(1isize),
+            *color.offset(2isize),
+            1f32,
             alphaFade,
             radius,
             crate::src::qcommon::q_shared::qfalse,
@@ -3294,13 +2812,11 @@ pub unsafe extern "C" fn CG_MissileHitWall(
             mark,
             origin as *const crate::src::qcommon::q_shared::vec_t,
             dir as *const crate::src::qcommon::q_shared::vec_t,
-            (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float
-                * 360 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
+            (crate::stdlib::rand() & 0x7fffi32) as f32 / 32767f32 * 360f32,
+            1f32,
+            1f32,
+            1f32,
+            1f32,
             alphaFade,
             radius,
             crate::src::qcommon::q_shared::qfalse,
@@ -3315,10 +2831,10 @@ CG_MissileHitPlayer
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_MissileHitPlayer(
-    mut weapon: libc::c_int,
+    mut weapon: i32,
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut dir: *mut crate::src::qcommon::q_shared::vec_t,
-    mut entityNum: libc::c_int,
+    mut entityNum: i32,
 ) {
     crate::src::cgame::cg_effects::CG_Bleed(origin, entityNum);
     // some weapons will make an explosion with the blood, while
@@ -3327,7 +2843,7 @@ pub unsafe extern "C" fn CG_MissileHitPlayer(
         4 | 5 | 8 | 9 => {
             CG_MissileHitWall(
                 weapon,
-                0 as libc::c_int,
+                0i32,
                 origin,
                 dir,
                 crate::cg_local_h::IMPACTSOUND_FLESH,
@@ -3352,7 +2868,7 @@ CG_ShotgunPellet
 unsafe extern "C" fn CG_ShotgunPellet(
     mut start: *mut crate::src::qcommon::q_shared::vec_t,
     mut end: *mut crate::src::qcommon::q_shared::vec_t,
-    mut skipNum: libc::c_int,
+    mut skipNum: i32,
 ) {
     let mut tr: crate::src::qcommon::q_shared::trace_t = crate::src::qcommon::q_shared::trace_t {
         allsolid: crate::src::qcommon::q_shared::qfalse,
@@ -3370,8 +2886,8 @@ unsafe extern "C" fn CG_ShotgunPellet(
         contents: 0,
         entityNum: 0,
     };
-    let mut sourceContentType: libc::c_int = 0;
-    let mut destContentType: libc::c_int = 0;
+    let mut sourceContentType: i32 = 0;
+    let mut destContentType: i32 = 0;
     crate::src::cgame::cg_predict::CG_Trace(
         &mut tr,
         start as *const crate::src::qcommon::q_shared::vec_t,
@@ -3379,26 +2895,22 @@ unsafe extern "C" fn CG_ShotgunPellet(
         0 as *const crate::src::qcommon::q_shared::vec_t,
         end as *const crate::src::qcommon::q_shared::vec_t,
         skipNum,
-        1 as libc::c_int | 0x2000000 as libc::c_int | 0x4000000 as libc::c_int,
+        1 | 0x2000000 | 0x4000000,
     );
     sourceContentType = crate::src::cgame::cg_predict::CG_PointContents(
         start as *const crate::src::qcommon::q_shared::vec_t,
-        0 as libc::c_int,
+        0,
     );
     destContentType = crate::src::cgame::cg_predict::CG_PointContents(
         tr.endpos.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        0 as libc::c_int,
+        0,
     );
     // FIXME: should probably move this cruft into CG_BubbleTrail
     if sourceContentType == destContentType {
-        if sourceContentType & 32 as libc::c_int != 0 {
-            crate::src::cgame::cg_effects::CG_BubbleTrail(
-                start,
-                tr.endpos.as_mut_ptr(),
-                32 as libc::c_int as libc::c_float,
-            );
+        if sourceContentType & 32 != 0 {
+            crate::src::cgame::cg_effects::CG_BubbleTrail(start, tr.endpos.as_mut_ptr(), 32f32);
         }
-    } else if sourceContentType & 32 as libc::c_int != 0 {
+    } else if sourceContentType & 32 != 0 {
         let mut trace: crate::src::qcommon::q_shared::trace_t =
             crate::src::qcommon::q_shared::trace_t {
                 allsolid: crate::src::qcommon::q_shared::qfalse,
@@ -3422,15 +2934,11 @@ unsafe extern "C" fn CG_ShotgunPellet(
             start as *const crate::src::qcommon::q_shared::vec_t,
             0 as *const crate::src::qcommon::q_shared::vec_t,
             0 as *const crate::src::qcommon::q_shared::vec_t,
-            0 as libc::c_int,
-            32 as libc::c_int,
+            0,
+            32,
         );
-        crate::src::cgame::cg_effects::CG_BubbleTrail(
-            start,
-            trace.endpos.as_mut_ptr(),
-            32 as libc::c_int as libc::c_float,
-        );
-    } else if destContentType & 32 as libc::c_int != 0 {
+        crate::src::cgame::cg_effects::CG_BubbleTrail(start, trace.endpos.as_mut_ptr(), 32f32);
+    } else if destContentType & 32 != 0 {
         let mut trace_0: crate::src::qcommon::q_shared::trace_t =
             crate::src::qcommon::q_shared::trace_t {
                 allsolid: crate::src::qcommon::q_shared::qfalse,
@@ -3454,46 +2962,46 @@ unsafe extern "C" fn CG_ShotgunPellet(
             end as *const crate::src::qcommon::q_shared::vec_t,
             0 as *const crate::src::qcommon::q_shared::vec_t,
             0 as *const crate::src::qcommon::q_shared::vec_t,
-            0 as libc::c_int,
-            32 as libc::c_int,
+            0,
+            32,
         );
         crate::src::cgame::cg_effects::CG_BubbleTrail(
             tr.endpos.as_mut_ptr(),
             trace_0.endpos.as_mut_ptr(),
-            32 as libc::c_int as libc::c_float,
+            32f32,
         );
     }
-    if tr.surfaceFlags & 0x10 as libc::c_int != 0 {
+    if tr.surfaceFlags & 0x10 != 0 {
         return;
     }
     if crate::src::cgame::cg_main::cg_entities[tr.entityNum as usize]
         .currentState
         .eType
-        == crate::bg_public_h::ET_PLAYER as libc::c_int
+        == crate::bg_public_h::ET_PLAYER as i32
     {
         CG_MissileHitPlayer(
-            crate::bg_public_h::WP_SHOTGUN as libc::c_int,
+            crate::bg_public_h::WP_SHOTGUN as i32,
             tr.endpos.as_mut_ptr(),
             tr.plane.normal.as_mut_ptr(),
             tr.entityNum,
         );
     } else {
-        if tr.surfaceFlags & 0x10 as libc::c_int != 0 {
+        if tr.surfaceFlags & 0x10 != 0 {
             // SURF_NOIMPACT will not make a flame puff or a mark
             return;
         }
-        if tr.surfaceFlags & 0x1000 as libc::c_int != 0 {
+        if tr.surfaceFlags & 0x1000 != 0 {
             CG_MissileHitWall(
-                crate::bg_public_h::WP_SHOTGUN as libc::c_int,
-                0 as libc::c_int,
+                crate::bg_public_h::WP_SHOTGUN as i32,
+                0i32,
                 tr.endpos.as_mut_ptr(),
                 tr.plane.normal.as_mut_ptr(),
                 crate::cg_local_h::IMPACTSOUND_METAL,
             );
         } else {
             CG_MissileHitWall(
-                crate::bg_public_h::WP_SHOTGUN as libc::c_int,
-                0 as libc::c_int,
+                crate::bg_public_h::WP_SHOTGUN as i32,
+                0i32,
                 tr.endpos.as_mut_ptr(),
                 tr.plane.normal.as_mut_ptr(),
                 crate::cg_local_h::IMPACTSOUND_DEFAULT,
@@ -3513,12 +3021,12 @@ hit splashes
 unsafe extern "C" fn CG_ShotgunPattern(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut origin2: *mut crate::src::qcommon::q_shared::vec_t,
-    mut seed: libc::c_int,
-    mut otherEntNum: libc::c_int,
+    mut seed: i32,
+    mut otherEntNum: i32,
 ) {
-    let mut i: libc::c_int = 0;
-    let mut r: libc::c_float = 0.;
-    let mut u: libc::c_float = 0.;
+    let mut i: i32 = 0;
+    let mut r: f32 = 0.;
+    let mut u: f32 = 0.;
     let mut end: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut forward: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut right: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -3539,35 +3047,19 @@ unsafe extern "C" fn CG_ShotgunPattern(
         up.as_mut_ptr(),
     );
     // generate the "random" spread pattern
-    i = 0 as libc::c_int;
-    while i < 11 as libc::c_int {
-        r = crate::src::qcommon::q_math::Q_crandom(&mut seed)
-            * 700 as libc::c_int as libc::c_float
-            * 16 as libc::c_int as libc::c_float;
-        u = crate::src::qcommon::q_math::Q_crandom(&mut seed)
-            * 700 as libc::c_int as libc::c_float
-            * 16 as libc::c_int as libc::c_float;
-        end[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize)
-            + forward[0 as libc::c_int as usize]
-                * (8192 as libc::c_int * 16 as libc::c_int) as libc::c_float;
-        end[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize)
-            + forward[1 as libc::c_int as usize]
-                * (8192 as libc::c_int * 16 as libc::c_int) as libc::c_float;
-        end[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize)
-            + forward[2 as libc::c_int as usize]
-                * (8192 as libc::c_int * 16 as libc::c_int) as libc::c_float;
-        end[0 as libc::c_int as usize] =
-            end[0 as libc::c_int as usize] + right[0 as libc::c_int as usize] * r;
-        end[1 as libc::c_int as usize] =
-            end[1 as libc::c_int as usize] + right[1 as libc::c_int as usize] * r;
-        end[2 as libc::c_int as usize] =
-            end[2 as libc::c_int as usize] + right[2 as libc::c_int as usize] * r;
-        end[0 as libc::c_int as usize] =
-            end[0 as libc::c_int as usize] + up[0 as libc::c_int as usize] * u;
-        end[1 as libc::c_int as usize] =
-            end[1 as libc::c_int as usize] + up[1 as libc::c_int as usize] * u;
-        end[2 as libc::c_int as usize] =
-            end[2 as libc::c_int as usize] + up[2 as libc::c_int as usize] * u;
+    i = 0;
+    while i < 11 {
+        r = crate::src::qcommon::q_math::Q_crandom(&mut seed) * 700f32 * 16f32;
+        u = crate::src::qcommon::q_math::Q_crandom(&mut seed) * 700f32 * 16f32;
+        end[0] = *origin.offset(0) + forward[0] * (8192i32 * 16) as f32;
+        end[1] = *origin.offset(1) + forward[1] * (8192i32 * 16) as f32;
+        end[2] = *origin.offset(2) + forward[2] * (8192i32 * 16) as f32;
+        end[0] = end[0] + right[0] * r;
+        end[1] = end[1] + right[1] * r;
+        end[2] = end[2] + right[2] * r;
+        end[0] = end[0] + up[0] * u;
+        end[1] = end[1] + up[1] * u;
+        end[2] = end[2] + up[2] * u;
         CG_ShotgunPellet(origin, end.as_mut_ptr(), otherEntNum);
         i += 1
     }
@@ -3581,54 +3073,40 @@ CG_ShotgunFire
 
 pub unsafe extern "C" fn CG_ShotgunFire(mut es: *mut crate::src::qcommon::q_shared::entityState_t) {
     let mut v: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut contents: libc::c_int = 0;
-    v[0 as libc::c_int as usize] =
-        (*es).origin2[0 as libc::c_int as usize] - (*es).pos.trBase[0 as libc::c_int as usize];
-    v[1 as libc::c_int as usize] =
-        (*es).origin2[1 as libc::c_int as usize] - (*es).pos.trBase[1 as libc::c_int as usize];
-    v[2 as libc::c_int as usize] =
-        (*es).origin2[2 as libc::c_int as usize] - (*es).pos.trBase[2 as libc::c_int as usize];
+    let mut contents: i32 = 0;
+    v[0] = (*es).origin2[0] - (*es).pos.trBase[0];
+    v[1] = (*es).origin2[1] - (*es).pos.trBase[1];
+    v[2] = (*es).origin2[2] - (*es).pos.trBase[2];
     crate::src::qcommon::q_math::VectorNormalize(v.as_mut_ptr());
-    v[0 as libc::c_int as usize] =
-        v[0 as libc::c_int as usize] * 32 as libc::c_int as libc::c_float;
-    v[1 as libc::c_int as usize] =
-        v[1 as libc::c_int as usize] * 32 as libc::c_int as libc::c_float;
-    v[2 as libc::c_int as usize] =
-        v[2 as libc::c_int as usize] * 32 as libc::c_int as libc::c_float;
-    v[0 as libc::c_int as usize] =
-        (*es).pos.trBase[0 as libc::c_int as usize] + v[0 as libc::c_int as usize];
-    v[1 as libc::c_int as usize] =
-        (*es).pos.trBase[1 as libc::c_int as usize] + v[1 as libc::c_int as usize];
-    v[2 as libc::c_int as usize] =
-        (*es).pos.trBase[2 as libc::c_int as usize] + v[2 as libc::c_int as usize];
-    if crate::src::cgame::cg_main::cgs.glconfig.hardwareType as libc::c_uint
-        != crate::tr_types_h::GLHW_RAGEPRO as libc::c_int as libc::c_uint
-    {
+    v[0] = v[0] * 32f32;
+    v[1] = v[1] * 32f32;
+    v[2] = v[2] * 32f32;
+    v[0] = (*es).pos.trBase[0] + v[0];
+    v[1] = (*es).pos.trBase[1] + v[1];
+    v[2] = (*es).pos.trBase[2] + v[2];
+    if crate::src::cgame::cg_main::cgs.glconfig.hardwareType != crate::tr_types_h::GLHW_RAGEPRO {
         // ragepro can't alpha fade, so don't even bother with smoke
         let mut up: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
         contents = crate::src::cgame::cg_predict::CG_PointContents(
             (*es).pos.trBase.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-            0 as libc::c_int,
+            0,
         );
-        if contents & 32 as libc::c_int == 0 {
-            up[0 as libc::c_int as usize] =
-                0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            up[1 as libc::c_int as usize] =
-                0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            up[2 as libc::c_int as usize] =
-                8 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
+        if contents & 32 == 0 {
+            up[0] = 0f32;
+            up[1] = 0f32;
+            up[2] = 8f32;
             crate::src::cgame::cg_effects::CG_SmokePuff(
                 v.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                 up.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-                32 as libc::c_int as libc::c_float,
-                1 as libc::c_int as libc::c_float,
-                1 as libc::c_int as libc::c_float,
-                1 as libc::c_int as libc::c_float,
+                32f32,
+                1f32,
+                1f32,
+                1f32,
                 0.33f32,
-                900 as libc::c_int as libc::c_float,
+                900f32,
                 crate::src::cgame::cg_main::cg.time,
-                0 as libc::c_int,
-                crate::cg_local_h::LEF_PUFF_DONT_SCALE as libc::c_int,
+                0i32,
+                crate::cg_local_h::LEF_PUFF_DONT_SCALE as i32,
                 crate::src::cgame::cg_main::cgs.media.shotgunSmokePuffShader,
             );
         }
@@ -3666,187 +3144,94 @@ pub unsafe extern "C" fn CG_Tracer(
         modulate: [0; 4],
     }; 4];
     let mut line: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut len: libc::c_float = 0.;
-    let mut begin: libc::c_float = 0.;
-    let mut end: libc::c_float = 0.;
+    let mut len: f32 = 0.;
+    let mut begin: f32 = 0.;
+    let mut end: f32 = 0.;
     let mut start: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut finish: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut midpoint: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     // tracer
-    forward[0 as libc::c_int as usize] =
-        *dest.offset(0 as libc::c_int as isize) - *source.offset(0 as libc::c_int as isize);
-    forward[1 as libc::c_int as usize] =
-        *dest.offset(1 as libc::c_int as isize) - *source.offset(1 as libc::c_int as isize);
-    forward[2 as libc::c_int as usize] =
-        *dest.offset(2 as libc::c_int as isize) - *source.offset(2 as libc::c_int as isize);
+    forward[0] = *dest.offset(0) - *source.offset(0);
+    forward[1] = *dest.offset(1) - *source.offset(1);
+    forward[2] = *dest.offset(2) - *source.offset(2);
     len = crate::src::qcommon::q_math::VectorNormalize(forward.as_mut_ptr());
     // start at least a little ways from the muzzle
-    if len < 100 as libc::c_int as libc::c_float {
+    if len < 100f32 {
         return;
     }
-    begin = 50 as libc::c_int as libc::c_float
-        + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float
-            * (len - 60 as libc::c_int as libc::c_float);
+    begin = 50f32 + (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 * (len - 60f32);
     end = begin + crate::src::cgame::cg_main::cg_tracerLength.value;
     if end > len {
         end = len
     }
-    start[0 as libc::c_int as usize] =
-        *source.offset(0 as libc::c_int as isize) + forward[0 as libc::c_int as usize] * begin;
-    start[1 as libc::c_int as usize] =
-        *source.offset(1 as libc::c_int as isize) + forward[1 as libc::c_int as usize] * begin;
-    start[2 as libc::c_int as usize] =
-        *source.offset(2 as libc::c_int as isize) + forward[2 as libc::c_int as usize] * begin;
-    finish[0 as libc::c_int as usize] =
-        *source.offset(0 as libc::c_int as isize) + forward[0 as libc::c_int as usize] * end;
-    finish[1 as libc::c_int as usize] =
-        *source.offset(1 as libc::c_int as isize) + forward[1 as libc::c_int as usize] * end;
-    finish[2 as libc::c_int as usize] =
-        *source.offset(2 as libc::c_int as isize) + forward[2 as libc::c_int as usize] * end;
-    line[0 as libc::c_int as usize] = forward[0 as libc::c_int as usize]
-        * crate::src::cgame::cg_main::cg.refdef.viewaxis[1 as libc::c_int as usize]
-            [0 as libc::c_int as usize]
-        + forward[1 as libc::c_int as usize]
-            * crate::src::cgame::cg_main::cg.refdef.viewaxis[1 as libc::c_int as usize]
-                [1 as libc::c_int as usize]
-        + forward[2 as libc::c_int as usize]
-            * crate::src::cgame::cg_main::cg.refdef.viewaxis[1 as libc::c_int as usize]
-                [2 as libc::c_int as usize];
-    line[1 as libc::c_int as usize] = forward[0 as libc::c_int as usize]
-        * crate::src::cgame::cg_main::cg.refdef.viewaxis[2 as libc::c_int as usize]
-            [0 as libc::c_int as usize]
-        + forward[1 as libc::c_int as usize]
-            * crate::src::cgame::cg_main::cg.refdef.viewaxis[2 as libc::c_int as usize]
-                [1 as libc::c_int as usize]
-        + forward[2 as libc::c_int as usize]
-            * crate::src::cgame::cg_main::cg.refdef.viewaxis[2 as libc::c_int as usize]
-                [2 as libc::c_int as usize];
-    right[0 as libc::c_int as usize] = crate::src::cgame::cg_main::cg.refdef.viewaxis
-        [1 as libc::c_int as usize][0 as libc::c_int as usize]
-        * line[1 as libc::c_int as usize];
-    right[1 as libc::c_int as usize] = crate::src::cgame::cg_main::cg.refdef.viewaxis
-        [1 as libc::c_int as usize][1 as libc::c_int as usize]
-        * line[1 as libc::c_int as usize];
-    right[2 as libc::c_int as usize] = crate::src::cgame::cg_main::cg.refdef.viewaxis
-        [1 as libc::c_int as usize][2 as libc::c_int as usize]
-        * line[1 as libc::c_int as usize];
-    right[0 as libc::c_int as usize] = right[0 as libc::c_int as usize]
-        + crate::src::cgame::cg_main::cg.refdef.viewaxis[2 as libc::c_int as usize]
-            [0 as libc::c_int as usize]
-            * -line[0 as libc::c_int as usize];
-    right[1 as libc::c_int as usize] = right[1 as libc::c_int as usize]
-        + crate::src::cgame::cg_main::cg.refdef.viewaxis[2 as libc::c_int as usize]
-            [1 as libc::c_int as usize]
-            * -line[0 as libc::c_int as usize];
-    right[2 as libc::c_int as usize] = right[2 as libc::c_int as usize]
-        + crate::src::cgame::cg_main::cg.refdef.viewaxis[2 as libc::c_int as usize]
-            [2 as libc::c_int as usize]
-            * -line[0 as libc::c_int as usize];
+    start[0] = *source.offset(0) + forward[0] * begin;
+    start[1] = *source.offset(1) + forward[1] * begin;
+    start[2] = *source.offset(2) + forward[2] * begin;
+    finish[0] = *source.offset(0) + forward[0] * end;
+    finish[1] = *source.offset(1) + forward[1] * end;
+    finish[2] = *source.offset(2) + forward[2] * end;
+    line[0] = forward[0] * crate::src::cgame::cg_main::cg.refdef.viewaxis[1][0]
+        + forward[1] * crate::src::cgame::cg_main::cg.refdef.viewaxis[1][1]
+        + forward[2] * crate::src::cgame::cg_main::cg.refdef.viewaxis[1][2];
+    line[1] = forward[0] * crate::src::cgame::cg_main::cg.refdef.viewaxis[2][0]
+        + forward[1] * crate::src::cgame::cg_main::cg.refdef.viewaxis[2][1]
+        + forward[2] * crate::src::cgame::cg_main::cg.refdef.viewaxis[2][2];
+    right[0] = crate::src::cgame::cg_main::cg.refdef.viewaxis[1][0] * line[1];
+    right[1] = crate::src::cgame::cg_main::cg.refdef.viewaxis[1][1] * line[1];
+    right[2] = crate::src::cgame::cg_main::cg.refdef.viewaxis[1][2] * line[1];
+    right[0] = right[0] + crate::src::cgame::cg_main::cg.refdef.viewaxis[2][0] * -line[0];
+    right[1] = right[1] + crate::src::cgame::cg_main::cg.refdef.viewaxis[2][1] * -line[0];
+    right[2] = right[2] + crate::src::cgame::cg_main::cg.refdef.viewaxis[2][2] * -line[0];
     crate::src::qcommon::q_math::VectorNormalize(right.as_mut_ptr());
-    verts[0 as libc::c_int as usize].xyz[0 as libc::c_int as usize] = finish
-        [0 as libc::c_int as usize]
-        + right[0 as libc::c_int as usize] * crate::src::cgame::cg_main::cg_tracerWidth.value;
-    verts[0 as libc::c_int as usize].xyz[1 as libc::c_int as usize] = finish
-        [1 as libc::c_int as usize]
-        + right[1 as libc::c_int as usize] * crate::src::cgame::cg_main::cg_tracerWidth.value;
-    verts[0 as libc::c_int as usize].xyz[2 as libc::c_int as usize] = finish
-        [2 as libc::c_int as usize]
-        + right[2 as libc::c_int as usize] * crate::src::cgame::cg_main::cg_tracerWidth.value;
-    verts[0 as libc::c_int as usize].st[0 as libc::c_int as usize] =
-        0 as libc::c_int as libc::c_float;
-    verts[0 as libc::c_int as usize].st[1 as libc::c_int as usize] =
-        1 as libc::c_int as libc::c_float;
-    verts[0 as libc::c_int as usize].modulate[0 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[0 as libc::c_int as usize].modulate[1 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[0 as libc::c_int as usize].modulate[2 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[0 as libc::c_int as usize].modulate[3 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[1 as libc::c_int as usize].xyz[0 as libc::c_int as usize] = finish
-        [0 as libc::c_int as usize]
-        + right[0 as libc::c_int as usize] * -crate::src::cgame::cg_main::cg_tracerWidth.value;
-    verts[1 as libc::c_int as usize].xyz[1 as libc::c_int as usize] = finish
-        [1 as libc::c_int as usize]
-        + right[1 as libc::c_int as usize] * -crate::src::cgame::cg_main::cg_tracerWidth.value;
-    verts[1 as libc::c_int as usize].xyz[2 as libc::c_int as usize] = finish
-        [2 as libc::c_int as usize]
-        + right[2 as libc::c_int as usize] * -crate::src::cgame::cg_main::cg_tracerWidth.value;
-    verts[1 as libc::c_int as usize].st[0 as libc::c_int as usize] =
-        1 as libc::c_int as libc::c_float;
-    verts[1 as libc::c_int as usize].st[1 as libc::c_int as usize] =
-        0 as libc::c_int as libc::c_float;
-    verts[1 as libc::c_int as usize].modulate[0 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[1 as libc::c_int as usize].modulate[1 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[1 as libc::c_int as usize].modulate[2 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[1 as libc::c_int as usize].modulate[3 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[2 as libc::c_int as usize].xyz[0 as libc::c_int as usize] = start
-        [0 as libc::c_int as usize]
-        + right[0 as libc::c_int as usize] * -crate::src::cgame::cg_main::cg_tracerWidth.value;
-    verts[2 as libc::c_int as usize].xyz[1 as libc::c_int as usize] = start
-        [1 as libc::c_int as usize]
-        + right[1 as libc::c_int as usize] * -crate::src::cgame::cg_main::cg_tracerWidth.value;
-    verts[2 as libc::c_int as usize].xyz[2 as libc::c_int as usize] = start
-        [2 as libc::c_int as usize]
-        + right[2 as libc::c_int as usize] * -crate::src::cgame::cg_main::cg_tracerWidth.value;
-    verts[2 as libc::c_int as usize].st[0 as libc::c_int as usize] =
-        1 as libc::c_int as libc::c_float;
-    verts[2 as libc::c_int as usize].st[1 as libc::c_int as usize] =
-        1 as libc::c_int as libc::c_float;
-    verts[2 as libc::c_int as usize].modulate[0 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[2 as libc::c_int as usize].modulate[1 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[2 as libc::c_int as usize].modulate[2 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[2 as libc::c_int as usize].modulate[3 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[3 as libc::c_int as usize].xyz[0 as libc::c_int as usize] = start
-        [0 as libc::c_int as usize]
-        + right[0 as libc::c_int as usize] * crate::src::cgame::cg_main::cg_tracerWidth.value;
-    verts[3 as libc::c_int as usize].xyz[1 as libc::c_int as usize] = start
-        [1 as libc::c_int as usize]
-        + right[1 as libc::c_int as usize] * crate::src::cgame::cg_main::cg_tracerWidth.value;
-    verts[3 as libc::c_int as usize].xyz[2 as libc::c_int as usize] = start
-        [2 as libc::c_int as usize]
-        + right[2 as libc::c_int as usize] * crate::src::cgame::cg_main::cg_tracerWidth.value;
-    verts[3 as libc::c_int as usize].st[0 as libc::c_int as usize] =
-        0 as libc::c_int as libc::c_float;
-    verts[3 as libc::c_int as usize].st[1 as libc::c_int as usize] =
-        0 as libc::c_int as libc::c_float;
-    verts[3 as libc::c_int as usize].modulate[0 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[3 as libc::c_int as usize].modulate[1 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[3 as libc::c_int as usize].modulate[2 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    verts[3 as libc::c_int as usize].modulate[3 as libc::c_int as usize] =
-        255 as libc::c_int as crate::src::qcommon::q_shared::byte;
+    verts[0].xyz[0] = finish[0] + right[0] * crate::src::cgame::cg_main::cg_tracerWidth.value;
+    verts[0].xyz[1] = finish[1] + right[1] * crate::src::cgame::cg_main::cg_tracerWidth.value;
+    verts[0].xyz[2] = finish[2] + right[2] * crate::src::cgame::cg_main::cg_tracerWidth.value;
+    verts[0].st[0] = 0f32;
+    verts[0].st[1] = 1f32;
+    verts[0].modulate[0] = 255;
+    verts[0].modulate[1] = 255;
+    verts[0].modulate[2] = 255;
+    verts[0].modulate[3] = 255;
+    verts[1].xyz[0] = finish[0] + right[0] * -crate::src::cgame::cg_main::cg_tracerWidth.value;
+    verts[1].xyz[1] = finish[1] + right[1] * -crate::src::cgame::cg_main::cg_tracerWidth.value;
+    verts[1].xyz[2] = finish[2] + right[2] * -crate::src::cgame::cg_main::cg_tracerWidth.value;
+    verts[1].st[0] = 1f32;
+    verts[1].st[1] = 0f32;
+    verts[1].modulate[0] = 255;
+    verts[1].modulate[1] = 255;
+    verts[1].modulate[2] = 255;
+    verts[1].modulate[3] = 255;
+    verts[2].xyz[0] = start[0] + right[0] * -crate::src::cgame::cg_main::cg_tracerWidth.value;
+    verts[2].xyz[1] = start[1] + right[1] * -crate::src::cgame::cg_main::cg_tracerWidth.value;
+    verts[2].xyz[2] = start[2] + right[2] * -crate::src::cgame::cg_main::cg_tracerWidth.value;
+    verts[2].st[0] = 1f32;
+    verts[2].st[1] = 1f32;
+    verts[2].modulate[0] = 255;
+    verts[2].modulate[1] = 255;
+    verts[2].modulate[2] = 255;
+    verts[2].modulate[3] = 255;
+    verts[3].xyz[0] = start[0] + right[0] * crate::src::cgame::cg_main::cg_tracerWidth.value;
+    verts[3].xyz[1] = start[1] + right[1] * crate::src::cgame::cg_main::cg_tracerWidth.value;
+    verts[3].xyz[2] = start[2] + right[2] * crate::src::cgame::cg_main::cg_tracerWidth.value;
+    verts[3].st[0] = 0f32;
+    verts[3].st[1] = 0f32;
+    verts[3].modulate[0] = 255;
+    verts[3].modulate[1] = 255;
+    verts[3].modulate[2] = 255;
+    verts[3].modulate[3] = 255;
     crate::src::cgame::cg_syscalls::trap_R_AddPolyToScene(
         crate::src::cgame::cg_main::cgs.media.tracerShader,
-        4 as libc::c_int,
+        4,
         verts.as_mut_ptr(),
     );
-    midpoint[0 as libc::c_int as usize] =
-        ((start[0 as libc::c_int as usize] + finish[0 as libc::c_int as usize]) as libc::c_double
-            * 0.5f64) as crate::src::qcommon::q_shared::vec_t;
-    midpoint[1 as libc::c_int as usize] =
-        ((start[1 as libc::c_int as usize] + finish[1 as libc::c_int as usize]) as libc::c_double
-            * 0.5f64) as crate::src::qcommon::q_shared::vec_t;
-    midpoint[2 as libc::c_int as usize] =
-        ((start[2 as libc::c_int as usize] + finish[2 as libc::c_int as usize]) as libc::c_double
-            * 0.5f64) as crate::src::qcommon::q_shared::vec_t;
+    midpoint[0] = ((start[0] + finish[0]) as f64 * 0.5) as crate::src::qcommon::q_shared::vec_t;
+    midpoint[1] = ((start[1] + finish[1]) as f64 * 0.5) as crate::src::qcommon::q_shared::vec_t;
+    midpoint[2] = ((start[2] + finish[2]) as f64 * 0.5) as crate::src::qcommon::q_shared::vec_t;
     // add the tracer sound
     crate::src::cgame::cg_syscalls::trap_S_StartSound(
         midpoint.as_mut_ptr(),
-        ((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int,
-        crate::src::qcommon::q_shared::CHAN_AUTO as libc::c_int,
+        ((1) << 10) - 2,
+        crate::src::qcommon::q_shared::CHAN_AUTO as i32,
         crate::src::cgame::cg_main::cgs.media.tracerSound,
     );
 }
@@ -3857,21 +3242,18 @@ CG_CalcMuzzlePoint
 */
 
 unsafe extern "C" fn CG_CalcMuzzlePoint(
-    mut entityNum: libc::c_int,
+    mut entityNum: i32,
     mut muzzle: *mut crate::src::qcommon::q_shared::vec_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut forward: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut cent: *mut crate::cg_local_h::centity_t = 0 as *mut crate::cg_local_h::centity_t;
-    let mut anim: libc::c_int = 0;
+    let mut anim: i32 = 0;
     if entityNum == (*crate::src::cgame::cg_main::cg.snap).ps.clientNum {
-        *muzzle.offset(0 as libc::c_int as isize) =
-            (*crate::src::cgame::cg_main::cg.snap).ps.origin[0 as libc::c_int as usize];
-        *muzzle.offset(1 as libc::c_int as isize) =
-            (*crate::src::cgame::cg_main::cg.snap).ps.origin[1 as libc::c_int as usize];
-        *muzzle.offset(2 as libc::c_int as isize) =
-            (*crate::src::cgame::cg_main::cg.snap).ps.origin[2 as libc::c_int as usize];
-        let ref mut fresh9 = *muzzle.offset(2 as libc::c_int as isize);
-        *fresh9 += (*crate::src::cgame::cg_main::cg.snap).ps.viewheight as libc::c_float;
+        *muzzle.offset(0) = (*crate::src::cgame::cg_main::cg.snap).ps.origin[0];
+        *muzzle.offset(1) = (*crate::src::cgame::cg_main::cg.snap).ps.origin[1];
+        *muzzle.offset(2) = (*crate::src::cgame::cg_main::cg.snap).ps.origin[2];
+        let ref mut fresh9 = *muzzle.offset(2);
+        *fresh9 += (*crate::src::cgame::cg_main::cg.snap).ps.viewheight as f32;
         crate::src::qcommon::q_math::AngleVectors(
             (*crate::src::cgame::cg_main::cg.snap)
                 .ps
@@ -3881,12 +3263,9 @@ unsafe extern "C" fn CG_CalcMuzzlePoint(
             0 as *mut crate::src::qcommon::q_shared::vec_t,
             0 as *mut crate::src::qcommon::q_shared::vec_t,
         );
-        *muzzle.offset(0 as libc::c_int as isize) = *muzzle.offset(0 as libc::c_int as isize)
-            + forward[0 as libc::c_int as usize] * 14 as libc::c_int as libc::c_float;
-        *muzzle.offset(1 as libc::c_int as isize) = *muzzle.offset(1 as libc::c_int as isize)
-            + forward[1 as libc::c_int as usize] * 14 as libc::c_int as libc::c_float;
-        *muzzle.offset(2 as libc::c_int as isize) = *muzzle.offset(2 as libc::c_int as isize)
-            + forward[2 as libc::c_int as usize] * 14 as libc::c_int as libc::c_float;
+        *muzzle.offset(0) = *muzzle.offset(0) + forward[0] * 14f32;
+        *muzzle.offset(1) = *muzzle.offset(1) + forward[1] * 14f32;
+        *muzzle.offset(2) = *muzzle.offset(2) + forward[2] * 14f32;
         return crate::src::qcommon::q_shared::qtrue;
     }
     cent = &mut *crate::src::cgame::cg_main::cg_entities
@@ -3895,12 +3274,9 @@ unsafe extern "C" fn CG_CalcMuzzlePoint(
     if (*cent).currentValid as u64 == 0 {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    *muzzle.offset(0 as libc::c_int as isize) =
-        (*cent).currentState.pos.trBase[0 as libc::c_int as usize];
-    *muzzle.offset(1 as libc::c_int as isize) =
-        (*cent).currentState.pos.trBase[1 as libc::c_int as usize];
-    *muzzle.offset(2 as libc::c_int as isize) =
-        (*cent).currentState.pos.trBase[2 as libc::c_int as usize];
+    *muzzle.offset(0) = (*cent).currentState.pos.trBase[0];
+    *muzzle.offset(1) = (*cent).currentState.pos.trBase[1];
+    *muzzle.offset(2) = (*cent).currentState.pos.trBase[2];
     crate::src::qcommon::q_math::AngleVectors(
         (*cent).currentState.apos.trBase.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
@@ -3908,22 +3284,19 @@ unsafe extern "C" fn CG_CalcMuzzlePoint(
         0 as *mut crate::src::qcommon::q_shared::vec_t,
         0 as *mut crate::src::qcommon::q_shared::vec_t,
     );
-    anim = (*cent).currentState.legsAnim & !(128 as libc::c_int);
-    if anim == crate::bg_public_h::LEGS_WALKCR as libc::c_int
-        || anim == crate::bg_public_h::LEGS_IDLECR as libc::c_int
+    anim = (*cent).currentState.legsAnim & !(128);
+    if anim == crate::bg_public_h::LEGS_WALKCR as i32
+        || anim == crate::bg_public_h::LEGS_IDLECR as i32
     {
-        let ref mut fresh10 = *muzzle.offset(2 as libc::c_int as isize);
-        *fresh10 += 12 as libc::c_int as libc::c_float
+        let ref mut fresh10 = *muzzle.offset(2);
+        *fresh10 += 12f32
     } else {
-        let ref mut fresh11 = *muzzle.offset(2 as libc::c_int as isize);
-        *fresh11 += 26 as libc::c_int as libc::c_float
+        let ref mut fresh11 = *muzzle.offset(2);
+        *fresh11 += 26f32
     }
-    *muzzle.offset(0 as libc::c_int as isize) = *muzzle.offset(0 as libc::c_int as isize)
-        + forward[0 as libc::c_int as usize] * 14 as libc::c_int as libc::c_float;
-    *muzzle.offset(1 as libc::c_int as isize) = *muzzle.offset(1 as libc::c_int as isize)
-        + forward[1 as libc::c_int as usize] * 14 as libc::c_int as libc::c_float;
-    *muzzle.offset(2 as libc::c_int as isize) = *muzzle.offset(2 as libc::c_int as isize)
-        + forward[2 as libc::c_int as usize] * 14 as libc::c_int as libc::c_float;
+    *muzzle.offset(0) = *muzzle.offset(0) + forward[0] * 14f32;
+    *muzzle.offset(1) = *muzzle.offset(1) + forward[1] * 14f32;
+    *muzzle.offset(2) = *muzzle.offset(2) + forward[2] * 14f32;
     return crate::src::qcommon::q_shared::qtrue;
 }
 //
@@ -3955,10 +3328,10 @@ Renders bullet effects.
 
 pub unsafe extern "C" fn CG_Bullet(
     mut end: *mut crate::src::qcommon::q_shared::vec_t,
-    mut sourceEntityNum: libc::c_int,
+    mut sourceEntityNum: i32,
     mut normal: *mut crate::src::qcommon::q_shared::vec_t,
     mut flesh: crate::src::qcommon::q_shared::qboolean,
-    mut fleshEntityNum: libc::c_int,
+    mut fleshEntityNum: i32,
 ) {
     let mut trace: crate::src::qcommon::q_shared::trace_t =
         crate::src::qcommon::q_shared::trace_t {
@@ -3977,66 +3350,59 @@ pub unsafe extern "C" fn CG_Bullet(
             contents: 0,
             entityNum: 0,
         };
-    let mut sourceContentType: libc::c_int = 0;
-    let mut destContentType: libc::c_int = 0;
+    let mut sourceContentType: i32 = 0;
+    let mut destContentType: i32 = 0;
     let mut start: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     // if the shooter is currently valid, calc a source point and possibly
     // do trail effects
-    if sourceEntityNum >= 0 as libc::c_int
-        && crate::src::cgame::cg_main::cg_tracerChance.value > 0 as libc::c_int as libc::c_float
-    {
+    if sourceEntityNum >= 0 && crate::src::cgame::cg_main::cg_tracerChance.value > 0f32 {
         if CG_CalcMuzzlePoint(sourceEntityNum, start.as_mut_ptr()) as u64 != 0 {
             sourceContentType = crate::src::cgame::cg_predict::CG_PointContents(
                 start.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-                0 as libc::c_int,
+                0,
             );
             destContentType = crate::src::cgame::cg_predict::CG_PointContents(
                 end as *const crate::src::qcommon::q_shared::vec_t,
-                0 as libc::c_int,
+                0,
             );
             // do a complete bubble trail if necessary
-            if sourceContentType == destContentType && sourceContentType & 32 as libc::c_int != 0 {
-                crate::src::cgame::cg_effects::CG_BubbleTrail(
-                    start.as_mut_ptr(),
-                    end,
-                    32 as libc::c_int as libc::c_float,
-                );
-            } else if sourceContentType & 32 as libc::c_int != 0 {
+            if sourceContentType == destContentType && sourceContentType & 32 != 0 {
+                crate::src::cgame::cg_effects::CG_BubbleTrail(start.as_mut_ptr(), end, 32f32);
+            } else if sourceContentType & 32 != 0 {
                 crate::src::cgame::cg_syscalls::trap_CM_BoxTrace(
                     &mut trace,
                     end as *const crate::src::qcommon::q_shared::vec_t,
                     start.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                     0 as *const crate::src::qcommon::q_shared::vec_t,
                     0 as *const crate::src::qcommon::q_shared::vec_t,
-                    0 as libc::c_int,
-                    32 as libc::c_int,
+                    0,
+                    32,
                 );
                 crate::src::cgame::cg_effects::CG_BubbleTrail(
                     start.as_mut_ptr(),
                     trace.endpos.as_mut_ptr(),
-                    32 as libc::c_int as libc::c_float,
+                    32f32,
                 );
-            } else if destContentType & 32 as libc::c_int != 0 {
+            } else if destContentType & 32 != 0 {
                 crate::src::cgame::cg_syscalls::trap_CM_BoxTrace(
                     &mut trace,
                     start.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                     end as *const crate::src::qcommon::q_shared::vec_t,
                     0 as *const crate::src::qcommon::q_shared::vec_t,
                     0 as *const crate::src::qcommon::q_shared::vec_t,
-                    0 as libc::c_int,
-                    32 as libc::c_int,
+                    0,
+                    32,
                 );
                 crate::src::cgame::cg_effects::CG_BubbleTrail(
                     trace.endpos.as_mut_ptr(),
                     end,
-                    32 as libc::c_int as libc::c_float,
+                    32f32,
                 );
             }
             // bubble trail from water into air
             // bubble trail from air into water
             // draw a tracer
-            if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float)
+            if ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32)
                 < crate::src::cgame::cg_main::cg_tracerChance.value
             {
                 CG_Tracer(start.as_mut_ptr(), end);
@@ -4048,8 +3414,8 @@ pub unsafe extern "C" fn CG_Bullet(
         crate::src::cgame::cg_effects::CG_Bleed(end, fleshEntityNum);
     } else {
         CG_MissileHitWall(
-            crate::bg_public_h::WP_MACHINEGUN as libc::c_int,
-            0 as libc::c_int,
+            crate::bg_public_h::WP_MACHINEGUN as i32,
+            0i32,
             end,
             normal,
             crate::cg_local_h::IMPACTSOUND_DEFAULT,

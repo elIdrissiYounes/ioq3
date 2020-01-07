@@ -1,5 +1,5 @@
 // =============== BEGIN jerror_h ================
-pub type C2RustUnnamed_1 = libc::c_uint;
+pub type C2RustUnnamed_1 = u32;
 
 pub const JERR_BAD_STRUCT_SIZE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 22;
 
@@ -323,153 +323,153 @@ use crate::stdlib::stderr;
  */
 #[no_mangle]
 
-pub static mut jpeg_std_message_table: [*const libc::c_char; 128] = [
-    b"Bogus message code %d\x00" as *const u8 as *const libc::c_char,
-    b"ALIGN_TYPE is wrong, please fix\x00" as *const u8 as *const libc::c_char,
-    b"MAX_ALLOC_CHUNK is wrong, please fix\x00" as *const u8 as *const libc::c_char,
-    b"Bogus buffer control mode\x00" as *const u8 as *const libc::c_char,
-    b"Invalid component ID %d in SOS\x00" as *const u8 as *const libc::c_char,
-    b"Invalid crop request\x00" as *const u8 as *const libc::c_char,
-    b"DCT coefficient out of range\x00" as *const u8 as *const libc::c_char,
-    b"DCT scaled block size %dx%d not supported\x00" as *const u8 as *const libc::c_char,
+pub static mut jpeg_std_message_table: [*const i8; 128] = [
+    b"Bogus message code %d\x00" as *const u8 as *const i8,
+    b"ALIGN_TYPE is wrong, please fix\x00" as *const u8 as *const i8,
+    b"MAX_ALLOC_CHUNK is wrong, please fix\x00" as *const u8 as *const i8,
+    b"Bogus buffer control mode\x00" as *const u8 as *const i8,
+    b"Invalid component ID %d in SOS\x00" as *const u8 as *const i8,
+    b"Invalid crop request\x00" as *const u8 as *const i8,
+    b"DCT coefficient out of range\x00" as *const u8 as *const i8,
+    b"DCT scaled block size %dx%d not supported\x00" as *const u8 as *const i8,
     b"Component index %d: mismatching sampling ratio %d:%d, %d:%d, %c\x00" as *const u8
-        as *const libc::c_char,
-    b"Bogus Huffman table definition\x00" as *const u8 as *const libc::c_char,
-    b"Bogus input colorspace\x00" as *const u8 as *const libc::c_char,
-    b"Bogus JPEG colorspace\x00" as *const u8 as *const libc::c_char,
-    b"Bogus marker length\x00" as *const u8 as *const libc::c_char,
+        as *const i8,
+    b"Bogus Huffman table definition\x00" as *const u8 as *const i8,
+    b"Bogus input colorspace\x00" as *const u8 as *const i8,
+    b"Bogus JPEG colorspace\x00" as *const u8 as *const i8,
+    b"Bogus marker length\x00" as *const u8 as *const i8,
     b"Wrong JPEG library version: library is %d, caller expects %d\x00" as *const u8
-        as *const libc::c_char,
-    b"Sampling factors too large for interleaved scan\x00" as *const u8 as *const libc::c_char,
-    b"Invalid memory pool code %d\x00" as *const u8 as *const libc::c_char,
-    b"Unsupported JPEG data precision %d\x00" as *const u8 as *const libc::c_char,
+        as *const i8,
+    b"Sampling factors too large for interleaved scan\x00" as *const u8 as *const i8,
+    b"Invalid memory pool code %d\x00" as *const u8 as *const i8,
+    b"Unsupported JPEG data precision %d\x00" as *const u8 as *const i8,
     b"Invalid progressive parameters Ss=%d Se=%d Ah=%d Al=%d\x00" as *const u8
-        as *const libc::c_char,
+        as *const i8,
     b"Invalid progressive parameters at scan script entry %d\x00" as *const u8
-        as *const libc::c_char,
-    b"Bogus sampling factors\x00" as *const u8 as *const libc::c_char,
-    b"Invalid scan script at entry %d\x00" as *const u8 as *const libc::c_char,
-    b"Improper call to JPEG library in state %d\x00" as *const u8 as *const libc::c_char,
+        as *const i8,
+    b"Bogus sampling factors\x00" as *const u8 as *const i8,
+    b"Invalid scan script at entry %d\x00" as *const u8 as *const i8,
+    b"Improper call to JPEG library in state %d\x00" as *const u8 as *const i8,
     b"JPEG parameter struct mismatch: library thinks size is %u, caller expects %u\x00" as *const u8
-        as *const libc::c_char,
-    b"Bogus virtual array access\x00" as *const u8 as *const libc::c_char,
-    b"Buffer passed to JPEG library is too small\x00" as *const u8 as *const libc::c_char,
-    b"Suspension not allowed here\x00" as *const u8 as *const libc::c_char,
-    b"CCIR601 sampling not implemented yet\x00" as *const u8 as *const libc::c_char,
-    b"Too many color components: %d, max %d\x00" as *const u8 as *const libc::c_char,
-    b"Unsupported color conversion request\x00" as *const u8 as *const libc::c_char,
-    b"Bogus DAC index %d\x00" as *const u8 as *const libc::c_char,
-    b"Bogus DAC value 0x%x\x00" as *const u8 as *const libc::c_char,
-    b"Bogus DHT index %d\x00" as *const u8 as *const libc::c_char,
-    b"Bogus DQT index %d\x00" as *const u8 as *const libc::c_char,
-    b"Empty JPEG image (DNL not supported)\x00" as *const u8 as *const libc::c_char,
-    b"Read from EMS failed\x00" as *const u8 as *const libc::c_char,
-    b"Write to EMS failed\x00" as *const u8 as *const libc::c_char,
-    b"Didn\'t expect more than one scan\x00" as *const u8 as *const libc::c_char,
-    b"Input file read error\x00" as *const u8 as *const libc::c_char,
-    b"Output file write error --- out of disk space?\x00" as *const u8 as *const libc::c_char,
-    b"Fractional sampling not implemented yet\x00" as *const u8 as *const libc::c_char,
-    b"Huffman code size table overflow\x00" as *const u8 as *const libc::c_char,
-    b"Missing Huffman code table entry\x00" as *const u8 as *const libc::c_char,
-    b"Maximum supported image dimension is %u pixels\x00" as *const u8 as *const libc::c_char,
-    b"Empty input file\x00" as *const u8 as *const libc::c_char,
-    b"Premature end of input file\x00" as *const u8 as *const libc::c_char,
+        as *const i8,
+    b"Bogus virtual array access\x00" as *const u8 as *const i8,
+    b"Buffer passed to JPEG library is too small\x00" as *const u8 as *const i8,
+    b"Suspension not allowed here\x00" as *const u8 as *const i8,
+    b"CCIR601 sampling not implemented yet\x00" as *const u8 as *const i8,
+    b"Too many color components: %d, max %d\x00" as *const u8 as *const i8,
+    b"Unsupported color conversion request\x00" as *const u8 as *const i8,
+    b"Bogus DAC index %d\x00" as *const u8 as *const i8,
+    b"Bogus DAC value 0x%x\x00" as *const u8 as *const i8,
+    b"Bogus DHT index %d\x00" as *const u8 as *const i8,
+    b"Bogus DQT index %d\x00" as *const u8 as *const i8,
+    b"Empty JPEG image (DNL not supported)\x00" as *const u8 as *const i8,
+    b"Read from EMS failed\x00" as *const u8 as *const i8,
+    b"Write to EMS failed\x00" as *const u8 as *const i8,
+    b"Didn\'t expect more than one scan\x00" as *const u8 as *const i8,
+    b"Input file read error\x00" as *const u8 as *const i8,
+    b"Output file write error --- out of disk space?\x00" as *const u8 as *const i8,
+    b"Fractional sampling not implemented yet\x00" as *const u8 as *const i8,
+    b"Huffman code size table overflow\x00" as *const u8 as *const i8,
+    b"Missing Huffman code table entry\x00" as *const u8 as *const i8,
+    b"Maximum supported image dimension is %u pixels\x00" as *const u8 as *const i8,
+    b"Empty input file\x00" as *const u8 as *const i8,
+    b"Premature end of input file\x00" as *const u8 as *const i8,
     b"Cannot transcode due to multiple use of quantization table %d\x00" as *const u8
-        as *const libc::c_char,
-    b"Scan script does not transmit all data\x00" as *const u8 as *const libc::c_char,
-    b"Invalid color quantization mode change\x00" as *const u8 as *const libc::c_char,
-    b"Not implemented yet\x00" as *const u8 as *const libc::c_char,
-    b"Requested feature was omitted at compile time\x00" as *const u8 as *const libc::c_char,
-    b"Arithmetic table 0x%02x was not defined\x00" as *const u8 as *const libc::c_char,
-    b"Backing store not supported\x00" as *const u8 as *const libc::c_char,
-    b"Huffman table 0x%02x was not defined\x00" as *const u8 as *const libc::c_char,
-    b"JPEG datastream contains no image\x00" as *const u8 as *const libc::c_char,
-    b"Quantization table 0x%02x was not defined\x00" as *const u8 as *const libc::c_char,
-    b"Not a JPEG file: starts with 0x%02x 0x%02x\x00" as *const u8 as *const libc::c_char,
-    b"Insufficient memory (case %d)\x00" as *const u8 as *const libc::c_char,
-    b"Cannot quantize more than %d color components\x00" as *const u8 as *const libc::c_char,
-    b"Cannot quantize to fewer than %d colors\x00" as *const u8 as *const libc::c_char,
-    b"Cannot quantize to more than %d colors\x00" as *const u8 as *const libc::c_char,
-    b"Invalid JPEG file structure: two SOF markers\x00" as *const u8 as *const libc::c_char,
-    b"Invalid JPEG file structure: missing SOS marker\x00" as *const u8 as *const libc::c_char,
-    b"Unsupported JPEG process: SOF type 0x%02x\x00" as *const u8 as *const libc::c_char,
-    b"Invalid JPEG file structure: two SOI markers\x00" as *const u8 as *const libc::c_char,
-    b"Invalid JPEG file structure: SOS before SOF\x00" as *const u8 as *const libc::c_char,
-    b"Failed to create temporary file %s\x00" as *const u8 as *const libc::c_char,
-    b"Read failed on temporary file\x00" as *const u8 as *const libc::c_char,
-    b"Seek failed on temporary file\x00" as *const u8 as *const libc::c_char,
+        as *const i8,
+    b"Scan script does not transmit all data\x00" as *const u8 as *const i8,
+    b"Invalid color quantization mode change\x00" as *const u8 as *const i8,
+    b"Not implemented yet\x00" as *const u8 as *const i8,
+    b"Requested feature was omitted at compile time\x00" as *const u8 as *const i8,
+    b"Arithmetic table 0x%02x was not defined\x00" as *const u8 as *const i8,
+    b"Backing store not supported\x00" as *const u8 as *const i8,
+    b"Huffman table 0x%02x was not defined\x00" as *const u8 as *const i8,
+    b"JPEG datastream contains no image\x00" as *const u8 as *const i8,
+    b"Quantization table 0x%02x was not defined\x00" as *const u8 as *const i8,
+    b"Not a JPEG file: starts with 0x%02x 0x%02x\x00" as *const u8 as *const i8,
+    b"Insufficient memory (case %d)\x00" as *const u8 as *const i8,
+    b"Cannot quantize more than %d color components\x00" as *const u8 as *const i8,
+    b"Cannot quantize to fewer than %d colors\x00" as *const u8 as *const i8,
+    b"Cannot quantize to more than %d colors\x00" as *const u8 as *const i8,
+    b"Invalid JPEG file structure: two SOF markers\x00" as *const u8 as *const i8,
+    b"Invalid JPEG file structure: missing SOS marker\x00" as *const u8 as *const i8,
+    b"Unsupported JPEG process: SOF type 0x%02x\x00" as *const u8 as *const i8,
+    b"Invalid JPEG file structure: two SOI markers\x00" as *const u8 as *const i8,
+    b"Invalid JPEG file structure: SOS before SOF\x00" as *const u8 as *const i8,
+    b"Failed to create temporary file %s\x00" as *const u8 as *const i8,
+    b"Read failed on temporary file\x00" as *const u8 as *const i8,
+    b"Seek failed on temporary file\x00" as *const u8 as *const i8,
     b"Write failed on temporary file --- out of disk space?\x00" as *const u8
-        as *const libc::c_char,
-    b"Application transferred too few scanlines\x00" as *const u8 as *const libc::c_char,
-    b"Unsupported marker type 0x%02x\x00" as *const u8 as *const libc::c_char,
-    b"Virtual array controller messed up\x00" as *const u8 as *const libc::c_char,
-    b"Image too wide for this implementation\x00" as *const u8 as *const libc::c_char,
-    b"Read from XMS failed\x00" as *const u8 as *const libc::c_char,
-    b"Write to XMS failed\x00" as *const u8 as *const libc::c_char,
-    b"Copyright (C) 2011, Thomas G. Lane, Guido Vollbeding\x00" as *const u8 as *const libc::c_char,
-    b"8c  16-Jan-2011\x00" as *const u8 as *const libc::c_char,
+        as *const i8,
+    b"Application transferred too few scanlines\x00" as *const u8 as *const i8,
+    b"Unsupported marker type 0x%02x\x00" as *const u8 as *const i8,
+    b"Virtual array controller messed up\x00" as *const u8 as *const i8,
+    b"Image too wide for this implementation\x00" as *const u8 as *const i8,
+    b"Read from XMS failed\x00" as *const u8 as *const i8,
+    b"Write to XMS failed\x00" as *const u8 as *const i8,
+    b"Copyright (C) 2011, Thomas G. Lane, Guido Vollbeding\x00" as *const u8 as *const i8,
+    b"8c  16-Jan-2011\x00" as *const u8 as *const i8,
     b"Caution: quantization tables are too coarse for baseline JPEG\x00" as *const u8
-        as *const libc::c_char,
+        as *const i8,
     b"Adobe APP14 marker: version %d, flags 0x%04x 0x%04x, transform %d\x00" as *const u8
-        as *const libc::c_char,
-    b"Unknown APP0 marker (not JFIF), length %u\x00" as *const u8 as *const libc::c_char,
-    b"Unknown APP14 marker (not Adobe), length %u\x00" as *const u8 as *const libc::c_char,
-    b"Define Arithmetic Table 0x%02x: 0x%02x\x00" as *const u8 as *const libc::c_char,
-    b"Define Huffman Table 0x%02x\x00" as *const u8 as *const libc::c_char,
-    b"Define Quantization Table %d  precision %d\x00" as *const u8 as *const libc::c_char,
-    b"Define Restart Interval %u\x00" as *const u8 as *const libc::c_char,
-    b"Freed EMS handle %u\x00" as *const u8 as *const libc::c_char,
-    b"Obtained EMS handle %u\x00" as *const u8 as *const libc::c_char,
-    b"End Of Image\x00" as *const u8 as *const libc::c_char,
-    b"        %3d %3d %3d %3d %3d %3d %3d %3d\x00" as *const u8 as *const libc::c_char,
-    b"JFIF APP0 marker: version %d.%02d, density %dx%d  %d\x00" as *const u8 as *const libc::c_char,
+        as *const i8,
+    b"Unknown APP0 marker (not JFIF), length %u\x00" as *const u8 as *const i8,
+    b"Unknown APP14 marker (not Adobe), length %u\x00" as *const u8 as *const i8,
+    b"Define Arithmetic Table 0x%02x: 0x%02x\x00" as *const u8 as *const i8,
+    b"Define Huffman Table 0x%02x\x00" as *const u8 as *const i8,
+    b"Define Quantization Table %d  precision %d\x00" as *const u8 as *const i8,
+    b"Define Restart Interval %u\x00" as *const u8 as *const i8,
+    b"Freed EMS handle %u\x00" as *const u8 as *const i8,
+    b"Obtained EMS handle %u\x00" as *const u8 as *const i8,
+    b"End Of Image\x00" as *const u8 as *const i8,
+    b"        %3d %3d %3d %3d %3d %3d %3d %3d\x00" as *const u8 as *const i8,
+    b"JFIF APP0 marker: version %d.%02d, density %dx%d  %d\x00" as *const u8 as *const i8,
     b"Warning: thumbnail image size does not match data length %u\x00" as *const u8
-        as *const libc::c_char,
-    b"JFIF extension marker: type 0x%02x, length %u\x00" as *const u8 as *const libc::c_char,
-    b"    with %d x %d thumbnail image\x00" as *const u8 as *const libc::c_char,
-    b"Miscellaneous marker 0x%02x, length %u\x00" as *const u8 as *const libc::c_char,
-    b"Unexpected marker 0x%02x\x00" as *const u8 as *const libc::c_char,
-    b"        %4u %4u %4u %4u %4u %4u %4u %4u\x00" as *const u8 as *const libc::c_char,
-    b"Quantizing to %d = %d*%d*%d colors\x00" as *const u8 as *const libc::c_char,
-    b"Quantizing to %d colors\x00" as *const u8 as *const libc::c_char,
-    b"Selected %d colors for quantization\x00" as *const u8 as *const libc::c_char,
-    b"At marker 0x%02x, recovery action %d\x00" as *const u8 as *const libc::c_char,
-    b"RST%d\x00" as *const u8 as *const libc::c_char,
+        as *const i8,
+    b"JFIF extension marker: type 0x%02x, length %u\x00" as *const u8 as *const i8,
+    b"    with %d x %d thumbnail image\x00" as *const u8 as *const i8,
+    b"Miscellaneous marker 0x%02x, length %u\x00" as *const u8 as *const i8,
+    b"Unexpected marker 0x%02x\x00" as *const u8 as *const i8,
+    b"        %4u %4u %4u %4u %4u %4u %4u %4u\x00" as *const u8 as *const i8,
+    b"Quantizing to %d = %d*%d*%d colors\x00" as *const u8 as *const i8,
+    b"Quantizing to %d colors\x00" as *const u8 as *const i8,
+    b"Selected %d colors for quantization\x00" as *const u8 as *const i8,
+    b"At marker 0x%02x, recovery action %d\x00" as *const u8 as *const i8,
+    b"RST%d\x00" as *const u8 as *const i8,
     b"Smoothing not supported with nonstandard sampling ratios\x00" as *const u8
-        as *const libc::c_char,
+        as *const i8,
     b"Start Of Frame 0x%02x: width=%u, height=%u, components=%d\x00" as *const u8
-        as *const libc::c_char,
-    b"    Component %d: %dhx%dv q=%d\x00" as *const u8 as *const libc::c_char,
-    b"Start of Image\x00" as *const u8 as *const libc::c_char,
-    b"Start Of Scan: %d components\x00" as *const u8 as *const libc::c_char,
-    b"    Component %d: dc=%d ac=%d\x00" as *const u8 as *const libc::c_char,
-    b"  Ss=%d, Se=%d, Ah=%d, Al=%d\x00" as *const u8 as *const libc::c_char,
-    b"Closed temporary file %s\x00" as *const u8 as *const libc::c_char,
-    b"Opened temporary file %s\x00" as *const u8 as *const libc::c_char,
+        as *const i8,
+    b"    Component %d: %dhx%dv q=%d\x00" as *const u8 as *const i8,
+    b"Start of Image\x00" as *const u8 as *const i8,
+    b"Start Of Scan: %d components\x00" as *const u8 as *const i8,
+    b"    Component %d: dc=%d ac=%d\x00" as *const u8 as *const i8,
+    b"  Ss=%d, Se=%d, Ah=%d, Al=%d\x00" as *const u8 as *const i8,
+    b"Closed temporary file %s\x00" as *const u8 as *const i8,
+    b"Opened temporary file %s\x00" as *const u8 as *const i8,
     b"JFIF extension marker: JPEG-compressed thumbnail image, length %u\x00" as *const u8
-        as *const libc::c_char,
+        as *const i8,
     b"JFIF extension marker: palette thumbnail image, length %u\x00" as *const u8
-        as *const libc::c_char,
+        as *const i8,
     b"JFIF extension marker: RGB thumbnail image, length %u\x00" as *const u8
-        as *const libc::c_char,
-    b"Unrecognized component IDs %d %d %d, assuming YCbCr\x00" as *const u8 as *const libc::c_char,
-    b"Freed XMS handle %u\x00" as *const u8 as *const libc::c_char,
-    b"Obtained XMS handle %u\x00" as *const u8 as *const libc::c_char,
-    b"Unknown Adobe color transform code %d\x00" as *const u8 as *const libc::c_char,
-    b"Corrupt JPEG data: bad arithmetic code\x00" as *const u8 as *const libc::c_char,
+        as *const i8,
+    b"Unrecognized component IDs %d %d %d, assuming YCbCr\x00" as *const u8 as *const i8,
+    b"Freed XMS handle %u\x00" as *const u8 as *const i8,
+    b"Obtained XMS handle %u\x00" as *const u8 as *const i8,
+    b"Unknown Adobe color transform code %d\x00" as *const u8 as *const i8,
+    b"Corrupt JPEG data: bad arithmetic code\x00" as *const u8 as *const i8,
     b"Inconsistent progression sequence for component %d coefficient %d\x00" as *const u8
-        as *const libc::c_char,
+        as *const i8,
     b"Corrupt JPEG data: %u extraneous bytes before marker 0x%02x\x00" as *const u8
-        as *const libc::c_char,
-    b"Corrupt JPEG data: premature end of data segment\x00" as *const u8 as *const libc::c_char,
-    b"Corrupt JPEG data: bad Huffman code\x00" as *const u8 as *const libc::c_char,
-    b"Warning: unknown JFIF revision number %d.%02d\x00" as *const u8 as *const libc::c_char,
-    b"Premature end of JPEG file\x00" as *const u8 as *const libc::c_char,
+        as *const i8,
+    b"Corrupt JPEG data: premature end of data segment\x00" as *const u8 as *const i8,
+    b"Corrupt JPEG data: bad Huffman code\x00" as *const u8 as *const i8,
+    b"Warning: unknown JFIF revision number %d.%02d\x00" as *const u8 as *const i8,
+    b"Premature end of JPEG file\x00" as *const u8 as *const i8,
     b"Corrupt JPEG data: found marker 0x%02x instead of RST%d\x00" as *const u8
-        as *const libc::c_char,
-    b"Invalid SOS parameters for sequential JPEG\x00" as *const u8 as *const libc::c_char,
-    b"Application transferred too many scanlines\x00" as *const u8 as *const libc::c_char,
-    0 as *const libc::c_char,
+        as *const i8,
+    b"Invalid SOS parameters for sequential JPEG\x00" as *const u8 as *const i8,
+    b"Application transferred too many scanlines\x00" as *const u8 as *const i8,
+    0 as *const i8,
 ];
 /*
  * Error exit handler: must not return to caller.
@@ -494,7 +494,7 @@ unsafe extern "C" fn error_exit(mut cinfo: crate::jpeglib_h::j_common_ptr) {
     .expect("non-null function pointer")(cinfo);
     /* Let the memory manager delete any temp files before we die */
     crate::src::jpeg_8c::jcomapi::jpeg_destroy(cinfo);
-    crate::stdlib::exit(1 as libc::c_int);
+    crate::stdlib::exit(1);
 }
 /*
  * Actual output of an error or trace message.
@@ -512,7 +512,7 @@ unsafe extern "C" fn error_exit(mut cinfo: crate::jpeglib_h::j_common_ptr) {
  */
 
 unsafe extern "C" fn output_message(mut cinfo: crate::jpeglib_h::j_common_ptr) {
-    let mut buffer: [libc::c_char; 200] = [0; 200];
+    let mut buffer: [i8; 200] = [0; 200];
     /* Create the message */
     Some(
         (*(*cinfo).err)
@@ -523,7 +523,7 @@ unsafe extern "C" fn output_message(mut cinfo: crate::jpeglib_h::j_common_ptr) {
     /* Send it to stderr, adding a newline */
     crate::stdlib::fprintf(
         crate::stdlib::stderr,
-        b"%s\n\x00" as *const u8 as *const libc::c_char,
+        b"%s\n\x00" as *const u8 as *const i8,
         buffer.as_mut_ptr(),
     );
 }
@@ -540,16 +540,16 @@ unsafe extern "C" fn output_message(mut cinfo: crate::jpeglib_h::j_common_ptr) {
 
 unsafe extern "C" fn emit_message(
     mut cinfo: crate::jpeglib_h::j_common_ptr,
-    mut msg_level: libc::c_int,
+    mut msg_level: i32,
 ) {
     let mut err: *mut crate::jpeglib_h::jpeg_error_mgr = (*cinfo).err;
-    if msg_level < 0 as libc::c_int {
+    if msg_level < 0 {
         /* It's a warning message.  Since corrupt files may generate many warnings,
          * the policy implemented here is to show only the first warning,
          * unless trace_level >= 3.
          */
-        if (*err).num_warnings == 0 as libc::c_int as libc::c_long
-            || (*err).trace_level >= 3 as libc::c_int
+        if (*err).num_warnings == 0
+            || (*err).trace_level >= 3
         {
             Some((*err).output_message.expect("non-null function pointer"))
                 .expect("non-null function pointer")(cinfo);
@@ -571,16 +571,16 @@ unsafe extern "C" fn emit_message(
 
 unsafe extern "C" fn format_message(
     mut cinfo: crate::jpeglib_h::j_common_ptr,
-    mut buffer: *mut libc::c_char,
+    mut buffer: *mut i8,
 ) {
     let mut err: *mut crate::jpeglib_h::jpeg_error_mgr = (*cinfo).err;
-    let mut msg_code: libc::c_int = (*err).msg_code;
-    let mut msgtext: *const libc::c_char = 0 as *const libc::c_char;
-    let mut msgptr: *const libc::c_char = 0 as *const libc::c_char;
-    let mut ch: libc::c_char = 0;
+    let mut msg_code: i32 = (*err).msg_code;
+    let mut msgtext: *const i8 = 0 as *const i8;
+    let mut msgptr: *const i8 = 0 as *const i8;
+    let mut ch: i8 = 0;
     let mut isstring: crate::jmorecfg_h::boolean = 0;
     /* Look up message string in proper table */
-    if msg_code > 0 as libc::c_int && msg_code <= (*err).last_jpeg_message {
+    if msg_code > 0 && msg_code <= (*err).last_jpeg_message {
         msgtext = *(*err).jpeg_message_table.offset(msg_code as isize)
     } else if !(*err).addon_message_table.is_null()
         && msg_code >= (*err).first_addon_message
@@ -592,24 +592,24 @@ unsafe extern "C" fn format_message(
     }
     /* Defend against bogus message number */
     if msgtext.is_null() {
-        (*err).msg_parm.i[0 as libc::c_int as usize] = msg_code;
-        msgtext = *(*err).jpeg_message_table.offset(0 as libc::c_int as isize)
+        (*err).msg_parm.i[0] = msg_code;
+        msgtext = *(*err).jpeg_message_table.offset(0)
     }
     /* Check for string parameter, as indicated by %s in the message text */
-    isstring = 0 as libc::c_int;
+    isstring = 0;
     msgptr = msgtext;
     loop {
         let fresh0 = msgptr;
         msgptr = msgptr.offset(1);
         ch = *fresh0;
-        if !(ch as libc::c_int != '\u{0}' as i32) {
+        if !(ch as i32 != '\u{0}' as i32) {
             break;
         }
-        if !(ch as libc::c_int == '%' as i32) {
+        if !(ch as i32 == '%' as i32) {
             continue;
         }
-        if *msgptr as libc::c_int == 's' as i32 {
-            isstring = 1 as libc::c_int
+        if *msgptr as i32 == 's' as i32 {
+            isstring = 1
         }
         break;
     }
@@ -620,14 +620,14 @@ unsafe extern "C" fn format_message(
         crate::stdlib::sprintf(
             buffer,
             msgtext,
-            (*err).msg_parm.i[0 as libc::c_int as usize],
-            (*err).msg_parm.i[1 as libc::c_int as usize],
-            (*err).msg_parm.i[2 as libc::c_int as usize],
-            (*err).msg_parm.i[3 as libc::c_int as usize],
-            (*err).msg_parm.i[4 as libc::c_int as usize],
-            (*err).msg_parm.i[5 as libc::c_int as usize],
-            (*err).msg_parm.i[6 as libc::c_int as usize],
-            (*err).msg_parm.i[7 as libc::c_int as usize],
+            (*err).msg_parm.i[0usize],
+            (*err).msg_parm.i[1usize],
+            (*err).msg_parm.i[2usize],
+            (*err).msg_parm.i[3usize],
+            (*err).msg_parm.i[4usize],
+            (*err).msg_parm.i[5usize],
+            (*err).msg_parm.i[6usize],
+            (*err).msg_parm.i[7usize],
         );
     };
 }
@@ -640,9 +640,9 @@ unsafe extern "C" fn format_message(
  */
 
 unsafe extern "C" fn reset_error_mgr(mut cinfo: crate::jpeglib_h::j_common_ptr) {
-    (*(*cinfo).err).num_warnings = 0 as libc::c_int as libc::c_long;
+    (*(*cinfo).err).num_warnings = 0isize;
     /* trace_level is not reset since it is an application-supplied parameter */
-    (*(*cinfo).err).msg_code = 0 as libc::c_int;
+    (*(*cinfo).err).msg_code = 0;
     /* may be useful as a flag for "no error" */
 }
 /* Declarations for routines called by application.
@@ -675,25 +675,25 @@ pub unsafe extern "C" fn jpeg_std_error(
         Some(error_exit as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr) -> ()); /* default = no tracing */
     (*err).emit_message = Some(
         emit_message
-            as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: libc::c_int) -> (),
+            as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: i32) -> (),
     ); /* no warnings emitted yet */
     (*err).output_message =
         Some(output_message as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr) -> ()); /* may be useful as a flag for "no error" */
     (*err).format_message = Some(
         format_message
-            as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: *mut libc::c_char) -> (),
+            as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: *mut i8) -> (),
     );
     (*err).reset_error_mgr =
         Some(reset_error_mgr as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr) -> ());
-    (*err).trace_level = 0 as libc::c_int;
-    (*err).num_warnings = 0 as libc::c_int as libc::c_long;
-    (*err).msg_code = 0 as libc::c_int;
+    (*err).trace_level = 0;
+    (*err).num_warnings = 0isize;
+    (*err).msg_code = 0;
     /* Initialize message table pointers */
     (*err).jpeg_message_table = jpeg_std_message_table.as_ptr(); /* for safety */
     (*err).last_jpeg_message =
-        crate::src::jpeg_8c::jerror::JMSG_LASTMSGCODE as libc::c_int - 1 as libc::c_int;
-    (*err).addon_message_table = 0 as *const *const libc::c_char;
-    (*err).first_addon_message = 0 as libc::c_int;
-    (*err).last_addon_message = 0 as libc::c_int;
+        crate::src::jpeg_8c::jerror::JMSG_LASTMSGCODE as i32 - 1;
+    (*err).addon_message_table = 0 as *const *const i8;
+    (*err).first_addon_message = 0;
+    (*err).last_addon_message = 0;
     return err;
 }

@@ -8,10 +8,9 @@ pub mod q_shared_h {
         mut v: *const crate::src::qcommon::q_shared::vec_t,
     ) -> crate::src::qcommon::q_shared::vec_t {
         return crate::stdlib::sqrt(
-            (*v.offset(0 as libc::c_int as isize) * *v.offset(0 as libc::c_int as isize)
-                + *v.offset(1 as libc::c_int as isize) * *v.offset(1 as libc::c_int as isize)
-                + *v.offset(2 as libc::c_int as isize) * *v.offset(2 as libc::c_int as isize))
-                as libc::c_double,
+            (*v.offset(0) * *v.offset(0)
+                + *v.offset(1) * *v.offset(1)
+                + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
     #[inline]
@@ -21,15 +20,9 @@ pub mod q_shared_h {
         mut v2: *const crate::src::qcommon::q_shared::vec_t,
         mut cross: *mut crate::src::qcommon::q_shared::vec_t,
     ) {
-        *cross.offset(0 as libc::c_int as isize) = *v1.offset(1 as libc::c_int as isize)
-            * *v2.offset(2 as libc::c_int as isize)
-            - *v1.offset(2 as libc::c_int as isize) * *v2.offset(1 as libc::c_int as isize);
-        *cross.offset(1 as libc::c_int as isize) = *v1.offset(2 as libc::c_int as isize)
-            * *v2.offset(0 as libc::c_int as isize)
-            - *v1.offset(0 as libc::c_int as isize) * *v2.offset(2 as libc::c_int as isize);
-        *cross.offset(2 as libc::c_int as isize) = *v1.offset(0 as libc::c_int as isize)
-            * *v2.offset(1 as libc::c_int as isize)
-            - *v1.offset(1 as libc::c_int as isize) * *v2.offset(0 as libc::c_int as isize);
+        *cross.offset(0) = *v1.offset(1) * *v2.offset(2) - *v1.offset(2) * *v2.offset(1);
+        *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
+        *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
     use crate::stdlib::sqrt;
 
@@ -187,8 +180,8 @@ use crate::stdlib::sqrt;
 
 pub static mut cg_localEntities: [crate::cg_local_h::localEntity_t; 512] =
     [crate::cg_local_h::localEntity_t {
-        prev: 0 as *const crate::cg_local_h::localEntity_s as *mut crate::cg_local_h::localEntity_s,
-        next: 0 as *const crate::cg_local_h::localEntity_s as *mut crate::cg_local_h::localEntity_s,
+        prev: 0 as *mut crate::cg_local_h::localEntity_s,
+        next: 0 as *mut crate::cg_local_h::localEntity_s,
         leType: crate::cg_local_h::LE_MARK,
         leFlags: 0,
         startTime: 0,
@@ -243,8 +236,8 @@ pub static mut cg_localEntities: [crate::cg_local_h::localEntity_t; 512] =
 
 pub static mut cg_activeLocalEntities: crate::cg_local_h::localEntity_t =
     crate::cg_local_h::localEntity_t {
-        prev: 0 as *const crate::cg_local_h::localEntity_s as *mut crate::cg_local_h::localEntity_s,
-        next: 0 as *const crate::cg_local_h::localEntity_s as *mut crate::cg_local_h::localEntity_s,
+        prev: 0 as *mut crate::cg_local_h::localEntity_s,
+        next: 0 as *mut crate::cg_local_h::localEntity_s,
         leType: crate::cg_local_h::LE_MARK,
         leFlags: 0,
         startTime: 0,
@@ -299,7 +292,7 @@ pub static mut cg_activeLocalEntities: crate::cg_local_h::localEntity_t =
 #[no_mangle]
 
 pub static mut cg_freeLocalEntities: *mut crate::cg_local_h::localEntity_t =
-    0 as *const crate::cg_local_h::localEntity_t as *mut crate::cg_local_h::localEntity_t;
+    0 as *mut crate::cg_local_h::localEntity_t;
 // single linked list
 /*
 ===================
@@ -311,21 +304,20 @@ This is called at startup and for tournement restarts
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_InitLocalEntities() {
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     crate::stdlib::memset(
         cg_localEntities.as_mut_ptr() as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<[crate::cg_local_h::localEntity_t; 512]>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<[crate::cg_local_h::localEntity_t; 512]>(),
     );
     cg_activeLocalEntities.next = &mut cg_activeLocalEntities;
     cg_activeLocalEntities.prev = &mut cg_activeLocalEntities;
     cg_freeLocalEntities = cg_localEntities.as_mut_ptr();
-    i = 0 as libc::c_int;
-    while i < 512 as libc::c_int - 1 as libc::c_int {
-        cg_localEntities[i as usize].next = &mut *cg_localEntities
-            .as_mut_ptr()
-            .offset((i + 1 as libc::c_int) as isize)
-            as *mut crate::cg_local_h::localEntity_t;
+    i = 0;
+    while i < 512 - 1 {
+        cg_localEntities[i as usize].next =
+            &mut *cg_localEntities.as_mut_ptr().offset((i + 1) as isize)
+                as *mut crate::cg_local_h::localEntity_t;
         i += 1
     }
 }
@@ -339,7 +331,7 @@ CG_FreeLocalEntity
 pub unsafe extern "C" fn CG_FreeLocalEntity(mut le: *mut crate::cg_local_h::localEntity_t) {
     if (*le).prev.is_null() {
         crate::src::cgame::cg_main::CG_Error(
-            b"CG_FreeLocalEntity: not active\x00" as *const u8 as *const libc::c_char,
+            b"CG_FreeLocalEntity: not active\x00" as *const u8 as *const i8,
         );
     }
     // remove from the doubly linked active list
@@ -369,8 +361,8 @@ pub unsafe extern "C" fn CG_AllocLocalEntity() -> *mut crate::cg_local_h::localE
     cg_freeLocalEntities = (*cg_freeLocalEntities).next;
     crate::stdlib::memset(
         le as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::cg_local_h::localEntity_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::cg_local_h::localEntity_t>(),
     );
     // link into the active list
     (*le).next = cg_activeLocalEntities.next;
@@ -399,13 +391,13 @@ Leave expanding blood puffs behind gibs
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_BloodTrail(mut le: *mut crate::cg_local_h::localEntity_t) {
-    let mut t: libc::c_int = 0;
-    let mut t2: libc::c_int = 0;
-    let mut step: libc::c_int = 0;
+    let mut t: i32 = 0;
+    let mut t2: i32 = 0;
+    let mut step: i32 = 0;
     let mut newOrigin: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut blood: *mut crate::cg_local_h::localEntity_t =
         0 as *mut crate::cg_local_h::localEntity_t;
-    step = 150 as libc::c_int;
+    step = 150;
     t = step
         * ((crate::src::cgame::cg_main::cg.time - crate::src::cgame::cg_main::cg.frametime + step)
             / step);
@@ -416,22 +408,21 @@ pub unsafe extern "C" fn CG_BloodTrail(mut le: *mut crate::cg_local_h::localEnti
             newOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
                 as *const crate::src::qcommon::q_shared::vec_t,
-            20 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            2000 as libc::c_int as libc::c_float,
+            20f32,
+            1f32,
+            1f32,
+            1f32,
+            1f32,
+            2000f32,
             t,
-            0 as libc::c_int,
-            0 as libc::c_int,
+            0,
+            0,
             crate::src::cgame::cg_main::cgs.media.bloodTrailShader,
         );
         // use the optimized version
         (*blood).leType = crate::cg_local_h::LE_FALL_SCALE_FADE;
         // drop a total of 40 units over its lifetime
-        (*blood).pos.trDelta[2 as libc::c_int as usize] =
-            40 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
+        (*blood).pos.trDelta[2] = 40f32;
         t += step
     }
 }
@@ -446,43 +437,35 @@ pub unsafe extern "C" fn CG_FragmentBounceMark(
     mut le: *mut crate::cg_local_h::localEntity_t,
     mut trace: *mut crate::src::qcommon::q_shared::trace_t,
 ) {
-    let mut radius: libc::c_int = 0;
-    if (*le).leMarkType as libc::c_uint
-        == crate::cg_local_h::LEMT_BLOOD as libc::c_int as libc::c_uint
-    {
-        radius = 16 as libc::c_int + (crate::stdlib::rand() & 31 as libc::c_int);
+    let mut radius: i32 = 0;
+    if (*le).leMarkType == crate::cg_local_h::LEMT_BLOOD {
+        radius = 16 + (crate::stdlib::rand() & 31);
         crate::src::cgame::cg_marks::CG_ImpactMark(
             crate::src::cgame::cg_main::cgs.media.bloodMarkShader,
             (*trace).endpos.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             (*trace).plane.normal.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-            (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float
-                * 360 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
+            (crate::stdlib::rand() & 0x7fffi32) as f32 / 32767f32 * 360f32,
+            1f32,
+            1f32,
+            1f32,
+            1f32,
             crate::src::qcommon::q_shared::qtrue,
-            radius as libc::c_float,
+            radius as f32,
             crate::src::qcommon::q_shared::qfalse,
         );
-    } else if (*le).leMarkType as libc::c_uint
-        == crate::cg_local_h::LEMT_BURN as libc::c_int as libc::c_uint
-    {
-        radius = 8 as libc::c_int + (crate::stdlib::rand() & 15 as libc::c_int);
+    } else if (*le).leMarkType == crate::cg_local_h::LEMT_BURN {
+        radius = 8 + (crate::stdlib::rand() & 15);
         crate::src::cgame::cg_marks::CG_ImpactMark(
             crate::src::cgame::cg_main::cgs.media.burnMarkShader,
             (*trace).endpos.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             (*trace).plane.normal.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-            (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float
-                * 360 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
+            (crate::stdlib::rand() & 0x7fffi32) as f32 / 32767f32 * 360f32,
+            1f32,
+            1f32,
+            1f32,
+            1f32,
             crate::src::qcommon::q_shared::qtrue,
-            radius as libc::c_float,
+            radius as f32,
             crate::src::qcommon::q_shared::qfalse,
         );
     }
@@ -501,30 +484,27 @@ pub unsafe extern "C" fn CG_FragmentBounceSound(
     mut le: *mut crate::cg_local_h::localEntity_t,
     mut trace: *mut crate::src::qcommon::q_shared::trace_t,
 ) {
-    if (*le).leBounceSoundType as libc::c_uint
-        == crate::cg_local_h::LEBS_BLOOD as libc::c_int as libc::c_uint
-    {
+    if (*le).leBounceSoundType == crate::cg_local_h::LEBS_BLOOD {
         // half the gibs will make splat sounds
-        if crate::stdlib::rand() & 1 as libc::c_int != 0 {
-            let mut r: libc::c_int = crate::stdlib::rand() & 3 as libc::c_int;
+        if crate::stdlib::rand() & 1 != 0 {
+            let mut r: i32 = crate::stdlib::rand() & 3;
             let mut s: crate::src::qcommon::q_shared::sfxHandle_t = 0;
-            if r == 0 as libc::c_int {
+            if r == 0 {
                 s = crate::src::cgame::cg_main::cgs.media.gibBounce1Sound
-            } else if r == 1 as libc::c_int {
+            } else if r == 1 {
                 s = crate::src::cgame::cg_main::cgs.media.gibBounce2Sound
             } else {
                 s = crate::src::cgame::cg_main::cgs.media.gibBounce3Sound
             }
             crate::src::cgame::cg_syscalls::trap_S_StartSound(
                 (*trace).endpos.as_mut_ptr(),
-                ((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int,
-                crate::src::qcommon::q_shared::CHAN_AUTO as libc::c_int,
+                ((1i32) << 10i32) - 2i32,
+                crate::src::qcommon::q_shared::CHAN_AUTO as i32,
                 s,
             );
         }
     } else {
-        ((*le).leBounceSoundType as libc::c_uint)
-            == crate::cg_local_h::LEBS_BRASS as libc::c_int as libc::c_uint;
+        ((*le).leBounceSoundType) == crate::cg_local_h::LEBS_BRASS;
     }
     // don't allow a fragment to make multiple bounce sounds,
     // or it gets too noisy as they settle
@@ -542,47 +522,36 @@ pub unsafe extern "C" fn CG_ReflectVelocity(
     mut trace: *mut crate::src::qcommon::q_shared::trace_t,
 ) {
     let mut velocity: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut dot: libc::c_float = 0.;
-    let mut hitTime: libc::c_int = 0;
+    let mut dot: f32 = 0.;
+    let mut hitTime: i32 = 0;
     // reflect the velocity on the trace plane
     hitTime = ((crate::src::cgame::cg_main::cg.time - crate::src::cgame::cg_main::cg.frametime)
-        as libc::c_float
-        + crate::src::cgame::cg_main::cg.frametime as libc::c_float * (*trace).fraction)
-        as libc::c_int;
+        as f32
+        + crate::src::cgame::cg_main::cg.frametime as f32 * (*trace).fraction) as i32;
     crate::src::game::bg_misc::BG_EvaluateTrajectoryDelta(
         &mut (*le).pos,
         hitTime,
         velocity.as_mut_ptr(),
     );
-    dot = velocity[0 as libc::c_int as usize] * (*trace).plane.normal[0 as libc::c_int as usize]
-        + velocity[1 as libc::c_int as usize] * (*trace).plane.normal[1 as libc::c_int as usize]
-        + velocity[2 as libc::c_int as usize] * (*trace).plane.normal[2 as libc::c_int as usize];
-    (*le).pos.trDelta[0 as libc::c_int as usize] = velocity[0 as libc::c_int as usize]
-        + (*trace).plane.normal[0 as libc::c_int as usize]
-            * (-(2 as libc::c_int) as libc::c_float * dot);
-    (*le).pos.trDelta[1 as libc::c_int as usize] = velocity[1 as libc::c_int as usize]
-        + (*trace).plane.normal[1 as libc::c_int as usize]
-            * (-(2 as libc::c_int) as libc::c_float * dot);
-    (*le).pos.trDelta[2 as libc::c_int as usize] = velocity[2 as libc::c_int as usize]
-        + (*trace).plane.normal[2 as libc::c_int as usize]
-            * (-(2 as libc::c_int) as libc::c_float * dot);
-    (*le).pos.trDelta[0 as libc::c_int as usize] =
-        (*le).pos.trDelta[0 as libc::c_int as usize] * (*le).bounceFactor;
-    (*le).pos.trDelta[1 as libc::c_int as usize] =
-        (*le).pos.trDelta[1 as libc::c_int as usize] * (*le).bounceFactor;
-    (*le).pos.trDelta[2 as libc::c_int as usize] =
-        (*le).pos.trDelta[2 as libc::c_int as usize] * (*le).bounceFactor;
-    (*le).pos.trBase[0 as libc::c_int as usize] = (*trace).endpos[0 as libc::c_int as usize];
-    (*le).pos.trBase[1 as libc::c_int as usize] = (*trace).endpos[1 as libc::c_int as usize];
-    (*le).pos.trBase[2 as libc::c_int as usize] = (*trace).endpos[2 as libc::c_int as usize];
+    dot = velocity[0] * (*trace).plane.normal[0]
+        + velocity[1] * (*trace).plane.normal[1]
+        + velocity[2] * (*trace).plane.normal[2];
+    (*le).pos.trDelta[0] = velocity[0] + (*trace).plane.normal[0] * (-2f32 * dot);
+    (*le).pos.trDelta[1] = velocity[1] + (*trace).plane.normal[1] * (-2f32 * dot);
+    (*le).pos.trDelta[2] = velocity[2] + (*trace).plane.normal[2] * (-2f32 * dot);
+    (*le).pos.trDelta[0] = (*le).pos.trDelta[0] * (*le).bounceFactor;
+    (*le).pos.trDelta[1] = (*le).pos.trDelta[1] * (*le).bounceFactor;
+    (*le).pos.trDelta[2] = (*le).pos.trDelta[2] * (*le).bounceFactor;
+    (*le).pos.trBase[0] = (*trace).endpos[0];
+    (*le).pos.trBase[1] = (*trace).endpos[1];
+    (*le).pos.trBase[2] = (*trace).endpos[2];
     (*le).pos.trTime = crate::src::cgame::cg_main::cg.time;
     // check for stop, making sure that even on low FPS systems it doesn't bobble
-    if (*trace).allsolid as libc::c_uint != 0
-        || (*trace).plane.normal[2 as libc::c_int as usize] > 0 as libc::c_int as libc::c_float
-            && ((*le).pos.trDelta[2 as libc::c_int as usize] < 40 as libc::c_int as libc::c_float
-                || (*le).pos.trDelta[2 as libc::c_int as usize]
-                    < -crate::src::cgame::cg_main::cg.frametime as libc::c_float
-                        * (*le).pos.trDelta[2 as libc::c_int as usize])
+    if (*trace).allsolid != 0
+        || (*trace).plane.normal[2] > 0f32
+            && ((*le).pos.trDelta[2] < 40f32
+                || (*le).pos.trDelta[2]
+                    < -crate::src::cgame::cg_main::cg.frametime as f32 * (*le).pos.trDelta[2])
     {
         (*le).pos.trType = crate::src::qcommon::q_shared::TR_STATIONARY
     };
@@ -613,33 +582,25 @@ pub unsafe extern "C" fn CG_AddFragment(mut le: *mut crate::cg_local_h::localEnt
             contents: 0,
             entityNum: 0,
         };
-    if (*le).pos.trType as libc::c_uint
-        == crate::src::qcommon::q_shared::TR_STATIONARY as libc::c_int as libc::c_uint
-    {
+    if (*le).pos.trType == crate::src::qcommon::q_shared::TR_STATIONARY {
         // sink into the ground if near the removal time
-        let mut t: libc::c_int = 0;
-        let mut oldZ: libc::c_float = 0.;
+        let mut t: i32 = 0;
+        let mut oldZ: f32 = 0.;
         t = (*le).endTime - crate::src::cgame::cg_main::cg.time;
-        if t < 1000 as libc::c_int {
+        if t < 1000 {
             // we must use an explicit lighting origin, otherwise the
             // lighting would be lost as soon as the origin went
             // into the ground
-            (*le).refEntity.lightingOrigin[0 as libc::c_int as usize] =
-                (*le).refEntity.origin[0 as libc::c_int as usize];
-            (*le).refEntity.lightingOrigin[1 as libc::c_int as usize] =
-                (*le).refEntity.origin[1 as libc::c_int as usize];
-            (*le).refEntity.lightingOrigin[2 as libc::c_int as usize] =
-                (*le).refEntity.origin[2 as libc::c_int as usize];
-            (*le).refEntity.renderfx |= 0x80 as libc::c_int;
-            oldZ = (*le).refEntity.origin[2 as libc::c_int as usize];
-            (*le).refEntity.origin[2 as libc::c_int as usize] =
-                ((*le).refEntity.origin[2 as libc::c_int as usize] as libc::c_double
-                    - 16 as libc::c_int as libc::c_double
-                        * (1.0f64
-                            - (t as libc::c_float / 1000 as libc::c_int as libc::c_float)
-                                as libc::c_double)) as libc::c_float;
+            (*le).refEntity.lightingOrigin[0] = (*le).refEntity.origin[0];
+            (*le).refEntity.lightingOrigin[1] = (*le).refEntity.origin[1];
+            (*le).refEntity.lightingOrigin[2] = (*le).refEntity.origin[2];
+            (*le).refEntity.renderfx |= 0x80;
+            oldZ = (*le).refEntity.origin[2];
+            (*le).refEntity.origin[2] = ((*le).refEntity.origin[2] as f64
+                - 16f64 * (1.0 - (t as f32 / 1000f32) as f64))
+                as f32;
             crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut (*le).refEntity);
-            (*le).refEntity.origin[2 as libc::c_int as usize] = oldZ
+            (*le).refEntity.origin[2] = oldZ
         } else {
             crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut (*le).refEntity);
         }
@@ -658,15 +619,15 @@ pub unsafe extern "C" fn CG_AddFragment(mut le: *mut crate::cg_local_h::localEnt
         0 as *const crate::src::qcommon::q_shared::vec_t,
         0 as *const crate::src::qcommon::q_shared::vec_t,
         newOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        -(1 as libc::c_int),
-        1 as libc::c_int,
+        -(1),
+        1,
     );
-    if trace.fraction as libc::c_double == 1.0f64 {
+    if trace.fraction as f64 == 1.0 {
         // still in free fall
-        (*le).refEntity.origin[0 as libc::c_int as usize] = newOrigin[0 as libc::c_int as usize];
-        (*le).refEntity.origin[1 as libc::c_int as usize] = newOrigin[1 as libc::c_int as usize];
-        (*le).refEntity.origin[2 as libc::c_int as usize] = newOrigin[2 as libc::c_int as usize];
-        if (*le).leFlags & crate::cg_local_h::LEF_TUMBLE as libc::c_int != 0 {
+        (*le).refEntity.origin[0] = newOrigin[0];
+        (*le).refEntity.origin[1] = newOrigin[1];
+        (*le).refEntity.origin[2] = newOrigin[2];
+        if (*le).leFlags & crate::cg_local_h::LEF_TUMBLE as i32 != 0 {
             let mut angles: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
             crate::src::game::bg_misc::BG_EvaluateTrajectory(
                 &mut (*le).angles,
@@ -680,9 +641,7 @@ pub unsafe extern "C" fn CG_AddFragment(mut le: *mut crate::cg_local_h::localEnt
         }
         crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut (*le).refEntity);
         // add a blood trail
-        if (*le).leBounceSoundType as libc::c_uint
-            == crate::cg_local_h::LEBS_BLOOD as libc::c_int as libc::c_uint
-        {
+        if (*le).leBounceSoundType == crate::cg_local_h::LEBS_BLOOD {
             CG_BloodTrail(le);
         }
         return;
@@ -692,9 +651,9 @@ pub unsafe extern "C" fn CG_AddFragment(mut le: *mut crate::cg_local_h::localEnt
     // and floating levels
     if crate::src::cgame::cg_predict::CG_PointContents(
         trace.endpos.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        0 as libc::c_int,
-    ) as libc::c_uint
-        & 0x80000000 as libc::c_uint
+        0,
+    ) as u32
+        & 0x80000000
         != 0
     {
         CG_FreeLocalEntity(le);
@@ -725,18 +684,14 @@ CG_AddFadeRGB
 
 pub unsafe extern "C" fn CG_AddFadeRGB(mut le: *mut crate::cg_local_h::localEntity_t) {
     let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
-    let mut c: libc::c_float = 0.;
+    let mut c: f32 = 0.;
     re = &mut (*le).refEntity;
-    c = ((*le).endTime - crate::src::cgame::cg_main::cg.time) as libc::c_float * (*le).lifeRate;
-    c *= 0xff as libc::c_int as libc::c_float;
-    (*re).shaderRGBA[0 as libc::c_int as usize] =
-        ((*le).color[0 as libc::c_int as usize] * c) as crate::src::qcommon::q_shared::byte;
-    (*re).shaderRGBA[1 as libc::c_int as usize] =
-        ((*le).color[1 as libc::c_int as usize] * c) as crate::src::qcommon::q_shared::byte;
-    (*re).shaderRGBA[2 as libc::c_int as usize] =
-        ((*le).color[2 as libc::c_int as usize] * c) as crate::src::qcommon::q_shared::byte;
-    (*re).shaderRGBA[3 as libc::c_int as usize] =
-        ((*le).color[3 as libc::c_int as usize] * c) as crate::src::qcommon::q_shared::byte;
+    c = ((*le).endTime - crate::src::cgame::cg_main::cg.time) as f32 * (*le).lifeRate;
+    c *= 255f32;
+    (*re).shaderRGBA[0] = ((*le).color[0] * c) as crate::src::qcommon::q_shared::byte;
+    (*re).shaderRGBA[1] = ((*le).color[1] * c) as crate::src::qcommon::q_shared::byte;
+    (*re).shaderRGBA[2] = ((*le).color[2] * c) as crate::src::qcommon::q_shared::byte;
+    (*re).shaderRGBA[3] = ((*le).color[3] * c) as crate::src::qcommon::q_shared::byte;
     crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(re);
 }
 /*
@@ -747,27 +702,23 @@ CG_AddMoveScaleFade
 
 unsafe extern "C" fn CG_AddMoveScaleFade(mut le: *mut crate::cg_local_h::localEntity_t) {
     let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
-    let mut c: libc::c_float = 0.;
+    let mut c: f32 = 0.;
     let mut delta: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut len: libc::c_float = 0.;
+    let mut len: f32 = 0.;
     re = &mut (*le).refEntity;
     if (*le).fadeInTime > (*le).startTime && crate::src::cgame::cg_main::cg.time < (*le).fadeInTime
     {
         // fade / grow time
-        c = (1.0f64
-            - (((*le).fadeInTime - crate::src::cgame::cg_main::cg.time) as libc::c_float
-                / ((*le).fadeInTime - (*le).startTime) as libc::c_float)
-                as libc::c_double) as libc::c_float
+        c = (1.0
+            - (((*le).fadeInTime - crate::src::cgame::cg_main::cg.time) as f32
+                / ((*le).fadeInTime - (*le).startTime) as f32) as f64) as f32
     } else {
         // fade / grow time
-        c = ((*le).endTime - crate::src::cgame::cg_main::cg.time) as libc::c_float * (*le).lifeRate
+        c = ((*le).endTime - crate::src::cgame::cg_main::cg.time) as f32 * (*le).lifeRate
     }
-    (*re).shaderRGBA[3 as libc::c_int as usize] =
-        (0xff as libc::c_int as libc::c_float * c * (*le).color[3 as libc::c_int as usize])
-            as crate::src::qcommon::q_shared::byte;
-    if (*le).leFlags & crate::cg_local_h::LEF_PUFF_DONT_SCALE as libc::c_int == 0 {
-        (*re).radius = ((*le).radius as libc::c_double * (1.0f64 - c as libc::c_double)
-            + 8 as libc::c_int as libc::c_double) as libc::c_float
+    (*re).shaderRGBA[3] = (255f32 * c * (*le).color[3]) as crate::src::qcommon::q_shared::byte;
+    if (*le).leFlags & crate::cg_local_h::LEF_PUFF_DONT_SCALE as i32 == 0 {
+        (*re).radius = ((*le).radius as f64 * (1.0 - c as f64) + 8f64) as f32
     }
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
         &mut (*le).pos,
@@ -776,12 +727,9 @@ unsafe extern "C" fn CG_AddMoveScaleFade(mut le: *mut crate::cg_local_h::localEn
     );
     // if the view would be "inside" the sprite, kill the sprite
     // so it doesn't add too much overdraw
-    delta[0 as libc::c_int as usize] = (*re).origin[0 as libc::c_int as usize]
-        - crate::src::cgame::cg_main::cg.refdef.vieworg[0 as libc::c_int as usize];
-    delta[1 as libc::c_int as usize] = (*re).origin[1 as libc::c_int as usize]
-        - crate::src::cgame::cg_main::cg.refdef.vieworg[1 as libc::c_int as usize];
-    delta[2 as libc::c_int as usize] = (*re).origin[2 as libc::c_int as usize]
-        - crate::src::cgame::cg_main::cg.refdef.vieworg[2 as libc::c_int as usize];
+    delta[0] = (*re).origin[0] - crate::src::cgame::cg_main::cg.refdef.vieworg[0];
+    delta[1] = (*re).origin[1] - crate::src::cgame::cg_main::cg.refdef.vieworg[1];
+    delta[2] = (*re).origin[2] - crate::src::cgame::cg_main::cg.refdef.vieworg[2];
     len = VectorLength(delta.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t);
     if len < (*le).radius {
         CG_FreeLocalEntity(le);
@@ -801,25 +749,19 @@ There are often many of these, so it needs to be simple.
 
 unsafe extern "C" fn CG_AddScaleFade(mut le: *mut crate::cg_local_h::localEntity_t) {
     let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
-    let mut c: libc::c_float = 0.;
+    let mut c: f32 = 0.;
     let mut delta: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut len: libc::c_float = 0.;
+    let mut len: f32 = 0.;
     re = &mut (*le).refEntity;
     // fade / grow time
-    c = ((*le).endTime - crate::src::cgame::cg_main::cg.time) as libc::c_float * (*le).lifeRate;
-    (*re).shaderRGBA[3 as libc::c_int as usize] =
-        (0xff as libc::c_int as libc::c_float * c * (*le).color[3 as libc::c_int as usize])
-            as crate::src::qcommon::q_shared::byte;
-    (*re).radius = ((*le).radius as libc::c_double * (1.0f64 - c as libc::c_double)
-        + 8 as libc::c_int as libc::c_double) as libc::c_float;
+    c = ((*le).endTime - crate::src::cgame::cg_main::cg.time) as f32 * (*le).lifeRate;
+    (*re).shaderRGBA[3] = (255f32 * c * (*le).color[3]) as crate::src::qcommon::q_shared::byte;
+    (*re).radius = ((*le).radius as f64 * (1.0 - c as f64) + 8f64) as f32;
     // if the view would be "inside" the sprite, kill the sprite
     // so it doesn't add too much overdraw
-    delta[0 as libc::c_int as usize] = (*re).origin[0 as libc::c_int as usize]
-        - crate::src::cgame::cg_main::cg.refdef.vieworg[0 as libc::c_int as usize];
-    delta[1 as libc::c_int as usize] = (*re).origin[1 as libc::c_int as usize]
-        - crate::src::cgame::cg_main::cg.refdef.vieworg[1 as libc::c_int as usize];
-    delta[2 as libc::c_int as usize] = (*re).origin[2 as libc::c_int as usize]
-        - crate::src::cgame::cg_main::cg.refdef.vieworg[2 as libc::c_int as usize];
+    delta[0] = (*re).origin[0] - crate::src::cgame::cg_main::cg.refdef.vieworg[0];
+    delta[1] = (*re).origin[1] - crate::src::cgame::cg_main::cg.refdef.vieworg[1];
+    delta[2] = (*re).origin[2] - crate::src::cgame::cg_main::cg.refdef.vieworg[2];
     len = VectorLength(delta.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t);
     if len < (*le).radius {
         CG_FreeLocalEntity(le);
@@ -840,30 +782,21 @@ There are often 100+ of these, so it needs to be simple.
 
 unsafe extern "C" fn CG_AddFallScaleFade(mut le: *mut crate::cg_local_h::localEntity_t) {
     let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
-    let mut c: libc::c_float = 0.;
+    let mut c: f32 = 0.;
     let mut delta: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut len: libc::c_float = 0.;
+    let mut len: f32 = 0.;
     re = &mut (*le).refEntity;
     // fade time
-    c = ((*le).endTime - crate::src::cgame::cg_main::cg.time) as libc::c_float * (*le).lifeRate;
-    (*re).shaderRGBA[3 as libc::c_int as usize] =
-        (0xff as libc::c_int as libc::c_float * c * (*le).color[3 as libc::c_int as usize])
-            as crate::src::qcommon::q_shared::byte;
-    (*re).origin[2 as libc::c_int as usize] = ((*le).pos.trBase[2 as libc::c_int as usize]
-        as libc::c_double
-        - (1.0f64 - c as libc::c_double)
-            * (*le).pos.trDelta[2 as libc::c_int as usize] as libc::c_double)
-        as libc::c_float;
-    (*re).radius = ((*le).radius as libc::c_double * (1.0f64 - c as libc::c_double)
-        + 16 as libc::c_int as libc::c_double) as libc::c_float;
+    c = ((*le).endTime - crate::src::cgame::cg_main::cg.time) as f32 * (*le).lifeRate;
+    (*re).shaderRGBA[3] = (255f32 * c * (*le).color[3]) as crate::src::qcommon::q_shared::byte;
+    (*re).origin[2] =
+        ((*le).pos.trBase[2] as f64 - (1.0 - c as f64) * (*le).pos.trDelta[2] as f64) as f32;
+    (*re).radius = ((*le).radius as f64 * (1.0 - c as f64) + 16f64) as f32;
     // if the view would be "inside" the sprite, kill the sprite
     // so it doesn't add too much overdraw
-    delta[0 as libc::c_int as usize] = (*re).origin[0 as libc::c_int as usize]
-        - crate::src::cgame::cg_main::cg.refdef.vieworg[0 as libc::c_int as usize];
-    delta[1 as libc::c_int as usize] = (*re).origin[1 as libc::c_int as usize]
-        - crate::src::cgame::cg_main::cg.refdef.vieworg[1 as libc::c_int as usize];
-    delta[2 as libc::c_int as usize] = (*re).origin[2 as libc::c_int as usize]
-        - crate::src::cgame::cg_main::cg.refdef.vieworg[2 as libc::c_int as usize];
+    delta[0] = (*re).origin[0] - crate::src::cgame::cg_main::cg.refdef.vieworg[0];
+    delta[1] = (*re).origin[1] - crate::src::cgame::cg_main::cg.refdef.vieworg[1];
+    delta[2] = (*re).origin[2] - crate::src::cgame::cg_main::cg.refdef.vieworg[2];
     len = VectorLength(delta.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t);
     if len < (*le).radius {
         CG_FreeLocalEntity(le);
@@ -884,23 +817,21 @@ unsafe extern "C" fn CG_AddExplosion(mut ex: *mut crate::cg_local_h::localEntity
     crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(ent);
     // add the dlight
     if (*ex).light != 0. {
-        let mut light: libc::c_float = 0.;
-        light = (crate::src::cgame::cg_main::cg.time - (*ex).startTime) as libc::c_float
-            / ((*ex).endTime - (*ex).startTime) as libc::c_float;
-        if (light as libc::c_double) < 0.5f64 {
-            light = 1.0f64 as libc::c_float
+        let mut light: f32 = 0.;
+        light = (crate::src::cgame::cg_main::cg.time - (*ex).startTime) as f32
+            / ((*ex).endTime - (*ex).startTime) as f32;
+        if (light as f64) < 0.5 {
+            light = 1f32
         } else {
-            light = (1.0f64
-                - (light as libc::c_double - 0.5f64) * 2 as libc::c_int as libc::c_double)
-                as libc::c_float
+            light = (1.0 - (light as f64 - 0.5) * 2f64) as f32
         }
         light = (*ex).light * light;
         crate::src::cgame::cg_syscalls::trap_R_AddLightToScene(
             (*ent).origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             light,
-            (*ex).lightColor[0 as libc::c_int as usize],
-            (*ex).lightColor[1 as libc::c_int as usize],
-            (*ex).lightColor[2 as libc::c_int as usize],
+            (*ex).lightColor[0usize],
+            (*ex).lightColor[1usize],
+            (*ex).lightColor[2usize],
         );
     };
 }
@@ -933,46 +864,38 @@ unsafe extern "C" fn CG_AddSpriteExplosion(mut le: *mut crate::cg_local_h::local
         radius: 0.,
         rotation: 0.,
     };
-    let mut c: libc::c_float = 0.;
+    let mut c: f32 = 0.;
     re = (*le).refEntity;
-    c = ((*le).endTime - crate::src::cgame::cg_main::cg.time) as libc::c_float
-        / ((*le).endTime - (*le).startTime) as libc::c_float;
-    if c > 1 as libc::c_int as libc::c_float {
-        c = 1.0f64 as libc::c_float
+    c = ((*le).endTime - crate::src::cgame::cg_main::cg.time) as f32
+        / ((*le).endTime - (*le).startTime) as f32;
+    if c > 1f32 {
+        c = 1f32
         // can happen during connection problems
     }
-    re.shaderRGBA[0 as libc::c_int as usize] =
-        0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-    re.shaderRGBA[1 as libc::c_int as usize] =
-        0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-    re.shaderRGBA[2 as libc::c_int as usize] =
-        0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-    re.shaderRGBA[3 as libc::c_int as usize] =
-        ((0xff as libc::c_int as libc::c_float * c) as libc::c_double * 0.33f64)
-            as crate::src::qcommon::q_shared::byte;
+    re.shaderRGBA[0] = 0xff;
+    re.shaderRGBA[1] = 0xff;
+    re.shaderRGBA[2] = 0xff;
+    re.shaderRGBA[3] = ((255f32 * c) as f64 * 0.33) as crate::src::qcommon::q_shared::byte;
     re.reType = crate::tr_types_h::RT_SPRITE;
-    re.radius = (42 as libc::c_int as libc::c_double * (1.0f64 - c as libc::c_double)
-        + 30 as libc::c_int as libc::c_double) as libc::c_float;
+    re.radius = (42f64 * (1.0 - c as f64) + 30f64) as f32;
     crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut re);
     // add the dlight
     if (*le).light != 0. {
-        let mut light: libc::c_float = 0.;
-        light = (crate::src::cgame::cg_main::cg.time - (*le).startTime) as libc::c_float
-            / ((*le).endTime - (*le).startTime) as libc::c_float;
-        if (light as libc::c_double) < 0.5f64 {
-            light = 1.0f64 as libc::c_float
+        let mut light: f32 = 0.;
+        light = (crate::src::cgame::cg_main::cg.time - (*le).startTime) as f32
+            / ((*le).endTime - (*le).startTime) as f32;
+        if (light as f64) < 0.5 {
+            light = 1f32
         } else {
-            light = (1.0f64
-                - (light as libc::c_double - 0.5f64) * 2 as libc::c_int as libc::c_double)
-                as libc::c_float
+            light = (1.0 - (light as f64 - 0.5) * 2f64) as f32
         }
         light = (*le).light * light;
         crate::src::cgame::cg_syscalls::trap_R_AddLightToScene(
             re.origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             light,
-            (*le).lightColor[0 as libc::c_int as usize],
-            (*le).lightColor[1 as libc::c_int as usize],
-            (*le).lightColor[2 as libc::c_int as usize],
+            (*le).lightColor[0usize],
+            (*le).lightColor[1usize],
+            (*le).lightColor[2usize],
         );
     };
 }
@@ -984,156 +907,100 @@ pub unsafe extern "C" fn CG_AddScorePlum(mut le: *mut crate::cg_local_h::localEn
     let mut delta: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut vec: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut up: crate::src::qcommon::q_shared::vec3_t = [
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-        1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
-    ];
-    let mut c: libc::c_float = 0.;
-    let mut len: libc::c_float = 0.;
-    let mut i: libc::c_int = 0;
-    let mut score: libc::c_int = 0;
-    let mut digits: [libc::c_int; 10] = [0; 10];
-    let mut numdigits: libc::c_int = 0;
-    let mut negative: libc::c_int = 0;
+    let mut up: crate::src::qcommon::q_shared::vec3_t = [0f32, 0f32, 1f32];
+    let mut c: f32 = 0.;
+    let mut len: f32 = 0.;
+    let mut i: i32 = 0;
+    let mut score: i32 = 0;
+    let mut digits: [i32; 10] = [0; 10];
+    let mut numdigits: i32 = 0;
+    let mut negative: i32 = 0;
     re = &mut (*le).refEntity;
-    c = ((*le).endTime - crate::src::cgame::cg_main::cg.time) as libc::c_float * (*le).lifeRate;
-    score = (*le).radius as libc::c_int;
-    if score < 0 as libc::c_int {
-        (*re).shaderRGBA[0 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-        (*re).shaderRGBA[1 as libc::c_int as usize] =
-            0x11 as libc::c_int as crate::src::qcommon::q_shared::byte;
-        (*re).shaderRGBA[2 as libc::c_int as usize] =
-            0x11 as libc::c_int as crate::src::qcommon::q_shared::byte
+    c = ((*le).endTime - crate::src::cgame::cg_main::cg.time) as f32 * (*le).lifeRate;
+    score = (*le).radius as i32;
+    if score < 0 {
+        (*re).shaderRGBA[0] = 0xff;
+        (*re).shaderRGBA[1] = 0x11;
+        (*re).shaderRGBA[2] = 0x11
     } else {
-        (*re).shaderRGBA[0 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-        (*re).shaderRGBA[1 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-        (*re).shaderRGBA[2 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-        if score >= 50 as libc::c_int {
-            (*re).shaderRGBA[1 as libc::c_int as usize] =
-                0 as libc::c_int as crate::src::qcommon::q_shared::byte
-        } else if score >= 20 as libc::c_int {
-            (*re).shaderRGBA[1 as libc::c_int as usize] =
-                0 as libc::c_int as crate::src::qcommon::q_shared::byte;
-            (*re).shaderRGBA[0 as libc::c_int as usize] =
-                (*re).shaderRGBA[1 as libc::c_int as usize]
-        } else if score >= 10 as libc::c_int {
-            (*re).shaderRGBA[2 as libc::c_int as usize] =
-                0 as libc::c_int as crate::src::qcommon::q_shared::byte
-        } else if score >= 2 as libc::c_int {
-            (*re).shaderRGBA[2 as libc::c_int as usize] =
-                0 as libc::c_int as crate::src::qcommon::q_shared::byte;
-            (*re).shaderRGBA[0 as libc::c_int as usize] =
-                (*re).shaderRGBA[2 as libc::c_int as usize]
+        (*re).shaderRGBA[0] = 0xff;
+        (*re).shaderRGBA[1] = 0xff;
+        (*re).shaderRGBA[2] = 0xff;
+        if score >= 50 {
+            (*re).shaderRGBA[1] = 0
+        } else if score >= 20 {
+            (*re).shaderRGBA[1] = 0;
+            (*re).shaderRGBA[0] = (*re).shaderRGBA[1]
+        } else if score >= 10 {
+            (*re).shaderRGBA[2] = 0
+        } else if score >= 2 {
+            (*re).shaderRGBA[2] = 0;
+            (*re).shaderRGBA[0] = (*re).shaderRGBA[2]
         }
     }
-    if (c as libc::c_double) < 0.25f64 {
-        (*re).shaderRGBA[3 as libc::c_int as usize] =
-            ((0xff as libc::c_int * 4 as libc::c_int) as libc::c_float * c)
-                as crate::src::qcommon::q_shared::byte
+    if (c as f64) < 0.25 {
+        (*re).shaderRGBA[3] = ((0xffi32 * 4) as f32 * c) as crate::src::qcommon::q_shared::byte
     } else {
-        (*re).shaderRGBA[3 as libc::c_int as usize] =
-            0xff as libc::c_int as crate::src::qcommon::q_shared::byte
+        (*re).shaderRGBA[3] = 0xff
     }
-    (*re).radius = (8 as libc::c_int / 2 as libc::c_int) as libc::c_float;
-    origin[0 as libc::c_int as usize] = (*le).pos.trBase[0 as libc::c_int as usize];
-    origin[1 as libc::c_int as usize] = (*le).pos.trBase[1 as libc::c_int as usize];
-    origin[2 as libc::c_int as usize] = (*le).pos.trBase[2 as libc::c_int as usize];
-    origin[2 as libc::c_int as usize] +=
-        110 as libc::c_int as libc::c_float - c * 100 as libc::c_int as libc::c_float;
-    dir[0 as libc::c_int as usize] = crate::src::cgame::cg_main::cg.refdef.vieworg
-        [0 as libc::c_int as usize]
-        - origin[0 as libc::c_int as usize];
-    dir[1 as libc::c_int as usize] = crate::src::cgame::cg_main::cg.refdef.vieworg
-        [1 as libc::c_int as usize]
-        - origin[1 as libc::c_int as usize];
-    dir[2 as libc::c_int as usize] = crate::src::cgame::cg_main::cg.refdef.vieworg
-        [2 as libc::c_int as usize]
-        - origin[2 as libc::c_int as usize];
+    (*re).radius = (8i32 / 2) as f32;
+    origin[0] = (*le).pos.trBase[0];
+    origin[1] = (*le).pos.trBase[1];
+    origin[2] = (*le).pos.trBase[2];
+    origin[2] += 110f32 - c * 100f32;
+    dir[0] = crate::src::cgame::cg_main::cg.refdef.vieworg[0] - origin[0];
+    dir[1] = crate::src::cgame::cg_main::cg.refdef.vieworg[1] - origin[1];
+    dir[2] = crate::src::cgame::cg_main::cg.refdef.vieworg[2] - origin[2];
     CrossProduct(
         dir.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         up.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         vec.as_mut_ptr(),
     );
     crate::src::qcommon::q_math::VectorNormalize(vec.as_mut_ptr());
-    origin[0 as libc::c_int as usize] = (origin[0 as libc::c_int as usize] as libc::c_double
-        + vec[0 as libc::c_int as usize] as libc::c_double
-            * (-(10 as libc::c_int) as libc::c_double
-                + 20 as libc::c_int as libc::c_double
-                    * crate::stdlib::sin(
-                        (c * 2 as libc::c_int as libc::c_float) as libc::c_double
-                            * 3.14159265358979323846f64,
-                    )))
+    origin[0] = (origin[0] as f64
+        + vec[0] as f64
+            * (-10f64 + 20f64 * crate::stdlib::sin((c * 2f32) as f64 * 3.14159265358979323846)))
         as crate::src::qcommon::q_shared::vec_t;
-    origin[1 as libc::c_int as usize] = (origin[1 as libc::c_int as usize] as libc::c_double
-        + vec[1 as libc::c_int as usize] as libc::c_double
-            * (-(10 as libc::c_int) as libc::c_double
-                + 20 as libc::c_int as libc::c_double
-                    * crate::stdlib::sin(
-                        (c * 2 as libc::c_int as libc::c_float) as libc::c_double
-                            * 3.14159265358979323846f64,
-                    )))
+    origin[1] = (origin[1] as f64
+        + vec[1] as f64
+            * (-10f64 + 20f64 * crate::stdlib::sin((c * 2f32) as f64 * 3.14159265358979323846)))
         as crate::src::qcommon::q_shared::vec_t;
-    origin[2 as libc::c_int as usize] = (origin[2 as libc::c_int as usize] as libc::c_double
-        + vec[2 as libc::c_int as usize] as libc::c_double
-            * (-(10 as libc::c_int) as libc::c_double
-                + 20 as libc::c_int as libc::c_double
-                    * crate::stdlib::sin(
-                        (c * 2 as libc::c_int as libc::c_float) as libc::c_double
-                            * 3.14159265358979323846f64,
-                    )))
+    origin[2] = (origin[2] as f64
+        + vec[2] as f64
+            * (-10f64 + 20f64 * crate::stdlib::sin((c * 2f32) as f64 * 3.14159265358979323846)))
         as crate::src::qcommon::q_shared::vec_t;
     // if the view would be "inside" the sprite, kill the sprite
     // so it doesn't add too much overdraw
-    delta[0 as libc::c_int as usize] = origin[0 as libc::c_int as usize]
-        - crate::src::cgame::cg_main::cg.refdef.vieworg[0 as libc::c_int as usize];
-    delta[1 as libc::c_int as usize] = origin[1 as libc::c_int as usize]
-        - crate::src::cgame::cg_main::cg.refdef.vieworg[1 as libc::c_int as usize];
-    delta[2 as libc::c_int as usize] = origin[2 as libc::c_int as usize]
-        - crate::src::cgame::cg_main::cg.refdef.vieworg[2 as libc::c_int as usize];
+    delta[0] = origin[0] - crate::src::cgame::cg_main::cg.refdef.vieworg[0];
+    delta[1] = origin[1] - crate::src::cgame::cg_main::cg.refdef.vieworg[1];
+    delta[2] = origin[2] - crate::src::cgame::cg_main::cg.refdef.vieworg[2];
     len = VectorLength(delta.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t);
-    if len < 20 as libc::c_int as libc::c_float {
+    if len < 20f32 {
         CG_FreeLocalEntity(le);
         return;
     }
-    negative = crate::src::qcommon::q_shared::qfalse as libc::c_int;
-    if score < 0 as libc::c_int {
-        negative = crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    negative = crate::src::qcommon::q_shared::qfalse as i32;
+    if score < 0 {
+        negative = crate::src::qcommon::q_shared::qtrue as i32;
         score = -score
     }
-    numdigits = 0 as libc::c_int;
+    numdigits = 0;
     while !(numdigits != 0 && score == 0) {
-        digits[numdigits as usize] = score % 10 as libc::c_int;
-        score = score / 10 as libc::c_int;
+        digits[numdigits as usize] = score % 10;
+        score = score / 10;
         numdigits += 1
     }
     if negative != 0 {
-        digits[numdigits as usize] = 10 as libc::c_int;
+        digits[numdigits as usize] = 10;
         numdigits += 1
     }
-    i = 0 as libc::c_int;
+    i = 0;
     while i < numdigits {
-        (*re).origin[0 as libc::c_int as usize] = origin[0 as libc::c_int as usize]
-            + vec[0 as libc::c_int as usize]
-                * ((numdigits as libc::c_float / 2 as libc::c_int as libc::c_float
-                    - i as libc::c_float)
-                    * 8 as libc::c_int as libc::c_float);
-        (*re).origin[1 as libc::c_int as usize] = origin[1 as libc::c_int as usize]
-            + vec[1 as libc::c_int as usize]
-                * ((numdigits as libc::c_float / 2 as libc::c_int as libc::c_float
-                    - i as libc::c_float)
-                    * 8 as libc::c_int as libc::c_float);
-        (*re).origin[2 as libc::c_int as usize] = origin[2 as libc::c_int as usize]
-            + vec[2 as libc::c_int as usize]
-                * ((numdigits as libc::c_float / 2 as libc::c_int as libc::c_float
-                    - i as libc::c_float)
-                    * 8 as libc::c_int as libc::c_float);
+        (*re).origin[0] = origin[0] + vec[0] * ((numdigits as f32 / 2f32 - i as f32) * 8f32);
+        (*re).origin[1] = origin[1] + vec[1] * ((numdigits as f32 / 2f32 - i as f32) * 8f32);
+        (*re).origin[2] = origin[2] + vec[2] * ((numdigits as f32 / 2f32 - i as f32) * 8f32);
         (*re).customShader = crate::src::cgame::cg_main::cgs.media.numberShaders
-            [digits[(numdigits - 1 as libc::c_int - i) as usize] as usize];
+            [digits[(numdigits - 1 - i) as usize] as usize];
         crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(re);
         i += 1
     }
@@ -1394,7 +1261,7 @@ pub unsafe extern "C" fn CG_AddLocalEntities() {
         if crate::src::cgame::cg_main::cg.time >= (*le).endTime {
             CG_FreeLocalEntity(le);
         } else {
-            match (*le).leType as libc::c_uint {
+            match (*le).leType {
                 0 => {}
                 2 => {
                     CG_AddSpriteExplosion(le);
@@ -1427,8 +1294,8 @@ pub unsafe extern "C" fn CG_AddLocalEntities() {
                 }
                 _ => {
                     crate::src::cgame::cg_main::CG_Error(
-                        b"Bad leType: %i\x00" as *const u8 as *const libc::c_char,
-                        (*le).leType as libc::c_uint,
+                        b"Bad leType: %i\x00" as *const u8 as *const i8,
+                        (*le).leType,
                     );
                 }
             }

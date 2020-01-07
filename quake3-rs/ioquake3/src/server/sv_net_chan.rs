@@ -108,24 +108,24 @@ SV_Netchan_Encode
 unsafe extern "C" fn SV_Netchan_Encode(
     mut client: *mut crate::server_h::client_t,
     mut msg: *mut crate::qcommon_h::msg_t,
-    mut clientCommandString: *const libc::c_char,
+    mut clientCommandString: *const i8,
 ) {
-    let mut i: libc::c_long = 0;
-    let mut index: libc::c_long = 0;
+    let mut i: isize = 0;
+    let mut index: isize = 0;
     let mut key: crate::src::qcommon::q_shared::byte = 0;
     let mut string: *mut crate::src::qcommon::q_shared::byte =
         0 as *mut crate::src::qcommon::q_shared::byte;
-    let mut srdc: libc::c_int = 0;
-    let mut sbit: libc::c_int = 0;
+    let mut srdc: i32 = 0;
+    let mut sbit: i32 = 0;
     let mut soob: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
-    if (*msg).cursize < 4 as libc::c_int {
+    if (*msg).cursize < 4 {
         return;
     }
     srdc = (*msg).readcount;
     sbit = (*msg).bit;
     soob = (*msg).oob;
-    (*msg).bit = 0 as libc::c_int;
-    (*msg).readcount = 0 as libc::c_int;
+    (*msg).bit = 0;
+    (*msg).readcount = 0;
     (*msg).oob = crate::src::qcommon::q_shared::qfalse;
     /* reliableAcknowledge = */
     crate::src::qcommon::msg::MSG_ReadLong(msg);
@@ -133,32 +133,26 @@ unsafe extern "C" fn SV_Netchan_Encode(
     (*msg).bit = sbit;
     (*msg).readcount = srdc;
     string = clientCommandString as *mut crate::src::qcommon::q_shared::byte;
-    index = 0 as libc::c_int as libc::c_long;
+    index = 0;
     // xor the client challenge with the netchan sequence number
     key = ((*client).challenge ^ (*client).netchan.outgoingSequence)
         as crate::src::qcommon::q_shared::byte;
-    i = 4 as libc::c_int as libc::c_long;
-    while i < (*msg).cursize as libc::c_long {
+    i = 4;
+    while i < (*msg).cursize as isize {
         // modify the key with the last received and with this message acknowledged client command
-        if *string.offset(index as isize) == 0 {
-            index = 0 as libc::c_int as libc::c_long
+        if *string.offset(index) == 0 {
+            index = 0
         }
-        if *string.offset(index as isize) as libc::c_int > 127 as libc::c_int
-            || *string.offset(index as isize) as libc::c_int == '%' as i32
-        {
-            key = (key as libc::c_int ^ ('.' as i32) << (i & 1 as libc::c_int as libc::c_long))
-                as crate::src::qcommon::q_shared::byte
+        if *string.offset(index) as i32 > 127 || *string.offset(index) as i32 == '%' as i32 {
+            key = (key as i32 ^ ('.' as i32) << (i & 1)) as crate::src::qcommon::q_shared::byte
         } else {
-            key = (key as libc::c_int
-                ^ (*string.offset(index as isize) as libc::c_int)
-                    << (i & 1 as libc::c_int as libc::c_long))
+            key = (key as i32 ^ (*string.offset(index) as i32) << (i & 1))
                 as crate::src::qcommon::q_shared::byte
         }
         index += 1;
         // encode the data with this key
-        *(*msg).data.offset(i as isize) = (*(*msg).data.offset(i as isize) as libc::c_int
-            ^ key as libc::c_int)
-            as crate::src::qcommon::q_shared::byte;
+        *(*msg).data.offset(i) =
+            (*(*msg).data.offset(i) as i32 ^ key as i32) as crate::src::qcommon::q_shared::byte;
         i += 1
     }
 }
@@ -178,13 +172,13 @@ unsafe extern "C" fn SV_Netchan_Decode(
     mut client: *mut crate::server_h::client_t,
     mut msg: *mut crate::qcommon_h::msg_t,
 ) {
-    let mut serverId: libc::c_int = 0;
-    let mut messageAcknowledge: libc::c_int = 0;
-    let mut reliableAcknowledge: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
-    let mut index: libc::c_int = 0;
-    let mut srdc: libc::c_int = 0;
-    let mut sbit: libc::c_int = 0;
+    let mut serverId: i32 = 0;
+    let mut messageAcknowledge: i32 = 0;
+    let mut reliableAcknowledge: i32 = 0;
+    let mut i: i32 = 0;
+    let mut index: i32 = 0;
+    let mut srdc: i32 = 0;
+    let mut sbit: i32 = 0;
     let mut soob: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
     let mut key: crate::src::qcommon::q_shared::byte = 0;
     let mut string: *mut crate::src::qcommon::q_shared::byte =
@@ -199,33 +193,29 @@ unsafe extern "C" fn SV_Netchan_Decode(
     (*msg).oob = soob;
     (*msg).bit = sbit;
     (*msg).readcount = srdc;
-    string = (*client).reliableCommands
-        [(reliableAcknowledge & 64 as libc::c_int - 1 as libc::c_int) as usize]
-        .as_mut_ptr() as *mut crate::src::qcommon::q_shared::byte;
-    index = 0 as libc::c_int;
+    string = (*client).reliableCommands[(reliableAcknowledge & 64 - 1) as usize].as_mut_ptr()
+        as *mut crate::src::qcommon::q_shared::byte;
+    index = 0;
     //
     key = ((*client).challenge ^ serverId ^ messageAcknowledge)
         as crate::src::qcommon::q_shared::byte;
-    i = (*msg).readcount + 12 as libc::c_int;
+    i = (*msg).readcount + 12;
     while i < (*msg).cursize {
         // modify the key with the last sent and acknowledged server command
         if *string.offset(index as isize) == 0 {
-            index = 0 as libc::c_int
+            index = 0
         }
-        if *string.offset(index as isize) as libc::c_int > 127 as libc::c_int
-            || *string.offset(index as isize) as libc::c_int == '%' as i32
+        if *string.offset(index as isize) as i32 > 127
+            || *string.offset(index as isize) as i32 == '%' as i32
         {
-            key = (key as libc::c_int ^ ('.' as i32) << (i & 1 as libc::c_int))
-                as crate::src::qcommon::q_shared::byte
+            key = (key as i32 ^ ('.' as i32) << (i & 1)) as crate::src::qcommon::q_shared::byte
         } else {
-            key = (key as libc::c_int
-                ^ (*string.offset(index as isize) as libc::c_int) << (i & 1 as libc::c_int))
+            key = (key as i32 ^ (*string.offset(index as isize) as i32) << (i & 1))
                 as crate::src::qcommon::q_shared::byte
         }
         index += 1;
         // decode the data with this key
-        *(*msg).data.offset(i as isize) = (*(*msg).data.offset(i as isize) as libc::c_int
-            ^ key as libc::c_int)
+        *(*msg).data.offset(i as isize) = (*(*msg).data.offset(i as isize) as i32 ^ key as i32)
             as crate::src::qcommon::q_shared::byte;
         i += 1
     }
@@ -265,7 +255,7 @@ pub unsafe extern "C" fn SV_Netchan_TransmitNextInQueue(
         0 as *mut crate::server_h::netchan_buffer_t;
     crate::src::qcommon::common::Com_DPrintf(
         b"#462 Netchan_TransmitNextFragment: popping a queued message for transmit\n\x00"
-            as *const u8 as *const libc::c_char,
+            as *const u8 as *const i8,
     );
     netbuf = (*client).netchan_start_queue;
     if (*client).compat as u64 != 0 {
@@ -284,14 +274,13 @@ pub unsafe extern "C" fn SV_Netchan_TransmitNextInQueue(
     (*client).netchan_start_queue = (*netbuf).next;
     if (*client).netchan_start_queue.is_null() {
         crate::src::qcommon::common::Com_DPrintf(
-            b"#462 Netchan_TransmitNextFragment: emptied queue\n\x00" as *const u8
-                as *const libc::c_char,
+            b"#462 Netchan_TransmitNextFragment: emptied queue\n\x00" as *const u8 as *const i8,
         );
         (*client).netchan_end_queue = &mut (*client).netchan_start_queue
     } else {
         crate::src::qcommon::common::Com_DPrintf(
             b"#462 Netchan_TransmitNextFragment: remaining queued message\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
         );
     }
     crate::src::qcommon::common::Z_Free(netbuf as *mut libc::c_void);
@@ -308,7 +297,7 @@ Return number of ms until next message can be sent based on throughput given by 
 
 pub unsafe extern "C" fn SV_Netchan_TransmitNextFragment(
     mut client: *mut crate::server_h::client_t,
-) -> libc::c_int {
+) -> i32 {
     if (*client).netchan.unsentFragments as u64 != 0 {
         crate::src::qcommon::net_chan::Netchan_TransmitNextFragment(&mut (*client).netchan);
         return crate::src::server::sv_main::SV_RateMsec(client);
@@ -318,7 +307,7 @@ pub unsafe extern "C" fn SV_Netchan_TransmitNextFragment(
             return crate::src::server::sv_main::SV_RateMsec(client);
         }
     }
-    return -(1 as libc::c_int);
+    return -(1);
 }
 // clip to a specific entity
 //
@@ -340,33 +329,28 @@ pub unsafe extern "C" fn SV_Netchan_Transmit(
     mut client: *mut crate::server_h::client_t,
     mut msg: *mut crate::qcommon_h::msg_t,
 ) {
-    crate::src::qcommon::msg::MSG_WriteByte(msg, crate::qcommon_h::svc_EOF as libc::c_int);
-    if (*client).netchan.unsentFragments as libc::c_uint != 0
-        || !(*client).netchan_start_queue.is_null()
-    {
+    crate::src::qcommon::msg::MSG_WriteByte(msg, crate::qcommon_h::svc_EOF as i32);
+    if (*client).netchan.unsentFragments != 0 || !(*client).netchan_start_queue.is_null() {
         let mut netbuf: *mut crate::server_h::netchan_buffer_t =
             0 as *mut crate::server_h::netchan_buffer_t;
         crate::src::qcommon::common::Com_DPrintf(
-            b"#462 SV_Netchan_Transmit: unsent fragments, stacked\n\x00" as *const u8
-                as *const libc::c_char,
+            b"#462 SV_Netchan_Transmit: unsent fragments, stacked\n\x00" as *const u8 as *const i8,
         );
         netbuf = crate::src::qcommon::common::Z_Malloc(::std::mem::size_of::<
             crate::server_h::netchan_buffer_t,
-        >() as libc::c_ulong as libc::c_int)
-            as *mut crate::server_h::netchan_buffer_t;
+        >() as i32) as *mut crate::server_h::netchan_buffer_t;
         // store the msg, we can't store it encoded, as the encoding depends on stuff we still have to finish sending
         crate::src::qcommon::msg::MSG_Copy(
             &mut (*netbuf).msg,
             (*netbuf).msgBuffer.as_mut_ptr(),
-            ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 16384]>() as libc::c_ulong
-                as libc::c_int,
+            ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 16384]>() as i32,
             msg,
         );
         if (*client).compat as u64 != 0 {
             crate::src::qcommon::q_shared::Q_strncpyz(
                 (*netbuf).clientCommandString.as_mut_ptr(),
                 (*client).lastClientCommandString.as_mut_ptr(),
-                ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+                ::std::mem::size_of::<[i8; 1024]>() as i32,
             );
         }
         (*netbuf).next = 0 as *mut crate::server_h::netchan_buffer_s;
@@ -395,9 +379,8 @@ pub unsafe extern "C" fn SV_Netchan_Process(
     mut client: *mut crate::server_h::client_t,
     mut msg: *mut crate::qcommon_h::msg_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut ret: libc::c_int = 0;
-    ret =
-        crate::src::qcommon::net_chan::Netchan_Process(&mut (*client).netchan, msg) as libc::c_int;
+    let mut ret: i32 = 0;
+    ret = crate::src::qcommon::net_chan::Netchan_Process(&mut (*client).netchan, msg) as i32;
     if ret == 0 {
         return crate::src::qcommon::q_shared::qfalse;
     }

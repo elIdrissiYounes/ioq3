@@ -4,15 +4,15 @@ pub mod resampler_rom_h {
     /* Tables for 2x upsampler, high quality */
 
     pub static mut silk_resampler_up2_hq_0: [crate::opus_types_h::opus_int16; 3] = [
-        1746 as libc::c_int as crate::opus_types_h::opus_int16,
-        14986 as libc::c_int as crate::opus_types_h::opus_int16,
-        (39083 as libc::c_int - 65536 as libc::c_int) as crate::opus_types_h::opus_int16,
+        1746,
+        14986,
+        (39083i32 - 65536) as crate::opus_types_h::opus_int16,
     ];
 
     pub static mut silk_resampler_up2_hq_1: [crate::opus_types_h::opus_int16; 3] = [
-        6854 as libc::c_int as crate::opus_types_h::opus_int16,
-        25769 as libc::c_int as crate::opus_types_h::opus_int16,
-        (55542 as libc::c_int - 65536 as libc::c_int) as crate::opus_types_h::opus_int16,
+        6854,
+        25769,
+        (55542i32 - 65536) as crate::opus_types_h::opus_int16,
     ];
     use crate::opus_types_h::opus_int16;
     /* SILK_FIX_RESAMPLER_ROM_H */
@@ -80,104 +80,83 @@ pub unsafe extern "C" fn silk_resampler_private_up2_HQ(
     let mut Y: crate::opus_types_h::opus_int32 = 0;
     let mut X: crate::opus_types_h::opus_int32 = 0;
     /* Internal variables and state are in Q10 format */
-    k = 0 as libc::c_int;
+    k = 0;
     while k < len {
         /* Convert to Q10 */
-        in32 = ((*in_0.offset(k as isize) as crate::opus_types_h::opus_int32
-            as crate::opus_types_h::opus_uint32)
-            << 10 as libc::c_int) as crate::opus_types_h::opus_int32;
+        in32 = ((*in_0.offset(k as isize) as crate::opus_types_h::opus_uint32) << 10)
+            as crate::opus_types_h::opus_int32;
         /* First all-pass section for even output sample */
-        Y = in32 - *S.offset(0 as libc::c_int as isize);
-        X = (Y as libc::c_longlong
-            * silk_resampler_up2_hq_0[0 as libc::c_int as usize] as libc::c_longlong
-            >> 16 as libc::c_int) as crate::opus_types_h::opus_int32;
-        out32_1 = *S.offset(0 as libc::c_int as isize) + X;
-        *S.offset(0 as libc::c_int as isize) = in32 + X;
+        Y = in32 - *S.offset(0);
+        X = (Y as i64 * silk_resampler_up2_hq_0[0] as i64 >> 16) as crate::opus_types_h::opus_int32;
+        out32_1 = *S.offset(0) + X;
+        *S.offset(0) = in32 + X;
         /* Second all-pass section for even output sample */
-        Y = out32_1 - *S.offset(1 as libc::c_int as isize);
-        X = (Y as libc::c_longlong
-            * silk_resampler_up2_hq_0[1 as libc::c_int as usize] as libc::c_longlong
-            >> 16 as libc::c_int) as crate::opus_types_h::opus_int32;
-        out32_2 = *S.offset(1 as libc::c_int as isize) + X;
-        *S.offset(1 as libc::c_int as isize) = out32_1 + X;
+        Y = out32_1 - *S.offset(1);
+        X = (Y as i64 * silk_resampler_up2_hq_0[1] as i64 >> 16) as crate::opus_types_h::opus_int32;
+        out32_2 = *S.offset(1) + X;
+        *S.offset(1) = out32_1 + X;
         /* Third all-pass section for even output sample */
-        Y = out32_2 - *S.offset(2 as libc::c_int as isize);
-        X = (Y as libc::c_longlong
-            + (Y as libc::c_longlong
-                * silk_resampler_up2_hq_0[2 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-        out32_1 = *S.offset(2 as libc::c_int as isize) + X;
-        *S.offset(2 as libc::c_int as isize) = out32_2 + X;
+        Y = out32_2 - *S.offset(2);
+        X = (Y as i64 + (Y as i64 * silk_resampler_up2_hq_0[2] as i64 >> 16))
+            as crate::opus_types_h::opus_int32;
+        out32_1 = *S.offset(2) + X;
+        *S.offset(2) = out32_2 + X;
         /* Apply gain in Q15, convert back to int16 and store to output */
-        *out.offset((2 as libc::c_int * k) as isize) = if (if 10 as libc::c_int == 1 as libc::c_int
-        {
-            (out32_1 >> 1 as libc::c_int) + (out32_1 & 1 as libc::c_int)
+        *out.offset((2 * k) as isize) = if (if 10 == 1 {
+            (out32_1 >> 1) + (out32_1 & 1)
         } else {
-            ((out32_1 >> 10 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-                >> 1 as libc::c_int
-        }) > 0x7fff as libc::c_int
+            ((out32_1 >> 10 - 1) + 1) >> 1
+        }) > 0x7fff
         {
-            0x7fff as libc::c_int
-        } else if (if 10 as libc::c_int == 1 as libc::c_int {
-            (out32_1 >> 1 as libc::c_int) + (out32_1 & 1 as libc::c_int)
+            0x7fff
+        } else if (if 10 == 1 {
+            (out32_1 >> 1) + (out32_1 & 1)
         } else {
-            ((out32_1 >> 10 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-                >> 1 as libc::c_int
-        }) < 0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
+            ((out32_1 >> 10 - 1) + 1) >> 1
+        }) < 0x8000i32 as crate::opus_types_h::opus_int16 as i32
         {
-            0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
-        } else if 10 as libc::c_int == 1 as libc::c_int {
-            (out32_1 >> 1 as libc::c_int) + (out32_1 & 1 as libc::c_int)
+            0x8000i32 as crate::opus_types_h::opus_int16 as i32
+        } else if 10 == 1 {
+            (out32_1 >> 1) + (out32_1 & 1)
         } else {
-            ((out32_1 >> 10 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-                >> 1 as libc::c_int
+            ((out32_1 >> 10 - 1) + 1) >> 1
         } as crate::opus_types_h::opus_int16;
         /* First all-pass section for odd output sample */
-        Y = in32 - *S.offset(3 as libc::c_int as isize);
-        X = (Y as libc::c_longlong
-            * silk_resampler_up2_hq_1[0 as libc::c_int as usize] as libc::c_longlong
-            >> 16 as libc::c_int) as crate::opus_types_h::opus_int32;
-        out32_1 = *S.offset(3 as libc::c_int as isize) + X;
-        *S.offset(3 as libc::c_int as isize) = in32 + X;
+        Y = in32 - *S.offset(3);
+        X = (Y as i64 * silk_resampler_up2_hq_1[0] as i64 >> 16) as crate::opus_types_h::opus_int32;
+        out32_1 = *S.offset(3) + X;
+        *S.offset(3) = in32 + X;
         /* Second all-pass section for odd output sample */
-        Y = out32_1 - *S.offset(4 as libc::c_int as isize);
-        X = (Y as libc::c_longlong
-            * silk_resampler_up2_hq_1[1 as libc::c_int as usize] as libc::c_longlong
-            >> 16 as libc::c_int) as crate::opus_types_h::opus_int32;
-        out32_2 = *S.offset(4 as libc::c_int as isize) + X;
-        *S.offset(4 as libc::c_int as isize) = out32_1 + X;
+        Y = out32_1 - *S.offset(4);
+        X = (Y as i64 * silk_resampler_up2_hq_1[1] as i64 >> 16) as crate::opus_types_h::opus_int32;
+        out32_2 = *S.offset(4) + X;
+        *S.offset(4) = out32_1 + X;
         /* Third all-pass section for odd output sample */
-        Y = out32_2 - *S.offset(5 as libc::c_int as isize);
-        X = (Y as libc::c_longlong
-            + (Y as libc::c_longlong
-                * silk_resampler_up2_hq_1[2 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-        out32_1 = *S.offset(5 as libc::c_int as isize) + X;
-        *S.offset(5 as libc::c_int as isize) = out32_2 + X;
+        Y = out32_2 - *S.offset(5);
+        X = (Y as i64 + (Y as i64 * silk_resampler_up2_hq_1[2] as i64 >> 16))
+            as crate::opus_types_h::opus_int32;
+        out32_1 = *S.offset(5) + X;
+        *S.offset(5) = out32_2 + X;
         /* Apply gain in Q15, convert back to int16 and store to output */
-        *out.offset((2 as libc::c_int * k + 1 as libc::c_int) as isize) =
-            if (if 10 as libc::c_int == 1 as libc::c_int {
-                (out32_1 >> 1 as libc::c_int) + (out32_1 & 1 as libc::c_int)
-            } else {
-                ((out32_1 >> 10 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-                    >> 1 as libc::c_int
-            }) > 0x7fff as libc::c_int
-            {
-                0x7fff as libc::c_int
-            } else if (if 10 as libc::c_int == 1 as libc::c_int {
-                (out32_1 >> 1 as libc::c_int) + (out32_1 & 1 as libc::c_int)
-            } else {
-                ((out32_1 >> 10 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-                    >> 1 as libc::c_int
-            }) < 0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
-            {
-                0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
-            } else if 10 as libc::c_int == 1 as libc::c_int {
-                (out32_1 >> 1 as libc::c_int) + (out32_1 & 1 as libc::c_int)
-            } else {
-                ((out32_1 >> 10 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-                    >> 1 as libc::c_int
-            } as crate::opus_types_h::opus_int16;
+        *out.offset((2 * k + 1) as isize) = if (if 10 == 1 {
+            (out32_1 >> 1) + (out32_1 & 1)
+        } else {
+            ((out32_1 >> 10 - 1) + 1) >> 1
+        }) > 0x7fff
+        {
+            0x7fff
+        } else if (if 10 == 1 {
+            (out32_1 >> 1) + (out32_1 & 1)
+        } else {
+            ((out32_1 >> 10 - 1) + 1) >> 1
+        }) < 0x8000i32 as crate::opus_types_h::opus_int16 as i32
+        {
+            0x8000i32 as crate::opus_types_h::opus_int16 as i32
+        } else if 10 == 1 {
+            (out32_1 >> 1) + (out32_1 & 1)
+        } else {
+            ((out32_1 >> 10 - 1) + 1) >> 1
+        } as crate::opus_types_h::opus_int16;
         k += 1
     }
 }

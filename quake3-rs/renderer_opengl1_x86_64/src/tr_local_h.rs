@@ -4,69 +4,69 @@ pub type srfPoly_t = crate::tr_local_h::srfPoly_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct glstate_t {
-    pub currenttextures: [libc::c_int; 2],
-    pub currenttmu: libc::c_int,
+    pub currenttextures: [i32; 2],
+    pub currenttmu: i32,
     pub finishCalled: crate::src::qcommon::q_shared::qboolean,
-    pub texEnv: [libc::c_int; 2],
-    pub faceCulling: libc::c_int,
-    pub glStateBits: libc::c_ulong,
+    pub texEnv: [i32; 2],
+    pub faceCulling: i32,
+    pub glStateBits: usize,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct clearDepthCommand_t {
-    pub commandId: libc::c_int,
+    pub commandId: i32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct colorMaskCommand_t {
-    pub commandId: libc::c_int,
+    pub commandId: i32,
     pub rgba: [crate::stdlib::GLboolean; 4],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct swapBuffersCommand_t {
-    pub commandId: libc::c_int,
+    pub commandId: i32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct drawBufferCommand_t {
-    pub commandId: libc::c_int,
-    pub buffer: libc::c_int,
+    pub commandId: i32,
+    pub buffer: i32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct drawSurfsCommand_t {
-    pub commandId: libc::c_int,
+    pub commandId: i32,
     pub refdef: crate::tr_local_h::trRefdef_t,
     pub viewParms: crate::tr_local_h::viewParms_t,
     pub drawSurfs: *mut crate::tr_local_h::drawSurf_t,
-    pub numDrawSurfs: libc::c_int,
+    pub numDrawSurfs: i32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct stretchPicCommand_t {
-    pub commandId: libc::c_int,
+    pub commandId: i32,
     pub shader: *mut crate::tr_local_h::shader_t,
-    pub x: libc::c_float,
-    pub y: libc::c_float,
-    pub w: libc::c_float,
-    pub h: libc::c_float,
-    pub s1: libc::c_float,
-    pub t1: libc::c_float,
-    pub s2: libc::c_float,
-    pub t2: libc::c_float,
+    pub x: f32,
+    pub y: f32,
+    pub w: f32,
+    pub h: f32,
+    pub s1: f32,
+    pub t1: f32,
+    pub s2: f32,
+    pub t2: f32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct setColorCommand_t {
-    pub commandId: libc::c_int,
-    pub color: [libc::c_float; 4],
+    pub commandId: i32,
+    pub color: [f32; 4],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct renderCommandList_t {
     pub cmds: [crate::src::qcommon::q_shared::byte; 262144],
-    pub used: libc::c_int,
+    pub used: i32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -81,9 +81,9 @@ pub struct backEndData_t {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct videoFrameCommand_t {
-    pub commandId: libc::c_int,
-    pub width: libc::c_int,
-    pub height: libc::c_int,
+    pub commandId: i32,
+    pub width: i32,
+    pub height: i32,
     pub captureBuffer: *mut crate::src::qcommon::q_shared::byte,
     pub encodeBuffer: *mut crate::src::qcommon::q_shared::byte,
     pub motionJpeg: crate::src::qcommon::q_shared::qboolean,
@@ -98,26 +98,26 @@ pub const RC_DRAW_BUFFER: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 4;
 pub const RC_DRAW_SURFS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 3;
 pub const RC_STRETCH_PIC: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 2;
 pub const RC_SET_COLOR: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 1;
-pub type glIndex_t = libc::c_uint;
+pub type glIndex_t = u32;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct dlight_s {
     pub origin: crate::src::qcommon::q_shared::vec3_t,
     pub color: crate::src::qcommon::q_shared::vec3_t,
-    pub radius: libc::c_float,
+    pub radius: f32,
     pub transformed: crate::src::qcommon::q_shared::vec3_t,
-    pub additive: libc::c_int,
+    pub additive: i32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct trRefEntity_t {
     pub e: crate::tr_types_h::refEntity_t,
-    pub axisLength: libc::c_float,
+    pub axisLength: f32,
     pub needDlights: crate::src::qcommon::q_shared::qboolean,
     pub lightingCalculated: crate::src::qcommon::q_shared::qboolean,
     pub lightDir: crate::src::qcommon::q_shared::vec3_t,
     pub ambientLight: crate::src::qcommon::q_shared::vec3_t,
-    pub ambientLightInt: libc::c_int,
+    pub ambientLightInt: i32,
     pub directedLight: crate::src::qcommon::q_shared::vec3_t,
 }
 #[repr(C)]
@@ -126,57 +126,57 @@ pub struct orientationr_t {
     pub origin: crate::src::qcommon::q_shared::vec3_t,
     pub axis: [crate::src::qcommon::q_shared::vec3_t; 3],
     pub viewOrigin: crate::src::qcommon::q_shared::vec3_t,
-    pub modelMatrix: [libc::c_float; 16],
+    pub modelMatrix: [f32; 16],
 }
-pub type genFunc_t = libc::c_uint;
-pub type deform_t = libc::c_uint;
-pub type alphaGen_t = libc::c_uint;
-pub type colorGen_t = libc::c_uint;
-pub type texCoordGen_t = libc::c_uint;
-pub type acff_t = libc::c_uint;
+pub type genFunc_t = u32;
+pub type deform_t = u32;
+pub type alphaGen_t = u32;
+pub type colorGen_t = u32;
+pub type texCoordGen_t = u32;
+pub type acff_t = u32;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct waveForm_t {
     pub func: crate::tr_local_h::genFunc_t,
-    pub base: libc::c_float,
-    pub amplitude: libc::c_float,
-    pub phase: libc::c_float,
-    pub frequency: libc::c_float,
+    pub base: f32,
+    pub amplitude: f32,
+    pub phase: f32,
+    pub frequency: f32,
 }
-pub type texMod_t = libc::c_uint;
+pub type texMod_t = u32;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct deformStage_t {
     pub deformation: crate::tr_local_h::deform_t,
     pub moveVector: crate::src::qcommon::q_shared::vec3_t,
     pub deformationWave: crate::tr_local_h::waveForm_t,
-    pub deformationSpread: libc::c_float,
-    pub bulgeWidth: libc::c_float,
-    pub bulgeHeight: libc::c_float,
-    pub bulgeSpeed: libc::c_float,
+    pub deformationSpread: f32,
+    pub bulgeWidth: f32,
+    pub bulgeHeight: f32,
+    pub bulgeSpeed: f32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct texModInfo_t {
     pub type_0: crate::tr_local_h::texMod_t,
     pub wave: crate::tr_local_h::waveForm_t,
-    pub matrix: [[libc::c_float; 2]; 2],
-    pub translate: [libc::c_float; 2],
-    pub scale: [libc::c_float; 2],
-    pub scroll: [libc::c_float; 2],
-    pub rotateSpeed: libc::c_float,
+    pub matrix: [[f32; 2]; 2],
+    pub translate: [f32; 2],
+    pub scale: [f32; 2],
+    pub scroll: [f32; 2],
+    pub rotateSpeed: f32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct textureBundle_t {
     pub image: [*mut crate::tr_common_h::image_t; 8],
-    pub numImageAnimations: libc::c_int,
-    pub imageAnimationSpeed: libc::c_float,
+    pub numImageAnimations: i32,
+    pub imageAnimationSpeed: f32,
     pub tcGen: crate::tr_local_h::texCoordGen_t,
     pub tcGenVectors: [crate::src::qcommon::q_shared::vec3_t; 2],
-    pub numTexMods: libc::c_int,
+    pub numTexMods: i32,
     pub texMods: *mut crate::tr_local_h::texModInfo_t,
-    pub videoMapHandle: libc::c_int,
+    pub videoMapHandle: i32,
     pub isLightmap: crate::src::qcommon::q_shared::qboolean,
     pub isVideoMap: crate::src::qcommon::q_shared::qboolean,
 }
@@ -190,7 +190,7 @@ pub struct shaderStage_t {
     pub alphaWave: crate::tr_local_h::waveForm_t,
     pub alphaGen: crate::tr_local_h::alphaGen_t,
     pub constantColor: [crate::src::qcommon::q_shared::byte; 4],
-    pub stateBits: libc::c_uint,
+    pub stateBits: u32,
     pub adjustColorsForFog: crate::tr_local_h::acff_t,
     pub isDetail: crate::src::qcommon::q_shared::qboolean,
 }
@@ -202,16 +202,16 @@ pub struct shaderCommands_s {
     pub normal: [crate::src::qcommon::q_shared::vec4_t; 1000],
     pub texCoords: [[crate::src::qcommon::q_shared::vec2_t; 2]; 1000],
     pub vertexColors: [crate::tr_local_h::color4ub_t; 1000],
-    pub vertexDlightBits: [libc::c_int; 1000],
+    pub vertexDlightBits: [i32; 1000],
     pub svars: crate::tr_local_h::stageVars_t,
     pub constantColor255: [crate::tr_local_h::color4ub_t; 1000],
     pub shader: *mut crate::tr_local_h::shader_t,
-    pub shaderTime: libc::c_double,
-    pub fogNum: libc::c_int,
-    pub dlightBits: libc::c_int,
-    pub numIndexes: libc::c_int,
-    pub numVertexes: libc::c_int,
-    pub numPasses: libc::c_int,
+    pub shaderTime: f64,
+    pub fogNum: i32,
+    pub dlightBits: i32,
+    pub numIndexes: i32,
+    pub numVertexes: i32,
+    pub numPasses: i32,
     pub currentStageIteratorFunc: Option<unsafe extern "C" fn() -> ()>,
     pub xstages: *mut *mut crate::tr_local_h::shaderStage_t,
 }
@@ -219,21 +219,21 @@ pub type shader_t = crate::tr_local_h::shader_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct shader_s {
-    pub name: [libc::c_char; 64],
-    pub lightmapIndex: libc::c_int,
-    pub index: libc::c_int,
-    pub sortedIndex: libc::c_int,
-    pub sort: libc::c_float,
+    pub name: [i8; 64],
+    pub lightmapIndex: i32,
+    pub index: i32,
+    pub sortedIndex: i32,
+    pub sort: f32,
     pub defaultShader: crate::src::qcommon::q_shared::qboolean,
     pub explicitlyDefined: crate::src::qcommon::q_shared::qboolean,
-    pub surfaceFlags: libc::c_int,
-    pub contentFlags: libc::c_int,
+    pub surfaceFlags: i32,
+    pub contentFlags: i32,
     pub entityMergable: crate::src::qcommon::q_shared::qboolean,
     pub isSky: crate::src::qcommon::q_shared::qboolean,
     pub sky: crate::tr_local_h::skyParms_t,
     pub fogParms: crate::tr_local_h::fogParms_t,
-    pub portalRange: libc::c_float,
-    pub multitextureEnv: libc::c_int,
+    pub portalRange: f32,
+    pub multitextureEnv: i32,
     pub cullType: crate::tr_local_h::cullType_t,
     pub polygonOffset: crate::src::qcommon::q_shared::qboolean,
     pub noMipMaps: crate::src::qcommon::q_shared::qboolean,
@@ -243,28 +243,28 @@ pub struct shader_s {
     pub needsST1: crate::src::qcommon::q_shared::qboolean,
     pub needsST2: crate::src::qcommon::q_shared::qboolean,
     pub needsColor: crate::src::qcommon::q_shared::qboolean,
-    pub numDeforms: libc::c_int,
+    pub numDeforms: i32,
     pub deforms: [crate::tr_local_h::deformStage_t; 3],
-    pub numUnfoggedPasses: libc::c_int,
+    pub numUnfoggedPasses: i32,
     pub stages: [*mut crate::tr_local_h::shaderStage_t; 8],
     pub optimalStageIteratorFunc: Option<unsafe extern "C" fn() -> ()>,
-    pub clampTime: libc::c_double,
-    pub timeOffset: libc::c_double,
+    pub clampTime: f64,
+    pub timeOffset: f64,
     pub remappedShader: *mut crate::tr_local_h::shader_s,
     pub next: *mut crate::tr_local_h::shader_s,
 }
-pub type fogPass_t = libc::c_uint;
-pub type cullType_t = libc::c_uint;
+pub type fogPass_t = u32;
+pub type cullType_t = u32;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct fogParms_t {
     pub color: crate::src::qcommon::q_shared::vec3_t,
-    pub depthForOpaque: libc::c_float,
+    pub depthForOpaque: f32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct skyParms_t {
-    pub cloudHeight: libc::c_float,
+    pub cloudHeight: f32,
     pub outerbox: [*mut crate::tr_common_h::image_t; 6],
     pub innerbox: [*mut crate::tr_common_h::image_t; 6],
 }
@@ -279,70 +279,70 @@ pub struct stageVars {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct trRefdef_t {
-    pub x: libc::c_int,
-    pub y: libc::c_int,
-    pub width: libc::c_int,
-    pub height: libc::c_int,
-    pub fov_x: libc::c_float,
-    pub fov_y: libc::c_float,
+    pub x: i32,
+    pub y: i32,
+    pub width: i32,
+    pub height: i32,
+    pub fov_x: f32,
+    pub fov_y: f32,
     pub vieworg: crate::src::qcommon::q_shared::vec3_t,
     pub viewaxis: [crate::src::qcommon::q_shared::vec3_t; 3],
     pub stereoFrame: crate::tr_types_h::stereoFrame_t,
-    pub time: libc::c_int,
-    pub rdflags: libc::c_int,
+    pub time: i32,
+    pub rdflags: i32,
     pub areamask: [crate::src::qcommon::q_shared::byte; 32],
     pub areamaskModified: crate::src::qcommon::q_shared::qboolean,
-    pub floatTime: libc::c_double,
-    pub text: [[libc::c_char; 32]; 8],
-    pub num_entities: libc::c_int,
+    pub floatTime: f64,
+    pub text: [[i8; 32]; 8],
+    pub num_entities: i32,
     pub entities: *mut crate::tr_local_h::trRefEntity_t,
-    pub num_dlights: libc::c_int,
+    pub num_dlights: i32,
     pub dlights: *mut crate::tr_local_h::dlight_s,
-    pub numPolys: libc::c_int,
+    pub numPolys: i32,
     pub polys: *mut crate::tr_local_h::srfPoly_s,
-    pub numDrawSurfs: libc::c_int,
+    pub numDrawSurfs: i32,
     pub drawSurfs: *mut crate::tr_local_h::drawSurf_s,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct drawSurf_s {
-    pub sort: libc::c_uint,
+    pub sort: u32,
     pub surface: *mut crate::tr_local_h::surfaceType_t,
 }
-pub type surfaceType_t = libc::c_uint;
+pub type surfaceType_t = u32;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct srfPoly_s {
     pub surfaceType: crate::tr_local_h::surfaceType_t,
     pub hShader: crate::src::qcommon::q_shared::qhandle_t,
-    pub fogIndex: libc::c_int,
-    pub numVerts: libc::c_int,
+    pub fogIndex: i32,
+    pub numVerts: i32,
     pub verts: *mut crate::tr_types_h::polyVert_t,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct skinSurface_t {
-    pub name: [libc::c_char; 64],
+    pub name: [i8; 64],
     pub shader: *mut crate::tr_local_h::shader_t,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct skin_s {
-    pub name: [libc::c_char; 64],
-    pub numSurfaces: libc::c_int,
+    pub name: [i8; 64],
+    pub numSurfaces: i32,
     pub surfaces: *mut crate::tr_local_h::skinSurface_t,
 }
 pub type skin_t = crate::tr_local_h::skin_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct fog_t {
-    pub originalBrushNumber: libc::c_int,
+    pub originalBrushNumber: i32,
     pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
-    pub colorInt: libc::c_uint,
-    pub tcScale: libc::c_float,
+    pub colorInt: u32,
+    pub tcScale: f32,
     pub parms: crate::tr_local_h::fogParms_t,
     pub hasSurface: crate::src::qcommon::q_shared::qboolean,
-    pub surface: [libc::c_float; 4],
+    pub surface: [f32; 4],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -352,44 +352,44 @@ pub struct viewParms_t {
     pub pvsOrigin: crate::src::qcommon::q_shared::vec3_t,
     pub isPortal: crate::src::qcommon::q_shared::qboolean,
     pub isMirror: crate::src::qcommon::q_shared::qboolean,
-    pub frameSceneNum: libc::c_int,
-    pub frameCount: libc::c_int,
+    pub frameSceneNum: i32,
+    pub frameCount: i32,
     pub portalPlane: crate::src::qcommon::q_shared::cplane_t,
-    pub viewportX: libc::c_int,
-    pub viewportY: libc::c_int,
-    pub viewportWidth: libc::c_int,
-    pub viewportHeight: libc::c_int,
-    pub fovX: libc::c_float,
-    pub fovY: libc::c_float,
-    pub projectionMatrix: [libc::c_float; 16],
+    pub viewportX: i32,
+    pub viewportY: i32,
+    pub viewportWidth: i32,
+    pub viewportHeight: i32,
+    pub fovX: f32,
+    pub fovY: f32,
+    pub projectionMatrix: [f32; 16],
     pub frustum: [crate::src::qcommon::q_shared::cplane_t; 4],
     pub visBounds: [crate::src::qcommon::q_shared::vec3_t; 2],
-    pub zFar: libc::c_float,
+    pub zFar: f32,
     pub stereoFrame: crate::tr_types_h::stereoFrame_t,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct msurface_s {
-    pub viewCount: libc::c_int,
+    pub viewCount: i32,
     pub shader: *mut crate::tr_local_h::shader_s,
-    pub fogIndex: libc::c_int,
+    pub fogIndex: i32,
     pub data: *mut crate::tr_local_h::surfaceType_t,
 }
 pub type msurface_t = crate::tr_local_h::msurface_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct mnode_s {
-    pub contents: libc::c_int,
-    pub visframe: libc::c_int,
+    pub contents: i32,
+    pub visframe: i32,
     pub mins: crate::src::qcommon::q_shared::vec3_t,
     pub maxs: crate::src::qcommon::q_shared::vec3_t,
     pub parent: *mut crate::tr_local_h::mnode_s,
     pub plane: *mut crate::src::qcommon::q_shared::cplane_t,
     pub children: [*mut crate::tr_local_h::mnode_s; 2],
-    pub cluster: libc::c_int,
-    pub area: libc::c_int,
+    pub cluster: i32,
+    pub area: i32,
     pub firstmarksurface: *mut *mut crate::tr_local_h::msurface_t,
-    pub nummarksurfaces: libc::c_int,
+    pub nummarksurfaces: i32,
 }
 pub type mnode_t = crate::tr_local_h::mnode_s;
 #[repr(C)]
@@ -397,88 +397,88 @@ pub type mnode_t = crate::tr_local_h::mnode_s;
 pub struct bmodel_t {
     pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
     pub firstSurface: *mut crate::tr_local_h::msurface_t,
-    pub numSurfaces: libc::c_int,
+    pub numSurfaces: i32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct world_t {
-    pub name: [libc::c_char; 64],
-    pub baseName: [libc::c_char; 64],
-    pub dataSize: libc::c_int,
-    pub numShaders: libc::c_int,
+    pub name: [i8; 64],
+    pub baseName: [i8; 64],
+    pub dataSize: i32,
+    pub numShaders: i32,
     pub shaders: *mut crate::qfiles_h::dshader_t,
     pub bmodels: *mut crate::tr_local_h::bmodel_t,
-    pub numplanes: libc::c_int,
+    pub numplanes: i32,
     pub planes: *mut crate::src::qcommon::q_shared::cplane_t,
-    pub numnodes: libc::c_int,
-    pub numDecisionNodes: libc::c_int,
+    pub numnodes: i32,
+    pub numDecisionNodes: i32,
     pub nodes: *mut crate::tr_local_h::mnode_t,
-    pub numsurfaces: libc::c_int,
+    pub numsurfaces: i32,
     pub surfaces: *mut crate::tr_local_h::msurface_t,
-    pub nummarksurfaces: libc::c_int,
+    pub nummarksurfaces: i32,
     pub marksurfaces: *mut *mut crate::tr_local_h::msurface_t,
-    pub numfogs: libc::c_int,
+    pub numfogs: i32,
     pub fogs: *mut crate::tr_local_h::fog_t,
     pub lightGridOrigin: crate::src::qcommon::q_shared::vec3_t,
     pub lightGridSize: crate::src::qcommon::q_shared::vec3_t,
     pub lightGridInverseSize: crate::src::qcommon::q_shared::vec3_t,
-    pub lightGridBounds: [libc::c_int; 3],
+    pub lightGridBounds: [i32; 3],
     pub lightGridData: *mut crate::src::qcommon::q_shared::byte,
-    pub numClusters: libc::c_int,
-    pub clusterBytes: libc::c_int,
+    pub numClusters: i32,
+    pub clusterBytes: i32,
     pub vis: *const crate::src::qcommon::q_shared::byte,
     pub novis: *mut crate::src::qcommon::q_shared::byte,
-    pub entityString: *mut libc::c_char,
-    pub entityParsePoint: *mut libc::c_char,
+    pub entityString: *mut i8,
+    pub entityParsePoint: *mut i8,
 }
-pub type modtype_t = libc::c_uint;
+pub type modtype_t = u32;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct model_s {
-    pub name: [libc::c_char; 64],
+    pub name: [i8; 64],
     pub type_0: crate::tr_local_h::modtype_t,
-    pub index: libc::c_int,
-    pub dataSize: libc::c_int,
+    pub index: i32,
+    pub dataSize: i32,
     pub bmodel: *mut crate::tr_local_h::bmodel_t,
     pub md3: [*mut crate::qfiles_h::md3Header_t; 3],
     pub modelData: *mut libc::c_void,
-    pub numLods: libc::c_int,
+    pub numLods: i32,
 }
 pub type model_t = crate::tr_local_h::model_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct frontEndCounters_t {
-    pub c_sphere_cull_patch_in: libc::c_int,
-    pub c_sphere_cull_patch_clip: libc::c_int,
-    pub c_sphere_cull_patch_out: libc::c_int,
-    pub c_box_cull_patch_in: libc::c_int,
-    pub c_box_cull_patch_clip: libc::c_int,
-    pub c_box_cull_patch_out: libc::c_int,
-    pub c_sphere_cull_md3_in: libc::c_int,
-    pub c_sphere_cull_md3_clip: libc::c_int,
-    pub c_sphere_cull_md3_out: libc::c_int,
-    pub c_box_cull_md3_in: libc::c_int,
-    pub c_box_cull_md3_clip: libc::c_int,
-    pub c_box_cull_md3_out: libc::c_int,
-    pub c_leafs: libc::c_int,
-    pub c_dlightSurfaces: libc::c_int,
-    pub c_dlightSurfacesCulled: libc::c_int,
+    pub c_sphere_cull_patch_in: i32,
+    pub c_sphere_cull_patch_clip: i32,
+    pub c_sphere_cull_patch_out: i32,
+    pub c_box_cull_patch_in: i32,
+    pub c_box_cull_patch_clip: i32,
+    pub c_box_cull_patch_out: i32,
+    pub c_sphere_cull_md3_in: i32,
+    pub c_sphere_cull_md3_clip: i32,
+    pub c_sphere_cull_md3_out: i32,
+    pub c_box_cull_md3_in: i32,
+    pub c_box_cull_md3_clip: i32,
+    pub c_box_cull_md3_out: i32,
+    pub c_leafs: i32,
+    pub c_dlightSurfaces: i32,
+    pub c_dlightSurfacesCulled: i32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct backEndCounters_t {
-    pub c_surfaces: libc::c_int,
-    pub c_shaders: libc::c_int,
-    pub c_vertexes: libc::c_int,
-    pub c_indexes: libc::c_int,
-    pub c_totalIndexes: libc::c_int,
-    pub c_overDraw: libc::c_float,
-    pub c_dlightVertexes: libc::c_int,
-    pub c_dlightIndexes: libc::c_int,
-    pub c_flareAdds: libc::c_int,
-    pub c_flareTests: libc::c_int,
-    pub c_flareRenders: libc::c_int,
-    pub msec: libc::c_int,
+    pub c_surfaces: i32,
+    pub c_shaders: i32,
+    pub c_vertexes: i32,
+    pub c_indexes: i32,
+    pub c_totalIndexes: i32,
+    pub c_overDraw: f32,
+    pub c_dlightVertexes: i32,
+    pub c_dlightIndexes: i32,
+    pub c_flareAdds: i32,
+    pub c_flareTests: i32,
+    pub c_flareRenders: i32,
+    pub msec: i32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -499,11 +499,11 @@ pub struct backEndState_t {
 #[derive(Copy, Clone)]
 pub struct trGlobals_t {
     pub registered: crate::src::qcommon::q_shared::qboolean,
-    pub visCount: libc::c_int,
-    pub frameCount: libc::c_int,
-    pub sceneCount: libc::c_int,
-    pub viewCount: libc::c_int,
-    pub frameSceneNum: libc::c_int,
+    pub visCount: i32,
+    pub frameCount: i32,
+    pub sceneCount: i32,
+    pub viewCount: i32,
+    pub frameSceneNum: i32,
     pub worldMapLoaded: crate::src::qcommon::q_shared::qboolean,
     pub world: *mut crate::tr_local_h::world_t,
     pub externalVisData: *const crate::src::qcommon::q_shared::byte,
@@ -519,39 +519,39 @@ pub struct trGlobals_t {
     pub projectionShadowShader: *mut crate::tr_local_h::shader_t,
     pub flareShader: *mut crate::tr_local_h::shader_t,
     pub sunShader: *mut crate::tr_local_h::shader_t,
-    pub numLightmaps: libc::c_int,
+    pub numLightmaps: i32,
     pub lightmaps: *mut *mut crate::tr_common_h::image_t,
     pub currentEntity: *mut crate::tr_local_h::trRefEntity_t,
     pub worldEntity: crate::tr_local_h::trRefEntity_t,
-    pub currentEntityNum: libc::c_int,
-    pub shiftedEntityNum: libc::c_int,
+    pub currentEntityNum: i32,
+    pub shiftedEntityNum: i32,
     pub currentModel: *mut crate::tr_local_h::model_t,
     pub viewParms: crate::tr_local_h::viewParms_t,
-    pub identityLight: libc::c_float,
-    pub identityLightByte: libc::c_int,
-    pub overbrightBits: libc::c_int,
+    pub identityLight: f32,
+    pub identityLightByte: i32,
+    pub overbrightBits: i32,
     pub or: crate::tr_local_h::orientationr_t,
     pub refdef: crate::tr_local_h::trRefdef_t,
-    pub viewCluster: libc::c_int,
+    pub viewCluster: i32,
     pub sunLight: crate::src::qcommon::q_shared::vec3_t,
     pub sunDirection: crate::src::qcommon::q_shared::vec3_t,
     pub pc: crate::tr_local_h::frontEndCounters_t,
-    pub frontEndMsec: libc::c_int,
+    pub frontEndMsec: i32,
     pub models: [*mut crate::tr_local_h::model_t; 1024],
-    pub numModels: libc::c_int,
-    pub numImages: libc::c_int,
+    pub numModels: i32,
+    pub numImages: i32,
     pub images: [*mut crate::tr_common_h::image_t; 2048],
-    pub numShaders: libc::c_int,
+    pub numShaders: i32,
     pub shaders: [*mut crate::tr_local_h::shader_t; 16384],
     pub sortedShaders: [*mut crate::tr_local_h::shader_t; 16384],
-    pub numSkins: libc::c_int,
+    pub numSkins: i32,
     pub skins: [*mut crate::tr_local_h::skin_t; 1024],
-    pub sinTable: [libc::c_float; 1024],
-    pub squareTable: [libc::c_float; 1024],
-    pub triangleTable: [libc::c_float; 1024],
-    pub sawToothTable: [libc::c_float; 1024],
-    pub inverseSawToothTable: [libc::c_float; 1024],
-    pub fogTable: [libc::c_float; 256],
+    pub sinTable: [f32; 1024],
+    pub squareTable: [f32; 1024],
+    pub triangleTable: [f32; 1024],
+    pub sawToothTable: [f32; 1024],
+    pub inverseSawToothTable: [f32; 1024],
+    pub fogTable: [f32; 256],
 }
 pub type shaderCommands_t = crate::tr_local_h::shaderCommands_s;
 pub const SS_NEAREST: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 16;
@@ -662,7 +662,7 @@ pub const MOD_BAD: crate::tr_local_h::modtype_t = 0;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union C2RustUnnamed_119 {
-    pub f: *mut libc::c_float,
+    pub f: *mut f32,
     pub b: *mut crate::src::qcommon::q_shared::byte,
 }
 #[repr(C)]
@@ -678,18 +678,18 @@ pub type srfFlare_t = crate::tr_local_h::srfFlare_s;
 #[derive(Copy, Clone)]
 pub struct srfGridMesh_s {
     pub surfaceType: crate::tr_local_h::surfaceType_t,
-    pub dlightBits: libc::c_int,
+    pub dlightBits: i32,
     pub meshBounds: [crate::src::qcommon::q_shared::vec3_t; 2],
     pub localOrigin: crate::src::qcommon::q_shared::vec3_t,
-    pub meshRadius: libc::c_float,
+    pub meshRadius: f32,
     pub lodOrigin: crate::src::qcommon::q_shared::vec3_t,
-    pub lodRadius: libc::c_float,
-    pub lodFixed: libc::c_int,
-    pub lodStitched: libc::c_int,
-    pub width: libc::c_int,
-    pub height: libc::c_int,
-    pub widthLodError: *mut libc::c_float,
-    pub heightLodError: *mut libc::c_float,
+    pub lodRadius: f32,
+    pub lodFixed: i32,
+    pub lodStitched: i32,
+    pub width: i32,
+    pub height: i32,
+    pub widthLodError: *mut f32,
+    pub heightLodError: *mut f32,
     pub verts: [crate::qfiles_h::drawVert_t; 1],
 }
 pub type srfGridMesh_t = crate::tr_local_h::srfGridMesh_s;
@@ -698,74 +698,74 @@ pub type srfGridMesh_t = crate::tr_local_h::srfGridMesh_s;
 pub struct srfSurfaceFace_t {
     pub surfaceType: crate::tr_local_h::surfaceType_t,
     pub plane: crate::src::qcommon::q_shared::cplane_t,
-    pub dlightBits: libc::c_int,
-    pub numPoints: libc::c_int,
-    pub numIndices: libc::c_int,
-    pub ofsIndices: libc::c_int,
-    pub points: [[libc::c_float; 8]; 1],
+    pub dlightBits: i32,
+    pub numPoints: i32,
+    pub numIndices: i32,
+    pub ofsIndices: i32,
+    pub points: [[f32; 8]; 1],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct srfTriangles_t {
     pub surfaceType: crate::tr_local_h::surfaceType_t,
-    pub dlightBits: libc::c_int,
+    pub dlightBits: i32,
     pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
     pub localOrigin: crate::src::qcommon::q_shared::vec3_t,
-    pub radius: libc::c_float,
-    pub numIndexes: libc::c_int,
-    pub indexes: *mut libc::c_int,
-    pub numVerts: libc::c_int,
+    pub radius: f32,
+    pub numIndexes: i32,
+    pub indexes: *mut i32,
+    pub numVerts: i32,
     pub verts: *mut crate::qfiles_h::drawVert_t,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct screenshotCommand_t {
-    pub commandId: libc::c_int,
-    pub x: libc::c_int,
-    pub y: libc::c_int,
-    pub width: libc::c_int,
-    pub height: libc::c_int,
-    pub fileName: *mut libc::c_char,
+    pub commandId: i32,
+    pub x: i32,
+    pub y: i32,
+    pub width: i32,
+    pub height: i32,
+    pub fileName: *mut i8,
     pub jpeg: crate::src::qcommon::q_shared::qboolean,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct iqmData_t {
-    pub num_vertexes: libc::c_int,
-    pub num_triangles: libc::c_int,
-    pub num_frames: libc::c_int,
-    pub num_surfaces: libc::c_int,
-    pub num_joints: libc::c_int,
-    pub num_poses: libc::c_int,
+    pub num_vertexes: i32,
+    pub num_triangles: i32,
+    pub num_frames: i32,
+    pub num_surfaces: i32,
+    pub num_joints: i32,
+    pub num_poses: i32,
     pub surfaces: *mut crate::tr_local_h::srfIQModel_s,
-    pub triangles: *mut libc::c_int,
-    pub positions: *mut libc::c_float,
-    pub texcoords: *mut libc::c_float,
-    pub normals: *mut libc::c_float,
-    pub tangents: *mut libc::c_float,
+    pub triangles: *mut i32,
+    pub positions: *mut f32,
+    pub texcoords: *mut f32,
+    pub normals: *mut f32,
+    pub tangents: *mut f32,
     pub colors: *mut crate::src::qcommon::q_shared::byte,
-    pub influences: *mut libc::c_int,
+    pub influences: *mut i32,
     pub influenceBlendIndexes: *mut crate::src::qcommon::q_shared::byte,
     pub influenceBlendWeights: crate::tr_local_h::C2RustUnnamed_119,
-    pub blendWeightsType: libc::c_int,
-    pub jointNames: *mut libc::c_char,
-    pub jointParents: *mut libc::c_int,
-    pub jointMats: *mut libc::c_float,
-    pub poseMats: *mut libc::c_float,
-    pub bounds: *mut libc::c_float,
+    pub blendWeightsType: i32,
+    pub jointNames: *mut i8,
+    pub jointParents: *mut i32,
+    pub jointMats: *mut f32,
+    pub poseMats: *mut f32,
+    pub bounds: *mut f32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct srfIQModel_s {
     pub surfaceType: crate::tr_local_h::surfaceType_t,
-    pub name: [libc::c_char; 64],
+    pub name: [i8; 64],
     pub shader: *mut crate::tr_local_h::shader_t,
     pub data: *mut crate::tr_local_h::iqmData_t,
-    pub first_vertex: libc::c_int,
-    pub num_vertexes: libc::c_int,
-    pub first_triangle: libc::c_int,
-    pub num_triangles: libc::c_int,
-    pub first_influence: libc::c_int,
-    pub num_influences: libc::c_int,
+    pub first_vertex: i32,
+    pub num_vertexes: i32,
+    pub first_triangle: i32,
+    pub num_triangles: i32,
+    pub first_influence: i32,
+    pub num_influences: i32,
 }
 pub type srfIQModel_t = crate::tr_local_h::srfIQModel_s;

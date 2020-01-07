@@ -85,28 +85,24 @@ pub unsafe extern "C" fn silk_resampler_down2_3(
         0 as *mut crate::opus_types_h::opus_int32;
     let mut fresh0 = ::std::vec::from_elem(
         0,
-        (::std::mem::size_of::<crate::opus_types_h::opus_int32>() as libc::c_ulong).wrapping_mul(
-            (10 as libc::c_int * 48 as libc::c_int + 4 as libc::c_int) as libc::c_ulong,
-        ) as usize,
+        (::std::mem::size_of::<crate::opus_types_h::opus_int32>())
+            .wrapping_mul((10i32 * 48 + 4) as usize),
     );
-    buf = fresh0.as_mut_ptr() as *mut crate::opus_types_h::opus_int32;
+    buf = fresh0.as_mut_ptr();
     /* Copy buffered samples to start of buffer */
-    crate::stdlib::memcpy(buf as *mut libc::c_void, S as *const libc::c_void,
-           (4 as libc::c_int as
-                libc::c_ulong).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()
-                                                as libc::c_ulong));
+    crate::stdlib::memcpy(
+        buf as *mut libc::c_void,
+        S as *const libc::c_void,
+        (4usize).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()),
+    );
     loop
     /* Iterate over blocks of frameSizeIn input samples */
     {
-        nSamplesIn = if inLen < 10 as libc::c_int * 48 as libc::c_int {
-            inLen
-        } else {
-            (10 as libc::c_int) * 48 as libc::c_int
-        };
+        nSamplesIn = if inLen < 10 * 48 { inLen } else { (10) * 48 };
         /* Second-order AR filter (output in Q8) */
         crate::src::opus_1_2_1::silk::resampler_private_AR2::silk_resampler_private_AR2(
-            &mut *S.offset(4 as libc::c_int as isize),
-            &mut *buf.offset(4 as libc::c_int as isize),
+            &mut *S.offset(4),
+            &mut *buf.offset(4),
             in_0,
             crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ.as_ptr(),
             nSamplesIn,
@@ -114,102 +110,96 @@ pub unsafe extern "C" fn silk_resampler_down2_3(
         /* Interpolate filtered signal */
         buf_ptr = buf;
         counter = nSamplesIn;
-        while counter > 2 as libc::c_int {
+        while counter > 2 {
             /* Inner product */
-            res_Q6 = (*buf_ptr.offset(0 as libc::c_int as isize) as libc::c_longlong
-                * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ
-                    [2 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32;
-            res_Q6 = (res_Q6 as libc::c_longlong
-                + (*buf_ptr.offset(1 as libc::c_int as isize) as libc::c_longlong
-                    * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ
-                        [3 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-            res_Q6 = (res_Q6 as libc::c_longlong
-                + (*buf_ptr.offset(2 as libc::c_int as isize) as libc::c_longlong
-                    * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ
-                        [5 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-            res_Q6 = (res_Q6 as libc::c_longlong
-                + (*buf_ptr.offset(3 as libc::c_int as isize) as libc::c_longlong
-                    * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ
-                        [4 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
+            res_Q6 = (*buf_ptr.offset(0) as i64
+                * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ[2]
+                    as i64
+                >> 16) as crate::opus_types_h::opus_int32;
+            res_Q6 = (res_Q6 as i64
+                + (*buf_ptr.offset(1) as i64
+                    * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ[3]
+                        as i64
+                    >> 16)) as crate::opus_types_h::opus_int32;
+            res_Q6 = (res_Q6 as i64
+                + (*buf_ptr.offset(2) as i64
+                    * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ[5]
+                        as i64
+                    >> 16)) as crate::opus_types_h::opus_int32;
+            res_Q6 = (res_Q6 as i64
+                + (*buf_ptr.offset(3) as i64
+                    * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ[4]
+                        as i64
+                    >> 16)) as crate::opus_types_h::opus_int32;
             /* Scale down, saturate and store in output array */
             let fresh1 = out;
             out = out.offset(1);
-            *fresh1 = if (if 6 as libc::c_int == 1 as libc::c_int {
-                (res_Q6 >> 1 as libc::c_int) + (res_Q6 & 1 as libc::c_int)
+            *fresh1 = if (if 6 == 1 {
+                (res_Q6 >> 1) + (res_Q6 & 1)
             } else {
-                ((res_Q6 >> 6 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-                    >> 1 as libc::c_int
-            }) > 0x7fff as libc::c_int
+                ((res_Q6 >> 6 - 1) + 1) >> 1
+            }) > 0x7fff
             {
-                0x7fff as libc::c_int
-            } else if (if 6 as libc::c_int == 1 as libc::c_int {
-                (res_Q6 >> 1 as libc::c_int) + (res_Q6 & 1 as libc::c_int)
+                0x7fff
+            } else if (if 6 == 1 {
+                (res_Q6 >> 1) + (res_Q6 & 1)
             } else {
-                ((res_Q6 >> 6 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-                    >> 1 as libc::c_int
-            }) < 0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
+                ((res_Q6 >> 6 - 1) + 1) >> 1
+            }) < 0x8000i32 as crate::opus_types_h::opus_int16 as i32
             {
-                0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
-            } else if 6 as libc::c_int == 1 as libc::c_int {
-                (res_Q6 >> 1 as libc::c_int) + (res_Q6 & 1 as libc::c_int)
+                0x8000i32 as crate::opus_types_h::opus_int16 as i32
+            } else if 6 == 1 {
+                (res_Q6 >> 1) + (res_Q6 & 1)
             } else {
-                ((res_Q6 >> 6 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-                    >> 1 as libc::c_int
+                ((res_Q6 >> 6 - 1) + 1) >> 1
             } as crate::opus_types_h::opus_int16;
-            res_Q6 = (*buf_ptr.offset(1 as libc::c_int as isize) as libc::c_longlong
-                * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ
-                    [4 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32;
-            res_Q6 = (res_Q6 as libc::c_longlong
-                + (*buf_ptr.offset(2 as libc::c_int as isize) as libc::c_longlong
-                    * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ
-                        [5 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-            res_Q6 = (res_Q6 as libc::c_longlong
-                + (*buf_ptr.offset(3 as libc::c_int as isize) as libc::c_longlong
-                    * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ
-                        [3 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-            res_Q6 = (res_Q6 as libc::c_longlong
-                + (*buf_ptr.offset(4 as libc::c_int as isize) as libc::c_longlong
-                    * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ
-                        [2 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
+            res_Q6 = (*buf_ptr.offset(1) as i64
+                * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ[4]
+                    as i64
+                >> 16) as crate::opus_types_h::opus_int32;
+            res_Q6 = (res_Q6 as i64
+                + (*buf_ptr.offset(2) as i64
+                    * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ[5]
+                        as i64
+                    >> 16)) as crate::opus_types_h::opus_int32;
+            res_Q6 = (res_Q6 as i64
+                + (*buf_ptr.offset(3) as i64
+                    * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ[3]
+                        as i64
+                    >> 16)) as crate::opus_types_h::opus_int32;
+            res_Q6 = (res_Q6 as i64
+                + (*buf_ptr.offset(4) as i64
+                    * crate::src::opus_1_2_1::silk::resampler_rom::silk_Resampler_2_3_COEFS_LQ[2]
+                        as i64
+                    >> 16)) as crate::opus_types_h::opus_int32;
             /* Scale down, saturate and store in output array */
             let fresh2 = out;
             out = out.offset(1);
-            *fresh2 = if (if 6 as libc::c_int == 1 as libc::c_int {
-                (res_Q6 >> 1 as libc::c_int) + (res_Q6 & 1 as libc::c_int)
+            *fresh2 = if (if 6 == 1 {
+                (res_Q6 >> 1) + (res_Q6 & 1)
             } else {
-                ((res_Q6 >> 6 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-                    >> 1 as libc::c_int
-            }) > 0x7fff as libc::c_int
+                ((res_Q6 >> 6 - 1) + 1) >> 1
+            }) > 0x7fff
             {
-                0x7fff as libc::c_int
-            } else if (if 6 as libc::c_int == 1 as libc::c_int {
-                (res_Q6 >> 1 as libc::c_int) + (res_Q6 & 1 as libc::c_int)
+                0x7fff
+            } else if (if 6 == 1 {
+                (res_Q6 >> 1) + (res_Q6 & 1)
             } else {
-                ((res_Q6 >> 6 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-                    >> 1 as libc::c_int
-            }) < 0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
+                ((res_Q6 >> 6 - 1) + 1) >> 1
+            }) < 0x8000i32 as crate::opus_types_h::opus_int16 as i32
             {
-                0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
-            } else if 6 as libc::c_int == 1 as libc::c_int {
-                (res_Q6 >> 1 as libc::c_int) + (res_Q6 & 1 as libc::c_int)
+                0x8000i32 as crate::opus_types_h::opus_int16 as i32
+            } else if 6 == 1 {
+                (res_Q6 >> 1) + (res_Q6 & 1)
             } else {
-                ((res_Q6 >> 6 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-                    >> 1 as libc::c_int
+                ((res_Q6 >> 6 - 1) + 1) >> 1
             } as crate::opus_types_h::opus_int16;
-            buf_ptr = buf_ptr.offset(3 as libc::c_int as isize);
-            counter -= 3 as libc::c_int
+            buf_ptr = buf_ptr.offset(3);
+            counter -= 3
         }
         in_0 = in_0.offset(nSamplesIn as isize);
         inLen -= nSamplesIn;
-        if !(inLen > 0 as libc::c_int) {
+        if !(inLen > 0) {
             break;
         }
         /* More iterations to do; copy last part of filtered signal to beginning of buffer */
@@ -217,16 +207,14 @@ pub unsafe extern "C" fn silk_resampler_down2_3(
             buf as *mut libc::c_void,
             &mut *buf.offset(nSamplesIn as isize) as *mut crate::opus_types_h::opus_int32
                 as *const libc::c_void,
-            (4 as libc::c_int as libc::c_ulong).wrapping_mul(::std::mem::size_of::<
-                crate::opus_types_h::opus_int32,
-            >() as libc::c_ulong),
+            (4usize).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()),
         );
     }
     /* Copy last part of filtered signal to the state for the next call */
-    crate::stdlib::memcpy(S as *mut libc::c_void,
-           &mut *buf.offset(nSamplesIn as isize) as *mut crate::opus_types_h::opus_int32 as
-               *const libc::c_void,
-           (4 as libc::c_int as
-                libc::c_ulong).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()
-                                                as libc::c_ulong));
+    crate::stdlib::memcpy(
+        S as *mut libc::c_void,
+        &mut *buf.offset(nSamplesIn as isize) as *mut crate::opus_types_h::opus_int32
+            as *const libc::c_void,
+        (4usize).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()),
+    );
 }

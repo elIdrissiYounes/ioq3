@@ -3,12 +3,8 @@ use ::libc;
 pub mod stdlib_h {
     #[inline]
 
-    pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
-            __nptr,
-            0 as *mut libc::c_void as *mut *mut libc::c_char,
-            10 as libc::c_int,
-        ) as libc::c_int;
+    pub unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
+        return crate::stdlib::strtol(__nptr, 0 as *mut *mut i8, 10) as i32;
     }
 }
 
@@ -200,271 +196,271 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // cl_parse.c  -- parse a message received from the server
 #[no_mangle]
 
-pub static mut svc_strings: [*mut libc::c_char; 256] = [
-    b"svc_bad\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"svc_nop\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"svc_gamestate\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"svc_configstring\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"svc_baseline\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"svc_serverCommand\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"svc_download\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"svc_snapshot\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"svc_EOF\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"svc_voipSpeex\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"svc_voipOpus\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
-    0 as *const libc::c_char as *mut libc::c_char,
+pub static mut svc_strings: [*mut i8; 256] = [
+    b"svc_bad\x00" as *const u8 as *mut i8,
+    b"svc_nop\x00" as *const u8 as *mut i8,
+    b"svc_gamestate\x00" as *const u8 as *mut i8,
+    b"svc_configstring\x00" as *const u8 as *mut i8,
+    b"svc_baseline\x00" as *const u8 as *mut i8,
+    b"svc_serverCommand\x00" as *const u8 as *mut i8,
+    b"svc_download\x00" as *const u8 as *mut i8,
+    b"svc_snapshot\x00" as *const u8 as *mut i8,
+    b"svc_EOF\x00" as *const u8 as *mut i8,
+    b"svc_voipSpeex\x00" as *const u8 as *mut i8,
+    b"svc_voipOpus\x00" as *const u8 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
+    0 as *mut i8,
 ];
 #[no_mangle]
 
-pub unsafe extern "C" fn SHOWNET(mut msg: *mut crate::qcommon_h::msg_t, mut s: *mut libc::c_char) {
-    if (*crate::src::client::cl_main::cl_shownet).integer >= 2 as libc::c_int {
+pub unsafe extern "C" fn SHOWNET(mut msg: *mut crate::qcommon_h::msg_t, mut s: *mut i8) {
+    if (*crate::src::client::cl_main::cl_shownet).integer >= 2 {
         crate::src::qcommon::common::Com_Printf(
-            b"%3i:%s\n\x00" as *const u8 as *const libc::c_char,
-            (*msg).readcount - 1 as libc::c_int,
+            b"%3i:%s\n\x00" as *const u8 as *const i8,
+            (*msg).readcount - 1i32,
             s,
         );
     };
@@ -489,7 +485,7 @@ to the current frame
 pub unsafe extern "C" fn CL_DeltaEntity(
     mut msg: *mut crate::qcommon_h::msg_t,
     mut frame: *mut crate::client_h::clSnapshot_t,
-    mut newnum: libc::c_int,
+    mut newnum: i32,
     mut old: *mut crate::src::qcommon::q_shared::entityState_t,
     mut unchanged: crate::src::qcommon::q_shared::qboolean,
 ) {
@@ -500,16 +496,14 @@ pub unsafe extern "C" fn CL_DeltaEntity(
     state = &mut *crate::src::client::cl_main::cl
         .parseEntities
         .as_mut_ptr()
-        .offset(
-            (crate::src::client::cl_main::cl.parseEntitiesNum
-                & 32 as libc::c_int * 256 as libc::c_int - 1 as libc::c_int) as isize,
-        ) as *mut crate::src::qcommon::q_shared::entityState_t;
+        .offset((crate::src::client::cl_main::cl.parseEntitiesNum & 32 * 256 - 1) as isize)
+        as *mut crate::src::qcommon::q_shared::entityState_t;
     if unchanged as u64 != 0 {
         *state = *old
     } else {
         crate::src::qcommon::msg::MSG_ReadDeltaEntity(msg, old, state, newnum);
     }
-    if (*state).number == ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int {
+    if (*state).number == ((1) << 10) - 1 {
         return;
         // entity was delta removed
     }
@@ -529,48 +523,45 @@ pub unsafe extern "C" fn CL_ParsePacketEntities(
     mut oldframe: *mut crate::client_h::clSnapshot_t,
     mut newframe: *mut crate::client_h::clSnapshot_t,
 ) {
-    let mut newnum: libc::c_int = 0;
+    let mut newnum: i32 = 0;
     let mut oldstate: *mut crate::src::qcommon::q_shared::entityState_t =
         0 as *mut crate::src::qcommon::q_shared::entityState_t;
-    let mut oldindex: libc::c_int = 0;
-    let mut oldnum: libc::c_int = 0;
+    let mut oldindex: i32 = 0;
+    let mut oldnum: i32 = 0;
     (*newframe).parseEntitiesNum = crate::src::client::cl_main::cl.parseEntitiesNum;
-    (*newframe).numEntities = 0 as libc::c_int;
+    (*newframe).numEntities = 0;
     // delta from the entities present in oldframe
-    oldindex = 0 as libc::c_int;
+    oldindex = 0;
     oldstate = 0 as *mut crate::src::qcommon::q_shared::entityState_t;
     if oldframe.is_null() {
-        oldnum = 99999 as libc::c_int
+        oldnum = 99999
     } else if oldindex >= (*oldframe).numEntities {
-        oldnum = 99999 as libc::c_int
+        oldnum = 99999
     } else {
         oldstate = &mut *crate::src::client::cl_main::cl
             .parseEntities
             .as_mut_ptr()
-            .offset(
-                ((*oldframe).parseEntitiesNum + oldindex
-                    & 32 as libc::c_int * 256 as libc::c_int - 1 as libc::c_int)
-                    as isize,
-            ) as *mut crate::src::qcommon::q_shared::entityState_t;
+            .offset(((*oldframe).parseEntitiesNum + oldindex & 32 * 256 - 1) as isize)
+            as *mut crate::src::qcommon::q_shared::entityState_t;
         oldnum = (*oldstate).number
     }
     loop {
         // read the entity index number
-        newnum = crate::src::qcommon::msg::MSG_ReadBits(msg, 10 as libc::c_int);
-        if newnum == ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int {
+        newnum = crate::src::qcommon::msg::MSG_ReadBits(msg, 10);
+        if newnum == ((1) << 10) - 1 {
             break;
         }
         if (*msg).readcount > (*msg).cursize {
             crate::src::qcommon::common::Com_Error(
-                crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-                b"CL_ParsePacketEntities: end of message\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::ERR_DROP as i32,
+                b"CL_ParsePacketEntities: end of message\x00" as *const u8 as *const i8,
             );
         }
         while oldnum < newnum {
             // one or more entities from the old packet are unchanged
-            if (*crate::src::client::cl_main::cl_shownet).integer == 3 as libc::c_int {
+            if (*crate::src::client::cl_main::cl_shownet).integer == 3 {
                 crate::src::qcommon::common::Com_Printf(
-                    b"%3i:  unchanged: %i\n\x00" as *const u8 as *const libc::c_char,
+                    b"%3i:  unchanged: %i\n\x00" as *const u8 as *const i8,
                     (*msg).readcount,
                     oldnum,
                 );
@@ -584,25 +575,21 @@ pub unsafe extern "C" fn CL_ParsePacketEntities(
             );
             oldindex += 1;
             if oldindex >= (*oldframe).numEntities {
-                oldnum = 99999 as libc::c_int
+                oldnum = 99999
             } else {
                 oldstate = &mut *crate::src::client::cl_main::cl
                     .parseEntities
                     .as_mut_ptr()
-                    .offset(
-                        ((*oldframe).parseEntitiesNum + oldindex
-                            & 32 as libc::c_int * 256 as libc::c_int - 1 as libc::c_int)
-                            as isize,
-                    )
+                    .offset(((*oldframe).parseEntitiesNum + oldindex & 32 * 256 - 1) as isize)
                     as *mut crate::src::qcommon::q_shared::entityState_t;
                 oldnum = (*oldstate).number
             }
         }
         if oldnum == newnum {
             // delta from previous state
-            if (*crate::src::client::cl_main::cl_shownet).integer == 3 as libc::c_int {
+            if (*crate::src::client::cl_main::cl_shownet).integer == 3 {
                 crate::src::qcommon::common::Com_Printf(
-                    b"%3i:  delta: %i\n\x00" as *const u8 as *const libc::c_char,
+                    b"%3i:  delta: %i\n\x00" as *const u8 as *const i8,
                     (*msg).readcount,
                     newnum,
                 );
@@ -616,16 +603,12 @@ pub unsafe extern "C" fn CL_ParsePacketEntities(
             );
             oldindex += 1;
             if oldindex >= (*oldframe).numEntities {
-                oldnum = 99999 as libc::c_int
+                oldnum = 99999
             } else {
                 oldstate = &mut *crate::src::client::cl_main::cl
                     .parseEntities
                     .as_mut_ptr()
-                    .offset(
-                        ((*oldframe).parseEntitiesNum + oldindex
-                            & 32 as libc::c_int * 256 as libc::c_int - 1 as libc::c_int)
-                            as isize,
-                    )
+                    .offset(((*oldframe).parseEntitiesNum + oldindex & 32 * 256 - 1) as isize)
                     as *mut crate::src::qcommon::q_shared::entityState_t;
                 oldnum = (*oldstate).number
             }
@@ -634,9 +617,9 @@ pub unsafe extern "C" fn CL_ParsePacketEntities(
                 continue;
             }
             // delta from baseline
-            if (*crate::src::client::cl_main::cl_shownet).integer == 3 as libc::c_int {
+            if (*crate::src::client::cl_main::cl_shownet).integer == 3 {
                 crate::src::qcommon::common::Com_Printf(
-                    b"%3i:  baseline: %i\n\x00" as *const u8 as *const libc::c_char,
+                    b"%3i:  baseline: %i\n\x00" as *const u8 as *const i8,
                     (*msg).readcount,
                     newnum,
                 );
@@ -654,11 +637,11 @@ pub unsafe extern "C" fn CL_ParsePacketEntities(
         }
     }
     // any remaining entities in the old frame are copied over
-    while oldnum != 99999 as libc::c_int {
+    while oldnum != 99999 {
         // one or more entities from the old packet are unchanged
-        if (*crate::src::client::cl_main::cl_shownet).integer == 3 as libc::c_int {
+        if (*crate::src::client::cl_main::cl_shownet).integer == 3 {
             crate::src::qcommon::common::Com_Printf(
-                b"%3i:  unchanged: %i\n\x00" as *const u8 as *const libc::c_char,
+                b"%3i:  unchanged: %i\n\x00" as *const u8 as *const i8,
                 (*msg).readcount,
                 oldnum,
             );
@@ -672,16 +655,13 @@ pub unsafe extern "C" fn CL_ParsePacketEntities(
         );
         oldindex += 1;
         if oldindex >= (*oldframe).numEntities {
-            oldnum = 99999 as libc::c_int
+            oldnum = 99999
         } else {
             oldstate = &mut *crate::src::client::cl_main::cl
                 .parseEntities
                 .as_mut_ptr()
-                .offset(
-                    ((*oldframe).parseEntitiesNum + oldindex
-                        & 32 as libc::c_int * 256 as libc::c_int - 1 as libc::c_int)
-                        as isize,
-                ) as *mut crate::src::qcommon::q_shared::entityState_t;
+                .offset(((*oldframe).parseEntitiesNum + oldindex & 32 * 256 - 1) as isize)
+                as *mut crate::src::qcommon::q_shared::entityState_t;
             oldnum = (*oldstate).number
         }
     }
@@ -698,7 +678,7 @@ for any reason, no changes to the state will be made at all.
 #[no_mangle]
 
 pub unsafe extern "C" fn CL_ParseSnapshot(mut msg: *mut crate::qcommon_h::msg_t) {
-    let mut len: libc::c_int = 0;
+    let mut len: i32 = 0;
     let mut old: *mut crate::client_h::clSnapshot_t = 0 as *mut crate::client_h::clSnapshot_t;
     let mut newSnap: crate::client_h::clSnapshot_t = crate::client_h::clSnapshot_t {
         valid: crate::src::qcommon::q_shared::qfalse,
@@ -760,10 +740,10 @@ pub unsafe extern "C" fn CL_ParseSnapshot(mut msg: *mut crate::qcommon_h::msg_t)
         parseEntitiesNum: 0,
         serverCommandNum: 0,
     };
-    let mut deltaNum: libc::c_int = 0;
-    let mut oldMessageNum: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
-    let mut packetNum: libc::c_int = 0;
+    let mut deltaNum: i32 = 0;
+    let mut oldMessageNum: i32 = 0;
+    let mut i: i32 = 0;
+    let mut packetNum: i32 = 0;
     // get the reliable sequence acknowledge number
     // NOTE: now sent with all server to client messages
     //clc.reliableAcknowledge = MSG_ReadLong( msg );
@@ -771,8 +751,8 @@ pub unsafe extern "C" fn CL_ParseSnapshot(mut msg: *mut crate::qcommon_h::msg_t)
     // we will only copy to cl.snap if it is valid
     crate::stdlib::memset(
         &mut newSnap as *mut crate::client_h::clSnapshot_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::client_h::clSnapshot_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::client_h::clSnapshot_t>(),
     );
     // we will have read any new server commands in this
     // message before we got to svc_snapshot
@@ -784,7 +764,7 @@ pub unsafe extern "C" fn CL_ParseSnapshot(mut msg: *mut crate::qcommon_h::msg_t)
     newSnap.messageNum = crate::src::client::cl_main::clc.serverMessageSequence;
     deltaNum = crate::src::qcommon::msg::MSG_ReadByte(msg);
     if deltaNum == 0 {
-        newSnap.deltaNum = -(1 as libc::c_int)
+        newSnap.deltaNum = -(1)
     } else {
         newSnap.deltaNum = newSnap.messageNum - deltaNum
     }
@@ -793,7 +773,7 @@ pub unsafe extern "C" fn CL_ParseSnapshot(mut msg: *mut crate::qcommon_h::msg_t)
     // no longer have available, we must suck up the rest of
     // the frame, but not use it, then ask for a non-compressed
     // message
-    if newSnap.deltaNum <= 0 as libc::c_int {
+    if newSnap.deltaNum <= 0 {
         newSnap.valid = crate::src::qcommon::q_shared::qtrue;
         old = 0 as *mut crate::client_h::clSnapshot_t;
         crate::src::client::cl_main::clc.demowaiting = crate::src::qcommon::q_shared::qfalse
@@ -803,25 +783,25 @@ pub unsafe extern "C" fn CL_ParseSnapshot(mut msg: *mut crate::qcommon_h::msg_t)
         old = &mut *crate::src::client::cl_main::cl
             .snapshots
             .as_mut_ptr()
-            .offset((newSnap.deltaNum & 32 as libc::c_int - 1 as libc::c_int) as isize)
+            .offset((newSnap.deltaNum & 32 - 1) as isize)
             as *mut crate::client_h::clSnapshot_t;
         if (*old).valid as u64 == 0 {
             // should never happen
             crate::src::qcommon::common::Com_Printf(
                 b"Delta from invalid frame (not supposed to happen!).\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
             );
         } else if (*old).messageNum != newSnap.deltaNum {
             // The frame that the server did the delta from
             // is too old, so we can't reconstruct it properly.
             crate::src::qcommon::common::Com_Printf(
-                b"Delta frame too old.\n\x00" as *const u8 as *const libc::c_char,
+                b"Delta frame too old.\n\x00" as *const u8 as *const i8,
             );
         } else if crate::src::client::cl_main::cl.parseEntitiesNum - (*old).parseEntitiesNum
-            > 32 as libc::c_int * 256 as libc::c_int - 256 as libc::c_int
+            > 32 * 256 - 256
         {
             crate::src::qcommon::common::Com_Printf(
-                b"Delta parseEntitiesNum too old.\n\x00" as *const u8 as *const libc::c_char,
+                b"Delta parseEntitiesNum too old.\n\x00" as *const u8 as *const i8,
             );
         } else {
             newSnap.valid = crate::src::qcommon::q_shared::qtrue
@@ -830,13 +810,10 @@ pub unsafe extern "C" fn CL_ParseSnapshot(mut msg: *mut crate::qcommon_h::msg_t)
     }
     // read areamask
     len = crate::src::qcommon::msg::MSG_ReadByte(msg);
-    if len as libc::c_ulong
-        > ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 32]>() as libc::c_ulong
-    {
+    if len as usize > ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 32]>() {
         crate::src::qcommon::common::Com_Error(
-            crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-            b"CL_ParseSnapshot: Invalid size %d for areamask\x00" as *const u8
-                as *const libc::c_char,
+            crate::src::qcommon::q_shared::ERR_DROP as i32,
+            b"CL_ParseSnapshot: Invalid size %d for areamask\x00" as *const u8 as *const i8,
             len,
         );
     }
@@ -847,10 +824,7 @@ pub unsafe extern "C" fn CL_ParseSnapshot(mut msg: *mut crate::qcommon_h::msg_t)
         len,
     );
     // read playerinfo
-    SHOWNET(
-        msg,
-        b"playerstate\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    );
+    SHOWNET(msg, b"playerstate\x00" as *const u8 as *mut i8);
     if !old.is_null() {
         crate::src::qcommon::msg::MSG_ReadDeltaPlayerstate(msg, &mut (*old).ps, &mut newSnap.ps);
     } else {
@@ -861,10 +835,7 @@ pub unsafe extern "C" fn CL_ParseSnapshot(mut msg: *mut crate::qcommon_h::msg_t)
         );
     }
     // read packet entities
-    SHOWNET(
-        msg,
-        b"packet entities\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    );
+    SHOWNET(msg, b"packet entities\x00" as *const u8 as *mut i8);
     CL_ParsePacketEntities(msg, old, &mut newSnap);
     // if not valid, dump the entire thing now that it has
     // been properly read
@@ -875,25 +846,22 @@ pub unsafe extern "C" fn CL_ParseSnapshot(mut msg: *mut crate::qcommon_h::msg_t)
     // received and this one, so if there was a dropped packet
     // it won't look like something valid to delta from next
     // time we wrap around in the buffer
-    oldMessageNum = crate::src::client::cl_main::cl.snap.messageNum + 1 as libc::c_int;
-    if newSnap.messageNum - oldMessageNum >= 32 as libc::c_int {
-        oldMessageNum = newSnap.messageNum - (32 as libc::c_int - 1 as libc::c_int)
+    oldMessageNum = crate::src::client::cl_main::cl.snap.messageNum + 1;
+    if newSnap.messageNum - oldMessageNum >= 32 {
+        oldMessageNum = newSnap.messageNum - (32 - 1)
     }
     while oldMessageNum < newSnap.messageNum {
-        crate::src::client::cl_main::cl.snapshots
-            [(oldMessageNum & 32 as libc::c_int - 1 as libc::c_int) as usize]
-            .valid = crate::src::qcommon::q_shared::qfalse;
+        crate::src::client::cl_main::cl.snapshots[(oldMessageNum & 32 - 1) as usize].valid =
+            crate::src::qcommon::q_shared::qfalse;
         oldMessageNum += 1
     }
     // copy to the current good spot
     crate::src::client::cl_main::cl.snap = newSnap;
-    crate::src::client::cl_main::cl.snap.ping = 999 as libc::c_int;
+    crate::src::client::cl_main::cl.snap.ping = 999;
     // calculate ping time
-    i = 0 as libc::c_int;
-    while i < 32 as libc::c_int {
-        packetNum =
-            crate::src::client::cl_main::clc.netchan.outgoingSequence - 1 as libc::c_int - i
-                & 32 as libc::c_int - 1 as libc::c_int;
+    i = 0;
+    while i < 32 {
+        packetNum = crate::src::client::cl_main::clc.netchan.outgoingSequence - 1 - i & 32 - 1;
         if crate::src::client::cl_main::cl.snap.ps.commandTime
             >= crate::src::client::cl_main::cl.outPackets[packetNum as usize].p_serverTime
         {
@@ -905,12 +873,12 @@ pub unsafe extern "C" fn CL_ParseSnapshot(mut msg: *mut crate::qcommon_h::msg_t)
         }
     }
     // save the frame off in the backup array for later delta comparisons
-    crate::src::client::cl_main::cl.snapshots[(crate::src::client::cl_main::cl.snap.messageNum
-        & 32 as libc::c_int - 1 as libc::c_int)
-        as usize] = crate::src::client::cl_main::cl.snap;
-    if (*crate::src::client::cl_main::cl_shownet).integer == 3 as libc::c_int {
+    crate::src::client::cl_main::cl.snapshots
+        [(crate::src::client::cl_main::cl.snap.messageNum & 32 - 1) as usize] =
+        crate::src::client::cl_main::cl.snap;
+    if (*crate::src::client::cl_main::cl_shownet).integer == 3 {
         crate::src::qcommon::common::Com_Printf(
-            b"   snapshot:%i  delta:%i  ping:%i\n\x00" as *const u8 as *const libc::c_char,
+            b"   snapshot:%i  delta:%i  ping:%i\n\x00" as *const u8 as *const i8,
             crate::src::client::cl_main::cl.snap.messageNum,
             crate::src::client::cl_main::cl.snap.deltaNum,
             crate::src::client::cl_main::cl.snap.ping,
@@ -921,10 +889,10 @@ pub unsafe extern "C" fn CL_ParseSnapshot(mut msg: *mut crate::qcommon_h::msg_t)
 //=====================================================================
 #[no_mangle]
 
-pub static mut cl_connectedToPureServer: libc::c_int = 0;
+pub static mut cl_connectedToPureServer: i32 = 0;
 #[no_mangle]
 
-pub static mut cl_connectedToCheatServer: libc::c_int = 0;
+pub static mut cl_connectedToCheatServer: i32 = 0;
 /*
 ==================
 CL_SystemInfoChanged
@@ -937,21 +905,18 @@ gamestate, and possibly during gameplay.
 #[no_mangle]
 
 pub unsafe extern "C" fn CL_SystemInfoChanged() {
-    let mut systemInfo: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut s: *const libc::c_char = 0 as *const libc::c_char;
-    let mut t: *const libc::c_char = 0 as *const libc::c_char;
-    let mut key: [libc::c_char; 8192] = [0; 8192];
-    let mut value: [libc::c_char; 8192] = [0; 8192];
+    let mut systemInfo: *mut i8 = 0 as *mut i8;
+    let mut s: *const i8 = 0 as *const i8;
+    let mut t: *const i8 = 0 as *const i8;
+    let mut key: [i8; 8192] = [0; 8192];
+    let mut value: [i8; 8192] = [0; 8192];
     let mut gameSet: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     systemInfo = crate::src::client::cl_main::cl
         .gameState
         .stringData
         .as_mut_ptr()
-        .offset(
-            crate::src::client::cl_main::cl.gameState.stringOffsets[1 as libc::c_int as usize]
-                as isize,
-        );
+        .offset(crate::src::client::cl_main::cl.gameState.stringOffsets[1] as isize);
     // NOTE TTimo:
     // when the serverId changes, any further messages we send to the server will use this new serverId
     // https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=475
@@ -959,20 +924,18 @@ pub unsafe extern "C" fn CL_SystemInfoChanged() {
     crate::src::client::cl_main::cl.serverId =
         atoi(crate::src::qcommon::q_shared::Info_ValueForKey(
             systemInfo,
-            b"sv_serverid\x00" as *const u8 as *const libc::c_char,
+            b"sv_serverid\x00" as *const u8 as *const i8,
         ));
     if crate::src::client::cl_main::clc.compat as u64 != 0 {
         crate::src::client::cl_main::clc.voipEnabled = crate::src::qcommon::q_shared::qfalse
     } else {
         s = crate::src::qcommon::q_shared::Info_ValueForKey(
             systemInfo,
-            b"sv_voipProtocol\x00" as *const u8 as *const libc::c_char,
+            b"sv_voipProtocol\x00" as *const u8 as *const i8,
         );
-        crate::src::client::cl_main::clc.voipEnabled = (crate::src::qcommon::q_shared::Q_stricmp(
-            s,
-            b"opus\x00" as *const u8 as *const libc::c_char,
-        ) == 0) as libc::c_int
-            as crate::src::qcommon::q_shared::qboolean
+        crate::src::client::cl_main::clc.voipEnabled =
+            (crate::src::qcommon::q_shared::Q_stricmp(s, b"opus\x00" as *const u8 as *const i8)
+                == 0) as crate::src::qcommon::q_shared::qboolean
     }
     // don't set any vars when playing a demo
     if crate::src::client::cl_main::clc.demoplaying as u64 != 0 {
@@ -980,7 +943,7 @@ pub unsafe extern "C" fn CL_SystemInfoChanged() {
     }
     s = crate::src::qcommon::q_shared::Info_ValueForKey(
         systemInfo,
-        b"sv_cheats\x00" as *const u8 as *const libc::c_char,
+        b"sv_cheats\x00" as *const u8 as *const i8,
     );
     cl_connectedToCheatServer = atoi(s);
     if cl_connectedToCheatServer == 0 {
@@ -989,41 +952,41 @@ pub unsafe extern "C" fn CL_SystemInfoChanged() {
     // check pure server string
     s = crate::src::qcommon::q_shared::Info_ValueForKey(
         systemInfo,
-        b"sv_paks\x00" as *const u8 as *const libc::c_char,
+        b"sv_paks\x00" as *const u8 as *const i8,
     );
     t = crate::src::qcommon::q_shared::Info_ValueForKey(
         systemInfo,
-        b"sv_pakNames\x00" as *const u8 as *const libc::c_char,
+        b"sv_pakNames\x00" as *const u8 as *const i8,
     );
     crate::src::qcommon::files::FS_PureServerSetLoadedPaks(s, t);
     s = crate::src::qcommon::q_shared::Info_ValueForKey(
         systemInfo,
-        b"sv_referencedPaks\x00" as *const u8 as *const libc::c_char,
+        b"sv_referencedPaks\x00" as *const u8 as *const i8,
     );
     t = crate::src::qcommon::q_shared::Info_ValueForKey(
         systemInfo,
-        b"sv_referencedPakNames\x00" as *const u8 as *const libc::c_char,
+        b"sv_referencedPakNames\x00" as *const u8 as *const i8,
     );
     crate::src::qcommon::files::FS_PureServerSetReferencedPaks(s, t);
     gameSet = crate::src::qcommon::q_shared::qfalse;
     // scan through all the variables in the systeminfo and locally set cvars to match
     s = systemInfo;
     while !s.is_null() {
-        let mut cvar_flags: libc::c_int = 0;
+        let mut cvar_flags: i32 = 0;
         crate::src::qcommon::q_shared::Info_NextPair(&mut s, key.as_mut_ptr(), value.as_mut_ptr());
-        if key[0 as libc::c_int as usize] == 0 {
+        if key[0] == 0 {
             break;
         }
         // ehw!
         if crate::src::qcommon::q_shared::Q_stricmp(
             key.as_mut_ptr(),
-            b"fs_game\x00" as *const u8 as *const libc::c_char,
+            b"fs_game\x00" as *const u8 as *const i8,
         ) == 0
         {
             if crate::src::qcommon::files::FS_InvalidGameDir(value.as_mut_ptr()) as u64 != 0 {
                 crate::src::qcommon::common::Com_Printf(
                     b"^3WARNING: Server sent invalid fs_game value %s\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     value.as_mut_ptr(),
                 );
                 continue;
@@ -1032,31 +995,31 @@ pub unsafe extern "C" fn CL_SystemInfoChanged() {
             }
         }
         cvar_flags = crate::src::qcommon::cvar::Cvar_Flags(key.as_mut_ptr());
-        if cvar_flags as libc::c_uint == 0x80000000 as libc::c_uint {
+        if cvar_flags as u32 == 0x80000000 {
             crate::src::qcommon::cvar::Cvar_Get(
                 key.as_mut_ptr(),
                 value.as_mut_ptr(),
-                0x800 as libc::c_int | 0x40 as libc::c_int,
+                0x800i32 | 0x40i32,
             );
         } else {
             // If this cvar may not be modified by a server discard the value.
-            if cvar_flags & (0x8 as libc::c_int | 0x800 as libc::c_int | 0x80 as libc::c_int) == 0 {
+            if cvar_flags & (0x8 | 0x800 | 0x80) == 0 {
                 if crate::src::qcommon::q_shared::Q_stricmp(
                     key.as_mut_ptr(),
-                    b"g_synchronousClients\x00" as *const u8 as *const libc::c_char,
+                    b"g_synchronousClients\x00" as *const u8 as *const i8,
                 ) != 0
                     && crate::src::qcommon::q_shared::Q_stricmp(
                         key.as_mut_ptr(),
-                        b"pmove_fixed\x00" as *const u8 as *const libc::c_char,
+                        b"pmove_fixed\x00" as *const u8 as *const i8,
                     ) != 0
                     && crate::src::qcommon::q_shared::Q_stricmp(
                         key.as_mut_ptr(),
-                        b"pmove_msec\x00" as *const u8 as *const libc::c_char,
+                        b"pmove_msec\x00" as *const u8 as *const i8,
                     ) != 0
                 {
                     crate::src::qcommon::common::Com_Printf(
                         b"^3WARNING: server is not allowed to set %s=%s\n\x00" as *const u8
-                            as *const libc::c_char,
+                            as *const i8,
                         key.as_mut_ptr(),
                         value.as_mut_ptr(),
                     );
@@ -1068,19 +1031,18 @@ pub unsafe extern "C" fn CL_SystemInfoChanged() {
     }
     // if game folder should not be set and it is set at the client side
     if gameSet as u64 == 0
-        && *crate::src::qcommon::cvar::Cvar_VariableString(
-            b"fs_game\x00" as *const u8 as *const libc::c_char,
-        ) as libc::c_int
+        && *crate::src::qcommon::cvar::Cvar_VariableString(b"fs_game\x00" as *const u8 as *const i8)
+            as i32
             != 0
     {
         crate::src::qcommon::cvar::Cvar_Set(
-            b"fs_game\x00" as *const u8 as *const libc::c_char,
-            b"\x00" as *const u8 as *const libc::c_char,
+            b"fs_game\x00" as *const u8 as *const i8,
+            b"\x00" as *const u8 as *const i8,
         );
     }
-    cl_connectedToPureServer = crate::src::qcommon::cvar::Cvar_VariableValue(
-        b"sv_pure\x00" as *const u8 as *const libc::c_char,
-    ) as libc::c_int;
+    cl_connectedToPureServer =
+        crate::src::qcommon::cvar::Cvar_VariableValue(b"sv_pure\x00" as *const u8 as *const i8)
+            as i32;
 }
 /*
 ==================
@@ -1089,27 +1051,24 @@ CL_ParseServerInfo
 */
 
 unsafe extern "C" fn CL_ParseServerInfo() {
-    let mut serverInfo: *const libc::c_char = 0 as *const libc::c_char;
+    let mut serverInfo: *const i8 = 0 as *const i8;
     serverInfo = crate::src::client::cl_main::cl
         .gameState
         .stringData
         .as_mut_ptr()
-        .offset(
-            crate::src::client::cl_main::cl.gameState.stringOffsets[0 as libc::c_int as usize]
-                as isize,
-        );
+        .offset(crate::src::client::cl_main::cl.gameState.stringOffsets[0] as isize);
     crate::src::client::cl_main::clc.sv_allowDownload =
         atoi(crate::src::qcommon::q_shared::Info_ValueForKey(
             serverInfo,
-            b"sv_allowDownload\x00" as *const u8 as *const libc::c_char,
+            b"sv_allowDownload\x00" as *const u8 as *const i8,
         ));
     crate::src::qcommon::q_shared::Q_strncpyz(
         crate::src::client::cl_main::clc.sv_dlURL.as_mut_ptr(),
         crate::src::qcommon::q_shared::Info_ValueForKey(
             serverInfo,
-            b"sv_dlURL\x00" as *const u8 as *const libc::c_char,
+            b"sv_dlURL\x00" as *const u8 as *const i8,
         ),
-        ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 256]>() as i32,
     );
 }
 /*
@@ -1120,10 +1079,10 @@ CL_ParseGamestate
 #[no_mangle]
 
 pub unsafe extern "C" fn CL_ParseGamestate(mut msg: *mut crate::qcommon_h::msg_t) {
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     let mut es: *mut crate::src::qcommon::q_shared::entityState_t =
         0 as *mut crate::src::qcommon::q_shared::entityState_t;
-    let mut newnum: libc::c_int = 0;
+    let mut newnum: i32 = 0;
     let mut nullstate: crate::src::qcommon::q_shared::entityState_t =
         crate::src::qcommon::q_shared::entityState_t {
             number: 0,
@@ -1167,40 +1126,38 @@ pub unsafe extern "C" fn CL_ParseGamestate(mut msg: *mut crate::qcommon_h::msg_t
             torsoAnim: 0,
             generic1: 0,
         };
-    let mut cmd: libc::c_int = 0;
-    let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut oldGame: [libc::c_char; 64] = [0; 64];
+    let mut cmd: i32 = 0;
+    let mut s: *mut i8 = 0 as *mut i8;
+    let mut oldGame: [i8; 64] = [0; 64];
     crate::src::client::cl_console::Con_Close();
-    crate::src::client::cl_main::clc.connectPacketCount = 0 as libc::c_int;
+    crate::src::client::cl_main::clc.connectPacketCount = 0;
     // wipe local client state
     crate::src::client::cl_main::CL_ClearState();
     // a gamestate always marks a server command sequence
     crate::src::client::cl_main::clc.serverCommandSequence =
         crate::src::qcommon::msg::MSG_ReadLong(msg);
     // parse all the configstrings and baselines
-    crate::src::client::cl_main::cl.gameState.dataCount = 1 as libc::c_int; // leave a 0 at the beginning for uninitialized configstrings
+    crate::src::client::cl_main::cl.gameState.dataCount = 1; // leave a 0 at the beginning for uninitialized configstrings
     loop {
         cmd = crate::src::qcommon::msg::MSG_ReadByte(msg);
-        if cmd == crate::qcommon_h::svc_EOF as libc::c_int {
+        if cmd == crate::qcommon_h::svc_EOF as i32 {
             break;
         }
-        if cmd == crate::qcommon_h::svc_configstring as libc::c_int {
-            let mut len: libc::c_int = 0;
+        if cmd == crate::qcommon_h::svc_configstring as i32 {
+            let mut len: i32 = 0;
             i = crate::src::qcommon::msg::MSG_ReadShort(msg);
-            if i < 0 as libc::c_int || i >= 1024 as libc::c_int {
+            if i < 0 || i >= 1024 {
                 crate::src::qcommon::common::Com_Error(
-                    crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-                    b"configstring > MAX_CONFIGSTRINGS\x00" as *const u8 as *const libc::c_char,
+                    crate::src::qcommon::q_shared::ERR_DROP as i32,
+                    b"configstring > MAX_CONFIGSTRINGS\x00" as *const u8 as *const i8,
                 );
             }
             s = crate::src::qcommon::msg::MSG_ReadBigString(msg);
-            len = crate::stdlib::strlen(s) as libc::c_int;
-            if len + 1 as libc::c_int + crate::src::client::cl_main::cl.gameState.dataCount
-                > 16000 as libc::c_int
-            {
+            len = crate::stdlib::strlen(s) as i32;
+            if len + 1 + crate::src::client::cl_main::cl.gameState.dataCount > 16000 {
                 crate::src::qcommon::common::Com_Error(
-                    crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-                    b"MAX_GAMESTATE_CHARS exceeded\x00" as *const u8 as *const libc::c_char,
+                    crate::src::qcommon::q_shared::ERR_DROP as i32,
+                    b"MAX_GAMESTATE_CHARS exceeded\x00" as *const u8 as *const i8,
                 );
             }
             // append it to the gameState string buffer
@@ -1214,24 +1171,23 @@ pub unsafe extern "C" fn CL_ParseGamestate(mut msg: *mut crate::qcommon_h::msg_t
                     .offset(crate::src::client::cl_main::cl.gameState.dataCount as isize)
                     as *mut libc::c_void,
                 s as *const libc::c_void,
-                (len + 1 as libc::c_int) as libc::c_ulong,
+                (len + 1) as usize,
             );
-            crate::src::client::cl_main::cl.gameState.dataCount += len + 1 as libc::c_int
-        } else if cmd == crate::qcommon_h::svc_baseline as libc::c_int {
-            newnum = crate::src::qcommon::msg::MSG_ReadBits(msg, 10 as libc::c_int);
-            if newnum < 0 as libc::c_int || newnum >= (1 as libc::c_int) << 10 as libc::c_int {
+            crate::src::client::cl_main::cl.gameState.dataCount += len + 1
+        } else if cmd == crate::qcommon_h::svc_baseline as i32 {
+            newnum = crate::src::qcommon::msg::MSG_ReadBits(msg, 10);
+            if newnum < 0 || newnum >= (1) << 10 {
                 crate::src::qcommon::common::Com_Error(
-                    crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-                    b"Baseline number out of range: %i\x00" as *const u8 as *const libc::c_char,
+                    crate::src::qcommon::q_shared::ERR_DROP as i32,
+                    b"Baseline number out of range: %i\x00" as *const u8 as *const i8,
                     newnum,
                 );
             }
             crate::stdlib::memset(
                 &mut nullstate as *mut crate::src::qcommon::q_shared::entityState_t
                     as *mut libc::c_void,
-                0 as libc::c_int,
-                ::std::mem::size_of::<crate::src::qcommon::q_shared::entityState_t>()
-                    as libc::c_ulong,
+                0,
+                ::std::mem::size_of::<crate::src::qcommon::q_shared::entityState_t>(),
             );
             es = &mut *crate::src::client::cl_main::cl
                 .entityBaselines
@@ -1241,8 +1197,8 @@ pub unsafe extern "C" fn CL_ParseGamestate(mut msg: *mut crate::qcommon_h::msg_t
             crate::src::qcommon::msg::MSG_ReadDeltaEntity(msg, &mut nullstate, es, newnum);
         } else {
             crate::src::qcommon::common::Com_Error(
-                crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-                b"CL_ParseGamestate: bad command byte\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::ERR_DROP as i32,
+                b"CL_ParseGamestate: bad command byte\x00" as *const u8 as *const i8,
             );
         }
     }
@@ -1251,9 +1207,9 @@ pub unsafe extern "C" fn CL_ParseGamestate(mut msg: *mut crate::qcommon_h::msg_t
     crate::src::client::cl_main::clc.checksumFeed = crate::src::qcommon::msg::MSG_ReadLong(msg);
     // save old gamedir
     crate::src::qcommon::cvar::Cvar_VariableStringBuffer(
-        b"fs_game\x00" as *const u8 as *const libc::c_char,
+        b"fs_game\x00" as *const u8 as *const i8,
         oldGame.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 64]>() as i32,
     );
     // parse useful values out of CS_SERVERINFO
     CL_ParseServerInfo();
@@ -1261,21 +1217,21 @@ pub unsafe extern "C" fn CL_ParseGamestate(mut msg: *mut crate::qcommon_h::msg_t
     CL_SystemInfoChanged();
     // stop recording now so the demo won't have an unnecessary level load at the end.
     if (*crate::src::client::cl_main::cl_autoRecordDemo).integer != 0
-        && crate::src::client::cl_main::clc.demorecording as libc::c_uint != 0
+        && crate::src::client::cl_main::clc.demorecording != 0
     {
         crate::src::client::cl_main::CL_StopRecord_f();
     }
     // reinitialize the filesystem if the game directory has changed
     if crate::src::client::cl_main::cl_oldGameSet as u64 == 0
-        && crate::src::qcommon::cvar::Cvar_Flags(b"fs_game\x00" as *const u8 as *const libc::c_char)
-            & 0x40000000 as libc::c_int
+        && crate::src::qcommon::cvar::Cvar_Flags(b"fs_game\x00" as *const u8 as *const i8)
+            & 0x40000000
             != 0
     {
         crate::src::client::cl_main::cl_oldGameSet = crate::src::qcommon::q_shared::qtrue;
         crate::src::qcommon::q_shared::Q_strncpyz(
             crate::src::client::cl_main::cl_oldGame.as_mut_ptr(),
             oldGame.as_mut_ptr(),
-            ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+            ::std::mem::size_of::<[i8; 64]>() as i32,
         );
     }
     crate::src::qcommon::files::FS_ConditionalRestart(
@@ -1287,8 +1243,8 @@ pub unsafe extern "C" fn CL_ParseGamestate(mut msg: *mut crate::qcommon_h::msg_t
     crate::src::client::cl_main::CL_InitDownloads();
     // make sure the game starts
     crate::src::qcommon::cvar::Cvar_Set(
-        b"cl_paused\x00" as *const u8 as *const libc::c_char,
-        b"0\x00" as *const u8 as *const libc::c_char,
+        b"cl_paused\x00" as *const u8 as *const i8,
+        b"0\x00" as *const u8 as *const i8,
     );
 }
 //=====================================================================
@@ -1302,8 +1258,8 @@ A download message has been received from the server
 #[no_mangle]
 
 pub unsafe extern "C" fn CL_ParseDownload(mut msg: *mut crate::qcommon_h::msg_t) {
-    let mut size: libc::c_int = 0;
-    let mut data: [libc::c_uchar; 16384] = [0; 16384];
+    let mut size: i32 = 0;
+    let mut data: [u8; 16384] = [0; 16384];
     let mut block: crate::stdlib::uint16_t = 0;
     if *crate::src::client::cl_main::clc
         .downloadTempName
@@ -1312,10 +1268,10 @@ pub unsafe extern "C" fn CL_ParseDownload(mut msg: *mut crate::qcommon_h::msg_t)
     {
         crate::src::qcommon::common::Com_Printf(
             b"Server sending download, but no download was requested\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
         );
         crate::src::client::cl_main::CL_AddReliableCommand(
-            b"stopdl\x00" as *const u8 as *const libc::c_char,
+            b"stopdl\x00" as *const u8 as *const i8,
             crate::src::qcommon::q_shared::qfalse,
         );
         return;
@@ -1326,37 +1282,31 @@ pub unsafe extern "C" fn CL_ParseDownload(mut msg: *mut crate::qcommon_h::msg_t)
         // block zero is special, contains file size
         crate::src::client::cl_main::clc.downloadSize = crate::src::qcommon::msg::MSG_ReadLong(msg);
         crate::src::qcommon::cvar::Cvar_SetValue(
-            b"cl_downloadSize\x00" as *const u8 as *const libc::c_char,
-            crate::src::client::cl_main::clc.downloadSize as libc::c_float,
+            b"cl_downloadSize\x00" as *const u8 as *const i8,
+            crate::src::client::cl_main::clc.downloadSize as f32,
         );
-        if crate::src::client::cl_main::clc.downloadSize < 0 as libc::c_int {
+        if crate::src::client::cl_main::clc.downloadSize < 0 {
             crate::src::qcommon::common::Com_Error(
-                crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-                b"%s\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::ERR_DROP as i32,
+                b"%s\x00" as *const u8 as *const i8,
                 crate::src::qcommon::msg::MSG_ReadString(msg),
             );
         }
     }
     size = crate::src::qcommon::msg::MSG_ReadShort(msg);
-    if size < 0 as libc::c_int
-        || size as libc::c_ulong > ::std::mem::size_of::<[libc::c_uchar; 16384]>() as libc::c_ulong
-    {
+    if size < 0 || size as usize > ::std::mem::size_of::<[u8; 16384]>() {
         crate::src::qcommon::common::Com_Error(
-            crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-            b"CL_ParseDownload: Invalid size %d for download chunk\x00" as *const u8
-                as *const libc::c_char,
+            crate::src::qcommon::q_shared::ERR_DROP as i32,
+            b"CL_ParseDownload: Invalid size %d for download chunk\x00" as *const u8 as *const i8,
             size,
         );
     }
     crate::src::qcommon::msg::MSG_ReadData(msg, data.as_mut_ptr() as *mut libc::c_void, size);
-    if crate::src::client::cl_main::clc.downloadBlock & 0xffff as libc::c_int
-        != block as libc::c_int
-    {
+    if crate::src::client::cl_main::clc.downloadBlock & 0xffff != block as i32 {
         crate::src::qcommon::common::Com_DPrintf(
-            b"CL_ParseDownload: Expected block %d, got %d\n\x00" as *const u8
-                as *const libc::c_char,
-            crate::src::client::cl_main::clc.downloadBlock & 0xffff as libc::c_int,
-            block as libc::c_int,
+            b"CL_ParseDownload: Expected block %d, got %d\n\x00" as *const u8 as *const i8,
+            crate::src::client::cl_main::clc.downloadBlock & 0xffffi32,
+            block as i32,
         );
         return;
     }
@@ -1370,13 +1320,13 @@ pub unsafe extern "C" fn CL_ParseDownload(mut msg: *mut crate::qcommon_h::msg_t)
             );
         if crate::src::client::cl_main::clc.download == 0 {
             crate::src::qcommon::common::Com_Printf(
-                b"Could not create %s\n\x00" as *const u8 as *const libc::c_char,
+                b"Could not create %s\n\x00" as *const u8 as *const i8,
                 crate::src::client::cl_main::clc
                     .downloadTempName
                     .as_mut_ptr(),
             );
             crate::src::client::cl_main::CL_AddReliableCommand(
-                b"stopdl\x00" as *const u8 as *const libc::c_char,
+                b"stopdl\x00" as *const u8 as *const i8,
                 crate::src::qcommon::q_shared::qfalse,
             );
             crate::src::client::cl_main::CL_NextDownload();
@@ -1392,7 +1342,7 @@ pub unsafe extern "C" fn CL_ParseDownload(mut msg: *mut crate::qcommon_h::msg_t)
     }
     crate::src::client::cl_main::CL_AddReliableCommand(
         crate::src::qcommon::q_shared::va(
-            b"nextdl %d\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"nextdl %d\x00" as *const u8 as *mut i8,
             crate::src::client::cl_main::clc.downloadBlock,
         ),
         crate::src::qcommon::q_shared::qfalse,
@@ -1401,14 +1351,14 @@ pub unsafe extern "C" fn CL_ParseDownload(mut msg: *mut crate::qcommon_h::msg_t)
     crate::src::client::cl_main::clc.downloadCount += size;
     // So UI gets access to it
     crate::src::qcommon::cvar::Cvar_SetValue(
-        b"cl_downloadCount\x00" as *const u8 as *const libc::c_char,
-        crate::src::client::cl_main::clc.downloadCount as libc::c_float,
+        b"cl_downloadCount\x00" as *const u8 as *const i8,
+        crate::src::client::cl_main::clc.downloadCount as f32,
     );
     if size == 0 {
         // A zero length block means EOF
         if crate::src::client::cl_main::clc.download != 0 {
             crate::src::qcommon::files::FS_FCloseFile(crate::src::client::cl_main::clc.download);
-            crate::src::client::cl_main::clc.download = 0 as libc::c_int;
+            crate::src::client::cl_main::clc.download = 0;
             // rename the file
             crate::src::qcommon::files::FS_SV_Rename(
                 crate::src::client::cl_main::clc
@@ -1431,7 +1381,7 @@ pub unsafe extern "C" fn CL_ParseDownload(mut msg: *mut crate::qcommon_h::msg_t)
 }
 
 unsafe extern "C" fn CL_ShouldIgnoreVoipSender(
-    mut sender: libc::c_int,
+    mut sender: i32,
 ) -> crate::src::qcommon::q_shared::qboolean {
     if (*crate::src::client::cl_main::cl_voip).integer == 0 {
         return crate::src::qcommon::q_shared::qtrue;
@@ -1449,7 +1399,7 @@ unsafe extern "C" fn CL_ShouldIgnoreVoipSender(
                     // all channels are muted with extreme prejudice.
                     return crate::src::qcommon::q_shared::qtrue;
                 } else {
-                    if crate::src::client::cl_main::clc.voipGain[sender as usize] == 0.0f32 {
+                    if crate::src::client::cl_main::clc.voipGain[sender as usize] == 0.0 {
                         return crate::src::qcommon::q_shared::qtrue;
                     }
                 }
@@ -1467,30 +1417,30 @@ Play raw data
 */
 
 unsafe extern "C" fn CL_PlayVoip(
-    mut sender: libc::c_int,
-    mut samplecnt: libc::c_int,
+    mut sender: i32,
+    mut samplecnt: i32,
     mut data: *const crate::src::qcommon::q_shared::byte,
-    mut flags: libc::c_int,
+    mut flags: i32,
 ) {
-    if flags & 0x2 as libc::c_int != 0 {
+    if flags & 0x2 != 0 {
         crate::src::client::snd_main::S_RawSamples(
-            sender + 1 as libc::c_int,
+            sender + 1i32,
             samplecnt,
-            48000 as libc::c_int,
-            2 as libc::c_int,
-            1 as libc::c_int,
+            48000i32,
+            2i32,
+            1i32,
             data,
             crate::src::client::cl_main::clc.voipGain[sender as usize],
-            -(1 as libc::c_int),
+            -(1i32),
         );
     }
-    if flags & 0x1 as libc::c_int != 0 {
+    if flags & 0x1 != 0 {
         crate::src::client::snd_main::S_RawSamples(
-            sender + 64 as libc::c_int + 1 as libc::c_int,
+            sender + 64i32 + 1i32,
             samplecnt,
-            48000 as libc::c_int,
-            2 as libc::c_int,
-            1 as libc::c_int,
+            48000i32,
+            2i32,
+            1i32,
             data,
             1.0f32,
             sender,
@@ -1509,51 +1459,49 @@ unsafe extern "C" fn CL_ParseVoip(
     mut msg: *mut crate::qcommon_h::msg_t,
     mut ignoreData: crate::src::qcommon::q_shared::qboolean,
 ) {
-    static mut decoded: [libc::c_short; 11520] = [0; 11520]; // !!! FIXME: don't hard code
-    let sender: libc::c_int = crate::src::qcommon::msg::MSG_ReadShort(msg); // short/invalid packet, bail.
-    let generation: libc::c_int = crate::src::qcommon::msg::MSG_ReadByte(msg); // short/invalid packet, bail.
-    let sequence: libc::c_int = crate::src::qcommon::msg::MSG_ReadLong(msg); // short/invalid packet, bail.
-    let frames: libc::c_int = crate::src::qcommon::msg::MSG_ReadByte(msg); // short/invalid packet, bail.
-    let packetsize: libc::c_int = crate::src::qcommon::msg::MSG_ReadShort(msg); // short/invalid packet, bail.
-    let flags: libc::c_int = crate::src::qcommon::msg::MSG_ReadBits(msg, 2 as libc::c_int);
-    let mut encoded: [libc::c_uchar; 4000] = [0; 4000];
-    let mut numSamples: libc::c_int = 0;
-    let mut seqdiff: libc::c_int = 0;
-    let mut written: libc::c_int = 0 as libc::c_int;
-    let mut i: libc::c_int = 0;
+    static mut decoded: [i16; 11520] = [0; 11520]; // !!! FIXME: don't hard code
+    let sender: i32 = crate::src::qcommon::msg::MSG_ReadShort(msg); // short/invalid packet, bail.
+    let generation: i32 = crate::src::qcommon::msg::MSG_ReadByte(msg); // short/invalid packet, bail.
+    let sequence: i32 = crate::src::qcommon::msg::MSG_ReadLong(msg); // short/invalid packet, bail.
+    let frames: i32 = crate::src::qcommon::msg::MSG_ReadByte(msg); // short/invalid packet, bail.
+    let packetsize: i32 = crate::src::qcommon::msg::MSG_ReadShort(msg); // short/invalid packet, bail.
+    let flags: i32 = crate::src::qcommon::msg::MSG_ReadBits(msg, 2);
+    let mut encoded: [u8; 4000] = [0; 4000];
+    let mut numSamples: i32 = 0;
+    let mut seqdiff: i32 = 0;
+    let mut written: i32 = 0;
+    let mut i: i32 = 0;
     crate::src::qcommon::common::Com_DPrintf(
-        b"VoIP: %d-byte packet from client %d\n\x00" as *const u8 as *const libc::c_char,
+        b"VoIP: %d-byte packet from client %d\n\x00" as *const u8 as *const i8,
         packetsize,
         sender,
     );
-    if sender < 0 as libc::c_int {
+    if sender < 0 {
         return;
     } else {
-        if generation < 0 as libc::c_int {
+        if generation < 0 {
             return;
         } else {
-            if sequence < 0 as libc::c_int {
+            if sequence < 0 {
                 return;
             } else {
-                if frames < 0 as libc::c_int {
+                if frames < 0 {
                     return;
                 } else {
-                    if packetsize < 0 as libc::c_int {
+                    if packetsize < 0 {
                         return;
                     }
                 }
             }
         }
     }
-    if packetsize as libc::c_ulong > ::std::mem::size_of::<[libc::c_uchar; 4000]>() as libc::c_ulong
-    {
+    if packetsize as usize > ::std::mem::size_of::<[u8; 4000]>() {
         // overlarge packet?
-        let mut bytesleft: libc::c_int = packetsize;
+        let mut bytesleft: i32 = packetsize;
         while bytesleft != 0 {
-            let mut br: libc::c_int = bytesleft;
-            if br as libc::c_ulong > ::std::mem::size_of::<[libc::c_uchar; 4000]>() as libc::c_ulong
-            {
-                br = ::std::mem::size_of::<[libc::c_uchar; 4000]>() as libc::c_ulong as libc::c_int
+            let mut br: i32 = bytesleft;
+            if br as usize > ::std::mem::size_of::<[u8; 4000]>() {
+                br = ::std::mem::size_of::<[u8; 4000]>() as i32
             }
             crate::src::qcommon::msg::MSG_ReadData(
                 msg,
@@ -1578,7 +1526,7 @@ unsafe extern "C" fn CL_ParseVoip(
             return;
         // can't handle VoIP without libopus!
         } else {
-            if sender >= 64 as libc::c_int {
+            if sender >= 64 {
                 return;
             // bogus sender.
             } else {
@@ -1591,78 +1539,73 @@ unsafe extern "C" fn CL_ParseVoip(
     }
     // !!! FIXME: make sure data is narrowband? Does decoder handle this?
     crate::src::qcommon::common::Com_DPrintf(
-        b"VoIP: packet accepted!\n\x00" as *const u8 as *const libc::c_char,
+        b"VoIP: packet accepted!\n\x00" as *const u8 as *const i8,
     );
     seqdiff = sequence - crate::src::client::cl_main::clc.voipIncomingSequence[sender as usize];
     // This is a new "generation" ... a new recording started, reset the bits.
-    if generation
-        != crate::src::client::cl_main::clc.voipIncomingGeneration[sender as usize] as libc::c_int
+    if generation != crate::src::client::cl_main::clc.voipIncomingGeneration[sender as usize] as i32
     {
         crate::src::qcommon::common::Com_DPrintf(
-            b"VoIP: new generation %d!\n\x00" as *const u8 as *const libc::c_char,
+            b"VoIP: new generation %d!\n\x00" as *const u8 as *const i8,
             generation,
         );
         crate::src::opus_1_2_1::src::opus_decoder::opus_decoder_ctl(
             crate::src::client::cl_main::clc.opusDecoder[sender as usize],
-            4028 as libc::c_int,
+            4028,
         );
         crate::src::client::cl_main::clc.voipIncomingGeneration[sender as usize] =
             generation as crate::src::qcommon::q_shared::byte;
-        seqdiff = 0 as libc::c_int
-    } else if seqdiff < 0 as libc::c_int {
+        seqdiff = 0
+    } else if seqdiff < 0 {
         // we're ahead of the sequence?!
         // This shouldn't happen unless the packet is corrupted or something.
         crate::src::qcommon::common::Com_DPrintf(
-            b"VoIP: misordered sequence! %d < %d!\n\x00" as *const u8 as *const libc::c_char,
+            b"VoIP: misordered sequence! %d < %d!\n\x00" as *const u8 as *const i8,
             sequence,
             crate::src::client::cl_main::clc.voipIncomingSequence[sender as usize],
         );
         // reset the decoder just in case.
         crate::src::opus_1_2_1::src::opus_decoder::opus_decoder_ctl(
             crate::src::client::cl_main::clc.opusDecoder[sender as usize],
-            4028 as libc::c_int,
+            4028,
         );
-        seqdiff = 0 as libc::c_int
-    } else if (seqdiff
-        * (20 as libc::c_int * 48 as libc::c_int * 3 as libc::c_int)
-        * 2 as libc::c_int) as libc::c_ulong
-        >= ::std::mem::size_of::<[libc::c_short; 11520]>() as libc::c_ulong
-    {
+        seqdiff = 0
+    } else if (seqdiff * (20 * 48 * 3) * 2) as usize >= ::std::mem::size_of::<[i16; 11520]>() {
         // dropped more than we can handle?
         // just start over.
         crate::src::qcommon::common::Com_DPrintf(
             b"VoIP: Dropped way too many (%d) frames from client #%d\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             seqdiff,
             sender,
         );
         crate::src::opus_1_2_1::src::opus_decoder::opus_decoder_ctl(
             crate::src::client::cl_main::clc.opusDecoder[sender as usize],
-            4028 as libc::c_int,
+            4028,
         );
-        seqdiff = 0 as libc::c_int
+        seqdiff = 0
     }
-    if seqdiff != 0 as libc::c_int {
+    if seqdiff != 0 {
         crate::src::qcommon::common::Com_DPrintf(
-            b"VoIP: Dropped %d frames from client #%d\n\x00" as *const u8 as *const libc::c_char,
+            b"VoIP: Dropped %d frames from client #%d\n\x00" as *const u8 as *const i8,
             seqdiff,
             sender,
         );
         // tell opus that we're missing frames...
-        i = 0 as libc::c_int;
+        i = 0;
         while i < seqdiff {
             numSamples = crate::src::opus_1_2_1::src::opus_decoder::opus_decode(
                 crate::src::client::cl_main::clc.opusDecoder[sender as usize],
-                0 as *const libc::c_uchar,
-                0 as libc::c_int,
+                0 as *const u8,
+                0,
                 decoded.as_mut_ptr().offset(written as isize),
-                20 as libc::c_int * 48 as libc::c_int * 3 as libc::c_int,
-                0 as libc::c_int,
+                20 * 48 * 3,
+                0,
             );
-            if numSamples <= 0 as libc::c_int {
+            if numSamples <= 0 {
                 crate::src::qcommon::common::Com_DPrintf(
                     b"VoIP: Error decoding frame %d from client #%d\n\x00" as *const u8
-                        as *const libc::c_char,
+                        as *const i8,
                     i,
                     sender,
                 );
@@ -1677,27 +1620,26 @@ unsafe extern "C" fn CL_ParseVoip(
         encoded.as_mut_ptr(),
         packetsize,
         decoded.as_mut_ptr().offset(written as isize),
-        (::std::mem::size_of::<[libc::c_short; 11520]>() as libc::c_ulong)
-            .wrapping_div(::std::mem::size_of::<libc::c_short>() as libc::c_ulong)
-            .wrapping_sub(written as libc::c_ulong) as libc::c_int,
-        0 as libc::c_int,
+        (::std::mem::size_of::<[i16; 11520]>())
+            .wrapping_div(::std::mem::size_of::<i16>())
+            .wrapping_sub(written as usize) as i32,
+        0,
     );
-    if numSamples <= 0 as libc::c_int {
+    if numSamples <= 0 {
         crate::src::qcommon::common::Com_DPrintf(
-            b"VoIP: Error decoding voip data from client #%d\n\x00" as *const u8
-                as *const libc::c_char,
+            b"VoIP: Error decoding voip data from client #%d\n\x00" as *const u8 as *const i8,
             sender,
         );
-        numSamples = 0 as libc::c_int
+        numSamples = 0
     }
     written += numSamples;
     crate::src::qcommon::common::Com_DPrintf(
-        b"VoIP: playback %d bytes, %d samples, %d frames\n\x00" as *const u8 as *const libc::c_char,
-        written * 2 as libc::c_int,
+        b"VoIP: playback %d bytes, %d samples, %d frames\n\x00" as *const u8 as *const i8,
+        written * 2i32,
         written,
         frames,
     );
-    if written > 0 as libc::c_int {
+    if written > 0 {
         CL_PlayVoip(
             sender,
             written,
@@ -1718,9 +1660,9 @@ when it transitions a snapshot
 #[no_mangle]
 
 pub unsafe extern "C" fn CL_ParseCommandString(mut msg: *mut crate::qcommon_h::msg_t) {
-    let mut s: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut seq: libc::c_int = 0;
-    let mut index: libc::c_int = 0;
+    let mut s: *mut i8 = 0 as *mut i8;
+    let mut seq: i32 = 0;
+    let mut index: i32 = 0;
     seq = crate::src::qcommon::msg::MSG_ReadLong(msg);
     s = crate::src::qcommon::msg::MSG_ReadString(msg);
     // see if we have already executed stored it off
@@ -1728,11 +1670,11 @@ pub unsafe extern "C" fn CL_ParseCommandString(mut msg: *mut crate::qcommon_h::m
         return;
     }
     crate::src::client::cl_main::clc.serverCommandSequence = seq;
-    index = seq & 64 as libc::c_int - 1 as libc::c_int;
+    index = seq & 64 - 1;
     crate::src::qcommon::q_shared::Q_strncpyz(
         crate::src::client::cl_main::clc.serverCommands[index as usize].as_mut_ptr(),
         s,
-        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 1024]>() as i32,
     );
 }
 /*
@@ -1926,15 +1868,15 @@ CL_ParseServerMessage
 #[no_mangle]
 
 pub unsafe extern "C" fn CL_ParseServerMessage(mut msg: *mut crate::qcommon_h::msg_t) {
-    let mut cmd: libc::c_int = 0;
-    if (*crate::src::client::cl_main::cl_shownet).integer == 1 as libc::c_int {
+    let mut cmd: i32 = 0;
+    if (*crate::src::client::cl_main::cl_shownet).integer == 1 {
         crate::src::qcommon::common::Com_Printf(
-            b"%i \x00" as *const u8 as *const libc::c_char,
+            b"%i \x00" as *const u8 as *const i8,
             (*msg).cursize,
         );
-    } else if (*crate::src::client::cl_main::cl_shownet).integer >= 2 as libc::c_int {
+    } else if (*crate::src::client::cl_main::cl_shownet).integer >= 2 {
         crate::src::qcommon::common::Com_Printf(
-            b"------------------\n\x00" as *const u8 as *const libc::c_char,
+            b"------------------\n\x00" as *const u8 as *const i8,
         );
     }
     crate::src::qcommon::msg::MSG_Bitstream(msg);
@@ -1943,7 +1885,7 @@ pub unsafe extern "C" fn CL_ParseServerMessage(mut msg: *mut crate::qcommon_h::m
         crate::src::qcommon::msg::MSG_ReadLong(msg);
     //
     if crate::src::client::cl_main::clc.reliableAcknowledge
-        < crate::src::client::cl_main::clc.reliableSequence - 64 as libc::c_int
+        < crate::src::client::cl_main::clc.reliableSequence - 64
     {
         crate::src::client::cl_main::clc.reliableAcknowledge =
             crate::src::client::cl_main::clc.reliableSequence
@@ -1955,24 +1897,21 @@ pub unsafe extern "C" fn CL_ParseServerMessage(mut msg: *mut crate::qcommon_h::m
     {
         if (*msg).readcount > (*msg).cursize {
             crate::src::qcommon::common::Com_Error(
-                crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
+                crate::src::qcommon::q_shared::ERR_DROP as i32,
                 b"CL_ParseServerMessage: read past end of server message\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
             );
         } else {
             cmd = crate::src::qcommon::msg::MSG_ReadByte(msg);
-            if cmd == crate::qcommon_h::svc_EOF as libc::c_int {
-                SHOWNET(
-                    msg,
-                    b"END OF MESSAGE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-                );
+            if cmd == crate::qcommon_h::svc_EOF as i32 {
+                SHOWNET(msg, b"END OF MESSAGE\x00" as *const u8 as *mut i8);
                 break;
             } else {
-                if (*crate::src::client::cl_main::cl_shownet).integer >= 2 as libc::c_int {
-                    if cmd < 0 as libc::c_int || svc_strings[cmd as usize].is_null() {
+                if (*crate::src::client::cl_main::cl_shownet).integer >= 2 {
+                    if cmd < 0 || svc_strings[cmd as usize].is_null() {
                         crate::src::qcommon::common::Com_Printf(
-                            b"%3i:BAD CMD %i\n\x00" as *const u8 as *const libc::c_char,
-                            (*msg).readcount - 1 as libc::c_int,
+                            b"%3i:BAD CMD %i\n\x00" as *const u8 as *const i8,
+                            (*msg).readcount - 1i32,
                             cmd,
                         );
                     } else {
@@ -2001,15 +1940,14 @@ pub unsafe extern "C" fn CL_ParseServerMessage(mut msg: *mut crate::qcommon_h::m
                         CL_ParseVoip(
                             msg,
                             (crate::src::client::cl_main::clc.voipEnabled as u64 == 0)
-                                as libc::c_int
                                 as crate::src::qcommon::q_shared::qboolean,
                         );
                     }
                     _ => {
                         crate::src::qcommon::common::Com_Error(
-                            crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
+                            crate::src::qcommon::q_shared::ERR_DROP as i32,
                             b"CL_ParseServerMessage: Illegible server message\x00" as *const u8
-                                as *const libc::c_char,
+                                as *const i8,
                         );
                     }
                 }

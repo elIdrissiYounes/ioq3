@@ -1,7 +1,7 @@
-pub type DCTELEM = libc::c_int;
+pub type DCTELEM = i32;
 pub type float_DCT_method_ptr = Option<
     unsafe extern "C" fn(
-        _: *mut libc::c_float,
+        _: *mut f32,
         _: crate::jpeglib_h::JSAMPARRAY,
         _: crate::jmorecfg_h::JDIMENSION,
     ) -> (),
@@ -17,9 +17,9 @@ pub type forward_DCT_method_ptr = Option<
 /* 16 bits is OK, use short if faster */
 
 /* fractional bits in scale factors */
-pub type FLOAT_MULT_TYPE = libc::c_float;
+pub type FLOAT_MULT_TYPE = f32;
 /* short or int, whichever is faster */
-pub type IFAST_MULT_TYPE = libc::c_int;
+pub type IFAST_MULT_TYPE = i32;
 /*
  * An inverse DCT routine is given a pointer to the input JBLOCK and a pointer
  * to an output sample array.  The routine must dequantize the input data as
@@ -36,4 +36,4 @@ pub type IFAST_MULT_TYPE = libc::c_int;
 /*
  * Each IDCT routine has its own ideas about the best dct_table element type.
  */
-pub type ISLOW_MULT_TYPE = libc::c_int;
+pub type ISLOW_MULT_TYPE = i32;

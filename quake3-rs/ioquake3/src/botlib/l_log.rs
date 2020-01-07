@@ -53,14 +53,14 @@ pub type logfile_t = logfile_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct logfile_s {
-    pub filename: [libc::c_char; 1024],
+    pub filename: [i8; 1024],
     pub fp: *mut crate::stdlib::FILE,
-    pub numwrites: libc::c_int,
+    pub numwrites: i32,
 }
 
 static mut logfile: logfile_t = logfile_t {
     filename: [0; 1024],
-    fp: 0 as *const crate::stdlib::FILE as *mut crate::stdlib::FILE,
+    fp: 0 as *mut crate::stdlib::FILE,
     numwrites: 0,
 };
 /*
@@ -101,11 +101,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn Log_Open(mut filename: *mut libc::c_char) {
-    let mut ospath: *mut libc::c_char = 0 as *mut libc::c_char; //end if
+pub unsafe extern "C" fn Log_Open(mut filename: *mut i8) {
+    let mut ospath: *mut i8 = 0 as *mut i8; //end if
     if crate::src::botlib::l_libvar::LibVarValue(
-        b"log\x00" as *const u8 as *const libc::c_char,
-        b"0\x00" as *const u8 as *const libc::c_char,
+        b"log\x00" as *const u8 as *const i8,
+        b"0\x00" as *const u8 as *const i8,
     ) == 0.
     {
         return;
@@ -114,8 +114,8 @@ pub unsafe extern "C" fn Log_Open(mut filename: *mut libc::c_char) {
         crate::src::botlib::be_interface::botimport
             .Print
             .expect("non-null function pointer")(
-            1 as libc::c_int,
-            b"openlog <filename>\n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            1,
+            b"openlog <filename>\n\x00" as *const u8 as *mut i8,
         ); //end if
         return;
     }
@@ -123,44 +123,36 @@ pub unsafe extern "C" fn Log_Open(mut filename: *mut libc::c_char) {
         crate::src::botlib::be_interface::botimport
             .Print
             .expect("non-null function pointer")(
-            3 as libc::c_int,
-            b"log file %s is already opened\n\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
+            3,
+            b"log file %s is already opened\n\x00" as *const u8 as *mut i8,
             logfile.filename.as_mut_ptr(),
         );
         return;
     }
     ospath = crate::src::qcommon::files::FS_BuildOSPath(
         crate::src::qcommon::cvar::Cvar_VariableString(
-            b"fs_homepath\x00" as *const u8 as *const libc::c_char,
+            b"fs_homepath\x00" as *const u8 as *const i8,
         ),
-        crate::src::qcommon::cvar::Cvar_VariableString(
-            b"fs_game\x00" as *const u8 as *const libc::c_char,
-        ),
+        crate::src::qcommon::cvar::Cvar_VariableString(b"fs_game\x00" as *const u8 as *const i8),
         filename,
     );
-    logfile.fp = crate::stdlib::fopen(ospath, b"wb\x00" as *const u8 as *const libc::c_char);
+    logfile.fp = crate::stdlib::fopen(ospath, b"wb\x00" as *const u8 as *const i8);
     if logfile.fp.is_null() {
         crate::src::botlib::be_interface::botimport
             .Print
             .expect("non-null function pointer")(
-            3 as libc::c_int,
-            b"can\'t open the log file %s\n\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
+            3,
+            b"can\'t open the log file %s\n\x00" as *const u8 as *mut i8,
             filename,
         );
         return;
     }
-    crate::src::qcommon::q_shared::Q_strncpyz(
-        logfile.filename.as_mut_ptr(),
-        filename,
-        1024 as libc::c_int,
-    );
+    crate::src::qcommon::q_shared::Q_strncpyz(logfile.filename.as_mut_ptr(), filename, 1024);
     crate::src::botlib::be_interface::botimport
         .Print
         .expect("non-null function pointer")(
-        1 as libc::c_int,
-        b"Opened log %s\n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        1,
+        b"Opened log %s\n\x00" as *const u8 as *mut i8,
         logfile.filename.as_mut_ptr(),
     );
 }
@@ -182,9 +174,8 @@ pub unsafe extern "C" fn Log_Close() {
         crate::src::botlib::be_interface::botimport
             .Print
             .expect("non-null function pointer")(
-            3 as libc::c_int,
-            b"can\'t close log file %s\n\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
+            3,
+            b"can\'t close log file %s\n\x00" as *const u8 as *mut i8,
             logfile.filename.as_mut_ptr(),
         );
         return;
@@ -193,8 +184,8 @@ pub unsafe extern "C" fn Log_Close() {
     crate::src::botlib::be_interface::botimport
         .Print
         .expect("non-null function pointer")(
-        1 as libc::c_int,
-        b"Closed log %s\n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        1,
+        b"Closed log %s\n\x00" as *const u8 as *mut i8,
         logfile.filename.as_mut_ptr(),
     );
 }
@@ -223,7 +214,7 @@ pub unsafe extern "C" fn Log_Shutdown() {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn Log_Write(mut fmt: *mut libc::c_char, mut args: ...) {
+pub unsafe extern "C" fn Log_Write(mut fmt: *mut i8, mut args: ...) {
     let mut ap: ::std::ffi::VaListImpl;
     if logfile.fp.is_null() {
         return;
@@ -243,29 +234,24 @@ pub unsafe extern "C" fn Log_Write(mut fmt: *mut libc::c_char, mut args: ...) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn Log_WriteTimeStamped(mut fmt: *mut libc::c_char, mut args: ...) {
+pub unsafe extern "C" fn Log_WriteTimeStamped(mut fmt: *mut i8, mut args: ...) {
     let mut ap: ::std::ffi::VaListImpl;
     if logfile.fp.is_null() {
         return;
     }
     crate::stdlib::fprintf(
         logfile.fp,
-        b"%d   %02d:%02d:%02d:%02d   \x00" as *const u8 as *const libc::c_char,
+        b"%d   %02d:%02d:%02d:%02d   \x00" as *const u8 as *const i8,
         logfile.numwrites,
-        (crate::src::botlib::be_interface::botlibglobals.time
-            / 60 as libc::c_int as libc::c_float
-            / 60 as libc::c_int as libc::c_float) as libc::c_int,
-        (crate::src::botlib::be_interface::botlibglobals.time / 60 as libc::c_int as libc::c_float)
-            as libc::c_int,
-        crate::src::botlib::be_interface::botlibglobals.time as libc::c_int,
-        (crate::src::botlib::be_interface::botlibglobals.time * 100 as libc::c_int as libc::c_float)
-            as libc::c_int
-            - crate::src::botlib::be_interface::botlibglobals.time as libc::c_int
-                * 100 as libc::c_int,
+        (crate::src::botlib::be_interface::botlibglobals.time / 60f32 / 60f32) as i32,
+        (crate::src::botlib::be_interface::botlibglobals.time / 60f32) as i32,
+        crate::src::botlib::be_interface::botlibglobals.time as i32,
+        (crate::src::botlib::be_interface::botlibglobals.time * 100f32) as i32
+            - crate::src::botlib::be_interface::botlibglobals.time as i32 * 100i32,
     );
     ap = args.clone();
     crate::stdlib::vfprintf(logfile.fp, fmt, ap.as_va_list());
-    crate::stdlib::fprintf(logfile.fp, b"\r\n\x00" as *const u8 as *const libc::c_char);
+    crate::stdlib::fprintf(logfile.fp, b"\r\n\x00" as *const u8 as *const i8);
     logfile.numwrites += 1;
     crate::stdlib::fflush(logfile.fp);
 }

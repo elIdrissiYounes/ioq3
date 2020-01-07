@@ -228,11 +228,11 @@ unsafe extern "C" fn start_pass_main(
     if (*cinfo).raw_data_in != 0 {
         return;
     } /* initialize counters */
-    (*main_ptr).cur_iMCU_row = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION; /* save mode for use by process_data */
-    (*main_ptr).rowgroup_ctr = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
-    (*main_ptr).suspended = 0 as libc::c_int;
+    (*main_ptr).cur_iMCU_row = 0; /* save mode for use by process_data */
+    (*main_ptr).rowgroup_ctr = 0;
+    (*main_ptr).suspended = 0;
     (*main_ptr).pass_mode = pass_mode;
-    match pass_mode as libc::c_uint {
+    match  pass_mode {
         0 => {
             (*main_ptr).pub_0.process_data = Some(
                 process_data_simple_main
@@ -246,7 +246,7 @@ unsafe extern "C" fn start_pass_main(
         }
         _ => {
             (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as libc::c_int;
+                crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -318,7 +318,7 @@ unsafe extern "C" fn process_data_simple_main(
              */
             if (*main_ptr).suspended == 0 {
                 *in_row_ctr = (*in_row_ctr).wrapping_sub(1);
-                (*main_ptr).suspended = 1 as libc::c_int
+                (*main_ptr).suspended = 1
             }
             return;
         }
@@ -327,9 +327,9 @@ unsafe extern "C" fn process_data_simple_main(
          */
         if (*main_ptr).suspended != 0 {
             *in_row_ctr = (*in_row_ctr).wrapping_add(1);
-            (*main_ptr).suspended = 0 as libc::c_int
+            (*main_ptr).suspended = 0
         }
-        (*main_ptr).rowgroup_ctr = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
+        (*main_ptr).rowgroup_ctr = 0;
         (*main_ptr).cur_iMCU_row = (*main_ptr).cur_iMCU_row.wrapping_add(1)
     }
 }
@@ -358,7 +358,7 @@ pub unsafe extern "C" fn jinit_c_main_controller(
     mut need_full_buffer: crate::jmorecfg_h::boolean,
 ) {
     let mut main_ptr: my_main_ptr = 0 as *mut my_main_controller;
-    let mut ci: libc::c_int = 0;
+    let mut ci: i32 = 0;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
     main_ptr = Some(
@@ -368,8 +368,9 @@ pub unsafe extern "C" fn jinit_c_main_controller(
     )
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
-        1 as libc::c_int,
-        ::std::mem::size_of::<my_main_controller>() as libc::c_ulong,
+        1,
+        
+        ::std::mem::size_of::<my_main_controller>(),
     ) as my_main_ptr;
     (*cinfo).main = main_ptr as *mut crate::jpegint_h::jpeg_c_main_controller;
     (*main_ptr).pub_0.start_pass = Some(
@@ -387,7 +388,7 @@ pub unsafe extern "C" fn jinit_c_main_controller(
      * may be of a different size.
      */
     if need_full_buffer != 0 {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as libc::c_int;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as i32;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -396,7 +397,7 @@ pub unsafe extern "C" fn jinit_c_main_controller(
         .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr);
     } else {
         /* Allocate a strip buffer for each component */
-        ci = 0 as libc::c_int;
+        ci = 0;
         compptr = (*cinfo).comp_info;
         while ci < (*cinfo).num_components {
             (*main_ptr).buffer[ci as usize] = Some(
@@ -406,10 +407,10 @@ pub unsafe extern "C" fn jinit_c_main_controller(
             )
             .expect("non-null function pointer")(
                 cinfo as crate::jpeglib_h::j_common_ptr,
-                1 as libc::c_int,
+                1,
                 (*compptr)
                     .width_in_blocks
-                    .wrapping_mul((*compptr).DCT_h_scaled_size as libc::c_uint),
+                    .wrapping_mul((*compptr).DCT_h_scaled_size as u32),
                 ((*compptr).v_samp_factor * (*compptr).DCT_v_scaled_size)
                     as crate::jmorecfg_h::JDIMENSION,
             );

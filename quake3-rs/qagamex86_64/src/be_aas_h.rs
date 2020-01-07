@@ -1,29 +1,29 @@
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct aas_entityinfo_s {
-    pub valid: libc::c_int,
-    pub type_0: libc::c_int,
-    pub flags: libc::c_int,
-    pub ltime: libc::c_float,
-    pub update_time: libc::c_float,
-    pub number: libc::c_int,
+    pub valid: i32,
+    pub type_0: i32,
+    pub flags: i32,
+    pub ltime: f32,
+    pub update_time: f32,
+    pub number: i32,
     pub origin: crate::src::qcommon::q_shared::vec3_t,
     pub angles: crate::src::qcommon::q_shared::vec3_t,
     pub old_origin: crate::src::qcommon::q_shared::vec3_t,
     pub lastvisorigin: crate::src::qcommon::q_shared::vec3_t,
     pub mins: crate::src::qcommon::q_shared::vec3_t,
     pub maxs: crate::src::qcommon::q_shared::vec3_t,
-    pub groundent: libc::c_int,
-    pub solid: libc::c_int,
-    pub modelindex: libc::c_int,
-    pub modelindex2: libc::c_int,
-    pub frame: libc::c_int,
-    pub event: libc::c_int,
-    pub eventParm: libc::c_int,
-    pub powerups: libc::c_int,
-    pub weapon: libc::c_int,
-    pub legsAnim: libc::c_int,
-    pub torsoAnim: libc::c_int,
+    pub groundent: i32,
+    pub solid: i32,
+    pub modelindex: i32,
+    pub modelindex2: i32,
+    pub frame: i32,
+    pub event: i32,
+    pub eventParm: i32,
+    pub powerups: i32,
+    pub weapon: i32,
+    pub legsAnim: i32,
+    pub torsoAnim: i32,
 }
 /* Defined in botlib.h
 
@@ -58,14 +58,14 @@ pub type aas_entityinfo_t = crate::be_aas_h::aas_entityinfo_s;
 #[derive(Copy, Clone)]
 pub struct aas_clientmove_s {
     pub endpos: crate::src::qcommon::q_shared::vec3_t,
-    pub endarea: libc::c_int,
+    pub endarea: i32,
     pub velocity: crate::src::qcommon::q_shared::vec3_t,
     pub trace: crate::be_aas_h::aas_trace_t,
-    pub presencetype: libc::c_int,
-    pub stopevent: libc::c_int,
-    pub endcontents: libc::c_int,
-    pub time: libc::c_float,
-    pub frames: libc::c_int,
+    pub presencetype: i32,
+    pub stopevent: i32,
+    pub endcontents: i32,
+    pub time: f32,
+    pub frames: i32,
 }
 //a trace is returned when a box is swept through the AAS world
 pub type aas_trace_t = crate::be_aas_h::aas_trace_s;
@@ -73,20 +73,20 @@ pub type aas_trace_t = crate::be_aas_h::aas_trace_s;
 #[derive(Copy, Clone)]
 pub struct aas_trace_s {
     pub startsolid: crate::src::qcommon::q_shared::qboolean,
-    pub fraction: libc::c_float,
+    pub fraction: f32,
     pub endpos: crate::src::qcommon::q_shared::vec3_t,
-    pub ent: libc::c_int,
-    pub lastarea: libc::c_int,
-    pub area: libc::c_int,
-    pub planenum: libc::c_int,
+    pub ent: i32,
+    pub lastarea: i32,
+    pub area: i32,
+    pub planenum: i32,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct aas_areainfo_s {
-    pub contents: libc::c_int,
-    pub flags: libc::c_int,
-    pub presencetype: libc::c_int,
-    pub cluster: libc::c_int,
+    pub contents: i32,
+    pub flags: i32,
+    pub presencetype: i32,
+    pub cluster: i32,
     pub mins: crate::src::qcommon::q_shared::vec3_t,
     pub maxs: crate::src::qcommon::q_shared::vec3_t,
     pub center: crate::src::qcommon::q_shared::vec3_t,
@@ -95,21 +95,21 @@ pub struct aas_areainfo_s {
 #[derive(Copy, Clone)]
 pub struct aas_altroutegoal_s {
     pub origin: crate::src::qcommon::q_shared::vec3_t,
-    pub areanum: libc::c_int,
-    pub starttraveltime: libc::c_ushort,
-    pub goaltraveltime: libc::c_ushort,
-    pub extratraveltime: libc::c_ushort,
+    pub areanum: i32,
+    pub starttraveltime: u16,
+    pub goaltraveltime: u16,
+    pub extratraveltime: u16,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct aas_predictroute_s {
     pub endpos: crate::src::qcommon::q_shared::vec3_t,
-    pub endarea: libc::c_int,
-    pub stopevent: libc::c_int,
-    pub endcontents: libc::c_int,
-    pub endtravelflags: libc::c_int,
-    pub numareas: libc::c_int,
-    pub time: libc::c_int,
+    pub endarea: i32,
+    pub stopevent: i32,
+    pub endcontents: i32,
+    pub endtravelflags: i32,
+    pub numareas: i32,
+    pub time: i32,
 }
 // true if updated this frame
 

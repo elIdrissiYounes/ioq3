@@ -7,12 +7,9 @@ pub mod macros_h {
         mut in32: crate::opus_types_h::opus_int32,
     ) -> crate::opus_types_h::opus_int32 {
         return if in32 != 0 {
-            (32 as libc::c_int)
-                - (::std::mem::size_of::<libc::c_uint>() as libc::c_ulong as libc::c_int
-                    * 8 as libc::c_int
-                    - (in32 as libc::c_uint).leading_zeros() as i32)
+            (32) - (::std::mem::size_of::<u32>() as i32 * 8 - (in32 as u32).leading_zeros() as i32)
         } else {
-            32 as libc::c_int
+            32
         };
     }
 
@@ -33,19 +30,17 @@ pub mod SigProc_FIX_h {
 
     pub unsafe extern "C" fn silk_ROR32(
         mut a32: crate::opus_types_h::opus_int32,
-        mut rot: libc::c_int,
+        mut rot: i32,
     ) -> crate::opus_types_h::opus_int32 {
         let mut x: crate::opus_types_h::opus_uint32 = a32 as crate::opus_types_h::opus_uint32;
         let mut r: crate::opus_types_h::opus_uint32 = rot as crate::opus_types_h::opus_uint32;
         let mut m: crate::opus_types_h::opus_uint32 = -rot as crate::opus_types_h::opus_uint32;
-        if rot == 0 as libc::c_int {
+        if rot == 0 {
             return a32;
-        } else if rot < 0 as libc::c_int {
-            return (x << m | x >> (32 as libc::c_int as libc::c_uint).wrapping_sub(m))
-                as crate::opus_types_h::opus_int32;
+        } else if rot < 0 {
+            return (x << m | x >> (32u32).wrapping_sub(m)) as crate::opus_types_h::opus_int32;
         } else {
-            return (x << (32 as libc::c_int as libc::c_uint).wrapping_sub(r) | x >> r)
-                as crate::opus_types_h::opus_int32;
+            return (x << (32u32).wrapping_sub(r) | x >> r) as crate::opus_types_h::opus_int32;
         };
     }
     /* Allocate opus_int16 aligned to 4-byte memory address */
@@ -95,7 +90,7 @@ pub mod SigProc_FIX_h {
     /* silk_min() versions with typecast in the function call */
     #[inline]
 
-    pub unsafe extern "C" fn silk_min_int(mut a: libc::c_int, mut b: libc::c_int) -> libc::c_int {
+    pub unsafe extern "C" fn silk_min_int(mut a: i32, mut b: i32) -> i32 {
         return if a < b { a } else { b };
     }
     #[inline]
@@ -109,7 +104,7 @@ pub mod SigProc_FIX_h {
     /* silk_min() versions with typecast in the function call */
     #[inline]
 
-    pub unsafe extern "C" fn silk_max_int(mut a: libc::c_int, mut b: libc::c_int) -> libc::c_int {
+    pub unsafe extern "C" fn silk_max_int(mut a: i32, mut b: i32) -> i32 {
         return if a > b { a } else { b };
     }
     #[inline]
@@ -118,10 +113,10 @@ pub mod SigProc_FIX_h {
         mut a: crate::opus_types_h::opus_int16,
         mut b: crate::opus_types_h::opus_int16,
     ) -> crate::opus_types_h::opus_int16 {
-        return if a as libc::c_int > b as libc::c_int {
-            a as libc::c_int
+        return if a as i32 > b as i32 {
+            a as i32
         } else {
-            b as libc::c_int
+            b as i32
         } as crate::opus_types_h::opus_int16;
     }
     #[inline]
@@ -163,7 +158,7 @@ pub mod Inlines_h {
     {
         let mut lzeros: crate::opus_types_h::opus_int32 = silk_CLZ32(in_0);
         *lz = lzeros;
-        *frac_Q7 = silk_ROR32(in_0, 24 as libc::c_int - lzeros) & 0x7f as libc::c_int;
+        *frac_Q7 = silk_ROR32(in_0, 24 - lzeros) & 0x7f;
     }
     /* Approximation of square root                                          */
     /* Accuracy: < +/- 10%  for output values > 15                           */
@@ -176,26 +171,25 @@ pub mod Inlines_h {
         let mut y: crate::opus_types_h::opus_int32 = 0;
         let mut lz: crate::opus_types_h::opus_int32 = 0;
         let mut frac_Q7: crate::opus_types_h::opus_int32 = 0;
-        if x <= 0 as libc::c_int {
-            return 0 as libc::c_int;
+        if x <= 0 {
+            return 0i32;
         }
         silk_CLZ_FRAC(x, &mut lz, &mut frac_Q7);
-        if lz & 1 as libc::c_int != 0 {
-            y = 32768 as libc::c_int
+        if lz & 1 != 0 {
+            y = 32768
         } else {
-            y = 46214 as libc::c_int
+            y = 46214
             /* 46214 = sqrt(2) * 32768 */
         }
         /* get scaling right */
-        y >>= lz >> 1 as libc::c_int;
+        y >>= lz >> 1;
         /* increment using fractional part of input */
-        y = (y as libc::c_longlong
-            + (y as libc::c_longlong
-                * (213 as libc::c_int as crate::opus_types_h::opus_int16
-                    as crate::opus_types_h::opus_int32
+        y = (y as i64
+            + (y as i64
+                * (213
                     * frac_Q7 as crate::opus_types_h::opus_int16 as crate::opus_types_h::opus_int32)
-                    as crate::opus_types_h::opus_int16 as libc::c_longlong
-                >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
+                    as crate::opus_types_h::opus_int16 as i64
+                >> 16)) as crate::opus_types_h::opus_int32;
         return y;
     }
     /* Invert int32 value and return result as int32 in a given Q-domain */
@@ -203,71 +197,65 @@ pub mod Inlines_h {
 
     pub unsafe extern "C" fn silk_INVERSE32_varQ(
         b32: crate::opus_types_h::opus_int32,
-        Qres: libc::c_int,
+        Qres: i32,
     ) -> crate::opus_types_h::opus_int32
 /* I    Q-domain of result (> 0)        */ {
-        let mut b_headrm: libc::c_int = 0;
-        let mut lshift: libc::c_int = 0;
+        let mut b_headrm: i32 = 0;
+        let mut lshift: i32 = 0;
         let mut b32_inv: crate::opus_types_h::opus_int32 = 0;
         let mut b32_nrm: crate::opus_types_h::opus_int32 = 0;
         let mut err_Q32: crate::opus_types_h::opus_int32 = 0;
         let mut result: crate::opus_types_h::opus_int32 = 0;
         /* Compute number of bits head room and normalize input */
-        b_headrm = silk_CLZ32((if b32 > 0 as libc::c_int { b32 } else { -b32 })) - 1 as libc::c_int; /* Q: b_headrm                */
+        b_headrm = silk_CLZ32((if b32 > 0 { b32 } else { -b32 })) - 1; /* Q: b_headrm                */
         b32_nrm = ((b32 as crate::opus_types_h::opus_uint32) << b_headrm)
             as crate::opus_types_h::opus_int32;
         /* Inverse of b32, with 14 bits of precision */
-        b32_inv = (0x7fffffff as libc::c_int >> 2 as libc::c_int) / (b32_nrm >> 16 as libc::c_int); /* Q: 29 + 16 - b_headrm    */
+        b32_inv = (0x7fffffff >> 2) / (b32_nrm >> 16); /* Q: 29 + 16 - b_headrm    */
         /* First approximation */
-        result = ((b32_inv as crate::opus_types_h::opus_uint32) << 16 as libc::c_int)
+        result = ((b32_inv as crate::opus_types_h::opus_uint32) << 16)
             as crate::opus_types_h::opus_int32; /* Q: 61 - b_headrm            */
         /* Compute residual by subtracting product of denominator and first approximation from one */
-        err_Q32 = (((((1 as libc::c_int) << 29 as libc::c_int)
-            - (b32_nrm as libc::c_longlong
-                * b32_inv as crate::opus_types_h::opus_int16 as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32)
+        err_Q32 = (((((1) << 29)
+            - (b32_nrm as i64 * b32_inv as crate::opus_types_h::opus_int16 as i64 >> 16)
+                as crate::opus_types_h::opus_int32)
             as crate::opus_types_h::opus_uint32)
-            << 3 as libc::c_int) as crate::opus_types_h::opus_int32; /* Q32                        */
+            << 3) as crate::opus_types_h::opus_int32; /* Q32                        */
         /* Refinement */
-        result = (result as libc::c_longlong
-            + (err_Q32 as libc::c_longlong * b32_inv as libc::c_longlong >> 16 as libc::c_int))
+        result = (result as i64 + (err_Q32 as i64 * b32_inv as i64 >> 16))
             as crate::opus_types_h::opus_int32; /* Q: 61 - b_headrm            */
         /* Convert to Qres domain */
-        lshift = 61 as libc::c_int - b_headrm - Qres;
-        if lshift <= 0 as libc::c_int {
-            return (((if 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32 >> -lshift
-                > 0x7fffffff as libc::c_int >> -lshift
+        lshift = 61 - b_headrm - Qres;
+        if lshift <= 0 {
+            return (((if 0x80000000u32 as crate::opus_types_h::opus_int32 >> -lshift
+                > 0x7fffffffi32 >> -lshift
             {
-                (if result
-                    > 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32 >> -lshift
-                {
-                    (0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32) >> -lshift
+                (if result > 0x80000000u32 as crate::opus_types_h::opus_int32 >> -lshift {
+                    (0x80000000u32 as crate::opus_types_h::opus_int32) >> -lshift
                 } else {
-                    (if result < 0x7fffffff as libc::c_int >> -lshift {
-                        (0x7fffffff as libc::c_int) >> -lshift
+                    (if result < 0x7fffffffi32 >> -lshift {
+                        (0x7fffffffi32) >> -lshift
                     } else {
                         result
                     })
                 })
             } else {
-                (if result > 0x7fffffff as libc::c_int >> -lshift {
-                    (0x7fffffff as libc::c_int) >> -lshift
+                (if result > 0x7fffffffi32 >> -lshift {
+                    (0x7fffffffi32) >> -lshift
                 } else {
-                    (if result
-                        < 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32 >> -lshift
-                    {
-                        (0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32) >> -lshift
+                    (if result < 0x80000000u32 as crate::opus_types_h::opus_int32 >> -lshift {
+                        (0x80000000u32 as crate::opus_types_h::opus_int32) >> -lshift
                     } else {
                         result
                     })
                 })
             }) as crate::opus_types_h::opus_uint32)
                 << -lshift) as crate::opus_types_h::opus_int32;
-        } else if lshift < 32 as libc::c_int {
+        } else if lshift < 32 {
             return result >> lshift;
         } else {
             /* Avoid undefined result */
-            return 0 as libc::c_int;
+            return 0i32;
         };
     }
     use crate::opus_types_h::opus_int16;
@@ -315,42 +303,26 @@ pub use crate::src::opus_1_2_1::silk::PLC::SigProc_FIX_h::silk_max_int;
 pub use crate::src::opus_1_2_1::silk::PLC::SigProc_FIX_h::silk_min_32;
 pub use crate::src::opus_1_2_1::silk::PLC::SigProc_FIX_h::silk_min_int;
 
-static mut HARM_ATT_Q15: [crate::opus_types_h::opus_int16; 2] = [
-    32440 as libc::c_int as crate::opus_types_h::opus_int16,
-    31130 as libc::c_int as crate::opus_types_h::opus_int16,
-];
+static mut HARM_ATT_Q15: [crate::opus_types_h::opus_int16; 2] = [32440, 31130];
 /* 0.99, 0.95 */
 
-static mut PLC_RAND_ATTENUATE_V_Q15: [crate::opus_types_h::opus_int16; 2] = [
-    31130 as libc::c_int as crate::opus_types_h::opus_int16,
-    26214 as libc::c_int as crate::opus_types_h::opus_int16,
-];
+static mut PLC_RAND_ATTENUATE_V_Q15: [crate::opus_types_h::opus_int16; 2] = [31130, 26214];
 /* 0.95, 0.8 */
 
-static mut PLC_RAND_ATTENUATE_UV_Q15: [crate::opus_types_h::opus_int16; 2] = [
-    32440 as libc::c_int as crate::opus_types_h::opus_int16,
-    29491 as libc::c_int as crate::opus_types_h::opus_int16,
-];
+static mut PLC_RAND_ATTENUATE_UV_Q15: [crate::opus_types_h::opus_int16; 2] = [32440, 29491];
 #[no_mangle]
 
 pub unsafe extern "C" fn silk_PLC_Reset(mut psDec: *mut crate::structs_h::silk_decoder_state)
 /* I/O Decoder state        */
 {
-    (*psDec).sPLC.pitchL_Q8 = (((*psDec).frame_length as crate::opus_types_h::opus_uint32)
-        << 8 as libc::c_int - 1 as libc::c_int)
+    (*psDec).sPLC.pitchL_Q8 = (((*psDec).frame_length as crate::opus_types_h::opus_uint32) << 8 - 1)
         as crate::opus_types_h::opus_int32;
-    (*psDec).sPLC.prevGain_Q16[0 as libc::c_int as usize] = ((1 as libc::c_int as libc::c_longlong
-        * ((1 as libc::c_int as libc::c_longlong) << 16 as libc::c_int))
-        as libc::c_double
-        + 0.5f64)
-        as crate::opus_types_h::opus_int32;
-    (*psDec).sPLC.prevGain_Q16[1 as libc::c_int as usize] = ((1 as libc::c_int as libc::c_longlong
-        * ((1 as libc::c_int as libc::c_longlong) << 16 as libc::c_int))
-        as libc::c_double
-        + 0.5f64)
-        as crate::opus_types_h::opus_int32;
-    (*psDec).sPLC.subfr_length = 20 as libc::c_int;
-    (*psDec).sPLC.nb_subfr = 2 as libc::c_int;
+    (*psDec).sPLC.prevGain_Q16[0] =
+        ((1i64 * ((1) << 16)) as f64 + 0.5) as crate::opus_types_h::opus_int32;
+    (*psDec).sPLC.prevGain_Q16[1] =
+        ((1i64 * ((1) << 16)) as f64 + 0.5) as crate::opus_types_h::opus_int32;
+    (*psDec).sPLC.subfr_length = 20;
+    (*psDec).sPLC.nb_subfr = 2;
 }
 #[no_mangle]
 
@@ -358,8 +330,8 @@ pub unsafe extern "C" fn silk_PLC(
     mut psDec: *mut crate::structs_h::silk_decoder_state,
     mut psDecCtrl: *mut crate::structs_h::silk_decoder_control,
     mut frame: *mut crate::opus_types_h::opus_int16,
-    mut lost: libc::c_int,
-    mut arch: libc::c_int,
+    mut lost: i32,
+    mut arch: i32,
 )
 /* I Run-time architecture  */
 {
@@ -395,29 +367,26 @@ unsafe extern "C" fn silk_PLC_update(
 {
     let mut LTP_Gain_Q14: crate::opus_types_h::opus_int32 = 0;
     let mut temp_LTP_Gain_Q14: crate::opus_types_h::opus_int32 = 0;
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
     let mut psPLC: *mut crate::structs_h::silk_PLC_struct =
         0 as *mut crate::structs_h::silk_PLC_struct;
     psPLC = &mut (*psDec).sPLC;
     /* Update parameters used in case of packet loss */
-    (*psDec).prevSignalType = (*psDec).indices.signalType as libc::c_int;
-    LTP_Gain_Q14 = 0 as libc::c_int;
-    if (*psDec).indices.signalType as libc::c_int == 2 as libc::c_int {
+    (*psDec).prevSignalType = (*psDec).indices.signalType as i32;
+    LTP_Gain_Q14 = 0;
+    if (*psDec).indices.signalType as i32 == 2 {
         /* Find the parameters for the last subframe which contains a pitch pulse */
-        j = 0 as libc::c_int;
-        while j * (*psDec).subfr_length
-            < (*psDecCtrl).pitchL[((*psDec).nb_subfr - 1 as libc::c_int) as usize]
-        {
+        j = 0;
+        while j * (*psDec).subfr_length < (*psDecCtrl).pitchL[((*psDec).nb_subfr - 1i32) as usize] {
             if j == (*psDec).nb_subfr {
                 break;
             }
-            temp_LTP_Gain_Q14 = 0 as libc::c_int;
-            i = 0 as libc::c_int;
-            while i < 5 as libc::c_int {
-                temp_LTP_Gain_Q14 += (*psDecCtrl).LTPCoef_Q14
-                    [(((*psDec).nb_subfr - 1 as libc::c_int - j) * 5 as libc::c_int + i) as usize]
-                    as libc::c_int;
+            temp_LTP_Gain_Q14 = 0;
+            i = 0;
+            while i < 5 {
+                temp_LTP_Gain_Q14 +=
+                    (*psDecCtrl).LTPCoef_Q14[(((*psDec).nb_subfr - 1 - j) * 5 + i) as usize] as i32;
                 i += 1
             }
             if temp_LTP_Gain_Q14 > LTP_Gain_Q14 {
@@ -425,112 +394,84 @@ unsafe extern "C" fn silk_PLC_update(
                 crate::stdlib::memcpy(
                     (*psPLC).LTPCoef_Q14.as_mut_ptr() as *mut libc::c_void,
                     &mut *(*psDecCtrl).LTPCoef_Q14.as_mut_ptr().offset(
-                        (((*psDec).nb_subfr - 1 as libc::c_int - j)
-                            as crate::opus_types_h::opus_int16
+                        (((*psDec).nb_subfr - 1 - j) as crate::opus_types_h::opus_int16
                             as crate::opus_types_h::opus_int32
-                            * 5 as libc::c_int as crate::opus_types_h::opus_int16
-                                as crate::opus_types_h::opus_int32)
-                            as isize,
+                            * 5) as isize,
                     ) as *mut crate::opus_types_h::opus_int16
                         as *const libc::c_void,
-                    (5 as libc::c_int as libc::c_ulong)
-                        .wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int16>()
-                            as libc::c_ulong),
+                    (5usize).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int16>()),
                 );
-                (*psPLC).pitchL_Q8 =
-                    (((*psDecCtrl).pitchL[((*psDec).nb_subfr - 1 as libc::c_int - j) as usize]
-                        as crate::opus_types_h::opus_uint32)
-                        << 8 as libc::c_int) as crate::opus_types_h::opus_int32
+                (*psPLC).pitchL_Q8 = (((*psDecCtrl).pitchL[((*psDec).nb_subfr - 1 - j) as usize]
+                    as crate::opus_types_h::opus_uint32)
+                    << 8) as crate::opus_types_h::opus_int32
             }
             j += 1
         }
         crate::stdlib::memset(
             (*psPLC).LTPCoef_Q14.as_mut_ptr() as *mut libc::c_void,
-            0 as libc::c_int,
-            (5 as libc::c_int as libc::c_ulong).wrapping_mul(::std::mem::size_of::<
-                crate::opus_types_h::opus_int16,
-            >() as libc::c_ulong),
+            0,
+            (5usize).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int16>()),
         );
-        (*psPLC).LTPCoef_Q14[(5 as libc::c_int / 2 as libc::c_int) as usize] =
-            LTP_Gain_Q14 as crate::opus_types_h::opus_int16;
+        (*psPLC).LTPCoef_Q14[(5i32 / 2) as usize] = LTP_Gain_Q14 as crate::opus_types_h::opus_int16;
         /* Limit LT coefs */
-        if LTP_Gain_Q14 < 11469 as libc::c_int {
-            let mut scale_Q10: libc::c_int = 0;
+        if LTP_Gain_Q14 < 11469 {
+            let mut scale_Q10: i32 = 0;
             let mut tmp: crate::opus_types_h::opus_int32 = 0;
-            tmp = ((11469 as libc::c_int as crate::opus_types_h::opus_uint32) << 10 as libc::c_int)
-                as crate::opus_types_h::opus_int32;
-            scale_Q10 = tmp
-                / (if LTP_Gain_Q14 > 1 as libc::c_int {
-                    LTP_Gain_Q14
-                } else {
-                    1 as libc::c_int
-                });
-            i = 0 as libc::c_int;
-            while i < 5 as libc::c_int {
-                (*psPLC).LTPCoef_Q14[i as usize] = ((*psPLC).LTPCoef_Q14[i as usize]
-                    as crate::opus_types_h::opus_int32
-                    * scale_Q10 as crate::opus_types_h::opus_int16
-                        as crate::opus_types_h::opus_int32
-                    >> 10 as libc::c_int)
-                    as crate::opus_types_h::opus_int16;
+            tmp = ((11469u32) << 10) as crate::opus_types_h::opus_int32;
+            scale_Q10 = tmp / (if LTP_Gain_Q14 > 1 { LTP_Gain_Q14 } else { 1 });
+            i = 0;
+            while i < 5 {
+                (*psPLC).LTPCoef_Q14[i as usize] =
+                    ((*psPLC).LTPCoef_Q14[i as usize] as crate::opus_types_h::opus_int32
+                        * scale_Q10 as crate::opus_types_h::opus_int16
+                            as crate::opus_types_h::opus_int32
+                        >> 10) as crate::opus_types_h::opus_int16;
                 i += 1
             }
-        } else if LTP_Gain_Q14 > 15565 as libc::c_int {
-            let mut scale_Q14: libc::c_int = 0;
+        } else if LTP_Gain_Q14 > 15565 {
+            let mut scale_Q14: i32 = 0;
             let mut tmp_0: crate::opus_types_h::opus_int32 = 0;
-            tmp_0 = ((15565 as libc::c_int as crate::opus_types_h::opus_uint32)
-                << 14 as libc::c_int) as crate::opus_types_h::opus_int32;
-            scale_Q14 = tmp_0
-                / (if LTP_Gain_Q14 > 1 as libc::c_int {
-                    LTP_Gain_Q14
-                } else {
-                    1 as libc::c_int
-                });
-            i = 0 as libc::c_int;
-            while i < 5 as libc::c_int {
-                (*psPLC).LTPCoef_Q14[i as usize] = ((*psPLC).LTPCoef_Q14[i as usize]
-                    as crate::opus_types_h::opus_int32
-                    * scale_Q14 as crate::opus_types_h::opus_int16
-                        as crate::opus_types_h::opus_int32
-                    >> 14 as libc::c_int)
-                    as crate::opus_types_h::opus_int16;
+            tmp_0 = ((15565u32) << 14) as crate::opus_types_h::opus_int32;
+            scale_Q14 = tmp_0 / (if LTP_Gain_Q14 > 1 { LTP_Gain_Q14 } else { 1 });
+            i = 0;
+            while i < 5 {
+                (*psPLC).LTPCoef_Q14[i as usize] =
+                    ((*psPLC).LTPCoef_Q14[i as usize] as crate::opus_types_h::opus_int32
+                        * scale_Q14 as crate::opus_types_h::opus_int16
+                            as crate::opus_types_h::opus_int32
+                        >> 14) as crate::opus_types_h::opus_int16;
                 i += 1
             }
         }
     } else {
         (*psPLC).pitchL_Q8 = ((((*psDec).fs_kHz as crate::opus_types_h::opus_int16
             as crate::opus_types_h::opus_int32
-            * 18 as libc::c_int as crate::opus_types_h::opus_int16
-                as crate::opus_types_h::opus_int32)
-            as crate::opus_types_h::opus_uint32)
-            << 8 as libc::c_int) as crate::opus_types_h::opus_int32;
+            * 18) as crate::opus_types_h::opus_uint32)
+            << 8) as crate::opus_types_h::opus_int32;
         crate::stdlib::memset(
             (*psPLC).LTPCoef_Q14.as_mut_ptr() as *mut libc::c_void,
-            0 as libc::c_int,
-            (5 as libc::c_int as libc::c_ulong).wrapping_mul(::std::mem::size_of::<
-                crate::opus_types_h::opus_int16,
-            >() as libc::c_ulong),
+            0i32,
+            (5usize).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int16>()),
         );
     }
     /* Save LPC coeficients */
-    crate::stdlib::memcpy((*psPLC).prevLPC_Q12.as_mut_ptr() as *mut libc::c_void,
-           (*psDecCtrl).PredCoef_Q12[1 as libc::c_int as usize].as_mut_ptr()
-               as *const libc::c_void,
-           ((*psDec).LPC_order as
-                libc::c_ulong).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int16>()
-                                                as libc::c_ulong));
+    crate::stdlib::memcpy(
+        (*psPLC).prevLPC_Q12.as_mut_ptr() as *mut libc::c_void,
+        (*psDecCtrl).PredCoef_Q12[1].as_mut_ptr() as *const libc::c_void,
+        ((*psDec).LPC_order as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int16>()),
+    );
     (*psPLC).prevLTP_scale_Q14 = (*psDecCtrl).LTP_scale_Q14 as crate::opus_types_h::opus_int16;
     /* Save last two gains */
-    crate::stdlib::memcpy((*psPLC).prevGain_Q16.as_mut_ptr() as *mut libc::c_void,
-           &mut *(*psDecCtrl).Gains_Q16.as_mut_ptr().offset(((*psDec).nb_subfr
-                                                                 -
-                                                                 2 as
-                                                                     libc::c_int)
-                                                                as isize) as
-               *mut crate::opus_types_h::opus_int32 as *const libc::c_void,
-           (2 as libc::c_int as
-                libc::c_ulong).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()
-                                                as libc::c_ulong));
+    crate::stdlib::memcpy(
+        (*psPLC).prevGain_Q16.as_mut_ptr() as *mut libc::c_void,
+        &mut *(*psDecCtrl)
+            .Gains_Q16
+            .as_mut_ptr()
+            .offset(((*psDec).nb_subfr - 2i32) as isize)
+            as *mut crate::opus_types_h::opus_int32 as *const libc::c_void,
+        (2usize).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()),
+    );
     (*psPLC).subfr_length = (*psDec).subfr_length;
     (*psPLC).nb_subfr = (*psDec).nb_subfr;
 }
@@ -538,59 +479,55 @@ unsafe extern "C" fn silk_PLC_update(
 
 unsafe extern "C" fn silk_PLC_energy(
     mut energy1: *mut crate::opus_types_h::opus_int32,
-    mut shift1: *mut libc::c_int,
+    mut shift1: *mut i32,
     mut energy2: *mut crate::opus_types_h::opus_int32,
-    mut shift2: *mut libc::c_int,
+    mut shift2: *mut i32,
     mut exc_Q14: *const crate::opus_types_h::opus_int32,
     mut prevGain_Q10: *const crate::opus_types_h::opus_int32,
-    mut subfr_length: libc::c_int,
-    mut nb_subfr: libc::c_int,
+    mut subfr_length: i32,
+    mut nb_subfr: i32,
 ) {
-    let mut i: libc::c_int = 0;
-    let mut k: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut k: i32 = 0;
     let mut exc_buf: *mut crate::opus_types_h::opus_int16 =
         0 as *mut crate::opus_types_h::opus_int16;
     let mut exc_buf_ptr: *mut crate::opus_types_h::opus_int16 =
         0 as *mut crate::opus_types_h::opus_int16;
     let mut fresh0 = ::std::vec::from_elem(
         0,
-        (::std::mem::size_of::<crate::opus_types_h::opus_int16>() as libc::c_ulong)
-            .wrapping_mul((2 as libc::c_int * subfr_length) as libc::c_ulong) as usize,
+        (::std::mem::size_of::<crate::opus_types_h::opus_int16>())
+            .wrapping_mul((2i32 * subfr_length) as usize),
     );
     exc_buf = fresh0.as_mut_ptr() as *mut crate::opus_types_h::opus_int16;
     /* Find random noise component */
     /* Scale previous excitation signal */
     exc_buf_ptr = exc_buf;
-    k = 0 as libc::c_int;
-    while k < 2 as libc::c_int {
-        i = 0 as libc::c_int;
+    k = 0;
+    while k < 2 {
+        i = 0;
         while i < subfr_length {
-            *exc_buf_ptr.offset(i as isize) = if (*exc_Q14
-                .offset((i + (k + nb_subfr - 2 as libc::c_int) * subfr_length) as isize)
-                as libc::c_longlong
-                * *prevGain_Q10.offset(k as isize) as libc::c_longlong
-                >> 16 as libc::c_int)
-                as crate::opus_types_h::opus_int32
-                >> 8 as libc::c_int
-                > 0x7fff as libc::c_int
-            {
-                0x7fff as libc::c_int
-            } else if ((*exc_Q14
-                .offset((i + (k + nb_subfr - 2 as libc::c_int) * subfr_length) as isize)
-                as libc::c_longlong
-                * *prevGain_Q10.offset(k as isize) as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                >> 8 as libc::c_int)
-                < 0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
-            {
-                0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
-            } else {
-                ((*exc_Q14.offset((i + (k + nb_subfr - 2 as libc::c_int) * subfr_length) as isize)
-                    as libc::c_longlong
-                    * *prevGain_Q10.offset(k as isize) as libc::c_longlong
-                    >> 16 as libc::c_int) as crate::opus_types_h::opus_int32)
-                    >> 8 as libc::c_int
-            } as crate::opus_types_h::opus_int16;
+            *exc_buf_ptr.offset(i as isize) =
+                if (*exc_Q14.offset((i + (k + nb_subfr - 2) * subfr_length) as isize) as i64
+                    * *prevGain_Q10.offset(k as isize) as i64
+                    >> 16) as crate::opus_types_h::opus_int32
+                    >> 8
+                    > 0x7fff
+                {
+                    0x7fff
+                } else if ((*exc_Q14.offset((i + (k + nb_subfr - 2) * subfr_length) as isize)
+                    as i64
+                    * *prevGain_Q10.offset(k as isize) as i64
+                    >> 16) as crate::opus_types_h::opus_int32
+                    >> 8)
+                    < 0x8000i32 as crate::opus_types_h::opus_int16 as i32
+                {
+                    0x8000i32 as crate::opus_types_h::opus_int16 as i32
+                } else {
+                    ((*exc_Q14.offset((i + (k + nb_subfr - 2) * subfr_length) as isize) as i64
+                        * *prevGain_Q10.offset(k as isize) as i64
+                        >> 16) as crate::opus_types_h::opus_int32)
+                        >> 8
+                } as crate::opus_types_h::opus_int16;
             i += 1
         }
         exc_buf_ptr = exc_buf_ptr.offset(subfr_length as isize);
@@ -616,18 +553,18 @@ unsafe extern "C" fn silk_PLC_conceal(
     mut psDec: *mut crate::structs_h::silk_decoder_state,
     mut psDecCtrl: *mut crate::structs_h::silk_decoder_control,
     mut frame: *mut crate::opus_types_h::opus_int16,
-    mut arch: libc::c_int,
+    mut arch: i32,
 )
 /* I Run-time architecture  */
 {
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    let mut k: libc::c_int = 0;
-    let mut lag: libc::c_int = 0;
-    let mut idx: libc::c_int = 0;
-    let mut sLTP_buf_idx: libc::c_int = 0;
-    let mut shift1: libc::c_int = 0;
-    let mut shift2: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut k: i32 = 0;
+    let mut lag: i32 = 0;
+    let mut idx: i32 = 0;
+    let mut sLTP_buf_idx: i32 = 0;
+    let mut shift1: i32 = 0;
+    let mut shift2: i32 = 0;
     let mut rand_seed: crate::opus_types_h::opus_int32 = 0;
     let mut harm_Gain_Q15: crate::opus_types_h::opus_int32 = 0;
     let mut rand_Gain_Q15: crate::opus_types_h::opus_int32 = 0;
@@ -652,26 +589,23 @@ unsafe extern "C" fn silk_PLC_conceal(
     let mut prevGain_Q10: [crate::opus_types_h::opus_int32; 2] = [0; 2];
     let mut fresh1 = ::std::vec::from_elem(
         0,
-        (::std::mem::size_of::<crate::opus_types_h::opus_int32>() as libc::c_ulong)
-            .wrapping_mul(((*psDec).ltp_mem_length + (*psDec).frame_length) as libc::c_ulong)
-            as usize,
+        (::std::mem::size_of::<crate::opus_types_h::opus_int32>())
+            .wrapping_mul(((*psDec).ltp_mem_length + (*psDec).frame_length) as usize),
     );
-    sLTP_Q14 = fresh1.as_mut_ptr() as *mut crate::opus_types_h::opus_int32;
+    sLTP_Q14 = fresh1.as_mut_ptr();
     let mut fresh2 = ::std::vec::from_elem(
         0,
-        (::std::mem::size_of::<crate::opus_types_h::opus_int16>() as libc::c_ulong)
-            .wrapping_mul((*psDec).ltp_mem_length as libc::c_ulong) as usize,
+        (::std::mem::size_of::<crate::opus_types_h::opus_int16>())
+            .wrapping_mul((*psDec).ltp_mem_length as usize),
     );
     sLTP = fresh2.as_mut_ptr() as *mut crate::opus_types_h::opus_int16;
-    prevGain_Q10[0 as libc::c_int as usize] =
-        (*psPLC).prevGain_Q16[0 as libc::c_int as usize] >> 6 as libc::c_int;
-    prevGain_Q10[1 as libc::c_int as usize] =
-        (*psPLC).prevGain_Q16[1 as libc::c_int as usize] >> 6 as libc::c_int;
+    prevGain_Q10[0] = (*psPLC).prevGain_Q16[0] >> 6;
+    prevGain_Q10[1] = (*psPLC).prevGain_Q16[1] >> 6;
     if (*psDec).first_frame_after_reset != 0 {
         crate::stdlib::memset(
             (*psPLC).prevLPC_Q12.as_mut_ptr() as *mut libc::c_void,
-            0 as libc::c_int,
-            ::std::mem::size_of::<[crate::opus_types_h::opus_int16; 16]>() as libc::c_ulong,
+            0i32,
+            ::std::mem::size_of::<[crate::opus_types_h::opus_int16; 16]>(),
         );
     }
     silk_PLC_energy(
@@ -687,68 +621,59 @@ unsafe extern "C" fn silk_PLC_conceal(
     if energy1 >> shift2 < energy2 >> shift1 {
         /* First sub-frame has lowest energy */
         rand_ptr = &mut *(*psDec).exc_Q14.as_mut_ptr().offset((silk_max_int
-            as unsafe extern "C" fn(_: libc::c_int, _: libc::c_int) -> libc::c_int)(
-            0 as libc::c_int,
-            ((*psPLC).nb_subfr - 1 as libc::c_int) * (*psPLC).subfr_length - 128 as libc::c_int,
+            as unsafe extern "C" fn(_: i32, _: i32) -> i32)(
+            0,
+            ((*psPLC).nb_subfr - 1) * (*psPLC).subfr_length - 128,
         ) as isize) as *mut crate::opus_types_h::opus_int32
     } else {
         /* Second sub-frame has lowest energy */
         rand_ptr = &mut *(*psDec).exc_Q14.as_mut_ptr().offset((silk_max_int
-            as unsafe extern "C" fn(_: libc::c_int, _: libc::c_int) -> libc::c_int)(
-            0 as libc::c_int,
-            (*psPLC).nb_subfr * (*psPLC).subfr_length - 128 as libc::c_int,
+            as unsafe extern "C" fn(_: i32, _: i32) -> i32)(
+            0,
+            (*psPLC).nb_subfr * (*psPLC).subfr_length - 128,
         ) as isize) as *mut crate::opus_types_h::opus_int32
     }
     /* Set up Gain to random noise component */
     B_Q14 = (*psPLC).LTPCoef_Q14.as_mut_ptr();
     rand_scale_Q14 = (*psPLC).randScale_Q14;
     /* Set up attenuation gains */
-    harm_Gain_Q15 = HARM_ATT_Q15
-        [silk_min_int(2 as libc::c_int - 1 as libc::c_int, (*psDec).lossCnt) as usize]
+    harm_Gain_Q15 = HARM_ATT_Q15[silk_min_int(2 - 1, (*psDec).lossCnt) as usize]
         as crate::opus_types_h::opus_int32;
-    if (*psDec).prevSignalType == 2 as libc::c_int {
-        rand_Gain_Q15 = PLC_RAND_ATTENUATE_V_Q15
-            [silk_min_int(2 as libc::c_int - 1 as libc::c_int, (*psDec).lossCnt) as usize]
+    if (*psDec).prevSignalType == 2 {
+        rand_Gain_Q15 = PLC_RAND_ATTENUATE_V_Q15[silk_min_int(2 - 1, (*psDec).lossCnt) as usize]
             as crate::opus_types_h::opus_int32
     } else {
-        rand_Gain_Q15 = PLC_RAND_ATTENUATE_UV_Q15
-            [silk_min_int(2 as libc::c_int - 1 as libc::c_int, (*psDec).lossCnt) as usize]
+        rand_Gain_Q15 = PLC_RAND_ATTENUATE_UV_Q15[silk_min_int(2 - 1, (*psDec).lossCnt) as usize]
             as crate::opus_types_h::opus_int32
     }
     /* LPC concealment. Apply BWE to previous LPC */
     crate::src::opus_1_2_1::silk::bwexpander::silk_bwexpander(
         (*psPLC).prevLPC_Q12.as_mut_ptr(),
         (*psDec).LPC_order,
-        (0.99f64 * ((1 as libc::c_int as libc::c_longlong) << 16 as libc::c_int) as libc::c_double
-            + 0.5f64) as crate::opus_types_h::opus_int32,
+        (0.99 * ((1i64) << 16) as f64 + 0.5) as crate::opus_types_h::opus_int32,
     );
     /* Preload LPC coeficients to array on stack. Gives small performance gain */
-    crate::stdlib::memcpy(A_Q12.as_mut_ptr() as *mut libc::c_void,
-           (*psPLC).prevLPC_Q12.as_mut_ptr() as *const libc::c_void,
-           ((*psDec).LPC_order as
-                libc::c_ulong).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int16>()
-                                                as libc::c_ulong));
+    crate::stdlib::memcpy(
+        A_Q12.as_mut_ptr() as *mut libc::c_void,
+        (*psPLC).prevLPC_Q12.as_mut_ptr() as *const libc::c_void,
+        ((*psDec).LPC_order as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int16>()),
+    );
     /* First Lost frame */
-    if (*psDec).lossCnt == 0 as libc::c_int {
-        rand_scale_Q14 =
-            ((1 as libc::c_int) << 14 as libc::c_int) as crate::opus_types_h::opus_int16;
+    if (*psDec).lossCnt == 0 {
+        rand_scale_Q14 = ((1i32) << 14) as crate::opus_types_h::opus_int16;
         /* Reduce random noise Gain for voiced frames */
-        if (*psDec).prevSignalType == 2 as libc::c_int {
-            i = 0 as libc::c_int; /* 0.2 */
-            while i < 5 as libc::c_int {
-                rand_scale_Q14 = (rand_scale_Q14 as libc::c_int
-                    - *B_Q14.offset(i as isize) as libc::c_int)
+        if (*psDec).prevSignalType == 2 {
+            i = 0; /* 0.2 */
+            while i < 5 {
+                rand_scale_Q14 = (rand_scale_Q14 as i32 - *B_Q14.offset(i as isize) as i32)
                     as crate::opus_types_h::opus_int16;
                 i += 1
             }
-            rand_scale_Q14 = silk_max_16(
-                3277 as libc::c_int as crate::opus_types_h::opus_int16,
-                rand_scale_Q14,
-            );
+            rand_scale_Q14 = silk_max_16(3277, rand_scale_Q14);
             rand_scale_Q14 = (rand_scale_Q14 as crate::opus_types_h::opus_int32
                 * (*psPLC).prevLTP_scale_Q14 as crate::opus_types_h::opus_int32
-                >> 14 as libc::c_int)
-                as crate::opus_types_h::opus_int16
+                >> 14) as crate::opus_types_h::opus_int16
         } else {
             /* Reduce random noise for unvoiced frames with high LPC gain */
             let mut invGain_Q30: crate::opus_types_h::opus_int32 = 0;
@@ -758,33 +683,25 @@ unsafe extern "C" fn silk_PLC_conceal(
                     (*psPLC).prevLPC_Q12.as_mut_ptr(),
                     (*psDec).LPC_order,
                 );
-            down_scale_Q30 = silk_min_32(
-                (1 as libc::c_int) << 30 as libc::c_int >> 3 as libc::c_int,
-                invGain_Q30,
-            );
-            down_scale_Q30 = silk_max_32(
-                (1 as libc::c_int) << 30 as libc::c_int >> 8 as libc::c_int,
-                down_scale_Q30,
-            );
-            down_scale_Q30 = ((down_scale_Q30 as crate::opus_types_h::opus_uint32)
-                << 3 as libc::c_int)
+            down_scale_Q30 = silk_min_32((1) << 30 >> 3, invGain_Q30);
+            down_scale_Q30 = silk_max_32((1) << 30 >> 8, down_scale_Q30);
+            down_scale_Q30 = ((down_scale_Q30 as crate::opus_types_h::opus_uint32) << 3)
                 as crate::opus_types_h::opus_int32;
-            rand_Gain_Q15 = (down_scale_Q30 as libc::c_longlong
-                * rand_Gain_Q15 as crate::opus_types_h::opus_int16 as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                >> 14 as libc::c_int
+            rand_Gain_Q15 = (down_scale_Q30 as i64
+                * rand_Gain_Q15 as crate::opus_types_h::opus_int16 as i64
+                >> 16) as crate::opus_types_h::opus_int32
+                >> 14
         }
     }
     rand_seed = (*psPLC).rand_seed;
-    lag = if 8 as libc::c_int == 1 as libc::c_int {
-        ((*psPLC).pitchL_Q8 >> 1 as libc::c_int) + ((*psPLC).pitchL_Q8 & 1 as libc::c_int)
+    lag = if 8 == 1 {
+        ((*psPLC).pitchL_Q8 >> 1) + ((*psPLC).pitchL_Q8 & 1)
     } else {
-        (((*psPLC).pitchL_Q8 >> 8 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-            >> 1 as libc::c_int
+        (((*psPLC).pitchL_Q8 >> 8 - 1) + 1) >> 1
     };
     sLTP_buf_idx = (*psDec).ltp_mem_length;
     /* Rewhiten LTP state */
-    idx = (*psDec).ltp_mem_length - lag - (*psDec).LPC_order - 5 as libc::c_int / 2 as libc::c_int;
+    idx = (*psDec).ltp_mem_length - lag - (*psDec).LPC_order - 5 / 2;
     crate::src::opus_1_2_1::silk::LPC_analysis_filter::silk_LPC_analysis_filter(
         &mut *sLTP.offset(idx as isize),
         &mut *(*psDec).outBuf.as_mut_ptr().offset(idx as isize),
@@ -794,594 +711,452 @@ unsafe extern "C" fn silk_PLC_conceal(
         arch,
     );
     /* Scale LTP state */
-    inv_gain_Q30 = silk_INVERSE32_varQ(
-        (*psPLC).prevGain_Q16[1 as libc::c_int as usize],
-        46 as libc::c_int,
-    );
-    inv_gain_Q30 = if inv_gain_Q30 < 0x7fffffff as libc::c_int >> 1 as libc::c_int {
+    inv_gain_Q30 = silk_INVERSE32_varQ((*psPLC).prevGain_Q16[1], 46);
+    inv_gain_Q30 = if inv_gain_Q30 < 0x7fffffff >> 1 {
         inv_gain_Q30
     } else {
-        (0x7fffffff as libc::c_int) >> 1 as libc::c_int
+        (0x7fffffff) >> 1
     };
     i = idx + (*psDec).LPC_order;
     while i < (*psDec).ltp_mem_length {
-        *sLTP_Q14.offset(i as isize) =
-            (inv_gain_Q30 as libc::c_longlong * *sLTP.offset(i as isize) as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32;
+        *sLTP_Q14.offset(i as isize) = (inv_gain_Q30 as i64 * *sLTP.offset(i as isize) as i64 >> 16)
+            as crate::opus_types_h::opus_int32;
         i += 1
     }
     /* **************************/
     /* LTP synthesis filtering */
     /* **************************/
-    k = 0 as libc::c_int;
+    k = 0;
     while k < (*psDec).nb_subfr {
         /* Set up pointer */
-        pred_lag_ptr = &mut *sLTP_Q14
-            .offset((sLTP_buf_idx - lag + 5 as libc::c_int / 2 as libc::c_int) as isize)
+        pred_lag_ptr = &mut *sLTP_Q14.offset((sLTP_buf_idx - lag + 5 / 2) as isize)
             as *mut crate::opus_types_h::opus_int32;
-        i = 0 as libc::c_int;
+        i = 0;
         while i < (*psDec).subfr_length {
             /* Unrolled loop */
             /* Avoids introducing a bias because silk_SMLAWB() always rounds to -inf */
-            LTP_pred_Q12 = 2 as libc::c_int;
-            LTP_pred_Q12 = (LTP_pred_Q12 as libc::c_longlong
-                + (*pred_lag_ptr.offset(0 as libc::c_int as isize) as libc::c_longlong
-                    * *B_Q14.offset(0 as libc::c_int as isize) as libc::c_longlong
-                    >> 16 as libc::c_int))
+            LTP_pred_Q12 = 2;
+            LTP_pred_Q12 = (LTP_pred_Q12 as i64
+                + (*pred_lag_ptr.offset(0) as i64 * *B_Q14.offset(0) as i64 >> 16))
                 as crate::opus_types_h::opus_int32;
-            LTP_pred_Q12 = (LTP_pred_Q12 as libc::c_longlong
-                + (*pred_lag_ptr.offset(-(1 as libc::c_int) as isize) as libc::c_longlong
-                    * *B_Q14.offset(1 as libc::c_int as isize) as libc::c_longlong
-                    >> 16 as libc::c_int))
+            LTP_pred_Q12 = (LTP_pred_Q12 as i64
+                + (*pred_lag_ptr.offset(-1) as i64 * *B_Q14.offset(1) as i64 >> 16))
                 as crate::opus_types_h::opus_int32;
-            LTP_pred_Q12 = (LTP_pred_Q12 as libc::c_longlong
-                + (*pred_lag_ptr.offset(-(2 as libc::c_int) as isize) as libc::c_longlong
-                    * *B_Q14.offset(2 as libc::c_int as isize) as libc::c_longlong
-                    >> 16 as libc::c_int))
+            LTP_pred_Q12 = (LTP_pred_Q12 as i64
+                + (*pred_lag_ptr.offset(-2) as i64 * *B_Q14.offset(2) as i64 >> 16))
                 as crate::opus_types_h::opus_int32;
-            LTP_pred_Q12 = (LTP_pred_Q12 as libc::c_longlong
-                + (*pred_lag_ptr.offset(-(3 as libc::c_int) as isize) as libc::c_longlong
-                    * *B_Q14.offset(3 as libc::c_int as isize) as libc::c_longlong
-                    >> 16 as libc::c_int))
+            LTP_pred_Q12 = (LTP_pred_Q12 as i64
+                + (*pred_lag_ptr.offset(-3) as i64 * *B_Q14.offset(3) as i64 >> 16))
                 as crate::opus_types_h::opus_int32;
-            LTP_pred_Q12 = (LTP_pred_Q12 as libc::c_longlong
-                + (*pred_lag_ptr.offset(-(4 as libc::c_int) as isize) as libc::c_longlong
-                    * *B_Q14.offset(4 as libc::c_int as isize) as libc::c_longlong
-                    >> 16 as libc::c_int))
+            LTP_pred_Q12 = (LTP_pred_Q12 as i64
+                + (*pred_lag_ptr.offset(-4) as i64 * *B_Q14.offset(4) as i64 >> 16))
                 as crate::opus_types_h::opus_int32;
             pred_lag_ptr = pred_lag_ptr.offset(1);
             /* Generate LPC excitation */
-            rand_seed = (907633515 as libc::c_int as crate::opus_types_h::opus_uint32).wrapping_add(
-                (rand_seed as crate::opus_types_h::opus_uint32)
-                    .wrapping_mul(196314165 as libc::c_int as crate::opus_types_h::opus_uint32),
+            rand_seed = (907633515u32).wrapping_add(
+                (rand_seed as crate::opus_types_h::opus_uint32).wrapping_mul(196314165u32),
             ) as crate::opus_types_h::opus_int32;
-            idx = rand_seed >> 25 as libc::c_int & 128 as libc::c_int - 1 as libc::c_int;
-            *sLTP_Q14.offset(sLTP_buf_idx as isize) =
-                (((LTP_pred_Q12 as libc::c_longlong
-                    + (*rand_ptr.offset(idx as isize) as libc::c_longlong
-                        * rand_scale_Q14 as libc::c_longlong
-                        >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32
-                    as crate::opus_types_h::opus_uint32)
-                    << 2 as libc::c_int) as crate::opus_types_h::opus_int32;
+            idx = rand_seed >> 25 & 128 - 1;
+            *sLTP_Q14.offset(sLTP_buf_idx as isize) = (((LTP_pred_Q12 as i64
+                + (*rand_ptr.offset(idx as isize) as i64 * rand_scale_Q14 as i64 >> 16))
+                as crate::opus_types_h::opus_uint32)
+                << 2)
+                as crate::opus_types_h::opus_int32;
             sLTP_buf_idx += 1;
             i += 1
         }
         /* Gradually reduce LTP gain */
-        j = 0 as libc::c_int;
-        while j < 5 as libc::c_int {
+        j = 0;
+        while j < 5 {
             *B_Q14.offset(j as isize) = (harm_Gain_Q15 as crate::opus_types_h::opus_int16
                 as crate::opus_types_h::opus_int32
                 * *B_Q14.offset(j as isize) as crate::opus_types_h::opus_int32
-                >> 15 as libc::c_int)
-                as crate::opus_types_h::opus_int16;
+                >> 15) as crate::opus_types_h::opus_int16;
             j += 1
         }
-        if (*psDec).indices.signalType as libc::c_int != 0 as libc::c_int {
+        if (*psDec).indices.signalType as i32 != 0 {
             /* Gradually reduce excitation gain */
             rand_scale_Q14 = (rand_scale_Q14 as crate::opus_types_h::opus_int32
                 * rand_Gain_Q15 as crate::opus_types_h::opus_int16
                     as crate::opus_types_h::opus_int32
-                >> 15 as libc::c_int)
-                as crate::opus_types_h::opus_int16
+                >> 15) as crate::opus_types_h::opus_int16
         }
         /* Slowly increase pitch lag */
-        (*psPLC).pitchL_Q8 = ((*psPLC).pitchL_Q8 as libc::c_longlong
-            + ((*psPLC).pitchL_Q8 as libc::c_longlong
-                * 655 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_longlong
-                >> 16 as libc::c_int))
+        (*psPLC).pitchL_Q8 = ((*psPLC).pitchL_Q8 as i64 + ((*psPLC).pitchL_Q8 as i64 * 655 >> 16))
             as crate::opus_types_h::opus_int32;
         (*psPLC).pitchL_Q8 = silk_min_32(
             (*psPLC).pitchL_Q8,
-            (((18 as libc::c_int as crate::opus_types_h::opus_int16
-                as crate::opus_types_h::opus_int32
+            (((18
                 * (*psDec).fs_kHz as crate::opus_types_h::opus_int16
                     as crate::opus_types_h::opus_int32)
                 as crate::opus_types_h::opus_uint32)
-                << 8 as libc::c_int) as crate::opus_types_h::opus_int32,
+                << 8) as crate::opus_types_h::opus_int32,
         );
-        lag = if 8 as libc::c_int == 1 as libc::c_int {
-            ((*psPLC).pitchL_Q8 >> 1 as libc::c_int) + ((*psPLC).pitchL_Q8 & 1 as libc::c_int)
+        lag = if 8 == 1 {
+            ((*psPLC).pitchL_Q8 >> 1) + ((*psPLC).pitchL_Q8 & 1)
         } else {
-            (((*psPLC).pitchL_Q8 >> 8 as libc::c_int - 1 as libc::c_int) + 1 as libc::c_int)
-                >> 1 as libc::c_int
+            (((*psPLC).pitchL_Q8 >> 8 - 1) + 1) >> 1
         };
         k += 1
     }
     /* **************************/
     /* LPC synthesis filtering */
     /* **************************/
-    sLPC_Q14_ptr = &mut *sLTP_Q14.offset(((*psDec).ltp_mem_length - 16 as libc::c_int) as isize)
+    sLPC_Q14_ptr = &mut *sLTP_Q14.offset(((*psDec).ltp_mem_length - 16i32) as isize)
         as *mut crate::opus_types_h::opus_int32;
     /* Copy LPC state */
-    crate::stdlib::memcpy(sLPC_Q14_ptr as *mut libc::c_void,
-           (*psDec).sLPC_Q14_buf.as_mut_ptr() as *const libc::c_void,
-           (16 as libc::c_int as
-                libc::c_ulong).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()
-                                                as libc::c_ulong));
+    crate::stdlib::memcpy(
+        sLPC_Q14_ptr as *mut libc::c_void,
+        (*psDec).sLPC_Q14_buf.as_mut_ptr() as *const libc::c_void,
+        (16usize).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()),
+    );
     /* check that unrolling works */
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*psDec).frame_length {
         /* partly unrolled */
         /* Avoids introducing a bias because silk_SMLAWB() always rounds to -inf */
-        LPC_pred_Q10 = (*psDec).LPC_order >> 1 as libc::c_int;
-        LPC_pred_Q10 = (LPC_pred_Q10 as libc::c_longlong
-            + (*sLPC_Q14_ptr.offset((16 as libc::c_int + i - 1 as libc::c_int) as isize)
-                as libc::c_longlong
-                * A_Q12[0 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-        LPC_pred_Q10 = (LPC_pred_Q10 as libc::c_longlong
-            + (*sLPC_Q14_ptr.offset((16 as libc::c_int + i - 2 as libc::c_int) as isize)
-                as libc::c_longlong
-                * A_Q12[1 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-        LPC_pred_Q10 = (LPC_pred_Q10 as libc::c_longlong
-            + (*sLPC_Q14_ptr.offset((16 as libc::c_int + i - 3 as libc::c_int) as isize)
-                as libc::c_longlong
-                * A_Q12[2 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-        LPC_pred_Q10 = (LPC_pred_Q10 as libc::c_longlong
-            + (*sLPC_Q14_ptr.offset((16 as libc::c_int + i - 4 as libc::c_int) as isize)
-                as libc::c_longlong
-                * A_Q12[3 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-        LPC_pred_Q10 = (LPC_pred_Q10 as libc::c_longlong
-            + (*sLPC_Q14_ptr.offset((16 as libc::c_int + i - 5 as libc::c_int) as isize)
-                as libc::c_longlong
-                * A_Q12[4 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-        LPC_pred_Q10 = (LPC_pred_Q10 as libc::c_longlong
-            + (*sLPC_Q14_ptr.offset((16 as libc::c_int + i - 6 as libc::c_int) as isize)
-                as libc::c_longlong
-                * A_Q12[5 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-        LPC_pred_Q10 = (LPC_pred_Q10 as libc::c_longlong
-            + (*sLPC_Q14_ptr.offset((16 as libc::c_int + i - 7 as libc::c_int) as isize)
-                as libc::c_longlong
-                * A_Q12[6 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-        LPC_pred_Q10 = (LPC_pred_Q10 as libc::c_longlong
-            + (*sLPC_Q14_ptr.offset((16 as libc::c_int + i - 8 as libc::c_int) as isize)
-                as libc::c_longlong
-                * A_Q12[7 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-        LPC_pred_Q10 = (LPC_pred_Q10 as libc::c_longlong
-            + (*sLPC_Q14_ptr.offset((16 as libc::c_int + i - 9 as libc::c_int) as isize)
-                as libc::c_longlong
-                * A_Q12[8 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-        LPC_pred_Q10 = (LPC_pred_Q10 as libc::c_longlong
-            + (*sLPC_Q14_ptr.offset((16 as libc::c_int + i - 10 as libc::c_int) as isize)
-                as libc::c_longlong
-                * A_Q12[9 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int)) as crate::opus_types_h::opus_int32;
-        j = 10 as libc::c_int;
+        LPC_pred_Q10 = (*psDec).LPC_order >> 1;
+        LPC_pred_Q10 = (LPC_pred_Q10 as i64
+            + (*sLPC_Q14_ptr.offset((16 + i - 1) as isize) as i64 * A_Q12[0] as i64 >> 16))
+            as crate::opus_types_h::opus_int32;
+        LPC_pred_Q10 = (LPC_pred_Q10 as i64
+            + (*sLPC_Q14_ptr.offset((16 + i - 2) as isize) as i64 * A_Q12[1] as i64 >> 16))
+            as crate::opus_types_h::opus_int32;
+        LPC_pred_Q10 = (LPC_pred_Q10 as i64
+            + (*sLPC_Q14_ptr.offset((16 + i - 3) as isize) as i64 * A_Q12[2] as i64 >> 16))
+            as crate::opus_types_h::opus_int32;
+        LPC_pred_Q10 = (LPC_pred_Q10 as i64
+            + (*sLPC_Q14_ptr.offset((16 + i - 4) as isize) as i64 * A_Q12[3] as i64 >> 16))
+            as crate::opus_types_h::opus_int32;
+        LPC_pred_Q10 = (LPC_pred_Q10 as i64
+            + (*sLPC_Q14_ptr.offset((16 + i - 5) as isize) as i64 * A_Q12[4] as i64 >> 16))
+            as crate::opus_types_h::opus_int32;
+        LPC_pred_Q10 = (LPC_pred_Q10 as i64
+            + (*sLPC_Q14_ptr.offset((16 + i - 6) as isize) as i64 * A_Q12[5] as i64 >> 16))
+            as crate::opus_types_h::opus_int32;
+        LPC_pred_Q10 = (LPC_pred_Q10 as i64
+            + (*sLPC_Q14_ptr.offset((16 + i - 7) as isize) as i64 * A_Q12[6] as i64 >> 16))
+            as crate::opus_types_h::opus_int32;
+        LPC_pred_Q10 = (LPC_pred_Q10 as i64
+            + (*sLPC_Q14_ptr.offset((16 + i - 8) as isize) as i64 * A_Q12[7] as i64 >> 16))
+            as crate::opus_types_h::opus_int32;
+        LPC_pred_Q10 = (LPC_pred_Q10 as i64
+            + (*sLPC_Q14_ptr.offset((16 + i - 9) as isize) as i64 * A_Q12[8] as i64 >> 16))
+            as crate::opus_types_h::opus_int32;
+        LPC_pred_Q10 = (LPC_pred_Q10 as i64
+            + (*sLPC_Q14_ptr.offset((16 + i - 10) as isize) as i64 * A_Q12[9] as i64 >> 16))
+            as crate::opus_types_h::opus_int32;
+        j = 10;
         while j < (*psDec).LPC_order {
-            LPC_pred_Q10 = (LPC_pred_Q10 as libc::c_longlong
-                + (*sLPC_Q14_ptr.offset((16 as libc::c_int + i - j - 1 as libc::c_int) as isize)
-                    as libc::c_longlong
-                    * A_Q12[j as usize] as libc::c_longlong
-                    >> 16 as libc::c_int))
-                as crate::opus_types_h::opus_int32;
+            LPC_pred_Q10 = (LPC_pred_Q10 as i64
+                + (*sLPC_Q14_ptr.offset((16 + i - j - 1) as isize) as i64
+                    * A_Q12[j as usize] as i64
+                    >> 16)) as crate::opus_types_h::opus_int32;
             j += 1
         }
         /* Add prediction to LPC excitation */
-        *sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) = if (*sLPC_Q14_ptr
-            .offset((16 as libc::c_int + i) as isize)
+        *sLPC_Q14_ptr.offset((16 + i) as isize) = if (*sLPC_Q14_ptr.offset((16 + i) as isize)
             as crate::opus_types_h::opus_uint32)
             .wrapping_add(
-                (((if 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                    >> 4 as libc::c_int
-                    > 0x7fffffff as libc::c_int >> 4 as libc::c_int
-                {
-                    (if LPC_pred_Q10
-                        > 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                            >> 4 as libc::c_int
-                    {
-                        (0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32)
-                            >> 4 as libc::c_int
+                ((if 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 > 0x7fffffff >> 4 {
+                    (if LPC_pred_Q10 > 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 {
+                        (0x80000000u32 as crate::opus_types_h::opus_int32) >> 4
                     } else {
-                        (if LPC_pred_Q10 < 0x7fffffff as libc::c_int >> 4 as libc::c_int {
-                            (0x7fffffff as libc::c_int) >> 4 as libc::c_int
+                        (if LPC_pred_Q10 < 0x7fffffff >> 4 {
+                            (0x7fffffff) >> 4
                         } else {
                             LPC_pred_Q10
                         })
                     })
                 } else {
-                    (if LPC_pred_Q10 > 0x7fffffff as libc::c_int >> 4 as libc::c_int {
-                        (0x7fffffff as libc::c_int) >> 4 as libc::c_int
+                    (if LPC_pred_Q10 > 0x7fffffff >> 4 {
+                        (0x7fffffff) >> 4
                     } else {
-                        (if LPC_pred_Q10
-                            < 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                                >> 4 as libc::c_int
-                        {
-                            (0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32)
-                                >> 4 as libc::c_int
+                        (if LPC_pred_Q10 < 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 {
+                            (0x80000000u32 as crate::opus_types_h::opus_int32) >> 4
                         } else {
                             LPC_pred_Q10
                         })
                     })
                 }) as crate::opus_types_h::opus_uint32)
-                    << 4 as libc::c_int) as crate::opus_types_h::opus_int32
-                    as crate::opus_types_h::opus_uint32,
+                    << 4,
             )
-            & 0x80000000 as libc::c_uint
-            == 0 as libc::c_int as libc::c_uint
+            & 0x80000000u32
+            == 0
         {
-            if (*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize)
-                & (((if 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                    >> 4 as libc::c_int
-                    > 0x7fffffff as libc::c_int >> 4 as libc::c_int
-                {
-                    (if LPC_pred_Q10
-                        > 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                            >> 4 as libc::c_int
-                    {
-                        (0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32)
-                            >> 4 as libc::c_int
+            if (*sLPC_Q14_ptr.offset((16 + i) as isize)
+                & (((if 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 > 0x7fffffff >> 4 {
+                    (if LPC_pred_Q10 > 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 {
+                        (0x80000000u32 as crate::opus_types_h::opus_int32) >> 4
                     } else {
-                        (if LPC_pred_Q10 < 0x7fffffff as libc::c_int >> 4 as libc::c_int {
-                            (0x7fffffff as libc::c_int) >> 4 as libc::c_int
+                        (if LPC_pred_Q10 < 0x7fffffff >> 4 {
+                            (0x7fffffff) >> 4
                         } else {
                             LPC_pred_Q10
                         })
                     })
                 } else {
-                    (if LPC_pred_Q10 > 0x7fffffff as libc::c_int >> 4 as libc::c_int {
-                        (0x7fffffff as libc::c_int) >> 4 as libc::c_int
+                    (if LPC_pred_Q10 > 0x7fffffff >> 4 {
+                        (0x7fffffff) >> 4
                     } else {
-                        (if LPC_pred_Q10
-                            < 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                                >> 4 as libc::c_int
-                        {
-                            (0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32)
-                                >> 4 as libc::c_int
+                        (if LPC_pred_Q10 < 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 {
+                            (0x80000000u32 as crate::opus_types_h::opus_int32) >> 4
                         } else {
                             LPC_pred_Q10
                         })
                     })
                 }) as crate::opus_types_h::opus_uint32)
-                    << 4 as libc::c_int) as crate::opus_types_h::opus_int32)
-                as libc::c_uint
-                & 0x80000000 as libc::c_uint
-                != 0 as libc::c_int as libc::c_uint
+                    << 4) as crate::opus_types_h::opus_int32) as u32
+                & 0x80000000
+                != 0
             {
-                0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
+                0x80000000u32 as crate::opus_types_h::opus_int32
             } else {
-                (*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize))
-                    + (((if 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                        >> 4 as libc::c_int
-                        > 0x7fffffff as libc::c_int >> 4 as libc::c_int
+                (*sLPC_Q14_ptr.offset((16 + i) as isize))
+                    + (((if 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 > 0x7fffffff >> 4
                     {
-                        (if LPC_pred_Q10
-                            > 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                                >> 4 as libc::c_int
-                        {
-                            (0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32)
-                                >> 4 as libc::c_int
+                        (if LPC_pred_Q10 > 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 {
+                            (0x80000000u32 as crate::opus_types_h::opus_int32) >> 4
                         } else {
-                            (if LPC_pred_Q10 < 0x7fffffff as libc::c_int >> 4 as libc::c_int {
-                                (0x7fffffff as libc::c_int) >> 4 as libc::c_int
+                            (if LPC_pred_Q10 < 0x7fffffff >> 4 {
+                                (0x7fffffff) >> 4
                             } else {
                                 LPC_pred_Q10
                             })
                         })
                     } else {
-                        (if LPC_pred_Q10 > 0x7fffffff as libc::c_int >> 4 as libc::c_int {
-                            (0x7fffffff as libc::c_int) >> 4 as libc::c_int
+                        (if LPC_pred_Q10 > 0x7fffffff >> 4 {
+                            (0x7fffffff) >> 4
                         } else {
-                            (if LPC_pred_Q10
-                                < 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                                    >> 4 as libc::c_int
+                            (if LPC_pred_Q10 < 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4
                             {
-                                (0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32)
-                                    >> 4 as libc::c_int
+                                (0x80000000u32 as crate::opus_types_h::opus_int32) >> 4
                             } else {
                                 LPC_pred_Q10
                             })
                         })
                     }) as crate::opus_types_h::opus_uint32)
-                        << 4 as libc::c_int)
-                        as crate::opus_types_h::opus_int32
+                        << 4) as crate::opus_types_h::opus_int32
             }
-        } else if (*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize)
-            | (((if 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                >> 4 as libc::c_int
-                > 0x7fffffff as libc::c_int >> 4 as libc::c_int
-            {
-                (if LPC_pred_Q10
-                    > 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                        >> 4 as libc::c_int
-                {
-                    (0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32)
-                        >> 4 as libc::c_int
+        } else if (*sLPC_Q14_ptr.offset((16 + i) as isize)
+            | (((if 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 > 0x7fffffff >> 4 {
+                (if LPC_pred_Q10 > 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 {
+                    (0x80000000u32 as crate::opus_types_h::opus_int32) >> 4
                 } else {
-                    (if LPC_pred_Q10 < 0x7fffffff as libc::c_int >> 4 as libc::c_int {
-                        (0x7fffffff as libc::c_int) >> 4 as libc::c_int
+                    (if LPC_pred_Q10 < 0x7fffffff >> 4 {
+                        (0x7fffffff) >> 4
                     } else {
                         LPC_pred_Q10
                     })
                 })
             } else {
-                (if LPC_pred_Q10 > 0x7fffffff as libc::c_int >> 4 as libc::c_int {
-                    (0x7fffffff as libc::c_int) >> 4 as libc::c_int
+                (if LPC_pred_Q10 > 0x7fffffff >> 4 {
+                    (0x7fffffff) >> 4
                 } else {
-                    (if LPC_pred_Q10
-                        < 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                            >> 4 as libc::c_int
-                    {
-                        (0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32)
-                            >> 4 as libc::c_int
+                    (if LPC_pred_Q10 < 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 {
+                        (0x80000000u32 as crate::opus_types_h::opus_int32) >> 4
                     } else {
                         LPC_pred_Q10
                     })
                 })
             }) as crate::opus_types_h::opus_uint32)
-                << 4 as libc::c_int) as crate::opus_types_h::opus_int32)
-            as libc::c_uint
-            & 0x80000000 as libc::c_uint
-            == 0 as libc::c_int as libc::c_uint
+                << 4) as crate::opus_types_h::opus_int32) as u32
+            & 0x80000000
+            == 0
         {
-            0x7fffffff as libc::c_int
+            0x7fffffff
         } else {
-            (*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize))
-                + (((if 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                    >> 4 as libc::c_int
-                    > 0x7fffffff as libc::c_int >> 4 as libc::c_int
-                {
-                    (if LPC_pred_Q10
-                        > 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                            >> 4 as libc::c_int
-                    {
-                        (0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32)
-                            >> 4 as libc::c_int
+            (*sLPC_Q14_ptr.offset((16 + i) as isize))
+                + (((if 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 > 0x7fffffff >> 4 {
+                    (if LPC_pred_Q10 > 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 {
+                        (0x80000000u32 as crate::opus_types_h::opus_int32) >> 4
                     } else {
-                        (if LPC_pred_Q10 < 0x7fffffff as libc::c_int >> 4 as libc::c_int {
-                            (0x7fffffff as libc::c_int) >> 4 as libc::c_int
+                        (if LPC_pred_Q10 < 0x7fffffff >> 4 {
+                            (0x7fffffff) >> 4
                         } else {
                             LPC_pred_Q10
                         })
                     })
                 } else {
-                    (if LPC_pred_Q10 > 0x7fffffff as libc::c_int >> 4 as libc::c_int {
-                        (0x7fffffff as libc::c_int) >> 4 as libc::c_int
+                    (if LPC_pred_Q10 > 0x7fffffff >> 4 {
+                        (0x7fffffff) >> 4
                     } else {
-                        (if LPC_pred_Q10
-                            < 0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32
-                                >> 4 as libc::c_int
-                        {
-                            (0x80000000 as libc::c_uint as crate::opus_types_h::opus_int32)
-                                >> 4 as libc::c_int
+                        (if LPC_pred_Q10 < 0x80000000u32 as crate::opus_types_h::opus_int32 >> 4 {
+                            (0x80000000u32 as crate::opus_types_h::opus_int32) >> 4
                         } else {
                             LPC_pred_Q10
                         })
                     })
                 }) as crate::opus_types_h::opus_uint32)
-                    << 4 as libc::c_int) as crate::opus_types_h::opus_int32
+                    << 4) as crate::opus_types_h::opus_int32
         };
         /* Scale with Gain */
-        *frame.offset(i as isize) = if (if (if 8 as libc::c_int == 1 as libc::c_int {
-            ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                >> 1 as libc::c_int)
-                + ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                    * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                    & 1 as libc::c_int)
+        *frame.offset(i as isize) = if (if (if 8 == 1 {
+            ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                as crate::opus_types_h::opus_int32
+                >> 1)
+                + ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                    as crate::opus_types_h::opus_int32
+                    & 1)
         } else {
-            (((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                >> 8 as libc::c_int - 1 as libc::c_int)
-                + 1 as libc::c_int)
-                >> 1 as libc::c_int
-        }) > 0x7fff as libc::c_int
+            (((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                as crate::opus_types_h::opus_int32
+                >> 8 - 1)
+                + 1)
+                >> 1
+        }) > 0x7fff
         {
-            0x7fff as libc::c_int
+            0x7fff
         } else {
-            (if (if 8 as libc::c_int == 1 as libc::c_int {
-                ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                    * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                    >> 1 as libc::c_int)
-                    + ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                        * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                        >> 16 as libc::c_int)
-                        as crate::opus_types_h::opus_int32
-                        & 1 as libc::c_int)
+            (if (if 8 == 1 {
+                ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                    as crate::opus_types_h::opus_int32
+                    >> 1)
+                    + ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64
+                        >> 16) as crate::opus_types_h::opus_int32
+                        & 1)
             } else {
-                (((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                    * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                    >> 8 as libc::c_int - 1 as libc::c_int)
-                    + 1 as libc::c_int)
-                    >> 1 as libc::c_int
-            }) < 0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
+                (((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                    as crate::opus_types_h::opus_int32
+                    >> 8 - 1)
+                    + 1)
+                    >> 1
+            }) < 0x8000i32 as crate::opus_types_h::opus_int16 as i32
             {
-                0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
+                0x8000i32 as crate::opus_types_h::opus_int16 as i32
             } else {
-                (if 8 as libc::c_int == 1 as libc::c_int {
-                    ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                        * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                        >> 16 as libc::c_int)
+                (if 8 == 1 {
+                    ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
                         as crate::opus_types_h::opus_int32
-                        >> 1 as libc::c_int)
-                        + ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize)
-                            as libc::c_longlong
-                            * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                            >> 16 as libc::c_int)
-                            as crate::opus_types_h::opus_int32
-                            & 1 as libc::c_int)
+                        >> 1)
+                        + ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64
+                            >> 16) as crate::opus_types_h::opus_int32
+                            & 1)
                 } else {
-                    (((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                        * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                        >> 16 as libc::c_int)
-                        as crate::opus_types_h::opus_int32
-                        >> 8 as libc::c_int - 1 as libc::c_int)
-                        + 1 as libc::c_int)
-                        >> 1 as libc::c_int
+                    (((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64
+                        >> 16) as crate::opus_types_h::opus_int32
+                        >> 8 - 1)
+                        + 1)
+                        >> 1
                 })
             })
-        }) > 0x7fff as libc::c_int
+        }) > 0x7fff
         {
-            0x7fff as libc::c_int
-        } else if (if (if 8 as libc::c_int == 1 as libc::c_int {
-            ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                >> 1 as libc::c_int)
-                + ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                    * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                    & 1 as libc::c_int)
+            0x7fff
+        } else if (if (if 8 == 1 {
+            ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                as crate::opus_types_h::opus_int32
+                >> 1)
+                + ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                    as crate::opus_types_h::opus_int32
+                    & 1)
         } else {
-            (((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                >> 8 as libc::c_int - 1 as libc::c_int)
-                + 1 as libc::c_int)
-                >> 1 as libc::c_int
-        }) > 0x7fff as libc::c_int
+            (((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                as crate::opus_types_h::opus_int32
+                >> 8 - 1)
+                + 1)
+                >> 1
+        }) > 0x7fff
         {
-            0x7fff as libc::c_int
+            0x7fff
         } else {
-            (if (if 8 as libc::c_int == 1 as libc::c_int {
-                ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                    * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                    >> 1 as libc::c_int)
-                    + ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                        * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                        >> 16 as libc::c_int)
-                        as crate::opus_types_h::opus_int32
-                        & 1 as libc::c_int)
+            (if (if 8 == 1 {
+                ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                    as crate::opus_types_h::opus_int32
+                    >> 1)
+                    + ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64
+                        >> 16) as crate::opus_types_h::opus_int32
+                        & 1)
             } else {
-                (((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                    * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                    >> 8 as libc::c_int - 1 as libc::c_int)
-                    + 1 as libc::c_int)
-                    >> 1 as libc::c_int
-            }) < 0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
+                (((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                    as crate::opus_types_h::opus_int32
+                    >> 8 - 1)
+                    + 1)
+                    >> 1
+            }) < 0x8000i32 as crate::opus_types_h::opus_int16 as i32
             {
-                0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
+                0x8000i32 as crate::opus_types_h::opus_int16 as i32
             } else {
-                (if 8 as libc::c_int == 1 as libc::c_int {
-                    ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                        * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                        >> 16 as libc::c_int)
+                (if 8 == 1 {
+                    ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
                         as crate::opus_types_h::opus_int32
-                        >> 1 as libc::c_int)
-                        + ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize)
-                            as libc::c_longlong
-                            * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                            >> 16 as libc::c_int)
-                            as crate::opus_types_h::opus_int32
-                            & 1 as libc::c_int)
+                        >> 1)
+                        + ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64
+                            >> 16) as crate::opus_types_h::opus_int32
+                            & 1)
                 } else {
-                    (((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                        * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                        >> 16 as libc::c_int)
-                        as crate::opus_types_h::opus_int32
-                        >> 8 as libc::c_int - 1 as libc::c_int)
-                        + 1 as libc::c_int)
-                        >> 1 as libc::c_int
+                    (((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64
+                        >> 16) as crate::opus_types_h::opus_int32
+                        >> 8 - 1)
+                        + 1)
+                        >> 1
                 })
             })
-        }) < 0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
+        }) < 0x8000i32 as crate::opus_types_h::opus_int16 as i32
         {
-            0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
-        } else if (if 8 as libc::c_int == 1 as libc::c_int {
-            ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                >> 1 as libc::c_int)
-                + ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                    * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                    & 1 as libc::c_int)
+            0x8000i32 as crate::opus_types_h::opus_int16 as i32
+        } else if (if 8 == 1 {
+            ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                as crate::opus_types_h::opus_int32
+                >> 1)
+                + ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                    as crate::opus_types_h::opus_int32
+                    & 1)
         } else {
-            (((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                >> 8 as libc::c_int - 1 as libc::c_int)
-                + 1 as libc::c_int)
-                >> 1 as libc::c_int
-        }) > 0x7fff as libc::c_int
+            (((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                as crate::opus_types_h::opus_int32
+                >> 8 - 1)
+                + 1)
+                >> 1
+        }) > 0x7fff
         {
-            0x7fff as libc::c_int
-        } else if (if 8 as libc::c_int == 1 as libc::c_int {
-            ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                >> 1 as libc::c_int)
-                + ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                    * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                    & 1 as libc::c_int)
+            0x7fff
+        } else if (if 8 == 1 {
+            ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                as crate::opus_types_h::opus_int32
+                >> 1)
+                + ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                    as crate::opus_types_h::opus_int32
+                    & 1)
         } else {
-            (((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                >> 8 as libc::c_int - 1 as libc::c_int)
-                + 1 as libc::c_int)
-                >> 1 as libc::c_int
-        }) < 0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
+            (((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                as crate::opus_types_h::opus_int32
+                >> 8 - 1)
+                + 1)
+                >> 1
+        }) < 0x8000i32 as crate::opus_types_h::opus_int16 as i32
         {
-            0x8000 as libc::c_int as crate::opus_types_h::opus_int16 as libc::c_int
-        } else if 8 as libc::c_int == 1 as libc::c_int {
-            ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                >> 1 as libc::c_int)
-                + ((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                    * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                    >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                    & 1 as libc::c_int)
+            0x8000i32 as crate::opus_types_h::opus_int16 as i32
+        } else if 8 == 1 {
+            ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                as crate::opus_types_h::opus_int32
+                >> 1)
+                + ((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                    as crate::opus_types_h::opus_int32
+                    & 1)
         } else {
-            (((*sLPC_Q14_ptr.offset((16 as libc::c_int + i) as isize) as libc::c_longlong
-                * prevGain_Q10[1 as libc::c_int as usize] as libc::c_longlong
-                >> 16 as libc::c_int) as crate::opus_types_h::opus_int32
-                >> 8 as libc::c_int - 1 as libc::c_int)
-                + 1 as libc::c_int)
-                >> 1 as libc::c_int
+            (((*sLPC_Q14_ptr.offset((16 + i) as isize) as i64 * prevGain_Q10[1] as i64 >> 16)
+                as crate::opus_types_h::opus_int32
+                >> 8 - 1)
+                + 1)
+                >> 1
         } as crate::opus_types_h::opus_int16;
         i += 1
     }
     /* Save LPC state */
-    crate::stdlib::memcpy((*psDec).sLPC_Q14_buf.as_mut_ptr() as *mut libc::c_void,
-           &mut *sLPC_Q14_ptr.offset((*psDec).frame_length as isize) as
-               *mut crate::opus_types_h::opus_int32 as *const libc::c_void,
-           (16 as libc::c_int as
-                libc::c_ulong).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()
-                                                as libc::c_ulong));
+    crate::stdlib::memcpy(
+        (*psDec).sLPC_Q14_buf.as_mut_ptr() as *mut libc::c_void,
+        &mut *sLPC_Q14_ptr.offset((*psDec).frame_length as isize)
+            as *mut crate::opus_types_h::opus_int32 as *const libc::c_void,
+        (16usize).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()),
+    );
     /* *************************************/
     /* Update states                      */
     /* *************************************/
     (*psPLC).rand_seed = rand_seed;
     (*psPLC).randScale_Q14 = rand_scale_Q14;
-    i = 0 as libc::c_int;
-    while i < 4 as libc::c_int {
+    i = 0;
+    while i < 4 {
         (*psDecCtrl).pitchL[i as usize] = lag;
         i += 1
     }
@@ -1429,12 +1204,12 @@ POSSIBILITY OF SUCH DAMAGE.
 pub unsafe extern "C" fn silk_PLC_glue_frames(
     mut psDec: *mut crate::structs_h::silk_decoder_state,
     mut frame: *mut crate::opus_types_h::opus_int16,
-    mut length: libc::c_int,
+    mut length: i32,
 )
 /* I length of signal       */
 {
-    let mut i: libc::c_int = 0;
-    let mut energy_shift: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut energy_shift: i32 = 0;
     let mut energy: crate::opus_types_h::opus_int32 = 0;
     let mut psPLC: *mut crate::structs_h::silk_PLC_struct =
         0 as *mut crate::structs_h::silk_PLC_struct;
@@ -1447,7 +1222,7 @@ pub unsafe extern "C" fn silk_PLC_glue_frames(
             frame as *const crate::opus_types_h::opus_int16,
             length,
         );
-        (*psPLC).last_frame_lost = 1 as libc::c_int
+        (*psPLC).last_frame_lost = 1
     } else {
         if (*psDec).sPLC.last_frame_lost != 0 {
             /* Calculate residual in decoded signal if last frame was lost */
@@ -1471,39 +1246,31 @@ pub unsafe extern "C" fn silk_PLC_glue_frames(
                 let mut gain_Q16: crate::opus_types_h::opus_int32 = 0;
                 let mut slope_Q16: crate::opus_types_h::opus_int32 = 0;
                 LZ = silk_CLZ32((*psPLC).conc_energy);
-                LZ = LZ - 1 as libc::c_int;
+                LZ = LZ - 1;
                 (*psPLC).conc_energy = (((*psPLC).conc_energy as crate::opus_types_h::opus_uint32)
                     << LZ)
                     as crate::opus_types_h::opus_int32;
-                energy = energy >> silk_max_32(24 as libc::c_int - LZ, 0 as libc::c_int);
-                frac_Q24 = (*psPLC).conc_energy
-                    / (if energy > 1 as libc::c_int {
-                        energy
-                    } else {
-                        1 as libc::c_int
-                    });
-                gain_Q16 = ((silk_SQRT_APPROX(frac_Q24) as crate::opus_types_h::opus_uint32)
-                    << 4 as libc::c_int)
+                energy = energy >> silk_max_32(24 - LZ, 0);
+                frac_Q24 = (*psPLC).conc_energy / (if energy > 1 { energy } else { 1 });
+                gain_Q16 = ((silk_SQRT_APPROX(frac_Q24) as crate::opus_types_h::opus_uint32) << 4)
                     as crate::opus_types_h::opus_int32;
-                slope_Q16 = (((1 as libc::c_int) << 16 as libc::c_int) - gain_Q16) / length;
+                slope_Q16 = (((1) << 16) - gain_Q16) / length;
                 /* Make slope 4x steeper to avoid missing onsets after DTX */
-                slope_Q16 = ((slope_Q16 as crate::opus_types_h::opus_uint32) << 2 as libc::c_int)
+                slope_Q16 = ((slope_Q16 as crate::opus_types_h::opus_uint32) << 2)
                     as crate::opus_types_h::opus_int32;
-                i = 0 as libc::c_int;
+                i = 0;
                 while i < length {
-                    *frame.offset(i as isize) = (gain_Q16 as libc::c_longlong
-                        * *frame.offset(i as isize) as libc::c_longlong
-                        >> 16 as libc::c_int)
-                        as crate::opus_types_h::opus_int32
+                    *frame.offset(i as isize) = (gain_Q16 as i64 * *frame.offset(i as isize) as i64
+                        >> 16)
                         as crate::opus_types_h::opus_int16;
                     gain_Q16 += slope_Q16;
-                    if gain_Q16 > (1 as libc::c_int) << 16 as libc::c_int {
+                    if gain_Q16 > (1) << 16 {
                         break;
                     }
                     i += 1
                 }
             }
         }
-        (*psPLC).last_frame_lost = 0 as libc::c_int
+        (*psPLC).last_frame_lost = 0
     };
 }

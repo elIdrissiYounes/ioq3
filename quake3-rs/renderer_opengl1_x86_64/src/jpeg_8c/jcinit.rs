@@ -96,12 +96,12 @@ pub use crate::src::jpeg_8c::jcsample::jinit_downsampler;
 
 pub unsafe extern "C" fn jinit_compress_master(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
     /* Initialize master control (includes parameter checking/processing) */
-    crate::src::jpeg_8c::jcmaster::jinit_c_master_control(cinfo, 0 as libc::c_int);
+    crate::src::jpeg_8c::jcmaster::jinit_c_master_control(cinfo, 0);
     /* Preprocessing */
     if (*cinfo).raw_data_in == 0 {
         crate::src::jpeg_8c::jccolor::jinit_color_converter(cinfo);
         crate::src::jpeg_8c::jcsample::jinit_downsampler(cinfo);
-        crate::src::jpeg_8c::jcprepct::jinit_c_prep_controller(cinfo, 0 as libc::c_int);
+        crate::src::jpeg_8c::jcprepct::jinit_c_prep_controller(cinfo, 0i32);
     }
     /* Forward DCT */
     crate::src::jpeg_8c::jcdctmgr::jinit_forward_dct(cinfo);
@@ -114,9 +114,9 @@ pub unsafe extern "C" fn jinit_compress_master(mut cinfo: crate::jpeglib_h::j_co
     /* Need a full-image coefficient buffer in any multi-pass mode. */
     crate::src::jpeg_8c::jccoefct::jinit_c_coef_controller(
         cinfo,
-        ((*cinfo).num_scans > 1 as libc::c_int || (*cinfo).optimize_coding != 0) as libc::c_int,
+        ((*cinfo).num_scans > 1 || (*cinfo).optimize_coding != 0) as i32,
     );
-    crate::src::jpeg_8c::jcmainct::jinit_c_main_controller(cinfo, 0 as libc::c_int);
+    crate::src::jpeg_8c::jcmainct::jinit_c_main_controller(cinfo, 0);
     crate::src::jpeg_8c::jcmarker::jinit_marker_writer(cinfo);
     /* We can now tell the memory manager to allocate virtual arrays. */
     Some(

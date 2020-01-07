@@ -1,17 +1,17 @@
-pub type imgType_t = libc::c_uint;
-pub type imgFlags_t = libc::c_uint;
+pub type imgType_t = u32;
+pub type imgFlags_t = u32;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct image_s {
-    pub imgName: [libc::c_char; 64],
-    pub width: libc::c_int,
-    pub height: libc::c_int,
-    pub uploadWidth: libc::c_int,
-    pub uploadHeight: libc::c_int,
+    pub imgName: [i8; 64],
+    pub width: i32,
+    pub height: i32,
+    pub uploadWidth: i32,
+    pub uploadHeight: i32,
     pub texnum: crate::stdlib::GLuint,
-    pub frameUsed: libc::c_int,
-    pub internalFormat: libc::c_int,
-    pub TMU: libc::c_int,
+    pub frameUsed: i32,
+    pub internalFormat: i32,
+    pub TMU: i32,
     pub type_0: crate::tr_common_h::imgType_t,
     pub flags: crate::tr_common_h::imgFlags_t,
     pub next: *mut crate::tr_common_h::image_s,

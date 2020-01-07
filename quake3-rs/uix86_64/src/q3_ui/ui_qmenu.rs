@@ -359,73 +359,59 @@ static mut sliderButton_0: crate::src::qcommon::q_shared::qhandle_t = 0;
 static mut sliderButton_1: crate::src::qcommon::q_shared::qhandle_t = 0;
 #[no_mangle]
 
-pub static mut menu_text_color: crate::src::qcommon::q_shared::vec4_t =
-    [1.0f32, 1.0f32, 1.0f32, 1.0f32];
+pub static mut menu_text_color: crate::src::qcommon::q_shared::vec4_t = [1.0, 1.0, 1.0, 1.0];
 #[no_mangle]
 
-pub static mut menu_dim_color: crate::src::qcommon::q_shared::vec4_t =
-    [0.0f32, 0.0f32, 0.0f32, 0.75f32];
+pub static mut menu_dim_color: crate::src::qcommon::q_shared::vec4_t = [0.0, 0.0, 0.0, 0.75];
 #[no_mangle]
 
-pub static mut color_black: crate::src::qcommon::q_shared::vec4_t =
-    [0.00f32, 0.00f32, 0.00f32, 1.00f32];
+pub static mut color_black: crate::src::qcommon::q_shared::vec4_t = [0.00, 0.00, 0.00, 1.00];
 #[no_mangle]
 
-pub static mut color_white: crate::src::qcommon::q_shared::vec4_t =
-    [1.00f32, 1.00f32, 1.00f32, 1.00f32];
+pub static mut color_white: crate::src::qcommon::q_shared::vec4_t = [1.00, 1.00, 1.00, 1.00];
 #[no_mangle]
 
-pub static mut color_yellow: crate::src::qcommon::q_shared::vec4_t =
-    [1.00f32, 1.00f32, 0.00f32, 1.00f32];
+pub static mut color_yellow: crate::src::qcommon::q_shared::vec4_t = [1.00, 1.00, 0.00, 1.00];
 #[no_mangle]
 
-pub static mut color_blue: crate::src::qcommon::q_shared::vec4_t =
-    [0.00f32, 0.00f32, 1.00f32, 1.00f32];
+pub static mut color_blue: crate::src::qcommon::q_shared::vec4_t = [0.00, 0.00, 1.00, 1.00];
 #[no_mangle]
 
-pub static mut color_lightOrange: crate::src::qcommon::q_shared::vec4_t =
-    [1.00f32, 0.68f32, 0.00f32, 1.00f32];
+pub static mut color_lightOrange: crate::src::qcommon::q_shared::vec4_t = [1.00, 0.68, 0.00, 1.00];
 #[no_mangle]
 
-pub static mut color_orange: crate::src::qcommon::q_shared::vec4_t =
-    [1.00f32, 0.43f32, 0.00f32, 1.00f32];
+pub static mut color_orange: crate::src::qcommon::q_shared::vec4_t = [1.00, 0.43, 0.00, 1.00];
 #[no_mangle]
 
-pub static mut color_red: crate::src::qcommon::q_shared::vec4_t =
-    [1.00f32, 0.00f32, 0.00f32, 1.00f32];
+pub static mut color_red: crate::src::qcommon::q_shared::vec4_t = [1.00, 0.00, 0.00, 1.00];
 #[no_mangle]
 
-pub static mut color_dim: crate::src::qcommon::q_shared::vec4_t =
-    [0.00f32, 0.00f32, 0.00f32, 0.25f32];
+pub static mut color_dim: crate::src::qcommon::q_shared::vec4_t = [0.00, 0.00, 0.00, 0.25];
 // current color scheme
 #[no_mangle]
 
-pub static mut pulse_color: crate::src::qcommon::q_shared::vec4_t =
-    [1.00f32, 1.00f32, 1.00f32, 1.00f32];
+pub static mut pulse_color: crate::src::qcommon::q_shared::vec4_t = [1.00, 1.00, 1.00, 1.00];
 #[no_mangle]
 
 pub static mut text_color_disabled: crate::src::qcommon::q_shared::vec4_t =
-    [0.50f32, 0.50f32, 0.50f32, 1.00f32];
+    [0.50, 0.50, 0.50, 1.00];
 // light gray
 #[no_mangle]
 
-pub static mut text_color_normal: crate::src::qcommon::q_shared::vec4_t =
-    [1.00f32, 0.43f32, 0.00f32, 1.00f32];
+pub static mut text_color_normal: crate::src::qcommon::q_shared::vec4_t = [1.00, 0.43, 0.00, 1.00];
 // light orange
 #[no_mangle]
 
 pub static mut text_color_highlight: crate::src::qcommon::q_shared::vec4_t =
-    [1.00f32, 1.00f32, 0.00f32, 1.00f32];
+    [1.00, 1.00, 0.00, 1.00];
 // bright yellow
 #[no_mangle]
 
-pub static mut listbar_color: crate::src::qcommon::q_shared::vec4_t =
-    [1.00f32, 0.43f32, 0.00f32, 0.30f32];
+pub static mut listbar_color: crate::src::qcommon::q_shared::vec4_t = [1.00, 0.43, 0.00, 0.30];
 // transluscent orange
 #[no_mangle]
 
-pub static mut text_color_status: crate::src::qcommon::q_shared::vec4_t =
-    [1.00f32, 1.00f32, 1.00f32, 1.00f32];
+pub static mut text_color_status: crate::src::qcommon::q_shared::vec4_t = [1.00, 1.00, 1.00, 1.00];
 // text widget
 /*
 =================
@@ -434,7 +420,7 @@ Text_Init
 */
 
 unsafe extern "C" fn Text_Init(mut t: *mut crate::ui_local_h::menutext_s) {
-    (*t).generic.flags |= 0x4000 as libc::c_int as libc::c_uint;
+    (*t).generic.flags |= 0x4000u32;
 }
 /*
 =================
@@ -443,13 +429,13 @@ Text_Draw
 */
 
 unsafe extern "C" fn Text_Draw(mut t: *mut crate::ui_local_h::menutext_s) {
-    let mut x: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
-    let mut buff: [libc::c_char; 512] = [0; 512];
-    let mut color: *mut libc::c_float = 0 as *mut libc::c_float;
+    let mut x: i32 = 0;
+    let mut y: i32 = 0;
+    let mut buff: [i8; 512] = [0; 512];
+    let mut color: *mut f32 = 0 as *mut f32;
     x = (*t).generic.x;
     y = (*t).generic.y;
-    buff[0 as libc::c_int as usize] = '\u{0}' as i32 as libc::c_char;
+    buff[0] = '\u{0}' as i8;
     // possible label
     if !(*t).generic.name.is_null() {
         crate::stdlib::strcpy(buff.as_mut_ptr(), (*t).generic.name);
@@ -458,7 +444,7 @@ unsafe extern "C" fn Text_Draw(mut t: *mut crate::ui_local_h::menutext_s) {
     if !(*t).string.is_null() {
         crate::stdlib::strcat(buff.as_mut_ptr(), (*t).string);
     }
-    if (*t).generic.flags & 0x2000 as libc::c_int as libc::c_uint != 0 {
+    if (*t).generic.flags & 0x2000u32 != 0 {
         color = text_color_disabled.as_mut_ptr()
     } else {
         color = (*t).color
@@ -473,7 +459,7 @@ BText_Init
 */
 
 unsafe extern "C" fn BText_Init(mut t: *mut crate::ui_local_h::menutext_s) {
-    (*t).generic.flags |= 0x4000 as libc::c_int as libc::c_uint;
+    (*t).generic.flags |= 0x4000u32;
 }
 /*
 =================
@@ -482,12 +468,12 @@ BText_Draw
 */
 
 unsafe extern "C" fn BText_Draw(mut t: *mut crate::ui_local_h::menutext_s) {
-    let mut x: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
-    let mut color: *mut libc::c_float = 0 as *mut libc::c_float;
+    let mut x: i32 = 0;
+    let mut y: i32 = 0;
+    let mut color: *mut f32 = 0 as *mut f32;
     x = (*t).generic.x;
     y = (*t).generic.y;
-    if (*t).generic.flags & 0x2000 as libc::c_int as libc::c_uint != 0 {
+    if (*t).generic.flags & 0x2000u32 != 0 {
         color = text_color_disabled.as_mut_ptr()
     } else {
         color = (*t).color
@@ -502,26 +488,24 @@ PText_Init
 */
 
 unsafe extern "C" fn PText_Init(mut t: *mut crate::ui_local_h::menutext_s) {
-    let mut x: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
-    let mut w: libc::c_int = 0;
-    let mut h: libc::c_int = 0;
-    let mut sizeScale: libc::c_float = 0.;
+    let mut x: i32 = 0;
+    let mut y: i32 = 0;
+    let mut w: i32 = 0;
+    let mut h: i32 = 0;
+    let mut sizeScale: f32 = 0.;
     sizeScale = crate::src::q3_ui::ui_atoms::UI_ProportionalSizeScale((*t).style);
     x = (*t).generic.x;
     y = (*t).generic.y;
-    w = (crate::src::q3_ui::ui_atoms::UI_ProportionalStringWidth((*t).string) as libc::c_float
-        * sizeScale) as libc::c_int;
-    h = (27 as libc::c_int as libc::c_float * sizeScale) as libc::c_int;
-    if (*t).generic.flags & 0x10 as libc::c_int as libc::c_uint != 0 {
+    w = (crate::src::q3_ui::ui_atoms::UI_ProportionalStringWidth((*t).string) as f32 * sizeScale)
+        as i32;
+    h = (27f32 * sizeScale) as i32;
+    if (*t).generic.flags & 0x10u32 != 0 {
         x -= w
-    } else if (*t).generic.flags & 0x8 as libc::c_int as libc::c_uint != 0 {
-        x -= w / 2 as libc::c_int
+    } else if (*t).generic.flags & 0x8u32 != 0 {
+        x -= w / 2
     }
-    (*t).generic.left =
-        (x as libc::c_float - 3 as libc::c_int as libc::c_float * sizeScale) as libc::c_int;
-    (*t).generic.right =
-        ((x + w) as libc::c_float + 3 as libc::c_int as libc::c_float * sizeScale) as libc::c_int;
+    (*t).generic.left = (x as f32 - 3f32 * sizeScale) as i32;
+    (*t).generic.right = ((x + w) as f32 + 3f32 * sizeScale) as i32;
     (*t).generic.top = y;
     (*t).generic.bottom = y + h;
 }
@@ -532,23 +516,23 @@ PText_Draw
 */
 
 unsafe extern "C" fn PText_Draw(mut t: *mut crate::ui_local_h::menutext_s) {
-    let mut x: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
-    let mut color: *mut libc::c_float = 0 as *mut libc::c_float;
-    let mut style: libc::c_int = 0;
+    let mut x: i32 = 0;
+    let mut y: i32 = 0;
+    let mut color: *mut f32 = 0 as *mut f32;
+    let mut style: i32 = 0;
     x = (*t).generic.x;
     y = (*t).generic.y;
-    if (*t).generic.flags & 0x2000 as libc::c_int as libc::c_uint != 0 {
+    if (*t).generic.flags & 0x2000u32 != 0 {
         color = text_color_disabled.as_mut_ptr()
     } else {
         color = (*t).color
     }
     style = (*t).style;
-    if (*t).generic.flags & 0x100 as libc::c_int as libc::c_uint != 0 {
+    if (*t).generic.flags & 0x100u32 != 0 {
         if Menu_ItemAtCursor((*t).generic.parent) == t as *mut libc::c_void {
-            style |= 0x4000 as libc::c_int
+            style |= 0x4000
         } else {
-            style |= 0x2000 as libc::c_int
+            style |= 0x2000
         }
     }
     crate::src::q3_ui::ui_atoms::UI_DrawProportionalString(x, y, (*t).string, style, color);
@@ -561,31 +545,31 @@ Bitmap_Init
 #[no_mangle]
 
 pub unsafe extern "C" fn Bitmap_Init(mut b: *mut crate::ui_local_h::menubitmap_s) {
-    let mut x: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
-    let mut w: libc::c_int = 0;
-    let mut h: libc::c_int = 0;
+    let mut x: i32 = 0;
+    let mut y: i32 = 0;
+    let mut w: i32 = 0;
+    let mut h: i32 = 0;
     x = (*b).generic.x;
     y = (*b).generic.y;
     w = (*b).width;
     h = (*b).height;
-    if w < 0 as libc::c_int {
+    if w < 0 {
         w = -w
     }
-    if h < 0 as libc::c_int {
+    if h < 0 {
         h = -h
     }
-    if (*b).generic.flags & 0x10 as libc::c_int as libc::c_uint != 0 {
+    if (*b).generic.flags & 0x10u32 != 0 {
         x = x - w
-    } else if (*b).generic.flags & 0x8 as libc::c_int as libc::c_uint != 0 {
-        x = x - w / 2 as libc::c_int
+    } else if (*b).generic.flags & 0x8u32 != 0 {
+        x = x - w / 2
     }
     (*b).generic.left = x;
     (*b).generic.right = x + w;
     (*b).generic.top = y;
     (*b).generic.bottom = y + h;
-    (*b).shader = 0 as libc::c_int;
-    (*b).focusshader = 0 as libc::c_int;
+    (*b).shader = 0;
+    (*b).focusshader = 0;
 }
 /*
 =================
@@ -595,20 +579,20 @@ Bitmap_Draw
 #[no_mangle]
 
 pub unsafe extern "C" fn Bitmap_Draw(mut b: *mut crate::ui_local_h::menubitmap_s) {
-    let mut x: libc::c_float = 0.;
-    let mut y: libc::c_float = 0.;
-    let mut w: libc::c_float = 0.;
-    let mut h: libc::c_float = 0.;
+    let mut x: f32 = 0.;
+    let mut y: f32 = 0.;
+    let mut w: f32 = 0.;
+    let mut h: f32 = 0.;
     let mut tempcolor: crate::src::qcommon::q_shared::vec4_t = [0.; 4];
-    let mut color: *mut libc::c_float = 0 as *mut libc::c_float;
-    x = (*b).generic.x as libc::c_float;
-    y = (*b).generic.y as libc::c_float;
-    w = (*b).width as libc::c_float;
-    h = (*b).height as libc::c_float;
-    if (*b).generic.flags & 0x10 as libc::c_int as libc::c_uint != 0 {
+    let mut color: *mut f32 = 0 as *mut f32;
+    x = (*b).generic.x as f32;
+    y = (*b).generic.y as f32;
+    w = (*b).width as f32;
+    h = (*b).height as f32;
+    if (*b).generic.flags & 0x10u32 != 0 {
         x = x - w
-    } else if (*b).generic.flags & 0x8 as libc::c_int as libc::c_uint != 0 {
-        x = x - w / 2 as libc::c_int as libc::c_float
+    } else if (*b).generic.flags & 0x8u32 != 0 {
+        x = x - w / 2f32
     }
     // used to refresh shader
     if !(*b).generic.name.is_null() && (*b).shader == 0 {
@@ -620,50 +604,43 @@ pub unsafe extern "C" fn Bitmap_Draw(mut b: *mut crate::ui_local_h::menubitmap_s
     if !(*b).focuspic.is_null() && (*b).focusshader == 0 {
         (*b).focusshader = crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip((*b).focuspic)
     }
-    if (*b).generic.flags & 0x2000 as libc::c_int as libc::c_uint != 0 {
+    if (*b).generic.flags & 0x2000u32 != 0 {
         if (*b).shader != 0 {
             crate::src::ui::ui_syscalls::trap_R_SetColor(
                 crate::src::qcommon::q_math::colorMdGrey.as_mut_ptr(),
             );
             crate::src::q3_ui::ui_atoms::UI_DrawHandlePic(x, y, w, h, (*b).shader);
-            crate::src::ui::ui_syscalls::trap_R_SetColor(0 as *const libc::c_float);
+            crate::src::ui::ui_syscalls::trap_R_SetColor(0 as *const f32);
         }
     } else {
         if (*b).shader != 0 {
             crate::src::q3_ui::ui_atoms::UI_DrawHandlePic(x, y, w, h, (*b).shader);
         }
-        if ((*b).generic.flags & 0x20000 as libc::c_int as libc::c_uint != 0
-            || (*b).generic.flags & 0x100 as libc::c_int as libc::c_uint != 0)
+        if ((*b).generic.flags & 0x20000u32 != 0 || (*b).generic.flags & 0x100u32 != 0)
             && Menu_ItemAtCursor((*b).generic.parent) == b as *mut libc::c_void
         {
             if !(*b).focuscolor.is_null() {
-                tempcolor[0 as libc::c_int as usize] =
-                    *(*b).focuscolor.offset(0 as libc::c_int as isize);
-                tempcolor[1 as libc::c_int as usize] =
-                    *(*b).focuscolor.offset(1 as libc::c_int as isize);
-                tempcolor[2 as libc::c_int as usize] =
-                    *(*b).focuscolor.offset(2 as libc::c_int as isize);
+                tempcolor[0] = *(*b).focuscolor.offset(0);
+                tempcolor[1] = *(*b).focuscolor.offset(1);
+                tempcolor[2] = *(*b).focuscolor.offset(2);
                 color = tempcolor.as_mut_ptr()
             } else {
                 color = pulse_color.as_mut_ptr()
             }
-            *color.offset(3 as libc::c_int as isize) = (0.5f64
-                + 0.5f64
-                    * crate::stdlib::sin(
-                        (crate::src::q3_ui::ui_atoms::uis.realtime / 75 as libc::c_int)
-                            as libc::c_double,
-                    )) as libc::c_float;
+            *color.offset(3) = (0.5
+                + 0.5 * crate::stdlib::sin((crate::src::q3_ui::ui_atoms::uis.realtime / 75) as f64))
+                as f32;
             crate::src::ui::ui_syscalls::trap_R_SetColor(color);
             crate::src::q3_ui::ui_atoms::UI_DrawHandlePic(x, y, w, h, (*b).focusshader);
-            crate::src::ui::ui_syscalls::trap_R_SetColor(0 as *const libc::c_float);
-        } else if (*b).generic.flags & 0x40 as libc::c_int as libc::c_uint != 0
-            || (*b).generic.flags & 0x80 as libc::c_int as libc::c_uint != 0
+            crate::src::ui::ui_syscalls::trap_R_SetColor(0 as *const f32);
+        } else if (*b).generic.flags & 0x40u32 != 0
+            || (*b).generic.flags & 0x80u32 != 0
                 && Menu_ItemAtCursor((*b).generic.parent) == b as *mut libc::c_void
         {
             if !(*b).focuscolor.is_null() {
                 crate::src::ui::ui_syscalls::trap_R_SetColor((*b).focuscolor);
                 crate::src::q3_ui::ui_atoms::UI_DrawHandlePic(x, y, w, h, (*b).focusshader);
-                crate::src::ui::ui_syscalls::trap_R_SetColor(0 as *const libc::c_float);
+                crate::src::ui::ui_syscalls::trap_R_SetColor(0 as *const f32);
             } else {
                 crate::src::q3_ui::ui_atoms::UI_DrawHandlePic(x, y, w, h, (*b).focusshader);
             }
@@ -679,18 +656,18 @@ Action_Init
 */
 
 unsafe extern "C" fn Action_Init(mut a: *mut crate::ui_local_h::menuaction_s) {
-    let mut len: libc::c_int = 0;
+    let mut len: i32 = 0;
     // calculate bounds
     if !(*a).generic.name.is_null() {
-        len = crate::stdlib::strlen((*a).generic.name) as libc::c_int
+        len = crate::stdlib::strlen((*a).generic.name) as i32
     } else {
-        len = 0 as libc::c_int
+        len = 0
     }
     // left justify text
     (*a).generic.left = (*a).generic.x;
-    (*a).generic.right = (*a).generic.x + len * 16 as libc::c_int;
+    (*a).generic.right = (*a).generic.x + len * 16;
     (*a).generic.top = (*a).generic.y;
-    (*a).generic.bottom = (*a).generic.y + 16 as libc::c_int;
+    (*a).generic.bottom = (*a).generic.y + 16;
 }
 /*
 =================
@@ -699,45 +676,33 @@ Action_Draw
 */
 
 unsafe extern "C" fn Action_Draw(mut a: *mut crate::ui_local_h::menuaction_s) {
-    let mut x: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
-    let mut style: libc::c_int = 0;
-    let mut color: *mut libc::c_float = 0 as *mut libc::c_float;
-    style = 0 as libc::c_int;
+    let mut x: i32 = 0;
+    let mut y: i32 = 0;
+    let mut style: i32 = 0;
+    let mut color: *mut f32 = 0 as *mut f32;
+    style = 0;
     color = menu_text_color.as_mut_ptr();
-    if (*a).generic.flags & 0x2000 as libc::c_int as libc::c_uint != 0 {
+    if (*a).generic.flags & 0x2000u32 != 0 {
         color = text_color_disabled.as_mut_ptr()
-    } else if (*a).generic.flags & 0x100 as libc::c_int as libc::c_uint != 0
+    } else if (*a).generic.flags & 0x100u32 != 0
         && (*(*a).generic.parent).cursor == (*a).generic.menuPosition
     {
         color = text_color_highlight.as_mut_ptr();
-        style = 0x4000 as libc::c_int
-    } else if (*a).generic.flags & 0x80 as libc::c_int as libc::c_uint != 0
+        style = 0x4000
+    } else if (*a).generic.flags & 0x80u32 != 0
         && (*(*a).generic.parent).cursor == (*a).generic.menuPosition
     {
         color = text_color_highlight.as_mut_ptr()
-    } else if (*a).generic.flags & 0x1 as libc::c_int as libc::c_uint != 0 {
-        style = 0x1000 as libc::c_int;
+    } else if (*a).generic.flags & 0x1u32 != 0 {
+        style = 0x1000;
         color = text_color_highlight.as_mut_ptr()
     }
     x = (*a).generic.x;
     y = (*a).generic.y;
-    crate::src::q3_ui::ui_atoms::UI_DrawString(
-        x,
-        y,
-        (*a).generic.name,
-        0 as libc::c_int | style,
-        color,
-    );
+    crate::src::q3_ui::ui_atoms::UI_DrawString(x, y, (*a).generic.name, 0 | style, color);
     if (*(*a).generic.parent).cursor == (*a).generic.menuPosition {
         // draw cursor
-        crate::src::q3_ui::ui_atoms::UI_DrawChar(
-            x - 16 as libc::c_int,
-            y,
-            13 as libc::c_int,
-            0 as libc::c_int | 0x1000 as libc::c_int,
-            color,
-        );
+        crate::src::q3_ui::ui_atoms::UI_DrawChar(x - 16i32, y, 13i32, 0i32 | 0x1000i32, color);
     };
 }
 // radio button widget
@@ -748,17 +713,17 @@ RadioButton_Init
 */
 
 unsafe extern "C" fn RadioButton_Init(mut rb: *mut crate::ui_local_h::menuradiobutton_s) {
-    let mut len: libc::c_int = 0;
+    let mut len: i32 = 0;
     // calculate bounds
     if !(*rb).generic.name.is_null() {
-        len = crate::stdlib::strlen((*rb).generic.name) as libc::c_int
+        len = crate::stdlib::strlen((*rb).generic.name) as i32
     } else {
-        len = 0 as libc::c_int
+        len = 0
     }
-    (*rb).generic.left = (*rb).generic.x - (len + 1 as libc::c_int) * 8 as libc::c_int;
-    (*rb).generic.right = (*rb).generic.x + 6 as libc::c_int * 8 as libc::c_int;
+    (*rb).generic.left = (*rb).generic.x - (len + 1) * 8;
+    (*rb).generic.right = (*rb).generic.x + 6 * 8;
     (*rb).generic.top = (*rb).generic.y;
-    (*rb).generic.bottom = (*rb).generic.y + 16 as libc::c_int;
+    (*rb).generic.bottom = (*rb).generic.y + 16;
 }
 /*
 =================
@@ -768,12 +733,12 @@ RadioButton_Key
 
 unsafe extern "C" fn RadioButton_Key(
     mut rb: *mut crate::ui_local_h::menuradiobutton_s,
-    mut key: libc::c_int,
+    mut key: i32,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
     let mut current_block_3: u64;
     match key {
         178 => {
-            if (*rb).generic.flags & 0x200 as libc::c_int as libc::c_uint == 0 {
+            if (*rb).generic.flags & 0x200u32 == 0 {
                 current_block_3 = 3640593987805443782;
             } else {
                 current_block_3 = 3096415330105608827;
@@ -789,18 +754,18 @@ unsafe extern "C" fn RadioButton_Key(
     match current_block_3 {
         3640593987805443782 => {}
         _ => {
-            (*rb).curvalue = ((*rb).curvalue == 0) as libc::c_int;
+            (*rb).curvalue = ((*rb).curvalue == 0) as i32;
             if (*rb).generic.callback.is_some() {
                 (*rb).generic.callback.expect("non-null function pointer")(
                     rb as *mut libc::c_void,
-                    3 as libc::c_int,
+                    3i32,
                 );
             }
             return menu_move_sound;
         }
     }
     // key not handled
-    return 0 as libc::c_int;
+    return 0;
 }
 /*
 =================
@@ -809,78 +774,72 @@ RadioButton_Draw
 */
 
 unsafe extern "C" fn RadioButton_Draw(mut rb: *mut crate::ui_local_h::menuradiobutton_s) {
-    let mut x: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
-    let mut color: *mut libc::c_float = 0 as *mut libc::c_float;
-    let mut style: libc::c_int = 0;
+    let mut x: i32 = 0;
+    let mut y: i32 = 0;
+    let mut color: *mut f32 = 0 as *mut f32;
+    let mut style: i32 = 0;
     let mut focus: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
     x = (*rb).generic.x;
     y = (*rb).generic.y;
-    focus = ((*(*rb).generic.parent).cursor == (*rb).generic.menuPosition) as libc::c_int
+    focus = ((*(*rb).generic.parent).cursor == (*rb).generic.menuPosition)
         as crate::src::qcommon::q_shared::qboolean;
-    if (*rb).generic.flags & 0x2000 as libc::c_int as libc::c_uint != 0 {
+    if (*rb).generic.flags & 0x2000u32 != 0 {
         color = text_color_disabled.as_mut_ptr();
-        style = 0 as libc::c_int | 0x10 as libc::c_int
+        style = 0 | 0x10
     } else if focus as u64 != 0 {
         color = text_color_highlight.as_mut_ptr();
-        style = 0 as libc::c_int | 0x4000 as libc::c_int | 0x10 as libc::c_int
+        style = 0 | 0x4000 | 0x10
     } else {
         color = text_color_normal.as_mut_ptr();
-        style = 0 as libc::c_int | 0x10 as libc::c_int
+        style = 0 | 0x10
     }
     if focus as u64 != 0 {
         // draw cursor
         crate::src::q3_ui::ui_atoms::UI_FillRect(
-            (*rb).generic.left as libc::c_float,
-            (*rb).generic.top as libc::c_float,
-            ((*rb).generic.right - (*rb).generic.left + 1 as libc::c_int) as libc::c_float,
-            ((*rb).generic.bottom - (*rb).generic.top + 1 as libc::c_int) as libc::c_float,
+            (*rb).generic.left as f32,
+            (*rb).generic.top as f32,
+            ((*rb).generic.right - (*rb).generic.left + 1i32) as f32,
+            ((*rb).generic.bottom - (*rb).generic.top + 1i32) as f32,
             listbar_color.as_mut_ptr(),
         );
-        crate::src::q3_ui::ui_atoms::UI_DrawChar(
-            x,
-            y,
-            13 as libc::c_int,
-            0x1 as libc::c_int | 0x1000 as libc::c_int | 0x10 as libc::c_int,
-            color,
-        );
+        crate::src::q3_ui::ui_atoms::UI_DrawChar(x, y, 13i32, 0x1i32 | 0x1000i32 | 0x10i32, color);
     }
     if !(*rb).generic.name.is_null() {
         crate::src::q3_ui::ui_atoms::UI_DrawString(
-            x - 8 as libc::c_int,
+            x - 8i32,
             y,
             (*rb).generic.name,
-            0x2 as libc::c_int | 0x10 as libc::c_int,
+            0x2i32 | 0x10i32,
             color,
         );
     }
     if (*rb).curvalue == 0 {
         crate::src::q3_ui::ui_atoms::UI_DrawHandlePic(
-            (x + 8 as libc::c_int) as libc::c_float,
-            (y + 2 as libc::c_int) as libc::c_float,
-            16 as libc::c_int as libc::c_float,
-            16 as libc::c_int as libc::c_float,
+            (x + 8) as f32,
+            (y + 2) as f32,
+            16f32,
+            16f32,
             crate::src::q3_ui::ui_atoms::uis.rb_off,
         );
         crate::src::q3_ui::ui_atoms::UI_DrawString(
-            x + 8 as libc::c_int + 16 as libc::c_int,
+            x + 8i32 + 16i32,
             y,
-            b"off\x00" as *const u8 as *const libc::c_char,
+            b"off\x00" as *const u8 as *const i8,
             style,
             color,
         );
     } else {
         crate::src::q3_ui::ui_atoms::UI_DrawHandlePic(
-            (x + 8 as libc::c_int) as libc::c_float,
-            (y + 2 as libc::c_int) as libc::c_float,
-            16 as libc::c_int as libc::c_float,
-            16 as libc::c_int as libc::c_float,
+            (x + 8) as f32,
+            (y + 2) as f32,
+            16f32,
+            16f32,
             crate::src::q3_ui::ui_atoms::uis.rb_on,
         );
         crate::src::q3_ui::ui_atoms::UI_DrawString(
-            x + 8 as libc::c_int + 16 as libc::c_int,
+            x + 8i32 + 16i32,
             y,
-            b"on\x00" as *const u8 as *const libc::c_char,
+            b"on\x00" as *const u8 as *const i8,
             style,
             color,
         );
@@ -894,18 +853,17 @@ Slider_Init
 */
 
 unsafe extern "C" fn Slider_Init(mut s: *mut crate::ui_local_h::menuslider_s) {
-    let mut len: libc::c_int = 0;
+    let mut len: i32 = 0;
     // calculate bounds
     if !(*s).generic.name.is_null() {
-        len = crate::stdlib::strlen((*s).generic.name) as libc::c_int
+        len = crate::stdlib::strlen((*s).generic.name) as i32
     } else {
-        len = 0 as libc::c_int
+        len = 0
     }
-    (*s).generic.left = (*s).generic.x - (len + 1 as libc::c_int) * 8 as libc::c_int;
-    (*s).generic.right = (*s).generic.x
-        + (10 as libc::c_int + 2 as libc::c_int + 1 as libc::c_int) * 8 as libc::c_int;
+    (*s).generic.left = (*s).generic.x - (len + 1) * 8;
+    (*s).generic.right = (*s).generic.x + (10 + 2 + 1) * 8;
     (*s).generic.top = (*s).generic.y;
-    (*s).generic.bottom = (*s).generic.y + 16 as libc::c_int;
+    (*s).generic.bottom = (*s).generic.y + 16;
 }
 /*
 =================
@@ -915,30 +873,26 @@ Slider_Key
 
 unsafe extern "C" fn Slider_Key(
     mut s: *mut crate::ui_local_h::menuslider_s,
-    mut key: libc::c_int,
+    mut key: i32,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
     let mut sound: crate::src::qcommon::q_shared::sfxHandle_t = 0;
-    let mut x: libc::c_int = 0;
-    let mut oldvalue: libc::c_int = 0;
+    let mut x: i32 = 0;
+    let mut oldvalue: i32 = 0;
     match key {
         178 => {
-            x = crate::src::q3_ui::ui_atoms::uis.cursorx
-                - (*s).generic.x
-                - 2 as libc::c_int * 8 as libc::c_int;
-            oldvalue = (*s).curvalue as libc::c_int;
-            (*s).curvalue = x as libc::c_float
-                / (10 as libc::c_int * 8 as libc::c_int) as libc::c_float
-                * ((*s).maxvalue - (*s).minvalue)
-                + (*s).minvalue;
+            x = crate::src::q3_ui::ui_atoms::uis.cursorx - (*s).generic.x - 2 * 8;
+            oldvalue = (*s).curvalue as i32;
+            (*s).curvalue =
+                x as f32 / (10i32 * 8) as f32 * ((*s).maxvalue - (*s).minvalue) + (*s).minvalue;
             if (*s).curvalue < (*s).minvalue {
                 (*s).curvalue = (*s).minvalue
             } else if (*s).curvalue > (*s).maxvalue {
                 (*s).curvalue = (*s).maxvalue
             }
-            if (*s).curvalue != oldvalue as libc::c_float {
+            if (*s).curvalue != oldvalue as f32 {
                 sound = menu_move_sound
             } else {
-                sound = 0 as libc::c_int
+                sound = 0
             }
         }
         163 | 134 => {
@@ -959,14 +913,11 @@ unsafe extern "C" fn Slider_Key(
         }
         _ => {
             // key not handled
-            sound = 0 as libc::c_int
+            sound = 0
         }
     }
     if sound != 0 && (*s).generic.callback.is_some() {
-        (*s).generic.callback.expect("non-null function pointer")(
-            s as *mut libc::c_void,
-            3 as libc::c_int,
-        );
+        (*s).generic.callback.expect("non-null function pointer")(s as *mut libc::c_void, 3i32);
     }
     return sound;
 }
@@ -977,69 +928,60 @@ Slider_Draw
 */
 
 unsafe extern "C" fn Slider_Draw(mut s: *mut crate::ui_local_h::menuslider_s) {
-    let mut x: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
-    let mut style: libc::c_int = 0;
-    let mut color: *mut libc::c_float = 0 as *mut libc::c_float;
-    let mut button: libc::c_int = 0;
+    let mut x: i32 = 0;
+    let mut y: i32 = 0;
+    let mut style: i32 = 0;
+    let mut color: *mut f32 = 0 as *mut f32;
+    let mut button: i32 = 0;
     let mut focus: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
     x = (*s).generic.x;
     y = (*s).generic.y;
-    focus = ((*(*s).generic.parent).cursor == (*s).generic.menuPosition) as libc::c_int
+    focus = ((*(*s).generic.parent).cursor == (*s).generic.menuPosition)
         as crate::src::qcommon::q_shared::qboolean;
-    if (*s).generic.flags & 0x2000 as libc::c_int as libc::c_uint != 0 {
+    if (*s).generic.flags & 0x2000u32 != 0 {
         color = text_color_disabled.as_mut_ptr();
-        style = 0x10 as libc::c_int
+        style = 0x10
     } else if focus as u64 != 0 {
         color = text_color_highlight.as_mut_ptr();
-        style = 0x10 as libc::c_int | 0x4000 as libc::c_int
+        style = 0x10 | 0x4000
     } else {
         color = text_color_normal.as_mut_ptr();
-        style = 0x10 as libc::c_int
+        style = 0x10
     }
     // draw label
-    crate::src::q3_ui::ui_atoms::UI_DrawString(
-        x - 8 as libc::c_int,
-        y,
-        (*s).generic.name,
-        0x2 as libc::c_int | style,
-        color,
-    );
+    crate::src::q3_ui::ui_atoms::UI_DrawString(x - 8, y, (*s).generic.name, 0x2 | style, color);
     // draw slider
     crate::src::q3_ui::ui_atoms::UI_SetColor(color);
     crate::src::q3_ui::ui_atoms::UI_DrawHandlePic(
-        (x + 8 as libc::c_int) as libc::c_float,
-        y as libc::c_float,
-        96 as libc::c_int as libc::c_float,
-        16 as libc::c_int as libc::c_float,
+        (x + 8) as f32,
+        y as f32,
+        96f32,
+        16f32,
         sliderBar,
     );
-    crate::src::q3_ui::ui_atoms::UI_SetColor(0 as *const libc::c_float);
+    crate::src::q3_ui::ui_atoms::UI_SetColor(0 as *const f32);
     // clamp thumb
     if (*s).maxvalue > (*s).minvalue {
         (*s).range = ((*s).curvalue - (*s).minvalue) / ((*s).maxvalue - (*s).minvalue);
-        if (*s).range < 0 as libc::c_int as libc::c_float {
-            (*s).range = 0 as libc::c_int as libc::c_float
-        } else if (*s).range > 1 as libc::c_int as libc::c_float {
-            (*s).range = 1 as libc::c_int as libc::c_float
+        if (*s).range < 0f32 {
+            (*s).range = 0f32
+        } else if (*s).range > 1f32 {
+            (*s).range = 1f32
         }
     } else {
-        (*s).range = 0 as libc::c_int as libc::c_float
+        (*s).range = 0f32
     }
     // draw thumb
-    if style & 0x4000 as libc::c_int != 0 {
+    if style & 0x4000 != 0 {
         button = sliderButton_1
     } else {
         button = sliderButton_0
     }
     crate::src::q3_ui::ui_atoms::UI_DrawHandlePic(
-        (((x + 2 as libc::c_int * 8 as libc::c_int) as libc::c_float
-            + ((10 as libc::c_int - 1 as libc::c_int) * 8 as libc::c_int) as libc::c_float
-                * (*s).range) as libc::c_int
-            - 2 as libc::c_int) as libc::c_float,
-        (y - 2 as libc::c_int) as libc::c_float,
-        12 as libc::c_int as libc::c_float,
-        20 as libc::c_int as libc::c_float,
+        (((x + 2 * 8) as f32 + ((10i32 - 1) * 8) as f32 * (*s).range) as i32 - 2) as f32,
+        (y - 2) as f32,
+        12f32,
+        20f32,
         button,
     );
 }
@@ -1051,32 +993,31 @@ SpinControl_Init
 */
 
 unsafe extern "C" fn SpinControl_Init(mut s: *mut crate::ui_local_h::menulist_s) {
-    let mut len: libc::c_int = 0;
-    let mut l: libc::c_int = 0;
-    let mut str: *const libc::c_char = 0 as *const libc::c_char;
+    let mut len: i32 = 0;
+    let mut l: i32 = 0;
+    let mut str: *const i8 = 0 as *const i8;
     if !(*s).generic.name.is_null() {
-        len = crate::stdlib::strlen((*s).generic.name)
-            .wrapping_mul(8 as libc::c_int as libc::c_ulong) as libc::c_int
+        len = crate::stdlib::strlen((*s).generic.name).wrapping_mul(8usize) as i32
     } else {
-        len = 0 as libc::c_int
+        len = 0
     }
-    (*s).generic.left = (*s).generic.x - 8 as libc::c_int - len;
-    (*s).numitems = 0 as libc::c_int;
+    (*s).generic.left = (*s).generic.x - 8 - len;
+    (*s).numitems = 0;
     len = (*s).numitems;
     loop {
         str = *(*s).itemnames.offset((*s).numitems as isize);
         if str.is_null() {
             break;
         }
-        l = crate::stdlib::strlen(str) as libc::c_int;
+        l = crate::stdlib::strlen(str) as i32;
         if l > len {
             len = l
         }
         (*s).numitems += 1
     }
     (*s).generic.top = (*s).generic.y;
-    (*s).generic.right = (*s).generic.x + (len + 1 as libc::c_int) * 8 as libc::c_int;
-    (*s).generic.bottom = (*s).generic.y + 16 as libc::c_int;
+    (*s).generic.right = (*s).generic.x + (len + 1) * 8;
+    (*s).generic.bottom = (*s).generic.y + 16;
 }
 /*
 =================
@@ -1086,32 +1027,29 @@ SpinControl_Key
 
 unsafe extern "C" fn SpinControl_Key(
     mut s: *mut crate::ui_local_h::menulist_s,
-    mut key: libc::c_int,
+    mut key: i32,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
     let mut sound: crate::src::qcommon::q_shared::sfxHandle_t = 0;
-    sound = 0 as libc::c_int;
+    sound = 0;
     match key {
         165 | 135 | 178 => {
             (*s).curvalue += 1;
             if (*s).curvalue >= (*s).numitems {
-                (*s).curvalue = 0 as libc::c_int
+                (*s).curvalue = 0
             }
             sound = menu_move_sound
         }
         163 | 134 => {
             (*s).curvalue -= 1;
-            if (*s).curvalue < 0 as libc::c_int {
-                (*s).curvalue = (*s).numitems - 1 as libc::c_int
+            if (*s).curvalue < 0 {
+                (*s).curvalue = (*s).numitems - 1
             }
             sound = menu_move_sound
         }
         _ => {}
     }
     if sound != 0 && (*s).generic.callback.is_some() {
-        (*s).generic.callback.expect("non-null function pointer")(
-            s as *mut libc::c_void,
-            3 as libc::c_int,
-        );
+        (*s).generic.callback.expect("non-null function pointer")(s as *mut libc::c_void, 3i32);
     }
     return sound;
 }
@@ -1122,56 +1060,44 @@ SpinControl_Draw
 */
 
 unsafe extern "C" fn SpinControl_Draw(mut s: *mut crate::ui_local_h::menulist_s) {
-    let mut color: *mut libc::c_float = 0 as *mut libc::c_float;
-    let mut x: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
-    let mut style: libc::c_int = 0;
+    let mut color: *mut f32 = 0 as *mut f32;
+    let mut x: i32 = 0;
+    let mut y: i32 = 0;
+    let mut style: i32 = 0;
     let mut focus: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
     x = (*s).generic.x;
     y = (*s).generic.y;
-    style = 0x10 as libc::c_int;
-    focus = ((*(*s).generic.parent).cursor == (*s).generic.menuPosition) as libc::c_int
+    style = 0x10;
+    focus = ((*(*s).generic.parent).cursor == (*s).generic.menuPosition)
         as crate::src::qcommon::q_shared::qboolean;
-    if (*s).generic.flags & 0x2000 as libc::c_int as libc::c_uint != 0 {
+    if (*s).generic.flags & 0x2000u32 != 0 {
         color = text_color_disabled.as_mut_ptr()
     } else if focus as u64 != 0 {
         color = text_color_highlight.as_mut_ptr();
-        style |= 0x4000 as libc::c_int
-    } else if (*s).generic.flags & 0x1 as libc::c_int as libc::c_uint != 0 {
+        style |= 0x4000
+    } else if (*s).generic.flags & 0x1u32 != 0 {
         color = text_color_highlight.as_mut_ptr();
-        style |= 0x1000 as libc::c_int
+        style |= 0x1000
     } else {
         color = text_color_normal.as_mut_ptr()
     }
     if focus as u64 != 0 {
         // draw cursor
         crate::src::q3_ui::ui_atoms::UI_FillRect(
-            (*s).generic.left as libc::c_float,
-            (*s).generic.top as libc::c_float,
-            ((*s).generic.right - (*s).generic.left + 1 as libc::c_int) as libc::c_float,
-            ((*s).generic.bottom - (*s).generic.top + 1 as libc::c_int) as libc::c_float,
+            (*s).generic.left as f32,
+            (*s).generic.top as f32,
+            ((*s).generic.right - (*s).generic.left + 1i32) as f32,
+            ((*s).generic.bottom - (*s).generic.top + 1i32) as f32,
             listbar_color.as_mut_ptr(),
         );
-        crate::src::q3_ui::ui_atoms::UI_DrawChar(
-            x,
-            y,
-            13 as libc::c_int,
-            0x1 as libc::c_int | 0x1000 as libc::c_int | 0x10 as libc::c_int,
-            color,
-        );
+        crate::src::q3_ui::ui_atoms::UI_DrawChar(x, y, 13i32, 0x1i32 | 0x1000i32 | 0x10i32, color);
     }
+    crate::src::q3_ui::ui_atoms::UI_DrawString(x - 8, y, (*s).generic.name, style | 0x2, color);
     crate::src::q3_ui::ui_atoms::UI_DrawString(
-        x - 8 as libc::c_int,
-        y,
-        (*s).generic.name,
-        style | 0x2 as libc::c_int,
-        color,
-    );
-    crate::src::q3_ui::ui_atoms::UI_DrawString(
-        x + 8 as libc::c_int,
+        x + 8,
         y,
         *(*s).itemnames.offset((*s).curvalue as isize),
-        style | 0 as libc::c_int,
+        style | 0,
         color,
     );
 }
@@ -1183,24 +1109,24 @@ ScrollList_Init
 */
 
 unsafe extern "C" fn ScrollList_Init(mut l: *mut crate::ui_local_h::menulist_s) {
-    let mut w: libc::c_int = 0;
-    (*l).oldvalue = 0 as libc::c_int;
-    (*l).curvalue = 0 as libc::c_int;
-    (*l).top = 0 as libc::c_int;
+    let mut w: i32 = 0;
+    (*l).oldvalue = 0;
+    (*l).curvalue = 0;
+    (*l).top = 0;
     if (*l).columns == 0 {
-        (*l).columns = 1 as libc::c_int;
-        (*l).separation = 0 as libc::c_int
+        (*l).columns = 1;
+        (*l).separation = 0
     } else if (*l).separation == 0 {
-        (*l).separation = 3 as libc::c_int
+        (*l).separation = 3
     }
-    w = (((*l).width + (*l).separation) * (*l).columns - (*l).separation) * 8 as libc::c_int;
+    w = (((*l).width + (*l).separation) * (*l).columns - (*l).separation) * 8;
     (*l).generic.left = (*l).generic.x;
     (*l).generic.top = (*l).generic.y;
     (*l).generic.right = (*l).generic.x + w;
-    (*l).generic.bottom = (*l).generic.y + (*l).height * 16 as libc::c_int;
-    if (*l).generic.flags & 0x8 as libc::c_int as libc::c_uint != 0 {
-        (*l).generic.left -= w / 2 as libc::c_int;
-        (*l).generic.right -= w / 2 as libc::c_int
+    (*l).generic.bottom = (*l).generic.y + (*l).height * 16;
+    if (*l).generic.flags & 0x8u32 != 0 {
+        (*l).generic.left -= w / 2;
+        (*l).generic.right -= w / 2
     };
 }
 /*
@@ -1212,40 +1138,34 @@ ScrollList_Key
 
 pub unsafe extern "C" fn ScrollList_Key(
     mut l: *mut crate::ui_local_h::menulist_s,
-    mut key: libc::c_int,
+    mut key: i32,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
-    let mut x: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
-    let mut w: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    let mut c: libc::c_int = 0;
-    let mut cursorx: libc::c_int = 0;
-    let mut cursory: libc::c_int = 0;
-    let mut column: libc::c_int = 0;
-    let mut index: libc::c_int = 0;
+    let mut x: i32 = 0;
+    let mut y: i32 = 0;
+    let mut w: i32 = 0;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    let mut c: i32 = 0;
+    let mut cursorx: i32 = 0;
+    let mut cursory: i32 = 0;
+    let mut column: i32 = 0;
+    let mut index: i32 = 0;
     match key {
         178 => {
-            if (*l).generic.flags & 0x200 as libc::c_int as libc::c_uint != 0 {
+            if (*l).generic.flags & 0x200u32 != 0 {
                 // check scroll region
                 x = (*l).generic.x;
                 y = (*l).generic.y;
-                w = (((*l).width + (*l).separation) * (*l).columns - (*l).separation)
-                    * 8 as libc::c_int;
-                if (*l).generic.flags & 0x8 as libc::c_int as libc::c_uint != 0 {
-                    x -= w / 2 as libc::c_int
+                w = (((*l).width + (*l).separation) * (*l).columns - (*l).separation) * 8;
+                if (*l).generic.flags & 0x8u32 != 0 {
+                    x -= w / 2
                 }
-                if crate::src::q3_ui::ui_atoms::UI_CursorInRect(
-                    x,
-                    y,
-                    w,
-                    (*l).height * 16 as libc::c_int,
-                ) as u64
+                if crate::src::q3_ui::ui_atoms::UI_CursorInRect(x, y, w, (*l).height * 16) as u64
                     != 0
                 {
-                    cursorx = (crate::src::q3_ui::ui_atoms::uis.cursorx - x) / 8 as libc::c_int;
+                    cursorx = (crate::src::q3_ui::ui_atoms::uis.cursorx - x) / 8;
                     column = cursorx / ((*l).width + (*l).separation);
-                    cursory = (crate::src::q3_ui::ui_atoms::uis.cursory - y) / 16 as libc::c_int;
+                    cursory = (crate::src::q3_ui::ui_atoms::uis.cursory - y) / 16;
                     index = column * (*l).height + cursory;
                     if (*l).top + index < (*l).numitems {
                         (*l).oldvalue = (*l).curvalue;
@@ -1253,7 +1173,7 @@ pub unsafe extern "C" fn ScrollList_Key(
                         if (*l).oldvalue != (*l).curvalue && (*l).generic.callback.is_some() {
                             (*l).generic.callback.expect("non-null function pointer")(
                                 l as *mut libc::c_void,
-                                1 as libc::c_int,
+                                1,
                             );
                             return menu_move_sound;
                         }
@@ -1265,12 +1185,12 @@ pub unsafe extern "C" fn ScrollList_Key(
         }
         160 | 143 => {
             (*l).oldvalue = (*l).curvalue;
-            (*l).curvalue = 0 as libc::c_int;
-            (*l).top = 0 as libc::c_int;
+            (*l).curvalue = 0;
+            (*l).top = 0;
             if (*l).oldvalue != (*l).curvalue && (*l).generic.callback.is_some() {
                 (*l).generic.callback.expect("non-null function pointer")(
                     l as *mut libc::c_void,
-                    1 as libc::c_int,
+                    1,
                 );
                 return menu_move_sound;
             }
@@ -1278,43 +1198,43 @@ pub unsafe extern "C" fn ScrollList_Key(
         }
         166 | 144 => {
             (*l).oldvalue = (*l).curvalue;
-            (*l).curvalue = (*l).numitems - 1 as libc::c_int;
-            if (*l).columns > 1 as libc::c_int {
-                c = ((*l).curvalue / (*l).height + 1 as libc::c_int) * (*l).height;
+            (*l).curvalue = (*l).numitems - 1;
+            if (*l).columns > 1 {
+                c = ((*l).curvalue / (*l).height + 1) * (*l).height;
                 (*l).top = c - (*l).columns * (*l).height
             } else {
-                (*l).top = (*l).curvalue - ((*l).height - 1 as libc::c_int)
+                (*l).top = (*l).curvalue - ((*l).height - 1)
             }
-            if (*l).top < 0 as libc::c_int {
-                (*l).top = 0 as libc::c_int
+            if (*l).top < 0 {
+                (*l).top = 0
             }
             if (*l).oldvalue != (*l).curvalue && (*l).generic.callback.is_some() {
                 (*l).generic.callback.expect("non-null function pointer")(
                     l as *mut libc::c_void,
-                    1 as libc::c_int,
+                    1,
                 );
                 return menu_move_sound;
             }
             return menu_buzz_sound;
         }
         142 | 162 => {
-            if (*l).columns > 1 as libc::c_int {
+            if (*l).columns > 1 {
                 return menu_null_sound;
             }
-            if (*l).curvalue > 0 as libc::c_int {
+            if (*l).curvalue > 0 {
                 (*l).oldvalue = (*l).curvalue;
-                (*l).curvalue -= (*l).height - 1 as libc::c_int;
-                if (*l).curvalue < 0 as libc::c_int {
-                    (*l).curvalue = 0 as libc::c_int
+                (*l).curvalue -= (*l).height - 1;
+                if (*l).curvalue < 0 {
+                    (*l).curvalue = 0
                 }
                 (*l).top = (*l).curvalue;
-                if (*l).top < 0 as libc::c_int {
-                    (*l).top = 0 as libc::c_int
+                if (*l).top < 0 {
+                    (*l).top = 0
                 }
                 if (*l).generic.callback.is_some() {
                     (*l).generic.callback.expect("non-null function pointer")(
                         l as *mut libc::c_void,
-                        1 as libc::c_int,
+                        1i32,
                     );
                 }
                 return menu_move_sound;
@@ -1322,23 +1242,23 @@ pub unsafe extern "C" fn ScrollList_Key(
             return menu_buzz_sound;
         }
         141 | 168 => {
-            if (*l).columns > 1 as libc::c_int {
+            if (*l).columns > 1 {
                 return menu_null_sound;
             }
-            if (*l).curvalue < (*l).numitems - 1 as libc::c_int {
+            if (*l).curvalue < (*l).numitems - 1 {
                 (*l).oldvalue = (*l).curvalue;
-                (*l).curvalue += (*l).height - 1 as libc::c_int;
-                if (*l).curvalue > (*l).numitems - 1 as libc::c_int {
-                    (*l).curvalue = (*l).numitems - 1 as libc::c_int
+                (*l).curvalue += (*l).height - 1;
+                if (*l).curvalue > (*l).numitems - 1 {
+                    (*l).curvalue = (*l).numitems - 1
                 }
-                (*l).top = (*l).curvalue - ((*l).height - 1 as libc::c_int);
-                if (*l).top < 0 as libc::c_int {
-                    (*l).top = 0 as libc::c_int
+                (*l).top = (*l).curvalue - ((*l).height - 1);
+                if (*l).top < 0 {
+                    (*l).top = 0
                 }
                 if (*l).generic.callback.is_some() {
                     (*l).generic.callback.expect("non-null function pointer")(
                         l as *mut libc::c_void,
-                        1 as libc::c_int,
+                        1i32,
                     );
                 }
                 return menu_move_sound;
@@ -1346,25 +1266,21 @@ pub unsafe extern "C" fn ScrollList_Key(
             return menu_buzz_sound;
         }
         184 => {
-            if (*l).columns > 1 as libc::c_int {
+            if (*l).columns > 1 {
                 return menu_null_sound;
             }
-            if (*l).top > 0 as libc::c_int {
+            if (*l).top > 0 {
                 // if scrolling 3 lines would replace over half of the
                 // displayed items, only scroll 1 item at a time.
-                let mut scroll: libc::c_int = if (*l).height < 6 as libc::c_int {
-                    1 as libc::c_int
-                } else {
-                    3 as libc::c_int
-                };
+                let mut scroll: i32 = if (*l).height < 6 { 1 } else { 3 };
                 (*l).top -= scroll;
-                if (*l).top < 0 as libc::c_int {
-                    (*l).top = 0 as libc::c_int
+                if (*l).top < 0 {
+                    (*l).top = 0
                 }
                 if (*l).generic.callback.is_some() {
                     (*l).generic.callback.expect("non-null function pointer")(
                         l as *mut libc::c_void,
-                        1 as libc::c_int,
+                        1i32,
                     );
                 }
                 // make scrolling silent
@@ -1373,17 +1289,13 @@ pub unsafe extern "C" fn ScrollList_Key(
             return menu_buzz_sound;
         }
         183 => {
-            if (*l).columns > 1 as libc::c_int {
+            if (*l).columns > 1 {
                 return menu_null_sound;
             }
             if (*l).top < (*l).numitems - (*l).height {
                 // if scrolling 3 items would replace over half of the
                 // displayed items, only scroll 1 item at a time.
-                let mut scroll_0: libc::c_int = if (*l).height < 6 as libc::c_int {
-                    1 as libc::c_int
-                } else {
-                    3 as libc::c_int
-                };
+                let mut scroll_0: i32 = if (*l).height < 6 { 1 } else { 3 };
                 (*l).top += scroll_0;
                 if (*l).top > (*l).numitems - (*l).height {
                     (*l).top = (*l).numitems - (*l).height
@@ -1391,7 +1303,7 @@ pub unsafe extern "C" fn ScrollList_Key(
                 if (*l).generic.callback.is_some() {
                     (*l).generic.callback.expect("non-null function pointer")(
                         l as *mut libc::c_void,
-                        1 as libc::c_int,
+                        1i32,
                     );
                 }
                 // make scrolling silent
@@ -1400,13 +1312,13 @@ pub unsafe extern "C" fn ScrollList_Key(
             return menu_buzz_sound;
         }
         161 | 132 => {
-            if (*l).curvalue == 0 as libc::c_int {
+            if (*l).curvalue == 0 {
                 return menu_buzz_sound;
             }
             (*l).oldvalue = (*l).curvalue;
             (*l).curvalue -= 1;
             if (*l).curvalue < (*l).top {
-                if (*l).columns == 1 as libc::c_int {
+                if (*l).columns == 1 {
                     (*l).top -= 1
                 } else {
                     (*l).top -= (*l).height
@@ -1415,19 +1327,19 @@ pub unsafe extern "C" fn ScrollList_Key(
             if (*l).generic.callback.is_some() {
                 (*l).generic.callback.expect("non-null function pointer")(
                     l as *mut libc::c_void,
-                    1 as libc::c_int,
+                    1i32,
                 );
             }
             return menu_move_sound;
         }
         167 | 133 => {
-            if (*l).curvalue == (*l).numitems - 1 as libc::c_int {
+            if (*l).curvalue == (*l).numitems - 1 {
                 return menu_buzz_sound;
             }
             (*l).oldvalue = (*l).curvalue;
             (*l).curvalue += 1;
             if (*l).curvalue >= (*l).top + (*l).columns * (*l).height {
-                if (*l).columns == 1 as libc::c_int {
+                if (*l).columns == 1 {
                     (*l).top += 1
                 } else {
                     (*l).top += (*l).height
@@ -1436,13 +1348,13 @@ pub unsafe extern "C" fn ScrollList_Key(
             if (*l).generic.callback.is_some() {
                 (*l).generic.callback.expect("non-null function pointer")(
                     l as *mut libc::c_void,
-                    1 as libc::c_int,
+                    1i32,
                 );
             }
             return menu_move_sound;
         }
         163 | 134 => {
-            if (*l).columns == 1 as libc::c_int {
+            if (*l).columns == 1 {
                 return menu_null_sound;
             }
             if (*l).curvalue < (*l).height {
@@ -1456,13 +1368,13 @@ pub unsafe extern "C" fn ScrollList_Key(
             if (*l).generic.callback.is_some() {
                 (*l).generic.callback.expect("non-null function pointer")(
                     l as *mut libc::c_void,
-                    1 as libc::c_int,
+                    1i32,
                 );
             }
             return menu_move_sound;
         }
         165 | 135 => {
-            if (*l).columns == 1 as libc::c_int {
+            if (*l).columns == 1 {
                 return menu_null_sound;
             }
             c = (*l).curvalue + (*l).height;
@@ -1471,13 +1383,13 @@ pub unsafe extern "C" fn ScrollList_Key(
             }
             (*l).oldvalue = (*l).curvalue;
             (*l).curvalue = c;
-            if (*l).curvalue > (*l).top + (*l).columns * (*l).height - 1 as libc::c_int {
+            if (*l).curvalue > (*l).top + (*l).columns * (*l).height - 1 {
                 (*l).top += (*l).height
             }
             if (*l).generic.callback.is_some() {
                 (*l).generic.callback.expect("non-null function pointer")(
                     l as *mut libc::c_void,
-                    1 as libc::c_int,
+                    1i32,
                 );
             }
             return menu_move_sound;
@@ -1486,17 +1398,17 @@ pub unsafe extern "C" fn ScrollList_Key(
     }
     // cycle look for ascii key inside list items
     if crate::src::qcommon::q_shared::Q_isprint(key) == 0 {
-        return 0 as libc::c_int;
+        return 0i32;
     }
     // force to lower for case insensitive compare
     if crate::src::qcommon::q_shared::Q_isupper(key) != 0 {
         key -= 'A' as i32 - 'a' as i32
     }
     // iterate list items
-    i = 1 as libc::c_int;
+    i = 1;
     while i <= (*l).numitems {
         j = ((*l).curvalue + i) % (*l).numitems;
-        c = *(*(*l).itemnames.offset(j as isize)).offset(0 as libc::c_int as isize) as libc::c_int;
+        c = *(*(*l).itemnames.offset(j as isize)).offset(0) as i32;
         if crate::src::qcommon::q_shared::Q_isupper(c) != 0 {
             c -= 'A' as i32 - 'a' as i32
         }
@@ -1505,9 +1417,9 @@ pub unsafe extern "C" fn ScrollList_Key(
             if j < (*l).top {
                 // behind top most item, set this as new top
                 (*l).top = j
-            } else if j > (*l).top + (*l).height - 1 as libc::c_int {
+            } else if j > (*l).top + (*l).height - 1 {
                 // past end of list box, do page down
-                (*l).top = j + 1 as libc::c_int - (*l).height
+                (*l).top = j + 1 - (*l).height
             }
             if (*l).curvalue != j {
                 (*l).oldvalue = (*l).curvalue;
@@ -1515,7 +1427,7 @@ pub unsafe extern "C" fn ScrollList_Key(
                 if (*l).generic.callback.is_some() {
                     (*l).generic.callback.expect("non-null function pointer")(
                         l as *mut libc::c_void,
-                        1 as libc::c_int,
+                        1i32,
                     );
                 }
                 return menu_move_sound;
@@ -1534,20 +1446,20 @@ ScrollList_Draw
 #[no_mangle]
 
 pub unsafe extern "C" fn ScrollList_Draw(mut l: *mut crate::ui_local_h::menulist_s) {
-    let mut x: libc::c_int = 0;
-    let mut u: libc::c_int = 0;
-    let mut y: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
-    let mut base: libc::c_int = 0;
-    let mut column: libc::c_int = 0;
-    let mut color: *mut libc::c_float = 0 as *mut libc::c_float;
+    let mut x: i32 = 0;
+    let mut u: i32 = 0;
+    let mut y: i32 = 0;
+    let mut i: i32 = 0;
+    let mut base: i32 = 0;
+    let mut column: i32 = 0;
+    let mut color: *mut f32 = 0 as *mut f32;
     let mut hasfocus: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
-    let mut style: libc::c_int = 0;
-    hasfocus = ((*(*l).generic.parent).cursor == (*l).generic.menuPosition) as libc::c_int
+    let mut style: i32 = 0;
+    hasfocus = ((*(*l).generic.parent).cursor == (*l).generic.menuPosition)
         as crate::src::qcommon::q_shared::qboolean;
     x = (*l).generic.x;
-    column = 0 as libc::c_int;
+    column = 0;
     while column < (*l).columns {
         y = (*l).generic.y;
         base = (*l).top + column * (*l).height;
@@ -1557,29 +1469,29 @@ pub unsafe extern "C" fn ScrollList_Draw(mut l: *mut crate::ui_local_h::menulist
                 break;
             }
             if i == (*l).curvalue {
-                u = x - 2 as libc::c_int;
-                if (*l).generic.flags & 0x8 as libc::c_int as libc::c_uint != 0 {
-                    u -= (*l).width * 8 as libc::c_int / 2 as libc::c_int + 1 as libc::c_int
+                u = x - 2;
+                if (*l).generic.flags & 0x8u32 != 0 {
+                    u -= (*l).width * 8 / 2 + 1
                 }
                 crate::src::q3_ui::ui_atoms::UI_FillRect(
-                    u as libc::c_float,
-                    y as libc::c_float,
-                    ((*l).width * 8 as libc::c_int) as libc::c_float,
-                    (16 as libc::c_int + 2 as libc::c_int) as libc::c_float,
+                    u as f32,
+                    y as f32,
+                    ((*l).width * 8i32) as f32,
+                    (16i32 + 2) as f32,
                     listbar_color.as_mut_ptr(),
                 );
                 color = text_color_highlight.as_mut_ptr();
                 if hasfocus as u64 != 0 {
-                    style = 0x4000 as libc::c_int | 0 as libc::c_int | 0x10 as libc::c_int
+                    style = 0x4000 | 0 | 0x10
                 } else {
-                    style = 0 as libc::c_int | 0x10 as libc::c_int
+                    style = 0 | 0x10
                 }
             } else {
                 color = text_color_normal.as_mut_ptr();
-                style = 0 as libc::c_int | 0x10 as libc::c_int
+                style = 0 | 0x10
             }
-            if (*l).generic.flags & 0x8 as libc::c_int as libc::c_uint != 0 {
-                style |= 0x1 as libc::c_int
+            if (*l).generic.flags & 0x8u32 != 0 {
+                style |= 0x1
             }
             crate::src::q3_ui::ui_atoms::UI_DrawString(
                 x,
@@ -1588,10 +1500,10 @@ pub unsafe extern "C" fn ScrollList_Draw(mut l: *mut crate::ui_local_h::menulist
                 style,
                 color,
             );
-            y += 16 as libc::c_int;
+            y += 16;
             i += 1
         }
-        x += ((*l).width + (*l).separation) * 8 as libc::c_int;
+        x += ((*l).width + (*l).separation) * 8;
         column += 1
     }
 }
@@ -1608,9 +1520,9 @@ pub unsafe extern "C" fn Menu_AddItem(
 ) {
     let mut itemptr: *mut crate::ui_local_h::menucommon_s =
         0 as *mut crate::ui_local_h::menucommon_s;
-    if (*menu).nitems >= 64 as libc::c_int {
+    if (*menu).nitems >= 64 {
         crate::src::ui::ui_syscalls::trap_Error(
-            b"Menu_AddItem: excessive items\x00" as *const u8 as *const libc::c_char,
+            b"Menu_AddItem: excessive items\x00" as *const u8 as *const i8,
         );
     }
     (*menu).items[(*menu).nitems as usize] = item;
@@ -1620,10 +1532,10 @@ pub unsafe extern "C" fn Menu_AddItem(
     (*((*menu).items[(*menu).nitems as usize] as *mut crate::ui_local_h::menucommon_s))
         .menuPosition = (*menu).nitems;
     (*((*menu).items[(*menu).nitems as usize] as *mut crate::ui_local_h::menucommon_s)).flags &=
-        !(0x200 as libc::c_int as libc::c_uint);
+        !(0x200);
     // perform any item specific initializations
     itemptr = item as *mut crate::ui_local_h::menucommon_s;
-    if (*itemptr).flags & 0x8000 as libc::c_int as libc::c_uint == 0 {
+    if (*itemptr).flags & 0x8000 == 0 {
         match (*itemptr).type_0 {
             2 => {
                 Action_Init(item as *mut crate::ui_local_h::menuaction_s);
@@ -1659,8 +1571,7 @@ pub unsafe extern "C" fn Menu_AddItem(
             }
             _ => {
                 crate::src::ui::ui_syscalls::trap_Error(crate::src::qcommon::q_shared::va(
-                    b"Menu_Init: unknown type %d\x00" as *const u8 as *const libc::c_char
-                        as *mut libc::c_char,
+                    b"Menu_Init: unknown type %d\x00" as *const u8 as *mut i8,
                     (*itemptr).type_0,
                 ));
             }
@@ -1676,30 +1587,26 @@ Menu_CursorMoved
 #[no_mangle]
 
 pub unsafe extern "C" fn Menu_CursorMoved(mut m: *mut crate::ui_local_h::menuframework_s) {
-    let mut callback: Option<unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ()> =
-        None;
+    let mut callback: Option<unsafe extern "C" fn(_: *mut libc::c_void, _: i32) -> ()> = None;
     if (*m).cursor_prev == (*m).cursor {
         return;
     }
-    if (*m).cursor_prev >= 0 as libc::c_int && (*m).cursor_prev < (*m).nitems {
+    if (*m).cursor_prev >= 0 && (*m).cursor_prev < (*m).nitems {
         callback = (*((*m).items[(*m).cursor_prev as usize]
             as *mut crate::ui_local_h::menucommon_s))
             .callback;
         if callback.is_some() {
             callback.expect("non-null function pointer")(
                 (*m).items[(*m).cursor_prev as usize],
-                2 as libc::c_int,
+                2i32,
             );
         }
     }
-    if (*m).cursor >= 0 as libc::c_int && (*m).cursor < (*m).nitems {
+    if (*m).cursor >= 0 && (*m).cursor < (*m).nitems {
         callback =
             (*((*m).items[(*m).cursor as usize] as *mut crate::ui_local_h::menucommon_s)).callback;
         if callback.is_some() {
-            callback.expect("non-null function pointer")(
-                (*m).items[(*m).cursor as usize],
-                1 as libc::c_int,
-            );
+            callback.expect("non-null function pointer")((*m).items[(*m).cursor as usize], 1i32);
         }
     };
 }
@@ -1712,10 +1619,10 @@ Menu_SetCursor
 
 pub unsafe extern "C" fn Menu_SetCursor(
     mut m: *mut crate::ui_local_h::menuframework_s,
-    mut cursor: libc::c_int,
+    mut cursor: i32,
 ) {
     if (*((*m).items[cursor as usize] as *mut crate::ui_local_h::menucommon_s)).flags
-        & (0x2000 as libc::c_int as libc::c_uint | 0x4000 as libc::c_int as libc::c_uint)
+        & (0x2000 | 0x4000)
         != 0
     {
         // cursor can't go there
@@ -1736,8 +1643,8 @@ pub unsafe extern "C" fn Menu_SetCursorToItem(
     mut m: *mut crate::ui_local_h::menuframework_s,
     mut ptr: *mut libc::c_void,
 ) {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
+    let mut i: i32 = 0;
+    i = 0;
     while i < (*m).nitems {
         if (*m).items[i as usize] == ptr {
             Menu_SetCursor(m, i);
@@ -1757,25 +1664,20 @@ pub unsafe extern "C" fn Menu_SetCursorToItem(
 
 pub unsafe extern "C" fn Menu_AdjustCursor(
     mut m: *mut crate::ui_local_h::menuframework_s,
-    mut dir: libc::c_int,
+    mut dir: i32,
 ) {
     let mut item: *mut crate::ui_local_h::menucommon_s = 0 as *mut crate::ui_local_h::menucommon_s;
     let mut wrapped: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     loop {
-        while (*m).cursor >= 0 as libc::c_int && (*m).cursor < (*m).nitems {
+        while (*m).cursor >= 0 && (*m).cursor < (*m).nitems {
             item = (*m).items[(*m).cursor as usize] as *mut crate::ui_local_h::menucommon_s;
-            if !((*item).flags
-                & (0x2000 as libc::c_int as libc::c_uint
-                    | 0x800 as libc::c_int as libc::c_uint
-                    | 0x4000 as libc::c_int as libc::c_uint)
-                != 0)
-            {
+            if !((*item).flags & (0x2000 | 0x800 | 0x4000) != 0) {
                 break;
             }
             (*m).cursor += dir
         }
-        if dir == 1 as libc::c_int {
+        if dir == 1 {
             if !((*m).cursor >= (*m).nitems) {
                 break;
             }
@@ -1784,14 +1686,14 @@ pub unsafe extern "C" fn Menu_AdjustCursor(
                     (*m).cursor = (*m).cursor_prev;
                     return;
                 }
-                (*m).cursor = 0 as libc::c_int;
+                (*m).cursor = 0;
                 wrapped = crate::src::qcommon::q_shared::qtrue
             } else {
                 (*m).cursor = (*m).cursor_prev;
                 break;
             }
         } else {
-            if !((*m).cursor < 0 as libc::c_int) {
+            if !((*m).cursor < 0) {
                 break;
             }
             if (*m).wrapAround as u64 != 0 {
@@ -1799,7 +1701,7 @@ pub unsafe extern "C" fn Menu_AdjustCursor(
                     (*m).cursor = (*m).cursor_prev;
                     return;
                 }
-                (*m).cursor = (*m).nitems - 1 as libc::c_int;
+                (*m).cursor = (*m).nitems - 1;
                 wrapped = crate::src::qcommon::q_shared::qtrue
             } else {
                 (*m).cursor = (*m).cursor_prev;
@@ -1816,14 +1718,14 @@ Menu_Draw
 #[no_mangle]
 
 pub unsafe extern "C" fn Menu_Draw(mut menu: *mut crate::ui_local_h::menuframework_s) {
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     let mut itemptr: *mut crate::ui_local_h::menucommon_s =
         0 as *mut crate::ui_local_h::menucommon_s;
     // draw menu
-    i = 0 as libc::c_int;
+    i = 0;
     while i < (*menu).nitems {
         itemptr = (*menu).items[i as usize] as *mut crate::ui_local_h::menucommon_s;
-        if !((*itemptr).flags & 0x1000 as libc::c_int as libc::c_uint != 0) {
+        if !((*itemptr).flags & 0x1000 != 0) {
             if (*itemptr).ownerdraw.is_some() {
                 // total subclassing, owner draws everything
                 (*itemptr).ownerdraw.expect("non-null function pointer")(
@@ -1865,8 +1767,7 @@ pub unsafe extern "C" fn Menu_Draw(mut menu: *mut crate::ui_local_h::menuframewo
                     }
                     _ => {
                         crate::src::ui::ui_syscalls::trap_Error(crate::src::qcommon::q_shared::va(
-                            b"Menu_Draw: unknown type %d\x00" as *const u8 as *const libc::c_char
-                                as *mut libc::c_char,
+                            b"Menu_Draw: unknown type %d\x00" as *const u8 as *mut i8,
                             (*itemptr).type_0,
                         ));
                     }
@@ -1890,7 +1791,7 @@ Menu_ItemAtCursor
 pub unsafe extern "C" fn Menu_ItemAtCursor(
     mut m: *mut crate::ui_local_h::menuframework_s,
 ) -> *mut libc::c_void {
-    if (*m).cursor < 0 as libc::c_int || (*m).cursor >= (*m).nitems {
+    if (*m).cursor < 0 || (*m).cursor >= (*m).nitems {
         return 0 as *mut libc::c_void;
     }
     return (*m).items[(*m).cursor as usize];
@@ -1907,15 +1808,12 @@ pub unsafe extern "C" fn Menu_ActivateItem(
     mut item: *mut crate::ui_local_h::menucommon_s,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
     if (*item).callback.is_some() {
-        (*item).callback.expect("non-null function pointer")(
-            item as *mut libc::c_void,
-            3 as libc::c_int,
-        );
-        if (*item).flags & 0x100000 as libc::c_int as libc::c_uint == 0 {
+        (*item).callback.expect("non-null function pointer")(item as *mut libc::c_void, 3);
+        if (*item).flags & 0x100000u32 == 0 {
             return menu_move_sound;
         }
     }
-    return 0 as libc::c_int;
+    return 0;
 }
 /*
 =================
@@ -1926,11 +1824,11 @@ Menu_DefaultKey
 
 pub unsafe extern "C" fn Menu_DefaultKey(
     mut m: *mut crate::ui_local_h::menuframework_s,
-    mut key: libc::c_int,
+    mut key: i32,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
-    let mut sound: crate::src::qcommon::q_shared::sfxHandle_t = 0 as libc::c_int;
+    let mut sound: crate::src::qcommon::q_shared::sfxHandle_t = 0;
     let mut item: *mut crate::ui_local_h::menucommon_s = 0 as *mut crate::ui_local_h::menucommon_s;
-    let mut cursor_prev: libc::c_int = 0;
+    let mut cursor_prev: i32 = 0;
     // menu system keys
     match key {
         179 | 27 => {
@@ -1940,15 +1838,11 @@ pub unsafe extern "C" fn Menu_DefaultKey(
         _ => {}
     }
     if m.is_null() || (*m).nitems == 0 {
-        return 0 as libc::c_int;
+        return 0i32;
     }
     // route key stimulus to widget
     item = Menu_ItemAtCursor(m) as *mut crate::ui_local_h::menucommon_s;
-    if !item.is_null()
-        && (*item).flags
-            & (0x2000 as libc::c_int as libc::c_uint | 0x4000 as libc::c_int as libc::c_uint)
-            == 0
-    {
+    if !item.is_null() && (*item).flags & (0x2000 | 0x4000) == 0 {
         match (*item).type_0 {
             3 => sound = SpinControl_Key(item as *mut crate::ui_local_h::menulist_s, key),
             5 => sound = RadioButton_Key(item as *mut crate::ui_local_h::menuradiobutton_s, key),
@@ -1973,7 +1867,7 @@ pub unsafe extern "C" fn Menu_DefaultKey(
             cursor_prev = (*m).cursor;
             (*m).cursor_prev = (*m).cursor;
             (*m).cursor -= 1;
-            Menu_AdjustCursor(m, -(1 as libc::c_int));
+            Menu_AdjustCursor(m, -(1));
             if cursor_prev != (*m).cursor {
                 Menu_CursorMoved(m);
                 sound = menu_move_sound
@@ -1983,7 +1877,7 @@ pub unsafe extern "C" fn Menu_DefaultKey(
             cursor_prev = (*m).cursor;
             (*m).cursor_prev = (*m).cursor;
             (*m).cursor += 1;
-            Menu_AdjustCursor(m, 1 as libc::c_int);
+            Menu_AdjustCursor(m, 1);
             if cursor_prev != (*m).cursor {
                 Menu_CursorMoved(m);
                 sound = menu_move_sound
@@ -1991,12 +1885,7 @@ pub unsafe extern "C" fn Menu_DefaultKey(
         }
         178 | 180 => {
             if !item.is_null() {
-                if (*item).flags & 0x200 as libc::c_int as libc::c_uint != 0
-                    && (*item).flags
-                        & (0x2000 as libc::c_int as libc::c_uint
-                            | 0x4000 as libc::c_int as libc::c_uint)
-                        == 0
-                {
+                if (*item).flags & 0x200 != 0 && (*item).flags & (0x2000 | 0x4000) == 0 {
                     return Menu_ActivateItem(m, item);
                 }
             }
@@ -2004,12 +1893,7 @@ pub unsafe extern "C" fn Menu_DefaultKey(
         185 | 186 | 187 | 188 | 217 | 218 | 219 | 220 | 221 | 222 | 223 | 224 | 225 | 226 | 227
         | 228 | 229 | 230 | 231 | 232 | 169 | 13 => {
             if !item.is_null() {
-                if (*item).flags
-                    & (0x800 as libc::c_int as libc::c_uint
-                        | 0x2000 as libc::c_int as libc::c_uint
-                        | 0x4000 as libc::c_int as libc::c_uint)
-                    == 0
-                {
+                if (*item).flags & (0x800 | 0x2000 | 0x4000) == 0 {
                     return Menu_ActivateItem(m, item);
                 }
             }
@@ -2038,83 +1922,81 @@ Menu_Cache
 pub unsafe extern "C" fn Menu_Cache() {
     crate::src::q3_ui::ui_atoms::uis.charset =
         crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"gfx/2d/bigchars\x00" as *const u8 as *const libc::c_char,
+            b"gfx/2d/bigchars\x00" as *const u8 as *const i8,
         );
     crate::src::q3_ui::ui_atoms::uis.charsetProp =
         crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"menu/art/font1_prop.tga\x00" as *const u8 as *const libc::c_char,
+            b"menu/art/font1_prop.tga\x00" as *const u8 as *const i8,
         );
     crate::src::q3_ui::ui_atoms::uis.charsetPropGlow =
         crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"menu/art/font1_prop_glo.tga\x00" as *const u8 as *const libc::c_char,
+            b"menu/art/font1_prop_glo.tga\x00" as *const u8 as *const i8,
         );
     crate::src::q3_ui::ui_atoms::uis.charsetPropB =
         crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"menu/art/font2_prop.tga\x00" as *const u8 as *const libc::c_char,
+            b"menu/art/font2_prop.tga\x00" as *const u8 as *const i8,
         );
     crate::src::q3_ui::ui_atoms::uis.cursor =
         crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"menu/art/3_cursor2\x00" as *const u8 as *const libc::c_char,
+            b"menu/art/3_cursor2\x00" as *const u8 as *const i8,
         );
     crate::src::q3_ui::ui_atoms::uis.rb_on =
         crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"menu/art/switch_on\x00" as *const u8 as *const libc::c_char,
+            b"menu/art/switch_on\x00" as *const u8 as *const i8,
         );
     crate::src::q3_ui::ui_atoms::uis.rb_off =
         crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"menu/art/switch_off\x00" as *const u8 as *const libc::c_char,
+            b"menu/art/switch_off\x00" as *const u8 as *const i8,
         );
     crate::src::q3_ui::ui_atoms::uis.whiteShader =
         crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"white\x00" as *const u8 as *const libc::c_char,
+            b"white\x00" as *const u8 as *const i8,
         );
-    if crate::src::q3_ui::ui_atoms::uis.glconfig.hardwareType as libc::c_uint
-        == crate::tr_types_h::GLHW_RAGEPRO as libc::c_int as libc::c_uint
-    {
+    if crate::src::q3_ui::ui_atoms::uis.glconfig.hardwareType == crate::tr_types_h::GLHW_RAGEPRO {
         // the blend effect turns to shit with the normal
         crate::src::q3_ui::ui_atoms::uis.menuBackShader =
             crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-                b"menubackRagePro\x00" as *const u8 as *const libc::c_char,
+                b"menubackRagePro\x00" as *const u8 as *const i8,
             )
     } else {
         crate::src::q3_ui::ui_atoms::uis.menuBackShader =
             crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-                b"menuback\x00" as *const u8 as *const libc::c_char,
+                b"menuback\x00" as *const u8 as *const i8,
             )
     }
     crate::src::q3_ui::ui_atoms::uis.menuBackNoLogoShader =
         crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-            b"menubacknologo\x00" as *const u8 as *const libc::c_char,
+            b"menubacknologo\x00" as *const u8 as *const i8,
         );
     menu_in_sound = crate::src::ui::ui_syscalls::trap_S_RegisterSound(
-        b"sound/misc/menu1.wav\x00" as *const u8 as *const libc::c_char,
+        b"sound/misc/menu1.wav\x00" as *const u8 as *const i8,
         crate::src::qcommon::q_shared::qfalse,
     );
     menu_move_sound = crate::src::ui::ui_syscalls::trap_S_RegisterSound(
-        b"sound/misc/menu2.wav\x00" as *const u8 as *const libc::c_char,
+        b"sound/misc/menu2.wav\x00" as *const u8 as *const i8,
         crate::src::qcommon::q_shared::qfalse,
     );
     menu_out_sound = crate::src::ui::ui_syscalls::trap_S_RegisterSound(
-        b"sound/misc/menu3.wav\x00" as *const u8 as *const libc::c_char,
+        b"sound/misc/menu3.wav\x00" as *const u8 as *const i8,
         crate::src::qcommon::q_shared::qfalse,
     );
     menu_buzz_sound = crate::src::ui::ui_syscalls::trap_S_RegisterSound(
-        b"sound/misc/menu4.wav\x00" as *const u8 as *const libc::c_char,
+        b"sound/misc/menu4.wav\x00" as *const u8 as *const i8,
         crate::src::qcommon::q_shared::qfalse,
     );
     weaponChangeSound = crate::src::ui::ui_syscalls::trap_S_RegisterSound(
-        b"sound/weapons/change.wav\x00" as *const u8 as *const libc::c_char,
+        b"sound/weapons/change.wav\x00" as *const u8 as *const i8,
         crate::src::qcommon::q_shared::qfalse,
     );
     // need a nonzero sound, make an empty sound for this
-    menu_null_sound = -(1 as libc::c_int);
+    menu_null_sound = -(1);
     sliderBar = crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/slider2\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/slider2\x00" as *const u8 as *const i8,
     );
     sliderButton_0 = crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/sliderbutt_0\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/sliderbutt_0\x00" as *const u8 as *const i8,
     );
     sliderButton_1 = crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
-        b"menu/art/sliderbutt_1\x00" as *const u8 as *const libc::c_char,
+        b"menu/art/sliderbutt_1\x00" as *const u8 as *const i8,
     );
 }

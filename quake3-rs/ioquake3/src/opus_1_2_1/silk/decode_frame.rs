@@ -325,39 +325,32 @@ pub unsafe extern "C" fn silk_decode_frame(
     mut psRangeDec: *mut crate::src::opus_1_2_1::celt::entcode::ec_dec,
     mut pOut: *mut crate::opus_types_h::opus_int16,
     mut pN: *mut crate::opus_types_h::opus_int32,
-    mut lostFlag: libc::c_int,
-    mut condCoding: libc::c_int,
-    mut arch: libc::c_int,
-) -> libc::c_int
+    mut lostFlag: i32,
+    mut condCoding: i32,
+    mut arch: i32,
+) -> i32
 /* I    Run-time architecture                       */ {
     let mut psDecCtrl: *mut crate::structs_h::silk_decoder_control =
         0 as *mut crate::structs_h::silk_decoder_control;
-    let mut L: libc::c_int = 0;
-    let mut mv_len: libc::c_int = 0;
-    let mut ret: libc::c_int = 0 as libc::c_int;
+    let mut L: i32 = 0;
+    let mut mv_len: i32 = 0;
+    let mut ret: i32 = 0;
     L = (*psDec).frame_length;
     let mut fresh0 = ::std::vec::from_elem(
         0,
-        (::std::mem::size_of::<crate::structs_h::silk_decoder_control>() as libc::c_ulong)
-            .wrapping_mul(1 as libc::c_int as libc::c_ulong) as usize,
+        (::std::mem::size_of::<crate::structs_h::silk_decoder_control>()).wrapping_mul(1usize),
     );
     psDecCtrl = fresh0.as_mut_ptr() as *mut crate::structs_h::silk_decoder_control;
-    (*psDecCtrl).LTP_scale_Q14 = 0 as libc::c_int;
+    (*psDecCtrl).LTP_scale_Q14 = 0;
     /* Safety checks */
-    if lostFlag == 0 as libc::c_int
-        || lostFlag == 2 as libc::c_int
-            && (*psDec).LBRR_flags[(*psDec).nFramesDecoded as usize] == 1 as libc::c_int
+    if lostFlag == 0 || lostFlag == 2 && (*psDec).LBRR_flags[(*psDec).nFramesDecoded as usize] == 1
     {
         let mut pulses: *mut crate::opus_types_h::opus_int16 =
             0 as *mut crate::opus_types_h::opus_int16;
         let mut fresh1 = ::std::vec::from_elem(
             0,
-            (::std::mem::size_of::<crate::opus_types_h::opus_int16>() as libc::c_ulong)
-                .wrapping_mul(
-                    (L + 16 as libc::c_int - 1 as libc::c_int
-                        & !(16 as libc::c_int - 1 as libc::c_int))
-                        as libc::c_ulong,
-                ) as usize,
+            (::std::mem::size_of::<crate::opus_types_h::opus_int16>())
+                .wrapping_mul((L + 16 - 1 & !(16 - 1)) as usize),
         );
         pulses = fresh1.as_mut_ptr() as *mut crate::opus_types_h::opus_int16;
         /* ********************************************/
@@ -376,8 +369,8 @@ pub unsafe extern "C" fn silk_decode_frame(
         crate::src::opus_1_2_1::silk::decode_pulses::silk_decode_pulses(
             psRangeDec,
             pulses,
-            (*psDec).indices.signalType as libc::c_int,
-            (*psDec).indices.quantOffsetType as libc::c_int,
+            (*psDec).indices.signalType as i32,
+            (*psDec).indices.quantOffsetType as i32,
             (*psDec).frame_length,
         );
         /* *******************************************/
@@ -399,33 +392,36 @@ pub unsafe extern "C" fn silk_decode_frame(
         /* *******************************************************/
         /* Update PLC state                                     */
         /* *******************************************************/
-        crate::src::opus_1_2_1::silk::PLC::silk_PLC(psDec, psDecCtrl, pOut, 0 as libc::c_int, arch);
-        (*psDec).lossCnt = 0 as libc::c_int;
-        (*psDec).prevSignalType = (*psDec).indices.signalType as libc::c_int;
+        crate::src::opus_1_2_1::silk::PLC::silk_PLC(psDec, psDecCtrl, pOut, 0, arch);
+        (*psDec).lossCnt = 0;
+        (*psDec).prevSignalType = (*psDec).indices.signalType as i32;
         /* A frame has been decoded without errors */
-        (*psDec).first_frame_after_reset = 0 as libc::c_int
+        (*psDec).first_frame_after_reset = 0
     } else {
         /* Handle packet loss by extrapolation */
-        (*psDec).indices.signalType = (*psDec).prevSignalType as libc::c_schar;
-        crate::src::opus_1_2_1::silk::PLC::silk_PLC(psDec, psDecCtrl, pOut, 1 as libc::c_int, arch);
+        (*psDec).indices.signalType = (*psDec).prevSignalType as i8;
+        crate::src::opus_1_2_1::silk::PLC::silk_PLC(psDec, psDecCtrl, pOut, 1i32, arch);
     }
     /* ************************/
     /* Update output buffer. */
     /* ************************/
     mv_len = (*psDec).ltp_mem_length - (*psDec).frame_length;
-    crate::stdlib::memmove((*psDec).outBuf.as_mut_ptr() as *mut libc::c_void,
-            &mut *(*psDec).outBuf.as_mut_ptr().offset((*psDec).frame_length as
-                                                          isize) as
-                *mut crate::opus_types_h::opus_int16 as *const libc::c_void,
-            (mv_len as
-                 libc::c_ulong).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int16>()
-                                                 as libc::c_ulong));
-    crate::stdlib::memcpy(&mut *(*psDec).outBuf.as_mut_ptr().offset(mv_len as isize) as
-               *mut crate::opus_types_h::opus_int16 as *mut libc::c_void,
-           pOut as *const libc::c_void,
-           ((*psDec).frame_length as
-                libc::c_ulong).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int16>()
-                                                as libc::c_ulong));
+    crate::stdlib::memmove(
+        (*psDec).outBuf.as_mut_ptr() as *mut libc::c_void,
+        &mut *(*psDec)
+            .outBuf
+            .as_mut_ptr()
+            .offset((*psDec).frame_length as isize) as *mut crate::opus_types_h::opus_int16
+            as *const libc::c_void,
+        (mv_len as usize).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int16>()),
+    );
+    crate::stdlib::memcpy(
+        &mut *(*psDec).outBuf.as_mut_ptr().offset(mv_len as isize)
+            as *mut crate::opus_types_h::opus_int16 as *mut libc::c_void,
+        pOut as *const libc::c_void,
+        ((*psDec).frame_length as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int16>()),
+    );
     /* ***********************************************/
     /* Comfort noise generation / estimation        */
     /* ***********************************************/
@@ -435,7 +431,7 @@ pub unsafe extern "C" fn silk_decode_frame(
     /* ***************************************************************/
     crate::src::opus_1_2_1::silk::PLC::silk_PLC_glue_frames(psDec, pOut, L);
     /* Update some decoder state variables */
-    (*psDec).lagPrev = (*psDecCtrl).pitchL[((*psDec).nb_subfr - 1 as libc::c_int) as usize];
+    (*psDec).lagPrev = (*psDecCtrl).pitchL[((*psDec).nb_subfr - 1i32) as usize];
     /* Set output frame length */
     *pN = L;
     return ret;

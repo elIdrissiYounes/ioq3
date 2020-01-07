@@ -101,7 +101,7 @@ pub struct unz_file_info_internal_s {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct file_in_zip_read_info_s {
-    pub read_buffer: *mut libc::c_char,
+    pub read_buffer: *mut i8,
     pub stream: crate::zlib_h::z_stream,
     pub pos_in_zipfile: crate::zconf_h::uLong,
     pub stream_initialised: crate::zconf_h::uLong,
@@ -116,7 +116,7 @@ pub struct file_in_zip_read_info_s {
     pub filestream: crate::zconf_h::voidpf,
     pub compression_method: crate::zconf_h::uLong,
     pub byte_before_the_zipfile: crate::zconf_h::uLong,
-    pub raw: libc::c_int,
+    pub raw: i32,
 }
 
 #[repr(C)]
@@ -135,11 +135,11 @@ pub struct unz_s {
     pub cur_file_info: crate::src::qcommon::unzip::unz_file_info,
     pub cur_file_info_internal: unz_file_info_internal,
     pub pfile_in_zip_read: *mut file_in_zip_read_info_s,
-    pub encrypted: libc::c_int,
+    pub encrypted: i32,
 }
 #[no_mangle]
 
-pub static mut unz_copyright: [libc::c_char; 81] = [
+pub static mut unz_copyright: [i8; 81] = [
     32, 117, 110, 122, 105, 112, 32, 49, 46, 48, 49, 32, 67, 111, 112, 121, 114, 105, 103, 104,
     116, 32, 49, 57, 57, 56, 45, 50, 48, 48, 52, 32, 71, 105, 108, 108, 101, 115, 32, 86, 111, 108,
     108, 97, 110, 116, 32, 45, 32, 104, 116, 116, 112, 58, 47, 47, 119, 119, 119, 46, 119, 105,
@@ -155,10 +155,10 @@ pub static mut unz_copyright: [libc::c_char; 81] = [
 unsafe extern "C" fn unzlocal_getByte(
     mut pzlib_filefunc_def: *const crate::src::qcommon::ioapi::zlib_filefunc_def,
     mut filestream: crate::zconf_h::voidpf,
-    mut pi: *mut libc::c_int,
-) -> libc::c_int {
-    let mut c: libc::c_uchar = 0;
-    let mut err: libc::c_int = Some(
+    mut pi: *mut i32,
+) -> i32 {
+    let mut c: u8 = 0;
+    let mut err: i32 = Some(
         (*pzlib_filefunc_def)
             .zread_file
             .expect("non-null function pointer"),
@@ -166,12 +166,12 @@ unsafe extern "C" fn unzlocal_getByte(
     .expect("non-null function pointer")(
         (*pzlib_filefunc_def).opaque,
         filestream,
-        &mut c as *mut libc::c_uchar as *mut libc::c_void,
-        1 as libc::c_int as crate::zconf_h::uLong,
-    ) as libc::c_int;
-    if err == 1 as libc::c_int {
-        *pi = c as libc::c_int;
-        return 0 as libc::c_int;
+        &mut c as *mut u8 as *mut libc::c_void,
+        1usize,
+    ) as i32;
+    if err == 1 {
+        *pi = c as i32;
+        return 0i32;
     } else if Some(
         (*pzlib_filefunc_def)
             .zerror_file
@@ -180,9 +180,9 @@ unsafe extern "C" fn unzlocal_getByte(
     .expect("non-null function pointer")((*pzlib_filefunc_def).opaque, filestream)
         != 0
     {
-        return -(1 as libc::c_int);
+        return -(1i32);
     } else {
-        return 0 as libc::c_int;
+        return 0i32;
     };
 }
 /* ===========================================================================
@@ -193,21 +193,20 @@ unsafe extern "C" fn unzlocal_getShort(
     mut pzlib_filefunc_def: *const crate::src::qcommon::ioapi::zlib_filefunc_def,
     mut filestream: crate::zconf_h::voidpf,
     mut pX: *mut crate::zconf_h::uLong,
-) -> libc::c_int {
+) -> i32 {
     let mut x: crate::zconf_h::uLong = 0;
-    let mut i: libc::c_int = 0 as libc::c_int;
-    let mut err: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut err: i32 = 0;
     err = unzlocal_getByte(pzlib_filefunc_def, filestream, &mut i);
     x = i as crate::zconf_h::uLong;
-    if err == 0 as libc::c_int {
+    if err == 0 {
         err = unzlocal_getByte(pzlib_filefunc_def, filestream, &mut i)
     }
-    x = (x as libc::c_ulong).wrapping_add((i as crate::zconf_h::uLong) << 8 as libc::c_int)
-        as crate::zconf_h::uLong as crate::zconf_h::uLong;
-    if err == 0 as libc::c_int {
+    x = (x).wrapping_add((i as crate::zconf_h::uLong) << 8);
+    if err == 0 {
         *pX = x
     } else {
-        *pX = 0 as libc::c_int as crate::zconf_h::uLong
+        *pX = 0usize
     }
     return err;
 }
@@ -216,68 +215,65 @@ unsafe extern "C" fn unzlocal_getLong(
     mut pzlib_filefunc_def: *const crate::src::qcommon::ioapi::zlib_filefunc_def,
     mut filestream: crate::zconf_h::voidpf,
     mut pX: *mut crate::zconf_h::uLong,
-) -> libc::c_int {
+) -> i32 {
     let mut x: crate::zconf_h::uLong = 0;
-    let mut i: libc::c_int = 0 as libc::c_int;
-    let mut err: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut err: i32 = 0;
     err = unzlocal_getByte(pzlib_filefunc_def, filestream, &mut i);
     x = i as crate::zconf_h::uLong;
-    if err == 0 as libc::c_int {
+    if err == 0 {
         err = unzlocal_getByte(pzlib_filefunc_def, filestream, &mut i)
     }
-    x = (x as libc::c_ulong).wrapping_add((i as crate::zconf_h::uLong) << 8 as libc::c_int)
-        as crate::zconf_h::uLong as crate::zconf_h::uLong;
-    if err == 0 as libc::c_int {
+    x = (x).wrapping_add((i as crate::zconf_h::uLong) << 8);
+    if err == 0 {
         err = unzlocal_getByte(pzlib_filefunc_def, filestream, &mut i)
     }
-    x = (x as libc::c_ulong).wrapping_add((i as crate::zconf_h::uLong) << 16 as libc::c_int)
-        as crate::zconf_h::uLong as crate::zconf_h::uLong;
-    if err == 0 as libc::c_int {
+    x = (x).wrapping_add((i as crate::zconf_h::uLong) << 16);
+    if err == 0 {
         err = unzlocal_getByte(pzlib_filefunc_def, filestream, &mut i)
     }
-    x = (x as libc::c_ulong).wrapping_add((i as crate::zconf_h::uLong) << 24 as libc::c_int)
-        as crate::zconf_h::uLong as crate::zconf_h::uLong;
-    if err == 0 as libc::c_int {
+    x = (x).wrapping_add((i as crate::zconf_h::uLong) << 24);
+    if err == 0 {
         *pX = x
     } else {
-        *pX = 0 as libc::c_int as crate::zconf_h::uLong
+        *pX = 0usize
     }
     return err;
 }
 /* My own strcmpi / strcasecmp */
 
 unsafe extern "C" fn strcmpcasenosensitive_internal(
-    mut fileName1: *const libc::c_char,
-    mut fileName2: *const libc::c_char,
-) -> libc::c_int {
+    mut fileName1: *const i8,
+    mut fileName2: *const i8,
+) -> i32 {
     loop {
         let fresh0 = fileName1;
         fileName1 = fileName1.offset(1);
-        let mut c1: libc::c_char = *fresh0;
+        let mut c1: i8 = *fresh0;
         let fresh1 = fileName2;
         fileName2 = fileName2.offset(1);
-        let mut c2: libc::c_char = *fresh1;
-        if c1 as libc::c_int >= 'a' as i32 && c1 as libc::c_int <= 'z' as i32 {
-            c1 = (c1 as libc::c_int - 0x20 as libc::c_int) as libc::c_char
+        let mut c2: i8 = *fresh1;
+        if c1 as i32 >= 'a' as i32 && c1 as i32 <= 'z' as i32 {
+            c1 = (c1 as i32 - 0x20) as i8
         }
-        if c2 as libc::c_int >= 'a' as i32 && c2 as libc::c_int <= 'z' as i32 {
-            c2 = (c2 as libc::c_int - 0x20 as libc::c_int) as libc::c_char
+        if c2 as i32 >= 'a' as i32 && c2 as i32 <= 'z' as i32 {
+            c2 = (c2 as i32 - 0x20) as i8
         }
-        if c1 as libc::c_int == '\u{0}' as i32 {
-            return if c2 as libc::c_int == '\u{0}' as i32 {
-                0 as libc::c_int
+        if c1 as i32 == '\u{0}' as i32 {
+            return if c2 as i32 == '\u{0}' as i32 {
+                0i32
             } else {
-                -(1 as libc::c_int)
+                -(1i32)
             };
         }
-        if c2 as libc::c_int == '\u{0}' as i32 {
-            return 1 as libc::c_int;
+        if c2 as i32 == '\u{0}' as i32 {
+            return 1i32;
         }
-        if (c1 as libc::c_int) < c2 as libc::c_int {
-            return -(1 as libc::c_int);
+        if (c1 as i32) < c2 as i32 {
+            return -(1i32);
         }
-        if c1 as libc::c_int > c2 as libc::c_int {
-            return 1 as libc::c_int;
+        if c1 as i32 > c2 as i32 {
+            return 1i32;
         }
     }
 }
@@ -293,14 +289,14 @@ unsafe extern "C" fn strcmpcasenosensitive_internal(
 #[no_mangle]
 
 pub unsafe extern "C" fn unzStringFileNameCompare(
-    mut fileName1: *const libc::c_char,
-    mut fileName2: *const libc::c_char,
-    mut iCaseSensitivity: libc::c_int,
-) -> libc::c_int {
-    if iCaseSensitivity == 0 as libc::c_int {
-        iCaseSensitivity = 1 as libc::c_int
+    mut fileName1: *const i8,
+    mut fileName2: *const i8,
+    mut iCaseSensitivity: i32,
+) -> i32 {
+    if iCaseSensitivity == 0 {
+        iCaseSensitivity = 1
     }
-    if iCaseSensitivity == 1 as libc::c_int {
+    if iCaseSensitivity == 1 {
         return crate::stdlib::strcmp(fileName1, fileName2);
     }
     return strcmpcasenosensitive_internal(fileName1, fileName2);
@@ -314,24 +310,20 @@ unsafe extern "C" fn unzlocal_SearchCentralDir(
     mut pzlib_filefunc_def: *const crate::src::qcommon::ioapi::zlib_filefunc_def,
     mut filestream: crate::zconf_h::voidpf,
 ) -> crate::zconf_h::uLong {
-    let mut buf: *mut libc::c_uchar = 0 as *mut libc::c_uchar; /* maximum size of global comment */
+    let mut buf: *mut u8 = 0 as *mut u8; /* maximum size of global comment */
     let mut uSizeFile: crate::zconf_h::uLong = 0;
     let mut uBackRead: crate::zconf_h::uLong = 0;
-    let mut uMaxBack: crate::zconf_h::uLong = 0xffff as libc::c_int as crate::zconf_h::uLong;
-    let mut uPosFound: crate::zconf_h::uLong = 0 as libc::c_int as crate::zconf_h::uLong;
+    let mut uMaxBack: crate::zconf_h::uLong = 0xffff;
+    let mut uPosFound: crate::zconf_h::uLong = 0;
     if Some(
         (*pzlib_filefunc_def)
             .zseek_file
             .expect("non-null function pointer"),
     )
-    .expect("non-null function pointer")(
-        (*pzlib_filefunc_def).opaque,
-        filestream,
-        0 as libc::c_int as crate::zconf_h::uLong,
-        2 as libc::c_int,
-    ) != 0 as libc::c_int as libc::c_long
+    .expect("non-null function pointer")((*pzlib_filefunc_def).opaque, filestream, 0usize, 2)
+        != 0isize
     {
-        return 0 as libc::c_int as crate::zconf_h::uLong;
+        return 0usize;
     }
     uSizeFile = Some(
         (*pzlib_filefunc_def)
@@ -343,28 +335,23 @@ unsafe extern "C" fn unzlocal_SearchCentralDir(
     if uMaxBack > uSizeFile {
         uMaxBack = uSizeFile
     }
-    buf = crate::src::qcommon::common::Z_Malloc(0x400 as libc::c_int + 4 as libc::c_int)
-        as *mut libc::c_uchar;
+    buf = crate::src::qcommon::common::Z_Malloc(0x400 + 4) as *mut u8;
     if buf.is_null() {
-        return 0 as libc::c_int as crate::zconf_h::uLong;
+        return 0usize;
     }
-    uBackRead = 4 as libc::c_int as crate::zconf_h::uLong;
+    uBackRead = 4;
     while uBackRead < uMaxBack {
         let mut uReadSize: crate::zconf_h::uLong = 0;
         let mut uReadPos: crate::zconf_h::uLong = 0;
-        let mut i: libc::c_int = 0;
-        if uBackRead.wrapping_add(0x400 as libc::c_int as libc::c_ulong) > uMaxBack {
+        let mut i: i32 = 0;
+        if uBackRead.wrapping_add(0x400usize) > uMaxBack {
             uBackRead = uMaxBack
         } else {
-            uBackRead = (uBackRead as libc::c_ulong)
-                .wrapping_add(0x400 as libc::c_int as libc::c_ulong)
-                as crate::zconf_h::uLong as crate::zconf_h::uLong
+            uBackRead = (uBackRead).wrapping_add(0x400usize)
         }
         uReadPos = uSizeFile.wrapping_sub(uBackRead);
-        uReadSize = if ((0x400 as libc::c_int + 4 as libc::c_int) as libc::c_ulong)
-            < uSizeFile.wrapping_sub(uReadPos)
-        {
-            (0x400 as libc::c_int + 4 as libc::c_int) as libc::c_ulong
+        uReadSize = if ((0x400i32 + 4) as usize) < uSizeFile.wrapping_sub(uReadPos) {
+            (0x400i32 + 4) as usize
         } else {
             uSizeFile.wrapping_sub(uReadPos)
         };
@@ -374,11 +361,8 @@ unsafe extern "C" fn unzlocal_SearchCentralDir(
                 .expect("non-null function pointer"),
         )
         .expect("non-null function pointer")(
-            (*pzlib_filefunc_def).opaque,
-            filestream,
-            uReadPos,
-            0 as libc::c_int,
-        ) != 0 as libc::c_int as libc::c_long
+            (*pzlib_filefunc_def).opaque, filestream, uReadPos, 0
+        ) != 0isize
         {
             break;
         }
@@ -396,27 +380,24 @@ unsafe extern "C" fn unzlocal_SearchCentralDir(
         {
             break;
         }
-        i = uReadSize as libc::c_int - 3 as libc::c_int;
+        i = uReadSize as i32 - 3;
         loop {
             let fresh2 = i;
             i = i - 1;
-            if !(fresh2 > 0 as libc::c_int) {
+            if !(fresh2 > 0) {
                 break;
             }
-            if !(*buf.offset(i as isize) as libc::c_int == 0x50 as libc::c_int
-                && *buf.offset(i as isize).offset(1 as libc::c_int as isize) as libc::c_int
-                    == 0x4b as libc::c_int
-                && *buf.offset(i as isize).offset(2 as libc::c_int as isize) as libc::c_int
-                    == 0x5 as libc::c_int
-                && *buf.offset(i as isize).offset(3 as libc::c_int as isize) as libc::c_int
-                    == 0x6 as libc::c_int)
+            if !(*buf.offset(i as isize) as i32 == 0x50
+                && *buf.offset(i as isize).offset(1) as i32 == 0x4b
+                && *buf.offset(i as isize).offset(2) as i32 == 0x5
+                && *buf.offset(i as isize).offset(3) as i32 == 0x6)
             {
                 continue;
             }
-            uPosFound = uReadPos.wrapping_add(i as libc::c_ulong);
+            uPosFound = uReadPos.wrapping_add(i as usize);
             break;
         }
-        if uPosFound != 0 as libc::c_int as libc::c_ulong {
+        if uPosFound != 0 {
             break;
         }
     }
@@ -437,7 +418,7 @@ unsafe extern "C" fn unzlocal_SearchCentralDir(
 #[no_mangle]
 
 pub unsafe extern "C" fn unzOpen2(
-    mut path: *const libc::c_char,
+    mut path: *const i8,
     mut pzlib_filefunc_def: *mut crate::src::qcommon::ioapi::zlib_filefunc_def,
 ) -> crate::src::qcommon::unzip::unzFile {
     let mut us: unz_s = unz_s {
@@ -501,8 +482,8 @@ pub unsafe extern "C" fn unzOpen2(
     let mut number_disk: crate::zconf_h::uLong = 0;
     let mut number_disk_with_CD: crate::zconf_h::uLong = 0;
     let mut number_entry_CD: crate::zconf_h::uLong = 0;
-    let mut err: libc::c_int = 0 as libc::c_int;
-    if unz_copyright[0 as libc::c_int as usize] as libc::c_int != ' ' as i32 {
+    let mut err: i32 = 0;
+    if unz_copyright[0] as i32 != ' ' as i32 {
         return 0 as *mut libc::c_void;
     }
     if pzlib_filefunc_def.is_null() {
@@ -511,65 +492,47 @@ pub unsafe extern "C" fn unzOpen2(
         us.z_filefunc = *pzlib_filefunc_def
     }
     us.filestream = Some(us.z_filefunc.zopen_file.expect("non-null function pointer"))
-        .expect("non-null function pointer")(
-        us.z_filefunc.opaque,
-        path,
-        1 as libc::c_int | 4 as libc::c_int,
-    );
+        .expect("non-null function pointer")(us.z_filefunc.opaque, path, 1 | 4);
     if us.filestream.is_null() {
         return 0 as *mut libc::c_void;
     }
     central_pos = unzlocal_SearchCentralDir(&mut us.z_filefunc, us.filestream);
-    if central_pos == 0 as libc::c_int as libc::c_ulong {
-        err = -(1 as libc::c_int)
+    if central_pos == 0 {
+        err = -(1)
     }
     if Some(us.z_filefunc.zseek_file.expect("non-null function pointer"))
         .expect("non-null function pointer")(
-        us.z_filefunc.opaque,
-        us.filestream,
-        central_pos,
-        0 as libc::c_int,
-    ) != 0 as libc::c_int as libc::c_long
+        us.z_filefunc.opaque, us.filestream, central_pos, 0
+    ) != 0isize
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     /* the signature, already checked */
-    if unzlocal_getLong(&mut us.z_filefunc, us.filestream, &mut uL) != 0 as libc::c_int {
-        err = -(1 as libc::c_int)
+    if unzlocal_getLong(&mut us.z_filefunc, us.filestream, &mut uL) != 0 {
+        err = -(1)
     }
     /* number of this disk */
-    if unzlocal_getShort(&mut us.z_filefunc, us.filestream, &mut number_disk) != 0 as libc::c_int {
-        err = -(1 as libc::c_int)
+    if unzlocal_getShort(&mut us.z_filefunc, us.filestream, &mut number_disk) != 0 {
+        err = -(1)
     }
     /* number of the disk with the start of the central directory */
-    if unzlocal_getShort(&mut us.z_filefunc, us.filestream, &mut number_disk_with_CD)
-        != 0 as libc::c_int
-    {
-        err = -(1 as libc::c_int)
+    if unzlocal_getShort(&mut us.z_filefunc, us.filestream, &mut number_disk_with_CD) != 0 {
+        err = -(1)
     }
     /* total number of entries in the central dir on this disk */
-    if unzlocal_getShort(&mut us.z_filefunc, us.filestream, &mut us.gi.number_entry)
-        != 0 as libc::c_int
-    {
-        err = -(1 as libc::c_int)
+    if unzlocal_getShort(&mut us.z_filefunc, us.filestream, &mut us.gi.number_entry) != 0 {
+        err = -(1)
     }
     /* total number of entries in the central dir */
-    if unzlocal_getShort(&mut us.z_filefunc, us.filestream, &mut number_entry_CD)
-        != 0 as libc::c_int
-    {
-        err = -(1 as libc::c_int)
+    if unzlocal_getShort(&mut us.z_filefunc, us.filestream, &mut number_entry_CD) != 0 {
+        err = -(1)
     }
-    if number_entry_CD != us.gi.number_entry
-        || number_disk_with_CD != 0 as libc::c_int as libc::c_ulong
-        || number_disk != 0 as libc::c_int as libc::c_ulong
-    {
-        err = -(103 as libc::c_int)
+    if number_entry_CD != us.gi.number_entry || number_disk_with_CD != 0 || number_disk != 0 {
+        err = -(103)
     }
     /* size of the central directory */
-    if unzlocal_getLong(&mut us.z_filefunc, us.filestream, &mut us.size_central_dir)
-        != 0 as libc::c_int
-    {
-        err = -(1 as libc::c_int)
+    if unzlocal_getLong(&mut us.z_filefunc, us.filestream, &mut us.size_central_dir) != 0 {
+        err = -(1)
     }
     /* offset of start of central directory with respect to the
     starting disk number */
@@ -577,22 +540,18 @@ pub unsafe extern "C" fn unzOpen2(
         &mut us.z_filefunc,
         us.filestream,
         &mut us.offset_central_dir,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     /* zipfile comment length */
-    if unzlocal_getShort(&mut us.z_filefunc, us.filestream, &mut us.gi.size_comment)
-        != 0 as libc::c_int
-    {
-        err = -(1 as libc::c_int)
+    if unzlocal_getShort(&mut us.z_filefunc, us.filestream, &mut us.gi.size_comment) != 0 {
+        err = -(1)
     }
-    if central_pos < us.offset_central_dir.wrapping_add(us.size_central_dir)
-        && err == 0 as libc::c_int
-    {
-        err = -(103 as libc::c_int)
+    if central_pos < us.offset_central_dir.wrapping_add(us.size_central_dir) && err == 0 {
+        err = -(103)
     }
-    if err != 0 as libc::c_int {
+    if err != 0 {
         Some(
             us.z_filefunc
                 .zclose_file
@@ -605,19 +564,15 @@ pub unsafe extern "C" fn unzOpen2(
         central_pos.wrapping_sub(us.offset_central_dir.wrapping_add(us.size_central_dir));
     us.central_pos = central_pos;
     us.pfile_in_zip_read = 0 as *mut file_in_zip_read_info_s;
-    us.encrypted = 0 as libc::c_int;
-    s = crate::src::qcommon::common::Z_Malloc(
-        ::std::mem::size_of::<unz_s>() as libc::c_ulong as libc::c_int
-    ) as *mut unz_s;
+    us.encrypted = 0;
+    s = crate::src::qcommon::common::Z_Malloc(::std::mem::size_of::<unz_s>() as i32) as *mut unz_s;
     *s = us;
     unzGoToFirstFile(s as crate::src::qcommon::unzip::unzFile);
     return s as crate::src::qcommon::unzip::unzFile;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn unzOpen(
-    mut path: *const libc::c_char,
-) -> crate::src::qcommon::unzip::unzFile {
+pub unsafe extern "C" fn unzOpen(mut path: *const i8) -> crate::src::qcommon::unzip::unzFile {
     return unzOpen2(
         path,
         0 as *mut crate::src::qcommon::ioapi::zlib_filefunc_def,
@@ -630,10 +585,10 @@ If there is files inside the .Zip opened with unzipOpenCurrentFile (see later),
 return UNZ_OK if there is no problem. */
 #[no_mangle]
 
-pub unsafe extern "C" fn unzClose(mut file: crate::src::qcommon::unzip::unzFile) -> libc::c_int {
+pub unsafe extern "C" fn unzClose(mut file: crate::src::qcommon::unzip::unzFile) -> i32 {
     let mut s: *mut unz_s = 0 as *mut unz_s;
     if file.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     if !(*s).pfile_in_zip_read.is_null() {
@@ -648,7 +603,7 @@ pub unsafe extern "C" fn unzClose(mut file: crate::src::qcommon::unzip::unzFile)
     if !s.is_null() {
         crate::src::qcommon::common::Z_Free(s as *mut libc::c_void);
     }
-    return 0 as libc::c_int;
+    return 0;
 }
 /*
 Write info about the ZipFile in the *pglobal_info structure.
@@ -659,14 +614,14 @@ return UNZ_OK if there is no problem. */
 pub unsafe extern "C" fn unzGetGlobalInfo(
     mut file: crate::src::qcommon::unzip::unzFile,
     mut pglobal_info: *mut crate::src::qcommon::unzip::unz_global_info,
-) -> libc::c_int {
+) -> i32 {
     let mut s: *mut unz_s = 0 as *mut unz_s;
     if file.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     *pglobal_info = (*s).gi;
-    return 0 as libc::c_int;
+    return 0;
 }
 /*
    Translate date/time from Dos format to tm_unz (readable more easilty)
@@ -677,25 +632,17 @@ unsafe extern "C" fn unzlocal_DosDateToTmuDate(
     mut ptm: *mut crate::src::qcommon::unzip::tm_unz,
 ) {
     let mut uDate: crate::zconf_h::uLong = 0;
-    uDate = ulDosDate >> 16 as libc::c_int;
-    (*ptm).tm_mday = (uDate & 0x1f as libc::c_int as libc::c_ulong) as crate::zconf_h::uInt;
-    (*ptm).tm_mon = (uDate & 0x1e0 as libc::c_int as libc::c_ulong)
-        .wrapping_div(0x20 as libc::c_int as libc::c_ulong)
-        .wrapping_sub(1 as libc::c_int as libc::c_ulong)
-        as crate::zconf_h::uInt;
-    (*ptm).tm_year = (uDate & 0xfe00 as libc::c_int as libc::c_ulong)
-        .wrapping_div(0x200 as libc::c_int as libc::c_ulong)
-        .wrapping_add(1980 as libc::c_int as libc::c_ulong)
-        as crate::zconf_h::uInt;
-    (*ptm).tm_hour = (ulDosDate & 0xf800 as libc::c_int as libc::c_ulong)
-        .wrapping_div(0x800 as libc::c_int as libc::c_ulong)
-        as crate::zconf_h::uInt;
-    (*ptm).tm_min = (ulDosDate & 0x7e0 as libc::c_int as libc::c_ulong)
-        .wrapping_div(0x20 as libc::c_int as libc::c_ulong)
-        as crate::zconf_h::uInt;
-    (*ptm).tm_sec = (2 as libc::c_int as libc::c_ulong)
-        .wrapping_mul(ulDosDate & 0x1f as libc::c_int as libc::c_ulong)
-        as crate::zconf_h::uInt;
+    uDate = ulDosDate >> 16;
+    (*ptm).tm_mday = (uDate & 0x1f) as crate::zconf_h::uInt;
+    (*ptm).tm_mon = (uDate & 0x1e0usize)
+        .wrapping_div(0x20usize)
+        .wrapping_sub(1usize) as crate::zconf_h::uInt;
+    (*ptm).tm_year = (uDate & 0xfe00usize)
+        .wrapping_div(0x200usize)
+        .wrapping_add(1980usize) as crate::zconf_h::uInt;
+    (*ptm).tm_hour = (ulDosDate & 0xf800usize).wrapping_div(0x800usize) as crate::zconf_h::uInt;
+    (*ptm).tm_min = (ulDosDate & 0x7e0usize).wrapping_div(0x20usize) as crate::zconf_h::uInt;
+    (*ptm).tm_sec = (2usize).wrapping_mul(ulDosDate & 0x1fusize) as crate::zconf_h::uInt;
 }
 /*
   Get Info about the current file in the zipfile, with internal only info
@@ -705,13 +652,13 @@ unsafe extern "C" fn unzlocal_GetCurrentFileInfoInternal(
     mut file: crate::src::qcommon::unzip::unzFile,
     mut pfile_info: *mut crate::src::qcommon::unzip::unz_file_info,
     mut pfile_info_internal: *mut unz_file_info_internal,
-    mut szFileName: *mut libc::c_char,
+    mut szFileName: *mut i8,
     mut fileNameBufferSize: crate::zconf_h::uLong,
     mut extraField: *mut libc::c_void,
     mut extraFieldBufferSize: crate::zconf_h::uLong,
-    mut szComment: *mut libc::c_char,
+    mut szComment: *mut i8,
     mut commentBufferSize: crate::zconf_h::uLong,
-) -> libc::c_int {
+) -> i32 {
     let mut s: *mut unz_s = 0 as *mut unz_s;
     let mut file_info: crate::src::qcommon::unzip::unz_file_info =
         crate::src::qcommon::unzip::unz_file_info {
@@ -740,11 +687,11 @@ unsafe extern "C" fn unzlocal_GetCurrentFileInfoInternal(
         };
     let mut file_info_internal: unz_file_info_internal =
         unz_file_info_internal { offset_curfile: 0 };
-    let mut err: libc::c_int = 0 as libc::c_int;
+    let mut err: i32 = 0;
     let mut uMagic: crate::zconf_h::uLong = 0;
-    let mut lSeek: libc::c_long = 0 as libc::c_int as libc::c_long;
+    let mut lSeek: isize = 0;
     if file.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     if Some(
@@ -757,148 +704,140 @@ unsafe extern "C" fn unzlocal_GetCurrentFileInfoInternal(
         (*s).filestream,
         (*s).pos_in_central_dir
             .wrapping_add((*s).byte_before_the_zipfile),
-        0 as libc::c_int,
-    ) != 0 as libc::c_int as libc::c_long
+        0,
+    ) != 0isize
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     /* we check the magic */
-    if err == 0 as libc::c_int {
-        if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut uMagic) != 0 as libc::c_int
-        {
-            err = -(1 as libc::c_int)
-        } else if uMagic != 0x2014b50 as libc::c_int as libc::c_ulong {
-            err = -(103 as libc::c_int)
+    if err == 0 {
+        if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut uMagic) != 0 {
+            err = -(1)
+        } else if uMagic != 0x2014b50i32 as usize {
+            err = -(103)
         }
     }
     if unzlocal_getShort(
         &mut (*s).z_filefunc,
         (*s).filestream,
         &mut file_info.version,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     if unzlocal_getShort(
         &mut (*s).z_filefunc,
         (*s).filestream,
         &mut file_info.version_needed,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
-    if unzlocal_getShort(&mut (*s).z_filefunc, (*s).filestream, &mut file_info.flag)
-        != 0 as libc::c_int
-    {
-        err = -(1 as libc::c_int)
+    if unzlocal_getShort(&mut (*s).z_filefunc, (*s).filestream, &mut file_info.flag) != 0 {
+        err = -(1)
     }
     if unzlocal_getShort(
         &mut (*s).z_filefunc,
         (*s).filestream,
         &mut file_info.compression_method,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     if unzlocal_getLong(
         &mut (*s).z_filefunc,
         (*s).filestream,
         &mut file_info.dosDate,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     unzlocal_DosDateToTmuDate(file_info.dosDate, &mut file_info.tmu_date);
-    if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut file_info.crc)
-        != 0 as libc::c_int
-    {
-        err = -(1 as libc::c_int)
+    if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut file_info.crc) != 0 {
+        err = -(1)
     }
     if unzlocal_getLong(
         &mut (*s).z_filefunc,
         (*s).filestream,
         &mut file_info.compressed_size,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     if unzlocal_getLong(
         &mut (*s).z_filefunc,
         (*s).filestream,
         &mut file_info.uncompressed_size,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     if unzlocal_getShort(
         &mut (*s).z_filefunc,
         (*s).filestream,
         &mut file_info.size_filename,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     if unzlocal_getShort(
         &mut (*s).z_filefunc,
         (*s).filestream,
         &mut file_info.size_file_extra,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     if unzlocal_getShort(
         &mut (*s).z_filefunc,
         (*s).filestream,
         &mut file_info.size_file_comment,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     if unzlocal_getShort(
         &mut (*s).z_filefunc,
         (*s).filestream,
         &mut file_info.disk_num_start,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     if unzlocal_getShort(
         &mut (*s).z_filefunc,
         (*s).filestream,
         &mut file_info.internal_fa,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     if unzlocal_getLong(
         &mut (*s).z_filefunc,
         (*s).filestream,
         &mut file_info.external_fa,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
     if unzlocal_getLong(
         &mut (*s).z_filefunc,
         (*s).filestream,
         &mut file_info_internal.offset_curfile,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
-    lSeek = (lSeek as libc::c_ulong).wrapping_add(file_info.size_filename) as libc::c_long
-        as libc::c_long;
-    if err == 0 as libc::c_int && !szFileName.is_null() {
+    lSeek = (lSeek as usize).wrapping_add(file_info.size_filename) as isize;
+    if err == 0 && !szFileName.is_null() {
         let mut uSizeRead: crate::zconf_h::uLong = 0;
         if file_info.size_filename < fileNameBufferSize {
-            *szFileName.offset(file_info.size_filename as isize) = '\u{0}' as i32 as libc::c_char;
+            *szFileName.offset(file_info.size_filename as isize) = '\u{0}' as i8;
             uSizeRead = file_info.size_filename
         } else {
             uSizeRead = fileNameBufferSize
         }
-        if file_info.size_filename > 0 as libc::c_int as libc::c_ulong
-            && fileNameBufferSize > 0 as libc::c_int as libc::c_ulong
-        {
+        if file_info.size_filename > 0 && fileNameBufferSize > 0usize {
             if Some(
                 (*s).z_filefunc
                     .zread_file
@@ -911,19 +850,19 @@ unsafe extern "C" fn unzlocal_GetCurrentFileInfoInternal(
                 uSizeRead,
             ) != uSizeRead
             {
-                err = -(1 as libc::c_int)
+                err = -(1)
             }
         }
-        lSeek = (lSeek as libc::c_ulong).wrapping_sub(uSizeRead) as libc::c_long as libc::c_long
+        lSeek = (lSeek as usize).wrapping_sub(uSizeRead) as isize
     }
-    if err == 0 as libc::c_int && !extraField.is_null() {
+    if err == 0 && !extraField.is_null() {
         let mut uSizeRead_0: crate::zconf_h::uLong = 0;
         if file_info.size_file_extra < extraFieldBufferSize {
             uSizeRead_0 = file_info.size_file_extra
         } else {
             uSizeRead_0 = extraFieldBufferSize
         }
-        if lSeek != 0 as libc::c_int as libc::c_long {
+        if lSeek != 0 {
             if Some(
                 (*s).z_filefunc
                     .zseek_file
@@ -933,17 +872,15 @@ unsafe extern "C" fn unzlocal_GetCurrentFileInfoInternal(
                 (*s).z_filefunc.opaque,
                 (*s).filestream,
                 lSeek as crate::zconf_h::uLong,
-                1 as libc::c_int,
-            ) == 0 as libc::c_int as libc::c_long
+                1,
+            ) == 0isize
             {
-                lSeek = 0 as libc::c_int as libc::c_long
+                lSeek = 0
             } else {
-                err = -(1 as libc::c_int)
+                err = -(1)
             }
         }
-        if file_info.size_file_extra > 0 as libc::c_int as libc::c_ulong
-            && extraFieldBufferSize > 0 as libc::c_int as libc::c_ulong
-        {
+        if file_info.size_file_extra > 0 && extraFieldBufferSize > 0usize {
             if Some(
                 (*s).z_filefunc
                     .zread_file
@@ -956,26 +893,23 @@ unsafe extern "C" fn unzlocal_GetCurrentFileInfoInternal(
                 uSizeRead_0,
             ) != uSizeRead_0
             {
-                err = -(1 as libc::c_int)
+                err = -(1)
             }
         }
-        lSeek = (lSeek as libc::c_ulong)
-            .wrapping_add(file_info.size_file_extra.wrapping_sub(uSizeRead_0))
-            as libc::c_long as libc::c_long
+        lSeek = (lSeek as usize).wrapping_add(file_info.size_file_extra.wrapping_sub(uSizeRead_0))
+            as isize
     } else {
-        lSeek = (lSeek as libc::c_ulong).wrapping_add(file_info.size_file_extra) as libc::c_long
-            as libc::c_long
+        lSeek = (lSeek as usize).wrapping_add(file_info.size_file_extra) as isize
     }
-    if err == 0 as libc::c_int && !szComment.is_null() {
+    if err == 0 && !szComment.is_null() {
         let mut uSizeRead_1: crate::zconf_h::uLong = 0;
         if file_info.size_file_comment < commentBufferSize {
-            *szComment.offset(file_info.size_file_comment as isize) =
-                '\u{0}' as i32 as libc::c_char;
+            *szComment.offset(file_info.size_file_comment as isize) = '\u{0}' as i8;
             uSizeRead_1 = file_info.size_file_comment
         } else {
             uSizeRead_1 = commentBufferSize
         }
-        if lSeek != 0 as libc::c_int as libc::c_long {
+        if lSeek != 0 {
             if Some(
                 (*s).z_filefunc
                     .zseek_file
@@ -985,15 +919,13 @@ unsafe extern "C" fn unzlocal_GetCurrentFileInfoInternal(
                 (*s).z_filefunc.opaque,
                 (*s).filestream,
                 lSeek as crate::zconf_h::uLong,
-                1 as libc::c_int,
-            ) != 0 as libc::c_int as libc::c_long
+                1,
+            ) != 0isize
             {
-                err = -(1 as libc::c_int)
+                err = -(1)
             }
         }
-        if file_info.size_file_comment > 0 as libc::c_int as libc::c_ulong
-            && commentBufferSize > 0 as libc::c_int as libc::c_ulong
-        {
+        if file_info.size_file_comment > 0 && commentBufferSize > 0usize {
             if Some(
                 (*s).z_filefunc
                     .zread_file
@@ -1006,14 +938,14 @@ unsafe extern "C" fn unzlocal_GetCurrentFileInfoInternal(
                 uSizeRead_1,
             ) != uSizeRead_1
             {
-                err = -(1 as libc::c_int)
+                err = -(1)
             }
         }
     }
-    if err == 0 as libc::c_int && !pfile_info.is_null() {
+    if err == 0 && !pfile_info.is_null() {
         *pfile_info = file_info
     }
-    if err == 0 as libc::c_int && !pfile_info_internal.is_null() {
+    if err == 0 && !pfile_info_internal.is_null() {
         *pfile_info_internal = file_info_internal
     }
     return err;
@@ -1028,13 +960,13 @@ unsafe extern "C" fn unzlocal_GetCurrentFileInfoInternal(
 pub unsafe extern "C" fn unzGetCurrentFileInfo(
     mut file: crate::src::qcommon::unzip::unzFile,
     mut pfile_info: *mut crate::src::qcommon::unzip::unz_file_info,
-    mut szFileName: *mut libc::c_char,
+    mut szFileName: *mut i8,
     mut fileNameBufferSize: crate::zconf_h::uLong,
     mut extraField: *mut libc::c_void,
     mut extraFieldBufferSize: crate::zconf_h::uLong,
-    mut szComment: *mut libc::c_char,
+    mut szComment: *mut i8,
     mut commentBufferSize: crate::zconf_h::uLong,
-) -> libc::c_int {
+) -> i32 {
     return unzlocal_GetCurrentFileInfoInternal(
         file,
         pfile_info,
@@ -1053,29 +985,27 @@ pub unsafe extern "C" fn unzGetCurrentFileInfo(
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn unzGoToFirstFile(
-    mut file: crate::src::qcommon::unzip::unzFile,
-) -> libc::c_int {
-    let mut err: libc::c_int = 0 as libc::c_int;
+pub unsafe extern "C" fn unzGoToFirstFile(mut file: crate::src::qcommon::unzip::unzFile) -> i32 {
+    let mut err: i32 = 0;
     let mut s: *mut unz_s = 0 as *mut unz_s;
     if file.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     (*s).pos_in_central_dir = (*s).offset_central_dir;
-    (*s).num_file = 0 as libc::c_int as crate::zconf_h::uLong;
+    (*s).num_file = 0;
     err = unzlocal_GetCurrentFileInfoInternal(
         file,
         &mut (*s).cur_file_info,
         &mut (*s).cur_file_info_internal,
-        0 as *mut libc::c_char,
-        0 as libc::c_int as crate::zconf_h::uLong,
+        0 as *mut i8,
+        0,
         0 as *mut libc::c_void,
-        0 as libc::c_int as crate::zconf_h::uLong,
-        0 as *mut libc::c_char,
-        0 as libc::c_int as crate::zconf_h::uLong,
+        0,
+        0 as *mut i8,
+        0,
     );
-    (*s).current_file_ok = (err == 0 as libc::c_int) as libc::c_int as crate::zconf_h::uLong;
+    (*s).current_file_ok = (err == 0) as i32 as crate::zconf_h::uLong;
     return err;
 }
 /*
@@ -1085,47 +1015,41 @@ pub unsafe extern "C" fn unzGoToFirstFile(
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn unzGoToNextFile(
-    mut file: crate::src::qcommon::unzip::unzFile,
-) -> libc::c_int {
+pub unsafe extern "C" fn unzGoToNextFile(mut file: crate::src::qcommon::unzip::unzFile) -> i32 {
     let mut s: *mut unz_s = 0 as *mut unz_s;
-    let mut err: libc::c_int = 0;
+    let mut err: i32 = 0;
     if file.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     if (*s).current_file_ok == 0 {
-        return -(100 as libc::c_int);
+        return -(100i32);
     }
-    if (*s).gi.number_entry != 0xffff as libc::c_int as libc::c_ulong {
+    if (*s).gi.number_entry != 0xffff {
         /* 2^16 files overflow hack */
-        if (*s)
-            .num_file
-            .wrapping_add(1 as libc::c_int as libc::c_ulong)
-            == (*s).gi.number_entry
-        {
-            return -(100 as libc::c_int);
+        if (*s).num_file.wrapping_add(1usize) == (*s).gi.number_entry {
+            return -(100i32);
         }
     }
-    (*s).pos_in_central_dir = ((*s).pos_in_central_dir as libc::c_ulong).wrapping_add(
-        (0x2e as libc::c_int as libc::c_ulong)
+    (*s).pos_in_central_dir = ((*s).pos_in_central_dir).wrapping_add(
+        (0x2eusize)
             .wrapping_add((*s).cur_file_info.size_filename)
             .wrapping_add((*s).cur_file_info.size_file_extra)
             .wrapping_add((*s).cur_file_info.size_file_comment),
-    ) as crate::zconf_h::uLong as crate::zconf_h::uLong;
+    );
     (*s).num_file = (*s).num_file.wrapping_add(1);
     err = unzlocal_GetCurrentFileInfoInternal(
         file,
         &mut (*s).cur_file_info,
         &mut (*s).cur_file_info_internal,
-        0 as *mut libc::c_char,
-        0 as libc::c_int as crate::zconf_h::uLong,
+        0 as *mut i8,
+        0,
         0 as *mut libc::c_void,
-        0 as libc::c_int as crate::zconf_h::uLong,
-        0 as *mut libc::c_char,
-        0 as libc::c_int as crate::zconf_h::uLong,
+        0,
+        0 as *mut i8,
+        0,
     );
-    (*s).current_file_ok = (err == 0 as libc::c_int) as libc::c_int as crate::zconf_h::uLong;
+    (*s).current_file_ok = (err == 0) as i32 as crate::zconf_h::uLong;
     return err;
 }
 /*
@@ -1140,11 +1064,11 @@ pub unsafe extern "C" fn unzGoToNextFile(
 
 pub unsafe extern "C" fn unzLocateFile(
     mut file: crate::src::qcommon::unzip::unzFile,
-    mut szFileName: *const libc::c_char,
-    mut iCaseSensitivity: libc::c_int,
-) -> libc::c_int {
+    mut szFileName: *const i8,
+    mut iCaseSensitivity: i32,
+) -> i32 {
     let mut s: *mut unz_s = 0 as *mut unz_s;
-    let mut err: libc::c_int = 0;
+    let mut err: i32 = 0;
     /* We remember the 'current' position in the file so that we can jump
      * back there if we fail.
      */
@@ -1178,14 +1102,14 @@ pub unsafe extern "C" fn unzLocateFile(
     let mut num_fileSaved: crate::zconf_h::uLong = 0;
     let mut pos_in_central_dirSaved: crate::zconf_h::uLong = 0;
     if file.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
-    if crate::stdlib::strlen(szFileName) >= 256 as libc::c_int as libc::c_ulong {
-        return -(102 as libc::c_int);
+    if crate::stdlib::strlen(szFileName) >= 256 {
+        return -(102i32);
     }
     s = file as *mut unz_s;
     if (*s).current_file_ok == 0 {
-        return -(100 as libc::c_int);
+        return -(100i32);
     }
     /* Save the current state */
     num_fileSaved = (*s).num_file;
@@ -1193,27 +1117,26 @@ pub unsafe extern "C" fn unzLocateFile(
     cur_file_infoSaved = (*s).cur_file_info;
     cur_file_info_internalSaved = (*s).cur_file_info_internal;
     err = unzGoToFirstFile(file);
-    while err == 0 as libc::c_int {
-        let mut szCurrentFileName: [libc::c_char; 257] = [0; 257];
+    while err == 0 {
+        let mut szCurrentFileName: [i8; 257] = [0; 257];
         err = unzGetCurrentFileInfo(
             file,
             0 as *mut crate::src::qcommon::unzip::unz_file_info,
             szCurrentFileName.as_mut_ptr(),
-            (::std::mem::size_of::<[libc::c_char; 257]>() as libc::c_ulong)
-                .wrapping_sub(1 as libc::c_int as libc::c_ulong),
+            (::std::mem::size_of::<[i8; 257]>()).wrapping_sub(1usize),
             0 as *mut libc::c_void,
-            0 as libc::c_int as crate::zconf_h::uLong,
-            0 as *mut libc::c_char,
-            0 as libc::c_int as crate::zconf_h::uLong,
+            0,
+            0 as *mut i8,
+            0,
         );
-        if err == 0 as libc::c_int {
+        if err == 0 {
             if unzStringFileNameCompare(
                 szCurrentFileName.as_mut_ptr(),
                 szFileName,
                 iCaseSensitivity,
-            ) == 0 as libc::c_int
+            ) == 0
             {
-                return 0 as libc::c_int;
+                return 0i32;
             }
             err = unzGoToNextFile(file)
         }
@@ -1248,29 +1171,29 @@ typedef struct unz_file_pos_s
 pub unsafe extern "C" fn unzGetFilePos(
     mut file: crate::src::qcommon::unzip::unzFile,
     mut file_pos: *mut crate::src::qcommon::unzip::unz_file_pos,
-) -> libc::c_int {
+) -> i32 {
     let mut s: *mut unz_s = 0 as *mut unz_s;
     if file.is_null() || file_pos.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     if (*s).current_file_ok == 0 {
-        return -(100 as libc::c_int);
+        return -(100i32);
     }
     (*file_pos).pos_in_zip_directory = (*s).pos_in_central_dir;
     (*file_pos).num_of_file = (*s).num_file;
-    return 0 as libc::c_int;
+    return 0;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn unzGoToFilePos(
     mut file: crate::src::qcommon::unzip::unzFile,
     mut file_pos: *mut crate::src::qcommon::unzip::unz_file_pos,
-) -> libc::c_int {
+) -> i32 {
     let mut s: *mut unz_s = 0 as *mut unz_s;
-    let mut err: libc::c_int = 0;
+    let mut err: i32 = 0;
     if file.is_null() || file_pos.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     /* jump to the right spot */
@@ -1281,15 +1204,15 @@ pub unsafe extern "C" fn unzGoToFilePos(
         file,
         &mut (*s).cur_file_info,
         &mut (*s).cur_file_info_internal,
-        0 as *mut libc::c_char,
-        0 as libc::c_int as crate::zconf_h::uLong,
+        0 as *mut i8,
+        0,
         0 as *mut libc::c_void,
-        0 as libc::c_int as crate::zconf_h::uLong,
-        0 as *mut libc::c_char,
-        0 as libc::c_int as crate::zconf_h::uLong,
+        0,
+        0 as *mut i8,
+        0,
     );
     /* return results */
-    (*s).current_file_ok = (err == 0 as libc::c_int) as libc::c_int as crate::zconf_h::uLong;
+    (*s).current_file_ok = (err == 0) as i32 as crate::zconf_h::uLong;
     return err;
 }
 /*
@@ -1309,16 +1232,16 @@ unsafe extern "C" fn unzlocal_CheckCurrentFileCoherencyHeader(
     mut piSizeVar: *mut crate::zconf_h::uInt,
     mut poffset_local_extrafield: *mut crate::zconf_h::uLong,
     mut psize_local_extrafield: *mut crate::zconf_h::uInt,
-) -> libc::c_int {
+) -> i32 {
     let mut uMagic: crate::zconf_h::uLong = 0;
     let mut uData: crate::zconf_h::uLong = 0;
     let mut uFlags: crate::zconf_h::uLong = 0;
     let mut size_filename: crate::zconf_h::uLong = 0;
     let mut size_extra_field: crate::zconf_h::uLong = 0;
-    let mut err: libc::c_int = 0 as libc::c_int;
-    *piSizeVar = 0 as libc::c_int as crate::zconf_h::uInt;
-    *poffset_local_extrafield = 0 as libc::c_int as crate::zconf_h::uLong;
-    *psize_local_extrafield = 0 as libc::c_int as crate::zconf_h::uInt;
+    let mut err: i32 = 0;
+    *piSizeVar = 0u32;
+    *poffset_local_extrafield = 0usize;
+    *psize_local_extrafield = 0u32;
     if Some(
         (*s).z_filefunc
             .zseek_file
@@ -1330,93 +1253,77 @@ unsafe extern "C" fn unzlocal_CheckCurrentFileCoherencyHeader(
         (*s).cur_file_info_internal
             .offset_curfile
             .wrapping_add((*s).byte_before_the_zipfile),
-        0 as libc::c_int,
-    ) != 0 as libc::c_int as libc::c_long
+        0,
+    ) != 0isize
     {
-        return -(1 as libc::c_int);
+        return -(1i32);
     }
-    if err == 0 as libc::c_int {
-        if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut uMagic) != 0 as libc::c_int
-        {
-            err = -(1 as libc::c_int)
-        } else if uMagic != 0x4034b50 as libc::c_int as libc::c_ulong {
-            err = -(103 as libc::c_int)
+    if err == 0 {
+        if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut uMagic) != 0 {
+            err = -(1)
+        } else if uMagic != 0x4034b50i32 as usize {
+            err = -(103)
         }
     }
-    if unzlocal_getShort(&mut (*s).z_filefunc, (*s).filestream, &mut uData) != 0 as libc::c_int {
-        err = -(1 as libc::c_int)
+    if unzlocal_getShort(&mut (*s).z_filefunc, (*s).filestream, &mut uData) != 0 {
+        err = -(1)
     }
     /*
         else if ((err==UNZ_OK) && (uData!=s->cur_file_info.wVersion))
             err=UNZ_BADZIPFILE;
     */
-    if unzlocal_getShort(&mut (*s).z_filefunc, (*s).filestream, &mut uFlags) != 0 as libc::c_int {
-        err = -(1 as libc::c_int)
+    if unzlocal_getShort(&mut (*s).z_filefunc, (*s).filestream, &mut uFlags) != 0 {
+        err = -(1)
     }
-    if unzlocal_getShort(&mut (*s).z_filefunc, (*s).filestream, &mut uData) != 0 as libc::c_int {
-        err = -(1 as libc::c_int)
-    } else if err == 0 as libc::c_int && uData != (*s).cur_file_info.compression_method {
-        err = -(103 as libc::c_int)
+    if unzlocal_getShort(&mut (*s).z_filefunc, (*s).filestream, &mut uData) != 0 {
+        err = -(1)
+    } else if err == 0 && uData != (*s).cur_file_info.compression_method {
+        err = -(103)
     }
-    if err == 0 as libc::c_int
-        && (*s).cur_file_info.compression_method != 0 as libc::c_int as libc::c_ulong
-        && (*s).cur_file_info.compression_method != 8 as libc::c_int as libc::c_ulong
+    if err == 0
+        && (*s).cur_file_info.compression_method != 0usize
+        && (*s).cur_file_info.compression_method != 8usize
     {
-        err = -(103 as libc::c_int)
+        err = -(103)
     }
-    if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut uData) != 0 as libc::c_int {
+    if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut uData) != 0 {
         /* date/time */
-        err = -(1 as libc::c_int)
+        err = -(1)
     }
-    if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut uData) != 0 as libc::c_int {
+    if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut uData) != 0 {
         /* crc */
-        err = -(1 as libc::c_int)
-    } else if err == 0 as libc::c_int
-        && uData != (*s).cur_file_info.crc
-        && uFlags & 8 as libc::c_int as libc::c_ulong == 0 as libc::c_int as libc::c_ulong
-    {
-        err = -(103 as libc::c_int)
+        err = -(1)
+    } else if err == 0 && uData != (*s).cur_file_info.crc && uFlags & 8 == 0 {
+        err = -(103)
     }
-    if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut uData) != 0 as libc::c_int {
+    if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut uData) != 0 {
         /* size compr */
-        err = -(1 as libc::c_int)
-    } else if err == 0 as libc::c_int
-        && uData != (*s).cur_file_info.compressed_size
-        && uFlags & 8 as libc::c_int as libc::c_ulong == 0 as libc::c_int as libc::c_ulong
-    {
-        err = -(103 as libc::c_int)
+        err = -(1)
+    } else if err == 0 && uData != (*s).cur_file_info.compressed_size && uFlags & 8 == 0 {
+        err = -(103)
     }
-    if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut uData) != 0 as libc::c_int {
+    if unzlocal_getLong(&mut (*s).z_filefunc, (*s).filestream, &mut uData) != 0 {
         /* size uncompr */
-        err = -(1 as libc::c_int)
-    } else if err == 0 as libc::c_int
-        && uData != (*s).cur_file_info.uncompressed_size
-        && uFlags & 8 as libc::c_int as libc::c_ulong == 0 as libc::c_int as libc::c_ulong
-    {
-        err = -(103 as libc::c_int)
+        err = -(1)
+    } else if err == 0 && uData != (*s).cur_file_info.uncompressed_size && uFlags & 8 == 0 {
+        err = -(103)
     }
-    if unzlocal_getShort(&mut (*s).z_filefunc, (*s).filestream, &mut size_filename)
-        != 0 as libc::c_int
-    {
-        err = -(1 as libc::c_int)
-    } else if err == 0 as libc::c_int && size_filename != (*s).cur_file_info.size_filename {
-        err = -(103 as libc::c_int)
+    if unzlocal_getShort(&mut (*s).z_filefunc, (*s).filestream, &mut size_filename) != 0 {
+        err = -(1)
+    } else if err == 0 && size_filename != (*s).cur_file_info.size_filename {
+        err = -(103)
     }
-    *piSizeVar = (*piSizeVar as libc::c_uint).wrapping_add(size_filename as crate::zconf_h::uInt)
-        as crate::zconf_h::uInt as crate::zconf_h::uInt;
-    if unzlocal_getShort(&mut (*s).z_filefunc, (*s).filestream, &mut size_extra_field)
-        != 0 as libc::c_int
-    {
-        err = -(1 as libc::c_int)
+    *piSizeVar = (*piSizeVar).wrapping_add(size_filename as crate::zconf_h::uInt);
+    if unzlocal_getShort(&mut (*s).z_filefunc, (*s).filestream, &mut size_extra_field) != 0 {
+        err = -(1)
     }
     *poffset_local_extrafield = (*s)
         .cur_file_info_internal
         .offset_curfile
-        .wrapping_add(0x1e as libc::c_int as libc::c_ulong)
+        .wrapping_add(0x1eusize)
         .wrapping_add(size_filename);
     *psize_local_extrafield = size_extra_field as crate::zconf_h::uInt;
-    *piSizeVar = (*piSizeVar as libc::c_uint).wrapping_add(size_extra_field as crate::zconf_h::uInt)
-        as crate::zconf_h::uInt as crate::zconf_h::uInt;
+    *piSizeVar = (*piSizeVar).wrapping_add(size_extra_field as crate::zconf_h::uInt);
     return err;
 }
 /*
@@ -1427,12 +1334,12 @@ unsafe extern "C" fn unzlocal_CheckCurrentFileCoherencyHeader(
 
 pub unsafe extern "C" fn unzOpenCurrentFile3(
     mut file: crate::src::qcommon::unzip::unzFile,
-    mut method: *mut libc::c_int,
-    mut level: *mut libc::c_int,
-    mut raw: libc::c_int,
-    mut password: *const libc::c_char,
-) -> libc::c_int {
-    let mut err: libc::c_int = 0 as libc::c_int; /* offset of the local extra field */
+    mut method: *mut i32,
+    mut level: *mut i32,
+    mut raw: i32,
+    mut password: *const i8,
+) -> i32 {
+    let mut err: i32 = 0; /* offset of the local extra field */
     let mut iSizeVar: crate::zconf_h::uInt = 0; /* size of the local extra field */
     let mut s: *mut unz_s = 0 as *mut unz_s;
     let mut pfile_in_zip_read_info: *mut file_in_zip_read_info_s =
@@ -1440,14 +1347,14 @@ pub unsafe extern "C" fn unzOpenCurrentFile3(
     let mut offset_local_extrafield: crate::zconf_h::uLong = 0;
     let mut size_local_extrafield: crate::zconf_h::uInt = 0;
     if !password.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     if file.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     if (*s).current_file_ok == 0 {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     if !(*s).pfile_in_zip_read.is_null() {
         unzCloseCurrentFile(file);
@@ -1457,73 +1364,69 @@ pub unsafe extern "C" fn unzOpenCurrentFile3(
         &mut iSizeVar,
         &mut offset_local_extrafield,
         &mut size_local_extrafield,
-    ) != 0 as libc::c_int
+    ) != 0
     {
-        return -(103 as libc::c_int);
+        return -(103i32);
     }
     pfile_in_zip_read_info = crate::src::qcommon::common::Z_Malloc(::std::mem::size_of::<
         file_in_zip_read_info_s,
-    >() as libc::c_ulong
-        as libc::c_int) as *mut file_in_zip_read_info_s;
+    >() as i32) as *mut file_in_zip_read_info_s;
     if pfile_in_zip_read_info.is_null() {
-        return -(104 as libc::c_int);
+        return -(104i32);
     }
-    (*pfile_in_zip_read_info).read_buffer =
-        crate::src::qcommon::common::Z_Malloc(16384 as libc::c_int) as *mut libc::c_char;
+    (*pfile_in_zip_read_info).read_buffer = crate::src::qcommon::common::Z_Malloc(16384) as *mut i8;
     (*pfile_in_zip_read_info).offset_local_extrafield = offset_local_extrafield;
     (*pfile_in_zip_read_info).size_local_extrafield = size_local_extrafield;
-    (*pfile_in_zip_read_info).pos_local_extrafield = 0 as libc::c_int as crate::zconf_h::uLong;
+    (*pfile_in_zip_read_info).pos_local_extrafield = 0;
     (*pfile_in_zip_read_info).raw = raw;
     if (*pfile_in_zip_read_info).read_buffer.is_null() {
         if !pfile_in_zip_read_info.is_null() {
             crate::src::qcommon::common::Z_Free(pfile_in_zip_read_info as *mut libc::c_void);
         }
-        return -(104 as libc::c_int);
+        return -(104i32);
     }
-    (*pfile_in_zip_read_info).stream_initialised = 0 as libc::c_int as crate::zconf_h::uLong;
+    (*pfile_in_zip_read_info).stream_initialised = 0;
     if !method.is_null() {
-        *method = (*s).cur_file_info.compression_method as libc::c_int
+        *method = (*s).cur_file_info.compression_method as i32
     }
     if !level.is_null() {
-        *level = 6 as libc::c_int;
-        match (*s).cur_file_info.flag & 0x6 as libc::c_int as libc::c_ulong {
-            6 => *level = 1 as libc::c_int,
-            4 => *level = 2 as libc::c_int,
-            2 => *level = 9 as libc::c_int,
+        *level = 6;
+        match (*s).cur_file_info.flag & 0x6 {
+            6 => *level = 1,
+            4 => *level = 2,
+            2 => *level = 9,
             _ => {}
         }
     }
-    if (*s).cur_file_info.compression_method != 0 as libc::c_int as libc::c_ulong
-        && (*s).cur_file_info.compression_method != 8 as libc::c_int as libc::c_ulong
-    {
-        err = -(103 as libc::c_int)
+    if (*s).cur_file_info.compression_method != 0 && (*s).cur_file_info.compression_method != 8 {
+        err = -(103)
     }
     (*pfile_in_zip_read_info).crc32_wait = (*s).cur_file_info.crc;
-    (*pfile_in_zip_read_info).crc32 = 0 as libc::c_int as crate::zconf_h::uLong;
+    (*pfile_in_zip_read_info).crc32 = 0;
     (*pfile_in_zip_read_info).compression_method = (*s).cur_file_info.compression_method;
     (*pfile_in_zip_read_info).filestream = (*s).filestream;
     (*pfile_in_zip_read_info).z_filefunc = (*s).z_filefunc;
     (*pfile_in_zip_read_info).byte_before_the_zipfile = (*s).byte_before_the_zipfile;
-    (*pfile_in_zip_read_info).stream.total_out = 0 as libc::c_int as crate::zconf_h::uLong;
-    if (*s).cur_file_info.compression_method == 8 as libc::c_int as libc::c_ulong && raw == 0 {
+    (*pfile_in_zip_read_info).stream.total_out = 0;
+    if (*s).cur_file_info.compression_method == 8 && raw == 0 {
         (*pfile_in_zip_read_info).stream.zalloc = None;
         (*pfile_in_zip_read_info).stream.zfree = None;
         (*pfile_in_zip_read_info).stream.opaque = 0 as crate::zconf_h::voidpf;
         (*pfile_in_zip_read_info).stream.next_in = 0 as *mut crate::zconf_h::Bytef;
-        (*pfile_in_zip_read_info).stream.avail_in = 0 as libc::c_int as crate::zconf_h::uInt;
+        (*pfile_in_zip_read_info).stream.avail_in = 0;
         if crate::src::zlib::inflate::inflateInit2_(
             &mut (*pfile_in_zip_read_info).stream,
-            -(15 as libc::c_int),
-            b"1.2.3\x00" as *const u8 as *const libc::c_char,
-            ::std::mem::size_of::<crate::zlib_h::z_stream>() as libc::c_ulong as libc::c_int,
-        ) == 0 as libc::c_int
+            -(15),
+            b"1.2.3\x00" as *const u8 as *const i8,
+            ::std::mem::size_of::<crate::zlib_h::z_stream>() as i32,
+        ) == 0
         {
-            (*pfile_in_zip_read_info).stream_initialised = 1 as libc::c_int as crate::zconf_h::uLong
+            (*pfile_in_zip_read_info).stream_initialised = 1
         } else {
             if !pfile_in_zip_read_info.is_null() {
                 crate::src::qcommon::common::Z_Free(pfile_in_zip_read_info as *mut libc::c_void);
             }
-            return -(104 as libc::c_int);
+            return -(104i32);
         }
         /* windowBits is passed < 0 to tell that there is no zlib header.
          * Note that in this case inflate *requires* an extra "dummy" byte
@@ -1538,48 +1441,34 @@ pub unsafe extern "C" fn unzOpenCurrentFile3(
     (*pfile_in_zip_read_info).pos_in_zipfile = (*s)
         .cur_file_info_internal
         .offset_curfile
-        .wrapping_add(0x1e as libc::c_int as libc::c_ulong)
-        .wrapping_add(iSizeVar as libc::c_ulong);
-    (*pfile_in_zip_read_info).stream.avail_in = 0 as libc::c_int as crate::zconf_h::uInt;
+        .wrapping_add(0x1eusize)
+        .wrapping_add(iSizeVar as usize);
+    (*pfile_in_zip_read_info).stream.avail_in = 0;
     (*s).pfile_in_zip_read = pfile_in_zip_read_info;
     return err;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn unzOpenCurrentFile(
-    mut file: crate::src::qcommon::unzip::unzFile,
-) -> libc::c_int {
-    return unzOpenCurrentFile3(
-        file,
-        0 as *mut libc::c_int,
-        0 as *mut libc::c_int,
-        0 as libc::c_int,
-        0 as *const libc::c_char,
-    );
+pub unsafe extern "C" fn unzOpenCurrentFile(mut file: crate::src::qcommon::unzip::unzFile) -> i32 {
+    return unzOpenCurrentFile3(file, 0 as *mut i32, 0 as *mut i32, 0, 0 as *const i8);
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn unzOpenCurrentFilePassword(
     mut file: crate::src::qcommon::unzip::unzFile,
-    mut password: *const libc::c_char,
-) -> libc::c_int {
-    return unzOpenCurrentFile3(
-        file,
-        0 as *mut libc::c_int,
-        0 as *mut libc::c_int,
-        0 as libc::c_int,
-        password,
-    );
+    mut password: *const i8,
+) -> i32 {
+    return unzOpenCurrentFile3(file, 0 as *mut i32, 0 as *mut i32, 0, password);
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn unzOpenCurrentFile2(
     mut file: crate::src::qcommon::unzip::unzFile,
-    mut method: *mut libc::c_int,
-    mut level: *mut libc::c_int,
-    mut raw: libc::c_int,
-) -> libc::c_int {
-    return unzOpenCurrentFile3(file, method, level, raw, 0 as *const libc::c_char);
+    mut method: *mut i32,
+    mut level: *mut i32,
+    mut raw: i32,
+) -> i32 {
+    return unzOpenCurrentFile3(file, method, level, raw, 0 as *const i8);
 }
 /*
   Read bytes from the current file.
@@ -1596,55 +1485,55 @@ pub unsafe extern "C" fn unzOpenCurrentFile2(
 pub unsafe extern "C" fn unzReadCurrentFile(
     mut file: crate::src::qcommon::unzip::unzFile,
     mut buf: crate::zconf_h::voidp,
-    mut len: libc::c_uint,
-) -> libc::c_int {
-    let mut err: libc::c_int = 0 as libc::c_int;
-    let mut iRead: crate::zconf_h::uInt = 0 as libc::c_int as crate::zconf_h::uInt;
+    mut len: u32,
+) -> i32 {
+    let mut err: i32 = 0;
+    let mut iRead: crate::zconf_h::uInt = 0;
     let mut s: *mut unz_s = 0 as *mut unz_s;
     let mut pfile_in_zip_read_info: *mut file_in_zip_read_info_s =
         0 as *mut file_in_zip_read_info_s;
     if file.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     pfile_in_zip_read_info = (*s).pfile_in_zip_read;
     if pfile_in_zip_read_info.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     if (*pfile_in_zip_read_info).read_buffer.is_null() {
-        return -(100 as libc::c_int);
+        return -(100i32);
     }
-    if len == 0 as libc::c_int as libc::c_uint {
-        return 0 as libc::c_int;
+    if len == 0u32 {
+        return 0i32;
     }
     (*pfile_in_zip_read_info).stream.next_out = buf as *mut crate::zconf_h::Bytef;
     (*pfile_in_zip_read_info).stream.avail_out = len;
-    if len as libc::c_ulong > (*pfile_in_zip_read_info).rest_read_uncompressed
+    if len as usize > (*pfile_in_zip_read_info).rest_read_uncompressed
         && (*pfile_in_zip_read_info).raw == 0
     {
         (*pfile_in_zip_read_info).stream.avail_out =
             (*pfile_in_zip_read_info).rest_read_uncompressed as crate::zconf_h::uInt
     }
-    if len as libc::c_ulong
+    if len as usize
         > (*pfile_in_zip_read_info)
             .rest_read_compressed
-            .wrapping_add((*pfile_in_zip_read_info).stream.avail_in as libc::c_ulong)
+            .wrapping_add((*pfile_in_zip_read_info).stream.avail_in as usize)
         && (*pfile_in_zip_read_info).raw != 0
     {
         (*pfile_in_zip_read_info).stream.avail_out = ((*pfile_in_zip_read_info).rest_read_compressed
             as crate::zconf_h::uInt)
             .wrapping_add((*pfile_in_zip_read_info).stream.avail_in)
     }
-    while (*pfile_in_zip_read_info).stream.avail_out > 0 as libc::c_int as libc::c_uint {
-        if (*pfile_in_zip_read_info).stream.avail_in == 0 as libc::c_int as libc::c_uint
-            && (*pfile_in_zip_read_info).rest_read_compressed > 0 as libc::c_int as libc::c_ulong
+    while (*pfile_in_zip_read_info).stream.avail_out > 0 {
+        if (*pfile_in_zip_read_info).stream.avail_in == 0
+            && (*pfile_in_zip_read_info).rest_read_compressed > 0
         {
-            let mut uReadThis: crate::zconf_h::uInt = 16384 as libc::c_int as crate::zconf_h::uInt;
-            if (*pfile_in_zip_read_info).rest_read_compressed < uReadThis as libc::c_ulong {
+            let mut uReadThis: crate::zconf_h::uInt = 16384;
+            if (*pfile_in_zip_read_info).rest_read_compressed < uReadThis as usize {
                 uReadThis = (*pfile_in_zip_read_info).rest_read_compressed as crate::zconf_h::uInt
             }
-            if uReadThis == 0 as libc::c_int as libc::c_uint {
-                return 0 as libc::c_int;
+            if uReadThis == 0 {
+                return 0i32;
             }
             if Some(
                 (*pfile_in_zip_read_info)
@@ -1658,10 +1547,10 @@ pub unsafe extern "C" fn unzReadCurrentFile(
                 (*pfile_in_zip_read_info)
                     .pos_in_zipfile
                     .wrapping_add((*pfile_in_zip_read_info).byte_before_the_zipfile),
-                0 as libc::c_int,
-            ) != 0 as libc::c_int as libc::c_long
+                0,
+            ) != 0isize
             {
-                return -(1 as libc::c_int);
+                return -(1i32);
             }
             if Some(
                 (*pfile_in_zip_read_info)
@@ -1674,36 +1563,25 @@ pub unsafe extern "C" fn unzReadCurrentFile(
                 (*pfile_in_zip_read_info).filestream,
                 (*pfile_in_zip_read_info).read_buffer as *mut libc::c_void,
                 uReadThis as crate::zconf_h::uLong,
-            ) != uReadThis as libc::c_ulong
+            ) != uReadThis as usize
             {
-                return -(1 as libc::c_int);
+                return -(1i32);
             }
             (*pfile_in_zip_read_info).pos_in_zipfile =
-                ((*pfile_in_zip_read_info).pos_in_zipfile as libc::c_ulong)
-                    .wrapping_add(uReadThis as libc::c_ulong)
-                    as crate::zconf_h::uLong as crate::zconf_h::uLong;
+                ((*pfile_in_zip_read_info).pos_in_zipfile).wrapping_add(uReadThis as usize);
             (*pfile_in_zip_read_info).rest_read_compressed =
-                ((*pfile_in_zip_read_info).rest_read_compressed as libc::c_ulong)
-                    .wrapping_sub(uReadThis as libc::c_ulong)
-                    as crate::zconf_h::uLong as crate::zconf_h::uLong;
+                ((*pfile_in_zip_read_info).rest_read_compressed).wrapping_sub(uReadThis as usize);
             (*pfile_in_zip_read_info).stream.next_in =
                 (*pfile_in_zip_read_info).read_buffer as *mut crate::zconf_h::Bytef;
             (*pfile_in_zip_read_info).stream.avail_in = uReadThis
         }
-        if (*pfile_in_zip_read_info).compression_method == 0 as libc::c_int as libc::c_ulong
-            || (*pfile_in_zip_read_info).raw != 0
-        {
+        if (*pfile_in_zip_read_info).compression_method == 0 || (*pfile_in_zip_read_info).raw != 0 {
             let mut uDoCopy: crate::zconf_h::uInt = 0;
             let mut i: crate::zconf_h::uInt = 0;
-            if (*pfile_in_zip_read_info).stream.avail_in == 0 as libc::c_int as libc::c_uint
-                && (*pfile_in_zip_read_info).rest_read_compressed
-                    == 0 as libc::c_int as libc::c_ulong
+            if (*pfile_in_zip_read_info).stream.avail_in == 0
+                && (*pfile_in_zip_read_info).rest_read_compressed == 0
             {
-                return if iRead == 0 as libc::c_int as libc::c_uint {
-                    0 as libc::c_int as libc::c_uint
-                } else {
-                    iRead
-                } as libc::c_int;
+                return if iRead == 0u32 { 0u32 } else { iRead } as i32;
             }
             if (*pfile_in_zip_read_info).stream.avail_out
                 < (*pfile_in_zip_read_info).stream.avail_in
@@ -1712,7 +1590,7 @@ pub unsafe extern "C" fn unzReadCurrentFile(
             } else {
                 uDoCopy = (*pfile_in_zip_read_info).stream.avail_in
             }
-            i = 0 as libc::c_int as crate::zconf_h::uInt;
+            i = 0;
             while i < uDoCopy {
                 *(*pfile_in_zip_read_info).stream.next_out.offset(i as isize) =
                     *(*pfile_in_zip_read_info).stream.next_in.offset(i as isize);
@@ -1724,15 +1602,11 @@ pub unsafe extern "C" fn unzReadCurrentFile(
                 uDoCopy,
             );
             (*pfile_in_zip_read_info).rest_read_uncompressed =
-                ((*pfile_in_zip_read_info).rest_read_uncompressed as libc::c_ulong)
-                    .wrapping_sub(uDoCopy as libc::c_ulong) as crate::zconf_h::uLong
-                    as crate::zconf_h::uLong;
+                ((*pfile_in_zip_read_info).rest_read_uncompressed).wrapping_sub(uDoCopy as usize);
             (*pfile_in_zip_read_info).stream.avail_in =
-                ((*pfile_in_zip_read_info).stream.avail_in as libc::c_uint).wrapping_sub(uDoCopy)
-                    as crate::zconf_h::uInt as crate::zconf_h::uInt;
+                ((*pfile_in_zip_read_info).stream.avail_in).wrapping_sub(uDoCopy);
             (*pfile_in_zip_read_info).stream.avail_out =
-                ((*pfile_in_zip_read_info).stream.avail_out as libc::c_uint).wrapping_sub(uDoCopy)
-                    as crate::zconf_h::uInt as crate::zconf_h::uInt;
+                ((*pfile_in_zip_read_info).stream.avail_out).wrapping_sub(uDoCopy);
             (*pfile_in_zip_read_info).stream.next_out = (*pfile_in_zip_read_info)
                 .stream
                 .next_out
@@ -1742,17 +1616,14 @@ pub unsafe extern "C" fn unzReadCurrentFile(
                 .next_in
                 .offset(uDoCopy as isize);
             (*pfile_in_zip_read_info).stream.total_out =
-                ((*pfile_in_zip_read_info).stream.total_out as libc::c_ulong)
-                    .wrapping_add(uDoCopy as libc::c_ulong) as crate::zconf_h::uLong
-                    as crate::zconf_h::uLong;
-            iRead = (iRead as libc::c_uint).wrapping_add(uDoCopy) as crate::zconf_h::uInt
-                as crate::zconf_h::uInt
+                ((*pfile_in_zip_read_info).stream.total_out).wrapping_add(uDoCopy as usize);
+            iRead = (iRead).wrapping_add(uDoCopy)
         } else {
             let mut uTotalOutBefore: crate::zconf_h::uLong = 0;
             let mut uTotalOutAfter: crate::zconf_h::uLong = 0;
             let mut bufBefore: *const crate::zconf_h::Bytef = 0 as *const crate::zconf_h::Bytef;
             let mut uOutThis: crate::zconf_h::uLong = 0;
-            let mut flush: libc::c_int = 2 as libc::c_int;
+            let mut flush: i32 = 2;
             uTotalOutBefore = (*pfile_in_zip_read_info).stream.total_out;
             bufBefore = (*pfile_in_zip_read_info).stream.next_out;
             /*
@@ -1762,8 +1633,8 @@ pub unsafe extern "C" fn unzReadCurrentFile(
                 flush = Z_FINISH;
             */
             err = crate::src::zlib::inflate::inflate(&mut (*pfile_in_zip_read_info).stream, flush);
-            if err >= 0 as libc::c_int && !(*pfile_in_zip_read_info).stream.msg.is_null() {
-                err = -(3 as libc::c_int)
+            if err >= 0 && !(*pfile_in_zip_read_info).stream.msg.is_null() {
+                err = -(3)
             }
             uTotalOutAfter = (*pfile_in_zip_read_info).stream.total_out;
             uOutThis = uTotalOutAfter.wrapping_sub(uTotalOutBefore);
@@ -1773,26 +1644,19 @@ pub unsafe extern "C" fn unzReadCurrentFile(
                 uOutThis as crate::zconf_h::uInt,
             );
             (*pfile_in_zip_read_info).rest_read_uncompressed =
-                ((*pfile_in_zip_read_info).rest_read_uncompressed as libc::c_ulong)
-                    .wrapping_sub(uOutThis) as crate::zconf_h::uLong
-                    as crate::zconf_h::uLong;
-            iRead = (iRead as libc::c_uint)
-                .wrapping_add(uTotalOutAfter.wrapping_sub(uTotalOutBefore) as crate::zconf_h::uInt)
-                as crate::zconf_h::uInt as crate::zconf_h::uInt;
-            if err == 1 as libc::c_int {
-                return if iRead == 0 as libc::c_int as libc::c_uint {
-                    0 as libc::c_int as libc::c_uint
-                } else {
-                    iRead
-                } as libc::c_int;
+                ((*pfile_in_zip_read_info).rest_read_uncompressed).wrapping_sub(uOutThis);
+            iRead = (iRead)
+                .wrapping_add(uTotalOutAfter.wrapping_sub(uTotalOutBefore) as crate::zconf_h::uInt);
+            if err == 1 {
+                return if iRead == 0u32 { 0u32 } else { iRead } as i32;
             }
-            if err != 0 as libc::c_int {
+            if err != 0 {
                 break;
             }
         }
     }
-    if err == 0 as libc::c_int {
-        return iRead as libc::c_int;
+    if err == 0 {
+        return iRead as i32;
     }
     return err;
 }
@@ -1808,12 +1672,12 @@ pub unsafe extern "C" fn unztell(
     let mut pfile_in_zip_read_info: *mut file_in_zip_read_info_s =
         0 as *mut file_in_zip_read_info_s;
     if file.is_null() {
-        return -(102 as libc::c_int) as crate::stdlib::off_t;
+        return -102isize;
     }
     s = file as *mut unz_s;
     pfile_in_zip_read_info = (*s).pfile_in_zip_read;
     if pfile_in_zip_read_info.is_null() {
-        return -(102 as libc::c_int) as crate::stdlib::off_t;
+        return -102isize;
     }
     return (*pfile_in_zip_read_info).stream.total_out as crate::stdlib::off_t;
 }
@@ -1822,22 +1686,22 @@ pub unsafe extern "C" fn unztell(
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn unzeof(mut file: crate::src::qcommon::unzip::unzFile) -> libc::c_int {
+pub unsafe extern "C" fn unzeof(mut file: crate::src::qcommon::unzip::unzFile) -> i32 {
     let mut s: *mut unz_s = 0 as *mut unz_s;
     let mut pfile_in_zip_read_info: *mut file_in_zip_read_info_s =
         0 as *mut file_in_zip_read_info_s;
     if file.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     pfile_in_zip_read_info = (*s).pfile_in_zip_read;
     if pfile_in_zip_read_info.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
-    if (*pfile_in_zip_read_info).rest_read_uncompressed == 0 as libc::c_int as libc::c_ulong {
-        return 1 as libc::c_int;
+    if (*pfile_in_zip_read_info).rest_read_uncompressed == 0 {
+        return 1i32;
     } else {
-        return 0 as libc::c_int;
+        return 0i32;
     };
 }
 /*
@@ -1857,33 +1721,33 @@ pub unsafe extern "C" fn unzeof(mut file: crate::src::qcommon::unzip::unzFile) -
 pub unsafe extern "C" fn unzGetLocalExtrafield(
     mut file: crate::src::qcommon::unzip::unzFile,
     mut buf: crate::zconf_h::voidp,
-    mut len: libc::c_uint,
-) -> libc::c_int {
+    mut len: u32,
+) -> i32 {
     let mut s: *mut unz_s = 0 as *mut unz_s;
     let mut pfile_in_zip_read_info: *mut file_in_zip_read_info_s =
         0 as *mut file_in_zip_read_info_s;
     let mut read_now: crate::zconf_h::uInt = 0;
     let mut size_to_read: crate::zconf_h::uLong = 0;
     if file.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     pfile_in_zip_read_info = (*s).pfile_in_zip_read;
     if pfile_in_zip_read_info.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
-    size_to_read = ((*pfile_in_zip_read_info).size_local_extrafield as libc::c_ulong)
+    size_to_read = ((*pfile_in_zip_read_info).size_local_extrafield as usize)
         .wrapping_sub((*pfile_in_zip_read_info).pos_local_extrafield);
     if buf.is_null() {
-        return size_to_read as libc::c_int;
+        return size_to_read as i32;
     }
-    if len as libc::c_ulong > size_to_read {
+    if len as usize > size_to_read {
         read_now = size_to_read as crate::zconf_h::uInt
     } else {
         read_now = len
     }
-    if read_now == 0 as libc::c_int as libc::c_uint {
-        return 0 as libc::c_int;
+    if read_now == 0 {
+        return 0i32;
     }
     if Some(
         (*pfile_in_zip_read_info)
@@ -1897,10 +1761,10 @@ pub unsafe extern "C" fn unzGetLocalExtrafield(
         (*pfile_in_zip_read_info)
             .offset_local_extrafield
             .wrapping_add((*pfile_in_zip_read_info).pos_local_extrafield),
-        0 as libc::c_int,
-    ) != 0 as libc::c_int as libc::c_long
+        0,
+    ) != 0isize
     {
-        return -(1 as libc::c_int);
+        return -(1i32);
     }
     if Some(
         (*pfile_in_zip_read_info)
@@ -1913,11 +1777,11 @@ pub unsafe extern "C" fn unzGetLocalExtrafield(
         (*pfile_in_zip_read_info).filestream,
         buf,
         read_now as crate::zconf_h::uLong,
-    ) != read_now as libc::c_ulong
+    ) != read_now as usize
     {
-        return -(1 as libc::c_int);
+        return -(1i32);
     }
-    return read_now as libc::c_int;
+    return read_now as i32;
 }
 /*
   Close the file in zip opened with unzipOpenCurrentFile
@@ -1925,26 +1789,22 @@ pub unsafe extern "C" fn unzGetLocalExtrafield(
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn unzCloseCurrentFile(
-    mut file: crate::src::qcommon::unzip::unzFile,
-) -> libc::c_int {
-    let mut err: libc::c_int = 0 as libc::c_int;
+pub unsafe extern "C" fn unzCloseCurrentFile(mut file: crate::src::qcommon::unzip::unzFile) -> i32 {
+    let mut err: i32 = 0;
     let mut s: *mut unz_s = 0 as *mut unz_s;
     let mut pfile_in_zip_read_info: *mut file_in_zip_read_info_s =
         0 as *mut file_in_zip_read_info_s;
     if file.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     pfile_in_zip_read_info = (*s).pfile_in_zip_read;
     if pfile_in_zip_read_info.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
-    if (*pfile_in_zip_read_info).rest_read_uncompressed == 0 as libc::c_int as libc::c_ulong
-        && (*pfile_in_zip_read_info).raw == 0
-    {
+    if (*pfile_in_zip_read_info).rest_read_uncompressed == 0 && (*pfile_in_zip_read_info).raw == 0 {
         if (*pfile_in_zip_read_info).crc32 != (*pfile_in_zip_read_info).crc32_wait {
-            err = -(105 as libc::c_int)
+            err = -(105)
         }
     }
     if !(*pfile_in_zip_read_info).read_buffer.is_null() {
@@ -1952,11 +1812,11 @@ pub unsafe extern "C" fn unzCloseCurrentFile(
             (*pfile_in_zip_read_info).read_buffer as *mut libc::c_void,
         );
     }
-    (*pfile_in_zip_read_info).read_buffer = 0 as *mut libc::c_char;
+    (*pfile_in_zip_read_info).read_buffer = 0 as *mut i8;
     if (*pfile_in_zip_read_info).stream_initialised != 0 {
         crate::src::zlib::inflate::inflateEnd(&mut (*pfile_in_zip_read_info).stream);
     }
-    (*pfile_in_zip_read_info).stream_initialised = 0 as libc::c_int as crate::zconf_h::uLong;
+    (*pfile_in_zip_read_info).stream_initialised = 0;
     if !pfile_in_zip_read_info.is_null() {
         crate::src::qcommon::common::Z_Free(pfile_in_zip_read_info as *mut libc::c_void);
     }
@@ -1972,13 +1832,13 @@ pub unsafe extern "C" fn unzCloseCurrentFile(
 
 pub unsafe extern "C" fn unzGetGlobalComment(
     mut file: crate::src::qcommon::unzip::unzFile,
-    mut szComment: *mut libc::c_char,
+    mut szComment: *mut i8,
     mut uSizeBuf: crate::zconf_h::uLong,
-) -> libc::c_int {
+) -> i32 {
     let mut s: *mut unz_s = 0 as *mut unz_s;
     let mut uReadThis: crate::zconf_h::uLong = 0;
     if file.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     uReadThis = uSizeBuf;
@@ -1993,15 +1853,14 @@ pub unsafe extern "C" fn unzGetGlobalComment(
     .expect("non-null function pointer")(
         (*s).z_filefunc.opaque,
         (*s).filestream,
-        (*s).central_pos
-            .wrapping_add(22 as libc::c_int as libc::c_ulong),
-        0 as libc::c_int,
-    ) != 0 as libc::c_int as libc::c_long
+        (*s).central_pos.wrapping_add(22usize),
+        0,
+    ) != 0isize
     {
-        return -(1 as libc::c_int);
+        return -(1i32);
     }
-    if uReadThis > 0 as libc::c_int as libc::c_ulong {
-        *szComment = '\u{0}' as i32 as libc::c_char;
+    if uReadThis > 0 {
+        *szComment = '\u{0}' as i8;
         if Some(
             (*s).z_filefunc
                 .zread_file
@@ -2014,13 +1873,13 @@ pub unsafe extern "C" fn unzGetGlobalComment(
             uReadThis,
         ) != uReadThis
         {
-            return -(1 as libc::c_int);
+            return -(1i32);
         }
     }
     if !szComment.is_null() && uSizeBuf > (*s).gi.size_comment {
-        *szComment.offset((*s).gi.size_comment as isize) = '\u{0}' as i32 as libc::c_char
+        *szComment.offset((*s).gi.size_comment as isize) = '\u{0}' as i8
     }
-    return uReadThis as libc::c_int;
+    return uReadThis as i32;
 }
 /* Additions by RX '2004 */
 #[no_mangle]
@@ -2030,17 +1889,15 @@ pub unsafe extern "C" fn unzGetOffset(
 ) -> crate::zconf_h::uLong {
     let mut s: *mut unz_s = 0 as *mut unz_s;
     if file.is_null() {
-        return -(102 as libc::c_int) as crate::zconf_h::uLong;
+        return -(102i32) as crate::zconf_h::uLong;
     }
     s = file as *mut unz_s;
     if (*s).current_file_ok == 0 {
-        return 0 as libc::c_int as crate::zconf_h::uLong;
+        return 0usize;
     }
-    if (*s).gi.number_entry != 0 as libc::c_int as libc::c_ulong
-        && (*s).gi.number_entry != 0xffff as libc::c_int as libc::c_ulong
-    {
+    if (*s).gi.number_entry != 0 && (*s).gi.number_entry != 0xffff {
         if (*s).num_file == (*s).gi.number_entry {
-            return 0 as libc::c_int as crate::zconf_h::uLong;
+            return 0usize;
         }
     }
     return (*s).pos_in_central_dir;
@@ -2255,11 +2112,11 @@ from it, and close it (you can close it before reading all the file)
 pub unsafe extern "C" fn unzSetOffset(
     mut file: crate::src::qcommon::unzip::unzFile,
     mut pos: crate::zconf_h::uLong,
-) -> libc::c_int {
+) -> i32 {
     let mut s: *mut unz_s = 0 as *mut unz_s; /* hack */
-    let mut err: libc::c_int = 0;
+    let mut err: i32 = 0;
     if file.is_null() {
-        return -(102 as libc::c_int);
+        return -(102i32);
     }
     s = file as *mut unz_s;
     (*s).pos_in_central_dir = pos;
@@ -2268,13 +2125,13 @@ pub unsafe extern "C" fn unzSetOffset(
         file,
         &mut (*s).cur_file_info,
         &mut (*s).cur_file_info_internal,
-        0 as *mut libc::c_char,
-        0 as libc::c_int as crate::zconf_h::uLong,
+        0 as *mut i8,
+        0,
         0 as *mut libc::c_void,
-        0 as libc::c_int as crate::zconf_h::uLong,
-        0 as *mut libc::c_char,
-        0 as libc::c_int as crate::zconf_h::uLong,
+        0,
+        0 as *mut i8,
+        0,
     );
-    (*s).current_file_ok = (err == 0 as libc::c_int) as libc::c_int as crate::zconf_h::uLong;
+    (*s).current_file_ok = (err == 0) as i32 as crate::zconf_h::uLong;
     return err;
 }

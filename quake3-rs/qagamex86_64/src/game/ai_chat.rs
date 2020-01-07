@@ -3,12 +3,8 @@ use ::libc;
 pub mod stdlib_h {
     #[inline]
 
-    pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
-            __nptr,
-            0 as *mut libc::c_void as *mut *mut libc::c_char,
-            10 as libc::c_int,
-        ) as libc::c_int;
+    pub unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
+        return crate::stdlib::strtol(__nptr, 0 as *mut *mut i8, 10) as i32;
     }
 }
 
@@ -188,30 +184,30 @@ BotNumActivePlayers
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn BotNumActivePlayers() -> libc::c_int {
-    let mut i: libc::c_int = 0;
-    let mut num: libc::c_int = 0;
-    let mut buf: [libc::c_char; 1024] = [0; 1024];
-    num = 0 as libc::c_int;
-    i = 0 as libc::c_int;
+pub unsafe extern "C" fn BotNumActivePlayers() -> i32 {
+    let mut i: i32 = 0;
+    let mut num: i32 = 0;
+    let mut buf: [i8; 1024] = [0; 1024];
+    num = 0;
+    i = 0;
     while i < crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
-            32 as libc::c_int + 256 as libc::c_int + 256 as libc::c_int + i,
+            32 + 256 + 256 + i,
             buf.as_mut_ptr(),
-            ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+            ::std::mem::size_of::<[i8; 1024]>() as i32,
         );
         //if no config string or no name
         if !(crate::stdlib::strlen(buf.as_mut_ptr()) == 0
             || crate::stdlib::strlen(crate::src::qcommon::q_shared::Info_ValueForKey(
                 buf.as_mut_ptr(),
-                b"n\x00" as *const u8 as *const libc::c_char,
+                b"n\x00" as *const u8 as *const i8,
             )) == 0)
         {
             //skip spectators
             if !(atoi(crate::src::qcommon::q_shared::Info_ValueForKey(
                 buf.as_mut_ptr(),
-                b"t\x00" as *const u8 as *const libc::c_char,
-            )) == crate::bg_public_h::TEAM_SPECTATOR as libc::c_int)
+                b"t\x00" as *const u8 as *const i8,
+            )) == crate::bg_public_h::TEAM_SPECTATOR as i32)
             {
                 //
                 num += 1
@@ -230,10 +226,10 @@ BotIsFirstInRankings
 
 pub unsafe extern "C" fn BotIsFirstInRankings(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut i: libc::c_int = 0;
-    let mut score: libc::c_int = 0;
-    let mut buf: [libc::c_char; 1024] = [0; 1024];
+) -> i32 {
+    let mut i: i32 = 0;
+    let mut score: i32 = 0;
+    let mut buf: [i8; 1024] = [0; 1024];
     let mut ps: crate::src::qcommon::q_shared::playerState_t =
         crate::src::qcommon::q_shared::playerState_t {
             commandTime: 0,
@@ -282,38 +278,38 @@ pub unsafe extern "C" fn BotIsFirstInRankings(
             jumppad_frame: 0,
             entityEventSequence: 0,
         };
-    score = (*bs).cur_ps.persistant[crate::bg_public_h::PERS_SCORE as libc::c_int as usize];
-    i = 0 as libc::c_int;
+    score = (*bs).cur_ps.persistant[crate::bg_public_h::PERS_SCORE as usize];
+    i = 0;
     while i < crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
-            32 as libc::c_int + 256 as libc::c_int + 256 as libc::c_int + i,
+            32 + 256 + 256 + i,
             buf.as_mut_ptr(),
-            ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+            ::std::mem::size_of::<[i8; 1024]>() as i32,
         );
         //if no config string or no name
         if !(crate::stdlib::strlen(buf.as_mut_ptr()) == 0
             || crate::stdlib::strlen(crate::src::qcommon::q_shared::Info_ValueForKey(
                 buf.as_mut_ptr(),
-                b"n\x00" as *const u8 as *const libc::c_char,
+                b"n\x00" as *const u8 as *const i8,
             )) == 0)
         {
             //skip spectators
             if !(atoi(crate::src::qcommon::q_shared::Info_ValueForKey(
                 buf.as_mut_ptr(),
-                b"t\x00" as *const u8 as *const libc::c_char,
-            )) == crate::bg_public_h::TEAM_SPECTATOR as libc::c_int)
+                b"t\x00" as *const u8 as *const i8,
+            )) == crate::bg_public_h::TEAM_SPECTATOR as i32)
             {
                 //
                 if crate::src::game::ai_main::BotAI_GetClientState(i, &mut ps) != 0
-                    && score < ps.persistant[crate::bg_public_h::PERS_SCORE as libc::c_int as usize]
+                    && score < ps.persistant[crate::bg_public_h::PERS_SCORE as usize]
                 {
-                    return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+                    return crate::src::qcommon::q_shared::qfalse as i32;
                 }
             }
         }
         i += 1
     }
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 /*
 ==================
@@ -324,10 +320,10 @@ BotIsLastInRankings
 
 pub unsafe extern "C" fn BotIsLastInRankings(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut i: libc::c_int = 0;
-    let mut score: libc::c_int = 0;
-    let mut buf: [libc::c_char; 1024] = [0; 1024];
+) -> i32 {
+    let mut i: i32 = 0;
+    let mut score: i32 = 0;
+    let mut buf: [i8; 1024] = [0; 1024];
     let mut ps: crate::src::qcommon::q_shared::playerState_t =
         crate::src::qcommon::q_shared::playerState_t {
             commandTime: 0,
@@ -376,38 +372,38 @@ pub unsafe extern "C" fn BotIsLastInRankings(
             jumppad_frame: 0,
             entityEventSequence: 0,
         };
-    score = (*bs).cur_ps.persistant[crate::bg_public_h::PERS_SCORE as libc::c_int as usize];
-    i = 0 as libc::c_int;
+    score = (*bs).cur_ps.persistant[crate::bg_public_h::PERS_SCORE as usize];
+    i = 0;
     while i < crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
-            32 as libc::c_int + 256 as libc::c_int + 256 as libc::c_int + i,
+            32 + 256 + 256 + i,
             buf.as_mut_ptr(),
-            ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+            ::std::mem::size_of::<[i8; 1024]>() as i32,
         );
         //if no config string or no name
         if !(crate::stdlib::strlen(buf.as_mut_ptr()) == 0
             || crate::stdlib::strlen(crate::src::qcommon::q_shared::Info_ValueForKey(
                 buf.as_mut_ptr(),
-                b"n\x00" as *const u8 as *const libc::c_char,
+                b"n\x00" as *const u8 as *const i8,
             )) == 0)
         {
             //skip spectators
             if !(atoi(crate::src::qcommon::q_shared::Info_ValueForKey(
                 buf.as_mut_ptr(),
-                b"t\x00" as *const u8 as *const libc::c_char,
-            )) == crate::bg_public_h::TEAM_SPECTATOR as libc::c_int)
+                b"t\x00" as *const u8 as *const i8,
+            )) == crate::bg_public_h::TEAM_SPECTATOR as i32)
             {
                 //
                 if crate::src::game::ai_main::BotAI_GetClientState(i, &mut ps) != 0
-                    && score > ps.persistant[crate::bg_public_h::PERS_SCORE as libc::c_int as usize]
+                    && score > ps.persistant[crate::bg_public_h::PERS_SCORE as usize]
                 {
-                    return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+                    return crate::src::qcommon::q_shared::qfalse as i32;
                 }
             }
         }
         i += 1
     }
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 /*
 ==================
@@ -416,12 +412,12 @@ BotFirstClientInRankings
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn BotFirstClientInRankings() -> *mut libc::c_char {
-    let mut i: libc::c_int = 0;
-    let mut bestscore: libc::c_int = 0;
-    let mut bestclient: libc::c_int = 0;
-    let mut buf: [libc::c_char; 1024] = [0; 1024];
-    static mut name: [libc::c_char; 32] = [0; 32];
+pub unsafe extern "C" fn BotFirstClientInRankings() -> *mut i8 {
+    let mut i: i32 = 0;
+    let mut bestscore: i32 = 0;
+    let mut bestclient: i32 = 0;
+    let mut buf: [i8; 1024] = [0; 1024];
+    static mut name: [i8; 32] = [0; 32];
     let mut ps: crate::src::qcommon::q_shared::playerState_t =
         crate::src::qcommon::q_shared::playerState_t {
             commandTime: 0,
@@ -470,42 +466,40 @@ pub unsafe extern "C" fn BotFirstClientInRankings() -> *mut libc::c_char {
             jumppad_frame: 0,
             entityEventSequence: 0,
         };
-    bestscore = -(999999 as libc::c_int);
-    bestclient = 0 as libc::c_int;
-    i = 0 as libc::c_int;
+    bestscore = -(999999);
+    bestclient = 0;
+    i = 0;
     while i < crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
-            32 as libc::c_int + 256 as libc::c_int + 256 as libc::c_int + i,
+            32 + 256 + 256 + i,
             buf.as_mut_ptr(),
-            ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+            ::std::mem::size_of::<[i8; 1024]>() as i32,
         );
         //if no config string or no name
         if !(crate::stdlib::strlen(buf.as_mut_ptr()) == 0
             || crate::stdlib::strlen(crate::src::qcommon::q_shared::Info_ValueForKey(
                 buf.as_mut_ptr(),
-                b"n\x00" as *const u8 as *const libc::c_char,
+                b"n\x00" as *const u8 as *const i8,
             )) == 0)
         {
             //skip spectators
             if !(atoi(crate::src::qcommon::q_shared::Info_ValueForKey(
                 buf.as_mut_ptr(),
-                b"t\x00" as *const u8 as *const libc::c_char,
-            )) == crate::bg_public_h::TEAM_SPECTATOR as libc::c_int)
+                b"t\x00" as *const u8 as *const i8,
+            )) == crate::bg_public_h::TEAM_SPECTATOR as i32)
             {
                 //
                 if crate::src::game::ai_main::BotAI_GetClientState(i, &mut ps) != 0
-                    && ps.persistant[crate::bg_public_h::PERS_SCORE as libc::c_int as usize]
-                        > bestscore
+                    && ps.persistant[crate::bg_public_h::PERS_SCORE as usize] > bestscore
                 {
-                    bestscore =
-                        ps.persistant[crate::bg_public_h::PERS_SCORE as libc::c_int as usize];
+                    bestscore = ps.persistant[crate::bg_public_h::PERS_SCORE as usize];
                     bestclient = i
                 }
             }
         }
         i += 1
     }
-    crate::src::game::ai_dmq3::EasyClientName(bestclient, name.as_mut_ptr(), 32 as libc::c_int);
+    crate::src::game::ai_dmq3::EasyClientName(bestclient, name.as_mut_ptr(), 32);
     return name.as_mut_ptr();
 }
 /*
@@ -515,12 +509,12 @@ BotLastClientInRankings
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn BotLastClientInRankings() -> *mut libc::c_char {
-    let mut i: libc::c_int = 0;
-    let mut worstscore: libc::c_int = 0;
-    let mut bestclient: libc::c_int = 0;
-    let mut buf: [libc::c_char; 1024] = [0; 1024];
-    static mut name: [libc::c_char; 32] = [0; 32];
+pub unsafe extern "C" fn BotLastClientInRankings() -> *mut i8 {
+    let mut i: i32 = 0;
+    let mut worstscore: i32 = 0;
+    let mut bestclient: i32 = 0;
+    let mut buf: [i8; 1024] = [0; 1024];
+    static mut name: [i8; 32] = [0; 32];
     let mut ps: crate::src::qcommon::q_shared::playerState_t =
         crate::src::qcommon::q_shared::playerState_t {
             commandTime: 0,
@@ -569,42 +563,40 @@ pub unsafe extern "C" fn BotLastClientInRankings() -> *mut libc::c_char {
             jumppad_frame: 0,
             entityEventSequence: 0,
         };
-    worstscore = 999999 as libc::c_int;
-    bestclient = 0 as libc::c_int;
-    i = 0 as libc::c_int;
+    worstscore = 999999;
+    bestclient = 0;
+    i = 0;
     while i < crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
-            32 as libc::c_int + 256 as libc::c_int + 256 as libc::c_int + i,
+            32 + 256 + 256 + i,
             buf.as_mut_ptr(),
-            ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+            ::std::mem::size_of::<[i8; 1024]>() as i32,
         );
         //if no config string or no name
         if !(crate::stdlib::strlen(buf.as_mut_ptr()) == 0
             || crate::stdlib::strlen(crate::src::qcommon::q_shared::Info_ValueForKey(
                 buf.as_mut_ptr(),
-                b"n\x00" as *const u8 as *const libc::c_char,
+                b"n\x00" as *const u8 as *const i8,
             )) == 0)
         {
             //skip spectators
             if !(atoi(crate::src::qcommon::q_shared::Info_ValueForKey(
                 buf.as_mut_ptr(),
-                b"t\x00" as *const u8 as *const libc::c_char,
-            )) == crate::bg_public_h::TEAM_SPECTATOR as libc::c_int)
+                b"t\x00" as *const u8 as *const i8,
+            )) == crate::bg_public_h::TEAM_SPECTATOR as i32)
             {
                 //
                 if crate::src::game::ai_main::BotAI_GetClientState(i, &mut ps) != 0
-                    && ps.persistant[crate::bg_public_h::PERS_SCORE as libc::c_int as usize]
-                        < worstscore
+                    && ps.persistant[crate::bg_public_h::PERS_SCORE as usize] < worstscore
                 {
-                    worstscore =
-                        ps.persistant[crate::bg_public_h::PERS_SCORE as libc::c_int as usize];
+                    worstscore = ps.persistant[crate::bg_public_h::PERS_SCORE as usize];
                     bestclient = i
                 }
             }
         }
         i += 1
     }
-    crate::src::game::ai_dmq3::EasyClientName(bestclient, name.as_mut_ptr(), 32 as libc::c_int);
+    crate::src::game::ai_dmq3::EasyClientName(bestclient, name.as_mut_ptr(), 32);
     return name.as_mut_ptr();
 }
 /*
@@ -616,36 +608,36 @@ BotRandomOpponentName
 
 pub unsafe extern "C" fn BotRandomOpponentName(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> *mut libc::c_char {
-    let mut i: libc::c_int = 0;
-    let mut count: libc::c_int = 0;
-    let mut buf: [libc::c_char; 1024] = [0; 1024];
-    let mut opponents: [libc::c_int; 64] = [0; 64];
-    let mut numopponents: libc::c_int = 0;
-    static mut name: [libc::c_char; 32] = [0; 32];
-    numopponents = 0 as libc::c_int;
-    opponents[0 as libc::c_int as usize] = 0 as libc::c_int;
-    i = 0 as libc::c_int;
+) -> *mut i8 {
+    let mut i: i32 = 0;
+    let mut count: i32 = 0;
+    let mut buf: [i8; 1024] = [0; 1024];
+    let mut opponents: [i32; 64] = [0; 64];
+    let mut numopponents: i32 = 0;
+    static mut name: [i8; 32] = [0; 32];
+    numopponents = 0;
+    opponents[0] = 0;
+    i = 0;
     while i < crate::src::game::g_main::level.maxclients {
         if !(i == (*bs).client) {
             //
             crate::src::game::g_syscalls::trap_GetConfigstring(
-                32 as libc::c_int + 256 as libc::c_int + 256 as libc::c_int + i,
+                32 + 256 + 256 + i,
                 buf.as_mut_ptr(),
-                ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+                ::std::mem::size_of::<[i8; 1024]>() as i32,
             );
             //if no config string or no name
             if !(crate::stdlib::strlen(buf.as_mut_ptr()) == 0
                 || crate::stdlib::strlen(crate::src::qcommon::q_shared::Info_ValueForKey(
                     buf.as_mut_ptr(),
-                    b"n\x00" as *const u8 as *const libc::c_char,
+                    b"n\x00" as *const u8 as *const i8,
                 )) == 0)
             {
                 //skip spectators
                 if !(atoi(crate::src::qcommon::q_shared::Info_ValueForKey(
                     buf.as_mut_ptr(),
-                    b"t\x00" as *const u8 as *const libc::c_char,
-                )) == crate::bg_public_h::TEAM_SPECTATOR as libc::c_int)
+                    b"t\x00" as *const u8 as *const i8,
+                )) == crate::bg_public_h::TEAM_SPECTATOR as i32)
                 {
                     //skip team mates
                     if !(crate::src::game::ai_dmq3::BotSameTeam(bs, i) != 0) {
@@ -658,26 +650,24 @@ pub unsafe extern "C" fn BotRandomOpponentName(
         }
         i += 1
     }
-    count = ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-        / 0x7fff as libc::c_int as libc::c_float
-        * numopponents as libc::c_float) as libc::c_int;
-    i = 0 as libc::c_int;
+    count = ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 * numopponents as f32) as i32;
+    i = 0;
     while i < numopponents {
         count -= 1;
-        if count <= 0 as libc::c_int {
+        if count <= 0 {
             crate::src::game::ai_dmq3::EasyClientName(
                 opponents[i as usize],
                 name.as_mut_ptr(),
-                ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
+                ::std::mem::size_of::<[i8; 32]>() as i32,
             );
             return name.as_mut_ptr();
         }
         i += 1
     }
     crate::src::game::ai_dmq3::EasyClientName(
-        opponents[0 as libc::c_int as usize],
+        opponents[0],
         name.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 32]>() as i32,
     );
     return name.as_mut_ptr();
 }
@@ -688,24 +678,22 @@ BotMapTitle
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn BotMapTitle() -> *mut libc::c_char {
-    let mut info: [libc::c_char; 1024] = [0; 1024];
-    static mut mapname: [libc::c_char; 128] = [0; 128];
+pub unsafe extern "C" fn BotMapTitle() -> *mut i8 {
+    let mut info: [i8; 1024] = [0; 1024];
+    static mut mapname: [i8; 128] = [0; 128];
     crate::src::game::g_syscalls::trap_GetServerinfo(
         info.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 1024]>() as i32,
     );
     crate::stdlib::strncpy(
         mapname.as_mut_ptr(),
         crate::src::qcommon::q_shared::Info_ValueForKey(
             info.as_mut_ptr(),
-            b"mapname\x00" as *const u8 as *const libc::c_char,
+            b"mapname\x00" as *const u8 as *const i8,
         ),
-        (::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong)
-            .wrapping_sub(1 as libc::c_int as libc::c_ulong),
+        (::std::mem::size_of::<[i8; 128]>()).wrapping_sub(1usize),
     );
-    mapname[(::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong)
-        .wrapping_sub(1 as libc::c_int as libc::c_ulong) as usize] = '\u{0}' as i32 as libc::c_char;
+    mapname[(::std::mem::size_of::<[i8; 128]>()).wrapping_sub(1usize)] = '\u{0}' as i8;
     return mapname.as_mut_ptr();
 }
 /*
@@ -715,25 +703,19 @@ BotWeaponNameForMeansOfDeath
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn BotWeaponNameForMeansOfDeath(mut mod_0: libc::c_int) -> *mut libc::c_char {
+pub unsafe extern "C" fn BotWeaponNameForMeansOfDeath(mut mod_0: i32) -> *mut i8 {
     match mod_0 {
-        1 => return b"Shotgun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        2 => return b"Gauntlet\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        3 => return b"Machinegun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        4 | 5 => {
-            return b"Grenade Launcher\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
-        }
-        6 | 7 => {
-            return b"Rocket Launcher\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
-        }
-        8 | 9 => return b"Plasmagun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        10 => return b"Railgun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        11 => return b"Lightning Gun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        12 | 13 => return b"BFG10K\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        23 => return b"Grapple\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        _ => {
-            return b"[unknown weapon]\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
-        }
+        1 => return b"Shotgun\x00" as *const u8 as *mut i8,
+        2 => return b"Gauntlet\x00" as *const u8 as *mut i8,
+        3 => return b"Machinegun\x00" as *const u8 as *mut i8,
+        4 | 5 => return b"Grenade Launcher\x00" as *const u8 as *mut i8,
+        6 | 7 => return b"Rocket Launcher\x00" as *const u8 as *mut i8,
+        8 | 9 => return b"Plasmagun\x00" as *const u8 as *mut i8,
+        10 => return b"Railgun\x00" as *const u8 as *mut i8,
+        11 => return b"Lightning Gun\x00" as *const u8 as *mut i8,
+        12 | 13 => return b"BFG10K\x00" as *const u8 as *mut i8,
+        23 => return b"Grapple\x00" as *const u8 as *mut i8,
+        _ => return b"[unknown weapon]\x00" as *const u8 as *mut i8,
     };
 }
 /*
@@ -743,25 +725,19 @@ BotRandomWeaponName
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn BotRandomWeaponName() -> *mut libc::c_char {
-    let mut rnd: libc::c_int = 0;
-    rnd = (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-        / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-        * 8.9f64) as libc::c_int;
+pub unsafe extern "C" fn BotRandomWeaponName() -> *mut i8 {
+    let mut rnd: i32 = 0;
+    rnd = (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 * 8.9) as i32;
     match rnd {
-        0 => return b"Gauntlet\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        1 => return b"Shotgun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        2 => return b"Machinegun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        3 => {
-            return b"Grenade Launcher\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
-        }
-        4 => {
-            return b"Rocket Launcher\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
-        }
-        5 => return b"Plasmagun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        6 => return b"Railgun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        7 => return b"Lightning Gun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        _ => return b"BFG10K\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        0 => return b"Gauntlet\x00" as *const u8 as *mut i8,
+        1 => return b"Shotgun\x00" as *const u8 as *mut i8,
+        2 => return b"Machinegun\x00" as *const u8 as *mut i8,
+        3 => return b"Grenade Launcher\x00" as *const u8 as *mut i8,
+        4 => return b"Rocket Launcher\x00" as *const u8 as *mut i8,
+        5 => return b"Plasmagun\x00" as *const u8 as *mut i8,
+        6 => return b"Railgun\x00" as *const u8 as *mut i8,
+        7 => return b"Lightning Gun\x00" as *const u8 as *mut i8,
+        _ => return b"BFG10K\x00" as *const u8 as *mut i8,
     };
 }
 /*
@@ -773,9 +749,9 @@ BotVisibleEnemies
 
 pub unsafe extern "C" fn BotVisibleEnemies(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut vis: libc::c_float = 0.;
-    let mut i: libc::c_int = 0;
+) -> i32 {
+    let mut vis: f32 = 0.;
+    let mut i: i32 = 0;
     let mut entinfo: crate::be_aas_h::aas_entityinfo_t = crate::be_aas_h::aas_entityinfo_t {
         valid: 0,
         type_0: 0,
@@ -801,20 +777,19 @@ pub unsafe extern "C" fn BotVisibleEnemies(
         legsAnim: 0,
         torsoAnim: 0,
     };
-    i = 0 as libc::c_int;
-    while i < 64 as libc::c_int {
+    i = 0;
+    while i < 64 {
         if !(i == (*bs).client) {
             //
             crate::src::game::ai_main::BotEntityInfo(i, &mut entinfo);
             //
             if !(entinfo.valid == 0) {
                 //if the enemy isn't dead and the enemy isn't the bot self
-                if !(crate::src::game::ai_dmq3::EntityIsDead(&mut entinfo) as libc::c_uint != 0
+                if !(crate::src::game::ai_dmq3::EntityIsDead(&mut entinfo) != 0
                     || entinfo.number == (*bs).entitynum)
                 {
                     //if the enemy is invisible and not shooting
-                    if !(crate::src::game::ai_dmq3::EntityIsInvisible(&mut entinfo) as libc::c_uint
-                        != 0
+                    if !(crate::src::game::ai_dmq3::EntityIsInvisible(&mut entinfo) != 0
                         && crate::src::game::ai_dmq3::EntityIsShooting(&mut entinfo) as u64 == 0)
                     {
                         //if on the same team
@@ -824,11 +799,11 @@ pub unsafe extern "C" fn BotVisibleEnemies(
                                 (*bs).entitynum,
                                 (*bs).eye.as_mut_ptr(),
                                 (*bs).viewangles.as_mut_ptr(),
-                                360 as libc::c_int as libc::c_float,
+                                360f32,
                                 i,
                             );
-                            if vis > 0 as libc::c_int as libc::c_float {
-                                return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+                            if vis > 0f32 {
+                                return crate::src::qcommon::q_shared::qtrue as i32;
                             }
                         }
                     }
@@ -837,7 +812,7 @@ pub unsafe extern "C" fn BotVisibleEnemies(
         }
         i += 1
     }
-    return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    return crate::src::qcommon::q_shared::qfalse as i32;
 }
 // returns true if the bot can chat at the current position
 /*
@@ -849,7 +824,7 @@ BotValidChatPosition
 
 pub unsafe extern "C" fn BotValidChatPosition(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
+) -> i32 {
     let mut point: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut start: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut end: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -879,57 +854,57 @@ pub unsafe extern "C" fn BotValidChatPosition(
     };
     //if the bot is dead all positions are valid
     if crate::src::game::ai_dmq3::BotIsDead(bs) as u64 != 0 {
-        return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+        return crate::src::qcommon::q_shared::qtrue as i32;
     }
     //never start chatting with a powerup
-    if (*bs).inventory[35 as libc::c_int as usize] != 0
-        || (*bs).inventory[36 as libc::c_int as usize] != 0
-        || (*bs).inventory[37 as libc::c_int as usize] != 0
-        || (*bs).inventory[38 as libc::c_int as usize] != 0
-        || (*bs).inventory[39 as libc::c_int as usize] != 0
-        || (*bs).inventory[40 as libc::c_int as usize] != 0
+    if (*bs).inventory[35] != 0
+        || (*bs).inventory[36] != 0
+        || (*bs).inventory[37] != 0
+        || (*bs).inventory[38] != 0
+        || (*bs).inventory[39] != 0
+        || (*bs).inventory[40] != 0
     {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //must be on the ground
     //if (bs->cur_ps.groundEntityNum != ENTITYNUM_NONE) return qfalse;
     //do not chat if in lava or slime
-    point[0 as libc::c_int as usize] = (*bs).origin[0 as libc::c_int as usize];
-    point[1 as libc::c_int as usize] = (*bs).origin[1 as libc::c_int as usize];
-    point[2 as libc::c_int as usize] = (*bs).origin[2 as libc::c_int as usize];
-    point[2 as libc::c_int as usize] -= 24 as libc::c_int as libc::c_float;
+    point[0] = (*bs).origin[0];
+    point[1] = (*bs).origin[1];
+    point[2] = (*bs).origin[2];
+    point[2] -= 24f32;
     if crate::src::game::g_syscalls::trap_PointContents(
         point.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         (*bs).entitynum,
-    ) & (8 as libc::c_int | 16 as libc::c_int)
+    ) & (8 | 16)
         != 0
     {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //do not chat if under water
-    point[0 as libc::c_int as usize] = (*bs).origin[0 as libc::c_int as usize];
-    point[1 as libc::c_int as usize] = (*bs).origin[1 as libc::c_int as usize];
-    point[2 as libc::c_int as usize] = (*bs).origin[2 as libc::c_int as usize];
-    point[2 as libc::c_int as usize] += 32 as libc::c_int as libc::c_float;
+    point[0] = (*bs).origin[0];
+    point[1] = (*bs).origin[1];
+    point[2] = (*bs).origin[2];
+    point[2] += 32f32;
     if crate::src::game::g_syscalls::trap_PointContents(
         point.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         (*bs).entitynum,
-    ) & (32 as libc::c_int | 8 as libc::c_int | 16 as libc::c_int)
+    ) & (32 | 8 | 16)
         != 0
     {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //must be standing on the world entity
-    start[0 as libc::c_int as usize] = (*bs).origin[0 as libc::c_int as usize];
-    start[1 as libc::c_int as usize] = (*bs).origin[1 as libc::c_int as usize];
-    start[2 as libc::c_int as usize] = (*bs).origin[2 as libc::c_int as usize];
-    end[0 as libc::c_int as usize] = (*bs).origin[0 as libc::c_int as usize];
-    end[1 as libc::c_int as usize] = (*bs).origin[1 as libc::c_int as usize];
-    end[2 as libc::c_int as usize] = (*bs).origin[2 as libc::c_int as usize];
-    start[2 as libc::c_int as usize] += 1 as libc::c_int as libc::c_float;
-    end[2 as libc::c_int as usize] -= 10 as libc::c_int as libc::c_float;
+    start[0] = (*bs).origin[0];
+    start[1] = (*bs).origin[1];
+    start[2] = (*bs).origin[2];
+    end[0] = (*bs).origin[0];
+    end[1] = (*bs).origin[1];
+    end[2] = (*bs).origin[2];
+    start[2] += 1f32;
+    end[2] -= 10f32;
     crate::src::game::g_syscalls::trap_AAS_PresenceTypeBoundingBox(
-        4 as libc::c_int,
+        4,
         mins.as_mut_ptr(),
         maxs.as_mut_ptr(),
     );
@@ -940,13 +915,13 @@ pub unsafe extern "C" fn BotValidChatPosition(
         maxs.as_mut_ptr(),
         end.as_mut_ptr(),
         (*bs).client,
-        1 as libc::c_int,
+        1,
     );
-    if trace.ent != ((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if trace.ent != ((1) << 10) - 2 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //the bot is in a position where it can chat
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 /*
 ===========================================================================
@@ -988,62 +963,48 @@ BotChat_EnterGame
 
 pub unsafe extern "C" fn BotChat_EnterGame(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut name: [libc::c_char; 32] = [0; 32];
-    let mut rnd: libc::c_float = 0.;
+) -> i32 {
+    let mut name: [i8; 32] = [0; 32];
+    let mut rnd: f32 = 0.;
     if crate::src::game::ai_dmq3::bot_nochat.integer != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if (*bs).lastchat_time
-        > crate::src::game::ai_main::floattime - 25 as libc::c_int as libc::c_float
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if (*bs).lastchat_time > crate::src::game::ai_main::floattime - 25f32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //don't chat in teamplay
     if crate::src::game::ai_dmq3::TeamPlayIsOn() != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     // don't chat in tournament mode
-    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as i32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat(
-        (*bs).character,
-        27 as libc::c_int,
-        0 as libc::c_int as libc::c_float,
-        1 as libc::c_int as libc::c_float,
-    );
+    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat((*bs).character, 27, 0f32, 1f32);
     if crate::src::game::ai_dmq3::bot_fastchat.integer == 0 {
-        if (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float
-            > rnd
-        {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        if (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 > rnd {
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     }
-    if BotNumActivePlayers() <= 1 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if BotNumActivePlayers() <= 1 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     if BotValidChatPosition(bs) == 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     crate::src::game::ai_main::BotAI_BotInitialChat(
         bs,
-        b"game_enter\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        crate::src::game::ai_dmq3::EasyClientName(
-            (*bs).client,
-            name.as_mut_ptr(),
-            32 as libc::c_int,
-        ),
+        b"game_enter\x00" as *const u8 as *mut i8,
+        crate::src::game::ai_dmq3::EasyClientName((*bs).client, name.as_mut_ptr(), 32i32),
         BotRandomOpponentName(bs),
-        b"[invalid var]\x00" as *const u8 as *const libc::c_char,
-        b"[invalid var]\x00" as *const u8 as *const libc::c_char,
+        b"[invalid var]\x00" as *const u8 as *const i8,
+        b"[invalid var]\x00" as *const u8 as *const i8,
         BotMapTitle(),
         0 as *mut libc::c_void,
     );
     (*bs).lastchat_time = crate::src::game::ai_main::floattime;
-    (*bs).chatto = 0 as libc::c_int;
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    (*bs).chatto = 0;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //
 /*
@@ -1055,60 +1016,46 @@ BotChat_ExitGame
 
 pub unsafe extern "C" fn BotChat_ExitGame(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut name: [libc::c_char; 32] = [0; 32];
-    let mut rnd: libc::c_float = 0.;
+) -> i32 {
+    let mut name: [i8; 32] = [0; 32];
+    let mut rnd: f32 = 0.;
     if crate::src::game::ai_dmq3::bot_nochat.integer != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if (*bs).lastchat_time
-        > crate::src::game::ai_main::floattime - 25 as libc::c_int as libc::c_float
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if (*bs).lastchat_time > crate::src::game::ai_main::floattime - 25f32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //don't chat in teamplay
     if crate::src::game::ai_dmq3::TeamPlayIsOn() != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     // don't chat in tournament mode
-    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as i32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat(
-        (*bs).character,
-        27 as libc::c_int,
-        0 as libc::c_int as libc::c_float,
-        1 as libc::c_int as libc::c_float,
-    );
+    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat((*bs).character, 27, 0f32, 1f32);
     if crate::src::game::ai_dmq3::bot_fastchat.integer == 0 {
-        if (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float
-            > rnd
-        {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        if (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 > rnd {
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     }
-    if BotNumActivePlayers() <= 1 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if BotNumActivePlayers() <= 1 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     crate::src::game::ai_main::BotAI_BotInitialChat(
         bs,
-        b"game_exit\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        crate::src::game::ai_dmq3::EasyClientName(
-            (*bs).client,
-            name.as_mut_ptr(),
-            32 as libc::c_int,
-        ),
+        b"game_exit\x00" as *const u8 as *mut i8,
+        crate::src::game::ai_dmq3::EasyClientName((*bs).client, name.as_mut_ptr(), 32i32),
         BotRandomOpponentName(bs),
-        b"[invalid var]\x00" as *const u8 as *const libc::c_char,
-        b"[invalid var]\x00" as *const u8 as *const libc::c_char,
+        b"[invalid var]\x00" as *const u8 as *const i8,
+        b"[invalid var]\x00" as *const u8 as *const i8,
         BotMapTitle(),
         0 as *mut libc::c_void,
     );
     (*bs).lastchat_time = crate::src::game::ai_main::floattime;
-    (*bs).chatto = 0 as libc::c_int;
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    (*bs).chatto = 0;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //
 /*
@@ -1120,58 +1067,44 @@ BotChat_StartLevel
 
 pub unsafe extern "C" fn BotChat_StartLevel(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut name: [libc::c_char; 32] = [0; 32];
-    let mut rnd: libc::c_float = 0.;
+) -> i32 {
+    let mut name: [i8; 32] = [0; 32];
+    let mut rnd: f32 = 0.;
     if crate::src::game::ai_dmq3::bot_nochat.integer != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     if crate::src::game::ai_dmq3::BotIsObserver(bs) as u64 != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if (*bs).lastchat_time
-        > crate::src::game::ai_main::floattime - 25 as libc::c_int as libc::c_float
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if (*bs).lastchat_time > crate::src::game::ai_main::floattime - 25f32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //don't chat in teamplay
     if crate::src::game::ai_dmq3::TeamPlayIsOn() != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     // don't chat in tournament mode
-    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as i32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat(
-        (*bs).character,
-        26 as libc::c_int,
-        0 as libc::c_int as libc::c_float,
-        1 as libc::c_int as libc::c_float,
-    );
+    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat((*bs).character, 26, 0f32, 1f32);
     if crate::src::game::ai_dmq3::bot_fastchat.integer == 0 {
-        if (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float
-            > rnd
-        {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        if (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 > rnd {
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     }
-    if BotNumActivePlayers() <= 1 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if BotNumActivePlayers() <= 1 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     crate::src::game::ai_main::BotAI_BotInitialChat(
         bs,
-        b"level_start\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        crate::src::game::ai_dmq3::EasyClientName(
-            (*bs).client,
-            name.as_mut_ptr(),
-            32 as libc::c_int,
-        ),
+        b"level_start\x00" as *const u8 as *mut i8,
+        crate::src::game::ai_dmq3::EasyClientName((*bs).client, name.as_mut_ptr(), 32i32),
         0 as *mut libc::c_void,
     );
     (*bs).lastchat_time = crate::src::game::ai_main::floattime;
-    (*bs).chatto = 0 as libc::c_int;
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    (*bs).chatto = 0;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //
 /*
@@ -1183,57 +1116,43 @@ BotChat_EndLevel
 
 pub unsafe extern "C" fn BotChat_EndLevel(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut name: [libc::c_char; 32] = [0; 32];
-    let mut rnd: libc::c_float = 0.;
+) -> i32 {
+    let mut name: [i8; 32] = [0; 32];
+    let mut rnd: f32 = 0.;
     if crate::src::game::ai_dmq3::bot_nochat.integer != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     if crate::src::game::ai_dmq3::BotIsObserver(bs) as u64 != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if (*bs).lastchat_time
-        > crate::src::game::ai_main::floattime - 25 as libc::c_int as libc::c_float
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if (*bs).lastchat_time > crate::src::game::ai_main::floattime - 25f32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     // teamplay
     if crate::src::game::ai_dmq3::TeamPlayIsOn() != 0 {
-        return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+        return crate::src::qcommon::q_shared::qtrue as i32;
     }
     // don't chat in tournament mode
-    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as i32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat(
-        (*bs).character,
-        26 as libc::c_int,
-        0 as libc::c_int as libc::c_float,
-        1 as libc::c_int as libc::c_float,
-    );
+    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat((*bs).character, 26, 0f32, 1f32);
     if crate::src::game::ai_dmq3::bot_fastchat.integer == 0 {
-        if (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float
-            > rnd
-        {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        if (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 > rnd {
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     }
-    if BotNumActivePlayers() <= 1 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if BotNumActivePlayers() <= 1 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     if BotIsFirstInRankings(bs) != 0 {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"level_end_victory\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            crate::src::game::ai_dmq3::EasyClientName(
-                (*bs).client,
-                name.as_mut_ptr(),
-                32 as libc::c_int,
-            ),
+            b"level_end_victory\x00" as *const u8 as *mut i8,
+            crate::src::game::ai_dmq3::EasyClientName((*bs).client, name.as_mut_ptr(), 32i32),
             BotRandomOpponentName(bs),
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
+            b"[invalid var]\x00" as *const u8 as *const i8,
             BotLastClientInRankings(),
             BotMapTitle(),
             0 as *mut libc::c_void,
@@ -1241,27 +1160,19 @@ pub unsafe extern "C" fn BotChat_EndLevel(
     } else if BotIsLastInRankings(bs) != 0 {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"level_end_lose\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            crate::src::game::ai_dmq3::EasyClientName(
-                (*bs).client,
-                name.as_mut_ptr(),
-                32 as libc::c_int,
-            ),
+            b"level_end_lose\x00" as *const u8 as *mut i8,
+            crate::src::game::ai_dmq3::EasyClientName((*bs).client, name.as_mut_ptr(), 32i32),
             BotRandomOpponentName(bs),
             BotFirstClientInRankings(),
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
+            b"[invalid var]\x00" as *const u8 as *const i8,
             BotMapTitle(),
             0 as *mut libc::c_void,
         );
     } else {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"level_end\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            crate::src::game::ai_dmq3::EasyClientName(
-                (*bs).client,
-                name.as_mut_ptr(),
-                32 as libc::c_int,
-            ),
+            b"level_end\x00" as *const u8 as *mut i8,
+            crate::src::game::ai_dmq3::EasyClientName((*bs).client, name.as_mut_ptr(), 32i32),
             BotRandomOpponentName(bs),
             BotFirstClientInRankings(),
             BotLastClientInRankings(),
@@ -1270,8 +1181,8 @@ pub unsafe extern "C" fn BotChat_EndLevel(
         );
     }
     (*bs).lastchat_time = crate::src::game::ai_main::floattime;
-    (*bs).chatto = 0 as libc::c_int;
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    (*bs).chatto = 0;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //
 /*
@@ -1281,142 +1192,121 @@ BotChat_Death
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn BotChat_Death(
-    mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut name: [libc::c_char; 32] = [0; 32];
-    let mut rnd: libc::c_float = 0.;
+pub unsafe extern "C" fn BotChat_Death(mut bs: *mut crate::src::game::ai_main::bot_state_t) -> i32 {
+    let mut name: [i8; 32] = [0; 32];
+    let mut rnd: f32 = 0.;
     if crate::src::game::ai_dmq3::bot_nochat.integer != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if (*bs).lastchat_time
-        > crate::src::game::ai_main::floattime - 25 as libc::c_int as libc::c_float
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if (*bs).lastchat_time > crate::src::game::ai_main::floattime - 25f32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat(
-        (*bs).character,
-        29 as libc::c_int,
-        0 as libc::c_int as libc::c_float,
-        1 as libc::c_int as libc::c_float,
-    );
+    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat((*bs).character, 29, 0f32, 1f32);
     // don't chat in tournament mode
-    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as i32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //if fast chatting is off
     if crate::src::game::ai_dmq3::bot_fastchat.integer == 0 {
-        if (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float
-            > rnd
-        {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        if (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 > rnd {
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     }
-    if BotNumActivePlayers() <= 1 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if BotNumActivePlayers() <= 1 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
-    if (*bs).lastkilledby >= 0 as libc::c_int && (*bs).lastkilledby < 64 as libc::c_int {
-        crate::src::game::ai_dmq3::EasyClientName(
-            (*bs).lastkilledby,
-            name.as_mut_ptr(),
-            32 as libc::c_int,
-        );
+    if (*bs).lastkilledby >= 0 && (*bs).lastkilledby < 64 {
+        crate::src::game::ai_dmq3::EasyClientName((*bs).lastkilledby, name.as_mut_ptr(), 32i32);
     } else {
-        crate::stdlib::strcpy(
-            name.as_mut_ptr(),
-            b"[world]\x00" as *const u8 as *const libc::c_char,
-        );
+        crate::stdlib::strcpy(name.as_mut_ptr(), b"[world]\x00" as *const u8 as *const i8);
     }
     //
     if crate::src::game::ai_dmq3::TeamPlayIsOn() != 0
         && crate::src::game::ai_dmq3::BotSameTeam(bs, (*bs).lastkilledby) != 0
     {
         if (*bs).lastkilledby == (*bs).client {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"death_teammate\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"death_teammate\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        (*bs).chatto = 1 as libc::c_int
+        (*bs).chatto = 1
     } else {
         //teamplay
         if crate::src::game::ai_dmq3::TeamPlayIsOn() != 0 {
-            return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+            return crate::src::qcommon::q_shared::qtrue as i32;
         }
         //
-        if (*bs).botdeathtype == crate::bg_public_h::MOD_WATER as libc::c_int {
+        if (*bs).botdeathtype == crate::bg_public_h::MOD_WATER as i32 {
             crate::src::game::ai_main::BotAI_BotInitialChat(
                 bs,
-                b"death_drown\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"death_drown\x00" as *const u8 as *mut i8,
                 BotRandomOpponentName(bs),
                 0 as *mut libc::c_void,
             );
-        } else if (*bs).botdeathtype == crate::bg_public_h::MOD_SLIME as libc::c_int {
+        } else if (*bs).botdeathtype == crate::bg_public_h::MOD_SLIME as i32 {
             crate::src::game::ai_main::BotAI_BotInitialChat(
                 bs,
-                b"death_slime\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"death_slime\x00" as *const u8 as *mut i8,
                 BotRandomOpponentName(bs),
                 0 as *mut libc::c_void,
             );
-        } else if (*bs).botdeathtype == crate::bg_public_h::MOD_LAVA as libc::c_int {
+        } else if (*bs).botdeathtype == crate::bg_public_h::MOD_LAVA as i32 {
             crate::src::game::ai_main::BotAI_BotInitialChat(
                 bs,
-                b"death_lava\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"death_lava\x00" as *const u8 as *mut i8,
                 BotRandomOpponentName(bs),
                 0 as *mut libc::c_void,
             );
-        } else if (*bs).botdeathtype == crate::bg_public_h::MOD_FALLING as libc::c_int {
+        } else if (*bs).botdeathtype == crate::bg_public_h::MOD_FALLING as i32 {
             crate::src::game::ai_main::BotAI_BotInitialChat(
                 bs,
-                b"death_cratered\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"death_cratered\x00" as *const u8 as *mut i8,
                 BotRandomOpponentName(bs),
                 0 as *mut libc::c_void,
             );
         } else if (*bs).botsuicide != 0
-            || (*bs).botdeathtype == crate::bg_public_h::MOD_CRUSH as libc::c_int
-            || (*bs).botdeathtype == crate::bg_public_h::MOD_SUICIDE as libc::c_int
-            || (*bs).botdeathtype == crate::bg_public_h::MOD_TARGET_LASER as libc::c_int
-            || (*bs).botdeathtype == crate::bg_public_h::MOD_TRIGGER_HURT as libc::c_int
-            || (*bs).botdeathtype == crate::bg_public_h::MOD_UNKNOWN as libc::c_int
+            || (*bs).botdeathtype == crate::bg_public_h::MOD_CRUSH as i32
+            || (*bs).botdeathtype == crate::bg_public_h::MOD_SUICIDE as i32
+            || (*bs).botdeathtype == crate::bg_public_h::MOD_TARGET_LASER as i32
+            || (*bs).botdeathtype == crate::bg_public_h::MOD_TRIGGER_HURT as i32
+            || (*bs).botdeathtype == crate::bg_public_h::MOD_UNKNOWN as i32
         {
             crate::src::game::ai_main::BotAI_BotInitialChat(
                 bs,
-                b"death_suicide\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"death_suicide\x00" as *const u8 as *mut i8,
                 BotRandomOpponentName(bs),
                 0 as *mut libc::c_void,
             );
-        } else if (*bs).botdeathtype == crate::bg_public_h::MOD_TELEFRAG as libc::c_int {
+        } else if (*bs).botdeathtype == crate::bg_public_h::MOD_TELEFRAG as i32 {
             crate::src::game::ai_main::BotAI_BotInitialChat(
                 bs,
-                b"death_telefrag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"death_telefrag\x00" as *const u8 as *mut i8,
                 name.as_mut_ptr(),
                 0 as *mut libc::c_void,
             );
-        } else if ((*bs).botdeathtype == crate::bg_public_h::MOD_GAUNTLET as libc::c_int
-            || (*bs).botdeathtype == crate::bg_public_h::MOD_RAILGUN as libc::c_int
-            || (*bs).botdeathtype == crate::bg_public_h::MOD_BFG as libc::c_int
-            || (*bs).botdeathtype == crate::bg_public_h::MOD_BFG_SPLASH as libc::c_int)
-            && (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double)
-                < 0.5f64
+        } else if ((*bs).botdeathtype == crate::bg_public_h::MOD_GAUNTLET as i32
+            || (*bs).botdeathtype == crate::bg_public_h::MOD_RAILGUN as i32
+            || (*bs).botdeathtype == crate::bg_public_h::MOD_BFG as i32
+            || (*bs).botdeathtype == crate::bg_public_h::MOD_BFG_SPLASH as i32)
+            && (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64) < 0.5
         {
-            if (*bs).botdeathtype == crate::bg_public_h::MOD_GAUNTLET as libc::c_int {
+            if (*bs).botdeathtype == crate::bg_public_h::MOD_GAUNTLET as i32 {
                 crate::src::game::ai_main::BotAI_BotInitialChat(
                     bs,
-                    b"death_gauntlet\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                    b"death_gauntlet\x00" as *const u8 as *mut i8,
                     name.as_mut_ptr(),
                     BotWeaponNameForMeansOfDeath((*bs).botdeathtype),
                     0 as *mut libc::c_void,
                 );
-            } else if (*bs).botdeathtype == crate::bg_public_h::MOD_RAILGUN as libc::c_int {
+            } else if (*bs).botdeathtype == crate::bg_public_h::MOD_RAILGUN as i32 {
                 crate::src::game::ai_main::BotAI_BotInitialChat(
                     bs,
-                    b"death_rail\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                    b"death_rail\x00" as *const u8 as *mut i8,
                     name.as_mut_ptr(),
                     BotWeaponNameForMeansOfDeath((*bs).botdeathtype),
                     0 as *mut libc::c_void,
@@ -1424,24 +1314,23 @@ pub unsafe extern "C" fn BotChat_Death(
             } else {
                 crate::src::game::ai_main::BotAI_BotInitialChat(
                     bs,
-                    b"death_bfg\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                    b"death_bfg\x00" as *const u8 as *mut i8,
                     name.as_mut_ptr(),
                     BotWeaponNameForMeansOfDeath((*bs).botdeathtype),
                     0 as *mut libc::c_void,
                 );
             }
-        } else if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float)
+        } else if ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32)
             < crate::src::game::g_syscalls::trap_Characteristic_BFloat(
                 (*bs).character,
-                24 as libc::c_int,
-                0 as libc::c_int as libc::c_float,
-                1 as libc::c_int as libc::c_float,
+                24,
+                0f32,
+                1f32,
             )
         {
             crate::src::game::ai_main::BotAI_BotInitialChat(
                 bs,
-                b"death_insult\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"death_insult\x00" as *const u8 as *mut i8,
                 name.as_mut_ptr(),
                 BotWeaponNameForMeansOfDeath((*bs).botdeathtype),
                 0 as *mut libc::c_void,
@@ -1449,16 +1338,16 @@ pub unsafe extern "C" fn BotChat_Death(
         } else {
             crate::src::game::ai_main::BotAI_BotInitialChat(
                 bs,
-                b"death_praise\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"death_praise\x00" as *const u8 as *mut i8,
                 name.as_mut_ptr(),
                 BotWeaponNameForMeansOfDeath((*bs).botdeathtype),
                 0 as *mut libc::c_void,
             );
         }
-        (*bs).chatto = 0 as libc::c_int
+        (*bs).chatto = 0
     }
     (*bs).lastchat_time = crate::src::game::ai_main::floattime;
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //choose between insult and praise
 //
@@ -1469,123 +1358,106 @@ BotChat_Kill
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn BotChat_Kill(
-    mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut name: [libc::c_char; 32] = [0; 32];
-    let mut rnd: libc::c_float = 0.;
+pub unsafe extern "C" fn BotChat_Kill(mut bs: *mut crate::src::game::ai_main::bot_state_t) -> i32 {
+    let mut name: [i8; 32] = [0; 32];
+    let mut rnd: f32 = 0.;
     if crate::src::game::ai_dmq3::bot_nochat.integer != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if (*bs).lastchat_time
-        > crate::src::game::ai_main::floattime - 25 as libc::c_int as libc::c_float
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if (*bs).lastchat_time > crate::src::game::ai_main::floattime - 25f32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat(
-        (*bs).character,
-        28 as libc::c_int,
-        0 as libc::c_int as libc::c_float,
-        1 as libc::c_int as libc::c_float,
-    );
+    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat((*bs).character, 28, 0f32, 1f32);
     // don't chat in tournament mode
-    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as i32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //if fast chat is off
     if crate::src::game::ai_dmq3::bot_fastchat.integer == 0 {
-        if (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float
-            > rnd
-        {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        if (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 > rnd {
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     }
     if (*bs).lastkilledplayer == (*bs).client {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if BotNumActivePlayers() <= 1 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if BotNumActivePlayers() <= 1 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     if BotValidChatPosition(bs) == 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     if BotVisibleEnemies(bs) != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
-    crate::src::game::ai_dmq3::EasyClientName(
-        (*bs).lastkilledplayer,
-        name.as_mut_ptr(),
-        32 as libc::c_int,
-    );
+    crate::src::game::ai_dmq3::EasyClientName((*bs).lastkilledplayer, name.as_mut_ptr(), 32);
     //
-    (*bs).chatto = 0 as libc::c_int;
+    (*bs).chatto = 0;
     if crate::src::game::ai_dmq3::TeamPlayIsOn() != 0
         && crate::src::game::ai_dmq3::BotSameTeam(bs, (*bs).lastkilledplayer) != 0
     {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"kill_teammate\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"kill_teammate\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        (*bs).chatto = 1 as libc::c_int
+        (*bs).chatto = 1
     } else {
         //don't chat in teamplay
         if crate::src::game::ai_dmq3::TeamPlayIsOn() != 0 {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+            return crate::src::qcommon::q_shared::qfalse as i32;
             // don't wait
         }
         //
-        if (*bs).enemydeathtype == crate::bg_public_h::MOD_GAUNTLET as libc::c_int {
+        if (*bs).enemydeathtype == crate::bg_public_h::MOD_GAUNTLET as i32 {
             crate::src::game::ai_main::BotAI_BotInitialChat(
                 bs,
-                b"kill_gauntlet\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"kill_gauntlet\x00" as *const u8 as *mut i8,
                 name.as_mut_ptr(),
                 0 as *mut libc::c_void,
             );
-        } else if (*bs).enemydeathtype == crate::bg_public_h::MOD_RAILGUN as libc::c_int {
+        } else if (*bs).enemydeathtype == crate::bg_public_h::MOD_RAILGUN as i32 {
             crate::src::game::ai_main::BotAI_BotInitialChat(
                 bs,
-                b"kill_rail\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"kill_rail\x00" as *const u8 as *mut i8,
                 name.as_mut_ptr(),
                 0 as *mut libc::c_void,
             );
-        } else if (*bs).enemydeathtype == crate::bg_public_h::MOD_TELEFRAG as libc::c_int {
+        } else if (*bs).enemydeathtype == crate::bg_public_h::MOD_TELEFRAG as i32 {
             crate::src::game::ai_main::BotAI_BotInitialChat(
                 bs,
-                b"kill_telefrag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"kill_telefrag\x00" as *const u8 as *mut i8,
                 name.as_mut_ptr(),
                 0 as *mut libc::c_void,
             );
-        } else if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float)
+        } else if ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32)
             < crate::src::game::g_syscalls::trap_Characteristic_BFloat(
                 (*bs).character,
-                24 as libc::c_int,
-                0 as libc::c_int as libc::c_float,
-                1 as libc::c_int as libc::c_float,
+                24,
+                0f32,
+                1f32,
             )
         {
             crate::src::game::ai_main::BotAI_BotInitialChat(
                 bs,
-                b"kill_insult\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"kill_insult\x00" as *const u8 as *mut i8,
                 name.as_mut_ptr(),
                 0 as *mut libc::c_void,
             );
         } else {
             crate::src::game::ai_main::BotAI_BotInitialChat(
                 bs,
-                b"kill_praise\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                b"kill_praise\x00" as *const u8 as *mut i8,
                 name.as_mut_ptr(),
                 0 as *mut libc::c_void,
             );
         }
     }
     (*bs).lastchat_time = crate::src::game::ai_main::floattime;
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //choose between insult and praise
 //
@@ -1598,73 +1470,56 @@ BotChat_EnemySuicide
 
 pub unsafe extern "C" fn BotChat_EnemySuicide(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut name: [libc::c_char; 32] = [0; 32];
-    let mut rnd: libc::c_float = 0.;
+) -> i32 {
+    let mut name: [i8; 32] = [0; 32];
+    let mut rnd: f32 = 0.;
     if crate::src::game::ai_dmq3::bot_nochat.integer != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if (*bs).lastchat_time
-        > crate::src::game::ai_main::floattime - 25 as libc::c_int as libc::c_float
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if (*bs).lastchat_time > crate::src::game::ai_main::floattime - 25f32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if BotNumActivePlayers() <= 1 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if BotNumActivePlayers() <= 1 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
-    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat(
-        (*bs).character,
-        30 as libc::c_int,
-        0 as libc::c_int as libc::c_float,
-        1 as libc::c_int as libc::c_float,
-    );
+    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat((*bs).character, 30, 0f32, 1f32);
     //don't chat in teamplay
     if crate::src::game::ai_dmq3::TeamPlayIsOn() != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     // don't chat in tournament mode
-    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as i32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //if fast chat is off
     if crate::src::game::ai_dmq3::bot_fastchat.integer == 0 {
-        if (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float
-            > rnd
-        {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        if (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 > rnd {
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     }
     if BotValidChatPosition(bs) == 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     if BotVisibleEnemies(bs) != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
-    if (*bs).enemy >= 0 as libc::c_int {
-        crate::src::game::ai_dmq3::EasyClientName(
-            (*bs).enemy,
-            name.as_mut_ptr(),
-            32 as libc::c_int,
-        );
+    if (*bs).enemy >= 0 {
+        crate::src::game::ai_dmq3::EasyClientName((*bs).enemy, name.as_mut_ptr(), 32i32);
     } else {
-        crate::stdlib::strcpy(
-            name.as_mut_ptr(),
-            b"\x00" as *const u8 as *const libc::c_char,
-        );
+        crate::stdlib::strcpy(name.as_mut_ptr(), b"\x00" as *const u8 as *const i8);
     }
     crate::src::game::ai_main::BotAI_BotInitialChat(
         bs,
-        b"enemy_suicide\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"enemy_suicide\x00" as *const u8 as *mut i8,
         name.as_mut_ptr(),
         0 as *mut libc::c_void,
     );
     (*bs).lastchat_time = crate::src::game::ai_main::floattime;
-    (*bs).chatto = 0 as libc::c_int;
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    (*bs).chatto = 0;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //
 /*
@@ -1676,66 +1531,56 @@ BotChat_HitTalking
 
 pub unsafe extern "C" fn BotChat_HitTalking(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut name: [libc::c_char; 32] = [0; 32];
-    let mut weap: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut lasthurt_client: libc::c_int = 0;
-    let mut rnd: libc::c_float = 0.;
+) -> i32 {
+    let mut name: [i8; 32] = [0; 32];
+    let mut weap: *mut i8 = 0 as *mut i8;
+    let mut lasthurt_client: i32 = 0;
+    let mut rnd: f32 = 0.;
     if crate::src::game::ai_dmq3::bot_nochat.integer != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if (*bs).lastchat_time
-        > crate::src::game::ai_main::floattime - 25 as libc::c_int as libc::c_float
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if (*bs).lastchat_time > crate::src::game::ai_main::floattime - 25f32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if BotNumActivePlayers() <= 1 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if BotNumActivePlayers() <= 1 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     lasthurt_client =
         (*crate::src::game::g_main::g_entities[(*bs).client as usize].client).lasthurt_client;
     if lasthurt_client == 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     if lasthurt_client == (*bs).client {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
-    if lasthurt_client < 0 as libc::c_int || lasthurt_client >= 64 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if lasthurt_client < 0 || lasthurt_client >= 64 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
-    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat(
-        (*bs).character,
-        31 as libc::c_int,
-        0 as libc::c_int as libc::c_float,
-        1 as libc::c_int as libc::c_float,
-    );
+    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat((*bs).character, 31, 0f32, 1f32);
     //don't chat in teamplay
     if crate::src::game::ai_dmq3::TeamPlayIsOn() != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     // don't chat in tournament mode
-    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as i32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //if fast chat is off
     if crate::src::game::ai_dmq3::bot_fastchat.integer == 0 {
-        if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            > rnd as libc::c_double * 0.5f64
-        {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        if ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 > rnd as f64 * 0.5 {
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     }
     if BotValidChatPosition(bs) == 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     crate::src::game::ai_dmq3::ClientName(
         (*crate::src::game::g_main::g_entities[(*bs).client as usize].client).lasthurt_client,
         name.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 32]>() as i32,
     );
     weap = BotWeaponNameForMeansOfDeath(
         (*crate::src::game::g_main::g_entities[(*bs).client as usize].client).lasthurt_mod,
@@ -1743,14 +1588,14 @@ pub unsafe extern "C" fn BotChat_HitTalking(
     //
     crate::src::game::ai_main::BotAI_BotInitialChat(
         bs,
-        b"hit_talking\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"hit_talking\x00" as *const u8 as *mut i8,
         name.as_mut_ptr(),
         weap,
         0 as *mut libc::c_void,
     );
     (*bs).lastchat_time = crate::src::game::ai_main::floattime;
-    (*bs).chatto = 0 as libc::c_int;
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    (*bs).chatto = 0;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //
 /*
@@ -1762,11 +1607,11 @@ BotChat_HitNoDeath
 
 pub unsafe extern "C" fn BotChat_HitNoDeath(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut name: [libc::c_char; 32] = [0; 32];
-    let mut weap: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut rnd: libc::c_float = 0.;
-    let mut lasthurt_client: libc::c_int = 0;
+) -> i32 {
+    let mut name: [i8; 32] = [0; 32];
+    let mut weap: *mut i8 = 0 as *mut i8;
+    let mut rnd: f32 = 0.;
+    let mut lasthurt_client: i32 = 0;
     let mut entinfo: crate::be_aas_h::aas_entityinfo_t = crate::be_aas_h::aas_entityinfo_t {
         valid: 0,
         type_0: 0,
@@ -1795,67 +1640,57 @@ pub unsafe extern "C" fn BotChat_HitNoDeath(
     lasthurt_client =
         (*crate::src::game::g_main::g_entities[(*bs).client as usize].client).lasthurt_client;
     if lasthurt_client == 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     if lasthurt_client == (*bs).client {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
-    if lasthurt_client < 0 as libc::c_int || lasthurt_client >= 64 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if lasthurt_client < 0 || lasthurt_client >= 64 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     if crate::src::game::ai_dmq3::bot_nochat.integer != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if (*bs).lastchat_time
-        > crate::src::game::ai_main::floattime - 25 as libc::c_int as libc::c_float
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if (*bs).lastchat_time > crate::src::game::ai_main::floattime - 25f32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if BotNumActivePlayers() <= 1 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if BotNumActivePlayers() <= 1 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat(
-        (*bs).character,
-        32 as libc::c_int,
-        0 as libc::c_int as libc::c_float,
-        1 as libc::c_int as libc::c_float,
-    );
+    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat((*bs).character, 32, 0f32, 1f32);
     //don't chat in teamplay
     if crate::src::game::ai_dmq3::TeamPlayIsOn() != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     // don't chat in tournament mode
-    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as i32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //if fast chat is off
     if crate::src::game::ai_dmq3::bot_fastchat.integer == 0 {
-        if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            > rnd as libc::c_double * 0.5f64
-        {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        if ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 > rnd as f64 * 0.5 {
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     }
     if BotValidChatPosition(bs) == 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     if BotVisibleEnemies(bs) != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     crate::src::game::ai_main::BotEntityInfo((*bs).enemy, &mut entinfo);
     if crate::src::game::ai_dmq3::EntityIsShooting(&mut entinfo) as u64 != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     crate::src::game::ai_dmq3::ClientName(
         lasthurt_client,
         name.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 32]>() as i32,
     );
     weap = BotWeaponNameForMeansOfDeath(
         (*crate::src::game::g_main::g_entities[(*bs).client as usize].client).lasthurt_mod,
@@ -1863,14 +1698,14 @@ pub unsafe extern "C" fn BotChat_HitNoDeath(
     //
     crate::src::game::ai_main::BotAI_BotInitialChat(
         bs,
-        b"hit_nodeath\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"hit_nodeath\x00" as *const u8 as *mut i8,
         name.as_mut_ptr(),
         weap,
         0 as *mut libc::c_void,
     );
     (*bs).lastchat_time = crate::src::game::ai_main::floattime;
-    (*bs).chatto = 0 as libc::c_int;
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    (*bs).chatto = 0;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //
 /*
@@ -1882,10 +1717,10 @@ BotChat_HitNoKill
 
 pub unsafe extern "C" fn BotChat_HitNoKill(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut name: [libc::c_char; 32] = [0; 32];
-    let mut weap: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut rnd: libc::c_float = 0.;
+) -> i32 {
+    let mut name: [i8; 32] = [0; 32];
+    let mut weap: *mut i8 = 0 as *mut i8;
+    let mut rnd: f32 = 0.;
     let mut entinfo: crate::be_aas_h::aas_entityinfo_t = crate::be_aas_h::aas_entityinfo_t {
         valid: 0,
         type_0: 0,
@@ -1912,56 +1747,46 @@ pub unsafe extern "C" fn BotChat_HitNoKill(
         torsoAnim: 0,
     };
     if crate::src::game::ai_dmq3::bot_nochat.integer != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if (*bs).lastchat_time
-        > crate::src::game::ai_main::floattime - 25 as libc::c_int as libc::c_float
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if (*bs).lastchat_time > crate::src::game::ai_main::floattime - 25f32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if BotNumActivePlayers() <= 1 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if BotNumActivePlayers() <= 1 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat(
-        (*bs).character,
-        33 as libc::c_int,
-        0 as libc::c_int as libc::c_float,
-        1 as libc::c_int as libc::c_float,
-    );
+    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat((*bs).character, 33, 0f32, 1f32);
     //don't chat in teamplay
     if crate::src::game::ai_dmq3::TeamPlayIsOn() != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     // don't chat in tournament mode
-    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as i32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //if fast chat is off
     if crate::src::game::ai_dmq3::bot_fastchat.integer == 0 {
-        if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            > rnd as libc::c_double * 0.5f64
-        {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        if ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 > rnd as f64 * 0.5 {
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     }
     if BotValidChatPosition(bs) == 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     if BotVisibleEnemies(bs) != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     crate::src::game::ai_main::BotEntityInfo((*bs).enemy, &mut entinfo);
     if crate::src::game::ai_dmq3::EntityIsShooting(&mut entinfo) as u64 != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     crate::src::game::ai_dmq3::ClientName(
         (*bs).enemy,
         name.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 32]>() as i32,
     );
     weap = BotWeaponNameForMeansOfDeath(
         (*crate::src::game::g_main::g_entities[(*bs).enemy as usize].client).lasthurt_mod,
@@ -1969,14 +1794,14 @@ pub unsafe extern "C" fn BotChat_HitNoKill(
     //
     crate::src::game::ai_main::BotAI_BotInitialChat(
         bs,
-        b"hit_nokill\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"hit_nokill\x00" as *const u8 as *mut i8,
         name.as_mut_ptr(),
         weap,
         0 as *mut libc::c_void,
     );
     (*bs).lastchat_time = crate::src::game::ai_main::floattime;
-    (*bs).chatto = 0 as libc::c_int;
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    (*bs).chatto = 0;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 //
 /*
@@ -1988,68 +1813,49 @@ BotChat_Random
 
 pub unsafe extern "C" fn BotChat_Random(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_int {
-    let mut rnd: libc::c_float = 0.;
-    let mut name: [libc::c_char; 32] = [0; 32];
+) -> i32 {
+    let mut rnd: f32 = 0.;
+    let mut name: [i8; 32] = [0; 32];
     if crate::src::game::ai_dmq3::bot_nochat.integer != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     if crate::src::game::ai_dmq3::BotIsObserver(bs) as u64 != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
-    if (*bs).lastchat_time
-        > crate::src::game::ai_main::floattime - 25 as libc::c_int as libc::c_float
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if (*bs).lastchat_time > crate::src::game::ai_main::floattime - 25f32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     // don't chat in tournament mode
-    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_TOURNAMENT as i32 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //don't chat when doing something important :)
-    if (*bs).ltgtype == 1 as libc::c_int
-        || (*bs).ltgtype == 2 as libc::c_int
-        || (*bs).ltgtype == 5 as libc::c_int
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if (*bs).ltgtype == 1 || (*bs).ltgtype == 2 || (*bs).ltgtype == 5 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
-    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat(
-        (*bs).character,
-        34 as libc::c_int,
-        0 as libc::c_int as libc::c_float,
-        1 as libc::c_int as libc::c_float,
-    );
-    if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-        / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-        > (*bs).thinktime as libc::c_double * 0.1f64
-    {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    rnd = crate::src::game::g_syscalls::trap_Characteristic_BFloat((*bs).character, 34, 0f32, 1f32);
+    if ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 > (*bs).thinktime as f64 * 0.1 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     if crate::src::game::ai_dmq3::bot_fastchat.integer == 0 {
-        if (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float
-            > rnd
-        {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        if (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 > rnd {
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
-        if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-            / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-            > 0.25f64
-        {
-            return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        if ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 > 0.25 {
+            return crate::src::qcommon::q_shared::qfalse as i32;
         }
     }
-    if BotNumActivePlayers() <= 1 as libc::c_int {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if BotNumActivePlayers() <= 1 {
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     if BotValidChatPosition(bs) == 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     if BotVisibleEnemies(bs) != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
     if (*bs).lastkilledplayer == (*bs).client {
@@ -2058,30 +1864,24 @@ pub unsafe extern "C" fn BotChat_Random(
         crate::src::game::ai_dmq3::EasyClientName(
             (*bs).lastkilledplayer,
             name.as_mut_ptr(),
-            ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
+            ::std::mem::size_of::<[i8; 32]>() as i32,
         );
     }
     if crate::src::game::ai_dmq3::TeamPlayIsOn() != 0 {
-        return crate::src::qcommon::q_shared::qfalse as libc::c_int;
+        return crate::src::qcommon::q_shared::qfalse as i32;
         // don't wait
     }
     //
-    if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-        / 0x7fff as libc::c_int as libc::c_float)
-        < crate::src::game::g_syscalls::trap_Characteristic_BFloat(
-            (*bs).character,
-            25 as libc::c_int,
-            0 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-        )
+    if ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32)
+        < crate::src::game::g_syscalls::trap_Characteristic_BFloat((*bs).character, 25, 0f32, 1f32)
     {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"random_misc\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"random_misc\x00" as *const u8 as *mut i8,
             BotRandomOpponentName(bs),
             name.as_mut_ptr(),
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
+            b"[invalid var]\x00" as *const u8 as *const i8,
+            b"[invalid var]\x00" as *const u8 as *const i8,
             BotMapTitle(),
             BotRandomWeaponName(),
             0 as *mut libc::c_void,
@@ -2089,19 +1889,19 @@ pub unsafe extern "C" fn BotChat_Random(
     } else {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"random_insult\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"random_insult\x00" as *const u8 as *mut i8,
             BotRandomOpponentName(bs),
             name.as_mut_ptr(),
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
+            b"[invalid var]\x00" as *const u8 as *const i8,
+            b"[invalid var]\x00" as *const u8 as *const i8,
             BotMapTitle(),
             BotRandomWeaponName(),
             0 as *mut libc::c_void,
         );
     }
     (*bs).lastchat_time = crate::src::game::ai_main::floattime;
-    (*bs).chatto = 0 as libc::c_int;
-    return crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    (*bs).chatto = 0;
+    return crate::src::qcommon::q_shared::qtrue as i32;
 }
 // time the selected chat takes to type in
 /*
@@ -2111,12 +1911,10 @@ BotChatTime
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn BotChatTime(
-    mut bs: *mut crate::src::game::ai_main::bot_state_t,
-) -> libc::c_float {
+pub unsafe extern "C" fn BotChatTime(mut bs: *mut crate::src::game::ai_main::bot_state_t) -> f32 {
     //int cpm;
     //cpm = trap_Characteristic_BInteger(bs->character, CHARACTERISTIC_CHAT_CPM, 1, 4000);
-    return 2.0f64 as libc::c_float;
+    return 2f32;
     //(float) trap_BotChatLength(bs->cs) * 30 / cpm;
 }
 // test the initial bot chats
@@ -2128,576 +1926,444 @@ BotChatTest
 #[no_mangle]
 
 pub unsafe extern "C" fn BotChatTest(mut bs: *mut crate::src::game::ai_main::bot_state_t) {
-    let mut name: [libc::c_char; 32] = [0; 32];
-    let mut weap: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut num: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
+    let mut name: [i8; 32] = [0; 32];
+    let mut weap: *mut i8 = 0 as *mut i8;
+    let mut num: i32 = 0;
+    let mut i: i32 = 0;
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"game_enter\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"game_enter\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"game_enter\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            crate::src::game::ai_dmq3::EasyClientName(
-                (*bs).client,
-                name.as_mut_ptr(),
-                32 as libc::c_int,
-            ),
+            b"game_enter\x00" as *const u8 as *mut i8,
+            crate::src::game::ai_dmq3::EasyClientName((*bs).client, name.as_mut_ptr(), 32i32),
             BotRandomOpponentName(bs),
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
+            b"[invalid var]\x00" as *const u8 as *const i8,
+            b"[invalid var]\x00" as *const u8 as *const i8,
             BotMapTitle(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"game_exit\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"game_exit\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"game_exit\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            crate::src::game::ai_dmq3::EasyClientName(
-                (*bs).client,
-                name.as_mut_ptr(),
-                32 as libc::c_int,
-            ),
+            b"game_exit\x00" as *const u8 as *mut i8,
+            crate::src::game::ai_dmq3::EasyClientName((*bs).client, name.as_mut_ptr(), 32i32),
             BotRandomOpponentName(bs),
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
+            b"[invalid var]\x00" as *const u8 as *const i8,
+            b"[invalid var]\x00" as *const u8 as *const i8,
             BotMapTitle(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"level_start\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"level_start\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"level_start\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            crate::src::game::ai_dmq3::EasyClientName(
-                (*bs).client,
-                name.as_mut_ptr(),
-                32 as libc::c_int,
-            ),
+            b"level_start\x00" as *const u8 as *mut i8,
+            crate::src::game::ai_dmq3::EasyClientName((*bs).client, name.as_mut_ptr(), 32i32),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"level_end_victory\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"level_end_victory\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"level_end_victory\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            crate::src::game::ai_dmq3::EasyClientName(
-                (*bs).client,
-                name.as_mut_ptr(),
-                32 as libc::c_int,
-            ),
+            b"level_end_victory\x00" as *const u8 as *mut i8,
+            crate::src::game::ai_dmq3::EasyClientName((*bs).client, name.as_mut_ptr(), 32i32),
             BotRandomOpponentName(bs),
             BotFirstClientInRankings(),
             BotLastClientInRankings(),
             BotMapTitle(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"level_end_lose\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"level_end_lose\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"level_end_lose\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            crate::src::game::ai_dmq3::EasyClientName(
-                (*bs).client,
-                name.as_mut_ptr(),
-                32 as libc::c_int,
-            ),
+            b"level_end_lose\x00" as *const u8 as *mut i8,
+            crate::src::game::ai_dmq3::EasyClientName((*bs).client, name.as_mut_ptr(), 32i32),
             BotRandomOpponentName(bs),
             BotFirstClientInRankings(),
             BotLastClientInRankings(),
             BotMapTitle(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"level_end\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"level_end\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"level_end\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            crate::src::game::ai_dmq3::EasyClientName(
-                (*bs).client,
-                name.as_mut_ptr(),
-                32 as libc::c_int,
-            ),
+            b"level_end\x00" as *const u8 as *mut i8,
+            crate::src::game::ai_dmq3::EasyClientName((*bs).client, name.as_mut_ptr(), 32i32),
             BotRandomOpponentName(bs),
             BotFirstClientInRankings(),
             BotLastClientInRankings(),
             BotMapTitle(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     crate::src::game::ai_dmq3::EasyClientName(
         (*bs).lastkilledby,
         name.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 32]>() as i32,
     );
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"death_drown\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"death_drown\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         //
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"death_drown\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"death_drown\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"death_slime\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"death_slime\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"death_slime\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"death_slime\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"death_lava\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"death_lava\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"death_lava\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"death_lava\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"death_cratered\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"death_cratered\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"death_cratered\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"death_cratered\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"death_suicide\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"death_suicide\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"death_suicide\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"death_suicide\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"death_telefrag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"death_telefrag\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"death_telefrag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"death_telefrag\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"death_gauntlet\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"death_gauntlet\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"death_gauntlet\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"death_gauntlet\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             BotWeaponNameForMeansOfDeath((*bs).botdeathtype),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"death_rail\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"death_rail\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"death_rail\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"death_rail\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             BotWeaponNameForMeansOfDeath((*bs).botdeathtype),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"death_bfg\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"death_bfg\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"death_bfg\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"death_bfg\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             BotWeaponNameForMeansOfDeath((*bs).botdeathtype),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"death_insult\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"death_insult\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"death_insult\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"death_insult\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             BotWeaponNameForMeansOfDeath((*bs).botdeathtype),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"death_praise\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"death_praise\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"death_praise\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"death_praise\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             BotWeaponNameForMeansOfDeath((*bs).botdeathtype),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     //
-    crate::src::game::ai_dmq3::EasyClientName(
-        (*bs).lastkilledplayer,
-        name.as_mut_ptr(),
-        32 as libc::c_int,
-    );
+    crate::src::game::ai_dmq3::EasyClientName((*bs).lastkilledplayer, name.as_mut_ptr(), 32);
     //
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"kill_gauntlet\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"kill_gauntlet\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         //
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"kill_gauntlet\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"kill_gauntlet\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"kill_rail\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"kill_rail\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"kill_rail\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"kill_rail\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"kill_telefrag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"kill_telefrag\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"kill_telefrag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"kill_telefrag\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"kill_insult\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"kill_insult\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"kill_insult\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"kill_insult\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"kill_praise\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"kill_praise\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"kill_praise\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"kill_praise\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"enemy_suicide\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"enemy_suicide\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"enemy_suicide\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"enemy_suicide\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     crate::src::game::ai_dmq3::ClientName(
         (*crate::src::game::g_main::g_entities[(*bs).client as usize].client).lasthurt_client,
         name.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 32]>() as i32,
     );
     weap = BotWeaponNameForMeansOfDeath(
         (*crate::src::game::g_main::g_entities[(*bs).client as usize].client).lasthurt_client,
     );
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"hit_talking\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"hit_talking\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"hit_talking\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"hit_talking\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             weap,
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"hit_nodeath\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"hit_nodeath\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"hit_nodeath\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"hit_nodeath\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             weap,
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"hit_nokill\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"hit_nokill\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"hit_nokill\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"hit_nokill\x00" as *const u8 as *mut i8,
             name.as_mut_ptr(),
             weap,
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     //
@@ -2707,57 +2373,49 @@ pub unsafe extern "C" fn BotChatTest(mut bs: *mut crate::src::game::ai_main::bot
         crate::src::game::ai_dmq3::EasyClientName(
             (*bs).lastkilledplayer,
             name.as_mut_ptr(),
-            ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
+            ::std::mem::size_of::<[i8; 32]>() as i32,
         );
     }
     //
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"random_misc\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"random_misc\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         //
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"random_misc\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"random_misc\x00" as *const u8 as *mut i8,
             BotRandomOpponentName(bs),
             name.as_mut_ptr(),
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
+            b"[invalid var]\x00" as *const u8 as *const i8,
+            b"[invalid var]\x00" as *const u8 as *const i8,
             BotMapTitle(),
             BotRandomWeaponName(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
     num = crate::src::game::g_syscalls::trap_BotNumInitialChats(
         (*bs).cs,
-        b"random_insult\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"random_insult\x00" as *const u8 as *mut i8,
     );
-    i = 0 as libc::c_int;
+    i = 0;
     while i < num {
         crate::src::game::ai_main::BotAI_BotInitialChat(
             bs,
-            b"random_insult\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            b"random_insult\x00" as *const u8 as *mut i8,
             BotRandomOpponentName(bs),
             name.as_mut_ptr(),
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
-            b"[invalid var]\x00" as *const u8 as *const libc::c_char,
+            b"[invalid var]\x00" as *const u8 as *const i8,
+            b"[invalid var]\x00" as *const u8 as *const i8,
             BotMapTitle(),
             BotRandomWeaponName(),
             0 as *mut libc::c_void,
         );
-        crate::src::game::g_syscalls::trap_BotEnterChat(
-            (*bs).cs,
-            0 as libc::c_int,
-            0 as libc::c_int,
-        );
+        crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, 0, 0);
         i += 1
     }
 }

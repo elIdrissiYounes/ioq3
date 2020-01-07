@@ -240,9 +240,9 @@ pub unsafe extern "C" fn jpeg_start_compress(
     mut cinfo: crate::jpeglib_h::j_compress_ptr,
     mut write_all_tables: crate::jmorecfg_h::boolean,
 ) {
-    if (*cinfo).global_state != 100 as libc::c_int {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as libc::c_int; /* mark all tables to be written */
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = (*cinfo).global_state;
+    if (*cinfo).global_state != 100 {
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as i32; /* mark all tables to be written */
+        (*(*cinfo).err).msg_parm.i[0] = (*cinfo).global_state;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -251,7 +251,7 @@ pub unsafe extern "C" fn jpeg_start_compress(
         .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr);
     }
     if write_all_tables != 0 {
-        crate::src::jpeg_8c::jcapimin::jpeg_suppress_tables(cinfo, 0 as libc::c_int);
+        crate::src::jpeg_8c::jcapimin::jpeg_suppress_tables(cinfo, 0i32);
     }
     /* (Re)initialize error mgr and destination modules */
     Some(
@@ -278,11 +278,11 @@ pub unsafe extern "C" fn jpeg_start_compress(
     /* Ready for application to drive first pass through jpeg_write_scanlines
      * or jpeg_write_raw_data.
      */
-    (*cinfo).next_scanline = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
+    (*cinfo).next_scanline = 0u32;
     (*cinfo).global_state = if (*cinfo).raw_data_in != 0 {
-        102 as libc::c_int
+        102
     } else {
-        101 as libc::c_int
+        101
     };
 }
 /*
@@ -308,9 +308,9 @@ pub unsafe extern "C" fn jpeg_write_scanlines(
 ) -> crate::jmorecfg_h::JDIMENSION {
     let mut row_ctr: crate::jmorecfg_h::JDIMENSION = 0;
     let mut rows_left: crate::jmorecfg_h::JDIMENSION = 0;
-    if (*cinfo).global_state != 101 as libc::c_int {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as libc::c_int;
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = (*cinfo).global_state;
+    if (*cinfo).global_state != 101 {
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as i32;
+        (*(*cinfo).err).msg_parm.i[0] = (*cinfo).global_state;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -319,7 +319,7 @@ pub unsafe extern "C" fn jpeg_write_scanlines(
         .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr);
     }
     if (*cinfo).next_scanline >= (*cinfo).image_height {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JWRN_TOO_MUCH_DATA as libc::c_int;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JWRN_TOO_MUCH_DATA as i32;
         Some(
             (*(*cinfo).err)
                 .emit_message
@@ -327,13 +327,13 @@ pub unsafe extern "C" fn jpeg_write_scanlines(
         )
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
-            -(1 as libc::c_int),
+            -(1i32),
         );
     }
     /* Call progress monitor hook if present */
     if !(*cinfo).progress.is_null() {
-        (*(*cinfo).progress).pass_counter = (*cinfo).next_scanline as libc::c_long;
-        (*(*cinfo).progress).pass_limit = (*cinfo).image_height as libc::c_long;
+        (*(*cinfo).progress).pass_counter = (*cinfo).next_scanline as isize;
+        (*(*cinfo).progress).pass_limit = (*cinfo).image_height as isize;
         Some(
             (*(*cinfo).progress)
                 .progress_monitor
@@ -359,16 +359,14 @@ pub unsafe extern "C" fn jpeg_write_scanlines(
     if num_lines > rows_left {
         num_lines = rows_left
     }
-    row_ctr = 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
+    row_ctr = 0;
     Some(
         (*(*cinfo).main)
             .process_data
             .expect("non-null function pointer"),
     )
     .expect("non-null function pointer")(cinfo, scanlines, &mut row_ctr, num_lines);
-    (*cinfo).next_scanline = ((*cinfo).next_scanline as libc::c_uint).wrapping_add(row_ctr)
-        as crate::jmorecfg_h::JDIMENSION
-        as crate::jmorecfg_h::JDIMENSION;
+    (*cinfo).next_scanline =  ((*cinfo).next_scanline).wrapping_add(row_ctr);
     return row_ctr;
 }
 /* Replaces jpeg_write_scanlines when writing raw downsampled data. */
@@ -384,9 +382,9 @@ pub unsafe extern "C" fn jpeg_write_raw_data(
     mut num_lines: crate::jmorecfg_h::JDIMENSION,
 ) -> crate::jmorecfg_h::JDIMENSION {
     let mut lines_per_iMCU_row: crate::jmorecfg_h::JDIMENSION = 0;
-    if (*cinfo).global_state != 102 as libc::c_int {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as libc::c_int;
-        (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = (*cinfo).global_state;
+    if (*cinfo).global_state != 102 {
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as i32;
+        (*(*cinfo).err).msg_parm.i[0] = (*cinfo).global_state;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -395,7 +393,7 @@ pub unsafe extern "C" fn jpeg_write_raw_data(
         .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr);
     }
     if (*cinfo).next_scanline >= (*cinfo).image_height {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JWRN_TOO_MUCH_DATA as libc::c_int;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JWRN_TOO_MUCH_DATA as i32;
         Some(
             (*(*cinfo).err)
                 .emit_message
@@ -403,14 +401,14 @@ pub unsafe extern "C" fn jpeg_write_raw_data(
         )
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
-            -(1 as libc::c_int),
+            -(1),
         );
-        return 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
+        return 0u32;
     }
     /* Call progress monitor hook if present */
     if !(*cinfo).progress.is_null() {
-        (*(*cinfo).progress).pass_counter = (*cinfo).next_scanline as libc::c_long;
-        (*(*cinfo).progress).pass_limit = (*cinfo).image_height as libc::c_long;
+        (*(*cinfo).progress).pass_counter = (*cinfo).next_scanline as isize;
+        (*(*cinfo).progress).pass_limit = (*cinfo).image_height as isize;
         Some(
             (*(*cinfo).progress)
                 .progress_monitor
@@ -433,9 +431,9 @@ pub unsafe extern "C" fn jpeg_write_raw_data(
     }
     /* Verify that at least one iMCU row has been passed. */
     lines_per_iMCU_row =
-        ((*cinfo).max_v_samp_factor * 8 as libc::c_int) as crate::jmorecfg_h::JDIMENSION;
+        ((*cinfo).max_v_samp_factor * 8i32) as crate::jmorecfg_h::JDIMENSION;
     if num_lines < lines_per_iMCU_row {
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BUFFER_SIZE as libc::c_int;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BUFFER_SIZE as i32;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -453,11 +451,11 @@ pub unsafe extern "C" fn jpeg_write_raw_data(
         == 0
     {
         /* If compressor did not consume the whole row, suspend processing. */
-        return 0 as libc::c_int as crate::jmorecfg_h::JDIMENSION;
+        return 0u32;
     }
     /* OK, we processed one iMCU row. */
     (*cinfo).next_scanline =
-        ((*cinfo).next_scanline as libc::c_uint).wrapping_add(lines_per_iMCU_row)
-            as crate::jmorecfg_h::JDIMENSION as crate::jmorecfg_h::JDIMENSION;
+        
+        ((*cinfo).next_scanline).wrapping_add(lines_per_iMCU_row);
     return lines_per_iMCU_row;
 }

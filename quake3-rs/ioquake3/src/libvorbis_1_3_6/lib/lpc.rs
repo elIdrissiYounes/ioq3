@@ -64,57 +64,51 @@ Output: m lpc coefficients, excitation energy */
 #[no_mangle]
 
 pub unsafe extern "C" fn vorbis_lpc_from_data(
-    mut data: *mut libc::c_float,
-    mut lpci: *mut libc::c_float,
-    mut n: libc::c_int,
-    mut m: libc::c_int,
-) -> libc::c_float {
+    mut data: *mut f32,
+    mut lpci: *mut f32,
+    mut n: i32,
+    mut m: i32,
+) -> f32 {
     let mut fresh0 = ::std::vec::from_elem(
         0,
-        (::std::mem::size_of::<libc::c_double>() as libc::c_ulong)
-            .wrapping_mul((m + 1 as libc::c_int) as libc::c_ulong) as usize,
+        (::std::mem::size_of::<f64>()).wrapping_mul((m + 1i32) as usize),
     );
-    let mut aut: *mut libc::c_double = fresh0.as_mut_ptr() as *mut libc::c_double;
-    let mut fresh1 = ::std::vec::from_elem(
-        0,
-        (::std::mem::size_of::<libc::c_double>() as libc::c_ulong).wrapping_mul(m as libc::c_ulong)
-            as usize,
-    );
-    let mut lpc: *mut libc::c_double = fresh1.as_mut_ptr() as *mut libc::c_double;
-    let mut error: libc::c_double = 0.;
-    let mut epsilon: libc::c_double = 0.;
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
+    let mut aut: *mut f64 = fresh0.as_mut_ptr() as *mut f64;
+    let mut fresh1 =
+        ::std::vec::from_elem(0, (::std::mem::size_of::<f64>()).wrapping_mul(m as usize));
+    let mut lpc: *mut f64 = fresh1.as_mut_ptr() as *mut f64;
+    let mut error: f64 = 0.;
+    let mut epsilon: f64 = 0.;
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
     /* autocorrelation, p+1 lag coefficients */
-    j = m + 1 as libc::c_int; /* double needed for accumulator depth */
+    j = m + 1; /* double needed for accumulator depth */
     loop {
         let fresh2 = j;
         j = j - 1;
         if !(fresh2 != 0) {
             break;
         }
-        let mut d: libc::c_double = 0 as libc::c_int as libc::c_double;
+        let mut d: f64 = 0f64;
         i = j;
         while i < n {
-            d += *data.offset(i as isize) as libc::c_double
-                * *data.offset((i - j) as isize) as libc::c_double;
+            d += *data.offset(i as isize) as f64 * *data.offset((i - j) as isize) as f64;
             i += 1
         }
         *aut.offset(j as isize) = d
     }
     /* Generate lpc coefficients from autocorr values */
     /* set our noise floor to about -100dB */
-    error = *aut.offset(0 as libc::c_int as isize) * (1.0f64 + 1e-10f64);
-    epsilon = 1e-9f64 * *aut.offset(0 as libc::c_int as isize) + 1e-10f64;
-    i = 0 as libc::c_int;
+    error = *aut.offset(0) * (1.0 + 1e-10);
+    epsilon = 1e-9 * *aut.offset(0) + 1e-10;
+    i = 0;
     while i < m {
-        let mut r: libc::c_double = -*aut.offset((i + 1 as libc::c_int) as isize);
+        let mut r: f64 = -*aut.offset((i + 1) as isize);
         if error < epsilon {
             crate::stdlib::memset(
                 lpc.offset(i as isize) as *mut libc::c_void,
-                0 as libc::c_int,
-                ((m - i) as libc::c_ulong)
-                    .wrapping_mul(::std::mem::size_of::<libc::c_double>() as libc::c_ulong),
+                0,
+                ((m - i) as usize).wrapping_mul(::std::mem::size_of::<f64>()),
             );
             break;
         } else {
@@ -122,7 +116,7 @@ pub unsafe extern "C" fn vorbis_lpc_from_data(
             Vorbis we don't save it.  If anyone wants to recycle this code
             and needs reflection coefficients, save the results of 'r' from
             each iteration. */
-            j = 0 as libc::c_int;
+            j = 0;
             while j < i {
                 r -= *lpc.offset(j as isize) * *aut.offset((i - j) as isize);
                 j += 1
@@ -130,90 +124,89 @@ pub unsafe extern "C" fn vorbis_lpc_from_data(
             r /= error;
             /* Update LPC coefficients and total error */
             *lpc.offset(i as isize) = r;
-            j = 0 as libc::c_int;
-            while j < i / 2 as libc::c_int {
-                let mut tmp: libc::c_double = *lpc.offset(j as isize);
-                *lpc.offset(j as isize) += r * *lpc.offset((i - 1 as libc::c_int - j) as isize);
-                *lpc.offset((i - 1 as libc::c_int - j) as isize) += r * tmp;
+            j = 0;
+            while j < i / 2 {
+                let mut tmp: f64 = *lpc.offset(j as isize);
+                *lpc.offset(j as isize) += r * *lpc.offset((i - 1 - j) as isize);
+                *lpc.offset((i - 1 - j) as isize) += r * tmp;
                 j += 1
             }
-            if i & 1 as libc::c_int != 0 {
+            if i & 1 != 0 {
                 *lpc.offset(j as isize) += *lpc.offset(j as isize) * r
             }
-            error *= 1.0f64 - r * r;
+            error *= 1.0 - r * r;
             i += 1
         }
     }
     /* slightly damp the filter */
-    let mut g: libc::c_double = 0.99f64;
-    let mut damp: libc::c_double = g;
-    j = 0 as libc::c_int;
+    let mut g: f64 = 0.99;
+    let mut damp: f64 = g;
+    j = 0;
     while j < m {
         *lpc.offset(j as isize) *= damp;
         damp *= g;
         j += 1
     }
-    j = 0 as libc::c_int;
+    j = 0;
     while j < m {
-        *lpci.offset(j as isize) = *lpc.offset(j as isize) as libc::c_float;
+        *lpci.offset(j as isize) = *lpc.offset(j as isize) as f32;
         j += 1
     }
     /* we need the error value to know how big an impulse to hit the
     filter with later */
-    return error as libc::c_float;
+    return error as f32;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn vorbis_lpc_predict(
-    mut coeff: *mut libc::c_float,
-    mut prime: *mut libc::c_float,
-    mut m: libc::c_int,
-    mut data: *mut libc::c_float,
-    mut n: libc::c_long,
+    mut coeff: *mut f32,
+    mut prime: *mut f32,
+    mut m: i32,
+    mut data: *mut f32,
+    mut n: isize,
 ) {
     /* in: coeff[0...m-1] LPC coefficients
          prime[0...m-1] initial values (allocated size of n+m-1)
     out: data[0...n-1] data samples */
-    let mut i: libc::c_long = 0;
-    let mut j: libc::c_long = 0;
-    let mut o: libc::c_long = 0;
-    let mut p: libc::c_long = 0;
-    let mut y: libc::c_float = 0.;
+    let mut i: isize = 0;
+    let mut j: isize = 0;
+    let mut o: isize = 0;
+    let mut p: isize = 0;
+    let mut y: f32 = 0.;
     let mut fresh3 = ::std::vec::from_elem(
         0,
-        (::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
-            .wrapping_mul((m as libc::c_long + n) as libc::c_ulong) as usize,
+        (::std::mem::size_of::<f32>()).wrapping_mul((m as isize + n) as usize),
     );
-    let mut work: *mut libc::c_float = fresh3.as_mut_ptr() as *mut libc::c_float;
+    let mut work: *mut f32 = fresh3.as_mut_ptr() as *mut f32;
     if prime.is_null() {
-        i = 0 as libc::c_int as libc::c_long;
-        while i < m as libc::c_long {
-            *work.offset(i as isize) = 0.0f32;
+        i = 0;
+        while i < m as isize {
+            *work.offset(i) = 0.0f32;
             i += 1
         }
     } else {
-        i = 0 as libc::c_int as libc::c_long;
-        while i < m as libc::c_long {
-            *work.offset(i as isize) = *prime.offset(i as isize);
+        i = 0;
+        while i < m as isize {
+            *work.offset(i) = *prime.offset(i);
             i += 1
         }
     }
-    i = 0 as libc::c_int as libc::c_long;
+    i = 0;
     while i < n {
-        y = 0 as libc::c_int as libc::c_float;
+        y = 0f32;
         o = i;
-        p = m as libc::c_long;
-        j = 0 as libc::c_int as libc::c_long;
-        while j < m as libc::c_long {
+        p = m as isize;
+        j = 0;
+        while j < m as isize {
             let fresh4 = o;
             o = o + 1;
             p -= 1;
-            y -= *work.offset(fresh4 as isize) * *coeff.offset(p as isize);
+            y -= *work.offset(fresh4) * *coeff.offset(p);
             j += 1
         }
-        let ref mut fresh5 = *work.offset(o as isize);
+        let ref mut fresh5 = *work.offset(o);
         *fresh5 = y;
-        *data.offset(i as isize) = *fresh5;
+        *data.offset(i) = *fresh5;
         i += 1
     }
 }

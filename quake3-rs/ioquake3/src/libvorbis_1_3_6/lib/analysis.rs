@@ -39,18 +39,18 @@ function: single-block PCM analysis mode dispatch
 pub unsafe extern "C" fn vorbis_analysis(
     mut vb: *mut crate::codec_h::vorbis_block,
     mut op: *mut crate::ogg_h::ogg_packet,
-) -> libc::c_int {
-    let mut ret: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
+) -> i32 {
+    let mut ret: i32 = 0;
+    let mut i: i32 = 0;
     let mut vbi: *mut crate::codec_internal_h::vorbis_block_internal =
         (*vb).internal as *mut crate::codec_internal_h::vorbis_block_internal;
-    (*vb).glue_bits = 0 as libc::c_int as libc::c_long;
-    (*vb).time_bits = 0 as libc::c_int as libc::c_long;
-    (*vb).floor_bits = 0 as libc::c_int as libc::c_long;
-    (*vb).res_bits = 0 as libc::c_int as libc::c_long;
+    (*vb).glue_bits = 0isize;
+    (*vb).time_bits = 0isize;
+    (*vb).floor_bits = 0isize;
+    (*vb).res_bits = 0isize;
     /* first things first.  Make sure encode is ready */
-    i = 0 as libc::c_int;
-    while i < 15 as libc::c_int {
+    i = 0;
+    while i < 15 {
         crate::src::libogg_1_3_3::src::bitwise::oggpack_reset((*vbi).packetblob[i as usize]);
         i += 1
     }
@@ -59,7 +59,7 @@ pub unsafe extern "C" fn vorbis_analysis(
     bitrate management */
     ret = (**crate::src::libvorbis_1_3_6::lib::registry::_mapping_P
         .as_ptr()
-        .offset(0 as libc::c_int as isize))
+        .offset(0))
     .forward
     .expect("non-null function pointer")(vb);
     if ret != 0 {
@@ -69,15 +69,15 @@ pub unsafe extern "C" fn vorbis_analysis(
         if crate::src::libvorbis_1_3_6::lib::bitrate::vorbis_bitrate_managed(vb) != 0 {
             /* The app is using a bitmanaged mode... but not using the
             bitrate management interface. */
-            return -(131 as libc::c_int);
+            return -(131i32);
         }
         (*op).packet = crate::src::libogg_1_3_3::src::bitwise::oggpack_get_buffer(&mut (*vb).opb);
         (*op).bytes = crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(&mut (*vb).opb);
-        (*op).b_o_s = 0 as libc::c_int as libc::c_long;
-        (*op).e_o_s = (*vb).eofflag as libc::c_long;
+        (*op).b_o_s = 0isize;
+        (*op).e_o_s = (*vb).eofflag as isize;
         (*op).granulepos = (*vb).granulepos;
         (*op).packetno = (*vb).sequence
         /* for sake of completeness */
     }
-    return 0 as libc::c_int;
+    return 0;
 }

@@ -27,138 +27,29 @@ POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************/
 #[no_mangle]
 
-pub static mut silk_pitch_lag_iCDF: [libc::c_uchar; 32] = [
-    253 as libc::c_int as libc::c_uchar,
-    250 as libc::c_int as libc::c_uchar,
-    244 as libc::c_int as libc::c_uchar,
-    233 as libc::c_int as libc::c_uchar,
-    212 as libc::c_int as libc::c_uchar,
-    182 as libc::c_int as libc::c_uchar,
-    150 as libc::c_int as libc::c_uchar,
-    131 as libc::c_int as libc::c_uchar,
-    120 as libc::c_int as libc::c_uchar,
-    110 as libc::c_int as libc::c_uchar,
-    98 as libc::c_int as libc::c_uchar,
-    85 as libc::c_int as libc::c_uchar,
-    72 as libc::c_int as libc::c_uchar,
-    60 as libc::c_int as libc::c_uchar,
-    49 as libc::c_int as libc::c_uchar,
-    40 as libc::c_int as libc::c_uchar,
-    32 as libc::c_int as libc::c_uchar,
-    25 as libc::c_int as libc::c_uchar,
-    19 as libc::c_int as libc::c_uchar,
-    15 as libc::c_int as libc::c_uchar,
-    13 as libc::c_int as libc::c_uchar,
-    11 as libc::c_int as libc::c_uchar,
-    9 as libc::c_int as libc::c_uchar,
-    8 as libc::c_int as libc::c_uchar,
-    7 as libc::c_int as libc::c_uchar,
-    6 as libc::c_int as libc::c_uchar,
-    5 as libc::c_int as libc::c_uchar,
-    4 as libc::c_int as libc::c_uchar,
-    3 as libc::c_int as libc::c_uchar,
-    2 as libc::c_int as libc::c_uchar,
-    1 as libc::c_int as libc::c_uchar,
-    0 as libc::c_int as libc::c_uchar,
+pub static mut silk_pitch_lag_iCDF: [u8; 32] = [
+    253, 250, 244, 233, 212, 182, 150, 131, 120, 110, 98, 85, 72, 60, 49, 40, 32, 25, 19, 15, 13,
+    11, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
 ];
 #[no_mangle]
 
-pub static mut silk_pitch_delta_iCDF: [libc::c_uchar; 21] = [
-    210 as libc::c_int as libc::c_uchar,
-    208 as libc::c_int as libc::c_uchar,
-    206 as libc::c_int as libc::c_uchar,
-    203 as libc::c_int as libc::c_uchar,
-    199 as libc::c_int as libc::c_uchar,
-    193 as libc::c_int as libc::c_uchar,
-    183 as libc::c_int as libc::c_uchar,
-    168 as libc::c_int as libc::c_uchar,
-    142 as libc::c_int as libc::c_uchar,
-    104 as libc::c_int as libc::c_uchar,
-    74 as libc::c_int as libc::c_uchar,
-    52 as libc::c_int as libc::c_uchar,
-    37 as libc::c_int as libc::c_uchar,
-    27 as libc::c_int as libc::c_uchar,
-    20 as libc::c_int as libc::c_uchar,
-    14 as libc::c_int as libc::c_uchar,
-    10 as libc::c_int as libc::c_uchar,
-    6 as libc::c_int as libc::c_uchar,
-    4 as libc::c_int as libc::c_uchar,
-    2 as libc::c_int as libc::c_uchar,
-    0 as libc::c_int as libc::c_uchar,
+pub static mut silk_pitch_delta_iCDF: [u8; 21] = [
+    210, 208, 206, 203, 199, 193, 183, 168, 142, 104, 74, 52, 37, 27, 20, 14, 10, 6, 4, 2, 0,
 ];
 #[no_mangle]
 
-pub static mut silk_pitch_contour_iCDF: [libc::c_uchar; 34] = [
-    223 as libc::c_int as libc::c_uchar,
-    201 as libc::c_int as libc::c_uchar,
-    183 as libc::c_int as libc::c_uchar,
-    167 as libc::c_int as libc::c_uchar,
-    152 as libc::c_int as libc::c_uchar,
-    138 as libc::c_int as libc::c_uchar,
-    124 as libc::c_int as libc::c_uchar,
-    111 as libc::c_int as libc::c_uchar,
-    98 as libc::c_int as libc::c_uchar,
-    88 as libc::c_int as libc::c_uchar,
-    79 as libc::c_int as libc::c_uchar,
-    70 as libc::c_int as libc::c_uchar,
-    62 as libc::c_int as libc::c_uchar,
-    56 as libc::c_int as libc::c_uchar,
-    50 as libc::c_int as libc::c_uchar,
-    44 as libc::c_int as libc::c_uchar,
-    39 as libc::c_int as libc::c_uchar,
-    35 as libc::c_int as libc::c_uchar,
-    31 as libc::c_int as libc::c_uchar,
-    27 as libc::c_int as libc::c_uchar,
-    24 as libc::c_int as libc::c_uchar,
-    21 as libc::c_int as libc::c_uchar,
-    18 as libc::c_int as libc::c_uchar,
-    16 as libc::c_int as libc::c_uchar,
-    14 as libc::c_int as libc::c_uchar,
-    12 as libc::c_int as libc::c_uchar,
-    10 as libc::c_int as libc::c_uchar,
-    8 as libc::c_int as libc::c_uchar,
-    6 as libc::c_int as libc::c_uchar,
-    4 as libc::c_int as libc::c_uchar,
-    3 as libc::c_int as libc::c_uchar,
-    2 as libc::c_int as libc::c_uchar,
-    1 as libc::c_int as libc::c_uchar,
-    0 as libc::c_int as libc::c_uchar,
+pub static mut silk_pitch_contour_iCDF: [u8; 34] = [
+    223, 201, 183, 167, 152, 138, 124, 111, 98, 88, 79, 70, 62, 56, 50, 44, 39, 35, 31, 27, 24, 21,
+    18, 16, 14, 12, 10, 8, 6, 4, 3, 2, 1, 0,
 ];
 #[no_mangle]
 
-pub static mut silk_pitch_contour_NB_iCDF: [libc::c_uchar; 11] = [
-    188 as libc::c_int as libc::c_uchar,
-    176 as libc::c_int as libc::c_uchar,
-    155 as libc::c_int as libc::c_uchar,
-    138 as libc::c_int as libc::c_uchar,
-    119 as libc::c_int as libc::c_uchar,
-    97 as libc::c_int as libc::c_uchar,
-    67 as libc::c_int as libc::c_uchar,
-    43 as libc::c_int as libc::c_uchar,
-    26 as libc::c_int as libc::c_uchar,
-    10 as libc::c_int as libc::c_uchar,
-    0 as libc::c_int as libc::c_uchar,
-];
+pub static mut silk_pitch_contour_NB_iCDF: [u8; 11] =
+    [188, 176, 155, 138, 119, 97, 67, 43, 26, 10, 0];
 #[no_mangle]
 
-pub static mut silk_pitch_contour_10_ms_iCDF: [libc::c_uchar; 12] = [
-    165 as libc::c_int as libc::c_uchar,
-    119 as libc::c_int as libc::c_uchar,
-    80 as libc::c_int as libc::c_uchar,
-    61 as libc::c_int as libc::c_uchar,
-    47 as libc::c_int as libc::c_uchar,
-    35 as libc::c_int as libc::c_uchar,
-    27 as libc::c_int as libc::c_uchar,
-    20 as libc::c_int as libc::c_uchar,
-    14 as libc::c_int as libc::c_uchar,
-    9 as libc::c_int as libc::c_uchar,
-    4 as libc::c_int as libc::c_uchar,
-    0 as libc::c_int as libc::c_uchar,
-];
+pub static mut silk_pitch_contour_10_ms_iCDF: [u8; 12] =
+    [165, 119, 80, 61, 47, 35, 27, 20, 14, 9, 4, 0];
 #[no_mangle]
 
-pub static mut silk_pitch_contour_10_ms_NB_iCDF: [libc::c_uchar; 3] = [
-    113 as libc::c_int as libc::c_uchar,
-    63 as libc::c_int as libc::c_uchar,
-    0 as libc::c_int as libc::c_uchar,
-];
+pub static mut silk_pitch_contour_10_ms_NB_iCDF: [u8; 3] = [113, 63, 0];

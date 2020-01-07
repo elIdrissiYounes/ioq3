@@ -46,17 +46,15 @@ Written by Jean-Marc Valin and Gregory Maxwell */
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn resampling_factor(
-    mut rate: crate::opus_types_h::opus_int32,
-) -> libc::c_int {
-    let mut ret: libc::c_int = 0;
+pub unsafe extern "C" fn resampling_factor(mut rate: crate::opus_types_h::opus_int32) -> i32 {
+    let mut ret: i32 = 0;
     match rate {
-        48000 => ret = 1 as libc::c_int,
-        24000 => ret = 2 as libc::c_int,
-        16000 => ret = 3 as libc::c_int,
-        12000 => ret = 4 as libc::c_int,
-        8000 => ret = 6 as libc::c_int,
-        _ => ret = 0 as libc::c_int,
+        48000 => ret = 1,
+        24000 => ret = 2,
+        16000 => ret = 3,
+        12000 => ret = 4,
+        8000 => ret = 6,
+        _ => ret = 0,
     }
     return ret;
 }
@@ -65,8 +63,8 @@ pub unsafe extern "C" fn resampling_factor(
 unsafe extern "C" fn comb_filter_const_c(
     mut y: *mut crate::arch_h::opus_val32,
     mut x: *mut crate::arch_h::opus_val32,
-    mut T: libc::c_int,
-    mut N: libc::c_int,
+    mut T: i32,
+    mut N: i32,
     mut g10: crate::arch_h::opus_val16,
     mut g11: crate::arch_h::opus_val16,
     mut g12: crate::arch_h::opus_val16,
@@ -76,14 +74,14 @@ unsafe extern "C" fn comb_filter_const_c(
     let mut x2: crate::arch_h::opus_val32 = 0.;
     let mut x3: crate::arch_h::opus_val32 = 0.;
     let mut x4: crate::arch_h::opus_val32 = 0.;
-    let mut i: libc::c_int = 0;
-    x4 = *x.offset((-T - 2 as libc::c_int) as isize);
-    x3 = *x.offset((-T - 1 as libc::c_int) as isize);
+    let mut i: i32 = 0;
+    x4 = *x.offset((-T - 2i32) as isize);
+    x3 = *x.offset((-T - 1i32) as isize);
     x2 = *x.offset(-T as isize);
-    x1 = *x.offset((-T + 1 as libc::c_int) as isize);
-    i = 0 as libc::c_int;
+    x1 = *x.offset((-T + 1i32) as isize);
+    i = 0;
     while i < N {
-        x0 = *x.offset((i - T + 2 as libc::c_int) as isize);
+        x0 = *x.offset((i - T + 2) as isize);
         *y.offset(i as isize) =
             *x.offset(i as isize) + g10 * x2 + g11 * (x1 + x3) + g12 * (x0 + x4);
         *y.offset(i as isize) = *y.offset(i as isize);
@@ -99,18 +97,18 @@ unsafe extern "C" fn comb_filter_const_c(
 pub unsafe extern "C" fn comb_filter(
     mut y: *mut crate::arch_h::opus_val32,
     mut x: *mut crate::arch_h::opus_val32,
-    mut T0: libc::c_int,
-    mut T1: libc::c_int,
-    mut N: libc::c_int,
+    mut T0: i32,
+    mut T1: i32,
+    mut N: i32,
     mut g0: crate::arch_h::opus_val16,
     mut g1: crate::arch_h::opus_val16,
-    mut tapset0: libc::c_int,
-    mut tapset1: libc::c_int,
+    mut tapset0: i32,
+    mut tapset1: i32,
     mut window: *const crate::arch_h::opus_val16,
-    mut overlap: libc::c_int,
-    mut arch: libc::c_int,
+    mut overlap: i32,
+    mut arch: i32,
 ) {
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     /* printf ("%d %d %f %f\n", T0, T1, g0, g1); */
     let mut g00: crate::arch_h::opus_val16 = 0.;
     let mut g01: crate::arch_h::opus_val16 = 0.;
@@ -124,70 +122,54 @@ pub unsafe extern "C" fn comb_filter(
     let mut x3: crate::arch_h::opus_val32 = 0.;
     let mut x4: crate::arch_h::opus_val32 = 0.;
     static mut gains: [[crate::arch_h::opus_val16; 3]; 3] = [
-        [0.3066406250f32, 0.2170410156f32, 0.1296386719f32],
-        [0.4638671875f32, 0.2680664062f32, 0.0f32],
-        [0.7998046875f32, 0.1000976562f32, 0.0f32],
+        [0.3066406250, 0.2170410156, 0.1296386719],
+        [0.4638671875, 0.2680664062, 0.0],
+        [0.7998046875, 0.1000976562, 0.0],
     ];
-    if g0 == 0 as libc::c_int as libc::c_float && g1 == 0 as libc::c_int as libc::c_float {
+    if g0 == 0f32 && g1 == 0f32 {
         /* OPT: Happens to work without the OPUS_MOVE(), but only because the current encoder already copies x to y */
         if x != y {
             crate::stdlib::memmove(
                 y as *mut libc::c_void,
                 x as *const libc::c_void,
-                (N as libc::c_ulong)
-                    .wrapping_mul(
-                        ::std::mem::size_of::<crate::arch_h::opus_val32>() as libc::c_ulong
-                    )
-                    .wrapping_add(
-                        (0 as libc::c_int as libc::c_long
-                            * y.wrapping_offset_from(x) as libc::c_long)
-                            as libc::c_ulong,
-                    ),
+                (N as usize)
+                    .wrapping_mul(::std::mem::size_of::<crate::arch_h::opus_val32>())
+                    .wrapping_add((0isize * y.wrapping_offset_from(x)) as usize),
             );
         }
         return;
     }
     /* When the gain is zero, T0 and/or T1 is set to zero. We need
     to have then be at least 2 to avoid processing garbage data. */
-    T0 = if T0 > 15 as libc::c_int {
-        T0
-    } else {
-        15 as libc::c_int
-    };
-    T1 = if T1 > 15 as libc::c_int {
-        T1
-    } else {
-        15 as libc::c_int
-    };
-    g00 = g0 * gains[tapset0 as usize][0 as libc::c_int as usize];
-    g01 = g0 * gains[tapset0 as usize][1 as libc::c_int as usize];
-    g02 = g0 * gains[tapset0 as usize][2 as libc::c_int as usize];
-    g10 = g1 * gains[tapset1 as usize][0 as libc::c_int as usize];
-    g11 = g1 * gains[tapset1 as usize][1 as libc::c_int as usize];
-    g12 = g1 * gains[tapset1 as usize][2 as libc::c_int as usize];
-    x1 = *x.offset((-T1 + 1 as libc::c_int) as isize);
+    T0 = if T0 > 15 { T0 } else { 15 };
+    T1 = if T1 > 15 { T1 } else { 15 };
+    g00 = g0 * gains[tapset0 as usize][0];
+    g01 = g0 * gains[tapset0 as usize][1];
+    g02 = g0 * gains[tapset0 as usize][2];
+    g10 = g1 * gains[tapset1 as usize][0];
+    g11 = g1 * gains[tapset1 as usize][1];
+    g12 = g1 * gains[tapset1 as usize][2];
+    x1 = *x.offset((-T1 + 1i32) as isize);
     x2 = *x.offset(-T1 as isize);
-    x3 = *x.offset((-T1 - 1 as libc::c_int) as isize);
-    x4 = *x.offset((-T1 - 2 as libc::c_int) as isize);
+    x3 = *x.offset((-T1 - 1i32) as isize);
+    x4 = *x.offset((-T1 - 2i32) as isize);
     /* If the filter didn't change, we don't need the overlap */
     if g0 == g1 && T0 == T1 && tapset0 == tapset1 {
-        overlap = 0 as libc::c_int
+        overlap = 0
     }
-    i = 0 as libc::c_int;
+    i = 0;
     while i < overlap {
         let mut f: crate::arch_h::opus_val16 = 0.;
-        x0 = *x.offset((i - T1 + 2 as libc::c_int) as isize);
+        x0 = *x.offset((i - T1 + 2) as isize);
         f = *window.offset(i as isize) * *window.offset(i as isize);
         *y.offset(i as isize) = *x.offset(i as isize)
-            + (1.0f32 - f) * g00 * *x.offset((i - T0) as isize)
-            + (1.0f32 - f)
+            + (1.0 - f) * g00 * *x.offset((i - T0) as isize)
+            + (1.0 - f)
                 * g01
-                * (*x.offset((i - T0 + 1 as libc::c_int) as isize)
-                    + *x.offset((i - T0 - 1 as libc::c_int) as isize))
-            + (1.0f32 - f)
+                * (*x.offset((i - T0 + 1) as isize) + *x.offset((i - T0 - 1) as isize))
+            + (1.0 - f)
                 * g02
-                * (*x.offset((i - T0 + 2 as libc::c_int) as isize)
-                    + *x.offset((i - T0 - 2 as libc::c_int) as isize))
+                * (*x.offset((i - T0 + 2) as isize) + *x.offset((i - T0 - 2) as isize))
             + f * g10 * x2
             + f * g11 * (x1 + x3)
             + f * g12 * (x0 + x4);
@@ -198,21 +180,19 @@ pub unsafe extern "C" fn comb_filter(
         x1 = x0;
         i += 1
     }
-    if g1 == 0 as libc::c_int as libc::c_float {
+    if g1 == 0f32 {
         /* OPT: Happens to work without the OPUS_MOVE(), but only because the current encoder already copies x to y */
         if x != y {
             crate::stdlib::memmove(
                 y.offset(overlap as isize) as *mut libc::c_void,
                 x.offset(overlap as isize) as *const libc::c_void,
-                ((N - overlap) as libc::c_ulong)
-                    .wrapping_mul(
-                        ::std::mem::size_of::<crate::arch_h::opus_val32>() as libc::c_ulong
-                    )
+                ((N - overlap) as usize)
+                    .wrapping_mul(::std::mem::size_of::<crate::arch_h::opus_val32>())
                     .wrapping_add(
-                        (0 as libc::c_int as libc::c_long
+                        (0isize
                             * y.offset(overlap as isize)
-                                .wrapping_offset_from(x.offset(overlap as isize))
-                                as libc::c_long) as libc::c_ulong,
+                                .wrapping_offset_from(x.offset(overlap as isize)))
+                            as usize,
                     ),
             );
         }
@@ -236,71 +216,35 @@ effective window), whereas negative values mean better time resolution
 4*isTransient + 2*tf_select + per_band_flag */
 #[no_mangle]
 
-pub static mut tf_select_table: [[libc::c_schar; 8]; 4] = [
-    [
-        0 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        0 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        0 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        -(3 as libc::c_int) as libc::c_schar,
-        2 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-    ],
-    [
-        0 as libc::c_int as libc::c_schar,
-        -(2 as libc::c_int) as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        -(3 as libc::c_int) as libc::c_schar,
-        3 as libc::c_int as libc::c_schar,
-        0 as libc::c_int as libc::c_schar,
-        1 as libc::c_int as libc::c_schar,
-        -(1 as libc::c_int) as libc::c_schar,
-    ],
+pub static mut tf_select_table: [[i8; 8]; 4] = [
+    [0, -1, 0, -1, 0, -1, 0, -1],
+    [0, -1, 0, -2, 1, 0, 1, -1],
+    [0, -2, 0, -3, 2, 0, 1, -1],
+    [0, -2, 0, -3, 3, 0, 1, -1],
 ];
 #[no_mangle]
 
 pub unsafe extern "C" fn init_caps(
     mut m: *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
-    mut cap: *mut libc::c_int,
-    mut LM: libc::c_int,
-    mut C: libc::c_int,
+    mut cap: *mut i32,
+    mut LM: i32,
+    mut C: i32,
 ) {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
+    let mut i: i32 = 0;
+    i = 0;
     while i < (*m).nbEBands {
-        let mut N: libc::c_int = 0;
-        N = (*(*m).eBands.offset((i + 1 as libc::c_int) as isize) as libc::c_int
-            - *(*m).eBands.offset(i as isize) as libc::c_int)
+        let mut N: i32 = 0;
+        N = (*(*m).eBands.offset((i + 1) as isize) as i32 - *(*m).eBands.offset(i as isize) as i32)
             << LM;
-        *cap.offset(i as isize) =
-            (*(*m).cache.caps.offset(
-                ((*m).nbEBands * (2 as libc::c_int * LM + C - 1 as libc::c_int) + i) as isize,
-            ) as libc::c_int
-                + 64 as libc::c_int)
-                * C
-                * N
-                >> 2 as libc::c_int;
+        *cap.offset(i as isize) = (*(*m)
+            .cache
+            .caps
+            .offset(((*m).nbEBands * (2 * LM + C - 1) + i) as isize)
+            as i32
+            + 64)
+            * C
+            * N
+            >> 2;
         i += 1
     }
 }
@@ -869,19 +813,19 @@ Written by Jean-Marc Valin and Koen Vos */
  */
 #[no_mangle]
 
-pub unsafe extern "C" fn opus_strerror(mut error: libc::c_int) -> *const libc::c_char {
-    static mut error_strings: [*const libc::c_char; 8] = [
-        b"success\x00" as *const u8 as *const libc::c_char,
-        b"invalid argument\x00" as *const u8 as *const libc::c_char,
-        b"buffer too small\x00" as *const u8 as *const libc::c_char,
-        b"internal error\x00" as *const u8 as *const libc::c_char,
-        b"corrupted stream\x00" as *const u8 as *const libc::c_char,
-        b"request not implemented\x00" as *const u8 as *const libc::c_char,
-        b"invalid state\x00" as *const u8 as *const libc::c_char,
-        b"memory allocation failed\x00" as *const u8 as *const libc::c_char,
+pub unsafe extern "C" fn opus_strerror(mut error: i32) -> *const i8 {
+    static mut error_strings: [*const i8; 8] = [
+        b"success\x00" as *const u8 as *const i8,
+        b"invalid argument\x00" as *const u8 as *const i8,
+        b"buffer too small\x00" as *const u8 as *const i8,
+        b"internal error\x00" as *const u8 as *const i8,
+        b"corrupted stream\x00" as *const u8 as *const i8,
+        b"request not implemented\x00" as *const u8 as *const i8,
+        b"invalid state\x00" as *const u8 as *const i8,
+        b"memory allocation failed\x00" as *const u8 as *const i8,
     ];
-    if error > 0 as libc::c_int || error < -(7 as libc::c_int) {
-        return b"unknown error\x00" as *const u8 as *const libc::c_char;
+    if error > 0 || error < -(7) {
+        return b"unknown error\x00" as *const u8 as *const i8;
     } else {
         return error_strings[-error as usize];
     };
@@ -896,8 +840,8 @@ pub unsafe extern "C" fn opus_strerror(mut error: libc::c_int) -> *const libc::c
  */
 #[no_mangle]
 
-pub unsafe extern "C" fn opus_get_version_string() -> *const libc::c_char {
-    return b"libopus unknown\x00" as *const u8 as *const libc::c_char;
+pub unsafe extern "C" fn opus_get_version_string() -> *const i8 {
+    return b"libopus unknown\x00" as *const u8 as *const i8;
     /* Applications may rely on the presence of this substring in the version
     string to determine if they have a fixed-point or floating-point build
     at runtime. */

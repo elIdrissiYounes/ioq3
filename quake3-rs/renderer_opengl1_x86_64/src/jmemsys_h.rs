@@ -7,8 +7,8 @@ pub struct backing_store_struct {
             _: crate::jpeglib_h::j_common_ptr,
             _: crate::jmemsys_h::backing_store_ptr,
             _: *mut libc::c_void,
-            _: libc::c_long,
-            _: libc::c_long,
+            _: isize,
+            _: isize,
         ) -> (),
     >,
     pub write_backing_store: Option<
@@ -16,8 +16,8 @@ pub struct backing_store_struct {
             _: crate::jpeglib_h::j_common_ptr,
             _: crate::jmemsys_h::backing_store_ptr,
             _: *mut libc::c_void,
-            _: libc::c_long,
-            _: libc::c_long,
+            _: isize,
+            _: isize,
         ) -> (),
     >,
     pub close_backing_store: Option<
@@ -27,6 +27,6 @@ pub struct backing_store_struct {
         ) -> (),
     >,
     pub temp_file: *mut crate::stdlib::FILE,
-    pub temp_name: [libc::c_char; 64],
+    pub temp_name: [i8; 64],
 }
 pub type backing_store_ptr = *mut crate::jmemsys_h::backing_store_struct;

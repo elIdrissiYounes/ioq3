@@ -353,7 +353,7 @@ pub static mut qalcCaptureStop: crate::alc_h::LPALCCAPTURESTOP = None;
 
 pub static mut qalcCaptureSamples: crate::alc_h::LPALCCAPTURESAMPLES = None;
 
-static mut OpenALLib: *mut libc::c_void = 0 as *const libc::c_void as *mut libc::c_void;
+static mut OpenALLib: *mut libc::c_void = 0 as *mut libc::c_void;
 
 static mut alinit_fail: crate::src::qcommon::q_shared::qboolean =
     crate::src::qcommon::q_shared::qfalse;
@@ -363,19 +363,19 @@ GPA
 =================
 */
 
-unsafe extern "C" fn GPA(mut str: *mut libc::c_char) -> *mut libc::c_void {
+unsafe extern "C" fn GPA(mut str: *mut i8) -> *mut libc::c_void {
     let mut rv: *mut libc::c_void = 0 as *mut libc::c_void;
     rv = crate::stdlib::SDL_LoadFunction(OpenALLib, str);
     if rv.is_null() {
         crate::src::qcommon::common::Com_Printf(
-            b" Can\'t load symbol %s\n\x00" as *const u8 as *const libc::c_char,
+            b" Can\'t load symbol %s\n\x00" as *const u8 as *const i8,
             str,
         );
         alinit_fail = crate::src::qcommon::q_shared::qtrue;
         return 0 as *mut libc::c_void;
     } else {
         crate::src::qcommon::common::Com_DPrintf(
-            b" Loaded symbol %s (%p)\n\x00" as *const u8 as *const libc::c_char,
+            b" Loaded symbol %s (%p)\n\x00" as *const u8 as *const i8,
             str,
             rv,
         );
@@ -390,7 +390,7 @@ QAL_Init
 #[no_mangle]
 
 pub unsafe extern "C" fn QAL_Init(
-    mut libname: *const libc::c_char,
+    mut libname: *const i8,
 ) -> crate::src::qcommon::q_shared::qboolean {
     if !OpenALLib.is_null() {
         return crate::src::qcommon::q_shared::qtrue;
@@ -404,251 +404,247 @@ pub unsafe extern "C" fn QAL_Init(
     qalEnable =
         ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALENABLE>(GPA(b"alEnable\x00"
             as *const u8
-            as *const libc::c_char
-            as *mut libc::c_char));
+            as *mut i8));
     qalDisable =
         ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALDISABLE>(GPA(b"alDisable\x00"
             as *const u8
-            as *const libc::c_char
-            as *mut libc::c_char));
+            as *mut i8));
     qalIsEnabled = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALISENABLED>(GPA(
-        b"alIsEnabled\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alIsEnabled\x00" as *const u8 as *mut i8,
     ));
     qalGetString = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETSTRING>(GPA(
-        b"alGetString\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetString\x00" as *const u8 as *mut i8,
     ));
     qalGetBooleanv = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETBOOLEANV>(GPA(
-        b"alGetBooleanv\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetBooleanv\x00" as *const u8 as *mut i8,
     ));
     qalGetIntegerv = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETINTEGERV>(GPA(
-        b"alGetIntegerv\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetIntegerv\x00" as *const u8 as *mut i8,
     ));
     qalGetFloatv = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETFLOATV>(GPA(
-        b"alGetFloatv\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetFloatv\x00" as *const u8 as *mut i8,
     ));
     qalGetDoublev = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETDOUBLEV>(GPA(
-        b"alGetDoublev\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetDoublev\x00" as *const u8 as *mut i8,
     ));
     qalGetBoolean = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETBOOLEAN>(GPA(
-        b"alGetBoolean\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetBoolean\x00" as *const u8 as *mut i8,
     ));
     qalGetInteger = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETINTEGER>(GPA(
-        b"alGetInteger\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetInteger\x00" as *const u8 as *mut i8,
     ));
     qalGetFloat = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETFLOAT>(GPA(
-        b"alGetFloat\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetFloat\x00" as *const u8 as *mut i8,
     ));
     qalGetDouble = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETDOUBLE>(GPA(
-        b"alGetDouble\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetDouble\x00" as *const u8 as *mut i8,
     ));
     qalGetError = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETERROR>(GPA(
-        b"alGetError\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetError\x00" as *const u8 as *mut i8,
     ));
-    qalIsExtensionPresent =
-        ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALISEXTENSIONPRESENT>(GPA(
-            b"alIsExtensionPresent\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
+    qalIsExtensionPresent = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::al_h::LPALISEXTENSIONPRESENT,
+    >(GPA(b"alIsExtensionPresent\x00" as *const u8 as *mut i8));
     qalGetProcAddress = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETPROCADDRESS>(
-        GPA(b"alGetProcAddress\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alGetProcAddress\x00" as *const u8 as *mut i8),
     );
     qalGetEnumValue = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETENUMVALUE>(
-        GPA(b"alGetEnumValue\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alGetEnumValue\x00" as *const u8 as *mut i8),
     );
     qalListenerf = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALLISTENERF>(GPA(
-        b"alListenerf\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alListenerf\x00" as *const u8 as *mut i8,
     ));
     qalListener3f = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALLISTENER3F>(GPA(
-        b"alListener3f\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alListener3f\x00" as *const u8 as *mut i8,
     ));
     qalListenerfv = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALLISTENERFV>(GPA(
-        b"alListenerfv\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alListenerfv\x00" as *const u8 as *mut i8,
     ));
     qalListeneri = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALLISTENERI>(GPA(
-        b"alListeneri\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alListeneri\x00" as *const u8 as *mut i8,
     ));
     qalGetListenerf = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETLISTENERF>(
-        GPA(b"alGetListenerf\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alGetListenerf\x00" as *const u8 as *mut i8),
     );
     qalGetListener3f = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETLISTENER3F>(
-        GPA(b"alGetListener3f\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alGetListener3f\x00" as *const u8 as *mut i8),
     );
     qalGetListenerfv = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETLISTENERFV>(
-        GPA(b"alGetListenerfv\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alGetListenerfv\x00" as *const u8 as *mut i8),
     );
     qalGetListeneri = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETLISTENERI>(
-        GPA(b"alGetListeneri\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alGetListeneri\x00" as *const u8 as *mut i8),
     );
     qalGenSources = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGENSOURCES>(GPA(
-        b"alGenSources\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGenSources\x00" as *const u8 as *mut i8,
     ));
     qalDeleteSources = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALDELETESOURCES>(
-        GPA(b"alDeleteSources\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alDeleteSources\x00" as *const u8 as *mut i8),
     );
     qalIsSource = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALISSOURCE>(GPA(
-        b"alIsSource\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alIsSource\x00" as *const u8 as *mut i8,
     ));
     qalSourcef =
         ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCEF>(GPA(b"alSourcef\x00"
             as *const u8
-            as *const libc::c_char
-            as *mut libc::c_char));
+            as *mut i8));
     qalSource3f = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCE3F>(GPA(
-        b"alSource3f\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alSource3f\x00" as *const u8 as *mut i8,
     ));
     qalSourcefv = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCEFV>(GPA(
-        b"alSourcefv\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alSourcefv\x00" as *const u8 as *mut i8,
     ));
     qalSourcei =
         ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCEI>(GPA(b"alSourcei\x00"
             as *const u8
-            as *const libc::c_char
-            as *mut libc::c_char));
+            as *mut i8));
     qalGetSourcef = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETSOURCEF>(GPA(
-        b"alGetSourcef\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetSourcef\x00" as *const u8 as *mut i8,
     ));
     qalGetSource3f = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETSOURCE3F>(GPA(
-        b"alGetSource3f\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetSource3f\x00" as *const u8 as *mut i8,
     ));
     qalGetSourcefv = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETSOURCEFV>(GPA(
-        b"alGetSourcefv\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetSourcefv\x00" as *const u8 as *mut i8,
     ));
     qalGetSourcei = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETSOURCEI>(GPA(
-        b"alGetSourcei\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetSourcei\x00" as *const u8 as *mut i8,
     ));
     qalSourcePlayv = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCEPLAYV>(GPA(
-        b"alSourcePlayv\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alSourcePlayv\x00" as *const u8 as *mut i8,
     ));
     qalSourceStopv = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCESTOPV>(GPA(
-        b"alSourceStopv\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alSourceStopv\x00" as *const u8 as *mut i8,
     ));
     qalSourceRewindv = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCEREWINDV>(
-        GPA(b"alSourceRewindv\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alSourceRewindv\x00" as *const u8 as *mut i8),
     );
     qalSourcePausev = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCEPAUSEV>(
-        GPA(b"alSourcePausev\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alSourcePausev\x00" as *const u8 as *mut i8),
     );
     qalSourcePlay = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCEPLAY>(GPA(
-        b"alSourcePlay\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alSourcePlay\x00" as *const u8 as *mut i8,
     ));
     qalSourceStop = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCESTOP>(GPA(
-        b"alSourceStop\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alSourceStop\x00" as *const u8 as *mut i8,
     ));
     qalSourceRewind = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCEREWIND>(
-        GPA(b"alSourceRewind\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alSourceRewind\x00" as *const u8 as *mut i8),
     );
     qalSourcePause = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCEPAUSE>(GPA(
-        b"alSourcePause\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alSourcePause\x00" as *const u8 as *mut i8,
     ));
-    qalSourceQueueBuffers =
-        ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCEQUEUEBUFFERS>(GPA(
-            b"alSourceQueueBuffers\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
-    qalSourceUnqueueBuffers =
-        ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSOURCEUNQUEUEBUFFERS>(GPA(
-            b"alSourceUnqueueBuffers\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
+    qalSourceQueueBuffers = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::al_h::LPALSOURCEQUEUEBUFFERS,
+    >(GPA(b"alSourceQueueBuffers\x00" as *const u8 as *mut i8));
+    qalSourceUnqueueBuffers = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::al_h::LPALSOURCEUNQUEUEBUFFERS,
+    >(GPA(b"alSourceUnqueueBuffers\x00" as *const u8 as *mut i8));
     qalGenBuffers = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGENBUFFERS>(GPA(
-        b"alGenBuffers\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGenBuffers\x00" as *const u8 as *mut i8,
     ));
     qalDeleteBuffers = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALDELETEBUFFERS>(
-        GPA(b"alDeleteBuffers\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alDeleteBuffers\x00" as *const u8 as *mut i8),
     );
     qalIsBuffer = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALISBUFFER>(GPA(
-        b"alIsBuffer\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alIsBuffer\x00" as *const u8 as *mut i8,
     ));
     qalBufferData = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALBUFFERDATA>(GPA(
-        b"alBufferData\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alBufferData\x00" as *const u8 as *mut i8,
     ));
     qalGetBufferf = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETBUFFERF>(GPA(
-        b"alGetBufferf\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetBufferf\x00" as *const u8 as *mut i8,
     ));
     qalGetBufferi = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALGETBUFFERI>(GPA(
-        b"alGetBufferi\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alGetBufferi\x00" as *const u8 as *mut i8,
     ));
     qalDopplerFactor = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALDOPPLERFACTOR>(
-        GPA(b"alDopplerFactor\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alDopplerFactor\x00" as *const u8 as *mut i8),
     );
     qalSpeedOfSound = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALSPEEDOFSOUND>(
-        GPA(b"alSpeedOfSound\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alSpeedOfSound\x00" as *const u8 as *mut i8),
     );
     qalDistanceModel = ::std::mem::transmute::<*mut libc::c_void, crate::al_h::LPALDISTANCEMODEL>(
-        GPA(b"alDistanceModel\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alDistanceModel\x00" as *const u8 as *mut i8),
     );
     qalcCreateContext = ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCCREATECONTEXT>(
-        GPA(b"alcCreateContext\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alcCreateContext\x00" as *const u8 as *mut i8),
     );
-    qalcMakeContextCurrent =
-        ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCMAKECONTEXTCURRENT>(GPA(
-            b"alcMakeContextCurrent\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
-    qalcProcessContext =
-        ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCPROCESSCONTEXT>(GPA(
-            b"alcProcessContext\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
-    qalcSuspendContext =
-        ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCSUSPENDCONTEXT>(GPA(
-            b"alcSuspendContext\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
-    qalcDestroyContext =
-        ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCDESTROYCONTEXT>(GPA(
-            b"alcDestroyContext\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
-    qalcGetCurrentContext =
-        ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCGETCURRENTCONTEXT>(GPA(
-            b"alcGetCurrentContext\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
-    qalcGetContextsDevice =
-        ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCGETCONTEXTSDEVICE>(GPA(
-            b"alcGetContextsDevice\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
+    qalcMakeContextCurrent = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::alc_h::LPALCMAKECONTEXTCURRENT,
+    >(GPA(b"alcMakeContextCurrent\x00" as *const u8 as *mut i8));
+    qalcProcessContext = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::alc_h::LPALCPROCESSCONTEXT,
+    >(GPA(b"alcProcessContext\x00" as *const u8 as *mut i8));
+    qalcSuspendContext = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::alc_h::LPALCSUSPENDCONTEXT,
+    >(GPA(b"alcSuspendContext\x00" as *const u8 as *mut i8));
+    qalcDestroyContext = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::alc_h::LPALCDESTROYCONTEXT,
+    >(GPA(b"alcDestroyContext\x00" as *const u8 as *mut i8));
+    qalcGetCurrentContext = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::alc_h::LPALCGETCURRENTCONTEXT,
+    >(GPA(b"alcGetCurrentContext\x00" as *const u8 as *mut i8));
+    qalcGetContextsDevice = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::alc_h::LPALCGETCONTEXTSDEVICE,
+    >(GPA(b"alcGetContextsDevice\x00" as *const u8 as *mut i8));
     qalcOpenDevice = ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCOPENDEVICE>(
-        GPA(b"alcOpenDevice\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alcOpenDevice\x00" as *const u8 as *mut i8),
     );
     qalcCloseDevice = ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCCLOSEDEVICE>(
-        GPA(b"alcCloseDevice\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alcCloseDevice\x00" as *const u8 as *mut i8),
     );
     qalcGetError = ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCGETERROR>(GPA(
-        b"alcGetError\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alcGetError\x00" as *const u8 as *mut i8,
     ));
-    qalcIsExtensionPresent =
-        ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCISEXTENSIONPRESENT>(GPA(
-            b"alcIsExtensionPresent\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
-    qalcGetProcAddress =
-        ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCGETPROCADDRESS>(GPA(
-            b"alcGetProcAddress\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
+    qalcIsExtensionPresent = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::alc_h::LPALCISEXTENSIONPRESENT,
+    >(GPA(b"alcIsExtensionPresent\x00" as *const u8 as *mut i8));
+    qalcGetProcAddress = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::alc_h::LPALCGETPROCADDRESS,
+    >(GPA(b"alcGetProcAddress\x00" as *const u8 as *mut i8));
     qalcGetEnumValue = ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCGETENUMVALUE>(
-        GPA(b"alcGetEnumValue\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alcGetEnumValue\x00" as *const u8 as *mut i8),
     );
     qalcGetString = ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCGETSTRING>(GPA(
-        b"alcGetString\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        b"alcGetString\x00" as *const u8 as *mut i8,
     ));
     qalcGetIntegerv = ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCGETINTEGERV>(
-        GPA(b"alcGetIntegerv\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alcGetIntegerv\x00" as *const u8 as *mut i8),
     );
-    qalcCaptureOpenDevice =
-        ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCCAPTUREOPENDEVICE>(GPA(
-            b"alcCaptureOpenDevice\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
-    qalcCaptureCloseDevice =
-        ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCCAPTURECLOSEDEVICE>(GPA(
-            b"alcCaptureCloseDevice\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
+    qalcCaptureOpenDevice = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::alc_h::LPALCCAPTUREOPENDEVICE,
+    >(GPA(b"alcCaptureOpenDevice\x00" as *const u8 as *mut i8));
+    qalcCaptureCloseDevice = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::alc_h::LPALCCAPTURECLOSEDEVICE,
+    >(GPA(b"alcCaptureCloseDevice\x00" as *const u8 as *mut i8));
     qalcCaptureStart = ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCCAPTURESTART>(
-        GPA(b"alcCaptureStart\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alcCaptureStart\x00" as *const u8 as *mut i8),
     );
     qalcCaptureStop = ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCCAPTURESTOP>(
-        GPA(b"alcCaptureStop\x00" as *const u8 as *const libc::c_char as *mut libc::c_char),
+        GPA(b"alcCaptureStop\x00" as *const u8 as *mut i8),
     );
-    qalcCaptureSamples =
-        ::std::mem::transmute::<*mut libc::c_void, crate::alc_h::LPALCCAPTURESAMPLES>(GPA(
-            b"alcCaptureSamples\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        ));
+    qalcCaptureSamples = ::std::mem::transmute::<
+        *mut libc::c_void,
+        crate::alc_h::LPALCCAPTURESAMPLES,
+    >(GPA(b"alcCaptureSamples\x00" as *const u8 as *mut i8));
     if alinit_fail as u64 != 0 {
         QAL_Shutdown();
         crate::src::qcommon::common::Com_Printf(
-            b" One or more symbols not found\n\x00" as *const u8 as *const libc::c_char,
+            b" One or more symbols not found\n\x00" as *const u8 as *const i8,
         );
         return crate::src::qcommon::q_shared::qfalse;
     }

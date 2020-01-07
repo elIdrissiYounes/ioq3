@@ -24,13 +24,13 @@ pub use crate::src::qcommon::q_shared::FS_WRITE;
 use crate::stdlib::memset;
 #[no_mangle]
 
-pub static mut allocatedmemory: libc::c_int = 0;
+pub static mut allocatedmemory: i32 = 0;
 #[no_mangle]
 
-pub static mut totalmemorysize: libc::c_int = 0;
+pub static mut totalmemorysize: i32 = 0;
 #[no_mangle]
 
-pub static mut numblocks: libc::c_int = 0;
+pub static mut numblocks: i32 = 0;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -70,24 +70,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn GetMemory(mut size: libc::c_ulong) -> *mut libc::c_void
+pub unsafe extern "C" fn GetMemory(mut size: usize) -> *mut libc::c_void
 //MEMDEBUG
 {
     let mut ptr: *mut libc::c_void = 0 as *mut libc::c_void;
-    let mut memid: *mut libc::c_ulong = 0 as *mut libc::c_ulong;
+    let mut memid: *mut usize = 0 as *mut usize;
     ptr = crate::src::botlib::be_interface::botimport
         .GetMemory
         .expect("non-null function pointer")(
-        size.wrapping_add(::std::mem::size_of::<libc::c_ulong>() as libc::c_ulong) as libc::c_int,
+        size.wrapping_add(::std::mem::size_of::<usize>()) as i32,
     );
     if ptr.is_null() {
         return 0 as *mut libc::c_void;
     }
-    memid = ptr as *mut libc::c_ulong;
-    *memid = 0x12345678 as libc::c_long as libc::c_ulong;
-    return (ptr as *mut libc::c_char)
-        .offset(::std::mem::size_of::<libc::c_ulong>() as libc::c_ulong as isize)
-        as *mut libc::c_ulong as *mut libc::c_void;
+    memid = ptr as *mut usize;
+    *memid = 0x12345678 as usize;
+    return (ptr as *mut i8).offset(::std::mem::size_of::<usize>() as isize) as *mut libc::c_void;
 }
 //allocate a memory block of the given size and clear it
 //end of the function GetMemory
@@ -99,13 +97,13 @@ pub unsafe extern "C" fn GetMemory(mut size: libc::c_ulong) -> *mut libc::c_void
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn GetClearedMemory(mut size: libc::c_ulong) -> *mut libc::c_void
+pub unsafe extern "C" fn GetClearedMemory(mut size: usize) -> *mut libc::c_void
 //MEMDEBUG
 {
     let mut ptr: *mut libc::c_void = 0 as *mut libc::c_void;
     ptr = GetMemory(size);
     //MEMDEBUG
-    crate::stdlib::memset(ptr, 0 as libc::c_int, size);
+    crate::stdlib::memset(ptr, 0, size);
     return ptr;
 }
 //
@@ -119,24 +117,22 @@ pub unsafe extern "C" fn GetClearedMemory(mut size: libc::c_ulong) -> *mut libc:
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn GetHunkMemory(mut size: libc::c_ulong) -> *mut libc::c_void
+pub unsafe extern "C" fn GetHunkMemory(mut size: usize) -> *mut libc::c_void
 //MEMDEBUG
 {
     let mut ptr: *mut libc::c_void = 0 as *mut libc::c_void;
-    let mut memid: *mut libc::c_ulong = 0 as *mut libc::c_ulong;
+    let mut memid: *mut usize = 0 as *mut usize;
     ptr = crate::src::botlib::be_interface::botimport
         .HunkAlloc
         .expect("non-null function pointer")(
-        size.wrapping_add(::std::mem::size_of::<libc::c_ulong>() as libc::c_ulong) as libc::c_int,
+        size.wrapping_add(::std::mem::size_of::<usize>()) as i32,
     );
     if ptr.is_null() {
         return 0 as *mut libc::c_void;
     }
-    memid = ptr as *mut libc::c_ulong;
-    *memid = 0x87654321 as libc::c_long as libc::c_ulong;
-    return (ptr as *mut libc::c_char)
-        .offset(::std::mem::size_of::<libc::c_ulong>() as libc::c_ulong as isize)
-        as *mut libc::c_ulong as *mut libc::c_void;
+    memid = ptr as *mut usize;
+    *memid = 0x87654321 as usize;
+    return (ptr as *mut i8).offset(::std::mem::size_of::<usize>() as isize) as *mut libc::c_void;
 }
 //allocate a memory block of the given size and clear it
 //end of the function GetHunkMemory
@@ -148,13 +144,13 @@ pub unsafe extern "C" fn GetHunkMemory(mut size: libc::c_ulong) -> *mut libc::c_
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn GetClearedHunkMemory(mut size: libc::c_ulong) -> *mut libc::c_void
+pub unsafe extern "C" fn GetClearedHunkMemory(mut size: usize) -> *mut libc::c_void
 //MEMDEBUG
 {
     let mut ptr: *mut libc::c_void = 0 as *mut libc::c_void;
     ptr = GetHunkMemory(size);
     //MEMDEBUG
-    crate::stdlib::memset(ptr, 0 as libc::c_int, size);
+    crate::stdlib::memset(ptr, 0, size);
     return ptr;
 }
 //free the given memory block
@@ -168,11 +164,9 @@ pub unsafe extern "C" fn GetClearedHunkMemory(mut size: libc::c_ulong) -> *mut l
 #[no_mangle]
 
 pub unsafe extern "C" fn FreeMemory(mut ptr: *mut libc::c_void) {
-    let mut memid: *mut libc::c_ulong = 0 as *mut libc::c_ulong;
-    memid = (ptr as *mut libc::c_char)
-        .offset(-(::std::mem::size_of::<libc::c_ulong>() as libc::c_ulong as isize))
-        as *mut libc::c_ulong;
-    if *memid == 0x12345678 as libc::c_long as libc::c_ulong {
+    let mut memid: *mut usize = 0 as *mut usize;
+    memid = (ptr as *mut i8).offset(-(::std::mem::size_of::<usize>() as isize)) as *mut usize;
+    if *memid == 0x12345678 as usize {
         crate::src::botlib::be_interface::botimport
             .FreeMemory
             .expect("non-null function pointer")(memid as *mut libc::c_void);
@@ -189,7 +183,7 @@ pub unsafe extern "C" fn FreeMemory(mut ptr: *mut libc::c_void) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AvailableMemory() -> libc::c_int {
+pub unsafe extern "C" fn AvailableMemory() -> i32 {
     return crate::src::botlib::be_interface::botimport
         .AvailableMemory
         .expect("non-null function pointer")();

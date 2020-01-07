@@ -151,77 +151,61 @@ pub static mut aasworld: crate::be_aas_def_h::aas_t = crate::be_aas_def_h::aas_t
     filename: [0; 64],
     mapname: [0; 64],
     numbboxes: 0,
-    bboxes: 0 as *const crate::aasfile_h::aas_bbox_t as *mut crate::aasfile_h::aas_bbox_t,
+    bboxes: 0 as *mut crate::aasfile_h::aas_bbox_t,
     numvertexes: 0,
-    vertexes: 0 as *const crate::aasfile_h::aas_vertex_t as *mut crate::aasfile_h::aas_vertex_t,
+    vertexes: 0 as *mut crate::aasfile_h::aas_vertex_t,
     numplanes: 0,
-    planes: 0 as *const crate::aasfile_h::aas_plane_t as *mut crate::aasfile_h::aas_plane_t,
+    planes: 0 as *mut crate::aasfile_h::aas_plane_t,
     numedges: 0,
-    edges: 0 as *const crate::aasfile_h::aas_edge_t as *mut crate::aasfile_h::aas_edge_t,
+    edges: 0 as *mut crate::aasfile_h::aas_edge_t,
     edgeindexsize: 0,
-    edgeindex: 0 as *const crate::aasfile_h::aas_edgeindex_t
-        as *mut crate::aasfile_h::aas_edgeindex_t,
+    edgeindex: 0 as *mut crate::aasfile_h::aas_edgeindex_t,
     numfaces: 0,
-    faces: 0 as *const crate::aasfile_h::aas_face_t as *mut crate::aasfile_h::aas_face_t,
+    faces: 0 as *mut crate::aasfile_h::aas_face_t,
     faceindexsize: 0,
-    faceindex: 0 as *const crate::aasfile_h::aas_faceindex_t
-        as *mut crate::aasfile_h::aas_faceindex_t,
+    faceindex: 0 as *mut crate::aasfile_h::aas_faceindex_t,
     numareas: 0,
-    areas: 0 as *const crate::aasfile_h::aas_area_t as *mut crate::aasfile_h::aas_area_t,
+    areas: 0 as *mut crate::aasfile_h::aas_area_t,
     numareasettings: 0,
-    areasettings: 0 as *const crate::aasfile_h::aas_areasettings_t
-        as *mut crate::aasfile_h::aas_areasettings_t,
+    areasettings: 0 as *mut crate::aasfile_h::aas_areasettings_t,
     reachabilitysize: 0,
-    reachability: 0 as *const crate::aasfile_h::aas_reachability_t
-        as *mut crate::aasfile_h::aas_reachability_t,
+    reachability: 0 as *mut crate::aasfile_h::aas_reachability_t,
     numnodes: 0,
-    nodes: 0 as *const crate::aasfile_h::aas_node_t as *mut crate::aasfile_h::aas_node_t,
+    nodes: 0 as *mut crate::aasfile_h::aas_node_t,
     numportals: 0,
-    portals: 0 as *const crate::aasfile_h::aas_portal_t as *mut crate::aasfile_h::aas_portal_t,
+    portals: 0 as *mut crate::aasfile_h::aas_portal_t,
     portalindexsize: 0,
-    portalindex: 0 as *const crate::aasfile_h::aas_portalindex_t
-        as *mut crate::aasfile_h::aas_portalindex_t,
+    portalindex: 0 as *mut crate::aasfile_h::aas_portalindex_t,
     numclusters: 0,
-    clusters: 0 as *const crate::aasfile_h::aas_cluster_t as *mut crate::aasfile_h::aas_cluster_t,
+    clusters: 0 as *mut crate::aasfile_h::aas_cluster_t,
     numreachabilityareas: 0,
     reachabilitytime: 0.,
-    linkheap: 0 as *const crate::be_aas_def_h::aas_link_t as *mut crate::be_aas_def_h::aas_link_t,
+    linkheap: 0 as *mut crate::be_aas_def_h::aas_link_t,
     linkheapsize: 0,
-    freelinks: 0 as *const crate::be_aas_def_h::aas_link_t as *mut crate::be_aas_def_h::aas_link_t,
-    arealinkedentities: 0 as *const *mut crate::be_aas_def_h::aas_link_t
-        as *mut *mut crate::be_aas_def_h::aas_link_t,
+    freelinks: 0 as *mut crate::be_aas_def_h::aas_link_t,
+    arealinkedentities: 0 as *mut *mut crate::be_aas_def_h::aas_link_t,
     maxentities: 0,
     maxclients: 0,
-    entities: 0 as *const crate::be_aas_def_h::aas_entity_t
-        as *mut crate::be_aas_def_h::aas_entity_t,
+    entities: 0 as *mut crate::be_aas_def_h::aas_entity_t,
     travelflagfortype: [0; 32],
-    areacontentstravelflags: 0 as *const libc::c_int as *mut libc::c_int,
-    areaupdate: 0 as *const crate::be_aas_def_h::aas_routingupdate_t
-        as *mut crate::be_aas_def_h::aas_routingupdate_t,
-    portalupdate: 0 as *const crate::be_aas_def_h::aas_routingupdate_t
-        as *mut crate::be_aas_def_h::aas_routingupdate_t,
+    areacontentstravelflags: 0 as *mut i32,
+    areaupdate: 0 as *mut crate::be_aas_def_h::aas_routingupdate_t,
+    portalupdate: 0 as *mut crate::be_aas_def_h::aas_routingupdate_t,
     frameroutingupdates: 0,
-    reversedreachability: 0 as *const crate::be_aas_def_h::aas_reversedreachability_t
-        as *mut crate::be_aas_def_h::aas_reversedreachability_t,
-    areatraveltimes: 0 as *const *mut *mut libc::c_ushort as *mut *mut *mut libc::c_ushort,
-    clusterareacache: 0 as *const *mut *mut crate::be_aas_def_h::aas_routingcache_t
-        as *mut *mut *mut crate::be_aas_def_h::aas_routingcache_t,
-    portalcache: 0 as *const *mut crate::be_aas_def_h::aas_routingcache_t
-        as *mut *mut crate::be_aas_def_h::aas_routingcache_t,
-    oldestcache: 0 as *const crate::be_aas_def_h::aas_routingcache_t
-        as *mut crate::be_aas_def_h::aas_routingcache_t,
-    newestcache: 0 as *const crate::be_aas_def_h::aas_routingcache_t
-        as *mut crate::be_aas_def_h::aas_routingcache_t,
-    portalmaxtraveltimes: 0 as *const libc::c_int as *mut libc::c_int,
-    reachabilityareaindex: 0 as *const libc::c_int as *mut libc::c_int,
-    reachabilityareas: 0 as *const crate::be_aas_def_h::aas_reachabilityareas_t
-        as *mut crate::be_aas_def_h::aas_reachabilityareas_t,
+    reversedreachability: 0 as *mut crate::be_aas_def_h::aas_reversedreachability_t,
+    areatraveltimes: 0 as *mut *mut *mut u16,
+    clusterareacache: 0 as *mut *mut *mut crate::be_aas_def_h::aas_routingcache_t,
+    portalcache: 0 as *mut *mut crate::be_aas_def_h::aas_routingcache_t,
+    oldestcache: 0 as *mut crate::be_aas_def_h::aas_routingcache_t,
+    newestcache: 0 as *mut crate::be_aas_def_h::aas_routingcache_t,
+    portalmaxtraveltimes: 0 as *mut i32,
+    reachabilityareaindex: 0 as *mut i32,
+    reachabilityareas: 0 as *mut crate::be_aas_def_h::aas_reachabilityareas_t,
 };
 #[no_mangle]
 
-pub static mut saveroutingcache: *mut crate::src::botlib::l_libvar::libvar_t = 0
-    as *const crate::src::botlib::l_libvar::libvar_t
-    as *mut crate::src::botlib::l_libvar::libvar_t;
+pub static mut saveroutingcache: *mut crate::src::botlib::l_libvar::libvar_t =
+    0 as *mut crate::src::botlib::l_libvar::libvar_t;
 //===========================================================================
 //
 // Parameter:				-
@@ -230,21 +214,21 @@ pub static mut saveroutingcache: *mut crate::src::botlib::l_libvar::libvar_t = 0
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_Error(mut fmt: *mut libc::c_char, mut args: ...) {
-    let mut str: [libc::c_char; 1024] = [0; 1024];
+pub unsafe extern "C" fn AAS_Error(mut fmt: *mut i8, mut args: ...) {
+    let mut str: [i8; 1024] = [0; 1024];
     let mut arglist: ::std::ffi::VaListImpl;
     arglist = args.clone();
     crate::stdlib::vsnprintf(
         str.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong,
+        ::std::mem::size_of::<[i8; 1024]>(),
         fmt,
         arglist.as_va_list(),
     );
     crate::src::botlib::be_interface::botimport
         .Print
         .expect("non-null function pointer")(
-        4 as libc::c_int,
-        b"%s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        4,
+        b"%s\x00" as *const u8 as *mut i8,
         str.as_mut_ptr(),
     );
 }
@@ -257,7 +241,7 @@ pub unsafe extern "C" fn AAS_Error(mut fmt: *mut libc::c_char, mut args: ...) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_Loaded() -> libc::c_int {
+pub unsafe extern "C" fn AAS_Loaded() -> i32 {
     return aasworld.loaded;
 }
 //end of the function AAS_Loaded
@@ -269,7 +253,7 @@ pub unsafe extern "C" fn AAS_Loaded() -> libc::c_int {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_Initialized() -> libc::c_int {
+pub unsafe extern "C" fn AAS_Initialized() -> i32 {
     return aasworld.initialized;
 }
 //end of the function AAS_Initialized
@@ -282,12 +266,11 @@ pub unsafe extern "C" fn AAS_Initialized() -> libc::c_int {
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_SetInitialized() {
-    aasworld.initialized = crate::src::qcommon::q_shared::qtrue as libc::c_int;
+    aasworld.initialized = crate::src::qcommon::q_shared::qtrue as i32;
     crate::src::botlib::be_interface::botimport
         .Print
         .expect("non-null function pointer")(
-        1 as libc::c_int,
-        b"AAS initialized.\n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        1, b"AAS initialized.\n\x00" as *const u8 as *mut i8
     );
 }
 //end of the function AAS_SetInitialized
@@ -299,7 +282,7 @@ pub unsafe extern "C" fn AAS_SetInitialized() {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_ContinueInit(mut time: libc::c_float) {
+pub unsafe extern "C" fn AAS_ContinueInit(mut time: f32) {
     //if no AAS file loaded
     if aasworld.loaded == 0 {
         return;
@@ -317,17 +300,16 @@ pub unsafe extern "C" fn AAS_ContinueInit(mut time: libc::c_float) {
     //if reachability has been calculated and an AAS file should be written
     //or there is a forced data optimization
     if aasworld.savefile != 0
-        || crate::src::botlib::l_libvar::LibVarGetValue(
-            b"forcewrite\x00" as *const u8 as *const libc::c_char,
-        ) as libc::c_int
+        || crate::src::botlib::l_libvar::LibVarGetValue(b"forcewrite\x00" as *const u8 as *const i8)
+            as i32
             != 0
     {
         //end if
         //optimize the AAS data
         if crate::src::botlib::l_libvar::LibVarValue(
-            b"aasoptimize\x00" as *const u8 as *const libc::c_char,
-            b"0\x00" as *const u8 as *const libc::c_char,
-        ) as libc::c_int
+            b"aasoptimize\x00" as *const u8 as *const i8,
+            b"0\x00" as *const u8 as *const i8,
+        ) as i32
             != 0
         {
             crate::src::botlib::be_aas_optimize::AAS_Optimize();
@@ -340,18 +322,16 @@ pub unsafe extern "C" fn AAS_ContinueInit(mut time: libc::c_float) {
             crate::src::botlib::be_interface::botimport
                 .Print
                 .expect("non-null function pointer")(
-                1 as libc::c_int,
-                b"%s written successfully\n\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
+                1i32,
+                b"%s written successfully\n\x00" as *const u8 as *mut i8,
                 aasworld.filename.as_mut_ptr(),
             ); //end if
         } else {
             crate::src::botlib::be_interface::botimport
                 .Print
                 .expect("non-null function pointer")(
-                3 as libc::c_int,
-                b"couldn\'t write %s\n\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
+                3i32,
+                b"couldn\'t write %s\n\x00" as *const u8 as *mut i8,
                 aasworld.filename.as_mut_ptr(),
             );
         }
@@ -371,7 +351,7 @@ pub unsafe extern "C" fn AAS_ContinueInit(mut time: libc::c_float) {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_StartFrame(mut time: libc::c_float) -> libc::c_int {
+pub unsafe extern "C" fn AAS_StartFrame(mut time: f32) -> i32 {
     aasworld.time = time;
     //unlink all entities that were not updated last frame
     crate::src::botlib::be_aas_entity::AAS_UnlinkInvalidEntities();
@@ -380,39 +360,38 @@ pub unsafe extern "C" fn AAS_StartFrame(mut time: libc::c_float) -> libc::c_int 
     //initialize AAS
     AAS_ContinueInit(time);
     //
-    aasworld.frameroutingupdates = 0 as libc::c_int;
+    aasworld.frameroutingupdates = 0;
     //
     if crate::src::botlib::be_interface::botDeveloper != 0 {
         //end if
         if crate::src::botlib::l_libvar::LibVarGetValue(
-            b"showcacheupdates\x00" as *const u8 as *const libc::c_char,
+            b"showcacheupdates\x00" as *const u8 as *const i8,
         ) != 0.
         {
             crate::src::botlib::be_aas_route::AAS_RoutingInfo(); //end if
             crate::src::botlib::l_libvar::LibVarSet(
-                b"showcacheupdates\x00" as *const u8 as *const libc::c_char,
-                b"0\x00" as *const u8 as *const libc::c_char,
+                b"showcacheupdates\x00" as *const u8 as *const i8,
+                b"0\x00" as *const u8 as *const i8,
             );
         }
         //end if
         if crate::src::botlib::l_libvar::LibVarGetValue(
-            b"showmemoryusage\x00" as *const u8 as *const libc::c_char,
+            b"showmemoryusage\x00" as *const u8 as *const i8,
         ) != 0.
         {
             crate::src::botlib::l_memory::PrintUsedMemorySize(); //end if
             crate::src::botlib::l_libvar::LibVarSet(
-                b"showmemoryusage\x00" as *const u8 as *const libc::c_char,
-                b"0\x00" as *const u8 as *const libc::c_char,
+                b"showmemoryusage\x00" as *const u8 as *const i8,
+                b"0\x00" as *const u8 as *const i8,
             );
         }
-        if crate::src::botlib::l_libvar::LibVarGetValue(
-            b"memorydump\x00" as *const u8 as *const libc::c_char,
-        ) != 0.
+        if crate::src::botlib::l_libvar::LibVarGetValue(b"memorydump\x00" as *const u8 as *const i8)
+            != 0.
         {
             crate::src::botlib::l_memory::PrintMemoryLabels();
             crate::src::botlib::l_libvar::LibVarSet(
-                b"memorydump\x00" as *const u8 as *const libc::c_char,
-                b"0\x00" as *const u8 as *const libc::c_char,
+                b"memorydump\x00" as *const u8 as *const i8,
+                b"0\x00" as *const u8 as *const i8,
             );
         }
     }
@@ -420,13 +399,13 @@ pub unsafe extern "C" fn AAS_StartFrame(mut time: libc::c_float) -> libc::c_int 
     if (*saveroutingcache).value != 0. {
         crate::src::botlib::be_aas_route::AAS_WriteRouteCache(); //end if
         crate::src::botlib::l_libvar::LibVarSet(
-            b"saveroutingcache\x00" as *const u8 as *const libc::c_char,
-            b"0\x00" as *const u8 as *const libc::c_char,
+            b"saveroutingcache\x00" as *const u8 as *const i8,
+            b"0\x00" as *const u8 as *const i8,
         );
     }
     //
     aasworld.numframes += 1;
-    return 0 as libc::c_int;
+    return 0;
 }
 //end of the function AAS_StartFrame
 //===========================================================================
@@ -437,7 +416,7 @@ pub unsafe extern "C" fn AAS_StartFrame(mut time: libc::c_float) -> libc::c_int 
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_Time() -> libc::c_float {
+pub unsafe extern "C" fn AAS_Time() -> f32 {
     return aasworld.time;
 }
 //start a new time frame
@@ -468,35 +447,20 @@ pub unsafe extern "C" fn AAS_ProjectPointOntoVector(
 ) {
     let mut pVec: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut vec: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    pVec[0 as libc::c_int as usize] =
-        *point.offset(0 as libc::c_int as isize) - *vStart.offset(0 as libc::c_int as isize);
-    pVec[1 as libc::c_int as usize] =
-        *point.offset(1 as libc::c_int as isize) - *vStart.offset(1 as libc::c_int as isize);
-    pVec[2 as libc::c_int as usize] =
-        *point.offset(2 as libc::c_int as isize) - *vStart.offset(2 as libc::c_int as isize);
-    vec[0 as libc::c_int as usize] =
-        *vEnd.offset(0 as libc::c_int as isize) - *vStart.offset(0 as libc::c_int as isize);
-    vec[1 as libc::c_int as usize] =
-        *vEnd.offset(1 as libc::c_int as isize) - *vStart.offset(1 as libc::c_int as isize);
-    vec[2 as libc::c_int as usize] =
-        *vEnd.offset(2 as libc::c_int as isize) - *vStart.offset(2 as libc::c_int as isize);
+    pVec[0] = *point.offset(0) - *vStart.offset(0);
+    pVec[1] = *point.offset(1) - *vStart.offset(1);
+    pVec[2] = *point.offset(2) - *vStart.offset(2);
+    vec[0] = *vEnd.offset(0) - *vStart.offset(0);
+    vec[1] = *vEnd.offset(1) - *vStart.offset(1);
+    vec[2] = *vEnd.offset(2) - *vStart.offset(2);
     crate::src::qcommon::q_math::VectorNormalize(vec.as_mut_ptr());
     // project onto the directional vector for this segment
-    *vProj.offset(0 as libc::c_int as isize) = *vStart.offset(0 as libc::c_int as isize)
-        + vec[0 as libc::c_int as usize]
-            * (pVec[0 as libc::c_int as usize] * vec[0 as libc::c_int as usize]
-                + pVec[1 as libc::c_int as usize] * vec[1 as libc::c_int as usize]
-                + pVec[2 as libc::c_int as usize] * vec[2 as libc::c_int as usize]);
-    *vProj.offset(1 as libc::c_int as isize) = *vStart.offset(1 as libc::c_int as isize)
-        + vec[1 as libc::c_int as usize]
-            * (pVec[0 as libc::c_int as usize] * vec[0 as libc::c_int as usize]
-                + pVec[1 as libc::c_int as usize] * vec[1 as libc::c_int as usize]
-                + pVec[2 as libc::c_int as usize] * vec[2 as libc::c_int as usize]);
-    *vProj.offset(2 as libc::c_int as isize) = *vStart.offset(2 as libc::c_int as isize)
-        + vec[2 as libc::c_int as usize]
-            * (pVec[0 as libc::c_int as usize] * vec[0 as libc::c_int as usize]
-                + pVec[1 as libc::c_int as usize] * vec[1 as libc::c_int as usize]
-                + pVec[2 as libc::c_int as usize] * vec[2 as libc::c_int as usize]);
+    *vProj.offset(0) =
+        *vStart.offset(0) + vec[0] * (pVec[0] * vec[0] + pVec[1] * vec[1] + pVec[2] * vec[2]);
+    *vProj.offset(1) =
+        *vStart.offset(1) + vec[1] * (pVec[0] * vec[0] + pVec[1] * vec[1] + pVec[2] * vec[2]);
+    *vProj.offset(2) =
+        *vStart.offset(2) + vec[2] * (pVec[0] * vec[0] + pVec[1] * vec[1] + pVec[2] * vec[2]);
 }
 //end of the function AAS_ProjectPointOntoVector
 //===========================================================================
@@ -507,13 +471,13 @@ pub unsafe extern "C" fn AAS_ProjectPointOntoVector(
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_LoadFiles(mut mapname: *const libc::c_char) -> libc::c_int {
-    let mut errnum: libc::c_int = 0;
-    let mut aasfile: [libc::c_char; 64] = [0; 64];
+pub unsafe extern "C" fn AAS_LoadFiles(mut mapname: *const i8) -> i32 {
+    let mut errnum: i32 = 0;
+    let mut aasfile: [i8; 64] = [0; 64];
     crate::src::qcommon::q_shared::Q_strncpyz(
         aasworld.mapname.as_mut_ptr(),
         mapname,
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 64]>() as i32,
     );
     //NOTE: first reset the entity links into the AAS areas and BSP leaves
     // the AAS link heap and BSP link heap are reset after respectively the
@@ -524,27 +488,27 @@ pub unsafe extern "C" fn AAS_LoadFiles(mut mapname: *const libc::c_char) -> libc
     //load the aas file
     crate::src::qcommon::q_shared::Com_sprintf(
         aasfile.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
-        b"maps/%s.aas\x00" as *const u8 as *const libc::c_char,
+        ::std::mem::size_of::<[i8; 64]>() as i32,
+        b"maps/%s.aas\x00" as *const u8 as *const i8,
         mapname,
     );
     errnum = crate::src::botlib::be_aas_file::AAS_LoadAASFile(aasfile.as_mut_ptr());
-    if errnum != 0 as libc::c_int {
+    if errnum != 0 {
         return errnum;
     }
     crate::src::botlib::be_interface::botimport
         .Print
         .expect("non-null function pointer")(
-        1 as libc::c_int,
-        b"loaded %s\n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        1,
+        b"loaded %s\n\x00" as *const u8 as *mut i8,
         aasfile.as_mut_ptr(),
     );
     crate::src::qcommon::q_shared::Q_strncpyz(
         aasworld.filename.as_mut_ptr(),
         aasfile.as_mut_ptr(),
-        ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 64]>() as i32,
     );
-    return 0 as libc::c_int;
+    return 0;
 }
 //start a new map
 //end of the function AAS_LoadFiles
@@ -557,22 +521,22 @@ pub unsafe extern "C" fn AAS_LoadFiles(mut mapname: *const libc::c_char) -> libc
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_LoadMap(mut mapname: *const libc::c_char) -> libc::c_int {
-    let mut errnum: libc::c_int = 0;
+pub unsafe extern "C" fn AAS_LoadMap(mut mapname: *const i8) -> i32 {
+    let mut errnum: i32 = 0;
     //if no mapname is provided then the string indexes are updated
     if mapname.is_null() {
-        return 0 as libc::c_int;
+        return 0i32;
     } //end if
       //
-    aasworld.initialized = crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    aasworld.initialized = crate::src::qcommon::q_shared::qfalse as i32;
     //NOTE: free the routing caches before loading a new map because
     // to free the caches the old number of areas, number of clusters
     // and number of areas in a clusters must be available
     crate::src::botlib::be_aas_route::AAS_FreeRoutingCaches();
     //load the map
     errnum = AAS_LoadFiles(mapname); //end if
-    if errnum != 0 as libc::c_int {
-        aasworld.loaded = crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    if errnum != 0 {
+        aasworld.loaded = crate::src::qcommon::q_shared::qfalse as i32;
         return errnum;
     }
     //
@@ -586,7 +550,7 @@ pub unsafe extern "C" fn AAS_LoadMap(mut mapname: *const libc::c_char) -> libc::
     //initialize the alternative routing
     crate::src::botlib::be_aas_routealt::AAS_InitAlternativeRouting();
     //everything went ok
-    return 0 as libc::c_int;
+    return 0;
 }
 //end of the function AAS_LoadMap
 //===========================================================================
@@ -598,36 +562,35 @@ pub unsafe extern "C" fn AAS_LoadMap(mut mapname: *const libc::c_char) -> libc::
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_Setup() -> libc::c_int {
+pub unsafe extern "C" fn AAS_Setup() -> i32 {
     aasworld.maxclients = crate::src::botlib::l_libvar::LibVarValue(
-        b"maxclients\x00" as *const u8 as *const libc::c_char,
-        b"128\x00" as *const u8 as *const libc::c_char,
-    ) as libc::c_int;
+        b"maxclients\x00" as *const u8 as *const i8,
+        b"128\x00" as *const u8 as *const i8,
+    ) as i32;
     aasworld.maxentities = crate::src::botlib::l_libvar::LibVarValue(
-        b"maxentities\x00" as *const u8 as *const libc::c_char,
-        b"1024\x00" as *const u8 as *const libc::c_char,
-    ) as libc::c_int;
+        b"maxentities\x00" as *const u8 as *const i8,
+        b"1024\x00" as *const u8 as *const i8,
+    ) as i32;
     // as soon as it's set to 1 the routing cache will be saved
     saveroutingcache = crate::src::botlib::l_libvar::LibVar(
-        b"saveroutingcache\x00" as *const u8 as *const libc::c_char,
-        b"0\x00" as *const u8 as *const libc::c_char,
+        b"saveroutingcache\x00" as *const u8 as *const i8,
+        b"0\x00" as *const u8 as *const i8,
     );
     //allocate memory for the entities
     if !aasworld.entities.is_null() {
         crate::src::botlib::l_memory::FreeMemory(aasworld.entities as *mut libc::c_void);
     }
     aasworld.entities = crate::src::botlib::l_memory::GetClearedHunkMemory(
-        (aasworld.maxentities as libc::c_ulong).wrapping_mul(::std::mem::size_of::<
-            crate::be_aas_def_h::aas_entity_t,
-        >() as libc::c_ulong),
+        (aasworld.maxentities as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::be_aas_def_h::aas_entity_t>()),
     ) as *mut crate::be_aas_def_h::aas_entity_t;
     //invalidate all the entities
     crate::src::botlib::be_aas_entity::AAS_InvalidateEntities();
     //force some recalculations
     //LibVarSet("forceclustering", "1");			//force clustering calculation
     //LibVarSet("forcereachability", "1");		//force reachability calculation
-    aasworld.numframes = 0 as libc::c_int;
-    return 0 as libc::c_int;
+    aasworld.numframes = 0;
+    return 0;
 }
 /*
 ===========================================================================
@@ -719,19 +682,16 @@ pub unsafe extern "C" fn AAS_Shutdown() {
     //clear the aasworld structure
     crate::stdlib::memset(
         &mut aasworld as *mut crate::be_aas_def_h::aas_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::be_aas_def_h::aas_t>() as libc::c_ulong,
+        0,
+        ::std::mem::size_of::<crate::be_aas_def_h::aas_t>(),
     );
     //aas has not been initialized
-    aasworld.initialized = crate::src::qcommon::q_shared::qfalse as libc::c_int;
+    aasworld.initialized = crate::src::qcommon::q_shared::qfalse as i32;
     //NOTE: as soon as a new .bsp file is loaded the .bsp file memory is
     // freed and reallocated, so there's no need to free that memory here
     //print shutdown
     crate::src::botlib::be_interface::botimport
         .Print
-        .expect("non-null function pointer")(
-        1 as libc::c_int,
-        b"AAS shutdown.\n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    );
+        .expect("non-null function pointer")(1, b"AAS shutdown.\n\x00" as *const u8 as *mut i8);
 }
 //end of the function AAS_Shutdown

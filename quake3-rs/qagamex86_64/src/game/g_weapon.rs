@@ -186,15 +186,9 @@ pub mod q_shared_h {
         mut v2: *const crate::src::qcommon::q_shared::vec_t,
         mut cross: *mut crate::src::qcommon::q_shared::vec_t,
     ) {
-        *cross.offset(0 as libc::c_int as isize) = *v1.offset(1 as libc::c_int as isize)
-            * *v2.offset(2 as libc::c_int as isize)
-            - *v1.offset(2 as libc::c_int as isize) * *v2.offset(1 as libc::c_int as isize);
-        *cross.offset(1 as libc::c_int as isize) = *v1.offset(2 as libc::c_int as isize)
-            * *v2.offset(0 as libc::c_int as isize)
-            - *v1.offset(0 as libc::c_int as isize) * *v2.offset(2 as libc::c_int as isize);
-        *cross.offset(2 as libc::c_int as isize) = *v1.offset(0 as libc::c_int as isize)
-            * *v2.offset(1 as libc::c_int as isize)
-            - *v1.offset(1 as libc::c_int as isize) * *v2.offset(0 as libc::c_int as isize);
+        *cross.offset(0) = *v1.offset(1) * *v2.offset(2) - *v1.offset(2) * *v2.offset(1);
+        *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
+        *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
 
     // __Q_SHARED_H
@@ -492,7 +486,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // g_weapon.c
 // perform the server side effects of a weapon firing
 
-static mut s_quadFactor: libc::c_float = 0.;
+static mut s_quadFactor: f32 = 0.;
 
 static mut forward: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
 
@@ -516,29 +510,18 @@ pub unsafe extern "C" fn G_BounceProjectile(
 ) {
     let mut v: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut newv: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut dot: libc::c_float = 0.;
-    v[0 as libc::c_int as usize] =
-        *impact.offset(0 as libc::c_int as isize) - *start.offset(0 as libc::c_int as isize);
-    v[1 as libc::c_int as usize] =
-        *impact.offset(1 as libc::c_int as isize) - *start.offset(1 as libc::c_int as isize);
-    v[2 as libc::c_int as usize] =
-        *impact.offset(2 as libc::c_int as isize) - *start.offset(2 as libc::c_int as isize);
-    dot = v[0 as libc::c_int as usize] * *dir.offset(0 as libc::c_int as isize)
-        + v[1 as libc::c_int as usize] * *dir.offset(1 as libc::c_int as isize)
-        + v[2 as libc::c_int as usize] * *dir.offset(2 as libc::c_int as isize);
-    newv[0 as libc::c_int as usize] = v[0 as libc::c_int as usize]
-        + *dir.offset(0 as libc::c_int as isize) * (-(2 as libc::c_int) as libc::c_float * dot);
-    newv[1 as libc::c_int as usize] = v[1 as libc::c_int as usize]
-        + *dir.offset(1 as libc::c_int as isize) * (-(2 as libc::c_int) as libc::c_float * dot);
-    newv[2 as libc::c_int as usize] = v[2 as libc::c_int as usize]
-        + *dir.offset(2 as libc::c_int as isize) * (-(2 as libc::c_int) as libc::c_float * dot);
+    let mut dot: f32 = 0.;
+    v[0] = *impact.offset(0) - *start.offset(0);
+    v[1] = *impact.offset(1) - *start.offset(1);
+    v[2] = *impact.offset(2) - *start.offset(2);
+    dot = v[0] * *dir.offset(0) + v[1] * *dir.offset(1) + v[2] * *dir.offset(2);
+    newv[0] = v[0] + *dir.offset(0) * (-2f32 * dot);
+    newv[1] = v[1] + *dir.offset(1) * (-2f32 * dot);
+    newv[2] = v[2] + *dir.offset(2) * (-2f32 * dot);
     crate::src::qcommon::q_math::VectorNormalize(newv.as_mut_ptr());
-    *endout.offset(0 as libc::c_int as isize) = *impact.offset(0 as libc::c_int as isize)
-        + newv[0 as libc::c_int as usize] * 8192 as libc::c_int as libc::c_float;
-    *endout.offset(1 as libc::c_int as isize) = *impact.offset(1 as libc::c_int as isize)
-        + newv[1 as libc::c_int as usize] * 8192 as libc::c_int as libc::c_float;
-    *endout.offset(2 as libc::c_int as isize) = *impact.offset(2 as libc::c_int as isize)
-        + newv[2 as libc::c_int as usize] * 8192 as libc::c_int as libc::c_float;
+    *endout.offset(0) = *impact.offset(0) + newv[0] * 8192f32;
+    *endout.offset(1) = *impact.offset(1) + newv[1] * 8192f32;
+    *endout.offset(2) = *impact.offset(2) + newv[2] * 8192f32;
 }
 /*
 ======================================================================
@@ -579,7 +562,7 @@ pub unsafe extern "C" fn CheckGauntletAttack(
     let mut end: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut tent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut traceEnt: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
-    let mut damage: libc::c_int = 0;
+    let mut damage: i32 = 0;
     // set aiming directions
     crate::src::qcommon::q_math::AngleVectors(
         (*(*ent).client).ps.viewangles.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -594,12 +577,9 @@ pub unsafe extern "C" fn CheckGauntletAttack(
         up.as_mut_ptr(),
         muzzle.as_mut_ptr(),
     );
-    end[0 as libc::c_int as usize] = muzzle[0 as libc::c_int as usize]
-        + forward[0 as libc::c_int as usize] * 32 as libc::c_int as libc::c_float;
-    end[1 as libc::c_int as usize] = muzzle[1 as libc::c_int as usize]
-        + forward[1 as libc::c_int as usize] * 32 as libc::c_int as libc::c_float;
-    end[2 as libc::c_int as usize] = muzzle[2 as libc::c_int as usize]
-        + forward[2 as libc::c_int as usize] * 32 as libc::c_int as libc::c_float;
+    end[0] = muzzle[0] + forward[0] * 32f32;
+    end[1] = muzzle[1] + forward[1] * 32f32;
+    end[2] = muzzle[2] + forward[2] * 32f32;
     crate::src::game::g_syscalls::trap_Trace(
         &mut tr,
         muzzle.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -607,9 +587,9 @@ pub unsafe extern "C" fn CheckGauntletAttack(
         0 as *const crate::src::qcommon::q_shared::vec_t,
         end.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         (*ent).s.number,
-        1 as libc::c_int | 0x2000000 as libc::c_int | 0x4000000 as libc::c_int,
+        1 | 0x2000000 | 0x4000000,
     );
-    if tr.surfaceFlags & 0x10 as libc::c_int != 0 {
+    if tr.surfaceFlags & 0x10 != 0 {
         return crate::src::qcommon::q_shared::qfalse;
     }
     if (*(*ent).client).noclip as u64 != 0 {
@@ -619,10 +599,10 @@ pub unsafe extern "C" fn CheckGauntletAttack(
         .as_mut_ptr()
         .offset(tr.entityNum as isize) as *mut crate::g_local_h::gentity_t;
     // send blood impact
-    if (*traceEnt).takedamage as libc::c_uint != 0 && !(*traceEnt).client.is_null() {
+    if (*traceEnt).takedamage != 0 && !(*traceEnt).client.is_null() {
         tent = crate::src::game::g_utils::G_TempEntity(
             tr.endpos.as_mut_ptr(),
-            crate::bg_public_h::EV_MISSILE_HIT as libc::c_int,
+            crate::bg_public_h::EV_MISSILE_HIT as i32,
         );
         (*tent).s.otherEntityNum = (*traceEnt).s.number;
         (*tent).s.eventParm = crate::src::qcommon::q_math::DirToByte(tr.plane.normal.as_mut_ptr());
@@ -631,17 +611,13 @@ pub unsafe extern "C" fn CheckGauntletAttack(
     if (*traceEnt).takedamage as u64 == 0 {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if (*(*ent).client).ps.powerups[crate::bg_public_h::PW_QUAD as libc::c_int as usize] != 0 {
-        crate::src::game::g_utils::G_AddEvent(
-            ent,
-            crate::bg_public_h::EV_POWERUP_QUAD as libc::c_int,
-            0 as libc::c_int,
-        );
+    if (*(*ent).client).ps.powerups[crate::bg_public_h::PW_QUAD as usize] != 0 {
+        crate::src::game::g_utils::G_AddEvent(ent, crate::bg_public_h::EV_POWERUP_QUAD as i32, 0);
         s_quadFactor = crate::src::game::g_main::g_quadfactor.value
     } else {
-        s_quadFactor = 1 as libc::c_int as libc::c_float
+        s_quadFactor = 1f32
     }
-    damage = (50 as libc::c_int as libc::c_float * s_quadFactor) as libc::c_int;
+    damage = (50f32 * s_quadFactor) as i32;
     crate::src::game::g_combat::G_Damage(
         traceEnt,
         ent,
@@ -649,8 +625,8 @@ pub unsafe extern "C" fn CheckGauntletAttack(
         forward.as_mut_ptr(),
         tr.endpos.as_mut_ptr(),
         damage,
-        0 as libc::c_int,
-        crate::bg_public_h::MOD_GAUNTLET as libc::c_int,
+        0,
+        crate::bg_public_h::MOD_GAUNTLET as i32,
     );
     return crate::src::qcommon::q_shared::qtrue;
 }
@@ -677,14 +653,14 @@ pub unsafe extern "C" fn SnapVectorTowards(
     mut v: *mut crate::src::qcommon::q_shared::vec_t,
     mut to: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
-    while i < 3 as libc::c_int {
+    let mut i: i32 = 0;
+    i = 0;
+    while i < 3 {
         if *to.offset(i as isize) <= *v.offset(i as isize) {
-            *v.offset(i as isize) = crate::stdlib::floor(*v.offset(i as isize) as libc::c_double)
+            *v.offset(i as isize) = crate::stdlib::floor(*v.offset(i as isize) as f64)
                 as crate::src::qcommon::q_shared::vec_t
         } else {
-            *v.offset(i as isize) = crate::stdlib::ceil(*v.offset(i as isize) as libc::c_double)
+            *v.offset(i as isize) = crate::stdlib::ceil(*v.offset(i as isize) as f64)
                 as crate::src::qcommon::q_shared::vec_t
         }
         i += 1
@@ -695,9 +671,9 @@ pub unsafe extern "C" fn SnapVectorTowards(
 
 pub unsafe extern "C" fn Bullet_Fire(
     mut ent: *mut crate::g_local_h::gentity_t,
-    mut spread: libc::c_float,
-    mut damage: libc::c_int,
-    mut mod_0: libc::c_int,
+    mut spread: f32,
+    mut damage: i32,
+    mut mod_0: i32,
 ) {
     let mut tr: crate::src::qcommon::q_shared::trace_t = crate::src::qcommon::q_shared::trace_t {
         allsolid: crate::src::qcommon::q_shared::qfalse,
@@ -716,55 +692,36 @@ pub unsafe extern "C" fn Bullet_Fire(
         entityNum: 0,
     };
     let mut end: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut r: libc::c_float = 0.;
-    let mut u: libc::c_float = 0.;
+    let mut r: f32 = 0.;
+    let mut u: f32 = 0.;
     let mut tent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut traceEnt: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
-    let mut i: libc::c_int = 0;
-    let mut passent: libc::c_int = 0;
-    damage = (damage as libc::c_float * s_quadFactor) as libc::c_int;
-    r = (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-        / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-        * 3.14159265358979323846f64
-        * 2.0f32 as libc::c_double) as libc::c_float;
-    u = (crate::stdlib::sin(r as libc::c_double)
-        * (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64))
-        * spread as libc::c_double
-        * 16 as libc::c_int as libc::c_double) as libc::c_float;
-    r = (crate::stdlib::cos(r as libc::c_double)
-        * (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
-                / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
-                - 0.5f64))
-        * spread as libc::c_double
-        * 16 as libc::c_int as libc::c_double) as libc::c_float;
-    end[0 as libc::c_int as usize] = muzzle[0 as libc::c_int as usize]
-        + forward[0 as libc::c_int as usize]
-            * (8192 as libc::c_int * 16 as libc::c_int) as libc::c_float;
-    end[1 as libc::c_int as usize] = muzzle[1 as libc::c_int as usize]
-        + forward[1 as libc::c_int as usize]
-            * (8192 as libc::c_int * 16 as libc::c_int) as libc::c_float;
-    end[2 as libc::c_int as usize] = muzzle[2 as libc::c_int as usize]
-        + forward[2 as libc::c_int as usize]
-            * (8192 as libc::c_int * 16 as libc::c_int) as libc::c_float;
-    end[0 as libc::c_int as usize] =
-        end[0 as libc::c_int as usize] + right[0 as libc::c_int as usize] * r;
-    end[1 as libc::c_int as usize] =
-        end[1 as libc::c_int as usize] + right[1 as libc::c_int as usize] * r;
-    end[2 as libc::c_int as usize] =
-        end[2 as libc::c_int as usize] + right[2 as libc::c_int as usize] * r;
-    end[0 as libc::c_int as usize] =
-        end[0 as libc::c_int as usize] + up[0 as libc::c_int as usize] * u;
-    end[1 as libc::c_int as usize] =
-        end[1 as libc::c_int as usize] + up[1 as libc::c_int as usize] * u;
-    end[2 as libc::c_int as usize] =
-        end[2 as libc::c_int as usize] + up[2 as libc::c_int as usize] * u;
+    let mut i: i32 = 0;
+    let mut passent: i32 = 0;
+    damage = (damage as f32 * s_quadFactor) as i32;
+    r = (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64
+        * 3.14159265358979323846
+        * 2f64) as f32;
+    u = (crate::stdlib::sin(r as f64)
+        * (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5))
+        * spread as f64
+        * 16f64) as f32;
+    r = (crate::stdlib::cos(r as f64)
+        * (2.0 * (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64 - 0.5))
+        * spread as f64
+        * 16f64) as f32;
+    end[0] = muzzle[0] + forward[0] * (8192i32 * 16) as f32;
+    end[1] = muzzle[1] + forward[1] * (8192i32 * 16) as f32;
+    end[2] = muzzle[2] + forward[2] * (8192i32 * 16) as f32;
+    end[0] = end[0] + right[0] * r;
+    end[1] = end[1] + right[1] * r;
+    end[2] = end[2] + right[2] * r;
+    end[0] = end[0] + up[0] * u;
+    end[1] = end[1] + up[1] * u;
+    end[2] = end[2] + up[2] * u;
     passent = (*ent).s.number;
-    i = 0 as libc::c_int;
-    if i < 10 as libc::c_int {
+    i = 0;
+    if i < 10 {
         crate::src::game::g_syscalls::trap_Trace(
             &mut tr,
             muzzle.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -772,9 +729,9 @@ pub unsafe extern "C" fn Bullet_Fire(
             0 as *const crate::src::qcommon::q_shared::vec_t,
             end.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             passent,
-            1 as libc::c_int | 0x2000000 as libc::c_int | 0x4000000 as libc::c_int,
+            1 | 0x2000000 | 0x4000000,
         );
-        if tr.surfaceFlags & 0x10 as libc::c_int != 0 {
+        if tr.surfaceFlags & 0x10 != 0 {
             return;
         }
         traceEnt = &mut *crate::src::game::g_main::g_entities
@@ -783,10 +740,10 @@ pub unsafe extern "C" fn Bullet_Fire(
         // snap the endpos to integers, but nudged towards the line
         SnapVectorTowards(tr.endpos.as_mut_ptr(), muzzle.as_mut_ptr());
         // send bullet impact
-        if (*traceEnt).takedamage as libc::c_uint != 0 && !(*traceEnt).client.is_null() {
+        if (*traceEnt).takedamage != 0 && !(*traceEnt).client.is_null() {
             tent = crate::src::game::g_utils::G_TempEntity(
                 tr.endpos.as_mut_ptr(),
-                crate::bg_public_h::EV_BULLET_HIT_FLESH as libc::c_int,
+                crate::bg_public_h::EV_BULLET_HIT_FLESH as i32,
             );
             (*tent).s.eventParm = (*traceEnt).s.number;
             if LogAccuracyHit(traceEnt, ent) as u64 != 0 {
@@ -795,7 +752,7 @@ pub unsafe extern "C" fn Bullet_Fire(
         } else {
             tent = crate::src::game::g_utils::G_TempEntity(
                 tr.endpos.as_mut_ptr(),
-                crate::bg_public_h::EV_BULLET_HIT_WALL as libc::c_int,
+                crate::bg_public_h::EV_BULLET_HIT_WALL as i32,
             );
             (*tent).s.eventParm =
                 crate::src::qcommon::q_math::DirToByte(tr.plane.normal.as_mut_ptr())
@@ -809,7 +766,7 @@ pub unsafe extern "C" fn Bullet_Fire(
                 forward.as_mut_ptr(),
                 tr.endpos.as_mut_ptr(),
                 damage,
-                0 as libc::c_int,
+                0i32,
                 mod_0,
             );
         }
@@ -827,8 +784,8 @@ BFG
 pub unsafe extern "C" fn BFG_Fire(mut ent: *mut crate::g_local_h::gentity_t) {
     let mut m: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     m = crate::src::game::g_missile::fire_bfg(ent, muzzle.as_mut_ptr(), forward.as_mut_ptr());
-    (*m).damage = ((*m).damage as libc::c_float * s_quadFactor) as libc::c_int;
-    (*m).splashDamage = ((*m).splashDamage as libc::c_float * s_quadFactor) as libc::c_int;
+    (*m).damage = ((*m).damage as f32 * s_quadFactor) as i32;
+    (*m).splashDamage = ((*m).splashDamage as f32 * s_quadFactor) as i32;
     //	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
 }
 #[no_mangle]
@@ -854,23 +811,23 @@ pub unsafe extern "C" fn ShotgunPellet(
         contents: 0,
         entityNum: 0,
     };
-    let mut damage: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
-    let mut passent: libc::c_int = 0;
+    let mut damage: i32 = 0;
+    let mut i: i32 = 0;
+    let mut passent: i32 = 0;
     let mut traceEnt: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut tr_start: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut tr_end: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut hitClient: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     passent = (*ent).s.number;
-    tr_start[0 as libc::c_int as usize] = *start.offset(0 as libc::c_int as isize);
-    tr_start[1 as libc::c_int as usize] = *start.offset(1 as libc::c_int as isize);
-    tr_start[2 as libc::c_int as usize] = *start.offset(2 as libc::c_int as isize);
-    tr_end[0 as libc::c_int as usize] = *end.offset(0 as libc::c_int as isize);
-    tr_end[1 as libc::c_int as usize] = *end.offset(1 as libc::c_int as isize);
-    tr_end[2 as libc::c_int as usize] = *end.offset(2 as libc::c_int as isize);
-    i = 0 as libc::c_int;
-    if i < 10 as libc::c_int {
+    tr_start[0] = *start.offset(0);
+    tr_start[1] = *start.offset(1);
+    tr_start[2] = *start.offset(2);
+    tr_end[0] = *end.offset(0);
+    tr_end[1] = *end.offset(1);
+    tr_end[2] = *end.offset(2);
+    i = 0;
+    if i < 10 {
         crate::src::game::g_syscalls::trap_Trace(
             &mut tr,
             tr_start.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -878,17 +835,17 @@ pub unsafe extern "C" fn ShotgunPellet(
             0 as *const crate::src::qcommon::q_shared::vec_t,
             tr_end.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             passent,
-            1 as libc::c_int | 0x2000000 as libc::c_int | 0x4000000 as libc::c_int,
+            1 | 0x2000000 | 0x4000000,
         );
         traceEnt = &mut *crate::src::game::g_main::g_entities
             .as_mut_ptr()
             .offset(tr.entityNum as isize) as *mut crate::g_local_h::gentity_t;
         // send bullet impact
-        if tr.surfaceFlags & 0x10 as libc::c_int != 0 {
+        if tr.surfaceFlags & 0x10 != 0 {
             return crate::src::qcommon::q_shared::qfalse;
         }
         if (*traceEnt).takedamage as u64 != 0 {
-            damage = (10 as libc::c_int as libc::c_float * s_quadFactor) as libc::c_int;
+            damage = (10f32 * s_quadFactor) as i32;
             if LogAccuracyHit(traceEnt, ent) as u64 != 0 {
                 hitClient = crate::src::qcommon::q_shared::qtrue
             }
@@ -899,8 +856,8 @@ pub unsafe extern "C" fn ShotgunPellet(
                 forward.as_mut_ptr(),
                 tr.endpos.as_mut_ptr(),
                 damage,
-                0 as libc::c_int,
-                crate::bg_public_h::MOD_SHOTGUN as libc::c_int,
+                0,
+                crate::bg_public_h::MOD_SHOTGUN as i32,
             );
             return hitClient;
         }
@@ -914,12 +871,12 @@ pub unsafe extern "C" fn ShotgunPellet(
 pub unsafe extern "C" fn ShotgunPattern(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut origin2: *mut crate::src::qcommon::q_shared::vec_t,
-    mut seed: libc::c_int,
+    mut seed: i32,
     mut ent: *mut crate::g_local_h::gentity_t,
 ) {
-    let mut i: libc::c_int = 0;
-    let mut r: libc::c_float = 0.;
-    let mut u: libc::c_float = 0.;
+    let mut i: i32 = 0;
+    let mut r: f32 = 0.;
+    let mut u: f32 = 0.;
     let mut end: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut forward_0: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut right_0: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -942,38 +899,20 @@ pub unsafe extern "C" fn ShotgunPattern(
         up_0.as_mut_ptr(),
     );
     // generate the "random" spread pattern
-    i = 0 as libc::c_int;
-    while i < 11 as libc::c_int {
-        r = crate::src::qcommon::q_math::Q_crandom(&mut seed)
-            * 700 as libc::c_int as libc::c_float
-            * 16 as libc::c_int as libc::c_float;
-        u = crate::src::qcommon::q_math::Q_crandom(&mut seed)
-            * 700 as libc::c_int as libc::c_float
-            * 16 as libc::c_int as libc::c_float;
-        end[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize)
-            + forward_0[0 as libc::c_int as usize]
-                * (8192 as libc::c_int * 16 as libc::c_int) as libc::c_float;
-        end[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize)
-            + forward_0[1 as libc::c_int as usize]
-                * (8192 as libc::c_int * 16 as libc::c_int) as libc::c_float;
-        end[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize)
-            + forward_0[2 as libc::c_int as usize]
-                * (8192 as libc::c_int * 16 as libc::c_int) as libc::c_float;
-        end[0 as libc::c_int as usize] =
-            end[0 as libc::c_int as usize] + right_0[0 as libc::c_int as usize] * r;
-        end[1 as libc::c_int as usize] =
-            end[1 as libc::c_int as usize] + right_0[1 as libc::c_int as usize] * r;
-        end[2 as libc::c_int as usize] =
-            end[2 as libc::c_int as usize] + right_0[2 as libc::c_int as usize] * r;
-        end[0 as libc::c_int as usize] =
-            end[0 as libc::c_int as usize] + up_0[0 as libc::c_int as usize] * u;
-        end[1 as libc::c_int as usize] =
-            end[1 as libc::c_int as usize] + up_0[1 as libc::c_int as usize] * u;
-        end[2 as libc::c_int as usize] =
-            end[2 as libc::c_int as usize] + up_0[2 as libc::c_int as usize] * u;
-        if ShotgunPellet(origin, end.as_mut_ptr(), ent) as libc::c_uint != 0
-            && hitClient as u64 == 0
-        {
+    i = 0;
+    while i < 11 {
+        r = crate::src::qcommon::q_math::Q_crandom(&mut seed) * 700f32 * 16f32;
+        u = crate::src::qcommon::q_math::Q_crandom(&mut seed) * 700f32 * 16f32;
+        end[0] = *origin.offset(0) + forward_0[0] * (8192i32 * 16) as f32;
+        end[1] = *origin.offset(1) + forward_0[1] * (8192i32 * 16) as f32;
+        end[2] = *origin.offset(2) + forward_0[2] * (8192i32 * 16) as f32;
+        end[0] = end[0] + right_0[0] * r;
+        end[1] = end[1] + right_0[1] * r;
+        end[2] = end[2] + right_0[2] * r;
+        end[0] = end[0] + up_0[0] * u;
+        end[1] = end[1] + up_0[1] * u;
+        end[2] = end[2] + up_0[2] * u;
+        if ShotgunPellet(origin, end.as_mut_ptr(), ent) != 0 && hitClient as u64 == 0 {
             hitClient = crate::src::qcommon::q_shared::qtrue;
             (*(*ent).client).accuracy_hits += 1
         }
@@ -987,24 +926,15 @@ pub unsafe extern "C" fn weapon_supershotgun_fire(mut ent: *mut crate::g_local_h
     // send shotgun blast
     tent = crate::src::game::g_utils::G_TempEntity(
         muzzle.as_mut_ptr(),
-        crate::bg_public_h::EV_SHOTGUN as libc::c_int,
+        crate::bg_public_h::EV_SHOTGUN as i32,
     ); // seed for spread pattern
-    (*tent).s.origin2[0 as libc::c_int as usize] =
-        forward[0 as libc::c_int as usize] * 4096 as libc::c_int as libc::c_float;
-    (*tent).s.origin2[1 as libc::c_int as usize] =
-        forward[1 as libc::c_int as usize] * 4096 as libc::c_int as libc::c_float;
-    (*tent).s.origin2[2 as libc::c_int as usize] =
-        forward[2 as libc::c_int as usize] * 4096 as libc::c_int as libc::c_float;
-    (*tent).s.origin2[0 as libc::c_int as usize] = (*tent).s.origin2[0 as libc::c_int as usize]
-        as libc::c_int
-        as crate::src::qcommon::q_shared::vec_t;
-    (*tent).s.origin2[1 as libc::c_int as usize] = (*tent).s.origin2[1 as libc::c_int as usize]
-        as libc::c_int
-        as crate::src::qcommon::q_shared::vec_t;
-    (*tent).s.origin2[2 as libc::c_int as usize] = (*tent).s.origin2[2 as libc::c_int as usize]
-        as libc::c_int
-        as crate::src::qcommon::q_shared::vec_t;
-    (*tent).s.eventParm = crate::stdlib::rand() & 255 as libc::c_int;
+    (*tent).s.origin2[0] = forward[0] * 4096f32;
+    (*tent).s.origin2[1] = forward[1] * 4096f32;
+    (*tent).s.origin2[2] = forward[2] * 4096f32;
+    (*tent).s.origin2[0] = (*tent).s.origin2[0] as i32 as crate::src::qcommon::q_shared::vec_t;
+    (*tent).s.origin2[1] = (*tent).s.origin2[1] as i32 as crate::src::qcommon::q_shared::vec_t;
+    (*tent).s.origin2[2] = (*tent).s.origin2[2] as i32 as crate::src::qcommon::q_shared::vec_t;
+    (*tent).s.eventParm = crate::stdlib::rand() & 255;
     (*tent).s.otherEntityNum = (*ent).s.number;
     ShotgunPattern(
         (*tent).s.pos.trBase.as_mut_ptr(),
@@ -1025,11 +955,11 @@ GRENADE LAUNCHER
 pub unsafe extern "C" fn weapon_grenadelauncher_fire(mut ent: *mut crate::g_local_h::gentity_t) {
     let mut m: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     // extra vertical velocity
-    forward[2 as libc::c_int as usize] += 0.2f32;
+    forward[2] += 0.2;
     crate::src::qcommon::q_math::VectorNormalize(forward.as_mut_ptr());
     m = crate::src::game::g_missile::fire_grenade(ent, muzzle.as_mut_ptr(), forward.as_mut_ptr());
-    (*m).damage = ((*m).damage as libc::c_float * s_quadFactor) as libc::c_int;
-    (*m).splashDamage = ((*m).splashDamage as libc::c_float * s_quadFactor) as libc::c_int;
+    (*m).damage = ((*m).damage as f32 * s_quadFactor) as i32;
+    (*m).splashDamage = ((*m).splashDamage as f32 * s_quadFactor) as i32;
     //	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
 }
 /*
@@ -1044,8 +974,8 @@ ROCKET
 pub unsafe extern "C" fn Weapon_RocketLauncher_Fire(mut ent: *mut crate::g_local_h::gentity_t) {
     let mut m: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     m = crate::src::game::g_missile::fire_rocket(ent, muzzle.as_mut_ptr(), forward.as_mut_ptr());
-    (*m).damage = ((*m).damage as libc::c_float * s_quadFactor) as libc::c_int;
-    (*m).splashDamage = ((*m).splashDamage as libc::c_float * s_quadFactor) as libc::c_int;
+    (*m).damage = ((*m).damage as f32 * s_quadFactor) as i32;
+    (*m).splashDamage = ((*m).splashDamage as f32 * s_quadFactor) as i32;
     //	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
 }
 /*
@@ -1060,8 +990,8 @@ PLASMA GUN
 pub unsafe extern "C" fn Weapon_Plasmagun_Fire(mut ent: *mut crate::g_local_h::gentity_t) {
     let mut m: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     m = crate::src::game::g_missile::fire_plasma(ent, muzzle.as_mut_ptr(), forward.as_mut_ptr());
-    (*m).damage = ((*m).damage as libc::c_float * s_quadFactor) as libc::c_int;
-    (*m).splashDamage = ((*m).splashDamage as libc::c_float * s_quadFactor) as libc::c_int;
+    (*m).damage = ((*m).damage as f32 * s_quadFactor) as i32;
+    (*m).splashDamage = ((*m).splashDamage as f32 * s_quadFactor) as i32;
     //	VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );	// "real" physics
 }
 #[no_mangle]
@@ -1087,23 +1017,20 @@ pub unsafe extern "C" fn weapon_railgun_fire(mut ent: *mut crate::g_local_h::gen
         };
     let mut tent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut traceEnt: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
-    let mut damage: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
-    let mut hits: libc::c_int = 0;
-    let mut unlinked: libc::c_int = 0;
-    let mut passent: libc::c_int = 0;
+    let mut damage: i32 = 0;
+    let mut i: i32 = 0;
+    let mut hits: i32 = 0;
+    let mut unlinked: i32 = 0;
+    let mut passent: i32 = 0;
     let mut unlinkedEntities: [*mut crate::g_local_h::gentity_t; 4] =
         [0 as *mut crate::g_local_h::gentity_t; 4];
-    damage = (100 as libc::c_int as libc::c_float * s_quadFactor) as libc::c_int;
-    end[0 as libc::c_int as usize] = muzzle[0 as libc::c_int as usize]
-        + forward[0 as libc::c_int as usize] * 8192 as libc::c_int as libc::c_float;
-    end[1 as libc::c_int as usize] = muzzle[1 as libc::c_int as usize]
-        + forward[1 as libc::c_int as usize] * 8192 as libc::c_int as libc::c_float;
-    end[2 as libc::c_int as usize] = muzzle[2 as libc::c_int as usize]
-        + forward[2 as libc::c_int as usize] * 8192 as libc::c_int as libc::c_float;
+    damage = (100f32 * s_quadFactor) as i32;
+    end[0] = muzzle[0] + forward[0] * 8192f32;
+    end[1] = muzzle[1] + forward[1] * 8192f32;
+    end[2] = muzzle[2] + forward[2] * 8192f32;
     // trace only against the solids, so the railgun will go through people
-    unlinked = 0 as libc::c_int;
-    hits = 0 as libc::c_int;
+    unlinked = 0;
+    hits = 0;
     passent = (*ent).s.number;
     loop {
         crate::src::game::g_syscalls::trap_Trace(
@@ -1113,9 +1040,9 @@ pub unsafe extern "C" fn weapon_railgun_fire(mut ent: *mut crate::g_local_h::gen
             0 as *const crate::src::qcommon::q_shared::vec_t,
             end.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             passent,
-            1 as libc::c_int | 0x2000000 as libc::c_int | 0x4000000 as libc::c_int,
+            1 | 0x2000000 | 0x4000000,
         );
-        if trace.entityNum >= ((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int {
+        if trace.entityNum >= ((1) << 10) - 2 {
             break;
         }
         traceEnt = &mut *crate::src::game::g_main::g_entities
@@ -1133,23 +1060,23 @@ pub unsafe extern "C" fn weapon_railgun_fire(mut ent: *mut crate::g_local_h::gen
                 forward.as_mut_ptr(),
                 trace.endpos.as_mut_ptr(),
                 damage,
-                0 as libc::c_int,
-                crate::bg_public_h::MOD_RAILGUN as libc::c_int,
+                0i32,
+                crate::bg_public_h::MOD_RAILGUN as i32,
             );
         }
-        if trace.contents & 1 as libc::c_int != 0 {
+        if trace.contents & 1 != 0 {
             break;
         }
         // unlink this entity, so the next trace will go past it
         crate::src::game::g_syscalls::trap_UnlinkEntity(traceEnt);
         unlinkedEntities[unlinked as usize] = traceEnt;
         unlinked += 1;
-        if !(unlinked < 4 as libc::c_int) {
+        if !(unlinked < 4) {
             break;
         }
     }
     // link back in any entities we unlinked
-    i = 0 as libc::c_int;
+    i = 0;
     while i < unlinked {
         crate::src::game::g_syscalls::trap_LinkEntity(unlinkedEntities[i as usize]);
         i += 1
@@ -1160,29 +1087,23 @@ pub unsafe extern "C" fn weapon_railgun_fire(mut ent: *mut crate::g_local_h::gen
     // send railgun beam effect
     tent = crate::src::game::g_utils::G_TempEntity(
         trace.endpos.as_mut_ptr(),
-        crate::bg_public_h::EV_RAILTRAIL as libc::c_int,
+        crate::bg_public_h::EV_RAILTRAIL as i32,
     );
     // set player number for custom colors on the railtrail
     (*tent).s.clientNum = (*ent).s.clientNum;
-    (*tent).s.origin2[0 as libc::c_int as usize] = muzzle[0 as libc::c_int as usize];
-    (*tent).s.origin2[1 as libc::c_int as usize] = muzzle[1 as libc::c_int as usize];
-    (*tent).s.origin2[2 as libc::c_int as usize] = muzzle[2 as libc::c_int as usize];
+    (*tent).s.origin2[0] = muzzle[0];
+    (*tent).s.origin2[1] = muzzle[1];
+    (*tent).s.origin2[2] = muzzle[2];
     // move origin a bit to come closer to the drawn gun muzzle
-    (*tent).s.origin2[0 as libc::c_int as usize] = (*tent).s.origin2[0 as libc::c_int as usize]
-        + right[0 as libc::c_int as usize] * 4 as libc::c_int as libc::c_float;
-    (*tent).s.origin2[1 as libc::c_int as usize] = (*tent).s.origin2[1 as libc::c_int as usize]
-        + right[1 as libc::c_int as usize] * 4 as libc::c_int as libc::c_float;
-    (*tent).s.origin2[2 as libc::c_int as usize] = (*tent).s.origin2[2 as libc::c_int as usize]
-        + right[2 as libc::c_int as usize] * 4 as libc::c_int as libc::c_float;
-    (*tent).s.origin2[0 as libc::c_int as usize] = (*tent).s.origin2[0 as libc::c_int as usize]
-        + up[0 as libc::c_int as usize] * -(1 as libc::c_int) as libc::c_float;
-    (*tent).s.origin2[1 as libc::c_int as usize] = (*tent).s.origin2[1 as libc::c_int as usize]
-        + up[1 as libc::c_int as usize] * -(1 as libc::c_int) as libc::c_float;
-    (*tent).s.origin2[2 as libc::c_int as usize] = (*tent).s.origin2[2 as libc::c_int as usize]
-        + up[2 as libc::c_int as usize] * -(1 as libc::c_int) as libc::c_float;
+    (*tent).s.origin2[0] = (*tent).s.origin2[0] + right[0] * 4f32;
+    (*tent).s.origin2[1] = (*tent).s.origin2[1] + right[1] * 4f32;
+    (*tent).s.origin2[2] = (*tent).s.origin2[2] + right[2] * 4f32;
+    (*tent).s.origin2[0] = (*tent).s.origin2[0] + up[0] * -1f32;
+    (*tent).s.origin2[1] = (*tent).s.origin2[1] + up[1] * -1f32;
+    (*tent).s.origin2[2] = (*tent).s.origin2[2] + up[2] * -1f32;
     // no explosion at end if SURF_NOIMPACT, but still make the trail
-    if trace.surfaceFlags & 0x10 as libc::c_int != 0 {
-        (*tent).s.eventParm = 255 as libc::c_int
+    if trace.surfaceFlags & 0x10 != 0 {
+        (*tent).s.eventParm = 255
     // don't make the explosion at the end
     } else {
         (*tent).s.eventParm =
@@ -1190,25 +1111,19 @@ pub unsafe extern "C" fn weapon_railgun_fire(mut ent: *mut crate::g_local_h::gen
     }
     (*tent).s.clientNum = (*ent).s.clientNum;
     // give the shooter a reward sound if they have made two railgun hits in a row
-    if hits == 0 as libc::c_int {
+    if hits == 0 {
         // complete miss
-        (*(*ent).client).accurateCount = 0 as libc::c_int
+        (*(*ent).client).accurateCount = 0
     } else {
         // check for "impressive" reward sound
         (*(*ent).client).accurateCount += hits;
-        if (*(*ent).client).accurateCount >= 2 as libc::c_int {
-            (*(*ent).client).accurateCount -= 2 as libc::c_int;
-            (*(*ent).client).ps.persistant
-                [crate::bg_public_h::PERS_IMPRESSIVE_COUNT as libc::c_int as usize] += 1;
+        if (*(*ent).client).accurateCount >= 2 {
+            (*(*ent).client).accurateCount -= 2;
+            (*(*ent).client).ps.persistant[crate::bg_public_h::PERS_IMPRESSIVE_COUNT as usize] += 1;
             // add the sprite over the player's head
-            (*(*ent).client).ps.eFlags &= !(0x8000 as libc::c_int
-                | 0x8 as libc::c_int
-                | 0x40 as libc::c_int
-                | 0x20000 as libc::c_int
-                | 0x10000 as libc::c_int
-                | 0x800 as libc::c_int);
-            (*(*ent).client).ps.eFlags |= 0x8000 as libc::c_int;
-            (*(*ent).client).rewardTime = crate::src::game::g_main::level.time + 2000 as libc::c_int
+            (*(*ent).client).ps.eFlags &= !(0x8000 | 0x8 | 0x40 | 0x20000 | 0x10000 | 0x800);
+            (*(*ent).client).ps.eFlags |= 0x8000;
+            (*(*ent).client).rewardTime = crate::src::game::g_main::level.time + 2000
         }
         (*(*ent).client).accuracy_hits += 1
     };
@@ -1233,7 +1148,7 @@ pub unsafe extern "C" fn Weapon_GrapplingHook_Fire(mut ent: *mut crate::g_local_
 
 pub unsafe extern "C" fn Weapon_HookFree(mut ent: *mut crate::g_local_h::gentity_t) {
     (*(*(*ent).parent).client).hook = 0 as *mut crate::g_local_h::gentity_t;
-    (*(*(*ent).parent).client).ps.pm_flags &= !(2048 as libc::c_int);
+    (*(*(*ent).parent).client).ps.pm_flags &= !(2048);
     crate::src::game::g_utils::G_FreeEntity(ent);
 }
 #[no_mangle]
@@ -1242,36 +1157,24 @@ pub unsafe extern "C" fn Weapon_HookThink(mut ent: *mut crate::g_local_h::gentit
     if !(*ent).enemy.is_null() {
         let mut v: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
         let mut oldorigin: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-        oldorigin[0 as libc::c_int as usize] = (*ent).r.currentOrigin[0 as libc::c_int as usize];
-        oldorigin[1 as libc::c_int as usize] = (*ent).r.currentOrigin[1 as libc::c_int as usize];
-        oldorigin[2 as libc::c_int as usize] = (*ent).r.currentOrigin[2 as libc::c_int as usize];
-        v[0 as libc::c_int as usize] =
-            ((*(*ent).enemy).r.currentOrigin[0 as libc::c_int as usize] as libc::c_double
-                + ((*(*ent).enemy).r.mins[0 as libc::c_int as usize]
-                    + (*(*ent).enemy).r.maxs[0 as libc::c_int as usize])
-                    as libc::c_double
-                    * 0.5f64) as crate::src::qcommon::q_shared::vec_t;
-        v[1 as libc::c_int as usize] =
-            ((*(*ent).enemy).r.currentOrigin[1 as libc::c_int as usize] as libc::c_double
-                + ((*(*ent).enemy).r.mins[1 as libc::c_int as usize]
-                    + (*(*ent).enemy).r.maxs[1 as libc::c_int as usize])
-                    as libc::c_double
-                    * 0.5f64) as crate::src::qcommon::q_shared::vec_t;
-        v[2 as libc::c_int as usize] =
-            ((*(*ent).enemy).r.currentOrigin[2 as libc::c_int as usize] as libc::c_double
-                + ((*(*ent).enemy).r.mins[2 as libc::c_int as usize]
-                    + (*(*ent).enemy).r.maxs[2 as libc::c_int as usize])
-                    as libc::c_double
-                    * 0.5f64) as crate::src::qcommon::q_shared::vec_t;
+        oldorigin[0] = (*ent).r.currentOrigin[0];
+        oldorigin[1] = (*ent).r.currentOrigin[1];
+        oldorigin[2] = (*ent).r.currentOrigin[2];
+        v[0] = ((*(*ent).enemy).r.currentOrigin[0] as f64
+            + ((*(*ent).enemy).r.mins[0] + (*(*ent).enemy).r.maxs[0]) as f64 * 0.5)
+            as crate::src::qcommon::q_shared::vec_t;
+        v[1] = ((*(*ent).enemy).r.currentOrigin[1] as f64
+            + ((*(*ent).enemy).r.mins[1] + (*(*ent).enemy).r.maxs[1]) as f64 * 0.5)
+            as crate::src::qcommon::q_shared::vec_t;
+        v[2] = ((*(*ent).enemy).r.currentOrigin[2] as f64
+            + ((*(*ent).enemy).r.mins[2] + (*(*ent).enemy).r.maxs[2]) as f64 * 0.5)
+            as crate::src::qcommon::q_shared::vec_t;
         SnapVectorTowards(v.as_mut_ptr(), oldorigin.as_mut_ptr());
         crate::src::game::g_utils::G_SetOrigin(ent, v.as_mut_ptr());
     }
-    (*(*(*ent).parent).client).ps.grapplePoint[0 as libc::c_int as usize] =
-        (*ent).r.currentOrigin[0 as libc::c_int as usize];
-    (*(*(*ent).parent).client).ps.grapplePoint[1 as libc::c_int as usize] =
-        (*ent).r.currentOrigin[1 as libc::c_int as usize];
-    (*(*(*ent).parent).client).ps.grapplePoint[2 as libc::c_int as usize] =
-        (*ent).r.currentOrigin[2 as libc::c_int as usize];
+    (*(*(*ent).parent).client).ps.grapplePoint[0] = (*ent).r.currentOrigin[0];
+    (*(*(*ent).parent).client).ps.grapplePoint[1] = (*ent).r.currentOrigin[1];
+    (*(*(*ent).parent).client).ps.grapplePoint[2] = (*ent).r.currentOrigin[2];
 }
 /*
 ======================================================================
@@ -1302,19 +1205,16 @@ pub unsafe extern "C" fn Weapon_LightningFire(mut ent: *mut crate::g_local_h::ge
     let mut end: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut traceEnt: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut tent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
-    let mut damage: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
-    let mut passent: libc::c_int = 0;
-    damage = (8 as libc::c_int as libc::c_float * s_quadFactor) as libc::c_int;
+    let mut damage: i32 = 0;
+    let mut i: i32 = 0;
+    let mut passent: i32 = 0;
+    damage = (8f32 * s_quadFactor) as i32;
     passent = (*ent).s.number;
-    i = 0 as libc::c_int;
-    if i < 10 as libc::c_int {
-        end[0 as libc::c_int as usize] = muzzle[0 as libc::c_int as usize]
-            + forward[0 as libc::c_int as usize] * 768 as libc::c_int as libc::c_float;
-        end[1 as libc::c_int as usize] = muzzle[1 as libc::c_int as usize]
-            + forward[1 as libc::c_int as usize] * 768 as libc::c_int as libc::c_float;
-        end[2 as libc::c_int as usize] = muzzle[2 as libc::c_int as usize]
-            + forward[2 as libc::c_int as usize] * 768 as libc::c_int as libc::c_float;
+    i = 0;
+    if i < 10 {
+        end[0] = muzzle[0] + forward[0] * 768f32;
+        end[1] = muzzle[1] + forward[1] * 768f32;
+        end[2] = muzzle[2] + forward[2] * 768f32;
         crate::src::game::g_syscalls::trap_Trace(
             &mut tr,
             muzzle.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -1322,9 +1222,9 @@ pub unsafe extern "C" fn Weapon_LightningFire(mut ent: *mut crate::g_local_h::ge
             0 as *const crate::src::qcommon::q_shared::vec_t,
             end.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             passent,
-            1 as libc::c_int | 0x2000000 as libc::c_int | 0x4000000 as libc::c_int,
+            1 | 0x2000000 | 0x4000000,
         );
-        if tr.entityNum == ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int {
+        if tr.entityNum == ((1) << 10) - 1 {
             return;
         }
         traceEnt = &mut *crate::src::game::g_main::g_entities
@@ -1341,23 +1241,23 @@ pub unsafe extern "C" fn Weapon_LightningFire(mut ent: *mut crate::g_local_h::ge
                 forward.as_mut_ptr(),
                 tr.endpos.as_mut_ptr(),
                 damage,
-                0 as libc::c_int,
-                crate::bg_public_h::MOD_LIGHTNING as libc::c_int,
+                0i32,
+                crate::bg_public_h::MOD_LIGHTNING as i32,
             );
         }
-        if (*traceEnt).takedamage as libc::c_uint != 0 && !(*traceEnt).client.is_null() {
+        if (*traceEnt).takedamage != 0 && !(*traceEnt).client.is_null() {
             tent = crate::src::game::g_utils::G_TempEntity(
                 tr.endpos.as_mut_ptr(),
-                crate::bg_public_h::EV_MISSILE_HIT as libc::c_int,
+                crate::bg_public_h::EV_MISSILE_HIT as i32,
             );
             (*tent).s.otherEntityNum = (*traceEnt).s.number;
             (*tent).s.eventParm =
                 crate::src::qcommon::q_math::DirToByte(tr.plane.normal.as_mut_ptr());
             (*tent).s.weapon = (*ent).s.weapon
-        } else if tr.surfaceFlags & 0x10 as libc::c_int == 0 {
+        } else if tr.surfaceFlags & 0x10 == 0 {
             tent = crate::src::game::g_utils::G_TempEntity(
                 tr.endpos.as_mut_ptr(),
-                crate::bg_public_h::EV_MISSILE_MISS as libc::c_int,
+                crate::bg_public_h::EV_MISSILE_MISS as i32,
             );
             (*tent).s.eventParm =
                 crate::src::qcommon::q_math::DirToByte(tr.plane.normal.as_mut_ptr())
@@ -1388,9 +1288,7 @@ pub unsafe extern "C" fn LogAccuracyHit(
     if (*attacker).client.is_null() {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if (*(*target).client).ps.stats[crate::bg_public_h::STAT_HEALTH as libc::c_int as usize]
-        <= 0 as libc::c_int
-    {
+    if (*(*target).client).ps.stats[crate::bg_public_h::STAT_HEALTH as usize] <= 0 {
         return crate::src::qcommon::q_shared::qfalse;
     }
     if crate::src::game::g_team::OnSameTeam(target, attacker) as u64 != 0 {
@@ -1414,27 +1312,18 @@ pub unsafe extern "C" fn CalcMuzzlePoint(
     mut up_0: *mut crate::src::qcommon::q_shared::vec_t,
     mut muzzlePoint: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    *muzzlePoint.offset(0 as libc::c_int as isize) = (*ent).s.pos.trBase[0 as libc::c_int as usize];
-    *muzzlePoint.offset(1 as libc::c_int as isize) = (*ent).s.pos.trBase[1 as libc::c_int as usize];
-    *muzzlePoint.offset(2 as libc::c_int as isize) = (*ent).s.pos.trBase[2 as libc::c_int as usize];
-    let ref mut fresh0 = *muzzlePoint.offset(2 as libc::c_int as isize);
-    *fresh0 += (*(*ent).client).ps.viewheight as libc::c_float;
-    *muzzlePoint.offset(0 as libc::c_int as isize) = *muzzlePoint.offset(0 as libc::c_int as isize)
-        + *forward_0.offset(0 as libc::c_int as isize) * 14 as libc::c_int as libc::c_float;
-    *muzzlePoint.offset(1 as libc::c_int as isize) = *muzzlePoint.offset(1 as libc::c_int as isize)
-        + *forward_0.offset(1 as libc::c_int as isize) * 14 as libc::c_int as libc::c_float;
-    *muzzlePoint.offset(2 as libc::c_int as isize) = *muzzlePoint.offset(2 as libc::c_int as isize)
-        + *forward_0.offset(2 as libc::c_int as isize) * 14 as libc::c_int as libc::c_float;
+    *muzzlePoint.offset(0) = (*ent).s.pos.trBase[0];
+    *muzzlePoint.offset(1) = (*ent).s.pos.trBase[1];
+    *muzzlePoint.offset(2) = (*ent).s.pos.trBase[2];
+    let ref mut fresh0 = *muzzlePoint.offset(2);
+    *fresh0 += (*(*ent).client).ps.viewheight as f32;
+    *muzzlePoint.offset(0) = *muzzlePoint.offset(0) + *forward_0.offset(0) * 14f32;
+    *muzzlePoint.offset(1) = *muzzlePoint.offset(1) + *forward_0.offset(1) * 14f32;
+    *muzzlePoint.offset(2) = *muzzlePoint.offset(2) + *forward_0.offset(2) * 14f32;
     // snap to integer coordinates for more efficient network bandwidth usage
-    *muzzlePoint.offset(0 as libc::c_int as isize) = *muzzlePoint.offset(0 as libc::c_int as isize)
-        as libc::c_int
-        as crate::src::qcommon::q_shared::vec_t;
-    *muzzlePoint.offset(1 as libc::c_int as isize) = *muzzlePoint.offset(1 as libc::c_int as isize)
-        as libc::c_int
-        as crate::src::qcommon::q_shared::vec_t;
-    *muzzlePoint.offset(2 as libc::c_int as isize) = *muzzlePoint.offset(2 as libc::c_int as isize)
-        as libc::c_int
-        as crate::src::qcommon::q_shared::vec_t;
+    *muzzlePoint.offset(0) = *muzzlePoint.offset(0) as i32 as crate::src::qcommon::q_shared::vec_t;
+    *muzzlePoint.offset(1) = *muzzlePoint.offset(1) as i32 as crate::src::qcommon::q_shared::vec_t;
+    *muzzlePoint.offset(2) = *muzzlePoint.offset(2) as i32 as crate::src::qcommon::q_shared::vec_t;
 }
 /*
 ===============
@@ -1453,27 +1342,18 @@ pub unsafe extern "C" fn CalcMuzzlePointOrigin(
     mut up_0: *mut crate::src::qcommon::q_shared::vec_t,
     mut muzzlePoint: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    *muzzlePoint.offset(0 as libc::c_int as isize) = (*ent).s.pos.trBase[0 as libc::c_int as usize];
-    *muzzlePoint.offset(1 as libc::c_int as isize) = (*ent).s.pos.trBase[1 as libc::c_int as usize];
-    *muzzlePoint.offset(2 as libc::c_int as isize) = (*ent).s.pos.trBase[2 as libc::c_int as usize];
-    let ref mut fresh1 = *muzzlePoint.offset(2 as libc::c_int as isize);
-    *fresh1 += (*(*ent).client).ps.viewheight as libc::c_float;
-    *muzzlePoint.offset(0 as libc::c_int as isize) = *muzzlePoint.offset(0 as libc::c_int as isize)
-        + *forward_0.offset(0 as libc::c_int as isize) * 14 as libc::c_int as libc::c_float;
-    *muzzlePoint.offset(1 as libc::c_int as isize) = *muzzlePoint.offset(1 as libc::c_int as isize)
-        + *forward_0.offset(1 as libc::c_int as isize) * 14 as libc::c_int as libc::c_float;
-    *muzzlePoint.offset(2 as libc::c_int as isize) = *muzzlePoint.offset(2 as libc::c_int as isize)
-        + *forward_0.offset(2 as libc::c_int as isize) * 14 as libc::c_int as libc::c_float;
+    *muzzlePoint.offset(0) = (*ent).s.pos.trBase[0];
+    *muzzlePoint.offset(1) = (*ent).s.pos.trBase[1];
+    *muzzlePoint.offset(2) = (*ent).s.pos.trBase[2];
+    let ref mut fresh1 = *muzzlePoint.offset(2);
+    *fresh1 += (*(*ent).client).ps.viewheight as f32;
+    *muzzlePoint.offset(0) = *muzzlePoint.offset(0) + *forward_0.offset(0) * 14f32;
+    *muzzlePoint.offset(1) = *muzzlePoint.offset(1) + *forward_0.offset(1) * 14f32;
+    *muzzlePoint.offset(2) = *muzzlePoint.offset(2) + *forward_0.offset(2) * 14f32;
     // snap to integer coordinates for more efficient network bandwidth usage
-    *muzzlePoint.offset(0 as libc::c_int as isize) = *muzzlePoint.offset(0 as libc::c_int as isize)
-        as libc::c_int
-        as crate::src::qcommon::q_shared::vec_t;
-    *muzzlePoint.offset(1 as libc::c_int as isize) = *muzzlePoint.offset(1 as libc::c_int as isize)
-        as libc::c_int
-        as crate::src::qcommon::q_shared::vec_t;
-    *muzzlePoint.offset(2 as libc::c_int as isize) = *muzzlePoint.offset(2 as libc::c_int as isize)
-        as libc::c_int
-        as crate::src::qcommon::q_shared::vec_t;
+    *muzzlePoint.offset(0) = *muzzlePoint.offset(0) as i32 as crate::src::qcommon::q_shared::vec_t;
+    *muzzlePoint.offset(1) = *muzzlePoint.offset(1) as i32 as crate::src::qcommon::q_shared::vec_t;
+    *muzzlePoint.offset(2) = *muzzlePoint.offset(2) as i32 as crate::src::qcommon::q_shared::vec_t;
 }
 /*
 ===============
@@ -1483,14 +1363,14 @@ FireWeapon
 #[no_mangle]
 
 pub unsafe extern "C" fn FireWeapon(mut ent: *mut crate::g_local_h::gentity_t) {
-    if (*(*ent).client).ps.powerups[crate::bg_public_h::PW_QUAD as libc::c_int as usize] != 0 {
+    if (*(*ent).client).ps.powerups[crate::bg_public_h::PW_QUAD as usize] != 0 {
         s_quadFactor = crate::src::game::g_main::g_quadfactor.value
     } else {
-        s_quadFactor = 1 as libc::c_int as libc::c_float
+        s_quadFactor = 1f32
     }
     // track shots taken for accuracy tracking.  Grapple is not a weapon and gauntet is just not tracked
-    if (*ent).s.weapon != crate::bg_public_h::WP_GRAPPLING_HOOK as libc::c_int
-        && (*ent).s.weapon != crate::bg_public_h::WP_GAUNTLET as libc::c_int
+    if (*ent).s.weapon != crate::bg_public_h::WP_GRAPPLING_HOOK as i32
+        && (*ent).s.weapon != crate::bg_public_h::WP_GAUNTLET as i32
     {
         (*(*ent).client).accuracy_shots += 1
     }
@@ -1521,22 +1401,10 @@ pub unsafe extern "C" fn FireWeapon(mut ent: *mut crate::g_local_h::gentity_t) {
             weapon_supershotgun_fire(ent);
         }
         2 => {
-            if crate::src::game::g_main::g_gametype.integer
-                != crate::bg_public_h::GT_TEAM as libc::c_int
-            {
-                Bullet_Fire(
-                    ent,
-                    200 as libc::c_int as libc::c_float,
-                    7 as libc::c_int,
-                    crate::bg_public_h::MOD_MACHINEGUN as libc::c_int,
-                );
+            if crate::src::game::g_main::g_gametype.integer != crate::bg_public_h::GT_TEAM as i32 {
+                Bullet_Fire(ent, 200f32, 7i32, crate::bg_public_h::MOD_MACHINEGUN as i32);
             } else {
-                Bullet_Fire(
-                    ent,
-                    200 as libc::c_int as libc::c_float,
-                    5 as libc::c_int,
-                    crate::bg_public_h::MOD_MACHINEGUN as libc::c_int,
-                );
+                Bullet_Fire(ent, 200f32, 5i32, crate::bg_public_h::MOD_MACHINEGUN as i32);
             }
         }
         4 => {

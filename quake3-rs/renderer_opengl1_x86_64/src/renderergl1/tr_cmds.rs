@@ -324,47 +324,49 @@ pub unsafe extern "C" fn R_PerformanceCounters() {
         crate::stdlib::memset(
             &mut crate::src::renderergl1::tr_main::tr.pc
                 as *mut crate::tr_local_h::frontEndCounters_t as *mut libc::c_void,
-            0 as libc::c_int,
-            ::std::mem::size_of::<crate::tr_local_h::frontEndCounters_t>() as libc::c_ulong,
+            0,
+            
+            ::std::mem::size_of::<crate::tr_local_h::frontEndCounters_t>(),
         );
         crate::stdlib::memset(
             &mut crate::src::renderergl1::tr_backend::backEnd.pc
                 as *mut crate::tr_local_h::backEndCounters_t as *mut libc::c_void,
-            0 as libc::c_int,
-            ::std::mem::size_of::<crate::tr_local_h::backEndCounters_t>() as libc::c_ulong,
+            0,
+            
+            ::std::mem::size_of::<crate::tr_local_h::backEndCounters_t>(),
         );
         return;
     }
-    if (*crate::src::renderergl1::tr_init::r_speeds).integer == 1 as libc::c_int {
+    if (*crate::src::renderergl1::tr_init::r_speeds).integer == 1 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_ALL as i32,
             b"%i/%i shaders/surfs %i leafs %i verts %i/%i tris %.2f mtex %.2f dc\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             crate::src::renderergl1::tr_backend::backEnd.pc.c_shaders,
             crate::src::renderergl1::tr_backend::backEnd.pc.c_surfaces,
             crate::src::renderergl1::tr_main::tr.pc.c_leafs,
             crate::src::renderergl1::tr_backend::backEnd.pc.c_vertexes,
-            crate::src::renderergl1::tr_backend::backEnd.pc.c_indexes / 3 as libc::c_int,
+            crate::src::renderergl1::tr_backend::backEnd.pc.c_indexes / 3i32,
             crate::src::renderergl1::tr_backend::backEnd
                 .pc
                 .c_totalIndexes
-                / 3 as libc::c_int,
-            (crate::src::renderergl1::tr_image::R_SumOfUsedImages() as libc::c_float / 1000000.0f32)
-                as libc::c_double,
+                / 3i32,
+            (crate::src::renderergl1::tr_image::R_SumOfUsedImages() as f32 / 1000000.0f32)
+                as f64,
             (crate::src::renderergl1::tr_backend::backEnd.pc.c_overDraw
                 / (crate::src::renderergl1::tr_init::glConfig.vidWidth
                     * crate::src::renderergl1::tr_init::glConfig.vidHeight)
-                    as libc::c_float) as libc::c_double,
+                    as f32) as f64,
         );
-    } else if (*crate::src::renderergl1::tr_init::r_speeds).integer == 2 as libc::c_int {
+    } else if (*crate::src::renderergl1::tr_init::r_speeds).integer == 2 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_ALL as i32,
             b"(patch) %i sin %i sclip  %i sout %i bin %i bclip %i bout\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             crate::src::renderergl1::tr_main::tr
                 .pc
                 .c_sphere_cull_patch_in,
@@ -383,9 +385,9 @@ pub unsafe extern "C" fn R_PerformanceCounters() {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
+            crate::src::qcommon::q_shared::PRINT_ALL as i32,
             b"(md3) %i sin %i sclip  %i sout %i bin %i bclip %i bout\n\x00" as *const u8
-                as *const libc::c_char,
+                as *const i8,
             crate::src::renderergl1::tr_main::tr.pc.c_sphere_cull_md3_in,
             crate::src::renderergl1::tr_main::tr
                 .pc
@@ -397,15 +399,15 @@ pub unsafe extern "C" fn R_PerformanceCounters() {
             crate::src::renderergl1::tr_main::tr.pc.c_box_cull_md3_clip,
             crate::src::renderergl1::tr_main::tr.pc.c_box_cull_md3_out,
         );
-    } else if (*crate::src::renderergl1::tr_init::r_speeds).integer == 3 as libc::c_int {
+    } else if (*crate::src::renderergl1::tr_init::r_speeds).integer == 3 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-            b"viewcluster: %i\n\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::PRINT_ALL as i32,
+            b"viewcluster: %i\n\x00" as *const u8 as *const i8,
             crate::src::renderergl1::tr_main::tr.viewCluster,
         );
-    } else if (*crate::src::renderergl1::tr_init::r_speeds).integer == 4 as libc::c_int {
+    } else if (*crate::src::renderergl1::tr_init::r_speeds).integer == 4 {
         if crate::src::renderergl1::tr_backend::backEnd
             .pc
             .c_dlightVertexes
@@ -414,9 +416,9 @@ pub unsafe extern "C" fn R_PerformanceCounters() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
                 b"dlight srf:%i  culled:%i  verts:%i  tris:%i\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 crate::src::renderergl1::tr_main::tr.pc.c_dlightSurfaces,
                 crate::src::renderergl1::tr_main::tr
                     .pc
@@ -427,23 +429,23 @@ pub unsafe extern "C" fn R_PerformanceCounters() {
                 crate::src::renderergl1::tr_backend::backEnd
                     .pc
                     .c_dlightIndexes
-                    / 3 as libc::c_int,
+                    / 3i32,
             );
         }
-    } else if (*crate::src::renderergl1::tr_init::r_speeds).integer == 5 as libc::c_int {
+    } else if (*crate::src::renderergl1::tr_init::r_speeds).integer == 5 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-            b"zFar: %.0f\n\x00" as *const u8 as *const libc::c_char,
-            crate::src::renderergl1::tr_main::tr.viewParms.zFar as libc::c_double,
+            crate::src::qcommon::q_shared::PRINT_ALL as i32,
+            b"zFar: %.0f\n\x00" as *const u8 as *const i8,
+            crate::src::renderergl1::tr_main::tr.viewParms.zFar as f64,
         );
-    } else if (*crate::src::renderergl1::tr_init::r_speeds).integer == 6 as libc::c_int {
+    } else if (*crate::src::renderergl1::tr_init::r_speeds).integer == 6 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
-            crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
-            b"flare adds:%i tests:%i renders:%i\n\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::PRINT_ALL as i32,
+            b"flare adds:%i tests:%i renders:%i\n\x00" as *const u8 as *const i8,
             crate::src::renderergl1::tr_backend::backEnd.pc.c_flareAdds,
             crate::src::renderergl1::tr_backend::backEnd.pc.c_flareTests,
             crate::src::renderergl1::tr_backend::backEnd
@@ -454,14 +456,16 @@ pub unsafe extern "C" fn R_PerformanceCounters() {
     crate::stdlib::memset(
         &mut crate::src::renderergl1::tr_main::tr.pc as *mut crate::tr_local_h::frontEndCounters_t
             as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::tr_local_h::frontEndCounters_t>() as libc::c_ulong,
+        0,
+        
+        ::std::mem::size_of::<crate::tr_local_h::frontEndCounters_t>(),
     );
     crate::stdlib::memset(
         &mut crate::src::renderergl1::tr_backend::backEnd.pc
             as *mut crate::tr_local_h::backEndCounters_t as *mut libc::c_void,
-        0 as libc::c_int,
-        ::std::mem::size_of::<crate::tr_local_h::backEndCounters_t>() as libc::c_ulong,
+        0,
+        
+        ::std::mem::size_of::<crate::tr_local_h::backEndCounters_t>(),
     );
 }
 /*
@@ -481,10 +485,10 @@ pub unsafe extern "C" fn R_IssueRenderCommands(
     *((*cmdList)
         .cmds
         .as_mut_ptr()
-        .offset((*cmdList).used as isize) as *mut libc::c_int) =
-        crate::tr_local_h::RC_END_OF_LIST as libc::c_int;
+        .offset((*cmdList).used as isize) as *mut i32) =
+        crate::tr_local_h::RC_END_OF_LIST as i32;
     // clear it out, in case this is a sync and not a buffer flip
-    (*cmdList).used = 0 as libc::c_int;
+    (*cmdList).used = 0;
     if runPerformanceCounters as u64 != 0 {
         R_PerformanceCounters();
     }
@@ -574,32 +578,32 @@ make sure there is enough command space
 #[no_mangle]
 
 pub unsafe extern "C" fn R_GetCommandBufferReserved(
-    mut bytes: libc::c_int,
-    mut reservedBytes: libc::c_int,
+    mut bytes: i32,
+    mut reservedBytes: i32,
 ) -> *mut libc::c_void {
     let mut cmdList: *mut crate::tr_local_h::renderCommandList_t =
         0 as *mut crate::tr_local_h::renderCommandList_t;
     cmdList = &mut (*crate::src::renderergl1::tr_backend::backEndData).commands;
-    bytes = ((bytes as libc::c_ulong)
-        .wrapping_add(::std::mem::size_of::<*mut libc::c_void>() as libc::c_ulong)
-        .wrapping_sub(1 as libc::c_int as libc::c_ulong)
-        & !(::std::mem::size_of::<*mut libc::c_void>() as libc::c_ulong)
-            .wrapping_sub(1 as libc::c_int as libc::c_ulong)) as libc::c_int;
+    bytes = ((bytes as usize)
+        .wrapping_add(::std::mem::size_of::<*mut libc::c_void>())
+        .wrapping_sub(1usize)
+        & !(::std::mem::size_of::<*mut libc::c_void>())
+            .wrapping_sub(1usize)) as i32;
     // always leave room for the end of list command
-    if (((*cmdList).used + bytes) as libc::c_ulong)
-        .wrapping_add(::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
-        .wrapping_add(reservedBytes as libc::c_ulong)
-        > 0x40000 as libc::c_int as libc::c_ulong
+    if (((*cmdList).used + bytes) as usize)
+        .wrapping_add(::std::mem::size_of::<i32>())
+        .wrapping_add(reservedBytes as usize)
+        > 0x40000i32 as usize
     {
-        if bytes as libc::c_ulong
-            > (0x40000 as libc::c_int as libc::c_ulong)
-                .wrapping_sub(::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
+        if bytes as usize
+            > (0x40000i32 as usize)
+                .wrapping_sub(::std::mem::size_of::<i32>())
         {
             crate::src::renderergl1::tr_main::ri
                 .Error
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::ERR_FATAL as libc::c_int,
-                b"R_GetCommandBuffer: bad size %i\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::ERR_FATAL as i32,
+                b"R_GetCommandBuffer: bad size %i\x00" as *const u8 as *const i8,
                 bytes,
             );
         }
@@ -622,14 +626,14 @@ returns NULL if there is not enough space for important commands
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn R_GetCommandBuffer(mut bytes: libc::c_int) -> *mut libc::c_void {
+pub unsafe extern "C" fn R_GetCommandBuffer(mut bytes: i32) -> *mut libc::c_void {
     return R_GetCommandBufferReserved(
         bytes,
-        ((::std::mem::size_of::<crate::tr_local_h::swapBuffersCommand_t>() as libc::c_ulong)
-            .wrapping_add(::std::mem::size_of::<*mut libc::c_void>() as libc::c_ulong)
-            .wrapping_sub(1 as libc::c_int as libc::c_ulong)
-            & !(::std::mem::size_of::<*mut libc::c_void>() as libc::c_ulong)
-                .wrapping_sub(1 as libc::c_int as libc::c_ulong)) as libc::c_int,
+        ((::std::mem::size_of::<crate::tr_local_h::swapBuffersCommand_t>())
+            .wrapping_add(::std::mem::size_of::<*mut libc::c_void>())
+            .wrapping_sub(1usize)
+            & !(::std::mem::size_of::<*mut libc::c_void>())
+                .wrapping_sub(1usize)) as i32,
     );
 }
 /*
@@ -642,18 +646,19 @@ R_AddDrawSurfCmd
 
 pub unsafe extern "C" fn R_AddDrawSurfCmd(
     mut drawSurfs: *mut crate::tr_local_h::drawSurf_t,
-    mut numDrawSurfs: libc::c_int,
+    mut numDrawSurfs: i32,
 ) {
     let mut cmd: *mut crate::tr_local_h::drawSurfsCommand_t =
         0 as *mut crate::tr_local_h::drawSurfsCommand_t;
     cmd = R_GetCommandBuffer(
-        ::std::mem::size_of::<crate::tr_local_h::drawSurfsCommand_t>() as libc::c_ulong
-            as libc::c_int,
+        
+        ::std::mem::size_of::<crate::tr_local_h::drawSurfsCommand_t>()
+            as i32,
     ) as *mut crate::tr_local_h::drawSurfsCommand_t;
     if cmd.is_null() {
         return;
     }
-    (*cmd).commandId = crate::tr_local_h::RC_DRAW_SURFS as libc::c_int;
+    (*cmd).commandId = crate::tr_local_h::RC_DRAW_SURFS as i32;
     (*cmd).drawSurfs = drawSurfs;
     (*cmd).numDrawSurfs = numDrawSurfs;
     (*cmd).refdef = crate::src::renderergl1::tr_main::tr.refdef;
@@ -668,33 +673,34 @@ Passing NULL will set the color to white
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn RE_SetColor(mut rgba: *const libc::c_float) {
+pub unsafe extern "C" fn RE_SetColor(mut rgba: *const f32) {
     let mut cmd: *mut crate::tr_local_h::setColorCommand_t =
         0 as *mut crate::tr_local_h::setColorCommand_t;
     if crate::src::renderergl1::tr_main::tr.registered as u64 == 0 {
         return;
     }
     cmd = R_GetCommandBuffer(
-        ::std::mem::size_of::<crate::tr_local_h::setColorCommand_t>() as libc::c_ulong
-            as libc::c_int,
+        
+        ::std::mem::size_of::<crate::tr_local_h::setColorCommand_t>()
+            as i32,
     ) as *mut crate::tr_local_h::setColorCommand_t;
     if cmd.is_null() {
         return;
     }
-    (*cmd).commandId = crate::tr_local_h::RC_SET_COLOR as libc::c_int;
+    (*cmd).commandId = crate::tr_local_h::RC_SET_COLOR as i32;
     if rgba.is_null() {
-        static mut colorWhite: [libc::c_float; 4] = [
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
-            1 as libc::c_int as libc::c_float,
+        static mut colorWhite: [f32; 4] = [
+            1f32,
+            1f32,
+            1f32,
+            1f32,
         ];
         rgba = colorWhite.as_mut_ptr()
     }
-    (*cmd).color[0 as libc::c_int as usize] = *rgba.offset(0 as libc::c_int as isize);
-    (*cmd).color[1 as libc::c_int as usize] = *rgba.offset(1 as libc::c_int as isize);
-    (*cmd).color[2 as libc::c_int as usize] = *rgba.offset(2 as libc::c_int as isize);
-    (*cmd).color[3 as libc::c_int as usize] = *rgba.offset(3 as libc::c_int as isize);
+    (*cmd).color[0] = *rgba.offset(0);
+    (*cmd).color[1] = *rgba.offset(1);
+    (*cmd).color[2] = *rgba.offset(2);
+    (*cmd).color[3] = *rgba.offset(3);
 }
 /*
 =============
@@ -704,14 +710,14 @@ RE_StretchPic
 #[no_mangle]
 
 pub unsafe extern "C" fn RE_StretchPic(
-    mut x: libc::c_float,
-    mut y: libc::c_float,
-    mut w: libc::c_float,
-    mut h: libc::c_float,
-    mut s1: libc::c_float,
-    mut t1: libc::c_float,
-    mut s2: libc::c_float,
-    mut t2: libc::c_float,
+    mut x: f32,
+    mut y: f32,
+    mut w: f32,
+    mut h: f32,
+    mut s1: f32,
+    mut t1: f32,
+    mut s2: f32,
+    mut t2: f32,
     mut hShader: crate::src::qcommon::q_shared::qhandle_t,
 ) {
     let mut cmd: *mut crate::tr_local_h::stretchPicCommand_t =
@@ -720,13 +726,14 @@ pub unsafe extern "C" fn RE_StretchPic(
         return;
     }
     cmd = R_GetCommandBuffer(
-        ::std::mem::size_of::<crate::tr_local_h::stretchPicCommand_t>() as libc::c_ulong
-            as libc::c_int,
+        
+        ::std::mem::size_of::<crate::tr_local_h::stretchPicCommand_t>()
+            as i32,
     ) as *mut crate::tr_local_h::stretchPicCommand_t;
     if cmd.is_null() {
         return;
     }
-    (*cmd).commandId = crate::tr_local_h::RC_STRETCH_PIC as libc::c_int;
+    (*cmd).commandId = crate::tr_local_h::RC_STRETCH_PIC as i32;
     (*cmd).shader = crate::src::renderergl1::tr_shader::R_GetShaderByHandle(hShader);
     (*cmd).x = x;
     (*cmd).y = y;
@@ -742,53 +749,53 @@ pub unsafe extern "C" fn RE_StretchPic(
 pub unsafe extern "C" fn R_SetColorMode(
     mut rgba: *mut crate::stdlib::GLboolean,
     mut stereoFrame: crate::tr_types_h::stereoFrame_t,
-    mut colormode: libc::c_int,
+    mut colormode: i32,
 ) {
-    let ref mut fresh0 = *rgba.offset(3 as libc::c_int as isize);
-    *fresh0 = 1 as libc::c_int as crate::stdlib::GLboolean;
-    let ref mut fresh1 = *rgba.offset(2 as libc::c_int as isize);
+    let ref mut fresh0 = *rgba.offset(3);
+    *fresh0 = 1u8;
+    let ref mut fresh1 = *rgba.offset(2);
     *fresh1 = *fresh0;
-    let ref mut fresh2 = *rgba.offset(1 as libc::c_int as isize);
+    let ref mut fresh2 = *rgba.offset(1);
     *fresh2 = *fresh1;
-    *rgba.offset(0 as libc::c_int as isize) = *fresh2;
-    if colormode > 4 as libc::c_int {
-        if stereoFrame as libc::c_uint
-            == crate::tr_types_h::STEREO_LEFT as libc::c_int as libc::c_uint
+    *rgba.offset(0) = *fresh2;
+    if colormode > 4 {
+        if  stereoFrame
+            ==  crate::tr_types_h::STEREO_LEFT
         {
             stereoFrame = crate::tr_types_h::STEREO_RIGHT
-        } else if stereoFrame as libc::c_uint
-            == crate::tr_types_h::STEREO_RIGHT as libc::c_int as libc::c_uint
+        } else if  stereoFrame
+            ==  crate::tr_types_h::STEREO_RIGHT
         {
             stereoFrame = crate::tr_types_h::STEREO_LEFT
         }
-        colormode -= 4 as libc::c_int
+        colormode -= 4
     }
-    if colormode == 4 as libc::c_int {
-        if stereoFrame as libc::c_uint
-            == crate::tr_types_h::STEREO_LEFT as libc::c_int as libc::c_uint
+    if colormode == 4 {
+        if  stereoFrame
+            ==  crate::tr_types_h::STEREO_LEFT
         {
-            let ref mut fresh3 = *rgba.offset(2 as libc::c_int as isize);
-            *fresh3 = 0 as libc::c_int as crate::stdlib::GLboolean;
-            *rgba.offset(0 as libc::c_int as isize) = *fresh3
-        } else if stereoFrame as libc::c_uint
-            == crate::tr_types_h::STEREO_RIGHT as libc::c_int as libc::c_uint
+            let ref mut fresh3 = *rgba.offset(2);
+            *fresh3 = 0u8;
+            *rgba.offset(0) = *fresh3
+        } else if  stereoFrame
+            ==  crate::tr_types_h::STEREO_RIGHT
         {
-            *rgba.offset(1 as libc::c_int as isize) = 0 as libc::c_int as crate::stdlib::GLboolean
+            *rgba.offset(1) = 0u8
         }
-    } else if stereoFrame as libc::c_uint
-        == crate::tr_types_h::STEREO_LEFT as libc::c_int as libc::c_uint
+    } else if  stereoFrame
+        ==  crate::tr_types_h::STEREO_LEFT
     {
-        let ref mut fresh4 = *rgba.offset(2 as libc::c_int as isize);
-        *fresh4 = 0 as libc::c_int as crate::stdlib::GLboolean;
-        *rgba.offset(1 as libc::c_int as isize) = *fresh4
-    } else if stereoFrame as libc::c_uint
-        == crate::tr_types_h::STEREO_RIGHT as libc::c_int as libc::c_uint
+        let ref mut fresh4 = *rgba.offset(2);
+        *fresh4 = 0u8;
+        *rgba.offset(1) = *fresh4
+    } else if  stereoFrame
+        ==  crate::tr_types_h::STEREO_RIGHT
     {
-        *rgba.offset(0 as libc::c_int as isize) = 0 as libc::c_int as crate::stdlib::GLboolean;
-        if colormode == 2 as libc::c_int {
-            *rgba.offset(1 as libc::c_int as isize) = 0 as libc::c_int as crate::stdlib::GLboolean
-        } else if colormode == 3 as libc::c_int {
-            *rgba.offset(2 as libc::c_int as isize) = 0 as libc::c_int as crate::stdlib::GLboolean
+        *rgba.offset(0) = 0u8;
+        if colormode == 2 {
+            *rgba.offset(1) = 0u8
+        } else if colormode == 3 {
+            *rgba.offset(2) = 0u8
         }
     };
 }
@@ -812,64 +819,64 @@ pub unsafe extern "C" fn RE_BeginFrame(mut stereoFrame: crate::tr_types_h::stere
     }
     crate::src::renderergl1::tr_init::glState.finishCalled = crate::src::qcommon::q_shared::qfalse;
     crate::src::renderergl1::tr_main::tr.frameCount += 1;
-    crate::src::renderergl1::tr_main::tr.frameSceneNum = 0 as libc::c_int;
+    crate::src::renderergl1::tr_main::tr.frameSceneNum = 0;
     //
     // do overdraw measurement
     //
     if (*crate::src::renderergl1::tr_init::r_measureOverdraw).integer != 0 {
-        if crate::src::renderergl1::tr_init::glConfig.stencilBits < 4 as libc::c_int {
+        if crate::src::renderergl1::tr_init::glConfig.stencilBits < 4 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
                 b"Warning: not enough stencil bits to measure overdraw: %d\n\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 crate::src::renderergl1::tr_init::glConfig.stencilBits,
             );
             crate::src::renderergl1::tr_main::ri
                 .Cvar_Set
                 .expect("non-null function pointer")(
-                b"r_measureOverdraw\x00" as *const u8 as *const libc::c_char,
-                b"0\x00" as *const u8 as *const libc::c_char,
+                b"r_measureOverdraw\x00" as *const u8 as *const i8,
+                b"0\x00" as *const u8 as *const i8,
             );
             (*crate::src::renderergl1::tr_init::r_measureOverdraw).modified =
                 crate::src::qcommon::q_shared::qfalse
-        } else if (*crate::src::renderergl1::tr_init::r_shadows).integer == 2 as libc::c_int {
+        } else if (*crate::src::renderergl1::tr_init::r_shadows).integer == 2 {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::PRINT_ALL as libc::c_int,
+                crate::src::qcommon::q_shared::PRINT_ALL as i32,
                 b"Warning: stencil shadows and overdraw measurement are mutually exclusive\n\x00"
-                    as *const u8 as *const libc::c_char,
+                    as *const u8 as *const i8,
             );
             crate::src::renderergl1::tr_main::ri
                 .Cvar_Set
                 .expect("non-null function pointer")(
-                b"r_measureOverdraw\x00" as *const u8 as *const libc::c_char,
-                b"0\x00" as *const u8 as *const libc::c_char,
+                b"r_measureOverdraw\x00" as *const u8 as *const i8,
+                b"0\x00" as *const u8 as *const i8,
             );
             (*crate::src::renderergl1::tr_init::r_measureOverdraw).modified =
                 crate::src::qcommon::q_shared::qfalse
         } else {
             R_IssuePendingRenderCommands();
             crate::src::sdl::sdl_glimp::qglEnable.expect("non-null function pointer")(
-                0xb90 as libc::c_int as crate::stdlib::GLenum,
+                0xb90u32,
             );
             crate::src::sdl::sdl_glimp::qglStencilMask.expect("non-null function pointer")(
-                !(0 as libc::c_uint),
+                !(0u32),
             );
             crate::src::sdl::sdl_glimp::qglClearStencil.expect("non-null function pointer")(
-                0 as libc::c_uint as crate::stdlib::GLint,
+                0,
             );
             crate::src::sdl::sdl_glimp::qglStencilFunc.expect("non-null function pointer")(
-                0x207 as libc::c_int as crate::stdlib::GLenum,
-                0 as libc::c_uint as crate::stdlib::GLint,
-                !(0 as libc::c_uint),
+                0x207u32,
+                0,
+                !(0),
             );
             crate::src::sdl::sdl_glimp::qglStencilOp.expect("non-null function pointer")(
-                0x1e00 as libc::c_int as crate::stdlib::GLenum,
-                0x1e02 as libc::c_int as crate::stdlib::GLenum,
-                0x1e02 as libc::c_int as crate::stdlib::GLenum,
+                0x1e00u32,
+                0x1e02u32,
+                0x1e02u32,
             );
         }
         (*crate::src::renderergl1::tr_init::r_measureOverdraw).modified =
@@ -879,7 +886,7 @@ pub unsafe extern "C" fn RE_BeginFrame(mut stereoFrame: crate::tr_types_h::stere
         if (*crate::src::renderergl1::tr_init::r_measureOverdraw).modified as u64 != 0 {
             R_IssuePendingRenderCommands();
             crate::src::sdl::sdl_glimp::qglDisable.expect("non-null function pointer")(
-                0xb90 as libc::c_int as crate::stdlib::GLenum,
+                0xb90u32,
             );
         }
         (*crate::src::renderergl1::tr_init::r_measureOverdraw).modified =
@@ -907,46 +914,48 @@ pub unsafe extern "C" fn RE_BeginFrame(mut stereoFrame: crate::tr_types_h::stere
     }
     // check for errors
     if (*crate::src::renderergl1::tr_init::r_ignoreGLErrors).integer == 0 {
-        let mut err: libc::c_int = 0;
+        let mut err: i32 = 0;
         R_IssuePendingRenderCommands();
         err = crate::src::sdl::sdl_glimp::qglGetError.expect("non-null function pointer")()
-            as libc::c_int;
-        if err != 0 as libc::c_int {
+            as i32;
+        if err != 0 {
             crate::src::renderergl1::tr_main::ri
                 .Error
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::ERR_FATAL as libc::c_int,
+                crate::src::qcommon::q_shared::ERR_FATAL as i32,
                 b"RE_BeginFrame() - glGetError() failed (0x%x)!\x00" as *const u8
-                    as *const libc::c_char,
+                    as *const i8,
                 err,
             );
         }
     }
     if crate::src::renderergl1::tr_init::glConfig.stereoEnabled as u64 != 0 {
         cmd = R_GetCommandBuffer(
-            ::std::mem::size_of::<crate::tr_local_h::drawBufferCommand_t>() as libc::c_ulong
-                as libc::c_int,
+            
+            ::std::mem::size_of::<crate::tr_local_h::drawBufferCommand_t>()
+                as i32,
         ) as *mut crate::tr_local_h::drawBufferCommand_t;
         if cmd.is_null() {
             return;
         }
-        (*cmd).commandId = crate::tr_local_h::RC_DRAW_BUFFER as libc::c_int;
-        if stereoFrame as libc::c_uint
-            == crate::tr_types_h::STEREO_LEFT as libc::c_int as libc::c_uint
+        (*cmd).commandId = crate::tr_local_h::RC_DRAW_BUFFER as i32;
+        if  stereoFrame
+            ==  crate::tr_types_h::STEREO_LEFT
         {
-            (*cmd).buffer = 0x402 as libc::c_int
-        } else if stereoFrame as libc::c_uint
-            == crate::tr_types_h::STEREO_RIGHT as libc::c_int as libc::c_uint
+            (*cmd).buffer = 0x402
+        } else if  stereoFrame
+            ==  crate::tr_types_h::STEREO_RIGHT
         {
-            (*cmd).buffer = 0x403 as libc::c_int
+            (*cmd).buffer = 0x403
         } else {
             crate::src::renderergl1::tr_main::ri
                 .Error
                 .expect("non-null function pointer")(
-                crate::src::qcommon::q_shared::ERR_FATAL as libc::c_int,
+                crate::src::qcommon::q_shared::ERR_FATAL as i32,
                 b"RE_BeginFrame: Stereo is enabled, but stereoFrame was %i\x00" as *const u8
-                    as *const libc::c_char,
-                stereoFrame as libc::c_uint,
+                    as *const i8,
+                
+                stereoFrame,
             );
         }
     } else {
@@ -954,62 +963,63 @@ pub unsafe extern "C" fn RE_BeginFrame(mut stereoFrame: crate::tr_types_h::stere
             if (*crate::src::renderergl1::tr_init::r_anaglyphMode).modified as u64 != 0 {
                 // clear both, front and backbuffer.
                 crate::src::sdl::sdl_glimp::qglColorMask.expect("non-null function pointer")(
-                    1 as libc::c_int as crate::stdlib::GLboolean,
-                    1 as libc::c_int as crate::stdlib::GLboolean,
-                    1 as libc::c_int as crate::stdlib::GLboolean,
-                    1 as libc::c_int as crate::stdlib::GLboolean,
+                    1u8,
+                    1,
+                    1,
+                    1,
                 );
                 crate::src::sdl::sdl_glimp::qglClearColor.expect("non-null function pointer")(
-                    0.0f32, 0.0f32, 0.0f32, 1.0f32,
+                    0.0f32, 0.0, 0.0, 1.0,
                 );
                 crate::src::sdl::sdl_glimp::qglDrawBuffer.expect("non-null function pointer")(
-                    0x404 as libc::c_int as crate::stdlib::GLenum,
+                    0x404u32,
                 );
                 crate::src::sdl::sdl_glimp::qglClear.expect("non-null function pointer")(
-                    0x4000 as libc::c_int as crate::stdlib::GLbitfield,
+                    0x4000u32,
                 );
                 crate::src::sdl::sdl_glimp::qglDrawBuffer.expect("non-null function pointer")(
-                    0x405 as libc::c_int as crate::stdlib::GLenum,
+                    0x405u32,
                 );
                 crate::src::sdl::sdl_glimp::qglClear.expect("non-null function pointer")(
-                    0x4000 as libc::c_int as crate::stdlib::GLbitfield,
+                    0x4000u32,
                 );
                 (*crate::src::renderergl1::tr_init::r_anaglyphMode).modified =
                     crate::src::qcommon::q_shared::qfalse
             }
-            if stereoFrame as libc::c_uint
-                == crate::tr_types_h::STEREO_LEFT as libc::c_int as libc::c_uint
+            if  stereoFrame
+                ==  crate::tr_types_h::STEREO_LEFT
             {
                 cmd = R_GetCommandBuffer(
-                    ::std::mem::size_of::<crate::tr_local_h::drawBufferCommand_t>() as libc::c_ulong
-                        as libc::c_int,
+                    
+                    ::std::mem::size_of::<crate::tr_local_h::drawBufferCommand_t>()
+                        as i32,
                 ) as *mut crate::tr_local_h::drawBufferCommand_t;
                 if cmd.is_null() {
                     return;
                 }
                 colcmd = R_GetCommandBuffer(::std::mem::size_of::<
                     crate::tr_local_h::colorMaskCommand_t,
-                >() as libc::c_ulong as libc::c_int)
+                >() as i32)
                     as *mut crate::tr_local_h::colorMaskCommand_t;
                 if colcmd.is_null() {
                     return;
                 }
-            } else if stereoFrame as libc::c_uint
-                == crate::tr_types_h::STEREO_RIGHT as libc::c_int as libc::c_uint
+            } else if  stereoFrame
+                ==  crate::tr_types_h::STEREO_RIGHT
             {
                 let mut cldcmd: *mut crate::tr_local_h::clearDepthCommand_t =
                     0 as *mut crate::tr_local_h::clearDepthCommand_t;
                 cldcmd = R_GetCommandBuffer(::std::mem::size_of::<
                     crate::tr_local_h::clearDepthCommand_t,
-                >() as libc::c_ulong as libc::c_int)
+                >() as i32)
                     as *mut crate::tr_local_h::clearDepthCommand_t;
                 if cldcmd.is_null() {
                     return;
                 }
-                (*cldcmd).commandId = crate::tr_local_h::RC_CLEARDEPTH as libc::c_int;
+                (*cldcmd).commandId = crate::tr_local_h::RC_CLEARDEPTH as i32;
                 colcmd = R_GetCommandBuffer(::std::mem::size_of::<
                     crate::tr_local_h::colorMaskCommand_t,
-                >() as libc::c_ulong as libc::c_int)
+                >() as i32)
                     as *mut crate::tr_local_h::colorMaskCommand_t;
                 if colcmd.is_null() {
                     return;
@@ -1018,10 +1028,11 @@ pub unsafe extern "C" fn RE_BeginFrame(mut stereoFrame: crate::tr_types_h::stere
                 crate::src::renderergl1::tr_main::ri
                     .Error
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::ERR_FATAL as libc::c_int,
+                    crate::src::qcommon::q_shared::ERR_FATAL as i32,
                     b"RE_BeginFrame: Stereo is enabled, but stereoFrame was %i\x00" as *const u8
-                        as *const libc::c_char,
-                    stereoFrame as libc::c_uint,
+                        as *const i8,
+                    
+                    stereoFrame,
                 );
             }
             R_SetColorMode(
@@ -1029,48 +1040,50 @@ pub unsafe extern "C" fn RE_BeginFrame(mut stereoFrame: crate::tr_types_h::stere
                 stereoFrame,
                 (*crate::src::renderergl1::tr_init::r_anaglyphMode).integer,
             );
-            (*colcmd).commandId = crate::tr_local_h::RC_COLORMASK as libc::c_int
+            (*colcmd).commandId = crate::tr_local_h::RC_COLORMASK as i32
         } else {
-            if stereoFrame as libc::c_uint
-                != crate::tr_types_h::STEREO_CENTER as libc::c_int as libc::c_uint
+            if  stereoFrame
+                !=  crate::tr_types_h::STEREO_CENTER
             {
                 crate::src::renderergl1::tr_main::ri
                     .Error
                     .expect("non-null function pointer")(
-                    crate::src::qcommon::q_shared::ERR_FATAL as libc::c_int,
+                    crate::src::qcommon::q_shared::ERR_FATAL as i32,
                     b"RE_BeginFrame: Stereo is disabled, but stereoFrame was %i\x00" as *const u8
-                        as *const libc::c_char,
-                    stereoFrame as libc::c_uint,
+                        as *const i8,
+                    
+                    stereoFrame,
                 );
             }
             cmd = R_GetCommandBuffer(
-                ::std::mem::size_of::<crate::tr_local_h::drawBufferCommand_t>() as libc::c_ulong
-                    as libc::c_int,
+                
+                ::std::mem::size_of::<crate::tr_local_h::drawBufferCommand_t>()
+                    as i32,
             ) as *mut crate::tr_local_h::drawBufferCommand_t;
             if cmd.is_null() {
                 return;
             }
         }
         if !cmd.is_null() {
-            (*cmd).commandId = crate::tr_local_h::RC_DRAW_BUFFER as libc::c_int;
+            (*cmd).commandId = crate::tr_local_h::RC_DRAW_BUFFER as i32;
             if (*crate::src::renderergl1::tr_init::r_anaglyphMode).modified as u64 != 0 {
                 crate::src::sdl::sdl_glimp::qglColorMask.expect("non-null function pointer")(
-                    1 as libc::c_int as crate::stdlib::GLboolean,
-                    1 as libc::c_int as crate::stdlib::GLboolean,
-                    1 as libc::c_int as crate::stdlib::GLboolean,
-                    1 as libc::c_int as crate::stdlib::GLboolean,
+                    1u8,
+                    1,
+                    1,
+                    1,
                 );
                 (*crate::src::renderergl1::tr_init::r_anaglyphMode).modified =
                     crate::src::qcommon::q_shared::qfalse
             }
             if crate::src::qcommon::q_shared::Q_stricmp(
                 (*crate::src::renderergl1::tr_init::r_drawBuffer).string,
-                b"GL_FRONT\x00" as *const u8 as *const libc::c_char,
+                b"GL_FRONT\x00" as *const u8 as *const i8,
             ) == 0
             {
-                (*cmd).buffer = 0x404 as libc::c_int
+                (*cmd).buffer = 0x404
             } else {
-                (*cmd).buffer = 0x405 as libc::c_int
+                (*cmd).buffer = 0x405
             }
         }
     }
@@ -1086,8 +1099,8 @@ Returns the number of msec spent in the back end
 #[no_mangle]
 
 pub unsafe extern "C" fn RE_EndFrame(
-    mut frontEndMsec: *mut libc::c_int,
-    mut backEndMsec: *mut libc::c_int,
+    mut frontEndMsec: *mut i32,
+    mut backEndMsec: *mut i32,
 ) {
     let mut cmd: *mut crate::tr_local_h::swapBuffersCommand_t =
         0 as *mut crate::tr_local_h::swapBuffersCommand_t;
@@ -1095,24 +1108,25 @@ pub unsafe extern "C" fn RE_EndFrame(
         return;
     }
     cmd = R_GetCommandBufferReserved(
-        ::std::mem::size_of::<crate::tr_local_h::swapBuffersCommand_t>() as libc::c_ulong
-            as libc::c_int,
-        0 as libc::c_int,
+        
+        ::std::mem::size_of::<crate::tr_local_h::swapBuffersCommand_t>()
+            as i32,
+        0,
     ) as *mut crate::tr_local_h::swapBuffersCommand_t;
     if cmd.is_null() {
         return;
     }
-    (*cmd).commandId = crate::tr_local_h::RC_SWAP_BUFFERS as libc::c_int;
+    (*cmd).commandId = crate::tr_local_h::RC_SWAP_BUFFERS as i32;
     R_IssueRenderCommands(crate::src::qcommon::q_shared::qtrue);
     crate::src::renderergl1::tr_scene::R_InitNextFrame();
     if !frontEndMsec.is_null() {
         *frontEndMsec = crate::src::renderergl1::tr_main::tr.frontEndMsec
     }
-    crate::src::renderergl1::tr_main::tr.frontEndMsec = 0 as libc::c_int;
+    crate::src::renderergl1::tr_main::tr.frontEndMsec = 0;
     if !backEndMsec.is_null() {
         *backEndMsec = crate::src::renderergl1::tr_backend::backEnd.pc.msec
     }
-    crate::src::renderergl1::tr_backend::backEnd.pc.msec = 0 as libc::c_int;
+    crate::src::renderergl1::tr_backend::backEnd.pc.msec = 0;
 }
 /*
 ===========================================================================
@@ -1549,8 +1563,8 @@ RE_TakeVideoFrame
 #[no_mangle]
 
 pub unsafe extern "C" fn RE_TakeVideoFrame(
-    mut width: libc::c_int,
-    mut height: libc::c_int,
+    mut width: i32,
+    mut height: i32,
     mut captureBuffer: *mut crate::src::qcommon::q_shared::byte,
     mut encodeBuffer: *mut crate::src::qcommon::q_shared::byte,
     mut motionJpeg: crate::src::qcommon::q_shared::qboolean,
@@ -1561,13 +1575,14 @@ pub unsafe extern "C" fn RE_TakeVideoFrame(
         return;
     }
     cmd = R_GetCommandBuffer(
-        ::std::mem::size_of::<crate::tr_local_h::videoFrameCommand_t>() as libc::c_ulong
-            as libc::c_int,
+        
+        ::std::mem::size_of::<crate::tr_local_h::videoFrameCommand_t>()
+            as i32,
     ) as *mut crate::tr_local_h::videoFrameCommand_t;
     if cmd.is_null() {
         return;
     }
-    (*cmd).commandId = crate::tr_local_h::RC_VIDEOFRAME as libc::c_int;
+    (*cmd).commandId = crate::tr_local_h::RC_VIDEOFRAME as i32;
     (*cmd).width = width;
     (*cmd).height = height;
     (*cmd).captureBuffer = captureBuffer;

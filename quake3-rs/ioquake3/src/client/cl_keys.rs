@@ -4,8 +4,8 @@ pub mod ctype_h {
 
     #[inline]
 
-    pub unsafe extern "C" fn tolower(mut __c: libc::c_int) -> libc::c_int {
-        return if __c >= -(128 as libc::c_int) && __c < 256 as libc::c_int {
+    pub unsafe extern "C" fn tolower(mut __c: i32) -> i32 {
+        return if __c >= -(128) && __c < 256 {
             *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
         } else {
             __c
@@ -16,12 +16,8 @@ pub mod ctype_h {
 pub mod stdlib_h {
     #[inline]
 
-    pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
-            __nptr,
-            0 as *mut libc::c_void as *mut *mut libc::c_char,
-            10 as libc::c_int,
-        ) as libc::c_int;
+    pub unsafe extern "C" fn atoi(mut __nptr: *const i8) -> i32 {
+        return crate::stdlib::strtol(__nptr, 0 as *mut *mut i8, 10) as i32;
     }
 }
 
@@ -453,8 +449,8 @@ pub use crate::tr_types_h::TC_S3TC_ARB;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct keyname_t {
-    pub name: *mut libc::c_char,
-    pub keynum: libc::c_int,
+    pub name: *mut i8,
+    pub keynum: i32,
 }
 /*
 ===========================================================================
@@ -492,11 +488,11 @@ pub static mut historyEditLines: [crate::qcommon_h::field_t; 32] = [crate::qcomm
 }; 32];
 #[no_mangle]
 
-pub static mut nextHistoryLine: libc::c_int = 0;
+pub static mut nextHistoryLine: i32 = 0;
 // the last line in the history buffer, not masked
 #[no_mangle]
 
-pub static mut historyLine: libc::c_int = 0;
+pub static mut historyLine: i32 = 0;
 // the line being displayed from history buffer
 // will be <= nextHistoryLine
 #[no_mangle]
@@ -521,20 +517,20 @@ pub static mut chat_team: crate::src::qcommon::q_shared::qboolean =
     crate::src::qcommon::q_shared::qfalse;
 #[no_mangle]
 
-pub static mut chat_playerNum: libc::c_int = 0;
+pub static mut chat_playerNum: i32 = 0;
 #[no_mangle]
 
 pub static mut key_overstrikeMode: crate::src::qcommon::q_shared::qboolean =
     crate::src::qcommon::q_shared::qfalse;
 #[no_mangle]
 
-pub static mut anykeydown: libc::c_int = 0;
+pub static mut anykeydown: i32 = 0;
 #[no_mangle]
 
 pub static mut keys: [crate::keys_h::qkey_t; 366] = [crate::keys_h::qkey_t {
     down: crate::src::qcommon::q_shared::qfalse,
     repeats: 0,
-    binding: 0 as *const libc::c_char as *mut libc::c_char,
+    binding: 0 as *mut i8,
 }; 366];
 // names not in this list can either be lowercase ascii, or '0xnn' hex sequences
 #[no_mangle]
@@ -542,1719 +538,1709 @@ pub static mut keys: [crate::keys_h::qkey_t; 366] = [crate::keys_h::qkey_t {
 pub static mut keynames: [keyname_t; 244] = [
     {
         let mut init = keyname_t {
-            name: b"TAB\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_TAB as libc::c_int,
+            name: b"TAB\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_TAB as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"ENTER\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_ENTER as libc::c_int,
+            name: b"ENTER\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_ENTER as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"ESCAPE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_ESCAPE as libc::c_int,
+            name: b"ESCAPE\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_ESCAPE as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"SPACE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_SPACE as libc::c_int,
+            name: b"SPACE\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_SPACE as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"BACKSPACE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_BACKSPACE as libc::c_int,
+            name: b"BACKSPACE\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_BACKSPACE as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"UPARROW\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_UPARROW as libc::c_int,
+            name: b"UPARROW\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_UPARROW as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"DOWNARROW\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_DOWNARROW as libc::c_int,
+            name: b"DOWNARROW\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_DOWNARROW as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"LEFTARROW\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_LEFTARROW as libc::c_int,
+            name: b"LEFTARROW\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_LEFTARROW as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"RIGHTARROW\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_RIGHTARROW as libc::c_int,
+            name: b"RIGHTARROW\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_RIGHTARROW as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"ALT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_ALT as libc::c_int,
+            name: b"ALT\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_ALT as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"CTRL\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_CTRL as libc::c_int,
+            name: b"CTRL\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_CTRL as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"SHIFT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_SHIFT as libc::c_int,
+            name: b"SHIFT\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_SHIFT as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"COMMAND\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_COMMAND as libc::c_int,
+            name: b"COMMAND\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_COMMAND as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"CAPSLOCK\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_CAPSLOCK as libc::c_int,
+            name: b"CAPSLOCK\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_CAPSLOCK as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F1 as libc::c_int,
+            name: b"F1\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F1 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F2\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F2 as libc::c_int,
+            name: b"F2\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F2 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F3\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F3 as libc::c_int,
+            name: b"F3\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F3 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F4\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F4 as libc::c_int,
+            name: b"F4\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F4 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F5\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F5 as libc::c_int,
+            name: b"F5\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F5 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F6\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F6 as libc::c_int,
+            name: b"F6\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F6 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F7\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F7 as libc::c_int,
+            name: b"F7\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F7 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F8\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F8 as libc::c_int,
+            name: b"F8\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F8 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F9\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F9 as libc::c_int,
+            name: b"F9\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F9 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F10\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F10 as libc::c_int,
+            name: b"F10\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F10 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F11\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F11 as libc::c_int,
+            name: b"F11\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F11 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F12\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F12 as libc::c_int,
+            name: b"F12\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F12 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F13\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F13 as libc::c_int,
+            name: b"F13\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F13 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F14\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F14 as libc::c_int,
+            name: b"F14\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F14 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"F15\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_F15 as libc::c_int,
+            name: b"F15\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_F15 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"INS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_INS as libc::c_int,
+            name: b"INS\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_INS as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"DEL\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_DEL as libc::c_int,
+            name: b"DEL\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_DEL as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PGDN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PGDN as libc::c_int,
+            name: b"PGDN\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PGDN as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PGUP\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PGUP as libc::c_int,
+            name: b"PGUP\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PGUP as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"HOME\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_HOME as libc::c_int,
+            name: b"HOME\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_HOME as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"END\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_END as libc::c_int,
+            name: b"END\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_END as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"MOUSE1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_MOUSE1 as libc::c_int,
+            name: b"MOUSE1\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_MOUSE1 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"MOUSE2\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_MOUSE2 as libc::c_int,
+            name: b"MOUSE2\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_MOUSE2 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"MOUSE3\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_MOUSE3 as libc::c_int,
+            name: b"MOUSE3\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_MOUSE3 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"MOUSE4\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_MOUSE4 as libc::c_int,
+            name: b"MOUSE4\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_MOUSE4 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"MOUSE5\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_MOUSE5 as libc::c_int,
+            name: b"MOUSE5\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_MOUSE5 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"MWHEELUP\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_MWHEELUP as libc::c_int,
+            name: b"MWHEELUP\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_MWHEELUP as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"MWHEELDOWN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_MWHEELDOWN as libc::c_int,
+            name: b"MWHEELDOWN\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_MWHEELDOWN as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY1 as libc::c_int,
+            name: b"JOY1\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY1 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY2\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY2 as libc::c_int,
+            name: b"JOY2\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY2 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY3\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY3 as libc::c_int,
+            name: b"JOY3\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY3 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY4\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY4 as libc::c_int,
+            name: b"JOY4\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY4 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY5\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY5 as libc::c_int,
+            name: b"JOY5\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY5 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY6\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY6 as libc::c_int,
+            name: b"JOY6\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY6 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY7\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY7 as libc::c_int,
+            name: b"JOY7\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY7 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY8\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY8 as libc::c_int,
+            name: b"JOY8\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY8 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY9\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY9 as libc::c_int,
+            name: b"JOY9\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY9 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY10\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY10 as libc::c_int,
+            name: b"JOY10\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY10 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY11\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY11 as libc::c_int,
+            name: b"JOY11\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY11 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY12\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY12 as libc::c_int,
+            name: b"JOY12\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY12 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY13\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY13 as libc::c_int,
+            name: b"JOY13\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY13 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY14\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY14 as libc::c_int,
+            name: b"JOY14\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY14 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY15\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY15 as libc::c_int,
+            name: b"JOY15\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY15 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY16\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY16 as libc::c_int,
+            name: b"JOY16\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY16 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY17\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY17 as libc::c_int,
+            name: b"JOY17\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY17 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY18\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY18 as libc::c_int,
+            name: b"JOY18\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY18 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY19\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY19 as libc::c_int,
+            name: b"JOY19\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY19 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY20\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY20 as libc::c_int,
+            name: b"JOY20\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY20 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY21\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY21 as libc::c_int,
+            name: b"JOY21\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY21 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY22\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY22 as libc::c_int,
+            name: b"JOY22\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY22 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY23\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY23 as libc::c_int,
+            name: b"JOY23\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY23 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY24\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY24 as libc::c_int,
+            name: b"JOY24\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY24 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY25\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY25 as libc::c_int,
+            name: b"JOY25\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY25 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY26\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY26 as libc::c_int,
+            name: b"JOY26\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY26 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY27\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY27 as libc::c_int,
+            name: b"JOY27\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY27 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY28\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY28 as libc::c_int,
+            name: b"JOY28\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY28 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY29\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY29 as libc::c_int,
+            name: b"JOY29\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY29 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY30\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY30 as libc::c_int,
+            name: b"JOY30\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY30 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY31\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY31 as libc::c_int,
+            name: b"JOY31\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY31 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"JOY32\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_JOY32 as libc::c_int,
+            name: b"JOY32\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_JOY32 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX1 as libc::c_int,
+            name: b"AUX1\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX1 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX2\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX2 as libc::c_int,
+            name: b"AUX2\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX2 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX3\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX3 as libc::c_int,
+            name: b"AUX3\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX3 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX4\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX4 as libc::c_int,
+            name: b"AUX4\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX4 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX5\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX5 as libc::c_int,
+            name: b"AUX5\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX5 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX6\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX6 as libc::c_int,
+            name: b"AUX6\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX6 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX7\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX7 as libc::c_int,
+            name: b"AUX7\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX7 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX8\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX8 as libc::c_int,
+            name: b"AUX8\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX8 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX9\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX9 as libc::c_int,
+            name: b"AUX9\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX9 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX10\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX10 as libc::c_int,
+            name: b"AUX10\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX10 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX11\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX11 as libc::c_int,
+            name: b"AUX11\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX11 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX12\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX12 as libc::c_int,
+            name: b"AUX12\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX12 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX13\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX13 as libc::c_int,
+            name: b"AUX13\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX13 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX14\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX14 as libc::c_int,
+            name: b"AUX14\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX14 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX15\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX15 as libc::c_int,
+            name: b"AUX15\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX15 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"AUX16\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_AUX16 as libc::c_int,
+            name: b"AUX16\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_AUX16 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_HOME\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_HOME as libc::c_int,
+            name: b"KP_HOME\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_HOME as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_UPARROW\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_UPARROW as libc::c_int,
+            name: b"KP_UPARROW\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_UPARROW as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_PGUP\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_PGUP as libc::c_int,
+            name: b"KP_PGUP\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_PGUP as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_LEFTARROW\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_LEFTARROW as libc::c_int,
+            name: b"KP_LEFTARROW\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_LEFTARROW as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_5\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_5 as libc::c_int,
+            name: b"KP_5\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_5 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_RIGHTARROW\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_RIGHTARROW as libc::c_int,
+            name: b"KP_RIGHTARROW\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_RIGHTARROW as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_END\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_END as libc::c_int,
+            name: b"KP_END\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_END as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_DOWNARROW\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_DOWNARROW as libc::c_int,
+            name: b"KP_DOWNARROW\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_DOWNARROW as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_PGDN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_PGDN as libc::c_int,
+            name: b"KP_PGDN\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_PGDN as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_ENTER\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_ENTER as libc::c_int,
+            name: b"KP_ENTER\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_ENTER as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_INS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_INS as libc::c_int,
+            name: b"KP_INS\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_INS as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_DEL\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_DEL as libc::c_int,
+            name: b"KP_DEL\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_DEL as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_SLASH\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_SLASH as libc::c_int,
+            name: b"KP_SLASH\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_SLASH as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_MINUS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_MINUS as libc::c_int,
+            name: b"KP_MINUS\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_MINUS as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_PLUS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_PLUS as libc::c_int,
+            name: b"KP_PLUS\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_PLUS as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_NUMLOCK\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_NUMLOCK as libc::c_int,
+            name: b"KP_NUMLOCK\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_NUMLOCK as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_STAR\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_STAR as libc::c_int,
+            name: b"KP_STAR\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_STAR as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"KP_EQUALS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_KP_EQUALS as libc::c_int,
+            name: b"KP_EQUALS\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_KP_EQUALS as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAUSE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAUSE as libc::c_int,
+            name: b"PAUSE\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAUSE as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"SEMICOLON\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            name: b"SEMICOLON\x00" as *const u8 as *mut i8,
             keynum: ';' as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_0\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_0 as libc::c_int,
+            name: b"WORLD_0\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_0 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_1 as libc::c_int,
+            name: b"WORLD_1\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_1 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_2\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_2 as libc::c_int,
+            name: b"WORLD_2\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_2 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_3\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_3 as libc::c_int,
+            name: b"WORLD_3\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_3 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_4\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_4 as libc::c_int,
+            name: b"WORLD_4\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_4 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_5\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_5 as libc::c_int,
+            name: b"WORLD_5\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_5 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_6\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_6 as libc::c_int,
+            name: b"WORLD_6\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_6 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_7\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_7 as libc::c_int,
+            name: b"WORLD_7\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_7 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_8\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_8 as libc::c_int,
+            name: b"WORLD_8\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_8 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_9\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_9 as libc::c_int,
+            name: b"WORLD_9\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_9 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_10\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_10 as libc::c_int,
+            name: b"WORLD_10\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_10 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_11\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_11 as libc::c_int,
+            name: b"WORLD_11\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_11 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_12\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_12 as libc::c_int,
+            name: b"WORLD_12\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_12 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_13\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_13 as libc::c_int,
+            name: b"WORLD_13\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_13 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_14\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_14 as libc::c_int,
+            name: b"WORLD_14\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_14 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_15\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_15 as libc::c_int,
+            name: b"WORLD_15\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_15 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_16\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_16 as libc::c_int,
+            name: b"WORLD_16\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_16 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_17\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_17 as libc::c_int,
+            name: b"WORLD_17\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_17 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_18\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_18 as libc::c_int,
+            name: b"WORLD_18\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_18 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_19\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_19 as libc::c_int,
+            name: b"WORLD_19\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_19 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_20\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_20 as libc::c_int,
+            name: b"WORLD_20\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_20 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_21\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_21 as libc::c_int,
+            name: b"WORLD_21\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_21 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_22\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_22 as libc::c_int,
+            name: b"WORLD_22\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_22 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_23\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_23 as libc::c_int,
+            name: b"WORLD_23\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_23 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_24\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_24 as libc::c_int,
+            name: b"WORLD_24\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_24 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_25\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_25 as libc::c_int,
+            name: b"WORLD_25\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_25 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_26\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_26 as libc::c_int,
+            name: b"WORLD_26\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_26 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_27\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_27 as libc::c_int,
+            name: b"WORLD_27\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_27 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_28\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_28 as libc::c_int,
+            name: b"WORLD_28\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_28 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_29\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_29 as libc::c_int,
+            name: b"WORLD_29\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_29 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_30\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_30 as libc::c_int,
+            name: b"WORLD_30\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_30 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_31\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_31 as libc::c_int,
+            name: b"WORLD_31\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_31 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_32\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_32 as libc::c_int,
+            name: b"WORLD_32\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_32 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_33\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_33 as libc::c_int,
+            name: b"WORLD_33\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_33 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_34\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_34 as libc::c_int,
+            name: b"WORLD_34\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_34 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_35\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_35 as libc::c_int,
+            name: b"WORLD_35\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_35 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_36\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_36 as libc::c_int,
+            name: b"WORLD_36\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_36 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_37\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_37 as libc::c_int,
+            name: b"WORLD_37\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_37 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_38\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_38 as libc::c_int,
+            name: b"WORLD_38\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_38 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_39\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_39 as libc::c_int,
+            name: b"WORLD_39\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_39 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_40\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_40 as libc::c_int,
+            name: b"WORLD_40\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_40 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_41\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_41 as libc::c_int,
+            name: b"WORLD_41\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_41 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_42\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_42 as libc::c_int,
+            name: b"WORLD_42\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_42 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_43\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_43 as libc::c_int,
+            name: b"WORLD_43\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_43 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_44\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_44 as libc::c_int,
+            name: b"WORLD_44\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_44 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_45\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_45 as libc::c_int,
+            name: b"WORLD_45\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_45 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_46\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_46 as libc::c_int,
+            name: b"WORLD_46\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_46 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_47\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_47 as libc::c_int,
+            name: b"WORLD_47\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_47 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_48\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_48 as libc::c_int,
+            name: b"WORLD_48\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_48 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_49\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_49 as libc::c_int,
+            name: b"WORLD_49\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_49 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_50\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_50 as libc::c_int,
+            name: b"WORLD_50\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_50 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_51\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_51 as libc::c_int,
+            name: b"WORLD_51\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_51 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_52\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_52 as libc::c_int,
+            name: b"WORLD_52\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_52 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_53\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_53 as libc::c_int,
+            name: b"WORLD_53\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_53 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_54\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_54 as libc::c_int,
+            name: b"WORLD_54\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_54 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_55\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_55 as libc::c_int,
+            name: b"WORLD_55\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_55 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_56\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_56 as libc::c_int,
+            name: b"WORLD_56\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_56 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_57\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_57 as libc::c_int,
+            name: b"WORLD_57\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_57 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_58\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_58 as libc::c_int,
+            name: b"WORLD_58\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_58 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_59\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_59 as libc::c_int,
+            name: b"WORLD_59\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_59 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_60\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_60 as libc::c_int,
+            name: b"WORLD_60\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_60 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_61\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_61 as libc::c_int,
+            name: b"WORLD_61\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_61 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_62\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_62 as libc::c_int,
+            name: b"WORLD_62\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_62 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_63\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_63 as libc::c_int,
+            name: b"WORLD_63\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_63 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_64\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_64 as libc::c_int,
+            name: b"WORLD_64\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_64 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_65\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_65 as libc::c_int,
+            name: b"WORLD_65\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_65 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_66\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_66 as libc::c_int,
+            name: b"WORLD_66\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_66 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_67\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_67 as libc::c_int,
+            name: b"WORLD_67\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_67 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_68\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_68 as libc::c_int,
+            name: b"WORLD_68\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_68 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_69\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_69 as libc::c_int,
+            name: b"WORLD_69\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_69 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_70\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_70 as libc::c_int,
+            name: b"WORLD_70\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_70 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_71\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_71 as libc::c_int,
+            name: b"WORLD_71\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_71 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_72\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_72 as libc::c_int,
+            name: b"WORLD_72\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_72 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_73\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_73 as libc::c_int,
+            name: b"WORLD_73\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_73 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_74\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_74 as libc::c_int,
+            name: b"WORLD_74\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_74 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_75\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_75 as libc::c_int,
+            name: b"WORLD_75\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_75 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_76\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_76 as libc::c_int,
+            name: b"WORLD_76\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_76 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_77\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_77 as libc::c_int,
+            name: b"WORLD_77\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_77 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_78\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_78 as libc::c_int,
+            name: b"WORLD_78\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_78 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_79\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_79 as libc::c_int,
+            name: b"WORLD_79\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_79 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_80\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_80 as libc::c_int,
+            name: b"WORLD_80\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_80 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_81\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_81 as libc::c_int,
+            name: b"WORLD_81\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_81 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_82\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_82 as libc::c_int,
+            name: b"WORLD_82\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_82 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_83\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_83 as libc::c_int,
+            name: b"WORLD_83\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_83 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_84\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_84 as libc::c_int,
+            name: b"WORLD_84\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_84 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_85\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_85 as libc::c_int,
+            name: b"WORLD_85\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_85 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_86\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_86 as libc::c_int,
+            name: b"WORLD_86\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_86 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_87\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_87 as libc::c_int,
+            name: b"WORLD_87\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_87 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_88\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_88 as libc::c_int,
+            name: b"WORLD_88\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_88 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_89\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_89 as libc::c_int,
+            name: b"WORLD_89\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_89 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_90\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_90 as libc::c_int,
+            name: b"WORLD_90\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_90 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_91\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_91 as libc::c_int,
+            name: b"WORLD_91\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_91 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_92\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_92 as libc::c_int,
+            name: b"WORLD_92\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_92 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_93\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_93 as libc::c_int,
+            name: b"WORLD_93\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_93 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_94\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_94 as libc::c_int,
+            name: b"WORLD_94\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_94 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WORLD_95\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_WORLD_95 as libc::c_int,
+            name: b"WORLD_95\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_WORLD_95 as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"WINDOWS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_SUPER as libc::c_int,
+            name: b"WINDOWS\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_SUPER as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"COMPOSE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_COMPOSE as libc::c_int,
+            name: b"COMPOSE\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_COMPOSE as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"MODE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_MODE as libc::c_int,
+            name: b"MODE\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_MODE as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"HELP\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_HELP as libc::c_int,
+            name: b"HELP\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_HELP as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PRINT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PRINT as libc::c_int,
+            name: b"PRINT\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PRINT as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"SYSREQ\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_SYSREQ as libc::c_int,
+            name: b"SYSREQ\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_SYSREQ as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"SCROLLOCK\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_SCROLLOCK as libc::c_int,
+            name: b"SCROLLOCK\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_SCROLLOCK as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"BREAK\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_BREAK as libc::c_int,
+            name: b"BREAK\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_BREAK as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"MENU\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_MENU as libc::c_int,
+            name: b"MENU\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_MENU as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"POWER\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_POWER as libc::c_int,
+            name: b"POWER\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_POWER as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"EURO\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_EURO as libc::c_int,
+            name: b"EURO\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_EURO as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"UNDO\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_UNDO as libc::c_int,
+            name: b"UNDO\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_UNDO as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_A\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_A as libc::c_int,
+            name: b"PAD0_A\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_A as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_B\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_B as libc::c_int,
+            name: b"PAD0_B\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_B as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_X\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_X as libc::c_int,
+            name: b"PAD0_X\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_X as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_Y\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_Y as libc::c_int,
+            name: b"PAD0_Y\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_Y as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_BACK\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_BACK as libc::c_int,
+            name: b"PAD0_BACK\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_BACK as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_GUIDE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_GUIDE as libc::c_int,
+            name: b"PAD0_GUIDE\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_GUIDE as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_START\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_START as libc::c_int,
+            name: b"PAD0_START\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_START as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_LEFTSTICK_CLICK\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_LEFTSTICK_CLICK as libc::c_int,
+            name: b"PAD0_LEFTSTICK_CLICK\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_LEFTSTICK_CLICK as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_RIGHTSTICK_CLICK\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_RIGHTSTICK_CLICK as libc::c_int,
+            name: b"PAD0_RIGHTSTICK_CLICK\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_RIGHTSTICK_CLICK as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_LEFTSHOULDER\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_LEFTSHOULDER as libc::c_int,
+            name: b"PAD0_LEFTSHOULDER\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_LEFTSHOULDER as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_RIGHTSHOULDER\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_RIGHTSHOULDER as libc::c_int,
+            name: b"PAD0_RIGHTSHOULDER\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_RIGHTSHOULDER as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_DPAD_UP\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_DPAD_UP as libc::c_int,
+            name: b"PAD0_DPAD_UP\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_DPAD_UP as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_DPAD_DOWN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_DPAD_DOWN as libc::c_int,
+            name: b"PAD0_DPAD_DOWN\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_DPAD_DOWN as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_DPAD_LEFT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_DPAD_LEFT as libc::c_int,
+            name: b"PAD0_DPAD_LEFT\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_DPAD_LEFT as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_DPAD_RIGHT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_DPAD_RIGHT as libc::c_int,
+            name: b"PAD0_DPAD_RIGHT\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_DPAD_RIGHT as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_LEFTSTICK_LEFT\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_LEFTSTICK_LEFT as libc::c_int,
+            name: b"PAD0_LEFTSTICK_LEFT\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_LEFTSTICK_LEFT as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_LEFTSTICK_RIGHT\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_LEFTSTICK_RIGHT as libc::c_int,
+            name: b"PAD0_LEFTSTICK_RIGHT\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_LEFTSTICK_RIGHT as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_LEFTSTICK_UP\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_LEFTSTICK_UP as libc::c_int,
+            name: b"PAD0_LEFTSTICK_UP\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_LEFTSTICK_UP as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_LEFTSTICK_DOWN\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_LEFTSTICK_DOWN as libc::c_int,
+            name: b"PAD0_LEFTSTICK_DOWN\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_LEFTSTICK_DOWN as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_RIGHTSTICK_LEFT\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_RIGHTSTICK_LEFT as libc::c_int,
+            name: b"PAD0_RIGHTSTICK_LEFT\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_RIGHTSTICK_LEFT as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_RIGHTSTICK_RIGHT\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_RIGHTSTICK_RIGHT as libc::c_int,
+            name: b"PAD0_RIGHTSTICK_RIGHT\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_RIGHTSTICK_RIGHT as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_RIGHTSTICK_UP\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_RIGHTSTICK_UP as libc::c_int,
+            name: b"PAD0_RIGHTSTICK_UP\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_RIGHTSTICK_UP as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_RIGHTSTICK_DOWN\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_RIGHTSTICK_DOWN as libc::c_int,
+            name: b"PAD0_RIGHTSTICK_DOWN\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_RIGHTSTICK_DOWN as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_LEFTTRIGGER\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_LEFTTRIGGER as libc::c_int,
+            name: b"PAD0_LEFTTRIGGER\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_LEFTTRIGGER as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: b"PAD0_RIGHTTRIGGER\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            keynum: crate::keycodes_h::K_PAD0_RIGHTTRIGGER as libc::c_int,
+            name: b"PAD0_RIGHTTRIGGER\x00" as *const u8 as *mut i8,
+            keynum: crate::keycodes_h::K_PAD0_RIGHTTRIGGER as i32,
         };
         init
     },
     {
         let mut init = keyname_t {
-            name: 0 as *const libc::c_char as *mut libc::c_char,
-            keynum: 0 as libc::c_int,
+            name: 0 as *mut i8,
+            keynum: 0,
         };
         init
     },
@@ -2278,29 +2264,29 @@ x, y, and width are in pixels
 
 pub unsafe extern "C" fn Field_VariableSizeDraw(
     mut edit: *mut crate::qcommon_h::field_t,
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut width: libc::c_int,
-    mut size: libc::c_int,
+    mut x: i32,
+    mut y: i32,
+    mut width: i32,
+    mut size: i32,
     mut showCursor: crate::src::qcommon::q_shared::qboolean,
     mut noColorEscape: crate::src::qcommon::q_shared::qboolean,
 ) {
-    let mut len: libc::c_int = 0; // - 1 so there is always a space for the cursor
-    let mut drawLen: libc::c_int = 0;
-    let mut prestep: libc::c_int = 0;
-    let mut cursorChar: libc::c_int = 0;
-    let mut str: [libc::c_char; 1024] = [0; 1024];
-    let mut i: libc::c_int = 0;
-    drawLen = (*edit).widthInChars - 1 as libc::c_int;
-    len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr()) as libc::c_int;
+    let mut len: i32 = 0; // - 1 so there is always a space for the cursor
+    let mut drawLen: i32 = 0;
+    let mut prestep: i32 = 0;
+    let mut cursorChar: i32 = 0;
+    let mut str: [i8; 1024] = [0; 1024];
+    let mut i: i32 = 0;
+    drawLen = (*edit).widthInChars - 1;
+    len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr()) as i32;
     // guarantee that cursor will be visible
     if len <= drawLen {
-        prestep = 0 as libc::c_int
+        prestep = 0
     } else {
         if (*edit).scroll + drawLen > len {
             (*edit).scroll = len - drawLen;
-            if (*edit).scroll < 0 as libc::c_int {
-                (*edit).scroll = 0 as libc::c_int
+            if (*edit).scroll < 0 {
+                (*edit).scroll = 0
             }
         }
         prestep = (*edit).scroll
@@ -2309,25 +2295,25 @@ pub unsafe extern "C" fn Field_VariableSizeDraw(
         drawLen = len - prestep
     }
     // extract <drawLen> characters from the field at <prestep>
-    if drawLen >= 1024 as libc::c_int {
+    if drawLen >= 1024 {
         crate::src::qcommon::common::Com_Error(
-            crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-            b"drawLen >= MAX_STRING_CHARS\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::ERR_DROP as i32,
+            b"drawLen >= MAX_STRING_CHARS\x00" as *const u8 as *const i8,
         );
     }
     crate::stdlib::memcpy(
         str.as_mut_ptr() as *mut libc::c_void,
         (*edit).buffer.as_mut_ptr().offset(prestep as isize) as *const libc::c_void,
-        drawLen as libc::c_ulong,
+        drawLen as usize,
     );
-    str[drawLen as usize] = 0 as libc::c_int as libc::c_char;
+    str[drawLen as usize] = 0;
     // draw it
-    if size == 8 as libc::c_int {
-        let mut color: [libc::c_float; 4] = [0.; 4];
-        color[3 as libc::c_int as usize] = 1.0f64 as libc::c_float;
-        color[2 as libc::c_int as usize] = color[3 as libc::c_int as usize];
-        color[1 as libc::c_int as usize] = color[2 as libc::c_int as usize];
-        color[0 as libc::c_int as usize] = color[1 as libc::c_int as usize];
+    if size == 8 {
+        let mut color: [f32; 4] = [0.; 4];
+        color[3] = 1f32;
+        color[2] = color[3];
+        color[1] = color[2];
+        color[0] = color[1];
         crate::src::client::cl_scrn::SCR_DrawSmallStringExt(
             x,
             y,
@@ -2338,41 +2324,34 @@ pub unsafe extern "C" fn Field_VariableSizeDraw(
         );
     } else {
         // draw big string with drop shadow
-        crate::src::client::cl_scrn::SCR_DrawBigString(
-            x,
-            y,
-            str.as_mut_ptr(),
-            1.0f64 as libc::c_float,
-            noColorEscape,
-        );
+        crate::src::client::cl_scrn::SCR_DrawBigString(x, y, str.as_mut_ptr(), 1f32, noColorEscape);
     }
     // draw the cursor
     if showCursor as u64 != 0 {
-        if crate::src::client::cl_main::cls.realtime >> 8 as libc::c_int & 1 as libc::c_int != 0 {
+        if crate::src::client::cl_main::cls.realtime >> 8 & 1 != 0 {
             return;
             // off blink
         }
         if key_overstrikeMode as u64 != 0 {
-            cursorChar = 11 as libc::c_int
+            cursorChar = 11
         } else {
-            cursorChar = 10 as libc::c_int
+            cursorChar = 10
         }
-        i = (drawLen as libc::c_ulong).wrapping_sub(crate::stdlib::strlen(str.as_mut_ptr()))
-            as libc::c_int;
-        if size == 8 as libc::c_int {
+        i = (drawLen as usize).wrapping_sub(crate::stdlib::strlen(str.as_mut_ptr())) as i32;
+        if size == 8 {
             crate::src::client::cl_scrn::SCR_DrawSmallChar(
                 x + ((*edit).cursor - prestep - i) * size,
                 y,
                 cursorChar,
             );
         } else {
-            str[0 as libc::c_int as usize] = cursorChar as libc::c_char;
-            str[1 as libc::c_int as usize] = 0 as libc::c_int as libc::c_char;
+            str[0] = cursorChar as i8;
+            str[1] = 0;
             crate::src::client::cl_scrn::SCR_DrawBigString(
                 x + ((*edit).cursor - prestep - i) * size,
                 y,
                 str.as_mut_ptr(),
-                1.0f64 as libc::c_float,
+                1f32,
                 crate::src::qcommon::q_shared::qfalse,
             );
         }
@@ -2382,41 +2361,25 @@ pub unsafe extern "C" fn Field_VariableSizeDraw(
 
 pub unsafe extern "C" fn Field_Draw(
     mut edit: *mut crate::qcommon_h::field_t,
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut width: libc::c_int,
+    mut x: i32,
+    mut y: i32,
+    mut width: i32,
     mut showCursor: crate::src::qcommon::q_shared::qboolean,
     mut noColorEscape: crate::src::qcommon::q_shared::qboolean,
 ) {
-    Field_VariableSizeDraw(
-        edit,
-        x,
-        y,
-        width,
-        8 as libc::c_int,
-        showCursor,
-        noColorEscape,
-    );
+    Field_VariableSizeDraw(edit, x, y, width, 8, showCursor, noColorEscape);
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn Field_BigDraw(
     mut edit: *mut crate::qcommon_h::field_t,
-    mut x: libc::c_int,
-    mut y: libc::c_int,
-    mut width: libc::c_int,
+    mut x: i32,
+    mut y: i32,
+    mut width: i32,
     mut showCursor: crate::src::qcommon::q_shared::qboolean,
     mut noColorEscape: crate::src::qcommon::q_shared::qboolean,
 ) {
-    Field_VariableSizeDraw(
-        edit,
-        x,
-        y,
-        width,
-        16 as libc::c_int,
-        showCursor,
-        noColorEscape,
-    );
+    Field_VariableSizeDraw(edit, x, y, width, 16, showCursor, noColorEscape);
 }
 /*
 ================
@@ -2426,18 +2389,18 @@ Field_Paste
 #[no_mangle]
 
 pub unsafe extern "C" fn Field_Paste(mut edit: *mut crate::qcommon_h::field_t) {
-    let mut cbd: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut pasteLen: libc::c_int = 0;
-    let mut i: libc::c_int = 0;
+    let mut cbd: *mut i8 = 0 as *mut i8;
+    let mut pasteLen: i32 = 0;
+    let mut i: i32 = 0;
     cbd = crate::src::sys::sys_main::Sys_GetClipboardData();
     if cbd.is_null() {
         return;
     }
     // send as if typed, so insert / overstrike works properly
-    pasteLen = crate::stdlib::strlen(cbd) as libc::c_int;
-    i = 0 as libc::c_int;
+    pasteLen = crate::stdlib::strlen(cbd) as i32;
+    i = 0;
     while i < pasteLen {
-        Field_CharEvent(edit, *cbd.offset(i as isize) as libc::c_int);
+        Field_CharEvent(edit, *cbd.offset(i as isize) as i32);
         i += 1
     }
     crate::src::qcommon::common::Z_Free(cbd as *mut libc::c_void);
@@ -2456,24 +2419,22 @@ Key events are used for non-printable characters, others are gotten from char ev
 
 pub unsafe extern "C" fn Field_KeyDownEvent(
     mut edit: *mut crate::qcommon_h::field_t,
-    mut key: libc::c_int,
+    mut key: i32,
 ) {
-    let mut len: libc::c_int = 0;
+    let mut len: i32 = 0;
     // shift-insert is paste
-    if (key == crate::keycodes_h::K_INS as libc::c_int
-        || key == crate::keycodes_h::K_KP_INS as libc::c_int)
-        && keys[crate::keycodes_h::K_SHIFT as libc::c_int as usize].down as libc::c_uint != 0
+    if (key == crate::keycodes_h::K_INS as i32 || key == crate::keycodes_h::K_KP_INS as i32)
+        && keys[crate::keycodes_h::K_SHIFT as usize].down != 0
     {
         Field_Paste(edit);
         return;
     }
     key = ({
-        let mut __res: libc::c_int = 0;
-        if ::std::mem::size_of::<libc::c_int>() as libc::c_ulong > 1 as libc::c_int as libc::c_ulong
-        {
+        let mut __res: i32 = 0;
+        if ::std::mem::size_of::<i32>() > 1 {
             if 0 != 0 {
-                let mut __c: libc::c_int = key;
-                __res = if __c < -(128 as libc::c_int) || __c > 255 as libc::c_int {
+                let mut __c: i32 = key;
+                __res = if __c < -(128) || __c > 255 {
                     __c
                 } else {
                     *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
@@ -2486,7 +2447,7 @@ pub unsafe extern "C" fn Field_KeyDownEvent(
         }
         __res
     });
-    len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr()) as libc::c_int;
+    len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr()) as i32;
     match key {
         140 => {
             if (*edit).cursor < len {
@@ -2497,9 +2458,8 @@ pub unsafe extern "C" fn Field_KeyDownEvent(
                         .buffer
                         .as_mut_ptr()
                         .offset((*edit).cursor as isize)
-                        .offset(1 as libc::c_int as isize)
-                        as *const libc::c_void,
-                    (len - (*edit).cursor) as libc::c_ulong,
+                        .offset(1isize) as *const libc::c_void,
+                    (len - (*edit).cursor) as usize,
                 );
             }
         }
@@ -2509,15 +2469,15 @@ pub unsafe extern "C" fn Field_KeyDownEvent(
             }
         }
         134 => {
-            if (*edit).cursor > 0 as libc::c_int {
+            if (*edit).cursor > 0 {
                 (*edit).cursor -= 1
             }
         }
-        143 => (*edit).cursor = 0 as libc::c_int,
+        143 => (*edit).cursor = 0,
         144 => (*edit).cursor = len,
         139 => {
-            key_overstrikeMode = (key_overstrikeMode as u64 == 0) as libc::c_int
-                as crate::src::qcommon::q_shared::qboolean
+            key_overstrikeMode =
+                (key_overstrikeMode as u64 == 0) as crate::src::qcommon::q_shared::qboolean
         }
         _ => {}
     }
@@ -2525,7 +2485,7 @@ pub unsafe extern "C" fn Field_KeyDownEvent(
     if (*edit).cursor < (*edit).scroll {
         (*edit).scroll = (*edit).cursor
     } else if (*edit).cursor >= (*edit).scroll + (*edit).widthInChars && (*edit).cursor <= len {
-        (*edit).scroll = (*edit).cursor - (*edit).widthInChars + 1 as libc::c_int
+        (*edit).scroll = (*edit).cursor - (*edit).widthInChars + 1
     };
 }
 /*
@@ -2535,33 +2495,30 @@ Field_CharEvent
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Field_CharEvent(
-    mut edit: *mut crate::qcommon_h::field_t,
-    mut ch: libc::c_int,
-) {
-    let mut len: libc::c_int = 0;
-    if ch == 'v' as i32 - 'a' as i32 + 1 as libc::c_int {
+pub unsafe extern "C" fn Field_CharEvent(mut edit: *mut crate::qcommon_h::field_t, mut ch: i32) {
+    let mut len: i32 = 0;
+    if ch == 'v' as i32 - 'a' as i32 + 1 {
         // ctrl-v is paste
         Field_Paste(edit);
         return;
     }
-    if ch == 'c' as i32 - 'a' as i32 + 1 as libc::c_int {
+    if ch == 'c' as i32 - 'a' as i32 + 1 {
         // ctrl-c clears the field
         crate::src::qcommon::common::Field_Clear(edit);
         return;
     }
-    len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr()) as libc::c_int;
-    if ch == 'h' as i32 - 'a' as i32 + 1 as libc::c_int {
+    len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr()) as i32;
+    if ch == 'h' as i32 - 'a' as i32 + 1 {
         // ctrl-h is backspace
-        if (*edit).cursor > 0 as libc::c_int {
+        if (*edit).cursor > 0 {
             crate::stdlib::memmove(
                 (*edit)
                     .buffer
                     .as_mut_ptr()
                     .offset((*edit).cursor as isize)
-                    .offset(-(1 as libc::c_int as isize)) as *mut libc::c_void,
+                    .offset(-(1)) as *mut libc::c_void,
                 (*edit).buffer.as_mut_ptr().offset((*edit).cursor as isize) as *const libc::c_void,
-                (len + 1 as libc::c_int - (*edit).cursor) as libc::c_ulong,
+                (len + 1 - (*edit).cursor) as usize,
             );
             (*edit).cursor -= 1;
             if (*edit).cursor < (*edit).scroll {
@@ -2570,13 +2527,13 @@ pub unsafe extern "C" fn Field_CharEvent(
         }
         return;
     }
-    if ch == 'a' as i32 - 'a' as i32 + 1 as libc::c_int {
+    if ch == 'a' as i32 - 'a' as i32 + 1 {
         // ctrl-a is home
-        (*edit).cursor = 0 as libc::c_int;
-        (*edit).scroll = 0 as libc::c_int;
+        (*edit).cursor = 0;
+        (*edit).scroll = 0;
         return;
     }
-    if ch == 'e' as i32 - 'a' as i32 + 1 as libc::c_int {
+    if ch == 'e' as i32 - 'a' as i32 + 1 {
         // ctrl-e is end
         (*edit).cursor = len;
         (*edit).scroll = (*edit).cursor - (*edit).widthInChars;
@@ -2585,19 +2542,19 @@ pub unsafe extern "C" fn Field_CharEvent(
     //
     // ignore any other non printable chars
     //
-    if ch < 32 as libc::c_int {
+    if ch < 32 {
         return;
     } // insert mode
     if key_overstrikeMode as u64 != 0 {
         // - 2 to leave room for the leading slash and trailing \0
-        if (*edit).cursor == 256 as libc::c_int - 2 as libc::c_int {
+        if (*edit).cursor == 256 - 2 {
             return;
         }
-        (*edit).buffer[(*edit).cursor as usize] = ch as libc::c_char;
+        (*edit).buffer[(*edit).cursor as usize] = ch as i8;
         (*edit).cursor += 1
     } else {
         // - 2 to leave room for the leading slash and trailing \0
-        if len == 256 as libc::c_int - 2 as libc::c_int {
+        if len == 256 - 2 {
             return;
             // all full
         }
@@ -2606,18 +2563,18 @@ pub unsafe extern "C" fn Field_CharEvent(
                 .buffer
                 .as_mut_ptr()
                 .offset((*edit).cursor as isize)
-                .offset(1 as libc::c_int as isize) as *mut libc::c_void,
+                .offset(1) as *mut libc::c_void,
             (*edit).buffer.as_mut_ptr().offset((*edit).cursor as isize) as *const libc::c_void,
-            (len + 1 as libc::c_int - (*edit).cursor) as libc::c_ulong,
+            (len + 1 - (*edit).cursor) as usize,
         );
-        (*edit).buffer[(*edit).cursor as usize] = ch as libc::c_char;
+        (*edit).buffer[(*edit).cursor as usize] = ch as i8;
         (*edit).cursor += 1
     }
     if (*edit).cursor >= (*edit).widthInChars {
         (*edit).scroll += 1
     }
-    if (*edit).cursor == len + 1 as libc::c_int {
-        (*edit).buffer[(*edit).cursor as usize] = 0 as libc::c_int as libc::c_char
+    if (*edit).cursor == len + 1 {
+        (*edit).buffer[(*edit).cursor as usize] = 0i8
     };
 }
 /*
@@ -2636,77 +2593,64 @@ Handles history and console scrollback
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Console_Key(mut key: libc::c_int) {
+pub unsafe extern "C" fn Console_Key(mut key: i32) {
     // ctrl-L clears screen
-    if key == 'l' as i32
-        && keys[crate::keycodes_h::K_CTRL as libc::c_int as usize].down as libc::c_uint != 0
-    {
-        crate::src::qcommon::cmd::Cbuf_AddText(b"clear\n\x00" as *const u8 as *const libc::c_char);
+    if key == 'l' as i32 && keys[crate::keycodes_h::K_CTRL as usize].down != 0 {
+        crate::src::qcommon::cmd::Cbuf_AddText(b"clear\n\x00" as *const u8 as *const i8);
         return;
     }
     // enter finishes the line
-    if key == crate::keycodes_h::K_ENTER as libc::c_int
-        || key == crate::keycodes_h::K_KP_ENTER as libc::c_int
-    {
+    if key == crate::keycodes_h::K_ENTER as i32 || key == crate::keycodes_h::K_KP_ENTER as i32 {
         // if not in the game explicitly prepend a slash if needed
-        if crate::src::client::cl_main::clc.state as libc::c_uint
-            != crate::src::qcommon::q_shared::CA_ACTIVE as libc::c_int as libc::c_uint
+        if crate::src::client::cl_main::clc.state != crate::src::qcommon::q_shared::CA_ACTIVE
             && (*crate::src::qcommon::common::con_autochat).integer != 0
-            && g_consoleField.buffer[0 as libc::c_int as usize] as libc::c_int != 0
-            && g_consoleField.buffer[0 as libc::c_int as usize] as libc::c_int != '\\' as i32
-            && g_consoleField.buffer[0 as libc::c_int as usize] as libc::c_int != '/' as i32
+            && g_consoleField.buffer[0] as i32 != 0
+            && g_consoleField.buffer[0] as i32 != '\\' as i32
+            && g_consoleField.buffer[0] as i32 != '/' as i32
         {
-            let mut temp: [libc::c_char; 255] = [0; 255];
+            let mut temp: [i8; 255] = [0; 255];
             crate::src::qcommon::q_shared::Q_strncpyz(
                 temp.as_mut_ptr(),
                 g_consoleField.buffer.as_mut_ptr(),
-                ::std::mem::size_of::<[libc::c_char; 255]>() as libc::c_ulong as libc::c_int,
+                ::std::mem::size_of::<[i8; 255]>() as i32,
             );
             crate::src::qcommon::q_shared::Com_sprintf(
                 g_consoleField.buffer.as_mut_ptr(),
-                ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong as libc::c_int,
-                b"\\%s\x00" as *const u8 as *const libc::c_char,
+                ::std::mem::size_of::<[i8; 256]>() as i32,
+                b"\\%s\x00" as *const u8 as *const i8,
                 temp.as_mut_ptr(),
             );
             g_consoleField.cursor += 1
         }
         crate::src::qcommon::common::Com_Printf(
-            b"]%s\n\x00" as *const u8 as *const libc::c_char,
+            b"]%s\n\x00" as *const u8 as *const i8,
             g_consoleField.buffer.as_mut_ptr(),
         );
         // leading slash is an explicit command
-        if g_consoleField.buffer[0 as libc::c_int as usize] as libc::c_int == '\\' as i32
-            || g_consoleField.buffer[0 as libc::c_int as usize] as libc::c_int == '/' as i32
+        if g_consoleField.buffer[0] as i32 == '\\' as i32
+            || g_consoleField.buffer[0] as i32 == '/' as i32
         {
-            crate::src::qcommon::cmd::Cbuf_AddText(
-                g_consoleField
-                    .buffer
-                    .as_mut_ptr()
-                    .offset(1 as libc::c_int as isize),
-            ); // valid command
-            crate::src::qcommon::cmd::Cbuf_AddText(b"\n\x00" as *const u8 as *const libc::c_char);
-        } else if g_consoleField.buffer[0 as libc::c_int as usize] == 0 {
+            crate::src::qcommon::cmd::Cbuf_AddText(g_consoleField.buffer.as_mut_ptr().offset(1)); // valid command
+            crate::src::qcommon::cmd::Cbuf_AddText(b"\n\x00" as *const u8 as *const i8);
+        } else if g_consoleField.buffer[0] == 0 {
             return;
         // other text will be chat messages
         // empty lines just scroll the console without adding to history
         } else {
             if (*crate::src::qcommon::common::con_autochat).integer != 0 {
-                crate::src::qcommon::cmd::Cbuf_AddText(
-                    b"cmd say \x00" as *const u8 as *const libc::c_char,
-                );
+                crate::src::qcommon::cmd::Cbuf_AddText(b"cmd say \x00" as *const u8 as *const i8);
             }
             crate::src::qcommon::cmd::Cbuf_AddText(g_consoleField.buffer.as_mut_ptr());
-            crate::src::qcommon::cmd::Cbuf_AddText(b"\n\x00" as *const u8 as *const libc::c_char);
+            crate::src::qcommon::cmd::Cbuf_AddText(b"\n\x00" as *const u8 as *const i8);
         }
         // copy line to history buffer
-        historyEditLines[(nextHistoryLine % 32 as libc::c_int) as usize] = g_consoleField; // may take some time
+        historyEditLines[(nextHistoryLine % 32) as usize] = g_consoleField; // may take some time
         nextHistoryLine += 1;
         historyLine = nextHistoryLine;
         crate::src::qcommon::common::Field_Clear(&mut g_consoleField);
         g_consoleField.widthInChars = crate::src::client::cl_console::g_console_field_width;
         CL_SaveConsoleHistory();
-        if crate::src::client::cl_main::clc.state as libc::c_uint
-            == crate::src::qcommon::q_shared::CA_DISCONNECTED as libc::c_int as libc::c_uint
+        if crate::src::client::cl_main::clc.state == crate::src::qcommon::q_shared::CA_DISCONNECTED
         {
             crate::src::client::cl_scrn::SCR_UpdateScreen();
             // force an update, because the command
@@ -2714,23 +2658,21 @@ pub unsafe extern "C" fn Console_Key(mut key: libc::c_int) {
         return;
     }
     // command completion
-    if key == crate::keycodes_h::K_TAB as libc::c_int {
+    if key == crate::keycodes_h::K_TAB as i32 {
         crate::src::qcommon::common::Field_AutoComplete(&mut g_consoleField);
         return;
     }
     // command history (ctrl-p ctrl-n for unix style)
-    if key == crate::keycodes_h::K_MWHEELUP as libc::c_int
-        && keys[crate::keycodes_h::K_SHIFT as libc::c_int as usize].down as libc::c_uint != 0
-        || key == crate::keycodes_h::K_UPARROW as libc::c_int
-        || key == crate::keycodes_h::K_KP_UPARROW as libc::c_int
+    if key == crate::keycodes_h::K_MWHEELUP as i32
+        && keys[crate::keycodes_h::K_SHIFT as usize].down != 0
+        || key == crate::keycodes_h::K_UPARROW as i32
+        || key == crate::keycodes_h::K_KP_UPARROW as i32
         || ({
-            let mut __res: libc::c_int = 0;
-            if ::std::mem::size_of::<libc::c_int>() as libc::c_ulong
-                > 1 as libc::c_int as libc::c_ulong
-            {
+            let mut __res: i32 = 0;
+            if ::std::mem::size_of::<i32>() > 1 {
                 if 0 != 0 {
-                    let mut __c: libc::c_int = key;
-                    __res = (if __c < -(128 as libc::c_int) || __c > 255 as libc::c_int {
+                    let mut __c: i32 = key;
+                    __res = (if __c < -(128) || __c > 255 {
                         __c
                     } else {
                         *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
@@ -2743,26 +2685,24 @@ pub unsafe extern "C" fn Console_Key(mut key: libc::c_int) {
             }
             __res
         }) == 'p' as i32
-            && keys[crate::keycodes_h::K_CTRL as libc::c_int as usize].down as libc::c_uint != 0
+            && keys[crate::keycodes_h::K_CTRL as usize].down != 0
     {
-        if nextHistoryLine - historyLine < 32 as libc::c_int && historyLine > 0 as libc::c_int {
+        if nextHistoryLine - historyLine < 32 && historyLine > 0 {
             historyLine -= 1
         }
-        g_consoleField = historyEditLines[(historyLine % 32 as libc::c_int) as usize];
+        g_consoleField = historyEditLines[(historyLine % 32) as usize];
         return;
     }
-    if key == crate::keycodes_h::K_MWHEELDOWN as libc::c_int
-        && keys[crate::keycodes_h::K_SHIFT as libc::c_int as usize].down as libc::c_uint != 0
-        || key == crate::keycodes_h::K_DOWNARROW as libc::c_int
-        || key == crate::keycodes_h::K_KP_DOWNARROW as libc::c_int
+    if key == crate::keycodes_h::K_MWHEELDOWN as i32
+        && keys[crate::keycodes_h::K_SHIFT as usize].down != 0
+        || key == crate::keycodes_h::K_DOWNARROW as i32
+        || key == crate::keycodes_h::K_KP_DOWNARROW as i32
         || ({
-            let mut __res: libc::c_int = 0;
-            if ::std::mem::size_of::<libc::c_int>() as libc::c_ulong
-                > 1 as libc::c_int as libc::c_ulong
-            {
+            let mut __res: i32 = 0;
+            if ::std::mem::size_of::<i32>() > 1 {
                 if 0 != 0 {
-                    let mut __c: libc::c_int = key;
-                    __res = (if __c < -(128 as libc::c_int) || __c > 255 as libc::c_int {
+                    let mut __c: i32 = key;
+                    __res = (if __c < -(128) || __c > 255 {
                         __c
                     } else {
                         *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
@@ -2775,7 +2715,7 @@ pub unsafe extern "C" fn Console_Key(mut key: libc::c_int) {
             }
             __res
         }) == 'n' as i32
-            && keys[crate::keycodes_h::K_CTRL as libc::c_int as usize].down as libc::c_uint != 0
+            && keys[crate::keycodes_h::K_CTRL as usize].down != 0
     {
         historyLine += 1;
         if historyLine >= nextHistoryLine {
@@ -2784,32 +2724,32 @@ pub unsafe extern "C" fn Console_Key(mut key: libc::c_int) {
             g_consoleField.widthInChars = crate::src::client::cl_console::g_console_field_width;
             return;
         }
-        g_consoleField = historyEditLines[(historyLine % 32 as libc::c_int) as usize];
+        g_consoleField = historyEditLines[(historyLine % 32) as usize];
         return;
     }
     // console scrolling
-    if key == crate::keycodes_h::K_PGUP as libc::c_int {
+    if key == crate::keycodes_h::K_PGUP as i32 {
         crate::src::client::cl_console::Con_PageUp();
         return;
     }
-    if key == crate::keycodes_h::K_PGDN as libc::c_int {
+    if key == crate::keycodes_h::K_PGDN as i32 {
         crate::src::client::cl_console::Con_PageDown();
         return;
     }
-    if key == crate::keycodes_h::K_MWHEELUP as libc::c_int {
+    if key == crate::keycodes_h::K_MWHEELUP as i32 {
         //----(SA)	added some mousewheel functionality to the console
         crate::src::client::cl_console::Con_PageUp();
-        if keys[crate::keycodes_h::K_CTRL as libc::c_int as usize].down as u64 != 0 {
+        if keys[crate::keycodes_h::K_CTRL as usize].down as u64 != 0 {
             // hold <ctrl> to accelerate scrolling
             crate::src::client::cl_console::Con_PageUp();
             crate::src::client::cl_console::Con_PageUp();
         }
         return;
     }
-    if key == crate::keycodes_h::K_MWHEELDOWN as libc::c_int {
+    if key == crate::keycodes_h::K_MWHEELDOWN as i32 {
         //----(SA)	added some mousewheel functionality to the console
         crate::src::client::cl_console::Con_PageDown();
-        if keys[crate::keycodes_h::K_CTRL as libc::c_int as usize].down as u64 != 0 {
+        if keys[crate::keycodes_h::K_CTRL as usize].down as u64 != 0 {
             // hold <ctrl> to accelerate scrolling
             crate::src::client::cl_console::Con_PageDown();
             crate::src::client::cl_console::Con_PageDown();
@@ -2817,15 +2757,13 @@ pub unsafe extern "C" fn Console_Key(mut key: libc::c_int) {
         return;
     }
     // ctrl-home = top of console
-    if key == crate::keycodes_h::K_HOME as libc::c_int
-        && keys[crate::keycodes_h::K_CTRL as libc::c_int as usize].down as libc::c_uint != 0
+    if key == crate::keycodes_h::K_HOME as i32 && keys[crate::keycodes_h::K_CTRL as usize].down != 0
     {
         crate::src::client::cl_console::Con_Top();
         return;
     }
     // ctrl-end = bottom of console
-    if key == crate::keycodes_h::K_END as libc::c_int
-        && keys[crate::keycodes_h::K_CTRL as libc::c_int as usize].down as libc::c_uint != 0
+    if key == crate::keycodes_h::K_END as i32 && keys[crate::keycodes_h::K_CTRL as usize].down != 0
     {
         crate::src::client::cl_console::Con_Bottom();
         return;
@@ -2843,40 +2781,37 @@ In game talk message
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Message_Key(mut key: libc::c_int) {
-    let mut buffer: [libc::c_char; 1024] = [0; 1024];
-    if key == crate::keycodes_h::K_ESCAPE as libc::c_int {
-        Key_SetCatcher(Key_GetCatcher() & !(0x4 as libc::c_int));
+pub unsafe extern "C" fn Message_Key(mut key: i32) {
+    let mut buffer: [i8; 1024] = [0; 1024];
+    if key == crate::keycodes_h::K_ESCAPE as i32 {
+        Key_SetCatcher(Key_GetCatcher() & !(0x4));
         crate::src::qcommon::common::Field_Clear(&mut chatField);
         return;
     }
-    if key == crate::keycodes_h::K_ENTER as libc::c_int
-        || key == crate::keycodes_h::K_KP_ENTER as libc::c_int
-    {
-        if chatField.buffer[0 as libc::c_int as usize] as libc::c_int != 0
-            && crate::src::client::cl_main::clc.state as libc::c_uint
-                == crate::src::qcommon::q_shared::CA_ACTIVE as libc::c_int as libc::c_uint
+    if key == crate::keycodes_h::K_ENTER as i32 || key == crate::keycodes_h::K_KP_ENTER as i32 {
+        if chatField.buffer[0] as i32 != 0
+            && crate::src::client::cl_main::clc.state == crate::src::qcommon::q_shared::CA_ACTIVE
         {
-            if chat_playerNum != -(1 as libc::c_int) {
+            if chat_playerNum != -(1) {
                 crate::src::qcommon::q_shared::Com_sprintf(
                     buffer.as_mut_ptr(),
-                    ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
-                    b"tell %i \"%s\"\n\x00" as *const u8 as *const libc::c_char,
+                    ::std::mem::size_of::<[i8; 1024]>() as i32,
+                    b"tell %i \"%s\"\n\x00" as *const u8 as *const i8,
                     chat_playerNum,
                     chatField.buffer.as_mut_ptr(),
                 );
             } else if chat_team as u64 != 0 {
                 crate::src::qcommon::q_shared::Com_sprintf(
                     buffer.as_mut_ptr(),
-                    ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
-                    b"say_team \"%s\"\n\x00" as *const u8 as *const libc::c_char,
+                    ::std::mem::size_of::<[i8; 1024]>() as i32,
+                    b"say_team \"%s\"\n\x00" as *const u8 as *const i8,
                     chatField.buffer.as_mut_ptr(),
                 );
             } else {
                 crate::src::qcommon::q_shared::Com_sprintf(
                     buffer.as_mut_ptr(),
-                    ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
-                    b"say \"%s\"\n\x00" as *const u8 as *const libc::c_char,
+                    ::std::mem::size_of::<[i8; 1024]>() as i32,
+                    b"say \"%s\"\n\x00" as *const u8 as *const i8,
                     chatField.buffer.as_mut_ptr(),
                 );
             }
@@ -2885,7 +2820,7 @@ pub unsafe extern "C" fn Message_Key(mut key: libc::c_int) {
                 crate::src::qcommon::q_shared::qfalse,
             );
         }
-        Key_SetCatcher(Key_GetCatcher() & !(0x4 as libc::c_int));
+        Key_SetCatcher(Key_GetCatcher() & !(0x4));
         crate::src::qcommon::common::Field_Clear(&mut chatField);
         return;
     }
@@ -2909,10 +2844,8 @@ Key_IsDown
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Key_IsDown(
-    mut keynum: libc::c_int,
-) -> crate::src::qcommon::q_shared::qboolean {
-    if keynum < 0 as libc::c_int || keynum >= crate::keycodes_h::MAX_KEYS as libc::c_int {
+pub unsafe extern "C" fn Key_IsDown(mut keynum: i32) -> crate::src::qcommon::q_shared::qboolean {
+    if keynum < 0 || keynum >= crate::keycodes_h::MAX_KEYS as i32 {
         return crate::src::qcommon::q_shared::qfalse;
     }
     return keys[keynum as usize].down;
@@ -2932,39 +2865,36 @@ to be configured even if they don't have defined names.
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Key_StringToKeynum(mut str: *mut libc::c_char) -> libc::c_int {
+pub unsafe extern "C" fn Key_StringToKeynum(mut str: *mut i8) -> i32 {
     let mut kn: *mut keyname_t = 0 as *mut keyname_t;
-    let mut n: libc::c_int = 0;
-    if str.is_null() || *str.offset(0 as libc::c_int as isize) == 0 {
-        return -(1 as libc::c_int);
+    let mut n: i32 = 0;
+    if str.is_null() || *str.offset(0) == 0 {
+        return -(1i32);
     }
-    if *str.offset(1 as libc::c_int as isize) == 0 {
+    if *str.offset(1) == 0 {
         return ({
-            let mut __res: libc::c_int = 0;
-            if ::std::mem::size_of::<libc::c_char>() as libc::c_ulong
-                > 1 as libc::c_int as libc::c_ulong
-            {
+            let mut __res: i32 = 0;
+            if ::std::mem::size_of::<i8>() > 1usize {
                 if 0 != 0 {
-                    let mut __c: libc::c_int =
-                        *str.offset(0 as libc::c_int as isize) as libc::c_int;
-                    __res = if __c < -(128 as libc::c_int) || __c > 255 as libc::c_int {
+                    let mut __c: i32 = *str.offset(0isize) as i32;
+                    __res = if __c < -(128i32) || __c > 255i32 {
                         __c
                     } else {
                         *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
                     }
                 } else {
-                    __res = tolower(*str.offset(0 as libc::c_int as isize) as libc::c_int)
+                    __res = tolower(*str.offset(0isize) as i32)
                 }
             } else {
                 __res = *(*crate::stdlib::__ctype_tolower_loc())
-                    .offset(*str.offset(0 as libc::c_int as isize) as libc::c_int as isize)
+                    .offset(*str.offset(0isize) as i32 as isize)
             }
             __res
         });
     }
     // check for hex code
     n = crate::src::qcommon::q_shared::Com_HexStrToInt(str);
-    if n >= 0 as libc::c_int && n < crate::keycodes_h::MAX_KEYS as libc::c_int {
+    if n >= 0 && n < crate::keycodes_h::MAX_KEYS as i32 {
         return n;
     }
     // scan for a text match
@@ -2975,7 +2905,7 @@ pub unsafe extern "C" fn Key_StringToKeynum(mut str: *mut libc::c_char) -> libc:
         }
         kn = kn.offset(1)
     }
-    return -(1 as libc::c_int);
+    return -(1);
 }
 /*
 ===================
@@ -2987,25 +2917,21 @@ given keynum.
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Key_KeynumToString(mut keynum: libc::c_int) -> *mut libc::c_char {
+pub unsafe extern "C" fn Key_KeynumToString(mut keynum: i32) -> *mut i8 {
     let mut kn: *mut keyname_t = 0 as *mut keyname_t;
-    static mut tinystr: [libc::c_char; 5] = [0; 5];
-    let mut i: libc::c_int = 0;
-    let mut j: libc::c_int = 0;
-    if keynum == -(1 as libc::c_int) {
-        return b"<KEY NOT FOUND>\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    static mut tinystr: [i8; 5] = [0; 5];
+    let mut i: i32 = 0;
+    let mut j: i32 = 0;
+    if keynum == -(1) {
+        return b"<KEY NOT FOUND>\x00" as *const u8 as *mut i8;
     }
-    if keynum < 0 as libc::c_int || keynum >= crate::keycodes_h::MAX_KEYS as libc::c_int {
-        return b"<OUT OF RANGE>\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+    if keynum < 0 || keynum >= crate::keycodes_h::MAX_KEYS as i32 {
+        return b"<OUT OF RANGE>\x00" as *const u8 as *mut i8;
     }
     // check for printable ascii (don't use quote)
-    if keynum > 32 as libc::c_int
-        && keynum < 127 as libc::c_int
-        && keynum != '\"' as i32
-        && keynum != ';' as i32
-    {
-        tinystr[0 as libc::c_int as usize] = keynum as libc::c_char;
-        tinystr[1 as libc::c_int as usize] = 0 as libc::c_int as libc::c_char;
+    if keynum > 32 && keynum < 127 && keynum != '\"' as i32 && keynum != ';' as i32 {
+        tinystr[0] = keynum as i8;
+        tinystr[1] = 0;
         return tinystr.as_mut_ptr();
     }
     // check for a key string
@@ -3017,21 +2943,21 @@ pub unsafe extern "C" fn Key_KeynumToString(mut keynum: libc::c_int) -> *mut lib
         kn = kn.offset(1)
     }
     // make a hex string
-    i = keynum >> 4 as libc::c_int;
-    j = keynum & 15 as libc::c_int;
-    tinystr[0 as libc::c_int as usize] = '0' as i32 as libc::c_char;
-    tinystr[1 as libc::c_int as usize] = 'x' as i32 as libc::c_char;
-    tinystr[2 as libc::c_int as usize] = if i > 9 as libc::c_int {
-        (i - 10 as libc::c_int) + 'a' as i32
+    i = keynum >> 4;
+    j = keynum & 15;
+    tinystr[0] = '0' as i8;
+    tinystr[1] = 'x' as i8;
+    tinystr[2] = if i > 9 {
+        (i - 10) + 'a' as i32
     } else {
         (i) + '0' as i32
-    } as libc::c_char;
-    tinystr[3 as libc::c_int as usize] = if j > 9 as libc::c_int {
-        (j - 10 as libc::c_int) + 'a' as i32
+    } as i8;
+    tinystr[3] = if j > 9 {
+        (j - 10) + 'a' as i32
     } else {
         (j) + '0' as i32
-    } as libc::c_char;
-    tinystr[4 as libc::c_int as usize] = 0 as libc::c_int as libc::c_char;
+    } as i8;
+    tinystr[4] = 0;
     return tinystr.as_mut_ptr();
 }
 /*
@@ -3041,8 +2967,8 @@ Key_SetBinding
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Key_SetBinding(mut keynum: libc::c_int, mut binding: *const libc::c_char) {
-    if keynum < 0 as libc::c_int || keynum >= crate::keycodes_h::MAX_KEYS as libc::c_int {
+pub unsafe extern "C" fn Key_SetBinding(mut keynum: i32, mut binding: *const i8) {
+    if keynum < 0 || keynum >= crate::keycodes_h::MAX_KEYS as i32 {
         return;
     }
     // free old bindings
@@ -3053,7 +2979,7 @@ pub unsafe extern "C" fn Key_SetBinding(mut keynum: libc::c_int, mut binding: *c
     keys[keynum as usize].binding = crate::src::qcommon::common::CopyString(binding);
     // consider this like modifying an archived cvar, so the
     // file write will be triggered at the next opportunity
-    crate::src::qcommon::cvar::cvar_modifiedFlags |= 0x1 as libc::c_int;
+    crate::src::qcommon::cvar::cvar_modifiedFlags |= 0x1;
 }
 /*
 ===================
@@ -3062,9 +2988,9 @@ Key_GetBinding
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Key_GetBinding(mut keynum: libc::c_int) -> *mut libc::c_char {
-    if keynum < 0 as libc::c_int || keynum >= crate::keycodes_h::MAX_KEYS as libc::c_int {
-        return b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
+pub unsafe extern "C" fn Key_GetBinding(mut keynum: i32) -> *mut i8 {
+    if keynum < 0 || keynum >= crate::keycodes_h::MAX_KEYS as i32 {
+        return b"\x00" as *const u8 as *mut i8;
     }
     return keys[keynum as usize].binding;
 }
@@ -3075,21 +3001,20 @@ Key_GetKey
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Key_GetKey(mut binding: *const libc::c_char) -> libc::c_int {
-    let mut i: libc::c_int = 0;
+pub unsafe extern "C" fn Key_GetKey(mut binding: *const i8) -> i32 {
+    let mut i: i32 = 0;
     if !binding.is_null() {
-        i = 0 as libc::c_int;
-        while i < crate::keycodes_h::MAX_KEYS as libc::c_int {
+        i = 0;
+        while i < crate::keycodes_h::MAX_KEYS as i32 {
             if !keys[i as usize].binding.is_null()
-                && crate::src::qcommon::q_shared::Q_stricmp(binding, keys[i as usize].binding)
-                    == 0 as libc::c_int
+                && crate::src::qcommon::q_shared::Q_stricmp(binding, keys[i as usize].binding) == 0
             {
                 return i;
             }
             i += 1
         }
     }
-    return -(1 as libc::c_int);
+    return -(1);
 }
 /*
 ===================
@@ -3099,22 +3024,22 @@ Key_Unbind_f
 #[no_mangle]
 
 pub unsafe extern "C" fn Key_Unbind_f() {
-    let mut b: libc::c_int = 0;
-    if crate::src::qcommon::cmd::Cmd_Argc() != 2 as libc::c_int {
+    let mut b: i32 = 0;
+    if crate::src::qcommon::cmd::Cmd_Argc() != 2 {
         crate::src::qcommon::common::Com_Printf(
-            b"unbind <key> : remove commands from a key\n\x00" as *const u8 as *const libc::c_char,
+            b"unbind <key> : remove commands from a key\n\x00" as *const u8 as *const i8,
         );
         return;
     }
-    b = Key_StringToKeynum(crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int));
-    if b == -(1 as libc::c_int) {
+    b = Key_StringToKeynum(crate::src::qcommon::cmd::Cmd_Argv(1));
+    if b == -(1) {
         crate::src::qcommon::common::Com_Printf(
-            b"\"%s\" isn\'t a valid key\n\x00" as *const u8 as *const libc::c_char,
-            crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int),
+            b"\"%s\" isn\'t a valid key\n\x00" as *const u8 as *const i8,
+            crate::src::qcommon::cmd::Cmd_Argv(1i32),
         );
         return;
     }
-    Key_SetBinding(b, b"\x00" as *const u8 as *const libc::c_char);
+    Key_SetBinding(b, b"\x00" as *const u8 as *const i8);
 }
 /*
 ===================
@@ -3124,11 +3049,11 @@ Key_Unbindall_f
 #[no_mangle]
 
 pub unsafe extern "C" fn Key_Unbindall_f() {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
-    while i < crate::keycodes_h::MAX_KEYS as libc::c_int {
+    let mut i: i32 = 0;
+    i = 0;
+    while i < crate::keycodes_h::MAX_KEYS as i32 {
         if !keys[i as usize].binding.is_null() {
-            Key_SetBinding(i, b"\x00" as *const u8 as *const libc::c_char);
+            Key_SetBinding(i, b"\x00" as *const u8 as *const i8);
         }
         i += 1
     }
@@ -3141,53 +3066,47 @@ Key_Bind_f
 #[no_mangle]
 
 pub unsafe extern "C" fn Key_Bind_f() {
-    let mut i: libc::c_int = 0;
-    let mut c: libc::c_int = 0;
-    let mut b: libc::c_int = 0;
-    let mut cmd: [libc::c_char; 1024] = [0; 1024];
+    let mut i: i32 = 0;
+    let mut c: i32 = 0;
+    let mut b: i32 = 0;
+    let mut cmd: [i8; 1024] = [0; 1024];
     c = crate::src::qcommon::cmd::Cmd_Argc();
-    if c < 2 as libc::c_int {
+    if c < 2 {
         crate::src::qcommon::common::Com_Printf(
-            b"bind <key> [command] : attach a command to a key\n\x00" as *const u8
-                as *const libc::c_char,
+            b"bind <key> [command] : attach a command to a key\n\x00" as *const u8 as *const i8,
         );
         return;
     }
-    b = Key_StringToKeynum(crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int));
-    if b == -(1 as libc::c_int) {
+    b = Key_StringToKeynum(crate::src::qcommon::cmd::Cmd_Argv(1));
+    if b == -(1) {
         crate::src::qcommon::common::Com_Printf(
-            b"\"%s\" isn\'t a valid key\n\x00" as *const u8 as *const libc::c_char,
-            crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int),
+            b"\"%s\" isn\'t a valid key\n\x00" as *const u8 as *const i8,
+            crate::src::qcommon::cmd::Cmd_Argv(1i32),
         );
         return;
     }
-    if c == 2 as libc::c_int {
-        if !keys[b as usize].binding.is_null()
-            && *keys[b as usize].binding.offset(0 as libc::c_int as isize) as libc::c_int != 0
-        {
+    if c == 2 {
+        if !keys[b as usize].binding.is_null() && *keys[b as usize].binding.offset(0) as i32 != 0 {
             crate::src::qcommon::common::Com_Printf(
-                b"\"%s\" = \"%s\"\n\x00" as *const u8 as *const libc::c_char,
+                b"\"%s\" = \"%s\"\n\x00" as *const u8 as *const i8,
                 Key_KeynumToString(b),
                 keys[b as usize].binding,
             );
         } else {
             crate::src::qcommon::common::Com_Printf(
-                b"\"%s\" is not bound\n\x00" as *const u8 as *const libc::c_char,
+                b"\"%s\" is not bound\n\x00" as *const u8 as *const i8,
                 Key_KeynumToString(b),
             );
         }
         return;
     }
     // copy the rest of the command line
-    cmd[0 as libc::c_int as usize] = 0 as libc::c_int as libc::c_char; // start out with a null string
-    i = 2 as libc::c_int;
+    cmd[0] = 0; // start out with a null string
+    i = 2;
     while i < c {
         crate::stdlib::strcat(cmd.as_mut_ptr(), crate::src::qcommon::cmd::Cmd_Argv(i));
-        if i != c - 1 as libc::c_int {
-            crate::stdlib::strcat(
-                cmd.as_mut_ptr(),
-                b" \x00" as *const u8 as *const libc::c_char,
-            );
+        if i != c - 1 {
+            crate::stdlib::strcat(cmd.as_mut_ptr(), b" \x00" as *const u8 as *const i8);
         }
         i += 1
     }
@@ -3204,19 +3123,14 @@ Writes lines containing "bind key value"
 #[no_mangle]
 
 pub unsafe extern "C" fn Key_WriteBindings(mut f: crate::src::qcommon::q_shared::fileHandle_t) {
-    let mut i: libc::c_int = 0;
-    crate::src::qcommon::files::FS_Printf(
-        f,
-        b"unbindall\n\x00" as *const u8 as *const libc::c_char,
-    );
-    i = 0 as libc::c_int;
-    while i < crate::keycodes_h::MAX_KEYS as libc::c_int {
-        if !keys[i as usize].binding.is_null()
-            && *keys[i as usize].binding.offset(0 as libc::c_int as isize) as libc::c_int != 0
-        {
+    let mut i: i32 = 0;
+    crate::src::qcommon::files::FS_Printf(f, b"unbindall\n\x00" as *const u8 as *const i8);
+    i = 0;
+    while i < crate::keycodes_h::MAX_KEYS as i32 {
+        if !keys[i as usize].binding.is_null() && *keys[i as usize].binding.offset(0) as i32 != 0 {
             crate::src::qcommon::files::FS_Printf(
                 f,
-                b"bind %s \"%s\"\n\x00" as *const u8 as *const libc::c_char,
+                b"bind %s \"%s\"\n\x00" as *const u8 as *const i8,
                 Key_KeynumToString(i),
                 keys[i as usize].binding,
             );
@@ -3233,14 +3147,12 @@ Key_Bindlist_f
 #[no_mangle]
 
 pub unsafe extern "C" fn Key_Bindlist_f() {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
-    while i < crate::keycodes_h::MAX_KEYS as libc::c_int {
-        if !keys[i as usize].binding.is_null()
-            && *keys[i as usize].binding.offset(0 as libc::c_int as isize) as libc::c_int != 0
-        {
+    let mut i: i32 = 0;
+    i = 0;
+    while i < crate::keycodes_h::MAX_KEYS as i32 {
+        if !keys[i as usize].binding.is_null() && *keys[i as usize].binding.offset(0) as i32 != 0 {
             crate::src::qcommon::common::Com_Printf(
-                b"%s \"%s\"\n\x00" as *const u8 as *const libc::c_char,
+                b"%s \"%s\"\n\x00" as *const u8 as *const i8,
                 Key_KeynumToString(i),
                 keys[i as usize].binding,
             );
@@ -3270,10 +3182,10 @@ Key_KeynameCompletion
 #[no_mangle]
 
 pub unsafe extern "C" fn Key_KeynameCompletion(
-    mut callback: Option<unsafe extern "C" fn(_: *const libc::c_char) -> ()>,
+    mut callback: Option<unsafe extern "C" fn(_: *const i8) -> ()>,
 ) {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
+    let mut i: i32 = 0;
+    i = 0;
     while !keynames[i as usize].name.is_null() {
         callback.expect("non-null function pointer")(keynames[i as usize].name);
         i += 1
@@ -3285,13 +3197,13 @@ Key_CompleteUnbind
 ====================
 */
 
-unsafe extern "C" fn Key_CompleteUnbind(mut args: *mut libc::c_char, mut argNum: libc::c_int) {
-    if argNum == 2 as libc::c_int {
+unsafe extern "C" fn Key_CompleteUnbind(mut args: *mut i8, mut argNum: i32) {
+    if argNum == 2 {
         // Skip "unbind "
-        let mut p: *mut libc::c_char = crate::src::qcommon::q_shared::Com_SkipTokens(
+        let mut p: *mut i8 = crate::src::qcommon::q_shared::Com_SkipTokens(
             args,
-            1 as libc::c_int,
-            b" \x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            1,
+            b" \x00" as *const u8 as *mut i8,
         );
         if p > args {
             crate::src::qcommon::common::Field_CompleteKeyname();
@@ -3304,24 +3216,24 @@ Key_CompleteBind
 ====================
 */
 
-unsafe extern "C" fn Key_CompleteBind(mut args: *mut libc::c_char, mut argNum: libc::c_int) {
-    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
-    if argNum == 2 as libc::c_int {
+unsafe extern "C" fn Key_CompleteBind(mut args: *mut i8, mut argNum: i32) {
+    let mut p: *mut i8 = 0 as *mut i8;
+    if argNum == 2 {
         // Skip "bind "
         p = crate::src::qcommon::q_shared::Com_SkipTokens(
             args,
-            1 as libc::c_int,
-            b" \x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            1,
+            b" \x00" as *const u8 as *mut i8,
         );
         if p > args {
             crate::src::qcommon::common::Field_CompleteKeyname();
         }
-    } else if argNum >= 3 as libc::c_int {
+    } else if argNum >= 3 {
         // Skip "bind <key> "
         p = crate::src::qcommon::q_shared::Com_SkipTokens(
             args,
-            2 as libc::c_int,
-            b" \x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            2,
+            b" \x00" as *const u8 as *mut i8,
         );
         if p > args {
             crate::src::qcommon::common::Field_CompleteCommand(
@@ -3342,29 +3254,27 @@ CL_InitKeyCommands
 pub unsafe extern "C" fn CL_InitKeyCommands() {
     // register our functions
     crate::src::qcommon::cmd::Cmd_AddCommand(
-        b"bind\x00" as *const u8 as *const libc::c_char,
+        b"bind\x00" as *const u8 as *const i8,
         Some(Key_Bind_f as unsafe extern "C" fn() -> ()),
     );
     crate::src::qcommon::cmd::Cmd_SetCommandCompletionFunc(
-        b"bind\x00" as *const u8 as *const libc::c_char,
-        Some(Key_CompleteBind as unsafe extern "C" fn(_: *mut libc::c_char, _: libc::c_int) -> ()),
+        b"bind\x00" as *const u8 as *const i8,
+        Some(Key_CompleteBind as unsafe extern "C" fn(_: *mut i8, _: i32) -> ()),
     );
     crate::src::qcommon::cmd::Cmd_AddCommand(
-        b"unbind\x00" as *const u8 as *const libc::c_char,
+        b"unbind\x00" as *const u8 as *const i8,
         Some(Key_Unbind_f as unsafe extern "C" fn() -> ()),
     );
     crate::src::qcommon::cmd::Cmd_SetCommandCompletionFunc(
-        b"unbind\x00" as *const u8 as *const libc::c_char,
-        Some(
-            Key_CompleteUnbind as unsafe extern "C" fn(_: *mut libc::c_char, _: libc::c_int) -> (),
-        ),
+        b"unbind\x00" as *const u8 as *const i8,
+        Some(Key_CompleteUnbind as unsafe extern "C" fn(_: *mut i8, _: i32) -> ()),
     );
     crate::src::qcommon::cmd::Cmd_AddCommand(
-        b"unbindall\x00" as *const u8 as *const libc::c_char,
+        b"unbindall\x00" as *const u8 as *const i8,
         Some(Key_Unbindall_f as unsafe extern "C" fn() -> ()),
     );
     crate::src::qcommon::cmd::Cmd_AddCommand(
-        b"bindlist\x00" as *const u8 as *const libc::c_char,
+        b"bindlist\x00" as *const u8 as *const i8,
         Some(Key_Bindlist_f as unsafe extern "C" fn() -> ()),
     );
 }
@@ -3377,22 +3287,18 @@ Returns qtrue if bind command should be executed while user interface is shown
 */
 
 unsafe extern "C" fn CL_BindUICommand(
-    mut cmd: *const libc::c_char,
+    mut cmd: *const i8,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    if Key_GetCatcher() & 0x1 as libc::c_int != 0 {
+    if Key_GetCatcher() & 0x1 != 0 {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if crate::src::qcommon::q_shared::Q_stricmp(
-        cmd,
-        b"toggleconsole\x00" as *const u8 as *const libc::c_char,
-    ) == 0
+    if crate::src::qcommon::q_shared::Q_stricmp(cmd, b"toggleconsole\x00" as *const u8 as *const i8)
+        == 0
     {
         return crate::src::qcommon::q_shared::qtrue;
     }
-    if crate::src::qcommon::q_shared::Q_stricmp(
-        cmd,
-        b"togglemenu\x00" as *const u8 as *const libc::c_char,
-    ) == 0
+    if crate::src::qcommon::q_shared::Q_stricmp(cmd, b"togglemenu\x00" as *const u8 as *const i8)
+        == 0
     {
         return crate::src::qcommon::q_shared::qtrue;
     }
@@ -3408,69 +3314,59 @@ Execute the commands in the bind string
 #[no_mangle]
 
 pub unsafe extern "C" fn CL_ParseBinding(
-    mut key: libc::c_int,
+    mut key: i32,
     mut down: crate::src::qcommon::q_shared::qboolean,
-    mut time: libc::c_uint,
+    mut time: u32,
 ) {
-    let mut buf: [libc::c_char; 1024] = [0; 1024];
-    let mut p: *mut libc::c_char = buf.as_mut_ptr();
-    let mut end: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut buf: [i8; 1024] = [0; 1024];
+    let mut p: *mut i8 = buf.as_mut_ptr();
+    let mut end: *mut i8 = 0 as *mut i8;
     let mut allCommands: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     let mut allowUpCmds: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
-    if crate::src::client::cl_main::clc.state as libc::c_uint
-        == crate::src::qcommon::q_shared::CA_DISCONNECTED as libc::c_int as libc::c_uint
-        && Key_GetCatcher() == 0 as libc::c_int
+    if crate::src::client::cl_main::clc.state == crate::src::qcommon::q_shared::CA_DISCONNECTED
+        && Key_GetCatcher() == 0
     {
         return;
     }
-    if keys[key as usize].binding.is_null()
-        || *keys[key as usize].binding.offset(0 as libc::c_int as isize) == 0
-    {
+    if keys[key as usize].binding.is_null() || *keys[key as usize].binding.offset(0) == 0 {
         return;
     }
     crate::src::qcommon::q_shared::Q_strncpyz(
         buf.as_mut_ptr(),
         keys[key as usize].binding,
-        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+        ::std::mem::size_of::<[i8; 1024]>() as i32,
     );
     // run all bind commands if console, ui, etc aren't reading keys
-    allCommands = (Key_GetCatcher() == 0 as libc::c_int) as libc::c_int
-        as crate::src::qcommon::q_shared::qboolean;
+    allCommands = (Key_GetCatcher() == 0) as crate::src::qcommon::q_shared::qboolean;
     // allow button up commands if in game even if key catcher is set
-    allowUpCmds = (crate::src::client::cl_main::clc.state as libc::c_uint
-        != crate::src::qcommon::q_shared::CA_DISCONNECTED as libc::c_int as libc::c_uint)
-        as libc::c_int as crate::src::qcommon::q_shared::qboolean;
+    allowUpCmds = (crate::src::client::cl_main::clc.state
+        != crate::src::qcommon::q_shared::CA_DISCONNECTED)
+        as crate::src::qcommon::q_shared::qboolean;
     loop {
-        while *(*crate::stdlib::__ctype_b_loc()).offset(*p as libc::c_int as isize) as libc::c_int
-            & crate::stdlib::_ISspace as libc::c_int as libc::c_ushort as libc::c_int
+        while *(*crate::stdlib::__ctype_b_loc()).offset(*p as i32 as isize) as i32
+            & crate::stdlib::_ISspace as u16 as i32
             != 0
         {
             p = p.offset(1)
         }
         end = crate::stdlib::strchr(p, ';' as i32);
         if !end.is_null() {
-            *end = '\u{0}' as i32 as libc::c_char
+            *end = '\u{0}' as i8
         }
-        if *p as libc::c_int == '+' as i32 {
+        if *p as i32 == '+' as i32 {
             // button commands add keynum and time as parameters
             // so that multiple sources can be discriminated and
             // subframe corrected
-            if allCommands as libc::c_uint != 0
-                || allowUpCmds as libc::c_uint != 0 && down as u64 == 0
-            {
-                let mut cmd: [libc::c_char; 1024] = [0; 1024];
+            if allCommands != 0 || allowUpCmds != 0 && down as u64 == 0 {
+                let mut cmd: [i8; 1024] = [0; 1024];
                 crate::src::qcommon::q_shared::Com_sprintf(
                     cmd.as_mut_ptr(),
-                    ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
-                    b"%c%s %d %d\n\x00" as *const u8 as *const libc::c_char,
-                    if down as libc::c_uint != 0 {
-                        '+' as i32
-                    } else {
-                        '-' as i32
-                    },
-                    p.offset(1 as libc::c_int as isize),
+                    ::std::mem::size_of::<[i8; 1024]>() as i32,
+                    b"%c%s %d %d\n\x00" as *const u8 as *const i8,
+                    if down != 0 { '+' as i32 } else { '-' as i32 },
+                    p.offset(1isize),
                     key,
                     time,
                 );
@@ -3478,17 +3374,15 @@ pub unsafe extern "C" fn CL_ParseBinding(
             }
         } else if down as u64 != 0 {
             // normal commands only execute on key press
-            if allCommands as libc::c_uint != 0 || CL_BindUICommand(p) as libc::c_uint != 0 {
+            if allCommands != 0 || CL_BindUICommand(p) != 0 {
                 crate::src::qcommon::cmd::Cbuf_AddText(p);
-                crate::src::qcommon::cmd::Cbuf_AddText(
-                    b"\n\x00" as *const u8 as *const libc::c_char,
-                );
+                crate::src::qcommon::cmd::Cbuf_AddText(b"\n\x00" as *const u8 as *const i8);
             }
         }
         if end.is_null() {
             break;
         }
-        p = end.offset(1 as libc::c_int as isize)
+        p = end.offset(1)
     }
 }
 /*
@@ -3500,129 +3394,127 @@ Called by CL_KeyEvent to handle a keypress
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn CL_KeyDownEvent(mut key: libc::c_int, mut time: libc::c_uint) {
+pub unsafe extern "C" fn CL_KeyDownEvent(mut key: i32, mut time: u32) {
     keys[key as usize].down = crate::src::qcommon::q_shared::qtrue;
     keys[key as usize].repeats += 1;
-    if keys[key as usize].repeats == 1 as libc::c_int {
+    if keys[key as usize].repeats == 1 {
         anykeydown += 1
     }
-    if keys[crate::keycodes_h::K_ALT as libc::c_int as usize].down as libc::c_uint != 0
-        && key == crate::keycodes_h::K_ENTER as libc::c_int
+    if keys[crate::keycodes_h::K_ALT as usize].down != 0 && key == crate::keycodes_h::K_ENTER as i32
     {
         // don't repeat fullscreen toggle when keys are held down
-        if keys[crate::keycodes_h::K_ENTER as libc::c_int as usize].repeats > 1 as libc::c_int {
+        if keys[crate::keycodes_h::K_ENTER as usize].repeats > 1 {
             return;
         }
         crate::src::qcommon::cvar::Cvar_SetValue(
-            b"r_fullscreen\x00" as *const u8 as *const libc::c_char,
+            b"r_fullscreen\x00" as *const u8 as *const i8,
             (crate::src::qcommon::cvar::Cvar_VariableIntegerValue(
-                b"r_fullscreen\x00" as *const u8 as *const libc::c_char,
-            ) == 0) as libc::c_int as libc::c_float,
+                b"r_fullscreen\x00" as *const u8 as *const i8,
+            ) == 0) as i32 as f32,
         );
         return;
     }
     // console key is hardcoded, so the user can never unbind it
-    if key == crate::keycodes_h::K_CONSOLE as libc::c_int
-        || keys[crate::keycodes_h::K_SHIFT as libc::c_int as usize].down as libc::c_uint != 0
-            && key == crate::keycodes_h::K_ESCAPE as libc::c_int
+    if key == crate::keycodes_h::K_CONSOLE as i32
+        || keys[crate::keycodes_h::K_SHIFT as usize].down != 0
+            && key == crate::keycodes_h::K_ESCAPE as i32
     {
         crate::src::client::cl_console::Con_ToggleConsole_f();
         Key_ClearStates();
         return;
     }
     // keys can still be used for bound actions
-    if (key < 128 as libc::c_int || key == crate::keycodes_h::K_MOUSE1 as libc::c_int)
-        && (crate::src::client::cl_main::clc.demoplaying as libc::c_uint != 0
-            || crate::src::client::cl_main::clc.state as libc::c_uint
-                == crate::src::qcommon::q_shared::CA_CINEMATIC as libc::c_int as libc::c_uint)
-        && Key_GetCatcher() == 0 as libc::c_int
+    if (key < 128 || key == crate::keycodes_h::K_MOUSE1 as i32)
+        && (crate::src::client::cl_main::clc.demoplaying != 0
+            || crate::src::client::cl_main::clc.state
+                == crate::src::qcommon::q_shared::CA_CINEMATIC)
+        && Key_GetCatcher() == 0
     {
         if crate::src::qcommon::cvar::Cvar_VariableValue(
-            b"com_cameraMode\x00" as *const u8 as *const libc::c_char,
-        ) == 0 as libc::c_int as libc::c_float
+            b"com_cameraMode\x00" as *const u8 as *const i8,
+        ) == 0f32
         {
             crate::src::qcommon::cvar::Cvar_Set(
-                b"nextdemo\x00" as *const u8 as *const libc::c_char,
-                b"\x00" as *const u8 as *const libc::c_char,
+                b"nextdemo\x00" as *const u8 as *const i8,
+                b"\x00" as *const u8 as *const i8,
             );
-            key = crate::keycodes_h::K_ESCAPE as libc::c_int
+            key = crate::keycodes_h::K_ESCAPE as i32
         }
     }
     // escape is always handled special
-    if key == crate::keycodes_h::K_ESCAPE as libc::c_int {
-        if Key_GetCatcher() & 0x4 as libc::c_int != 0 {
+    if key == crate::keycodes_h::K_ESCAPE as i32 {
+        if Key_GetCatcher() & 0x4 != 0 {
             // clear message mode
             Message_Key(key);
             return;
         }
         // escape always gets out of CGAME stuff
-        if Key_GetCatcher() & 0x8 as libc::c_int != 0 {
-            Key_SetCatcher(Key_GetCatcher() & !(0x8 as libc::c_int));
+        if Key_GetCatcher() & 0x8 != 0 {
+            Key_SetCatcher(Key_GetCatcher() & !(0x8));
             crate::src::qcommon::vm::VM_Call(
                 crate::src::client::cl_main::cgvm,
-                crate::cg_public_h::CG_EVENT_HANDLING as libc::c_int,
-                crate::cg_public_h::CGAME_EVENT_NONE as libc::c_int,
+                crate::cg_public_h::CG_EVENT_HANDLING as i32,
+                crate::cg_public_h::CGAME_EVENT_NONE as i32,
             );
             return;
         }
-        if Key_GetCatcher() & 0x2 as libc::c_int == 0 {
-            if crate::src::client::cl_main::clc.state as libc::c_uint
-                == crate::src::qcommon::q_shared::CA_ACTIVE as libc::c_int as libc::c_uint
+        if Key_GetCatcher() & 0x2 == 0 {
+            if crate::src::client::cl_main::clc.state == crate::src::qcommon::q_shared::CA_ACTIVE
                 && crate::src::client::cl_main::clc.demoplaying as u64 == 0
             {
                 crate::src::qcommon::vm::VM_Call(
                     crate::src::client::cl_ui::uivm,
-                    crate::ui_public_h::UI_SET_ACTIVE_MENU as libc::c_int,
-                    crate::ui_public_h::UIMENU_INGAME as libc::c_int,
+                    crate::ui_public_h::UI_SET_ACTIVE_MENU as i32,
+                    crate::ui_public_h::UIMENU_INGAME as i32,
                 );
-            } else if crate::src::client::cl_main::clc.state as libc::c_uint
-                != crate::src::qcommon::q_shared::CA_DISCONNECTED as libc::c_int as libc::c_uint
+            } else if crate::src::client::cl_main::clc.state
+                != crate::src::qcommon::q_shared::CA_DISCONNECTED
             {
                 crate::src::client::cl_main::CL_Disconnect_f();
                 crate::src::client::snd_main::S_StopAllSounds();
                 crate::src::qcommon::vm::VM_Call(
                     crate::src::client::cl_ui::uivm,
-                    crate::ui_public_h::UI_SET_ACTIVE_MENU as libc::c_int,
-                    crate::ui_public_h::UIMENU_MAIN as libc::c_int,
+                    crate::ui_public_h::UI_SET_ACTIVE_MENU as i32,
+                    crate::ui_public_h::UIMENU_MAIN as i32,
                 );
             }
             return;
         }
         crate::src::qcommon::vm::VM_Call(
             crate::src::client::cl_ui::uivm,
-            crate::ui_public_h::UI_KEY_EVENT as libc::c_int,
+            crate::ui_public_h::UI_KEY_EVENT as i32,
             key,
-            crate::src::qcommon::q_shared::qtrue as libc::c_int,
+            crate::src::qcommon::q_shared::qtrue as i32,
         );
         return;
     }
     // send the bound action
     CL_ParseBinding(key, crate::src::qcommon::q_shared::qtrue, time);
     // distribute the key down event to the appropriate handler
-    if Key_GetCatcher() & 0x1 as libc::c_int != 0 {
+    if Key_GetCatcher() & 0x1 != 0 {
         Console_Key(key);
-    } else if Key_GetCatcher() & 0x2 as libc::c_int != 0 {
+    } else if Key_GetCatcher() & 0x2 != 0 {
         if !crate::src::client::cl_ui::uivm.is_null() {
             crate::src::qcommon::vm::VM_Call(
                 crate::src::client::cl_ui::uivm,
-                crate::ui_public_h::UI_KEY_EVENT as libc::c_int,
+                crate::ui_public_h::UI_KEY_EVENT as i32,
                 key,
-                crate::src::qcommon::q_shared::qtrue as libc::c_int,
+                crate::src::qcommon::q_shared::qtrue as i32,
             );
         }
-    } else if Key_GetCatcher() & 0x8 as libc::c_int != 0 {
+    } else if Key_GetCatcher() & 0x8 != 0 {
         if !crate::src::client::cl_main::cgvm.is_null() {
             crate::src::qcommon::vm::VM_Call(
                 crate::src::client::cl_main::cgvm,
-                crate::cg_public_h::CG_KEY_EVENT as libc::c_int,
+                crate::cg_public_h::CG_KEY_EVENT as i32,
                 key,
-                crate::src::qcommon::q_shared::qtrue as libc::c_int,
+                crate::src::qcommon::q_shared::qtrue as i32,
             );
         }
-    } else if Key_GetCatcher() & 0x4 as libc::c_int != 0 {
+    } else if Key_GetCatcher() & 0x4 != 0 {
         Message_Key(key);
-    } else if crate::src::client::cl_main::clc.state as libc::c_uint
-        == crate::src::qcommon::q_shared::CA_DISCONNECTED as libc::c_int as libc::c_uint
+    } else if crate::src::client::cl_main::clc.state
+        == crate::src::qcommon::q_shared::CA_DISCONNECTED
     {
         Console_Key(key);
     };
@@ -3636,17 +3528,17 @@ Called by CL_KeyEvent to handle a keyrelease
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn CL_KeyUpEvent(mut key: libc::c_int, mut time: libc::c_uint) {
-    keys[key as usize].repeats = 0 as libc::c_int;
+pub unsafe extern "C" fn CL_KeyUpEvent(mut key: i32, mut time: u32) {
+    keys[key as usize].repeats = 0;
     keys[key as usize].down = crate::src::qcommon::q_shared::qfalse;
     anykeydown -= 1;
-    if anykeydown < 0 as libc::c_int {
-        anykeydown = 0 as libc::c_int
+    if anykeydown < 0 {
+        anykeydown = 0
     }
     // don't process key-up events for the console key
-    if key == crate::keycodes_h::K_CONSOLE as libc::c_int
-        || key == crate::keycodes_h::K_ESCAPE as libc::c_int
-            && keys[crate::keycodes_h::K_SHIFT as libc::c_int as usize].down as libc::c_uint != 0
+    if key == crate::keycodes_h::K_CONSOLE as i32
+        || key == crate::keycodes_h::K_ESCAPE as i32
+            && keys[crate::keycodes_h::K_SHIFT as usize].down != 0
     {
         return;
     }
@@ -3657,21 +3549,19 @@ pub unsafe extern "C" fn CL_KeyUpEvent(mut key: libc::c_int, mut time: libc::c_u
     // an action started before a mode switch.
     //
     CL_ParseBinding(key, crate::src::qcommon::q_shared::qfalse, time);
-    if Key_GetCatcher() & 0x2 as libc::c_int != 0 && !crate::src::client::cl_ui::uivm.is_null() {
+    if Key_GetCatcher() & 0x2 != 0 && !crate::src::client::cl_ui::uivm.is_null() {
         crate::src::qcommon::vm::VM_Call(
             crate::src::client::cl_ui::uivm,
-            crate::ui_public_h::UI_KEY_EVENT as libc::c_int,
+            crate::ui_public_h::UI_KEY_EVENT as i32,
             key,
-            crate::src::qcommon::q_shared::qfalse as libc::c_int,
+            crate::src::qcommon::q_shared::qfalse as i32,
         );
-    } else if Key_GetCatcher() & 0x8 as libc::c_int != 0
-        && !crate::src::client::cl_main::cgvm.is_null()
-    {
+    } else if Key_GetCatcher() & 0x8 != 0 && !crate::src::client::cl_main::cgvm.is_null() {
         crate::src::qcommon::vm::VM_Call(
             crate::src::client::cl_main::cgvm,
-            crate::cg_public_h::CG_KEY_EVENT as libc::c_int,
+            crate::cg_public_h::CG_KEY_EVENT as i32,
             key,
-            crate::src::qcommon::q_shared::qfalse as libc::c_int,
+            crate::src::qcommon::q_shared::qfalse as i32,
         );
     };
 }
@@ -3685,9 +3575,9 @@ Called by the system for both key up and key down events
 #[no_mangle]
 
 pub unsafe extern "C" fn CL_KeyEvent(
-    mut key: libc::c_int,
+    mut key: i32,
     mut down: crate::src::qcommon::q_shared::qboolean,
-    mut time: libc::c_uint,
+    mut time: u32,
 ) {
     if down as u64 != 0 {
         CL_KeyDownEvent(key, time);
@@ -4028,26 +3918,26 @@ Normal keyboard characters, already shifted / capslocked / etc
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn CL_CharEvent(mut key: libc::c_int) {
+pub unsafe extern "C" fn CL_CharEvent(mut key: i32) {
     // delete is not a printable character and is
     // otherwise handled by Field_KeyDownEvent
-    if key == 127 as libc::c_int {
+    if key == 127 {
         return;
     }
     // distribute the key down event to the appropriate handler
-    if Key_GetCatcher() & 0x1 as libc::c_int != 0 {
+    if Key_GetCatcher() & 0x1 != 0 {
         Field_CharEvent(&mut g_consoleField, key);
-    } else if Key_GetCatcher() & 0x2 as libc::c_int != 0 {
+    } else if Key_GetCatcher() & 0x2 != 0 {
         crate::src::qcommon::vm::VM_Call(
             crate::src::client::cl_ui::uivm,
-            crate::ui_public_h::UI_KEY_EVENT as libc::c_int,
-            key | 1024 as libc::c_int,
-            crate::src::qcommon::q_shared::qtrue as libc::c_int,
+            crate::ui_public_h::UI_KEY_EVENT as i32,
+            key | 1024i32,
+            crate::src::qcommon::q_shared::qtrue as i32,
         );
-    } else if Key_GetCatcher() & 0x4 as libc::c_int != 0 {
+    } else if Key_GetCatcher() & 0x4 != 0 {
         Field_CharEvent(&mut chatField, key);
-    } else if crate::src::client::cl_main::clc.state as libc::c_uint
-        == crate::src::qcommon::q_shared::CA_DISCONNECTED as libc::c_int as libc::c_uint
+    } else if crate::src::client::cl_main::clc.state
+        == crate::src::qcommon::q_shared::CA_DISCONNECTED
     {
         Field_CharEvent(&mut g_consoleField, key);
     };
@@ -4083,24 +3973,20 @@ Key_ClearStates
 #[no_mangle]
 
 pub unsafe extern "C" fn Key_ClearStates() {
-    let mut i: libc::c_int = 0;
-    anykeydown = 0 as libc::c_int;
-    i = 0 as libc::c_int;
-    while i < crate::keycodes_h::MAX_KEYS as libc::c_int {
+    let mut i: i32 = 0;
+    anykeydown = 0;
+    i = 0;
+    while i < crate::keycodes_h::MAX_KEYS as i32 {
         if keys[i as usize].down as u64 != 0 {
-            CL_KeyEvent(
-                i,
-                crate::src::qcommon::q_shared::qfalse,
-                0 as libc::c_int as libc::c_uint,
-            );
+            CL_KeyEvent(i, crate::src::qcommon::q_shared::qfalse, 0u32);
         }
         keys[i as usize].down = crate::src::qcommon::q_shared::qfalse;
-        keys[i as usize].repeats = 0 as libc::c_int;
+        keys[i as usize].repeats = 0;
         i += 1
     }
 }
 
-static mut keyCatchers: libc::c_int = 0 as libc::c_int;
+static mut keyCatchers: i32 = 0;
 /*
 ====================
 Key_GetCatcher
@@ -4108,7 +3994,7 @@ Key_GetCatcher
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Key_GetCatcher() -> libc::c_int {
+pub unsafe extern "C" fn Key_GetCatcher() -> i32 {
     return keyCatchers;
 }
 //
@@ -4133,7 +4019,7 @@ Key_SetCatcher
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Key_SetCatcher(mut catcher: libc::c_int) {
+pub unsafe extern "C" fn Key_SetCatcher(mut catcher: i32) {
     // If the catcher state is changing, clear all key states
     if catcher != keyCatchers {
         Key_ClearStates();
@@ -4141,9 +4027,9 @@ pub unsafe extern "C" fn Key_SetCatcher(mut catcher: libc::c_int) {
     keyCatchers = catcher;
 }
 
-static mut consoleSaveBuffer: [libc::c_char; 1024] = [0; 1024];
+static mut consoleSaveBuffer: [i8; 1024] = [0; 1024];
 
-static mut consoleSaveBufferSize: libc::c_int = 0 as libc::c_int;
+static mut consoleSaveBufferSize: i32 = 0;
 /*
 ================
 CL_LoadConsoleHistory
@@ -4154,35 +4040,35 @@ Load the console history from cl_consoleHistory
 #[no_mangle]
 
 pub unsafe extern "C" fn CL_LoadConsoleHistory() {
-    let mut token: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut text_p: *mut libc::c_char = 0 as *mut libc::c_char;
-    let mut i: libc::c_int = 0;
-    let mut numChars: libc::c_int = 0;
-    let mut numLines: libc::c_int = 0 as libc::c_int;
+    let mut token: *mut i8 = 0 as *mut i8;
+    let mut text_p: *mut i8 = 0 as *mut i8;
+    let mut i: i32 = 0;
+    let mut numChars: i32 = 0;
+    let mut numLines: i32 = 0;
     let mut f: crate::src::qcommon::q_shared::fileHandle_t = 0;
     consoleSaveBufferSize = crate::src::qcommon::files::FS_FOpenFileRead(
-        b"q3history\x00" as *const u8 as *const libc::c_char,
+        b"q3history\x00" as *const u8 as *const i8,
         &mut f,
         crate::src::qcommon::q_shared::qfalse,
-    ) as libc::c_int;
+    ) as i32;
     if f == 0 {
         crate::src::qcommon::common::Com_Printf(
-            b"Couldn\'t read %s.\n\x00" as *const u8 as *const libc::c_char,
-            b"q3history\x00" as *const u8 as *const libc::c_char,
+            b"Couldn\'t read %s.\n\x00" as *const u8 as *const i8,
+            b"q3history\x00" as *const u8 as *const i8,
         );
         return;
     }
-    if consoleSaveBufferSize < 1024 as libc::c_int
+    if consoleSaveBufferSize < 1024
         && crate::src::qcommon::files::FS_Read(
             consoleSaveBuffer.as_mut_ptr() as *mut libc::c_void,
             consoleSaveBufferSize,
             f,
         ) == consoleSaveBufferSize
     {
-        consoleSaveBuffer[consoleSaveBufferSize as usize] = '\u{0}' as i32 as libc::c_char;
+        consoleSaveBuffer[consoleSaveBufferSize as usize] = '\u{0}' as i8;
         text_p = consoleSaveBuffer.as_mut_ptr();
-        i = 32 as libc::c_int - 1 as libc::c_int;
-        while i >= 0 as libc::c_int {
+        i = 32 - 1;
+        while i >= 0 {
             token = crate::src::qcommon::q_shared::COM_Parse(&mut text_p);
             if *token == 0 {
                 break;
@@ -4199,43 +4085,36 @@ pub unsafe extern "C" fn CL_LoadConsoleHistory() {
             }
             numChars = atoi(token);
             text_p = text_p.offset(1);
-            if numChars as libc::c_ulong
-                > crate::stdlib::strlen(consoleSaveBuffer.as_mut_ptr())
-                    .wrapping_sub(text_p.wrapping_offset_from(consoleSaveBuffer.as_mut_ptr())
-                        as libc::c_long as libc::c_ulong)
+            if numChars as usize
+                > crate::stdlib::strlen(consoleSaveBuffer.as_mut_ptr()).wrapping_sub(
+                    text_p.wrapping_offset_from(consoleSaveBuffer.as_mut_ptr()) as usize,
+                )
             {
                 crate::src::qcommon::common::Com_DPrintf(
-                    b"^3WARNING: probable corrupt history\n\x00" as *const u8
-                        as *const libc::c_char,
+                    b"^3WARNING: probable corrupt history\n\x00" as *const u8 as *const i8,
                 );
                 break;
             } else {
                 crate::stdlib::memcpy(
                     historyEditLines[i as usize].buffer.as_mut_ptr() as *mut libc::c_void,
                     text_p as *const libc::c_void,
-                    numChars as libc::c_ulong,
+                    numChars as usize,
                 );
-                historyEditLines[i as usize].buffer[numChars as usize] =
-                    '\u{0}' as i32 as libc::c_char;
+                historyEditLines[i as usize].buffer[numChars as usize] = '\u{0}' as i8;
                 text_p = text_p.offset(numChars as isize);
                 numLines += 1;
                 i -= 1
             }
         }
         crate::stdlib::memmove(
-            &mut *historyEditLines
-                .as_mut_ptr()
-                .offset(0 as libc::c_int as isize) as *mut crate::qcommon_h::field_t
+            &mut *historyEditLines.as_mut_ptr().offset(0) as *mut crate::qcommon_h::field_t
                 as *mut libc::c_void,
-            &mut *historyEditLines
-                .as_mut_ptr()
-                .offset((i + 1 as libc::c_int) as isize)
+            &mut *historyEditLines.as_mut_ptr().offset((i + 1) as isize)
                 as *mut crate::qcommon_h::field_t as *const libc::c_void,
-            (numLines as libc::c_ulong)
-                .wrapping_mul(::std::mem::size_of::<crate::qcommon_h::field_t>() as libc::c_ulong),
+            (numLines as usize).wrapping_mul(::std::mem::size_of::<crate::qcommon_h::field_t>()),
         );
         i = numLines;
-        while i < 32 as libc::c_int {
+        while i < 32 {
             crate::src::qcommon::common::Field_Clear(
                 &mut *historyEditLines.as_mut_ptr().offset(i as isize),
             );
@@ -4245,8 +4124,8 @@ pub unsafe extern "C" fn CL_LoadConsoleHistory() {
         historyLine = nextHistoryLine
     } else {
         crate::src::qcommon::common::Com_Printf(
-            b"Couldn\'t read %s.\n\x00" as *const u8 as *const libc::c_char,
-            b"q3history\x00" as *const u8 as *const libc::c_char,
+            b"Couldn\'t read %s.\n\x00" as *const u8 as *const i8,
+            b"q3history\x00" as *const u8 as *const i8,
         );
     }
     crate::src::qcommon::files::FS_FCloseFile(f);
@@ -4449,30 +4328,30 @@ so that it persists across invocations of q3
 #[no_mangle]
 
 pub unsafe extern "C" fn CL_SaveConsoleHistory() {
-    let mut i: libc::c_int = 0;
-    let mut lineLength: libc::c_int = 0;
-    let mut saveBufferLength: libc::c_int = 0;
-    let mut additionalLength: libc::c_int = 0;
+    let mut i: i32 = 0;
+    let mut lineLength: i32 = 0;
+    let mut saveBufferLength: i32 = 0;
+    let mut additionalLength: i32 = 0;
     let mut f: crate::src::qcommon::q_shared::fileHandle_t = 0;
-    consoleSaveBuffer[0 as libc::c_int as usize] = '\u{0}' as i32 as libc::c_char;
-    i = (nextHistoryLine - 1 as libc::c_int) % 32 as libc::c_int;
+    consoleSaveBuffer[0] = '\u{0}' as i8;
+    i = (nextHistoryLine - 1) % 32;
     loop {
-        if historyEditLines[i as usize].buffer[0 as libc::c_int as usize] != 0 {
-            lineLength = crate::stdlib::strlen(historyEditLines[i as usize].buffer.as_mut_ptr())
-                as libc::c_int;
-            saveBufferLength = crate::stdlib::strlen(consoleSaveBuffer.as_mut_ptr()) as libc::c_int;
+        if historyEditLines[i as usize].buffer[0] != 0 {
+            lineLength =
+                crate::stdlib::strlen(historyEditLines[i as usize].buffer.as_mut_ptr()) as i32;
+            saveBufferLength = crate::stdlib::strlen(consoleSaveBuffer.as_mut_ptr()) as i32;
             //ICK
-            additionalLength = (lineLength as libc::c_ulong).wrapping_add(crate::stdlib::strlen(
-                b"999 999 999  \x00" as *const u8 as *const libc::c_char,
-            )) as libc::c_int;
-            if !(saveBufferLength + additionalLength < 1024 as libc::c_int) {
+            additionalLength = (lineLength as usize).wrapping_add(crate::stdlib::strlen(
+                b"999 999 999  \x00" as *const u8 as *const i8,
+            )) as i32;
+            if !(saveBufferLength + additionalLength < 1024) {
                 break;
             }
             crate::src::qcommon::q_shared::Q_strcat(
                 consoleSaveBuffer.as_mut_ptr(),
-                1024 as libc::c_int,
+                1024i32,
                 crate::src::qcommon::q_shared::va(
-                    b"%d %d %d %s \x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                    b"%d %d %d %s \x00" as *const u8 as *mut i8,
                     historyEditLines[i as usize].cursor,
                     historyEditLines[i as usize].scroll,
                     lineLength,
@@ -4480,19 +4359,17 @@ pub unsafe extern "C" fn CL_SaveConsoleHistory() {
                 ),
             );
         }
-        i = (i - 1 as libc::c_int + 32 as libc::c_int) % 32 as libc::c_int;
-        if !(i != (nextHistoryLine - 1 as libc::c_int) % 32 as libc::c_int) {
+        i = (i - 1 + 32) % 32;
+        if !(i != (nextHistoryLine - 1) % 32) {
             break;
         }
     }
-    consoleSaveBufferSize = crate::stdlib::strlen(consoleSaveBuffer.as_mut_ptr()) as libc::c_int;
-    f = crate::src::qcommon::files::FS_FOpenFileWrite(
-        b"q3history\x00" as *const u8 as *const libc::c_char,
-    );
+    consoleSaveBufferSize = crate::stdlib::strlen(consoleSaveBuffer.as_mut_ptr()) as i32;
+    f = crate::src::qcommon::files::FS_FOpenFileWrite(b"q3history\x00" as *const u8 as *const i8);
     if f == 0 {
         crate::src::qcommon::common::Com_Printf(
-            b"Couldn\'t write %s.\n\x00" as *const u8 as *const libc::c_char,
-            b"q3history\x00" as *const u8 as *const libc::c_char,
+            b"Couldn\'t write %s.\n\x00" as *const u8 as *const i8,
+            b"q3history\x00" as *const u8 as *const i8,
         );
         return;
     }
@@ -4503,8 +4380,8 @@ pub unsafe extern "C" fn CL_SaveConsoleHistory() {
     ) < consoleSaveBufferSize
     {
         crate::src::qcommon::common::Com_Printf(
-            b"Couldn\'t write %s.\n\x00" as *const u8 as *const libc::c_char,
-            b"q3history\x00" as *const u8 as *const libc::c_char,
+            b"Couldn\'t write %s.\n\x00" as *const u8 as *const i8,
+            b"q3history\x00" as *const u8 as *const i8,
         );
     }
     crate::src::qcommon::files::FS_FCloseFile(f);

@@ -42,34 +42,32 @@ POSSIBILITY OF SUCH DAMAGE.
 
 pub unsafe extern "C" fn silk_stereo_encode_pred(
     mut psRangeEnc: *mut crate::src::opus_1_2_1::celt::entcode::ec_enc,
-    mut ix: *mut [libc::c_schar; 3],
+    mut ix: *mut [i8; 3],
 )
 /* I    Quantization indices                        */
 {
-    let mut n: libc::c_int = 0;
+    let mut n: i32 = 0;
     /* Entropy coding */
-    n = 5 as libc::c_int
-        * (*ix.offset(0 as libc::c_int as isize))[2 as libc::c_int as usize] as libc::c_int
-        + (*ix.offset(1 as libc::c_int as isize))[2 as libc::c_int as usize] as libc::c_int;
+    n = 5 * (*ix.offset(0))[2] as i32 + (*ix.offset(1))[2] as i32;
     crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
         psRangeEnc,
         n,
         crate::src::opus_1_2_1::silk::tables_other::silk_stereo_pred_joint_iCDF.as_ptr(),
-        8 as libc::c_int as libc::c_uint,
+        8,
     );
-    n = 0 as libc::c_int;
-    while n < 2 as libc::c_int {
+    n = 0;
+    while n < 2 {
         crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
             psRangeEnc,
-            (*ix.offset(n as isize))[0 as libc::c_int as usize] as libc::c_int,
+            (*ix.offset(n as isize))[0] as i32,
             crate::src::opus_1_2_1::silk::tables_other::silk_uniform3_iCDF.as_ptr(),
-            8 as libc::c_int as libc::c_uint,
+            8,
         );
         crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
             psRangeEnc,
-            (*ix.offset(n as isize))[1 as libc::c_int as usize] as libc::c_int,
+            (*ix.offset(n as isize))[1] as i32,
             crate::src::opus_1_2_1::silk::tables_other::silk_uniform5_iCDF.as_ptr(),
-            8 as libc::c_int as libc::c_uint,
+            8,
         );
         n += 1
     }
@@ -139,13 +137,13 @@ POSSIBILITY OF SUCH DAMAGE.
 
 pub unsafe extern "C" fn silk_stereo_encode_mid_only(
     mut psRangeEnc: *mut crate::src::opus_1_2_1::celt::entcode::ec_enc,
-    mut mid_only_flag: libc::c_schar,
+    mut mid_only_flag: i8,
 ) {
     /* Encode flag that only mid channel is coded */
     crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
         psRangeEnc,
-        mid_only_flag as libc::c_int,
+        mid_only_flag as i32,
         crate::src::opus_1_2_1::silk::tables_other::silk_stereo_only_code_mid_iCDF.as_ptr(),
-        8 as libc::c_int as libc::c_uint,
+        8,
     );
 }

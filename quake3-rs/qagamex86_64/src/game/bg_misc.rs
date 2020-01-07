@@ -263,873 +263,732 @@ An item fires all of its targets when it is picked up.  If the toucher can't car
 pub static mut bg_itemlist: [crate::bg_public_h::gitem_t; 37] = [
     {
         let mut init = crate::bg_public_h::gitem_s {
-            classname: 0 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: 0 as *const libc::c_char as *mut libc::c_char,
-            world_model: [
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: 0 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: 0 as *const libc::c_char as *mut libc::c_char,
-            quantity: 0 as libc::c_int,
-            giType: crate::bg_public_h::IT_BAD,
-            giTag: 0 as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"item_armor_shard\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/ar1_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/armor/shard.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                b"models/powerups/armor/shard_sphere.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconr_shard\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Armor Shard\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            quantity: 5 as libc::c_int,
-            giType: crate::bg_public_h::IT_ARMOR,
-            giTag: 0 as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"item_armor_combat\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/ar2_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/armor/armor_yel.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconr_yellow\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Armor\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 50 as libc::c_int,
-            giType: crate::bg_public_h::IT_ARMOR,
-            giTag: 0 as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"item_armor_body\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/ar2_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/armor/armor_red.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconr_red\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Heavy Armor\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            quantity: 100 as libc::c_int,
-            giType: crate::bg_public_h::IT_ARMOR,
-            giTag: 0 as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"item_health_small\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/items/s_health.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/health/small_cross.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                b"models/powerups/health/small_sphere.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconh_green\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"5 Health\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 5 as libc::c_int,
-            giType: crate::bg_public_h::IT_HEALTH,
-            giTag: 0 as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"item_health\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/items/n_health.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/health/medium_cross.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                b"models/powerups/health/medium_sphere.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconh_yellow\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"25 Health\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 25 as libc::c_int,
-            giType: crate::bg_public_h::IT_HEALTH,
-            giTag: 0 as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"item_health_large\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/items/l_health.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/health/large_cross.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                b"models/powerups/health/large_sphere.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconh_red\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"50 Health\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 50 as libc::c_int,
-            giType: crate::bg_public_h::IT_HEALTH,
-            giTag: 0 as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"item_health_mega\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/items/m_health.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/health/mega_cross.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                b"models/powerups/health/mega_sphere.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconh_mega\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Mega Health\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            quantity: 100 as libc::c_int,
-            giType: crate::bg_public_h::IT_HEALTH,
-            giTag: 0 as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"weapon_gauntlet\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/weapons2/gauntlet/gauntlet.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconw_gauntlet\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Gauntlet\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 0 as libc::c_int,
-            giType: crate::bg_public_h::IT_WEAPON,
-            giTag: crate::bg_public_h::WP_GAUNTLET as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"weapon_shotgun\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/weapons2/shotgun/shotgun.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconw_shotgun\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Shotgun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 10 as libc::c_int,
-            giType: crate::bg_public_h::IT_WEAPON,
-            giTag: crate::bg_public_h::WP_SHOTGUN as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"weapon_machinegun\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/weapons2/machinegun/machinegun.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconw_machinegun\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Machinegun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 40 as libc::c_int,
-            giType: crate::bg_public_h::IT_WEAPON,
-            giTag: crate::bg_public_h::WP_MACHINEGUN as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"weapon_grenadelauncher\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/weapons2/grenadel/grenadel.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconw_grenade\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Grenade Launcher\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            quantity: 10 as libc::c_int,
-            giType: crate::bg_public_h::IT_WEAPON,
-            giTag: crate::bg_public_h::WP_GRENADE_LAUNCHER as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"sound/weapons/grenade/hgrenb1a.wav sound/weapons/grenade/hgrenb2a.wav\x00"
-                as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"weapon_rocketlauncher\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/weapons2/rocketl/rocketl.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconw_rocket\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Rocket Launcher\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            quantity: 10 as libc::c_int,
-            giType: crate::bg_public_h::IT_WEAPON,
-            giTag: crate::bg_public_h::WP_ROCKET_LAUNCHER as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"weapon_lightning\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/weapons2/lightning/lightning.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconw_lightning\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Lightning Gun\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            quantity: 100 as libc::c_int,
-            giType: crate::bg_public_h::IT_WEAPON,
-            giTag: crate::bg_public_h::WP_LIGHTNING as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"weapon_railgun\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/weapons2/railgun/railgun.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconw_railgun\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Railgun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 10 as libc::c_int,
-            giType: crate::bg_public_h::IT_WEAPON,
-            giTag: crate::bg_public_h::WP_RAILGUN as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"weapon_plasmagun\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/weapons2/plasma/plasma.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconw_plasma\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Plasma Gun\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 50 as libc::c_int,
-            giType: crate::bg_public_h::IT_WEAPON,
-            giTag: crate::bg_public_h::WP_PLASMAGUN as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"weapon_bfg\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/weapons2/bfg/bfg.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconw_bfg\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"BFG10K\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 20 as libc::c_int,
-            giType: crate::bg_public_h::IT_WEAPON,
-            giTag: crate::bg_public_h::WP_BFG as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"weapon_grapplinghook\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/weapons2/grapple/grapple.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconw_grapple\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Grappling Hook\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            quantity: 0 as libc::c_int,
-            giType: crate::bg_public_h::IT_WEAPON,
-            giTag: crate::bg_public_h::WP_GRAPPLING_HOOK as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"ammo_shells\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/ammo/shotgunam.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/icona_shotgun\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Shells\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 10 as libc::c_int,
-            giType: crate::bg_public_h::IT_AMMO,
-            giTag: crate::bg_public_h::WP_SHOTGUN as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"ammo_bullets\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/ammo/machinegunam.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/icona_machinegun\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Bullets\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 50 as libc::c_int,
-            giType: crate::bg_public_h::IT_AMMO,
-            giTag: crate::bg_public_h::WP_MACHINEGUN as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"ammo_grenades\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/ammo/grenadeam.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/icona_grenade\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Grenades\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 5 as libc::c_int,
-            giType: crate::bg_public_h::IT_AMMO,
-            giTag: crate::bg_public_h::WP_GRENADE_LAUNCHER as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"ammo_cells\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/ammo/plasmaam.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/icona_plasma\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Cells\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 30 as libc::c_int,
-            giType: crate::bg_public_h::IT_AMMO,
-            giTag: crate::bg_public_h::WP_PLASMAGUN as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"ammo_lightning\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/ammo/lightningam.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/icona_lightning\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Lightning\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 60 as libc::c_int,
-            giType: crate::bg_public_h::IT_AMMO,
-            giTag: crate::bg_public_h::WP_LIGHTNING as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"ammo_rockets\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/ammo/rocketam.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/icona_rocket\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Rockets\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 5 as libc::c_int,
-            giType: crate::bg_public_h::IT_AMMO,
-            giTag: crate::bg_public_h::WP_ROCKET_LAUNCHER as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"ammo_slugs\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/ammo/railgunam.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/icona_railgun\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_name: b"Slugs\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 10 as libc::c_int,
-            giType: crate::bg_public_h::IT_AMMO,
-            giTag: crate::bg_public_h::WP_RAILGUN as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"ammo_bfg\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/ammo/bfgam.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/icona_bfg\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Bfg Ammo\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 15 as libc::c_int,
-            giType: crate::bg_public_h::IT_AMMO,
-            giTag: crate::bg_public_h::WP_BFG as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"holdable_teleporter\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/items/holdable.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/holdable/teleporter.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/teleporter\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Personal Teleporter\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            quantity: 60 as libc::c_int,
-            giType: crate::bg_public_h::IT_HOLDABLE,
-            giTag: crate::bg_public_h::HI_TELEPORTER as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"holdable_medkit\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: b"sound/items/holdable.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/holdable/medkit.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                b"models/powerups/holdable/medkit_sphere.md3\x00" as *const u8
-                    as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/medkit\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Medkit\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 60 as libc::c_int,
-            giType: crate::bg_public_h::IT_HOLDABLE,
-            giTag: crate::bg_public_h::HI_MEDKIT as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"sound/items/use_medkit.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"item_quad\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/items/quaddamage.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/instant/quad.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                b"models/powerups/instant/quad_ring.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/quad\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Quad Damage\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            quantity: 30 as libc::c_int,
-            giType: crate::bg_public_h::IT_POWERUP,
-            giTag: crate::bg_public_h::PW_QUAD as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"sound/items/damage2.wav sound/items/damage3.wav\x00" as *const u8
-                as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"item_enviro\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/items/protect.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/instant/enviro.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                b"models/powerups/instant/enviro_ring.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/envirosuit\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Battle Suit\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            quantity: 30 as libc::c_int,
-            giType: crate::bg_public_h::IT_POWERUP,
-            giTag: crate::bg_public_h::PW_BATTLESUIT as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"sound/items/airout.wav sound/items/protect3.wav\x00" as *const u8
-                as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"item_haste\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/items/haste.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/instant/haste.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                b"models/powerups/instant/haste_ring.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/haste\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Speed\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 30 as libc::c_int,
-            giType: crate::bg_public_h::IT_POWERUP,
-            giTag: crate::bg_public_h::PW_HASTE as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"item_invis\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/items/invisibility.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/instant/invis.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                b"models/powerups/instant/invis_ring.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/invis\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Invisibility\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            quantity: 30 as libc::c_int,
-            giType: crate::bg_public_h::IT_POWERUP,
-            giTag: crate::bg_public_h::PW_INVIS as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"item_regen\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/items/regeneration.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/instant/regen.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                b"models/powerups/instant/regen_ring.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/regen\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Regeneration\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            quantity: 30 as libc::c_int,
-            giType: crate::bg_public_h::IT_POWERUP,
-            giTag: crate::bg_public_h::PW_REGEN as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"sound/items/regen.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"item_flight\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: b"sound/items/flight.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            world_model: [
-                b"models/powerups/instant/flight.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                b"models/powerups/instant/flight_ring.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/flight\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Flight\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 60 as libc::c_int,
-            giType: crate::bg_public_h::IT_POWERUP,
-            giTag: crate::bg_public_h::PW_FLIGHT as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"sound/items/flight.wav\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"team_CTF_redflag\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: 0 as *const libc::c_char as *mut libc::c_char,
-            world_model: [
-                b"models/flags/r_flag.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconf_red1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Red Flag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 0 as libc::c_int,
-            giType: crate::bg_public_h::IT_TEAM,
-            giTag: crate::bg_public_h::PW_REDFLAG as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: b"team_CTF_blueflag\x00" as *const u8 as *const libc::c_char
-                as *mut libc::c_char,
-            pickup_sound: 0 as *const libc::c_char as *mut libc::c_char,
-            world_model: [
-                b"models/flags/b_flag.md3\x00" as *const u8 as *const libc::c_char
-                    as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-                0 as *const libc::c_char as *mut libc::c_char,
-            ],
-            icon: b"icons/iconf_blu1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: b"Blue Flag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            quantity: 0 as libc::c_int,
-            giType: crate::bg_public_h::IT_TEAM,
-            giTag: crate::bg_public_h::PW_BLUEFLAG as libc::c_int,
-            precaches: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            sounds: b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        };
-        init
-    },
-    {
-        let mut init = crate::bg_public_h::gitem_s {
-            classname: 0 as *const libc::c_char as *mut libc::c_char,
-            pickup_sound: 0 as *const libc::c_char as *mut libc::c_char,
-            world_model: [0 as *const libc::c_char as *mut libc::c_char; 4],
-            icon: 0 as *const libc::c_char as *mut libc::c_char,
-            pickup_name: 0 as *const libc::c_char as *mut libc::c_char,
+            classname: 0 as *mut i8,
+            pickup_sound: 0 as *mut i8,
+            world_model: [0 as *mut i8, 0 as *mut i8, 0 as *mut i8, 0 as *mut i8],
+            icon: 0 as *mut i8,
+            pickup_name: 0 as *mut i8,
             quantity: 0,
             giType: crate::bg_public_h::IT_BAD,
             giTag: 0,
-            precaches: 0 as *const libc::c_char as *mut libc::c_char,
-            sounds: 0 as *const libc::c_char as *mut libc::c_char,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"item_armor_shard\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/ar1_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/armor/shard.md3\x00" as *const u8 as *mut i8,
+                b"models/powerups/armor/shard_sphere.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconr_shard\x00" as *const u8 as *mut i8,
+            pickup_name: b"Armor Shard\x00" as *const u8 as *mut i8,
+            quantity: 5,
+            giType: crate::bg_public_h::IT_ARMOR,
+            giTag: 0,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"item_armor_combat\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/ar2_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/armor/armor_yel.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconr_yellow\x00" as *const u8 as *mut i8,
+            pickup_name: b"Armor\x00" as *const u8 as *mut i8,
+            quantity: 50,
+            giType: crate::bg_public_h::IT_ARMOR,
+            giTag: 0,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"item_armor_body\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/ar2_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/armor/armor_red.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconr_red\x00" as *const u8 as *mut i8,
+            pickup_name: b"Heavy Armor\x00" as *const u8 as *mut i8,
+            quantity: 100,
+            giType: crate::bg_public_h::IT_ARMOR,
+            giTag: 0,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"item_health_small\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/items/s_health.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/health/small_cross.md3\x00" as *const u8 as *mut i8,
+                b"models/powerups/health/small_sphere.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconh_green\x00" as *const u8 as *mut i8,
+            pickup_name: b"5 Health\x00" as *const u8 as *mut i8,
+            quantity: 5,
+            giType: crate::bg_public_h::IT_HEALTH,
+            giTag: 0,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"item_health\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/items/n_health.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/health/medium_cross.md3\x00" as *const u8 as *mut i8,
+                b"models/powerups/health/medium_sphere.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconh_yellow\x00" as *const u8 as *mut i8,
+            pickup_name: b"25 Health\x00" as *const u8 as *mut i8,
+            quantity: 25,
+            giType: crate::bg_public_h::IT_HEALTH,
+            giTag: 0,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"item_health_large\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/items/l_health.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/health/large_cross.md3\x00" as *const u8 as *mut i8,
+                b"models/powerups/health/large_sphere.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconh_red\x00" as *const u8 as *mut i8,
+            pickup_name: b"50 Health\x00" as *const u8 as *mut i8,
+            quantity: 50,
+            giType: crate::bg_public_h::IT_HEALTH,
+            giTag: 0,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"item_health_mega\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/items/m_health.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/health/mega_cross.md3\x00" as *const u8 as *mut i8,
+                b"models/powerups/health/mega_sphere.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconh_mega\x00" as *const u8 as *mut i8,
+            pickup_name: b"Mega Health\x00" as *const u8 as *mut i8,
+            quantity: 100,
+            giType: crate::bg_public_h::IT_HEALTH,
+            giTag: 0,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"weapon_gauntlet\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/weapons2/gauntlet/gauntlet.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconw_gauntlet\x00" as *const u8 as *mut i8,
+            pickup_name: b"Gauntlet\x00" as *const u8 as *mut i8,
+            quantity: 0,
+            giType: crate::bg_public_h::IT_WEAPON,
+            giTag: crate::bg_public_h::WP_GAUNTLET as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"weapon_shotgun\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/weapons2/shotgun/shotgun.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconw_shotgun\x00" as *const u8 as *mut i8,
+            pickup_name: b"Shotgun\x00" as *const u8 as *mut i8,
+            quantity: 10,
+            giType: crate::bg_public_h::IT_WEAPON,
+            giTag: crate::bg_public_h::WP_SHOTGUN as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"weapon_machinegun\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/weapons2/machinegun/machinegun.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconw_machinegun\x00" as *const u8 as *mut i8,
+            pickup_name: b"Machinegun\x00" as *const u8 as *mut i8,
+            quantity: 40,
+            giType: crate::bg_public_h::IT_WEAPON,
+            giTag: crate::bg_public_h::WP_MACHINEGUN as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"weapon_grenadelauncher\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/weapons2/grenadel/grenadel.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconw_grenade\x00" as *const u8 as *mut i8,
+            pickup_name: b"Grenade Launcher\x00" as *const u8 as *mut i8,
+            quantity: 10,
+            giType: crate::bg_public_h::IT_WEAPON,
+            giTag: crate::bg_public_h::WP_GRENADE_LAUNCHER as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"sound/weapons/grenade/hgrenb1a.wav sound/weapons/grenade/hgrenb2a.wav\x00"
+                as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"weapon_rocketlauncher\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/weapons2/rocketl/rocketl.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconw_rocket\x00" as *const u8 as *mut i8,
+            pickup_name: b"Rocket Launcher\x00" as *const u8 as *mut i8,
+            quantity: 10,
+            giType: crate::bg_public_h::IT_WEAPON,
+            giTag: crate::bg_public_h::WP_ROCKET_LAUNCHER as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"weapon_lightning\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/weapons2/lightning/lightning.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconw_lightning\x00" as *const u8 as *mut i8,
+            pickup_name: b"Lightning Gun\x00" as *const u8 as *mut i8,
+            quantity: 100,
+            giType: crate::bg_public_h::IT_WEAPON,
+            giTag: crate::bg_public_h::WP_LIGHTNING as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"weapon_railgun\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/weapons2/railgun/railgun.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconw_railgun\x00" as *const u8 as *mut i8,
+            pickup_name: b"Railgun\x00" as *const u8 as *mut i8,
+            quantity: 10,
+            giType: crate::bg_public_h::IT_WEAPON,
+            giTag: crate::bg_public_h::WP_RAILGUN as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"weapon_plasmagun\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/weapons2/plasma/plasma.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconw_plasma\x00" as *const u8 as *mut i8,
+            pickup_name: b"Plasma Gun\x00" as *const u8 as *mut i8,
+            quantity: 50,
+            giType: crate::bg_public_h::IT_WEAPON,
+            giTag: crate::bg_public_h::WP_PLASMAGUN as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"weapon_bfg\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/weapons2/bfg/bfg.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconw_bfg\x00" as *const u8 as *mut i8,
+            pickup_name: b"BFG10K\x00" as *const u8 as *mut i8,
+            quantity: 20,
+            giType: crate::bg_public_h::IT_WEAPON,
+            giTag: crate::bg_public_h::WP_BFG as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"weapon_grapplinghook\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/w_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/weapons2/grapple/grapple.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconw_grapple\x00" as *const u8 as *mut i8,
+            pickup_name: b"Grappling Hook\x00" as *const u8 as *mut i8,
+            quantity: 0,
+            giType: crate::bg_public_h::IT_WEAPON,
+            giTag: crate::bg_public_h::WP_GRAPPLING_HOOK as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"ammo_shells\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/ammo/shotgunam.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/icona_shotgun\x00" as *const u8 as *mut i8,
+            pickup_name: b"Shells\x00" as *const u8 as *mut i8,
+            quantity: 10,
+            giType: crate::bg_public_h::IT_AMMO,
+            giTag: crate::bg_public_h::WP_SHOTGUN as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"ammo_bullets\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/ammo/machinegunam.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/icona_machinegun\x00" as *const u8 as *mut i8,
+            pickup_name: b"Bullets\x00" as *const u8 as *mut i8,
+            quantity: 50,
+            giType: crate::bg_public_h::IT_AMMO,
+            giTag: crate::bg_public_h::WP_MACHINEGUN as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"ammo_grenades\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/ammo/grenadeam.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/icona_grenade\x00" as *const u8 as *mut i8,
+            pickup_name: b"Grenades\x00" as *const u8 as *mut i8,
+            quantity: 5,
+            giType: crate::bg_public_h::IT_AMMO,
+            giTag: crate::bg_public_h::WP_GRENADE_LAUNCHER as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"ammo_cells\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/ammo/plasmaam.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/icona_plasma\x00" as *const u8 as *mut i8,
+            pickup_name: b"Cells\x00" as *const u8 as *mut i8,
+            quantity: 30,
+            giType: crate::bg_public_h::IT_AMMO,
+            giTag: crate::bg_public_h::WP_PLASMAGUN as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"ammo_lightning\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/ammo/lightningam.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/icona_lightning\x00" as *const u8 as *mut i8,
+            pickup_name: b"Lightning\x00" as *const u8 as *mut i8,
+            quantity: 60,
+            giType: crate::bg_public_h::IT_AMMO,
+            giTag: crate::bg_public_h::WP_LIGHTNING as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"ammo_rockets\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/ammo/rocketam.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/icona_rocket\x00" as *const u8 as *mut i8,
+            pickup_name: b"Rockets\x00" as *const u8 as *mut i8,
+            quantity: 5,
+            giType: crate::bg_public_h::IT_AMMO,
+            giTag: crate::bg_public_h::WP_ROCKET_LAUNCHER as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"ammo_slugs\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/ammo/railgunam.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/icona_railgun\x00" as *const u8 as *mut i8,
+            pickup_name: b"Slugs\x00" as *const u8 as *mut i8,
+            quantity: 10,
+            giType: crate::bg_public_h::IT_AMMO,
+            giTag: crate::bg_public_h::WP_RAILGUN as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"ammo_bfg\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/misc/am_pkup.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/ammo/bfgam.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/icona_bfg\x00" as *const u8 as *mut i8,
+            pickup_name: b"Bfg Ammo\x00" as *const u8 as *mut i8,
+            quantity: 15,
+            giType: crate::bg_public_h::IT_AMMO,
+            giTag: crate::bg_public_h::WP_BFG as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"holdable_teleporter\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/items/holdable.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/holdable/teleporter.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/teleporter\x00" as *const u8 as *mut i8,
+            pickup_name: b"Personal Teleporter\x00" as *const u8 as *mut i8,
+            quantity: 60,
+            giType: crate::bg_public_h::IT_HOLDABLE,
+            giTag: crate::bg_public_h::HI_TELEPORTER as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"holdable_medkit\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/items/holdable.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/holdable/medkit.md3\x00" as *const u8 as *mut i8,
+                b"models/powerups/holdable/medkit_sphere.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/medkit\x00" as *const u8 as *mut i8,
+            pickup_name: b"Medkit\x00" as *const u8 as *mut i8,
+            quantity: 60,
+            giType: crate::bg_public_h::IT_HOLDABLE,
+            giTag: crate::bg_public_h::HI_MEDKIT as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"sound/items/use_medkit.wav\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"item_quad\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/items/quaddamage.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/instant/quad.md3\x00" as *const u8 as *mut i8,
+                b"models/powerups/instant/quad_ring.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/quad\x00" as *const u8 as *mut i8,
+            pickup_name: b"Quad Damage\x00" as *const u8 as *mut i8,
+            quantity: 30,
+            giType: crate::bg_public_h::IT_POWERUP,
+            giTag: crate::bg_public_h::PW_QUAD as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"sound/items/damage2.wav sound/items/damage3.wav\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"item_enviro\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/items/protect.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/instant/enviro.md3\x00" as *const u8 as *mut i8,
+                b"models/powerups/instant/enviro_ring.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/envirosuit\x00" as *const u8 as *mut i8,
+            pickup_name: b"Battle Suit\x00" as *const u8 as *mut i8,
+            quantity: 30,
+            giType: crate::bg_public_h::IT_POWERUP,
+            giTag: crate::bg_public_h::PW_BATTLESUIT as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"sound/items/airout.wav sound/items/protect3.wav\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"item_haste\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/items/haste.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/instant/haste.md3\x00" as *const u8 as *mut i8,
+                b"models/powerups/instant/haste_ring.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/haste\x00" as *const u8 as *mut i8,
+            pickup_name: b"Speed\x00" as *const u8 as *mut i8,
+            quantity: 30,
+            giType: crate::bg_public_h::IT_POWERUP,
+            giTag: crate::bg_public_h::PW_HASTE as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"item_invis\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/items/invisibility.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/instant/invis.md3\x00" as *const u8 as *mut i8,
+                b"models/powerups/instant/invis_ring.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/invis\x00" as *const u8 as *mut i8,
+            pickup_name: b"Invisibility\x00" as *const u8 as *mut i8,
+            quantity: 30,
+            giType: crate::bg_public_h::IT_POWERUP,
+            giTag: crate::bg_public_h::PW_INVIS as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"item_regen\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/items/regeneration.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/instant/regen.md3\x00" as *const u8 as *mut i8,
+                b"models/powerups/instant/regen_ring.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/regen\x00" as *const u8 as *mut i8,
+            pickup_name: b"Regeneration\x00" as *const u8 as *mut i8,
+            quantity: 30,
+            giType: crate::bg_public_h::IT_POWERUP,
+            giTag: crate::bg_public_h::PW_REGEN as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"sound/items/regen.wav\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"item_flight\x00" as *const u8 as *mut i8,
+            pickup_sound: b"sound/items/flight.wav\x00" as *const u8 as *mut i8,
+            world_model: [
+                b"models/powerups/instant/flight.md3\x00" as *const u8 as *mut i8,
+                b"models/powerups/instant/flight_ring.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/flight\x00" as *const u8 as *mut i8,
+            pickup_name: b"Flight\x00" as *const u8 as *mut i8,
+            quantity: 60,
+            giType: crate::bg_public_h::IT_POWERUP,
+            giTag: crate::bg_public_h::PW_FLIGHT as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"sound/items/flight.wav\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"team_CTF_redflag\x00" as *const u8 as *mut i8,
+            pickup_sound: 0 as *mut i8,
+            world_model: [
+                b"models/flags/r_flag.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconf_red1\x00" as *const u8 as *mut i8,
+            pickup_name: b"Red Flag\x00" as *const u8 as *mut i8,
+            quantity: 0,
+            giType: crate::bg_public_h::IT_TEAM,
+            giTag: crate::bg_public_h::PW_REDFLAG as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: b"team_CTF_blueflag\x00" as *const u8 as *mut i8,
+            pickup_sound: 0 as *mut i8,
+            world_model: [
+                b"models/flags/b_flag.md3\x00" as *const u8 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+                0 as *mut i8,
+            ],
+            icon: b"icons/iconf_blu1\x00" as *const u8 as *mut i8,
+            pickup_name: b"Blue Flag\x00" as *const u8 as *mut i8,
+            quantity: 0,
+            giType: crate::bg_public_h::IT_TEAM,
+            giTag: crate::bg_public_h::PW_BLUEFLAG as i32,
+            precaches: b"\x00" as *const u8 as *mut i8,
+            sounds: b"\x00" as *const u8 as *mut i8,
+        };
+        init
+    },
+    {
+        let mut init = crate::bg_public_h::gitem_s {
+            classname: 0 as *mut i8,
+            pickup_sound: 0 as *mut i8,
+            world_model: [0 as *mut i8; 4],
+            icon: 0 as *mut i8,
+            pickup_name: 0 as *mut i8,
+            quantity: 0,
+            giType: crate::bg_public_h::IT_BAD,
+            giTag: 0,
+            precaches: 0 as *mut i8,
+            sounds: 0 as *mut i8,
         };
         init
     },
@@ -1137,7 +996,7 @@ pub static mut bg_itemlist: [crate::bg_public_h::gitem_t; 37] = [
 // Initialized in run_static_initializers
 #[no_mangle]
 
-pub static mut bg_numItems: libc::c_int = 0;
+pub static mut bg_numItems: i32 = 0;
 /*
 ==============
 BG_FindItemForPowerup
@@ -1148,16 +1007,13 @@ BG_FindItemForPowerup
 pub unsafe extern "C" fn BG_FindItemForPowerup(
     mut pw: crate::bg_public_h::powerup_t,
 ) -> *mut crate::bg_public_h::gitem_t {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
+    let mut i: i32 = 0;
+    i = 0;
     while i < bg_numItems {
-        if (bg_itemlist[i as usize].giType as libc::c_uint
-            == crate::bg_public_h::IT_POWERUP as libc::c_int as libc::c_uint
-            || bg_itemlist[i as usize].giType as libc::c_uint
-                == crate::bg_public_h::IT_TEAM as libc::c_int as libc::c_uint
-            || bg_itemlist[i as usize].giType as libc::c_uint
-                == crate::bg_public_h::IT_PERSISTANT_POWERUP as libc::c_int as libc::c_uint)
-            && bg_itemlist[i as usize].giTag as libc::c_uint == pw as libc::c_uint
+        if (bg_itemlist[i as usize].giType == crate::bg_public_h::IT_POWERUP
+            || bg_itemlist[i as usize].giType == crate::bg_public_h::IT_TEAM
+            || bg_itemlist[i as usize].giType == crate::bg_public_h::IT_PERSISTANT_POWERUP)
+            && bg_itemlist[i as usize].giTag as u32 == pw
         {
             return &mut *bg_itemlist.as_mut_ptr().offset(i as isize)
                 as *mut crate::bg_public_h::gitem_t;
@@ -1176,12 +1032,11 @@ BG_FindItemForHoldable
 pub unsafe extern "C" fn BG_FindItemForHoldable(
     mut pw: crate::bg_public_h::holdable_t,
 ) -> *mut crate::bg_public_h::gitem_t {
-    let mut i: libc::c_int = 0;
-    i = 0 as libc::c_int;
+    let mut i: i32 = 0;
+    i = 0;
     while i < bg_numItems {
-        if bg_itemlist[i as usize].giType as libc::c_uint
-            == crate::bg_public_h::IT_HOLDABLE as libc::c_int as libc::c_uint
-            && bg_itemlist[i as usize].giTag as libc::c_uint == pw as libc::c_uint
+        if bg_itemlist[i as usize].giType == crate::bg_public_h::IT_HOLDABLE
+            && bg_itemlist[i as usize].giTag as u32 == pw
         {
             return &mut *bg_itemlist.as_mut_ptr().offset(i as isize)
                 as *mut crate::bg_public_h::gitem_t;
@@ -1189,8 +1044,8 @@ pub unsafe extern "C" fn BG_FindItemForHoldable(
         i += 1
     }
     crate::src::game::g_main::Com_Error(
-        crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-        b"HoldableItem not found\x00" as *const u8 as *const libc::c_char,
+        crate::src::qcommon::q_shared::ERR_DROP as i32,
+        b"HoldableItem not found\x00" as *const u8 as *const i8,
     );
 }
 /*
@@ -1205,20 +1060,17 @@ pub unsafe extern "C" fn BG_FindItemForWeapon(
     mut weapon: crate::bg_public_h::weapon_t,
 ) -> *mut crate::bg_public_h::gitem_t {
     let mut it: *mut crate::bg_public_h::gitem_t = 0 as *mut crate::bg_public_h::gitem_t;
-    it = bg_itemlist.as_mut_ptr().offset(1 as libc::c_int as isize);
+    it = bg_itemlist.as_mut_ptr().offset(1);
     while !(*it).classname.is_null() {
-        if (*it).giType as libc::c_uint
-            == crate::bg_public_h::IT_WEAPON as libc::c_int as libc::c_uint
-            && (*it).giTag as libc::c_uint == weapon as libc::c_uint
-        {
+        if (*it).giType == crate::bg_public_h::IT_WEAPON && (*it).giTag as u32 == weapon {
             return it;
         }
         it = it.offset(1)
     }
     crate::src::game::g_main::Com_Error(
-        crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-        b"Couldn\'t find item for weapon %i\x00" as *const u8 as *const libc::c_char,
-        weapon as libc::c_uint,
+        crate::src::qcommon::q_shared::ERR_DROP as i32,
+        b"Couldn\'t find item for weapon %i\x00" as *const u8 as *const i8,
+        weapon,
     );
 }
 // included in both the game dll and the client
@@ -1231,10 +1083,10 @@ BG_FindItem
 #[no_mangle]
 
 pub unsafe extern "C" fn BG_FindItem(
-    mut pickupName: *const libc::c_char,
+    mut pickupName: *const i8,
 ) -> *mut crate::bg_public_h::gitem_t {
     let mut it: *mut crate::bg_public_h::gitem_t = 0 as *mut crate::bg_public_h::gitem_t;
-    it = bg_itemlist.as_mut_ptr().offset(1 as libc::c_int as isize);
+    it = bg_itemlist.as_mut_ptr().offset(1);
     while !(*it).classname.is_null() {
         if crate::src::qcommon::q_shared::Q_stricmp((*it).pickup_name, pickupName) == 0 {
             return it;
@@ -1256,23 +1108,17 @@ grabbing them easier
 pub unsafe extern "C" fn BG_PlayerTouchesItem(
     mut ps: *mut crate::src::qcommon::q_shared::playerState_t,
     mut item: *mut crate::src::qcommon::q_shared::entityState_t,
-    mut atTime: libc::c_int,
+    mut atTime: i32,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut origin: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     BG_EvaluateTrajectory(&mut (*item).pos, atTime, origin.as_mut_ptr());
     // we are ignoring ducked differences here
-    if (*ps).origin[0 as libc::c_int as usize] - origin[0 as libc::c_int as usize]
-        > 44 as libc::c_int as libc::c_float
-        || (*ps).origin[0 as libc::c_int as usize] - origin[0 as libc::c_int as usize]
-            < -(50 as libc::c_int) as libc::c_float
-        || (*ps).origin[1 as libc::c_int as usize] - origin[1 as libc::c_int as usize]
-            > 36 as libc::c_int as libc::c_float
-        || (*ps).origin[1 as libc::c_int as usize] - origin[1 as libc::c_int as usize]
-            < -(36 as libc::c_int) as libc::c_float
-        || (*ps).origin[2 as libc::c_int as usize] - origin[2 as libc::c_int as usize]
-            > 36 as libc::c_int as libc::c_float
-        || (*ps).origin[2 as libc::c_int as usize] - origin[2 as libc::c_int as usize]
-            < -(36 as libc::c_int) as libc::c_float
+    if (*ps).origin[0] - origin[0] > 44f32
+        || (*ps).origin[0] - origin[0] < -50f32
+        || (*ps).origin[1] - origin[1] > 36f32
+        || (*ps).origin[1] - origin[1] < -36f32
+        || (*ps).origin[2] - origin[2] > 36f32
+        || (*ps).origin[2] - origin[2] < -36f32
     {
         return crate::src::qcommon::q_shared::qfalse;
     }
@@ -1289,32 +1135,31 @@ This needs to be the same for client side prediction and server use.
 #[no_mangle]
 
 pub unsafe extern "C" fn BG_CanItemBeGrabbed(
-    mut gametype: libc::c_int,
+    mut gametype: i32,
     mut ent: *const crate::src::qcommon::q_shared::entityState_t,
     mut ps: *const crate::src::qcommon::q_shared::playerState_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut item: *mut crate::bg_public_h::gitem_t = 0 as *mut crate::bg_public_h::gitem_t; // weapons are always picked up
-    if (*ent).modelindex < 1 as libc::c_int || (*ent).modelindex >= bg_numItems {
+    if (*ent).modelindex < 1 || (*ent).modelindex >= bg_numItems {
         crate::src::game::g_main::Com_Error(
-            crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-            b"BG_CanItemBeGrabbed: index out of range\x00" as *const u8 as *const libc::c_char,
+            crate::src::qcommon::q_shared::ERR_DROP as i32,
+            b"BG_CanItemBeGrabbed: index out of range\x00" as *const u8 as *const i8,
         );
     }
     item = &mut *bg_itemlist.as_mut_ptr().offset((*ent).modelindex as isize)
         as *mut crate::bg_public_h::gitem_t;
-    match (*item).giType as libc::c_uint {
+    match (*item).giType {
         1 => return crate::src::qcommon::q_shared::qtrue,
         2 => {
-            if (*ps).ammo[(*item).giTag as usize] >= 200 as libc::c_int {
+            if (*ps).ammo[(*item).giTag as usize] >= 200 {
                 return crate::src::qcommon::q_shared::qfalse;
                 // can't hold any more
             }
             return crate::src::qcommon::q_shared::qtrue;
         }
         3 => {
-            if (*ps).stats[crate::bg_public_h::STAT_ARMOR as libc::c_int as usize]
-                >= (*ps).stats[crate::bg_public_h::STAT_MAX_HEALTH as libc::c_int as usize]
-                    * 2 as libc::c_int
+            if (*ps).stats[crate::bg_public_h::STAT_ARMOR as usize]
+                >= (*ps).stats[crate::bg_public_h::STAT_MAX_HEALTH as usize] * 2
             {
                 return crate::src::qcommon::q_shared::qfalse;
             }
@@ -1323,17 +1168,16 @@ pub unsafe extern "C" fn BG_CanItemBeGrabbed(
         4 => {
             // small and mega healths will go over the max, otherwise
             // don't pick up if already at max
-            if (*item).quantity == 5 as libc::c_int || (*item).quantity == 100 as libc::c_int {
-                if (*ps).stats[crate::bg_public_h::STAT_HEALTH as libc::c_int as usize]
-                    >= (*ps).stats[crate::bg_public_h::STAT_MAX_HEALTH as libc::c_int as usize]
-                        * 2 as libc::c_int
+            if (*item).quantity == 5 || (*item).quantity == 100 {
+                if (*ps).stats[crate::bg_public_h::STAT_HEALTH as usize]
+                    >= (*ps).stats[crate::bg_public_h::STAT_MAX_HEALTH as usize] * 2
                 {
                     return crate::src::qcommon::q_shared::qfalse;
                 } // powerups are always picked up
                 return crate::src::qcommon::q_shared::qtrue;
             }
-            if (*ps).stats[crate::bg_public_h::STAT_HEALTH as libc::c_int as usize]
-                >= (*ps).stats[crate::bg_public_h::STAT_MAX_HEALTH as libc::c_int as usize]
+            if (*ps).stats[crate::bg_public_h::STAT_HEALTH as usize]
+                >= (*ps).stats[crate::bg_public_h::STAT_MAX_HEALTH as usize]
             {
                 return crate::src::qcommon::q_shared::qfalse;
             }
@@ -1342,33 +1186,29 @@ pub unsafe extern "C" fn BG_CanItemBeGrabbed(
         5 => return crate::src::qcommon::q_shared::qtrue,
         8 => {
             // team items, such as flags
-            if gametype == crate::bg_public_h::GT_CTF as libc::c_int {
+            if gametype == crate::bg_public_h::GT_CTF as i32 {
                 // ent->modelindex2 is non-zero on items if they are dropped
                 // we need to know this because we can pick up our dropped flag (and return it)
                 // but we can't pick up our flag at base
-                if (*ps).persistant[crate::bg_public_h::PERS_TEAM as libc::c_int as usize]
-                    == crate::bg_public_h::TEAM_RED as libc::c_int
+                if (*ps).persistant[crate::bg_public_h::PERS_TEAM as usize]
+                    == crate::bg_public_h::TEAM_RED as i32
                 {
-                    if (*item).giTag == crate::bg_public_h::PW_BLUEFLAG as libc::c_int
-                        || (*item).giTag == crate::bg_public_h::PW_REDFLAG as libc::c_int
+                    if (*item).giTag == crate::bg_public_h::PW_BLUEFLAG as i32
+                        || (*item).giTag == crate::bg_public_h::PW_REDFLAG as i32
                             && (*ent).modelindex2 != 0
-                        || (*item).giTag == crate::bg_public_h::PW_REDFLAG as libc::c_int
-                            && (*ps).powerups
-                                [crate::bg_public_h::PW_BLUEFLAG as libc::c_int as usize]
-                                != 0
+                        || (*item).giTag == crate::bg_public_h::PW_REDFLAG as i32
+                            && (*ps).powerups[crate::bg_public_h::PW_BLUEFLAG as usize] != 0
                     {
                         return crate::src::qcommon::q_shared::qtrue;
                     }
-                } else if (*ps).persistant[crate::bg_public_h::PERS_TEAM as libc::c_int as usize]
-                    == crate::bg_public_h::TEAM_BLUE as libc::c_int
+                } else if (*ps).persistant[crate::bg_public_h::PERS_TEAM as usize]
+                    == crate::bg_public_h::TEAM_BLUE as i32
                 {
-                    if (*item).giTag == crate::bg_public_h::PW_REDFLAG as libc::c_int
-                        || (*item).giTag == crate::bg_public_h::PW_BLUEFLAG as libc::c_int
+                    if (*item).giTag == crate::bg_public_h::PW_REDFLAG as i32
+                        || (*item).giTag == crate::bg_public_h::PW_BLUEFLAG as i32
                             && (*ent).modelindex2 != 0
-                        || (*item).giTag == crate::bg_public_h::PW_BLUEFLAG as libc::c_int
-                            && (*ps).powerups
-                                [crate::bg_public_h::PW_REDFLAG as libc::c_int as usize]
-                                != 0
+                        || (*item).giTag == crate::bg_public_h::PW_BLUEFLAG as i32
+                            && (*ps).powerups[crate::bg_public_h::PW_REDFLAG as usize] != 0
                     {
                         return crate::src::qcommon::q_shared::qtrue;
                     }
@@ -1378,15 +1218,15 @@ pub unsafe extern "C" fn BG_CanItemBeGrabbed(
         }
         6 => {
             // can only hold one item at a time
-            if (*ps).stats[crate::bg_public_h::STAT_HOLDABLE_ITEM as libc::c_int as usize] != 0 {
+            if (*ps).stats[crate::bg_public_h::STAT_HOLDABLE_ITEM as usize] != 0 {
                 return crate::src::qcommon::q_shared::qfalse;
             }
             return crate::src::qcommon::q_shared::qtrue;
         }
         0 => {
             crate::src::game::g_main::Com_Error(
-                crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-                b"BG_CanItemBeGrabbed: IT_BAD\x00" as *const u8 as *const libc::c_char,
+                crate::src::qcommon::q_shared::ERR_DROP as i32,
+                b"BG_CanItemBeGrabbed: IT_BAD\x00" as *const u8 as *const i8,
             );
         }
         _ => {}
@@ -1404,78 +1244,56 @@ BG_EvaluateTrajectory
 
 pub unsafe extern "C" fn BG_EvaluateTrajectory(
     mut tr: *const crate::src::qcommon::q_shared::trajectory_t,
-    mut atTime: libc::c_int,
+    mut atTime: i32,
     mut result: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut deltaTime: libc::c_float = 0.; // milliseconds to seconds
-    let mut phase: libc::c_float = 0.; // milliseconds to seconds
-    match (*tr).trType as libc::c_uint {
+    let mut deltaTime: f32 = 0.; // milliseconds to seconds
+    let mut phase: f32 = 0.; // milliseconds to seconds
+    match (*tr).trType {
         0 | 1 => {
-            *result.offset(0 as libc::c_int as isize) = (*tr).trBase[0 as libc::c_int as usize]; // milliseconds to seconds
-            *result.offset(1 as libc::c_int as isize) = (*tr).trBase[1 as libc::c_int as usize]; // FIXME: local gravity...
-            *result.offset(2 as libc::c_int as isize) = (*tr).trBase[2 as libc::c_int as usize]
+            *result.offset(0) = (*tr).trBase[0]; // milliseconds to seconds
+            *result.offset(1) = (*tr).trBase[1]; // FIXME: local gravity...
+            *result.offset(2) = (*tr).trBase[2]
         }
         2 => {
-            deltaTime = ((atTime - (*tr).trTime) as libc::c_double * 0.001f64) as libc::c_float;
-            *result.offset(0 as libc::c_int as isize) = (*tr).trBase[0 as libc::c_int as usize]
-                + (*tr).trDelta[0 as libc::c_int as usize] * deltaTime;
-            *result.offset(1 as libc::c_int as isize) = (*tr).trBase[1 as libc::c_int as usize]
-                + (*tr).trDelta[1 as libc::c_int as usize] * deltaTime;
-            *result.offset(2 as libc::c_int as isize) = (*tr).trBase[2 as libc::c_int as usize]
-                + (*tr).trDelta[2 as libc::c_int as usize] * deltaTime
+            deltaTime = ((atTime - (*tr).trTime) as f64 * 0.001) as f32;
+            *result.offset(0) = (*tr).trBase[0] + (*tr).trDelta[0] * deltaTime;
+            *result.offset(1) = (*tr).trBase[1] + (*tr).trDelta[1] * deltaTime;
+            *result.offset(2) = (*tr).trBase[2] + (*tr).trDelta[2] * deltaTime
         }
         4 => {
-            deltaTime =
-                (atTime - (*tr).trTime) as libc::c_float / (*tr).trDuration as libc::c_float;
-            phase = crate::stdlib::sin(
-                deltaTime as libc::c_double
-                    * 3.14159265358979323846f64
-                    * 2 as libc::c_int as libc::c_double,
-            ) as libc::c_float;
-            *result.offset(0 as libc::c_int as isize) = (*tr).trBase[0 as libc::c_int as usize]
-                + (*tr).trDelta[0 as libc::c_int as usize] * phase;
-            *result.offset(1 as libc::c_int as isize) = (*tr).trBase[1 as libc::c_int as usize]
-                + (*tr).trDelta[1 as libc::c_int as usize] * phase;
-            *result.offset(2 as libc::c_int as isize) = (*tr).trBase[2 as libc::c_int as usize]
-                + (*tr).trDelta[2 as libc::c_int as usize] * phase
+            deltaTime = (atTime - (*tr).trTime) as f32 / (*tr).trDuration as f32;
+            phase = crate::stdlib::sin(deltaTime as f64 * 3.14159265358979323846 * 2f64) as f32;
+            *result.offset(0) = (*tr).trBase[0] + (*tr).trDelta[0] * phase;
+            *result.offset(1) = (*tr).trBase[1] + (*tr).trDelta[1] * phase;
+            *result.offset(2) = (*tr).trBase[2] + (*tr).trDelta[2] * phase
         }
         3 => {
             if atTime > (*tr).trTime + (*tr).trDuration {
                 atTime = (*tr).trTime + (*tr).trDuration
             }
-            deltaTime = ((atTime - (*tr).trTime) as libc::c_double * 0.001f64) as libc::c_float;
-            if deltaTime < 0 as libc::c_int as libc::c_float {
-                deltaTime = 0 as libc::c_int as libc::c_float
+            deltaTime = ((atTime - (*tr).trTime) as f64 * 0.001) as f32;
+            if deltaTime < 0f32 {
+                deltaTime = 0f32
             }
-            *result.offset(0 as libc::c_int as isize) = (*tr).trBase[0 as libc::c_int as usize]
-                + (*tr).trDelta[0 as libc::c_int as usize] * deltaTime;
-            *result.offset(1 as libc::c_int as isize) = (*tr).trBase[1 as libc::c_int as usize]
-                + (*tr).trDelta[1 as libc::c_int as usize] * deltaTime;
-            *result.offset(2 as libc::c_int as isize) = (*tr).trBase[2 as libc::c_int as usize]
-                + (*tr).trDelta[2 as libc::c_int as usize] * deltaTime
+            *result.offset(0) = (*tr).trBase[0] + (*tr).trDelta[0] * deltaTime;
+            *result.offset(1) = (*tr).trBase[1] + (*tr).trDelta[1] * deltaTime;
+            *result.offset(2) = (*tr).trBase[2] + (*tr).trDelta[2] * deltaTime
         }
         5 => {
-            deltaTime = ((atTime - (*tr).trTime) as libc::c_double * 0.001f64) as libc::c_float;
-            *result.offset(0 as libc::c_int as isize) = (*tr).trBase[0 as libc::c_int as usize]
-                + (*tr).trDelta[0 as libc::c_int as usize] * deltaTime;
-            *result.offset(1 as libc::c_int as isize) = (*tr).trBase[1 as libc::c_int as usize]
-                + (*tr).trDelta[1 as libc::c_int as usize] * deltaTime;
-            *result.offset(2 as libc::c_int as isize) = (*tr).trBase[2 as libc::c_int as usize]
-                + (*tr).trDelta[2 as libc::c_int as usize] * deltaTime;
-            let ref mut fresh0 = *result.offset(2 as libc::c_int as isize);
-            *fresh0 = (*fresh0 as libc::c_double
-                - 0.5f64
-                    * 800 as libc::c_int as libc::c_double
-                    * deltaTime as libc::c_double
-                    * deltaTime as libc::c_double)
+            deltaTime = ((atTime - (*tr).trTime) as f64 * 0.001) as f32;
+            *result.offset(0) = (*tr).trBase[0] + (*tr).trDelta[0] * deltaTime;
+            *result.offset(1) = (*tr).trBase[1] + (*tr).trDelta[1] * deltaTime;
+            *result.offset(2) = (*tr).trBase[2] + (*tr).trDelta[2] * deltaTime;
+            let ref mut fresh0 = *result.offset(2);
+            *fresh0 = (*fresh0 as f64 - 0.5 * 800f64 * deltaTime as f64 * deltaTime as f64)
                 as crate::src::qcommon::q_shared::vec_t
         }
         _ => {
             crate::src::game::g_main::Com_Error(
-                crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-                b"BG_EvaluateTrajectory: unknown trType: %i\x00" as *const u8
-                    as *const libc::c_char,
-                (*tr).trType as libc::c_uint,
+                crate::src::qcommon::q_shared::ERR_DROP as i32,
+                b"BG_EvaluateTrajectory: unknown trType: %i\x00" as *const u8 as *const i8,
+                (*tr).trType,
             );
         }
     };
@@ -1491,168 +1309,158 @@ For determining velocity at a given time
 
 pub unsafe extern "C" fn BG_EvaluateTrajectoryDelta(
     mut tr: *const crate::src::qcommon::q_shared::trajectory_t,
-    mut atTime: libc::c_int,
+    mut atTime: i32,
     mut result: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut deltaTime: libc::c_float = 0.; // derivative of sin = cos
-    let mut phase: libc::c_float = 0.; // milliseconds to seconds
-    match (*tr).trType as libc::c_uint {
+    let mut deltaTime: f32 = 0.; // derivative of sin = cos
+    let mut phase: f32 = 0.; // milliseconds to seconds
+    match (*tr).trType {
         0 | 1 => {
-            let ref mut fresh1 = *result.offset(2 as libc::c_int as isize); // FIXME: local gravity...
-            *fresh1 = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-            let ref mut fresh2 = *result.offset(1 as libc::c_int as isize);
+            let ref mut fresh1 = *result.offset(2); // FIXME: local gravity...
+            *fresh1 = 0f32;
+            let ref mut fresh2 = *result.offset(1);
             *fresh2 = *fresh1;
-            *result.offset(0 as libc::c_int as isize) = *fresh2
+            *result.offset(0) = *fresh2
         }
         2 => {
-            *result.offset(0 as libc::c_int as isize) = (*tr).trDelta[0 as libc::c_int as usize];
-            *result.offset(1 as libc::c_int as isize) = (*tr).trDelta[1 as libc::c_int as usize];
-            *result.offset(2 as libc::c_int as isize) = (*tr).trDelta[2 as libc::c_int as usize]
+            *result.offset(0) = (*tr).trDelta[0];
+            *result.offset(1) = (*tr).trDelta[1];
+            *result.offset(2) = (*tr).trDelta[2]
         }
         4 => {
-            deltaTime =
-                (atTime - (*tr).trTime) as libc::c_float / (*tr).trDuration as libc::c_float;
-            phase = crate::stdlib::cos(
-                deltaTime as libc::c_double
-                    * 3.14159265358979323846f64
-                    * 2 as libc::c_int as libc::c_double,
-            ) as libc::c_float;
-            phase = (phase as libc::c_double * 0.5f64) as libc::c_float;
-            *result.offset(0 as libc::c_int as isize) =
-                (*tr).trDelta[0 as libc::c_int as usize] * phase;
-            *result.offset(1 as libc::c_int as isize) =
-                (*tr).trDelta[1 as libc::c_int as usize] * phase;
-            *result.offset(2 as libc::c_int as isize) =
-                (*tr).trDelta[2 as libc::c_int as usize] * phase
+            deltaTime = (atTime - (*tr).trTime) as f32 / (*tr).trDuration as f32;
+            phase = crate::stdlib::cos(deltaTime as f64 * 3.14159265358979323846 * 2f64) as f32;
+            phase = (phase as f64 * 0.5) as f32;
+            *result.offset(0) = (*tr).trDelta[0] * phase;
+            *result.offset(1) = (*tr).trDelta[1] * phase;
+            *result.offset(2) = (*tr).trDelta[2] * phase
         }
         3 => {
             if atTime > (*tr).trTime + (*tr).trDuration {
-                let ref mut fresh3 = *result.offset(2 as libc::c_int as isize);
-                *fresh3 = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-                let ref mut fresh4 = *result.offset(1 as libc::c_int as isize);
+                let ref mut fresh3 = *result.offset(2);
+                *fresh3 = 0f32;
+                let ref mut fresh4 = *result.offset(1);
                 *fresh4 = *fresh3;
-                *result.offset(0 as libc::c_int as isize) = *fresh4;
+                *result.offset(0) = *fresh4;
                 return;
             }
-            *result.offset(0 as libc::c_int as isize) = (*tr).trDelta[0 as libc::c_int as usize];
-            *result.offset(1 as libc::c_int as isize) = (*tr).trDelta[1 as libc::c_int as usize];
-            *result.offset(2 as libc::c_int as isize) = (*tr).trDelta[2 as libc::c_int as usize]
+            *result.offset(0) = (*tr).trDelta[0];
+            *result.offset(1) = (*tr).trDelta[1];
+            *result.offset(2) = (*tr).trDelta[2]
         }
         5 => {
-            deltaTime = ((atTime - (*tr).trTime) as libc::c_double * 0.001f64) as libc::c_float;
-            *result.offset(0 as libc::c_int as isize) = (*tr).trDelta[0 as libc::c_int as usize];
-            *result.offset(1 as libc::c_int as isize) = (*tr).trDelta[1 as libc::c_int as usize];
-            *result.offset(2 as libc::c_int as isize) = (*tr).trDelta[2 as libc::c_int as usize];
-            let ref mut fresh5 = *result.offset(2 as libc::c_int as isize);
-            *fresh5 -= 800 as libc::c_int as libc::c_float * deltaTime
+            deltaTime = ((atTime - (*tr).trTime) as f64 * 0.001) as f32;
+            *result.offset(0) = (*tr).trDelta[0];
+            *result.offset(1) = (*tr).trDelta[1];
+            *result.offset(2) = (*tr).trDelta[2];
+            let ref mut fresh5 = *result.offset(2);
+            *fresh5 -= 800f32 * deltaTime
         }
         _ => {
             crate::src::game::g_main::Com_Error(
-                crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
-                b"BG_EvaluateTrajectoryDelta: unknown trType: %i\x00" as *const u8
-                    as *const libc::c_char,
-                (*tr).trType as libc::c_uint,
+                crate::src::qcommon::q_shared::ERR_DROP as i32,
+                b"BG_EvaluateTrajectoryDelta: unknown trType: %i\x00" as *const u8 as *const i8,
+                (*tr).trType,
             );
         }
     };
 }
 #[no_mangle]
 
-pub static mut eventnames: [*mut libc::c_char; 83] = [
-    b"EV_NONE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_FOOTSTEP\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_FOOTSTEP_METAL\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_FOOTSPLASH\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_FOOTWADE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_SWIM\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_STEP_4\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_STEP_8\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_STEP_12\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_STEP_16\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_FALL_SHORT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_FALL_MEDIUM\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_FALL_FAR\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_JUMP_PAD\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_JUMP\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_WATER_TOUCH\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_WATER_LEAVE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_WATER_UNDER\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_WATER_CLEAR\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_ITEM_PICKUP\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_GLOBAL_ITEM_PICKUP\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_NOAMMO\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_CHANGE_WEAPON\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_FIRE_WEAPON\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM0\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM2\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM3\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM4\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM5\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM6\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM7\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM8\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM9\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM10\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM11\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM12\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM13\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM14\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_USE_ITEM15\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_ITEM_RESPAWN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_ITEM_POP\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_PLAYER_TELEPORT_IN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_PLAYER_TELEPORT_OUT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_GRENADE_BOUNCE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_GENERAL_SOUND\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_GLOBAL_SOUND\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_GLOBAL_TEAM_SOUND\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_BULLET_HIT_FLESH\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_BULLET_HIT_WALL\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_MISSILE_HIT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_MISSILE_MISS\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_MISSILE_MISS_METAL\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_RAILTRAIL\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_SHOTGUN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_BULLET\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_PAIN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_DEATH1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_DEATH2\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_DEATH3\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_OBITUARY\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_POWERUP_QUAD\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_POWERUP_BATTLESUIT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_POWERUP_REGEN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_GIB_PLAYER\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_SCOREPLUM\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_PROXIMITY_MINE_STICK\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_PROXIMITY_MINE_TRIGGER\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_KAMIKAZE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_OBELISKEXPLODE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_OBELISKPAIN\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_INVUL_IMPACT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_JUICED\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_LIGHTNINGBOLT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_DEBUG_LINE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_STOPLOOPINGSOUND\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_TAUNT\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_TAUNT_YES\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_TAUNT_NO\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_TAUNT_FOLLOWME\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_TAUNT_GETFLAG\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_TAUNT_GUARDBASE\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    b"EV_TAUNT_PATROL\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+pub static mut eventnames: [*mut i8; 83] = [
+    b"EV_NONE\x00" as *const u8 as *mut i8,
+    b"EV_FOOTSTEP\x00" as *const u8 as *mut i8,
+    b"EV_FOOTSTEP_METAL\x00" as *const u8 as *mut i8,
+    b"EV_FOOTSPLASH\x00" as *const u8 as *mut i8,
+    b"EV_FOOTWADE\x00" as *const u8 as *mut i8,
+    b"EV_SWIM\x00" as *const u8 as *mut i8,
+    b"EV_STEP_4\x00" as *const u8 as *mut i8,
+    b"EV_STEP_8\x00" as *const u8 as *mut i8,
+    b"EV_STEP_12\x00" as *const u8 as *mut i8,
+    b"EV_STEP_16\x00" as *const u8 as *mut i8,
+    b"EV_FALL_SHORT\x00" as *const u8 as *mut i8,
+    b"EV_FALL_MEDIUM\x00" as *const u8 as *mut i8,
+    b"EV_FALL_FAR\x00" as *const u8 as *mut i8,
+    b"EV_JUMP_PAD\x00" as *const u8 as *mut i8,
+    b"EV_JUMP\x00" as *const u8 as *mut i8,
+    b"EV_WATER_TOUCH\x00" as *const u8 as *mut i8,
+    b"EV_WATER_LEAVE\x00" as *const u8 as *mut i8,
+    b"EV_WATER_UNDER\x00" as *const u8 as *mut i8,
+    b"EV_WATER_CLEAR\x00" as *const u8 as *mut i8,
+    b"EV_ITEM_PICKUP\x00" as *const u8 as *mut i8,
+    b"EV_GLOBAL_ITEM_PICKUP\x00" as *const u8 as *mut i8,
+    b"EV_NOAMMO\x00" as *const u8 as *mut i8,
+    b"EV_CHANGE_WEAPON\x00" as *const u8 as *mut i8,
+    b"EV_FIRE_WEAPON\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM0\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM1\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM2\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM3\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM4\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM5\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM6\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM7\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM8\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM9\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM10\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM11\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM12\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM13\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM14\x00" as *const u8 as *mut i8,
+    b"EV_USE_ITEM15\x00" as *const u8 as *mut i8,
+    b"EV_ITEM_RESPAWN\x00" as *const u8 as *mut i8,
+    b"EV_ITEM_POP\x00" as *const u8 as *mut i8,
+    b"EV_PLAYER_TELEPORT_IN\x00" as *const u8 as *mut i8,
+    b"EV_PLAYER_TELEPORT_OUT\x00" as *const u8 as *mut i8,
+    b"EV_GRENADE_BOUNCE\x00" as *const u8 as *mut i8,
+    b"EV_GENERAL_SOUND\x00" as *const u8 as *mut i8,
+    b"EV_GLOBAL_SOUND\x00" as *const u8 as *mut i8,
+    b"EV_GLOBAL_TEAM_SOUND\x00" as *const u8 as *mut i8,
+    b"EV_BULLET_HIT_FLESH\x00" as *const u8 as *mut i8,
+    b"EV_BULLET_HIT_WALL\x00" as *const u8 as *mut i8,
+    b"EV_MISSILE_HIT\x00" as *const u8 as *mut i8,
+    b"EV_MISSILE_MISS\x00" as *const u8 as *mut i8,
+    b"EV_MISSILE_MISS_METAL\x00" as *const u8 as *mut i8,
+    b"EV_RAILTRAIL\x00" as *const u8 as *mut i8,
+    b"EV_SHOTGUN\x00" as *const u8 as *mut i8,
+    b"EV_BULLET\x00" as *const u8 as *mut i8,
+    b"EV_PAIN\x00" as *const u8 as *mut i8,
+    b"EV_DEATH1\x00" as *const u8 as *mut i8,
+    b"EV_DEATH2\x00" as *const u8 as *mut i8,
+    b"EV_DEATH3\x00" as *const u8 as *mut i8,
+    b"EV_OBITUARY\x00" as *const u8 as *mut i8,
+    b"EV_POWERUP_QUAD\x00" as *const u8 as *mut i8,
+    b"EV_POWERUP_BATTLESUIT\x00" as *const u8 as *mut i8,
+    b"EV_POWERUP_REGEN\x00" as *const u8 as *mut i8,
+    b"EV_GIB_PLAYER\x00" as *const u8 as *mut i8,
+    b"EV_SCOREPLUM\x00" as *const u8 as *mut i8,
+    b"EV_PROXIMITY_MINE_STICK\x00" as *const u8 as *mut i8,
+    b"EV_PROXIMITY_MINE_TRIGGER\x00" as *const u8 as *mut i8,
+    b"EV_KAMIKAZE\x00" as *const u8 as *mut i8,
+    b"EV_OBELISKEXPLODE\x00" as *const u8 as *mut i8,
+    b"EV_OBELISKPAIN\x00" as *const u8 as *mut i8,
+    b"EV_INVUL_IMPACT\x00" as *const u8 as *mut i8,
+    b"EV_JUICED\x00" as *const u8 as *mut i8,
+    b"EV_LIGHTNINGBOLT\x00" as *const u8 as *mut i8,
+    b"EV_DEBUG_LINE\x00" as *const u8 as *mut i8,
+    b"EV_STOPLOOPINGSOUND\x00" as *const u8 as *mut i8,
+    b"EV_TAUNT\x00" as *const u8 as *mut i8,
+    b"EV_TAUNT_YES\x00" as *const u8 as *mut i8,
+    b"EV_TAUNT_NO\x00" as *const u8 as *mut i8,
+    b"EV_TAUNT_FOLLOWME\x00" as *const u8 as *mut i8,
+    b"EV_TAUNT_GETFLAG\x00" as *const u8 as *mut i8,
+    b"EV_TAUNT_GUARDBASE\x00" as *const u8 as *mut i8,
+    b"EV_TAUNT_PATROL\x00" as *const u8 as *mut i8,
 ];
 #[no_mangle]
 
 pub unsafe extern "C" fn BG_AddPredictableEventToPlayerstate(
-    mut newEvent: libc::c_int,
-    mut eventParm: libc::c_int,
+    mut newEvent: i32,
+    mut eventParm: i32,
     mut ps: *mut crate::src::qcommon::q_shared::playerState_t,
 ) {
-    (*ps).events[((*ps).eventSequence & 2 as libc::c_int - 1 as libc::c_int) as usize] = newEvent;
-    (*ps).eventParms[((*ps).eventSequence & 2 as libc::c_int - 1 as libc::c_int) as usize] =
-        eventParm;
+    (*ps).events[((*ps).eventSequence & 2i32 - 1) as usize] = newEvent;
+    (*ps).eventParms[((*ps).eventSequence & 2i32 - 1) as usize] = eventParm;
     (*ps).eventSequence += 1;
 }
 /*
@@ -1667,14 +1475,14 @@ pub unsafe extern "C" fn BG_TouchJumpPad(
     mut jumppad: *mut crate::src::qcommon::q_shared::entityState_t,
 ) {
     let mut angles: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut p: libc::c_float = 0.;
-    let mut effectNum: libc::c_int = 0;
+    let mut p: f32 = 0.;
+    let mut effectNum: i32 = 0;
     // spectators don't use jump pads
-    if (*ps).pm_type != crate::bg_public_h::PM_NORMAL as libc::c_int {
+    if (*ps).pm_type != crate::bg_public_h::PM_NORMAL as i32 {
         return;
     }
     // flying characters don't hit bounce pads
-    if (*ps).powerups[crate::bg_public_h::PW_FLIGHT as libc::c_int as usize] != 0 {
+    if (*ps).powerups[crate::bg_public_h::PW_FLIGHT as usize] != 0 {
         return;
     }
     // if we didn't hit this same jumppad the previous frame
@@ -1684,27 +1492,22 @@ pub unsafe extern "C" fn BG_TouchJumpPad(
             (*jumppad).origin2.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             angles.as_mut_ptr(),
         );
-        p = crate::stdlib::fabs(crate::src::qcommon::q_math::AngleNormalize180(
-            angles[0 as libc::c_int as usize],
-        ) as libc::c_double) as libc::c_float;
-        if p < 45 as libc::c_int as libc::c_float {
-            effectNum = 0 as libc::c_int
+        p = crate::stdlib::fabs(crate::src::qcommon::q_math::AngleNormalize180(angles[0]) as f64)
+            as f32;
+        if p < 45f32 {
+            effectNum = 0
         } else {
-            effectNum = 1 as libc::c_int
+            effectNum = 1
         }
-        BG_AddPredictableEventToPlayerstate(
-            crate::bg_public_h::EV_JUMP_PAD as libc::c_int,
-            effectNum,
-            ps,
-        );
+        BG_AddPredictableEventToPlayerstate(crate::bg_public_h::EV_JUMP_PAD as i32, effectNum, ps);
     }
     // remember hitting this jumppad this frame
     (*ps).jumppad_ent = (*jumppad).number;
     (*ps).jumppad_frame = (*ps).pmove_framecount;
     // give the player the velocity from the jumppad
-    (*ps).velocity[0 as libc::c_int as usize] = (*jumppad).origin2[0 as libc::c_int as usize];
-    (*ps).velocity[1 as libc::c_int as usize] = (*jumppad).origin2[1 as libc::c_int as usize];
-    (*ps).velocity[2 as libc::c_int as usize] = (*jumppad).origin2[2 as libc::c_int as usize];
+    (*ps).velocity[0] = (*jumppad).origin2[0];
+    (*ps).velocity[1] = (*jumppad).origin2[1];
+    (*ps).velocity[2] = (*jumppad).origin2[2];
 }
 /*
 ========================
@@ -1721,86 +1524,70 @@ pub unsafe extern "C" fn BG_PlayerStateToEntityState(
     mut s: *mut crate::src::qcommon::q_shared::entityState_t,
     mut snap: crate::src::qcommon::q_shared::qboolean,
 ) {
-    let mut i: libc::c_int = 0;
-    if (*ps).pm_type == crate::bg_public_h::PM_INTERMISSION as libc::c_int
-        || (*ps).pm_type == crate::bg_public_h::PM_SPECTATOR as libc::c_int
+    let mut i: i32 = 0;
+    if (*ps).pm_type == crate::bg_public_h::PM_INTERMISSION as i32
+        || (*ps).pm_type == crate::bg_public_h::PM_SPECTATOR as i32
     {
-        (*s).eType = crate::bg_public_h::ET_INVISIBLE as libc::c_int
-    } else if (*ps).stats[crate::bg_public_h::STAT_HEALTH as libc::c_int as usize]
-        <= -(40 as libc::c_int)
-    {
-        (*s).eType = crate::bg_public_h::ET_INVISIBLE as libc::c_int
+        (*s).eType = crate::bg_public_h::ET_INVISIBLE as i32
+    } else if (*ps).stats[crate::bg_public_h::STAT_HEALTH as usize] <= -(40) {
+        (*s).eType = crate::bg_public_h::ET_INVISIBLE as i32
     } else {
-        (*s).eType = crate::bg_public_h::ET_PLAYER as libc::c_int
+        (*s).eType = crate::bg_public_h::ET_PLAYER as i32
     }
     (*s).number = (*ps).clientNum;
     (*s).pos.trType = crate::src::qcommon::q_shared::TR_INTERPOLATE;
-    (*s).pos.trBase[0 as libc::c_int as usize] = (*ps).origin[0 as libc::c_int as usize];
-    (*s).pos.trBase[1 as libc::c_int as usize] = (*ps).origin[1 as libc::c_int as usize];
-    (*s).pos.trBase[2 as libc::c_int as usize] = (*ps).origin[2 as libc::c_int as usize];
+    (*s).pos.trBase[0] = (*ps).origin[0];
+    (*s).pos.trBase[1] = (*ps).origin[1];
+    (*s).pos.trBase[2] = (*ps).origin[2];
     if snap as u64 != 0 {
-        (*s).pos.trBase[0 as libc::c_int as usize] = (*s).pos.trBase[0 as libc::c_int as usize]
-            as libc::c_int
-            as crate::src::qcommon::q_shared::vec_t;
-        (*s).pos.trBase[1 as libc::c_int as usize] = (*s).pos.trBase[1 as libc::c_int as usize]
-            as libc::c_int
-            as crate::src::qcommon::q_shared::vec_t;
-        (*s).pos.trBase[2 as libc::c_int as usize] = (*s).pos.trBase[2 as libc::c_int as usize]
-            as libc::c_int
-            as crate::src::qcommon::q_shared::vec_t
+        (*s).pos.trBase[0] = (*s).pos.trBase[0] as i32 as crate::src::qcommon::q_shared::vec_t;
+        (*s).pos.trBase[1] = (*s).pos.trBase[1] as i32 as crate::src::qcommon::q_shared::vec_t;
+        (*s).pos.trBase[2] = (*s).pos.trBase[2] as i32 as crate::src::qcommon::q_shared::vec_t
     }
     // set the trDelta for flag direction
-    (*s).pos.trDelta[0 as libc::c_int as usize] = (*ps).velocity[0 as libc::c_int as usize]; // ET_PLAYER looks here instead of at number
-    (*s).pos.trDelta[1 as libc::c_int as usize] = (*ps).velocity[1 as libc::c_int as usize];
-    (*s).pos.trDelta[2 as libc::c_int as usize] = (*ps).velocity[2 as libc::c_int as usize];
+    (*s).pos.trDelta[0] = (*ps).velocity[0]; // ET_PLAYER looks here instead of at number
+    (*s).pos.trDelta[1] = (*ps).velocity[1];
+    (*s).pos.trDelta[2] = (*ps).velocity[2];
     (*s).apos.trType = crate::src::qcommon::q_shared::TR_INTERPOLATE;
-    (*s).apos.trBase[0 as libc::c_int as usize] = (*ps).viewangles[0 as libc::c_int as usize];
-    (*s).apos.trBase[1 as libc::c_int as usize] = (*ps).viewangles[1 as libc::c_int as usize];
-    (*s).apos.trBase[2 as libc::c_int as usize] = (*ps).viewangles[2 as libc::c_int as usize];
+    (*s).apos.trBase[0] = (*ps).viewangles[0];
+    (*s).apos.trBase[1] = (*ps).viewangles[1];
+    (*s).apos.trBase[2] = (*ps).viewangles[2];
     if snap as u64 != 0 {
-        (*s).apos.trBase[0 as libc::c_int as usize] = (*s).apos.trBase[0 as libc::c_int as usize]
-            as libc::c_int
-            as crate::src::qcommon::q_shared::vec_t;
-        (*s).apos.trBase[1 as libc::c_int as usize] = (*s).apos.trBase[1 as libc::c_int as usize]
-            as libc::c_int
-            as crate::src::qcommon::q_shared::vec_t;
-        (*s).apos.trBase[2 as libc::c_int as usize] = (*s).apos.trBase[2 as libc::c_int as usize]
-            as libc::c_int
-            as crate::src::qcommon::q_shared::vec_t
+        (*s).apos.trBase[0] = (*s).apos.trBase[0] as i32 as crate::src::qcommon::q_shared::vec_t;
+        (*s).apos.trBase[1] = (*s).apos.trBase[1] as i32 as crate::src::qcommon::q_shared::vec_t;
+        (*s).apos.trBase[2] = (*s).apos.trBase[2] as i32 as crate::src::qcommon::q_shared::vec_t
     }
-    (*s).angles2[1 as libc::c_int as usize] =
-        (*ps).movementDir as crate::src::qcommon::q_shared::vec_t;
+    (*s).angles2[1] = (*ps).movementDir as crate::src::qcommon::q_shared::vec_t;
     (*s).legsAnim = (*ps).legsAnim;
     (*s).torsoAnim = (*ps).torsoAnim;
     (*s).clientNum = (*ps).clientNum;
     // so corpses can also reference the proper config
     (*s).eFlags = (*ps).eFlags;
-    if (*ps).stats[crate::bg_public_h::STAT_HEALTH as libc::c_int as usize] <= 0 as libc::c_int {
-        (*s).eFlags |= 0x1 as libc::c_int
+    if (*ps).stats[crate::bg_public_h::STAT_HEALTH as usize] <= 0 {
+        (*s).eFlags |= 0x1
     } else {
-        (*s).eFlags &= !(0x1 as libc::c_int)
+        (*s).eFlags &= !(0x1)
     }
     if (*ps).externalEvent != 0 {
         (*s).event = (*ps).externalEvent;
         (*s).eventParm = (*ps).externalEventParm
     } else if (*ps).entityEventSequence < (*ps).eventSequence {
-        let mut seq: libc::c_int = 0;
-        if (*ps).entityEventSequence < (*ps).eventSequence - 2 as libc::c_int {
-            (*ps).entityEventSequence = (*ps).eventSequence - 2 as libc::c_int
+        let mut seq: i32 = 0;
+        if (*ps).entityEventSequence < (*ps).eventSequence - 2 {
+            (*ps).entityEventSequence = (*ps).eventSequence - 2
         }
-        seq = (*ps).entityEventSequence & 2 as libc::c_int - 1 as libc::c_int;
-        (*s).event = (*ps).events[seq as usize]
-            | ((*ps).entityEventSequence & 3 as libc::c_int) << 8 as libc::c_int;
+        seq = (*ps).entityEventSequence & 2 - 1;
+        (*s).event = (*ps).events[seq as usize] | ((*ps).entityEventSequence & 3) << 8;
         (*s).eventParm = (*ps).eventParms[seq as usize];
         (*ps).entityEventSequence += 1
     }
     (*s).weapon = (*ps).weapon;
     (*s).groundEntityNum = (*ps).groundEntityNum;
-    (*s).powerups = 0 as libc::c_int;
-    i = 0 as libc::c_int;
-    while i < 16 as libc::c_int {
+    (*s).powerups = 0;
+    i = 0;
+    while i < 16 {
         if (*ps).powerups[i as usize] != 0 {
-            (*s).powerups |= (1 as libc::c_int) << i
+            (*s).powerups |= (1) << i
         }
         i += 1
     }
@@ -1820,93 +1607,77 @@ and after local prediction on the client
 pub unsafe extern "C" fn BG_PlayerStateToEntityStateExtraPolate(
     mut ps: *mut crate::src::qcommon::q_shared::playerState_t,
     mut s: *mut crate::src::qcommon::q_shared::entityState_t,
-    mut time: libc::c_int,
+    mut time: i32,
     mut snap: crate::src::qcommon::q_shared::qboolean,
 ) {
-    let mut i: libc::c_int = 0;
-    if (*ps).pm_type == crate::bg_public_h::PM_INTERMISSION as libc::c_int
-        || (*ps).pm_type == crate::bg_public_h::PM_SPECTATOR as libc::c_int
+    let mut i: i32 = 0;
+    if (*ps).pm_type == crate::bg_public_h::PM_INTERMISSION as i32
+        || (*ps).pm_type == crate::bg_public_h::PM_SPECTATOR as i32
     {
-        (*s).eType = crate::bg_public_h::ET_INVISIBLE as libc::c_int
-    } else if (*ps).stats[crate::bg_public_h::STAT_HEALTH as libc::c_int as usize]
-        <= -(40 as libc::c_int)
-    {
-        (*s).eType = crate::bg_public_h::ET_INVISIBLE as libc::c_int
+        (*s).eType = crate::bg_public_h::ET_INVISIBLE as i32
+    } else if (*ps).stats[crate::bg_public_h::STAT_HEALTH as usize] <= -(40) {
+        (*s).eType = crate::bg_public_h::ET_INVISIBLE as i32
     } else {
-        (*s).eType = crate::bg_public_h::ET_PLAYER as libc::c_int
+        (*s).eType = crate::bg_public_h::ET_PLAYER as i32
     }
     (*s).number = (*ps).clientNum;
     (*s).pos.trType = crate::src::qcommon::q_shared::TR_LINEAR_STOP;
-    (*s).pos.trBase[0 as libc::c_int as usize] = (*ps).origin[0 as libc::c_int as usize];
-    (*s).pos.trBase[1 as libc::c_int as usize] = (*ps).origin[1 as libc::c_int as usize];
-    (*s).pos.trBase[2 as libc::c_int as usize] = (*ps).origin[2 as libc::c_int as usize];
+    (*s).pos.trBase[0] = (*ps).origin[0];
+    (*s).pos.trBase[1] = (*ps).origin[1];
+    (*s).pos.trBase[2] = (*ps).origin[2];
     if snap as u64 != 0 {
-        (*s).pos.trBase[0 as libc::c_int as usize] = (*s).pos.trBase[0 as libc::c_int as usize]
-            as libc::c_int
-            as crate::src::qcommon::q_shared::vec_t;
-        (*s).pos.trBase[1 as libc::c_int as usize] = (*s).pos.trBase[1 as libc::c_int as usize]
-            as libc::c_int
-            as crate::src::qcommon::q_shared::vec_t;
-        (*s).pos.trBase[2 as libc::c_int as usize] = (*s).pos.trBase[2 as libc::c_int as usize]
-            as libc::c_int
-            as crate::src::qcommon::q_shared::vec_t
+        (*s).pos.trBase[0] = (*s).pos.trBase[0] as i32 as crate::src::qcommon::q_shared::vec_t;
+        (*s).pos.trBase[1] = (*s).pos.trBase[1] as i32 as crate::src::qcommon::q_shared::vec_t;
+        (*s).pos.trBase[2] = (*s).pos.trBase[2] as i32 as crate::src::qcommon::q_shared::vec_t
     }
     // set the trDelta for flag direction and linear prediction
-    (*s).pos.trDelta[0 as libc::c_int as usize] = (*ps).velocity[0 as libc::c_int as usize];
-    (*s).pos.trDelta[1 as libc::c_int as usize] = (*ps).velocity[1 as libc::c_int as usize];
-    (*s).pos.trDelta[2 as libc::c_int as usize] = (*ps).velocity[2 as libc::c_int as usize];
+    (*s).pos.trDelta[0] = (*ps).velocity[0];
+    (*s).pos.trDelta[1] = (*ps).velocity[1];
+    (*s).pos.trDelta[2] = (*ps).velocity[2];
     // set the time for linear prediction
     (*s).pos.trTime = time;
     // set maximum extra polation time
-    (*s).pos.trDuration = 50 as libc::c_int; // 1000 / sv_fps (default = 20)
+    (*s).pos.trDuration = 50; // 1000 / sv_fps (default = 20)
     (*s).apos.trType = crate::src::qcommon::q_shared::TR_INTERPOLATE; // ET_PLAYER looks here instead of at number
-    (*s).apos.trBase[0 as libc::c_int as usize] = (*ps).viewangles[0 as libc::c_int as usize];
-    (*s).apos.trBase[1 as libc::c_int as usize] = (*ps).viewangles[1 as libc::c_int as usize];
-    (*s).apos.trBase[2 as libc::c_int as usize] = (*ps).viewangles[2 as libc::c_int as usize];
+    (*s).apos.trBase[0] = (*ps).viewangles[0];
+    (*s).apos.trBase[1] = (*ps).viewangles[1];
+    (*s).apos.trBase[2] = (*ps).viewangles[2];
     if snap as u64 != 0 {
-        (*s).apos.trBase[0 as libc::c_int as usize] = (*s).apos.trBase[0 as libc::c_int as usize]
-            as libc::c_int
-            as crate::src::qcommon::q_shared::vec_t;
-        (*s).apos.trBase[1 as libc::c_int as usize] = (*s).apos.trBase[1 as libc::c_int as usize]
-            as libc::c_int
-            as crate::src::qcommon::q_shared::vec_t;
-        (*s).apos.trBase[2 as libc::c_int as usize] = (*s).apos.trBase[2 as libc::c_int as usize]
-            as libc::c_int
-            as crate::src::qcommon::q_shared::vec_t
+        (*s).apos.trBase[0] = (*s).apos.trBase[0] as i32 as crate::src::qcommon::q_shared::vec_t;
+        (*s).apos.trBase[1] = (*s).apos.trBase[1] as i32 as crate::src::qcommon::q_shared::vec_t;
+        (*s).apos.trBase[2] = (*s).apos.trBase[2] as i32 as crate::src::qcommon::q_shared::vec_t
     }
-    (*s).angles2[1 as libc::c_int as usize] =
-        (*ps).movementDir as crate::src::qcommon::q_shared::vec_t;
+    (*s).angles2[1] = (*ps).movementDir as crate::src::qcommon::q_shared::vec_t;
     (*s).legsAnim = (*ps).legsAnim;
     (*s).torsoAnim = (*ps).torsoAnim;
     (*s).clientNum = (*ps).clientNum;
     // so corpses can also reference the proper config
     (*s).eFlags = (*ps).eFlags;
-    if (*ps).stats[crate::bg_public_h::STAT_HEALTH as libc::c_int as usize] <= 0 as libc::c_int {
-        (*s).eFlags |= 0x1 as libc::c_int
+    if (*ps).stats[crate::bg_public_h::STAT_HEALTH as usize] <= 0 {
+        (*s).eFlags |= 0x1
     } else {
-        (*s).eFlags &= !(0x1 as libc::c_int)
+        (*s).eFlags &= !(0x1)
     }
     if (*ps).externalEvent != 0 {
         (*s).event = (*ps).externalEvent;
         (*s).eventParm = (*ps).externalEventParm
     } else if (*ps).entityEventSequence < (*ps).eventSequence {
-        let mut seq: libc::c_int = 0;
-        if (*ps).entityEventSequence < (*ps).eventSequence - 2 as libc::c_int {
-            (*ps).entityEventSequence = (*ps).eventSequence - 2 as libc::c_int
+        let mut seq: i32 = 0;
+        if (*ps).entityEventSequence < (*ps).eventSequence - 2 {
+            (*ps).entityEventSequence = (*ps).eventSequence - 2
         }
-        seq = (*ps).entityEventSequence & 2 as libc::c_int - 1 as libc::c_int;
-        (*s).event = (*ps).events[seq as usize]
-            | ((*ps).entityEventSequence & 3 as libc::c_int) << 8 as libc::c_int;
+        seq = (*ps).entityEventSequence & 2 - 1;
+        (*s).event = (*ps).events[seq as usize] | ((*ps).entityEventSequence & 3) << 8;
         (*s).eventParm = (*ps).eventParms[seq as usize];
         (*ps).entityEventSequence += 1
     }
     (*s).weapon = (*ps).weapon;
     (*s).groundEntityNum = (*ps).groundEntityNum;
-    (*s).powerups = 0 as libc::c_int;
-    i = 0 as libc::c_int;
-    while i < 16 as libc::c_int {
+    (*s).powerups = 0;
+    i = 0;
+    while i < 16 {
         if (*ps).powerups[i as usize] != 0 {
-            (*s).powerups |= (1 as libc::c_int) << i
+            (*s).powerups |= (1) << i
         }
         i += 1
     }
@@ -1914,9 +1685,9 @@ pub unsafe extern "C" fn BG_PlayerStateToEntityStateExtraPolate(
     (*s).generic1 = (*ps).generic1;
 }
 unsafe extern "C" fn run_static_initializers() {
-    bg_numItems = (::std::mem::size_of::<[crate::bg_public_h::gitem_t; 37]>() as libc::c_ulong)
-        .wrapping_div(::std::mem::size_of::<crate::bg_public_h::gitem_t>() as libc::c_ulong)
-        .wrapping_sub(1 as libc::c_int as libc::c_ulong) as libc::c_int
+    bg_numItems = (::std::mem::size_of::<[crate::bg_public_h::gitem_t; 37]>())
+        .wrapping_div(::std::mem::size_of::<crate::bg_public_h::gitem_t>())
+        .wrapping_sub(1usize) as i32
 }
 #[used]
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]

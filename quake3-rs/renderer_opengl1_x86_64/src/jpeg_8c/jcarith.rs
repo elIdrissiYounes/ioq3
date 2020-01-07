@@ -201,15 +201,15 @@ pub struct arith_entropy_encoder {
     pub a: crate::jmorecfg_h::INT32,
     pub sc: crate::jmorecfg_h::INT32,
     pub zc: crate::jmorecfg_h::INT32,
-    pub ct: libc::c_int,
-    pub buffer: libc::c_int,
-    pub last_dc_val: [libc::c_int; 4],
-    pub dc_context: [libc::c_int; 4],
-    pub restarts_to_go: libc::c_uint,
-    pub next_restart_num: libc::c_int,
-    pub dc_stats: [*mut libc::c_uchar; 16],
-    pub ac_stats: [*mut libc::c_uchar; 16],
-    pub fixed_bin: [libc::c_uchar; 4],
+    pub ct: i32,
+    pub buffer: i32,
+    pub last_dc_val: [i32; 4],
+    pub dc_context: [i32; 4],
+    pub restarts_to_go: u32,
+    pub next_restart_num: i32,
+    pub dc_stats: [*mut u8; 16],
+    pub ac_stats: [*mut u8; 16],
+    pub fixed_bin: [u8; 4],
 }
 /* NOTE: Uncomment the following #define if you want to use the
  * given formula for calculating the AC conditioning parameter Kx
@@ -247,7 +247,7 @@ pub struct arith_entropy_encoder {
  * which should be safe.
  */
 
-unsafe extern "C" fn emit_byte(mut val: libc::c_int, mut cinfo: crate::jpeglib_h::j_compress_ptr)
+unsafe extern "C" fn emit_byte(mut val: i32, mut cinfo: crate::jpeglib_h::j_compress_ptr)
 /* Write next output byte; we do not support suspension in this module. */
 {
     let mut dest: *mut crate::jpeglib_h::jpeg_destination_mgr = (*cinfo).dest;
@@ -255,7 +255,7 @@ unsafe extern "C" fn emit_byte(mut val: libc::c_int, mut cinfo: crate::jpeglib_h
     (*dest).next_output_byte = (*dest).next_output_byte.offset(1);
     *fresh0 = val as crate::jmorecfg_h::JOCTET;
     (*dest).free_in_buffer = (*dest).free_in_buffer.wrapping_sub(1);
-    if (*dest).free_in_buffer == 0 as libc::c_int as libc::c_ulong {
+    if (*dest).free_in_buffer == 0 {
         if Some(
             (*dest)
                 .empty_output_buffer
@@ -265,7 +265,7 @@ unsafe extern "C" fn emit_byte(mut val: libc::c_int, mut cinfo: crate::jpeglib_h
             == 0
         {
             (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_CANT_SUSPEND as libc::c_int;
+                crate::src::jpeg_8c::jerror::JERR_CANT_SUSPEND as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -287,40 +287,40 @@ unsafe extern "C" fn finish_pass(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
     /* Section D.1.8: Termination of encoding */
     /* Find the e->c in the coding interval with the largest
      * number of trailing zero bits */
-    temp = (*e).a - 1 as libc::c_int as libc::c_long + (*e).c & 0xffff0000 as libc::c_long;
+    temp = (*e).a - 1 + (*e).c & 0xffff0000 as isize;
     if temp < (*e).c {
-        (*e).c = temp + 0x8000 as libc::c_long
+        (*e).c = temp + 0x8000 as isize
     } else {
         (*e).c = temp
     }
     /* Send remaining bytes to output */
-    (*e).c <<= (*e).ct;
-    if (*e).c & 0xf8000000 as libc::c_long != 0 {
+    (*e).c <<=  (*e).ct as isize;
+    if (*e).c & 0xf8000000 as isize != 0 {
         /* One final overflow has to be handled */
-        if (*e).buffer >= 0 as libc::c_int {
+        if (*e).buffer >= 0 {
             if (*e).zc != 0 {
                 loop {
-                    emit_byte(0 as libc::c_int, cinfo); /* carry-over converts stacked 0xFF bytes to 0x00 */
+                    emit_byte(0, cinfo); /* carry-over converts stacked 0xFF bytes to 0x00 */
                     (*e).zc -= 1;
                     if !((*e).zc != 0) {
                         break;
                     }
                 }
             }
-            emit_byte((*e).buffer + 1 as libc::c_int, cinfo);
-            if (*e).buffer + 1 as libc::c_int == 0xff as libc::c_int {
-                emit_byte(0 as libc::c_int, cinfo);
+            emit_byte((*e).buffer + 1, cinfo);
+            if (*e).buffer + 1 == 0xff {
+                emit_byte(0i32, cinfo);
             }
         }
         (*e).zc += (*e).sc;
-        (*e).sc = 0 as libc::c_int as crate::jmorecfg_h::INT32
+        (*e).sc = 0
     } else {
-        if (*e).buffer == 0 as libc::c_int {
+        if (*e).buffer == 0 {
             (*e).zc += 1
-        } else if (*e).buffer >= 0 as libc::c_int {
+        } else if (*e).buffer >= 0 {
             if (*e).zc != 0 {
                 loop {
-                    emit_byte(0 as libc::c_int, cinfo);
+                    emit_byte(0, cinfo);
                     (*e).zc -= 1;
                     if !((*e).zc != 0) {
                         break;
@@ -332,7 +332,7 @@ unsafe extern "C" fn finish_pass(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
         if (*e).sc != 0 {
             if (*e).zc != 0 {
                 loop {
-                    emit_byte(0 as libc::c_int, cinfo);
+                    emit_byte(0, cinfo);
                     (*e).zc -= 1;
                     if !((*e).zc != 0) {
                         break;
@@ -340,8 +340,8 @@ unsafe extern "C" fn finish_pass(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
                 }
             }
             loop {
-                emit_byte(0xff as libc::c_int, cinfo);
-                emit_byte(0 as libc::c_int, cinfo);
+                emit_byte(0xff, cinfo);
+                emit_byte(0, cinfo);
                 (*e).sc -= 1;
                 if !((*e).sc != 0) {
                     break;
@@ -350,12 +350,12 @@ unsafe extern "C" fn finish_pass(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
         }
     }
     /* Output final bytes only if they are not 0x00 */
-    if (*e).c & 0x7fff800 as libc::c_long != 0 {
+    if (*e).c & 0x7fff800 as isize != 0 {
         if (*e).zc != 0 {
             loop
             /* output final pending zero bytes */
             {
-                emit_byte(0 as libc::c_int, cinfo);
+                emit_byte(0, cinfo);
                 (*e).zc -= 1;
                 if !((*e).zc != 0) {
                     break;
@@ -363,23 +363,23 @@ unsafe extern "C" fn finish_pass(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
             }
         }
         emit_byte(
-            ((*e).c >> 19 as libc::c_int & 0xff as libc::c_int as libc::c_long) as libc::c_int,
+            ((*e).c >> 19 & 0xff) as i32,
             cinfo,
         );
-        if (*e).c >> 19 as libc::c_int & 0xff as libc::c_int as libc::c_long
-            == 0xff as libc::c_int as libc::c_long
+        if (*e).c >> 19 & 0xff
+            == 0xff
         {
-            emit_byte(0 as libc::c_int, cinfo);
+            emit_byte(0i32, cinfo);
         }
-        if (*e).c & 0x7f800 as libc::c_long != 0 {
+        if (*e).c & 0x7f800 as isize != 0 {
             emit_byte(
-                ((*e).c >> 11 as libc::c_int & 0xff as libc::c_int as libc::c_long) as libc::c_int,
+                ((*e).c >> 11 & 0xff) as i32,
                 cinfo,
             );
-            if (*e).c >> 11 as libc::c_int & 0xff as libc::c_int as libc::c_long
-                == 0xff as libc::c_int as libc::c_long
+            if (*e).c >> 11 & 0xff
+                == 0xff
             {
-                emit_byte(0 as libc::c_int, cinfo);
+                emit_byte(0i32, cinfo);
             }
         }
     };
@@ -408,29 +408,29 @@ unsafe extern "C" fn finish_pass(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
 
 unsafe extern "C" fn arith_encode(
     mut cinfo: crate::jpeglib_h::j_compress_ptr,
-    mut st: *mut libc::c_uchar,
-    mut val: libc::c_int,
+    mut st: *mut u8,
+    mut val: i32,
 ) {
     let mut e: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
-    let mut nl: libc::c_uchar = 0;
-    let mut nm: libc::c_uchar = 0;
+    let mut nl: u8 = 0;
+    let mut nm: u8 = 0;
     let mut qe: crate::jmorecfg_h::INT32 = 0;
     let mut temp: crate::jmorecfg_h::INT32 = 0;
-    let mut sv: libc::c_int = 0;
+    let mut sv: i32 = 0;
     /* Fetch values from our compact representation of Table D.2:
      * Qe values and probability estimation state machine
      */
-    sv = *st as libc::c_int; /* => Qe_Value */
+    sv = *st as i32; /* => Qe_Value */
     qe = *crate::src::jpeg_8c::jaricom::jpeg_aritab
         .as_ptr()
-        .offset((sv & 0x7f as libc::c_int) as isize); /* Next_Index_LPS + Switch_MPS */
-    nl = (qe & 0xff as libc::c_int as libc::c_long) as libc::c_uchar; /* Next_Index_MPS */
-    qe >>= 8 as libc::c_int;
-    nm = (qe & 0xff as libc::c_int as libc::c_long) as libc::c_uchar;
-    qe >>= 8 as libc::c_int;
+        .offset((sv & 0x7f) as isize); /* Next_Index_LPS + Switch_MPS */
+    nl = (qe & 0xff) as u8; /* Next_Index_MPS */
+    qe >>=  8isize;
+    nm = (qe & 0xff) as u8;
+    qe >>=  8isize;
     /* Encode & estimation procedures per sections D.1.4 & D.1.5 */
     (*e).a -= qe;
-    if val != sv >> 7 as libc::c_int {
+    if val != sv >> 7 {
         /* Encode the less probable symbol */
         if (*e).a >= qe {
             /* If the interval size (qe) for the less probable symbol (LPS)
@@ -440,11 +440,11 @@ unsafe extern "C" fn arith_encode(
             (*e).c += (*e).a;
             (*e).a = qe
         }
-        *st = (sv & 0x80 as libc::c_int ^ nl as libc::c_int) as libc::c_uchar
+        *st = (sv & 0x80 ^ nl as i32) as u8
     /* Estimate_after_LPS */
     } else {
         /* Encode the more probable symbol */
-        if (*e).a >= 0x8000 as libc::c_long {
+        if (*e).a >= 0x8000 as isize {
             return;
         }
         if (*e).a < qe {
@@ -456,39 +456,39 @@ unsafe extern "C" fn arith_encode(
             (*e).c += (*e).a;
             (*e).a = qe
         }
-        *st = (sv & 0x80 as libc::c_int ^ nm as libc::c_int) as libc::c_uchar
+        *st = (sv & 0x80 ^ nm as i32) as u8
     }
     loop
     /* Renormalization & data output per section D.1.6 */
     {
-        (*e).a <<= 1 as libc::c_int;
-        (*e).c <<= 1 as libc::c_int;
+        (*e).a <<=  1isize;
+        (*e).c <<=  1isize;
         (*e).ct -= 1;
-        if (*e).ct == 0 as libc::c_int {
+        if (*e).ct == 0 {
             /* Another byte is ready for output */
-            temp = (*e).c >> 19 as libc::c_int;
-            if temp > 0xff as libc::c_int as libc::c_long {
+            temp = (*e).c >> 19;
+            if temp > 0xff {
                 /* Handle overflow over all stacked 0xFF bytes */
-                if (*e).buffer >= 0 as libc::c_int {
+                if (*e).buffer >= 0 {
                     if (*e).zc != 0 {
                         loop {
-                            emit_byte(0 as libc::c_int, cinfo);
+                            emit_byte(0, cinfo);
                             (*e).zc -= 1;
                             if !((*e).zc != 0) {
                                 break;
                             }
                         }
                     }
-                    emit_byte((*e).buffer + 1 as libc::c_int, cinfo);
-                    if (*e).buffer + 1 as libc::c_int == 0xff as libc::c_int {
-                        emit_byte(0 as libc::c_int, cinfo);
+                    emit_byte((*e).buffer + 1, cinfo);
+                    if (*e).buffer + 1 == 0xff {
+                        emit_byte(0i32, cinfo);
                     }
                 }
                 /* new output byte, might overflow later */
                 (*e).zc += (*e).sc; /* carry-over converts stacked 0xFF bytes to 0x00 */
-                (*e).sc = 0 as libc::c_int as crate::jmorecfg_h::INT32;
-                (*e).buffer = (temp & 0xff as libc::c_int as libc::c_long) as libc::c_int
-            } else if temp == 0xff as libc::c_int as libc::c_long {
+                (*e).sc = 0;
+                (*e).buffer = (temp & 0xff) as i32
+            } else if temp == 0xff {
                 (*e).sc += 1
             /* Note: The 3 spacer bits in the C register guarantee
              * that the new buffer byte can't be 0xFF here
@@ -496,12 +496,12 @@ unsafe extern "C" fn arith_encode(
             /* stack 0xFF byte (which might overflow later) */
             } else {
                 /* Output all stacked 0xFF bytes, they will not overflow any more */
-                if (*e).buffer == 0 as libc::c_int {
+                if (*e).buffer == 0 {
                     (*e).zc += 1
-                } else if (*e).buffer >= 0 as libc::c_int {
+                } else if (*e).buffer >= 0 {
                     if (*e).zc != 0 {
                         loop {
-                            emit_byte(0 as libc::c_int, cinfo);
+                            emit_byte(0, cinfo);
                             (*e).zc -= 1;
                             if !((*e).zc != 0) {
                                 break;
@@ -513,7 +513,7 @@ unsafe extern "C" fn arith_encode(
                 if (*e).sc != 0 {
                     if (*e).zc != 0 {
                         loop {
-                            emit_byte(0 as libc::c_int, cinfo);
+                            emit_byte(0, cinfo);
                             (*e).zc -= 1;
                             if !((*e).zc != 0) {
                                 break;
@@ -521,21 +521,21 @@ unsafe extern "C" fn arith_encode(
                         }
                     }
                     loop {
-                        emit_byte(0xff as libc::c_int, cinfo);
-                        emit_byte(0 as libc::c_int, cinfo);
+                        emit_byte(0xff, cinfo);
+                        emit_byte(0, cinfo);
                         (*e).sc -= 1;
                         if !((*e).sc != 0) {
                             break;
                         }
                     }
                 }
-                (*e).buffer = (temp & 0xff as libc::c_int as libc::c_long) as libc::c_int
+                (*e).buffer = (temp & 0xff) as i32
                 /* new output byte (can still overflow) */
             }
-            (*e).c &= 0x7ffff as libc::c_long;
-            (*e).ct += 8 as libc::c_int
+            (*e).c &= 0x7ffff as isize;
+            (*e).ct += 8
         }
-        if !((*e).a < 0x8000 as libc::c_long) {
+        if !((*e).a < 0x8000 as isize) {
             break;
         }
     }
@@ -546,47 +546,47 @@ unsafe extern "C" fn arith_encode(
 
 unsafe extern "C" fn emit_restart(
     mut cinfo: crate::jpeglib_h::j_compress_ptr,
-    mut restart_num: libc::c_int,
+    mut restart_num: i32,
 ) {
     let mut entropy: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
-    let mut ci: libc::c_int = 0;
+    let mut ci: i32 = 0;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
     finish_pass(cinfo);
-    emit_byte(0xff as libc::c_int, cinfo);
-    emit_byte(0xd0 as libc::c_int + restart_num, cinfo);
+    emit_byte(0xff, cinfo);
+    emit_byte(0xd0 + restart_num, cinfo);
     /* Re-initialize statistics areas */
-    ci = 0 as libc::c_int;
+    ci = 0;
     while ci < (*cinfo).comps_in_scan {
         compptr = (*cinfo).cur_comp_info[ci as usize];
         /* DC needs no table for refinement scan */
-        if (*cinfo).Ss == 0 as libc::c_int && (*cinfo).Ah == 0 as libc::c_int {
+        if (*cinfo).Ss == 0 && (*cinfo).Ah == 0 {
             crate::stdlib::memset(
                 (*entropy).dc_stats[(*compptr).dc_tbl_no as usize] as *mut libc::c_void,
-                0 as libc::c_int,
-                64 as libc::c_int as crate::stddef_h::size_t,
+                0,
+                64,
             );
             /* Reset DC predictions to 0 */
-            (*entropy).last_dc_val[ci as usize] = 0 as libc::c_int;
-            (*entropy).dc_context[ci as usize] = 0 as libc::c_int
+            (*entropy).last_dc_val[ci as usize] = 0;
+            (*entropy).dc_context[ci as usize] = 0
         }
         /* AC needs no table when not present */
         if (*cinfo).Se != 0 {
             crate::stdlib::memset(
                 (*entropy).ac_stats[(*compptr).ac_tbl_no as usize] as *mut libc::c_void,
-                0 as libc::c_int,
-                256 as libc::c_int as crate::stddef_h::size_t,
+                0i32,
+                256usize,
             );
         }
         ci += 1
     }
     /* Reset arithmetic encoding variables */
-    (*entropy).c = 0 as libc::c_int as crate::jmorecfg_h::INT32;
-    (*entropy).a = 0x10000 as libc::c_long;
-    (*entropy).sc = 0 as libc::c_int as crate::jmorecfg_h::INT32;
-    (*entropy).zc = 0 as libc::c_int as crate::jmorecfg_h::INT32;
-    (*entropy).ct = 11 as libc::c_int;
-    (*entropy).buffer = -(1 as libc::c_int);
+    (*entropy).c = 0;
+    (*entropy).a = 0x10000 as isize;
+    (*entropy).sc = 0;
+    (*entropy).zc = 0;
+    (*entropy).ct = 11;
+    (*entropy).buffer = -(1);
     /* empty */
 }
 /*
@@ -600,25 +600,25 @@ unsafe extern "C" fn encode_mcu_DC_first(
 ) -> crate::jmorecfg_h::boolean {
     let mut entropy: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
     let mut block: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
-    let mut st: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-    let mut blkn: libc::c_int = 0;
-    let mut ci: libc::c_int = 0;
-    let mut tbl: libc::c_int = 0;
-    let mut v: libc::c_int = 0;
-    let mut v2: libc::c_int = 0;
-    let mut m: libc::c_int = 0;
+    let mut st: *mut u8 = 0 as *mut u8;
+    let mut blkn: i32 = 0;
+    let mut ci: i32 = 0;
+    let mut tbl: i32 = 0;
+    let mut v: i32 = 0;
+    let mut v2: i32 = 0;
+    let mut m: i32 = 0;
     /* Emit restart marker if needed */
     if (*cinfo).restart_interval != 0 {
-        if (*entropy).restarts_to_go == 0 as libc::c_int as libc::c_uint {
+        if (*entropy).restarts_to_go == 0 {
             emit_restart(cinfo, (*entropy).next_restart_num);
             (*entropy).restarts_to_go = (*cinfo).restart_interval;
             (*entropy).next_restart_num += 1;
-            (*entropy).next_restart_num &= 7 as libc::c_int
+            (*entropy).next_restart_num &= 7
         }
         (*entropy).restarts_to_go = (*entropy).restarts_to_go.wrapping_sub(1)
     }
     /* Encode the MCU data blocks */
-    blkn = 0 as libc::c_int;
+    blkn = 0;
     while blkn < (*cinfo).blocks_in_MCU {
         block = *MCU_data.offset(blkn as isize);
         ci = (*cinfo).MCU_membership[blkn as usize];
@@ -626,76 +626,76 @@ unsafe extern "C" fn encode_mcu_DC_first(
         /* Compute the DC value after the required point transform by Al.
          * This is simply an arithmetic right shift.
          */
-        m = (*block)[0 as libc::c_int as usize] as libc::c_int >> (*cinfo).Al;
+        m = (*block)[0] as i32 >> (*cinfo).Al;
         /* Sections F.1.4.1 & F.1.4.4.1: Encoding of DC coefficients */
         /* Table F.4: Point to statistics bin S0 for DC coefficient coding */
         st = (*entropy).dc_stats[tbl as usize].offset((*entropy).dc_context[ci as usize] as isize);
         /* Figure F.4: Encode_DC_DIFF */
         v = m - (*entropy).last_dc_val[ci as usize];
-        if v == 0 as libc::c_int {
-            arith_encode(cinfo, st, 0 as libc::c_int);
-            (*entropy).dc_context[ci as usize] = 0 as libc::c_int
+        if v == 0 {
+            arith_encode(cinfo, st, 0);
+            (*entropy).dc_context[ci as usize] = 0
         /* zero diff category */
         } else {
             (*entropy).last_dc_val[ci as usize] = m;
-            arith_encode(cinfo, st, 1 as libc::c_int);
+            arith_encode(cinfo, st, 1);
             /* Figure F.6: Encoding nonzero value v */
             /* Figure F.7: Encoding the sign of v */
-            if v > 0 as libc::c_int {
+            if v > 0 {
                 arith_encode(
                     cinfo,
-                    st.offset(1 as libc::c_int as isize),
-                    0 as libc::c_int,
+                    st.offset(1),
+                    0,
                 ); /* Table F.4: SS = S0 + 1 */
                 /* small positive diff category */
-                st = st.offset(2 as libc::c_int as isize); /* Table F.4: SP = S0 + 2 */
-                (*entropy).dc_context[ci as usize] = 4 as libc::c_int
+                st = st.offset(2); /* Table F.4: SP = S0 + 2 */
+                (*entropy).dc_context[ci as usize] = 4
             } else {
                 v = -v;
                 /* small negative diff category */
                 arith_encode(
                     cinfo,
-                    st.offset(1 as libc::c_int as isize),
-                    1 as libc::c_int,
+                    st.offset(1),
+                    1,
                 ); /* Table F.4: SS = S0 + 1 */
-                st = st.offset(3 as libc::c_int as isize); /* Table F.4: SN = S0 + 3 */
-                (*entropy).dc_context[ci as usize] = 8 as libc::c_int
+                st = st.offset(3); /* Table F.4: SN = S0 + 3 */
+                (*entropy).dc_context[ci as usize] = 8
             }
             /* Figure F.8: Encoding the magnitude category of v */
-            m = 0 as libc::c_int; /* Table F.4: X1 = 20 */
-            v -= 1 as libc::c_int;
+            m = 0; /* Table F.4: X1 = 20 */
+            v -= 1;
             if v != 0 {
-                arith_encode(cinfo, st, 1 as libc::c_int);
-                m = 1 as libc::c_int;
+                arith_encode(cinfo, st, 1);
+                m = 1;
                 v2 = v;
-                st = (*entropy).dc_stats[tbl as usize].offset(20 as libc::c_int as isize);
+                st = (*entropy).dc_stats[tbl as usize].offset(20);
                 loop {
-                    v2 >>= 1 as libc::c_int;
+                    v2 >>= 1;
                     if !(v2 != 0) {
                         break;
                     }
-                    arith_encode(cinfo, st, 1 as libc::c_int);
-                    m <<= 1 as libc::c_int;
-                    st = st.offset(1 as libc::c_int as isize)
+                    arith_encode(cinfo, st, 1);
+                    m <<= 1;
+                    st = st.offset(1)
                 }
             }
-            arith_encode(cinfo, st, 0 as libc::c_int);
+            arith_encode(cinfo, st, 0);
             /* Section F.1.4.4.1.2: Establish dc_context conditioning category */
-            if m < ((1 as libc::c_long) << (*cinfo).arith_dc_L[tbl as usize] as libc::c_int
-                >> 1 as libc::c_int) as libc::c_int
+            if m < ((1isize) << (*cinfo).arith_dc_L[tbl as usize] as i32
+                >> 1) as i32
             {
                 /* large diff category */
-                (*entropy).dc_context[ci as usize] = 0 as libc::c_int
+                (*entropy).dc_context[ci as usize] = 0
             } else if m
-                > ((1 as libc::c_long) << (*cinfo).arith_dc_U[tbl as usize] as libc::c_int
-                    >> 1 as libc::c_int) as libc::c_int
+                > ((1isize) << (*cinfo).arith_dc_U[tbl as usize] as i32
+                    >> 1) as i32
             {
-                (*entropy).dc_context[ci as usize] += 8 as libc::c_int
+                (*entropy).dc_context[ci as usize] += 8
             } /* zero diff category */
             /* Figure F.9: Encoding the magnitude bit pattern of v */
-            st = st.offset(14 as libc::c_int as isize);
+            st = st.offset(14);
             loop {
-                m >>= 1 as libc::c_int;
+                m >>= 1;
                 if !(m != 0) {
                     break;
                 }
@@ -703,16 +703,16 @@ unsafe extern "C" fn encode_mcu_DC_first(
                     cinfo,
                     st,
                     if m & v != 0 {
-                        1 as libc::c_int
+                        1
                     } else {
-                        0 as libc::c_int
+                        0
                     },
                 );
             }
         }
         blkn += 1
     }
-    return 1 as libc::c_int;
+    return 1;
 }
 /*
  * MCU encoding for AC initial scan (either spectral selection,
@@ -725,38 +725,38 @@ unsafe extern "C" fn encode_mcu_AC_first(
 ) -> crate::jmorecfg_h::boolean {
     let mut entropy: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
     let mut block: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
-    let mut st: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-    let mut tbl: libc::c_int = 0;
-    let mut k: libc::c_int = 0;
-    let mut ke: libc::c_int = 0;
-    let mut v: libc::c_int = 0;
-    let mut v2: libc::c_int = 0;
-    let mut m: libc::c_int = 0;
-    let mut natural_order: *const libc::c_int = 0 as *const libc::c_int;
+    let mut st: *mut u8 = 0 as *mut u8;
+    let mut tbl: i32 = 0;
+    let mut k: i32 = 0;
+    let mut ke: i32 = 0;
+    let mut v: i32 = 0;
+    let mut v2: i32 = 0;
+    let mut m: i32 = 0;
+    let mut natural_order: *const i32 = 0 as *const i32;
     /* Emit restart marker if needed */
     if (*cinfo).restart_interval != 0 {
-        if (*entropy).restarts_to_go == 0 as libc::c_int as libc::c_uint {
+        if (*entropy).restarts_to_go == 0 {
             emit_restart(cinfo, (*entropy).next_restart_num);
             (*entropy).restarts_to_go = (*cinfo).restart_interval;
             (*entropy).next_restart_num += 1;
-            (*entropy).next_restart_num &= 7 as libc::c_int
+            (*entropy).next_restart_num &= 7
         }
         (*entropy).restarts_to_go = (*entropy).restarts_to_go.wrapping_sub(1)
     }
     natural_order = (*cinfo).natural_order;
     /* Encode the MCU data block */
-    block = *MCU_data.offset(0 as libc::c_int as isize);
-    tbl = (*(*cinfo).cur_comp_info[0 as libc::c_int as usize]).ac_tbl_no;
+    block = *MCU_data.offset(0);
+    tbl = (*(*cinfo).cur_comp_info[0]).ac_tbl_no;
     /* Sections F.1.4.2 & F.1.4.4.2: Encoding of AC coefficients */
     /* Establish EOB (end-of-block) index */
     ke = (*cinfo).Se;
-    while ke > 0 as libc::c_int {
+    while ke > 0 {
         /* We must apply the point transform by Al.  For AC coefficients this
          * is an integer division with rounding towards 0.  To do this portably
          * in C, we shift after obtaining the absolute value.
          */
-        v = (*block)[*natural_order.offset(ke as isize) as usize] as libc::c_int;
-        if v >= 0 as libc::c_int {
+        v = (*block)[*natural_order.offset(ke as isize) as usize] as i32;
+        if v >= 0 {
             v >>= (*cinfo).Al;
             if v != 0 {
                 break;
@@ -774,19 +774,19 @@ unsafe extern "C" fn encode_mcu_AC_first(
     k = (*cinfo).Ss; /* EOB decision */
     while k <= ke {
         st = (*entropy).ac_stats[tbl as usize]
-            .offset((3 as libc::c_int * (k - 1 as libc::c_int)) as isize);
-        arith_encode(cinfo, st, 0 as libc::c_int);
+            .offset((3 * (k - 1)) as isize);
+        arith_encode(cinfo, st, 0);
         loop {
-            v = (*block)[*natural_order.offset(k as isize) as usize] as libc::c_int;
-            if v >= 0 as libc::c_int {
+            v = (*block)[*natural_order.offset(k as isize) as usize] as i32;
+            if v >= 0 {
                 v >>= (*cinfo).Al;
                 if v != 0 {
                     arith_encode(
                         cinfo,
-                        st.offset(1 as libc::c_int as isize),
-                        1 as libc::c_int,
+                        st.offset(1),
+                        1,
                     );
-                    arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 0 as libc::c_int);
+                    arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 0);
                     break;
                 }
             } else {
@@ -795,56 +795,56 @@ unsafe extern "C" fn encode_mcu_AC_first(
                 if v != 0 {
                     arith_encode(
                         cinfo,
-                        st.offset(1 as libc::c_int as isize),
-                        1 as libc::c_int,
+                        st.offset(1),
+                        1,
                     );
-                    arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 1 as libc::c_int);
+                    arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 1);
                     break;
                 }
             }
             arith_encode(
                 cinfo,
-                st.offset(1 as libc::c_int as isize),
-                0 as libc::c_int,
+                st.offset(1),
+                0,
             );
-            st = st.offset(3 as libc::c_int as isize);
+            st = st.offset(3);
             k += 1
         }
-        st = st.offset(2 as libc::c_int as isize);
+        st = st.offset(2);
         /* Figure F.8: Encoding the magnitude category of v */
-        m = 0 as libc::c_int;
-        v -= 1 as libc::c_int;
+        m = 0;
+        v -= 1;
         if v != 0 {
-            arith_encode(cinfo, st, 1 as libc::c_int);
-            m = 1 as libc::c_int;
+            arith_encode(cinfo, st, 1);
+            m = 1;
             v2 = v;
-            v2 >>= 1 as libc::c_int;
+            v2 >>= 1;
             if v2 != 0 {
-                arith_encode(cinfo, st, 1 as libc::c_int);
-                m <<= 1 as libc::c_int;
+                arith_encode(cinfo, st, 1);
+                m <<= 1;
                 st = (*entropy).ac_stats[tbl as usize].offset(
-                    (if k <= (*cinfo).arith_ac_K[tbl as usize] as libc::c_int {
-                        189 as libc::c_int
+                    (if k <= (*cinfo).arith_ac_K[tbl as usize] as i32 {
+                        189i32
                     } else {
-                        217 as libc::c_int
+                        217
                     }) as isize,
                 );
                 loop {
-                    v2 >>= 1 as libc::c_int;
+                    v2 >>= 1;
                     if !(v2 != 0) {
                         break;
                     }
-                    arith_encode(cinfo, st, 1 as libc::c_int);
-                    m <<= 1 as libc::c_int;
-                    st = st.offset(1 as libc::c_int as isize)
+                    arith_encode(cinfo, st, 1);
+                    m <<= 1;
+                    st = st.offset(1)
                 }
             }
         }
-        arith_encode(cinfo, st, 0 as libc::c_int);
+        arith_encode(cinfo, st, 0);
         /* Figure F.9: Encoding the magnitude bit pattern of v */
-        st = st.offset(14 as libc::c_int as isize);
+        st = st.offset(14);
         loop {
-            m >>= 1 as libc::c_int;
+            m >>= 1;
             if !(m != 0) {
                 break;
             }
@@ -852,9 +852,9 @@ unsafe extern "C" fn encode_mcu_AC_first(
                 cinfo,
                 st,
                 if m & v != 0 {
-                    1 as libc::c_int
+                    1
                 } else {
-                    0 as libc::c_int
+                    0
                 },
             );
         }
@@ -863,10 +863,10 @@ unsafe extern "C" fn encode_mcu_AC_first(
     /* Encode EOB decision only if k <= cinfo->Se */
     if k <= (*cinfo).Se {
         st = (*entropy).ac_stats[tbl as usize]
-            .offset((3 as libc::c_int * (k - 1 as libc::c_int)) as isize);
-        arith_encode(cinfo, st, 1 as libc::c_int);
+            .offset((3 * (k - 1)) as isize);
+        arith_encode(cinfo, st, 1i32);
     }
-    return 1 as libc::c_int;
+    return 1;
 }
 /*
  * MCU encoding for DC successive approximation refinement scan.
@@ -877,36 +877,36 @@ unsafe extern "C" fn encode_mcu_DC_refine(
     mut MCU_data: *mut crate::jpeglib_h::JBLOCKROW,
 ) -> crate::jmorecfg_h::boolean {
     let mut entropy: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
-    let mut st: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-    let mut Al: libc::c_int = 0;
-    let mut blkn: libc::c_int = 0;
+    let mut st: *mut u8 = 0 as *mut u8;
+    let mut Al: i32 = 0;
+    let mut blkn: i32 = 0;
     /* Emit restart marker if needed */
     if (*cinfo).restart_interval != 0 {
-        if (*entropy).restarts_to_go == 0 as libc::c_int as libc::c_uint {
+        if (*entropy).restarts_to_go == 0 {
             emit_restart(cinfo, (*entropy).next_restart_num); /* use fixed probability estimation */
             (*entropy).restarts_to_go = (*cinfo).restart_interval;
             (*entropy).next_restart_num += 1;
-            (*entropy).next_restart_num &= 7 as libc::c_int
+            (*entropy).next_restart_num &= 7
         }
         (*entropy).restarts_to_go = (*entropy).restarts_to_go.wrapping_sub(1)
     }
     st = (*entropy).fixed_bin.as_mut_ptr();
     Al = (*cinfo).Al;
     /* Encode the MCU data blocks */
-    blkn = 0 as libc::c_int;
+    blkn = 0;
     while blkn < (*cinfo).blocks_in_MCU {
         /* We simply emit the Al'th bit of the DC coefficient value. */
         arith_encode(
             cinfo,
             st,
-            (*(*MCU_data.offset(blkn as isize)).offset(0 as libc::c_int as isize))
-                [0 as libc::c_int as usize] as libc::c_int
+            (*(*MCU_data.offset(blkn as isize)).offset(0))
+                [0] as i32
                 >> Al
-                & 1 as libc::c_int,
+                & 1,
         );
         blkn += 1
     }
-    return 1 as libc::c_int;
+    return 1;
 }
 /*
  * MCU encoding for AC successive approximation refinement scan.
@@ -918,37 +918,37 @@ unsafe extern "C" fn encode_mcu_AC_refine(
 ) -> crate::jmorecfg_h::boolean {
     let mut entropy: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
     let mut block: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
-    let mut st: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-    let mut tbl: libc::c_int = 0;
-    let mut k: libc::c_int = 0;
-    let mut ke: libc::c_int = 0;
-    let mut kex: libc::c_int = 0;
-    let mut v: libc::c_int = 0;
-    let mut natural_order: *const libc::c_int = 0 as *const libc::c_int;
+    let mut st: *mut u8 = 0 as *mut u8;
+    let mut tbl: i32 = 0;
+    let mut k: i32 = 0;
+    let mut ke: i32 = 0;
+    let mut kex: i32 = 0;
+    let mut v: i32 = 0;
+    let mut natural_order: *const i32 = 0 as *const i32;
     /* Emit restart marker if needed */
     if (*cinfo).restart_interval != 0 {
-        if (*entropy).restarts_to_go == 0 as libc::c_int as libc::c_uint {
+        if (*entropy).restarts_to_go == 0 {
             emit_restart(cinfo, (*entropy).next_restart_num);
             (*entropy).restarts_to_go = (*cinfo).restart_interval;
             (*entropy).next_restart_num += 1;
-            (*entropy).next_restart_num &= 7 as libc::c_int
+            (*entropy).next_restart_num &= 7
         }
         (*entropy).restarts_to_go = (*entropy).restarts_to_go.wrapping_sub(1)
     }
     natural_order = (*cinfo).natural_order;
     /* Encode the MCU data block */
-    block = *MCU_data.offset(0 as libc::c_int as isize);
-    tbl = (*(*cinfo).cur_comp_info[0 as libc::c_int as usize]).ac_tbl_no;
+    block = *MCU_data.offset(0);
+    tbl = (*(*cinfo).cur_comp_info[0]).ac_tbl_no;
     /* Section G.1.3.3: Encoding of AC coefficients */
     /* Establish EOB (end-of-block) index */
     ke = (*cinfo).Se;
-    while ke > 0 as libc::c_int {
+    while ke > 0 {
         /* We must apply the point transform by Al.  For AC coefficients this
          * is an integer division with rounding towards 0.  To do this portably
          * in C, we shift after obtaining the absolute value.
          */
-        v = (*block)[*natural_order.offset(ke as isize) as usize] as libc::c_int;
-        if v >= 0 as libc::c_int {
+        v = (*block)[*natural_order.offset(ke as isize) as usize] as i32;
+        if v >= 0 {
             v >>= (*cinfo).Al;
             if v != 0 {
                 break;
@@ -964,9 +964,9 @@ unsafe extern "C" fn encode_mcu_AC_refine(
     }
     /* Establish EOBx (previous stage end-of-block) index */
     kex = ke;
-    while kex > 0 as libc::c_int {
-        v = (*block)[*natural_order.offset(kex as isize) as usize] as libc::c_int;
-        if v >= 0 as libc::c_int {
+    while kex > 0 {
+        v = (*block)[*natural_order.offset(kex as isize) as usize] as i32;
+        if v >= 0 {
             v >>= (*cinfo).Ah;
             if v != 0 {
                 break;
@@ -984,30 +984,30 @@ unsafe extern "C" fn encode_mcu_AC_refine(
     k = (*cinfo).Ss; /* EOB decision */
     while k <= ke {
         st = (*entropy).ac_stats[tbl as usize]
-            .offset((3 as libc::c_int * (k - 1 as libc::c_int)) as isize);
+            .offset((3 * (k - 1)) as isize);
         if k > kex {
-            arith_encode(cinfo, st, 0 as libc::c_int);
+            arith_encode(cinfo, st, 0i32);
         }
         loop {
-            v = (*block)[*natural_order.offset(k as isize) as usize] as libc::c_int;
-            if v >= 0 as libc::c_int {
+            v = (*block)[*natural_order.offset(k as isize) as usize] as i32;
+            if v >= 0 {
                 v >>= (*cinfo).Al;
                 if v != 0 {
-                    if v >> 1 as libc::c_int != 0 {
+                    if v >> 1 != 0 {
                         /* previously nonzero coef */
                         arith_encode(
                             cinfo,
-                            st.offset(2 as libc::c_int as isize),
-                            v & 1 as libc::c_int,
+                            st.offset(2isize),
+                            v & 1i32,
                         );
                     } else {
                         /* newly nonzero coef */
                         arith_encode(
                             cinfo,
-                            st.offset(1 as libc::c_int as isize),
-                            1 as libc::c_int,
+                            st.offset(1),
+                            1,
                         );
-                        arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 0 as libc::c_int);
+                        arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 0i32);
                     }
                     break;
                 }
@@ -1015,31 +1015,31 @@ unsafe extern "C" fn encode_mcu_AC_refine(
                 v = -v;
                 v >>= (*cinfo).Al;
                 if v != 0 {
-                    if v >> 1 as libc::c_int != 0 {
+                    if v >> 1 != 0 {
                         /* previously nonzero coef */
                         arith_encode(
                             cinfo,
-                            st.offset(2 as libc::c_int as isize),
-                            v & 1 as libc::c_int,
+                            st.offset(2isize),
+                            v & 1i32,
                         );
                     } else {
                         /* newly nonzero coef */
                         arith_encode(
                             cinfo,
-                            st.offset(1 as libc::c_int as isize),
-                            1 as libc::c_int,
+                            st.offset(1),
+                            1,
                         );
-                        arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 1 as libc::c_int);
+                        arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 1i32);
                     }
                     break;
                 }
             }
             arith_encode(
                 cinfo,
-                st.offset(1 as libc::c_int as isize),
-                0 as libc::c_int,
+                st.offset(1),
+                0,
             );
-            st = st.offset(3 as libc::c_int as isize);
+            st = st.offset(3);
             k += 1
         }
         k += 1
@@ -1047,10 +1047,10 @@ unsafe extern "C" fn encode_mcu_AC_refine(
     /* Encode EOB decision only if k <= cinfo->Se */
     if k <= (*cinfo).Se {
         st = (*entropy).ac_stats[tbl as usize]
-            .offset((3 as libc::c_int * (k - 1 as libc::c_int)) as isize);
-        arith_encode(cinfo, st, 1 as libc::c_int);
+            .offset((3 * (k - 1)) as isize);
+        arith_encode(cinfo, st, 1i32);
     }
-    return 1 as libc::c_int;
+    return 1;
 }
 /*
  * Encode and output one MCU's worth of arithmetic-compressed coefficients.
@@ -1064,29 +1064,29 @@ unsafe extern "C" fn encode_mcu(
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
     let mut block: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
-    let mut st: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-    let mut blkn: libc::c_int = 0;
-    let mut ci: libc::c_int = 0;
-    let mut tbl: libc::c_int = 0;
-    let mut k: libc::c_int = 0;
-    let mut ke: libc::c_int = 0;
-    let mut v: libc::c_int = 0;
-    let mut v2: libc::c_int = 0;
-    let mut m: libc::c_int = 0;
-    let mut natural_order: *const libc::c_int = 0 as *const libc::c_int;
+    let mut st: *mut u8 = 0 as *mut u8;
+    let mut blkn: i32 = 0;
+    let mut ci: i32 = 0;
+    let mut tbl: i32 = 0;
+    let mut k: i32 = 0;
+    let mut ke: i32 = 0;
+    let mut v: i32 = 0;
+    let mut v2: i32 = 0;
+    let mut m: i32 = 0;
+    let mut natural_order: *const i32 = 0 as *const i32;
     /* Emit restart marker if needed */
     if (*cinfo).restart_interval != 0 {
-        if (*entropy).restarts_to_go == 0 as libc::c_int as libc::c_uint {
+        if (*entropy).restarts_to_go == 0 {
             emit_restart(cinfo, (*entropy).next_restart_num);
             (*entropy).restarts_to_go = (*cinfo).restart_interval;
             (*entropy).next_restart_num += 1;
-            (*entropy).next_restart_num &= 7 as libc::c_int
+            (*entropy).next_restart_num &= 7
         }
         (*entropy).restarts_to_go = (*entropy).restarts_to_go.wrapping_sub(1)
     }
     natural_order = (*cinfo).natural_order;
     /* Encode the MCU data blocks */
-    blkn = 0 as libc::c_int;
+    blkn = 0;
     while blkn < (*cinfo).blocks_in_MCU {
         block = *MCU_data.offset(blkn as isize);
         ci = (*cinfo).MCU_membership[blkn as usize];
@@ -1096,73 +1096,73 @@ unsafe extern "C" fn encode_mcu(
         /* Table F.4: Point to statistics bin S0 for DC coefficient coding */
         st = (*entropy).dc_stats[tbl as usize].offset((*entropy).dc_context[ci as usize] as isize);
         /* Figure F.4: Encode_DC_DIFF */
-        v = (*block)[0 as libc::c_int as usize] as libc::c_int
+        v = (*block)[0] as i32
             - (*entropy).last_dc_val[ci as usize];
-        if v == 0 as libc::c_int {
-            arith_encode(cinfo, st, 0 as libc::c_int);
-            (*entropy).dc_context[ci as usize] = 0 as libc::c_int
+        if v == 0 {
+            arith_encode(cinfo, st, 0);
+            (*entropy).dc_context[ci as usize] = 0
         /* zero diff category */
         } else {
             (*entropy).last_dc_val[ci as usize] =
-                (*block)[0 as libc::c_int as usize] as libc::c_int;
-            arith_encode(cinfo, st, 1 as libc::c_int);
+                (*block)[0] as i32;
+            arith_encode(cinfo, st, 1);
             /* Figure F.6: Encoding nonzero value v */
             /* Figure F.7: Encoding the sign of v */
-            if v > 0 as libc::c_int {
+            if v > 0 {
                 arith_encode(
                     cinfo,
-                    st.offset(1 as libc::c_int as isize),
-                    0 as libc::c_int,
+                    st.offset(1),
+                    0,
                 ); /* Table F.4: SS = S0 + 1 */
                 /* small positive diff category */
-                st = st.offset(2 as libc::c_int as isize); /* Table F.4: SP = S0 + 2 */
-                (*entropy).dc_context[ci as usize] = 4 as libc::c_int
+                st = st.offset(2); /* Table F.4: SP = S0 + 2 */
+                (*entropy).dc_context[ci as usize] = 4
             } else {
                 v = -v;
                 /* small negative diff category */
                 arith_encode(
                     cinfo,
-                    st.offset(1 as libc::c_int as isize),
-                    1 as libc::c_int,
+                    st.offset(1),
+                    1,
                 ); /* Table F.4: SS = S0 + 1 */
-                st = st.offset(3 as libc::c_int as isize); /* Table F.4: SN = S0 + 3 */
-                (*entropy).dc_context[ci as usize] = 8 as libc::c_int
+                st = st.offset(3); /* Table F.4: SN = S0 + 3 */
+                (*entropy).dc_context[ci as usize] = 8
             }
             /* Figure F.8: Encoding the magnitude category of v */
-            m = 0 as libc::c_int; /* Table F.4: X1 = 20 */
-            v -= 1 as libc::c_int;
+            m = 0; /* Table F.4: X1 = 20 */
+            v -= 1;
             if v != 0 {
-                arith_encode(cinfo, st, 1 as libc::c_int);
-                m = 1 as libc::c_int;
+                arith_encode(cinfo, st, 1);
+                m = 1;
                 v2 = v;
-                st = (*entropy).dc_stats[tbl as usize].offset(20 as libc::c_int as isize);
+                st = (*entropy).dc_stats[tbl as usize].offset(20);
                 loop {
-                    v2 >>= 1 as libc::c_int;
+                    v2 >>= 1;
                     if !(v2 != 0) {
                         break;
                     }
-                    arith_encode(cinfo, st, 1 as libc::c_int);
-                    m <<= 1 as libc::c_int;
-                    st = st.offset(1 as libc::c_int as isize)
+                    arith_encode(cinfo, st, 1);
+                    m <<= 1;
+                    st = st.offset(1)
                 }
             }
-            arith_encode(cinfo, st, 0 as libc::c_int);
+            arith_encode(cinfo, st, 0);
             /* Section F.1.4.4.1.2: Establish dc_context conditioning category */
-            if m < ((1 as libc::c_long) << (*cinfo).arith_dc_L[tbl as usize] as libc::c_int
-                >> 1 as libc::c_int) as libc::c_int
+            if m < ((1isize) << (*cinfo).arith_dc_L[tbl as usize] as i32
+                >> 1) as i32
             {
                 /* large diff category */
-                (*entropy).dc_context[ci as usize] = 0 as libc::c_int
+                (*entropy).dc_context[ci as usize] = 0
             } else if m
-                > ((1 as libc::c_long) << (*cinfo).arith_dc_U[tbl as usize] as libc::c_int
-                    >> 1 as libc::c_int) as libc::c_int
+                > ((1isize) << (*cinfo).arith_dc_U[tbl as usize] as i32
+                    >> 1) as i32
             {
-                (*entropy).dc_context[ci as usize] += 8 as libc::c_int
+                (*entropy).dc_context[ci as usize] += 8
             } /* zero diff category */
             /* Figure F.9: Encoding the magnitude bit pattern of v */
-            st = st.offset(14 as libc::c_int as isize);
+            st = st.offset(14);
             loop {
-                m >>= 1 as libc::c_int;
+                m >>= 1;
                 if !(m != 0) {
                     break;
                 }
@@ -1170,9 +1170,9 @@ unsafe extern "C" fn encode_mcu(
                     cinfo,
                     st,
                     if m & v != 0 {
-                        1 as libc::c_int
+                        1
                     } else {
-                        0 as libc::c_int
+                        0
                     },
                 );
             }
@@ -1181,79 +1181,79 @@ unsafe extern "C" fn encode_mcu(
         tbl = (*compptr).ac_tbl_no;
         /* Establish EOB (end-of-block) index */
         ke = (*cinfo).lim_Se;
-        while ke > 0 as libc::c_int {
+        while ke > 0 {
             if (*block)[*natural_order.offset(ke as isize) as usize] != 0 {
                 break;
             }
             ke -= 1
         }
         /* Figure F.5: Encode_AC_Coefficients */
-        k = 1 as libc::c_int; /* EOB decision */
+        k = 1; /* EOB decision */
         while k <= ke {
             st = (*entropy).ac_stats[tbl as usize]
-                .offset((3 as libc::c_int * (k - 1 as libc::c_int)) as isize);
-            arith_encode(cinfo, st, 0 as libc::c_int);
+                .offset((3 * (k - 1)) as isize);
+            arith_encode(cinfo, st, 0);
             loop {
-                v = (*block)[*natural_order.offset(k as isize) as usize] as libc::c_int;
-                if !(v == 0 as libc::c_int) {
+                v = (*block)[*natural_order.offset(k as isize) as usize] as i32;
+                if !(v == 0) {
                     break;
                 }
                 arith_encode(
                     cinfo,
-                    st.offset(1 as libc::c_int as isize),
-                    0 as libc::c_int,
+                    st.offset(1),
+                    0,
                 );
-                st = st.offset(3 as libc::c_int as isize);
+                st = st.offset(3);
                 k += 1
             }
             arith_encode(
                 cinfo,
-                st.offset(1 as libc::c_int as isize),
-                1 as libc::c_int,
+                st.offset(1),
+                1,
             );
             /* Figure F.6: Encoding nonzero value v */
             /* Figure F.7: Encoding the sign of v */
-            if v > 0 as libc::c_int {
-                arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 0 as libc::c_int);
+            if v > 0 {
+                arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 0i32);
             } else {
                 v = -v;
-                arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 1 as libc::c_int);
+                arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 1i32);
             }
-            st = st.offset(2 as libc::c_int as isize);
+            st = st.offset(2);
             /* Figure F.8: Encoding the magnitude category of v */
-            m = 0 as libc::c_int;
-            v -= 1 as libc::c_int;
+            m = 0;
+            v -= 1;
             if v != 0 {
-                arith_encode(cinfo, st, 1 as libc::c_int);
-                m = 1 as libc::c_int;
+                arith_encode(cinfo, st, 1);
+                m = 1;
                 v2 = v;
-                v2 >>= 1 as libc::c_int;
+                v2 >>= 1;
                 if v2 != 0 {
-                    arith_encode(cinfo, st, 1 as libc::c_int);
-                    m <<= 1 as libc::c_int;
+                    arith_encode(cinfo, st, 1);
+                    m <<= 1;
                     st = (*entropy).ac_stats[tbl as usize].offset(
-                        (if k <= (*cinfo).arith_ac_K[tbl as usize] as libc::c_int {
-                            189 as libc::c_int
+                        (if k <= (*cinfo).arith_ac_K[tbl as usize] as i32 {
+                            189i32
                         } else {
-                            217 as libc::c_int
+                            217
                         }) as isize,
                     );
                     loop {
-                        v2 >>= 1 as libc::c_int;
+                        v2 >>= 1;
                         if !(v2 != 0) {
                             break;
                         }
-                        arith_encode(cinfo, st, 1 as libc::c_int);
-                        m <<= 1 as libc::c_int;
-                        st = st.offset(1 as libc::c_int as isize)
+                        arith_encode(cinfo, st, 1);
+                        m <<= 1;
+                        st = st.offset(1)
                     }
                 }
             }
-            arith_encode(cinfo, st, 0 as libc::c_int);
+            arith_encode(cinfo, st, 0);
             /* Figure F.9: Encoding the magnitude bit pattern of v */
-            st = st.offset(14 as libc::c_int as isize);
+            st = st.offset(14);
             loop {
-                m >>= 1 as libc::c_int;
+                m >>= 1;
                 if !(m != 0) {
                     break;
                 }
@@ -1261,9 +1261,9 @@ unsafe extern "C" fn encode_mcu(
                     cinfo,
                     st,
                     if m & v != 0 {
-                        1 as libc::c_int
+                        1
                     } else {
-                        0 as libc::c_int
+                        0
                     },
                 );
             }
@@ -1272,12 +1272,12 @@ unsafe extern "C" fn encode_mcu(
         /* Encode EOB decision only if k <= cinfo->lim_Se */
         if k <= (*cinfo).lim_Se {
             st = (*entropy).ac_stats[tbl as usize]
-                .offset((3 as libc::c_int * (k - 1 as libc::c_int)) as isize);
-            arith_encode(cinfo, st, 1 as libc::c_int);
+                .offset((3 * (k - 1)) as isize);
+            arith_encode(cinfo, st, 1i32);
         }
         blkn += 1
     }
-    return 1 as libc::c_int;
+    return 1;
 }
 /*
  * Initialize for an arithmetic-compressed scan.
@@ -1288,8 +1288,8 @@ unsafe extern "C" fn start_pass(
     mut gather_statistics: crate::jmorecfg_h::boolean,
 ) {
     let mut entropy: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
-    let mut ci: libc::c_int = 0;
-    let mut tbl: libc::c_int = 0;
+    let mut ci: i32 = 0;
+    let mut tbl: i32 = 0;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
     if gather_statistics != 0 {
@@ -1297,7 +1297,7 @@ unsafe extern "C" fn start_pass(
          * We are fully adaptive here and need no extra
          * statistics gathering pass!
          */
-        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_NOT_COMPILED as libc::c_int;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_NOT_COMPILED as i32;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -1308,8 +1308,8 @@ unsafe extern "C" fn start_pass(
     /* We assume jcmaster.c already validated the progressive scan parameters. */
     /* Select execution routines */
     if (*cinfo).progressive_mode != 0 {
-        if (*cinfo).Ah == 0 as libc::c_int {
-            if (*cinfo).Ss == 0 as libc::c_int {
+        if (*cinfo).Ah == 0 {
+            if (*cinfo).Ss == 0 {
                 (*entropy).pub_0.encode_mcu = Some(
                     encode_mcu_DC_first
                         as unsafe extern "C" fn(
@@ -1328,7 +1328,7 @@ unsafe extern "C" fn start_pass(
                             -> crate::jmorecfg_h::boolean,
                 )
             }
-        } else if (*cinfo).Ss == 0 as libc::c_int {
+        } else if (*cinfo).Ss == 0 {
             (*entropy).pub_0.encode_mcu = Some(
                 encode_mcu_DC_refine
                     as unsafe extern "C" fn(
@@ -1355,16 +1355,16 @@ unsafe extern "C" fn start_pass(
         )
     }
     /* Allocate & initialize requested statistics areas */
-    ci = 0 as libc::c_int;
+    ci = 0;
     while ci < (*cinfo).comps_in_scan {
         compptr = (*cinfo).cur_comp_info[ci as usize];
         /* DC needs no table for refinement scan */
-        if (*cinfo).Ss == 0 as libc::c_int && (*cinfo).Ah == 0 as libc::c_int {
+        if (*cinfo).Ss == 0 && (*cinfo).Ah == 0 {
             tbl = (*compptr).dc_tbl_no;
-            if tbl < 0 as libc::c_int || tbl >= 16 as libc::c_int {
+            if tbl < 0 || tbl >= 16 {
                 (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_NO_ARITH_TABLE as libc::c_int;
-                (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = tbl;
+                    crate::src::jpeg_8c::jerror::JERR_NO_ARITH_TABLE as i32;
+                (*(*cinfo).err).msg_parm.i[0] = tbl;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -1382,26 +1382,26 @@ unsafe extern "C" fn start_pass(
                 )
                 .expect("non-null function pointer")(
                     cinfo as crate::jpeglib_h::j_common_ptr,
-                    1 as libc::c_int,
-                    64 as libc::c_int as crate::stddef_h::size_t,
-                ) as *mut libc::c_uchar
+                    1,
+                    64,
+                ) as *mut u8
             }
             crate::stdlib::memset(
                 (*entropy).dc_stats[tbl as usize] as *mut libc::c_void,
-                0 as libc::c_int,
-                64 as libc::c_int as crate::stddef_h::size_t,
+                0,
+                64,
             );
             /* Initialize DC predictions to 0 */
-            (*entropy).last_dc_val[ci as usize] = 0 as libc::c_int;
-            (*entropy).dc_context[ci as usize] = 0 as libc::c_int
+            (*entropy).last_dc_val[ci as usize] = 0;
+            (*entropy).dc_context[ci as usize] = 0
         }
         /* AC needs no table when not present */
         if (*cinfo).Se != 0 {
             tbl = (*compptr).ac_tbl_no;
-            if tbl < 0 as libc::c_int || tbl >= 16 as libc::c_int {
+            if tbl < 0 || tbl >= 16 {
                 (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_NO_ARITH_TABLE as libc::c_int;
-                (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = tbl;
+                    crate::src::jpeg_8c::jerror::JERR_NO_ARITH_TABLE as i32;
+                (*(*cinfo).err).msg_parm.i[0] = tbl;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -1419,28 +1419,28 @@ unsafe extern "C" fn start_pass(
                 )
                 .expect("non-null function pointer")(
                     cinfo as crate::jpeglib_h::j_common_ptr,
-                    1 as libc::c_int,
-                    256 as libc::c_int as crate::stddef_h::size_t,
-                ) as *mut libc::c_uchar
+                    1,
+                    256,
+                ) as *mut u8
             }
             crate::stdlib::memset(
                 (*entropy).ac_stats[tbl as usize] as *mut libc::c_void,
-                0 as libc::c_int,
-                256 as libc::c_int as crate::stddef_h::size_t,
+                0i32,
+                256usize,
             );
         }
         ci += 1
     }
     /* Initialize arithmetic encoding variables */
-    (*entropy).c = 0 as libc::c_int as crate::jmorecfg_h::INT32; /* empty */
-    (*entropy).a = 0x10000 as libc::c_long;
-    (*entropy).sc = 0 as libc::c_int as crate::jmorecfg_h::INT32;
-    (*entropy).zc = 0 as libc::c_int as crate::jmorecfg_h::INT32;
-    (*entropy).ct = 11 as libc::c_int;
-    (*entropy).buffer = -(1 as libc::c_int);
+    (*entropy).c = 0; /* empty */
+    (*entropy).a = 0x10000 as isize;
+    (*entropy).sc = 0;
+    (*entropy).zc = 0;
+    (*entropy).ct = 11;
+    (*entropy).buffer = -(1);
     /* Initialize restart stuff */
     (*entropy).restarts_to_go = (*cinfo).restart_interval;
-    (*entropy).next_restart_num = 0 as libc::c_int;
+    (*entropy).next_restart_num = 0;
 }
 /* It is useful to allow each component to have a separate IDCT method. */
 /* Upsampling (note that upsampler must also call color converter) */
@@ -1467,7 +1467,7 @@ unsafe extern "C" fn start_pass(
 
 pub unsafe extern "C" fn jinit_arith_encoder(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
     let mut entropy: arith_entropy_ptr = 0 as *mut arith_entropy_encoder;
-    let mut i: libc::c_int = 0;
+    let mut i: i32 = 0;
     entropy = Some(
         (*(*cinfo).mem)
             .alloc_small
@@ -1475,8 +1475,9 @@ pub unsafe extern "C" fn jinit_arith_encoder(mut cinfo: crate::jpeglib_h::j_comp
     )
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
-        1 as libc::c_int,
-        ::std::mem::size_of::<arith_entropy_encoder>() as libc::c_ulong,
+        1,
+        
+        ::std::mem::size_of::<arith_entropy_encoder>(),
     ) as arith_entropy_ptr;
     (*cinfo).entropy = entropy as *mut crate::jpegint_h::jpeg_entropy_encoder;
     (*entropy).pub_0.start_pass = Some(
@@ -1489,12 +1490,12 @@ pub unsafe extern "C" fn jinit_arith_encoder(mut cinfo: crate::jpeglib_h::j_comp
     (*entropy).pub_0.finish_pass =
         Some(finish_pass as unsafe extern "C" fn(_: crate::jpeglib_h::j_compress_ptr) -> ());
     /* Mark tables unallocated */
-    i = 0 as libc::c_int;
-    while i < 16 as libc::c_int {
-        (*entropy).dc_stats[i as usize] = 0 as *mut libc::c_uchar;
-        (*entropy).ac_stats[i as usize] = 0 as *mut libc::c_uchar;
+    i = 0;
+    while i < 16 {
+        (*entropy).dc_stats[i as usize] = 0 as *mut u8;
+        (*entropy).ac_stats[i as usize] = 0 as *mut u8;
         i += 1
     }
     /* Initialize index for fixed probability estimation */
-    (*entropy).fixed_bin[0 as libc::c_int as usize] = 113 as libc::c_int as libc::c_uchar;
+    (*entropy).fixed_bin[0] = 113;
 }
