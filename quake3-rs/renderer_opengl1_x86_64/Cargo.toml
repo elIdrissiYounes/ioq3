@@ -1,0 +1,21 @@
+
+
+[package]
+name = "renderer_opengl1_x86_64"
+authors = ["C2Rust"]
+version = "0.0.0"
+publish = false
+edition = "2018"
+autobins = false
+
+[lib]
+name = "renderer_opengl1_x86_64"
+path = "lib.rs"
+crate-type = ["cdylib"]
+
+
+[dependencies]
+libc = "0.2"
+
+
+

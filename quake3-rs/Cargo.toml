@@ -1,0 +1,10 @@
+[workspace]
+members = [
+    "uix86_64",
+    "qagamex86_64",
+    "cgamex86_64",
+    "ioquake3",
+    "renderer_opengl1_x86_64",
+]
+
+

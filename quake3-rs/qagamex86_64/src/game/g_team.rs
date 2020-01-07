@@ -1,0 +1,2020 @@
+use ::libc;
+
+pub mod q_shared_h {
+
+    // perpendicular vector could be replaced by this
+    //int	PlaneTypeForNormal (vec3_t normal);
+    //=============================================
+    //int		COM_ParseInfos( char *buf, int max, char infos[][MAX_INFO_STRING] );
+    //token types
+    // string
+    // literal
+    // number
+    // name
+    // punctuation
+    // data is an in/out parm, returns a parsed out token
+    // mode parm for FS_FOpenFile
+    //=============================================
+    // portable case insensitive compare
+    // buffer size safe library replacements
+    // strlen that discounts Quake color sequences
+    // removes color sequences from string
+    // Count the number of char tocount encountered in string
+    //=============================================
+    // 64-bit integers for global rankings interface
+    // implemented as a struct for qvm compatibility
+    //=============================================
+    /*
+    short	BigShort(short l);
+    short	LittleShort(short l);
+    int		BigLong (int l);
+    int		LittleLong (int l);
+    qint64  BigLong64 (qint64 l);
+    qint64  LittleLong64 (qint64 l);
+    float	BigFloat (const float *l);
+    float	LittleFloat (const float *l);
+
+    void	Swap_Init (void);
+    */
+    //=============================================
+    //
+    // key / value info strings
+    //
+    // this is only here so the functions in q_shared.c and bg_*.c can link
+    /*
+    ==========================================================
+
+    CVARS (console variables)
+
+    Many variables can be used for cheating purposes, so when
+    cheats is zero, force all unspecified variables to their
+    default values.
+    ==========================================================
+    */
+    // set to cause it to be saved to vars.rc
+    // used for system variables, not for player
+    // specific configurations
+    // sent to server on connect or change
+    // sent in response to front end requests
+    // these cvars will be duplicated on all clients
+    // don't allow change from console at all,
+    // but can be set from the command line
+    // will only change when C code next does
+    // a Cvar_Get(), so it can't be changed
+    // without proper initialization.  modified
+    // will be set, even though the value hasn't
+    // changed yet
+    // display only, cannot be set by user at all
+    // created by a set command
+    // can be set even when cheats are disabled, but is not archived
+    // can not be changed if cheats are disabled
+    // do not clear when a cvar_restart is issued
+    // cvar was created by a server the client connected to.
+    // cvar was created exclusively in one of the VMs.
+    // prevent modifying this var from VMs or the server
+    // These flags are only returned by the Cvar_Flags() function
+    // Cvar was modified
+    // Cvar doesn't exist.
+    // nothing outside the Cvar_*() functions should modify these fields!
+    // cvar_restart will reset to this value
+    // for CVAR_LATCH vars
+    // set each time the cvar is changed
+    // incremented each time the cvar is changed
+    // atof( string )
+    // atoi( string )
+    // the modules that run in the virtual machine can't access the cvar_t directly,
+    // so they must ask for structured updates
+    /*
+    ==============================================================
+
+    VoIP
+
+    ==============================================================
+    */
+    // if you change the count of flags be sure to also change VOIP_FLAGNUM
+    // spatialized voip message
+    // non-spatialized voip message
+    // number of flags voip knows. You will have to bump protocol version number if you
+    // change this.
+    /*
+    ==============================================================
+
+    COLLISION DETECTION
+
+    ==============================================================
+    */
+    // plane types are used to speed some tests
+    // 0-2 are axial planes
+    /*
+    =================
+    PlaneTypeForNormal
+    =================
+    */
+    // plane_t structure
+    // !!! if this is changed, it must be changed in asm code too !!!
+
+    // a trace is returned when a box is swept through the world
+
+    //=========================================================
+    // bit field limits
+    // playerState_t is the information needed by both the client and server
+    // to predict player motion and actions
+    // nothing outside of pmove should modify these, or some degree of prediction error
+    // will occur
+    // you can't add anything to this without modifying the code in msg.c
+    // playerState_t is a full superset of entityState_t as it is used by players,
+    // so if a playerState_t is transmitted, the entityState_t can be fully derived
+    // from it.
+
+    //====================================================================
+    //
+    // usercmd_t->button bits, many of which are generated by the client system,
+    // so they aren't game/cgame only definitions
+    //
+    // displays talk balloon and disables actions
+    // walking can't just be inferred from MOVE_RUN
+    // because a key pressed late in the frame will
+    // only generate a small move value for that frame
+    // walking will use different animations and
+    // won't generate footsteps
+    // any key whatsoever
+    // if forwardmove or rightmove are >= MOVE_RUN,
+    // then BUTTON_WALKING should be set
+    // usercmd_t is sent to the server each client frame
+
+    //===================================================================
+    // if entityState->solid == SOLID_BMODEL, modelindex is an inline model number
+
+    // value = base + sin( time / duration ) * delta
+
+    // non-parametric, but interpolate between snapshots
+
+    // entityState_t is the information conveyed from the server
+    // in an update message about entities that the client will
+    // need to render in some way
+    // Different eTypes may use the information in different ways
+    // The messages are delta compressed, so it doesn't really matter if
+    // the structure size is fairly large
+
+    // One Flag CTF
+
+    // One Flag CTF
+
+    // CTF
+
+    #[inline]
+
+    pub unsafe extern "C" fn VectorLength(
+        mut v: *const crate::src::qcommon::q_shared::vec_t,
+    ) -> crate::src::qcommon::q_shared::vec_t {
+        return crate::stdlib::sqrt(
+            (*v.offset(0 as libc::c_int as isize) * *v.offset(0 as libc::c_int as isize)
+                + *v.offset(1 as libc::c_int as isize) * *v.offset(1 as libc::c_int as isize)
+                + *v.offset(2 as libc::c_int as isize) * *v.offset(2 as libc::c_int as isize))
+                as libc::c_double,
+        ) as crate::src::qcommon::q_shared::vec_t;
+    }
+    use crate::stdlib::sqrt;
+
+    // __Q_SHARED_H
+}
+
+pub use crate::internal::__builtin_va_list;
+pub use crate::internal::__va_list_tag;
+pub use crate::stdarg_h::va_list;
+pub use crate::stddef_h::size_t;
+
+pub use crate::bg_public_h::gitem_s;
+pub use crate::bg_public_h::gitem_t;
+pub use crate::bg_public_h::itemType_t;
+pub use crate::bg_public_h::team_t;
+pub use crate::bg_public_h::C2RustUnnamed_0;
+pub use crate::bg_public_h::EV_BULLET;
+pub use crate::bg_public_h::EV_BULLET_HIT_FLESH;
+pub use crate::bg_public_h::EV_BULLET_HIT_WALL;
+pub use crate::bg_public_h::EV_CHANGE_WEAPON;
+pub use crate::bg_public_h::EV_DEATH1;
+pub use crate::bg_public_h::EV_DEATH2;
+pub use crate::bg_public_h::EV_DEATH3;
+pub use crate::bg_public_h::EV_DEBUG_LINE;
+pub use crate::bg_public_h::EV_FALL_FAR;
+pub use crate::bg_public_h::EV_FALL_MEDIUM;
+pub use crate::bg_public_h::EV_FALL_SHORT;
+pub use crate::bg_public_h::EV_FIRE_WEAPON;
+pub use crate::bg_public_h::EV_FOOTSPLASH;
+pub use crate::bg_public_h::EV_FOOTSTEP;
+pub use crate::bg_public_h::EV_FOOTSTEP_METAL;
+pub use crate::bg_public_h::EV_FOOTWADE;
+pub use crate::bg_public_h::EV_GENERAL_SOUND;
+pub use crate::bg_public_h::EV_GIB_PLAYER;
+pub use crate::bg_public_h::EV_GLOBAL_ITEM_PICKUP;
+pub use crate::bg_public_h::EV_GLOBAL_SOUND;
+pub use crate::bg_public_h::EV_GLOBAL_TEAM_SOUND;
+pub use crate::bg_public_h::EV_GRENADE_BOUNCE;
+pub use crate::bg_public_h::EV_INVUL_IMPACT;
+pub use crate::bg_public_h::EV_ITEM_PICKUP;
+pub use crate::bg_public_h::EV_ITEM_POP;
+pub use crate::bg_public_h::EV_ITEM_RESPAWN;
+pub use crate::bg_public_h::EV_JUICED;
+pub use crate::bg_public_h::EV_JUMP;
+pub use crate::bg_public_h::EV_JUMP_PAD;
+pub use crate::bg_public_h::EV_KAMIKAZE;
+pub use crate::bg_public_h::EV_LIGHTNINGBOLT;
+pub use crate::bg_public_h::EV_MISSILE_HIT;
+pub use crate::bg_public_h::EV_MISSILE_MISS;
+pub use crate::bg_public_h::EV_MISSILE_MISS_METAL;
+pub use crate::bg_public_h::EV_NOAMMO;
+pub use crate::bg_public_h::EV_NONE;
+pub use crate::bg_public_h::EV_OBELISKEXPLODE;
+pub use crate::bg_public_h::EV_OBELISKPAIN;
+pub use crate::bg_public_h::EV_OBITUARY;
+pub use crate::bg_public_h::EV_PAIN;
+pub use crate::bg_public_h::EV_PLAYER_TELEPORT_IN;
+pub use crate::bg_public_h::EV_PLAYER_TELEPORT_OUT;
+pub use crate::bg_public_h::EV_POWERUP_BATTLESUIT;
+pub use crate::bg_public_h::EV_POWERUP_QUAD;
+pub use crate::bg_public_h::EV_POWERUP_REGEN;
+pub use crate::bg_public_h::EV_PROXIMITY_MINE_STICK;
+pub use crate::bg_public_h::EV_PROXIMITY_MINE_TRIGGER;
+pub use crate::bg_public_h::EV_RAILTRAIL;
+pub use crate::bg_public_h::EV_SCOREPLUM;
+pub use crate::bg_public_h::EV_SHOTGUN;
+pub use crate::bg_public_h::EV_STEP_12;
+pub use crate::bg_public_h::EV_STEP_16;
+pub use crate::bg_public_h::EV_STEP_4;
+pub use crate::bg_public_h::EV_STEP_8;
+pub use crate::bg_public_h::EV_STOPLOOPINGSOUND;
+pub use crate::bg_public_h::EV_SWIM;
+pub use crate::bg_public_h::EV_TAUNT;
+pub use crate::bg_public_h::EV_TAUNT_FOLLOWME;
+pub use crate::bg_public_h::EV_TAUNT_GETFLAG;
+pub use crate::bg_public_h::EV_TAUNT_GUARDBASE;
+pub use crate::bg_public_h::EV_TAUNT_NO;
+pub use crate::bg_public_h::EV_TAUNT_PATROL;
+pub use crate::bg_public_h::EV_TAUNT_YES;
+pub use crate::bg_public_h::EV_USE_ITEM0;
+pub use crate::bg_public_h::EV_USE_ITEM1;
+pub use crate::bg_public_h::EV_USE_ITEM10;
+pub use crate::bg_public_h::EV_USE_ITEM11;
+pub use crate::bg_public_h::EV_USE_ITEM12;
+pub use crate::bg_public_h::EV_USE_ITEM13;
+pub use crate::bg_public_h::EV_USE_ITEM14;
+pub use crate::bg_public_h::EV_USE_ITEM15;
+pub use crate::bg_public_h::EV_USE_ITEM2;
+pub use crate::bg_public_h::EV_USE_ITEM3;
+pub use crate::bg_public_h::EV_USE_ITEM4;
+pub use crate::bg_public_h::EV_USE_ITEM5;
+pub use crate::bg_public_h::EV_USE_ITEM6;
+pub use crate::bg_public_h::EV_USE_ITEM7;
+pub use crate::bg_public_h::EV_USE_ITEM8;
+pub use crate::bg_public_h::EV_USE_ITEM9;
+pub use crate::bg_public_h::EV_WATER_CLEAR;
+pub use crate::bg_public_h::EV_WATER_LEAVE;
+pub use crate::bg_public_h::EV_WATER_TOUCH;
+pub use crate::bg_public_h::EV_WATER_UNDER;
+pub use crate::bg_public_h::GTS_BLUEOBELISK_ATTACKED;
+pub use crate::bg_public_h::GTS_BLUETEAM_SCORED;
+pub use crate::bg_public_h::GTS_BLUETEAM_TOOK_LEAD;
+pub use crate::bg_public_h::GTS_BLUE_CAPTURE;
+pub use crate::bg_public_h::GTS_BLUE_RETURN;
+pub use crate::bg_public_h::GTS_BLUE_TAKEN;
+pub use crate::bg_public_h::GTS_KAMIKAZE;
+pub use crate::bg_public_h::GTS_REDOBELISK_ATTACKED;
+pub use crate::bg_public_h::GTS_REDTEAM_SCORED;
+pub use crate::bg_public_h::GTS_REDTEAM_TOOK_LEAD;
+pub use crate::bg_public_h::GTS_RED_CAPTURE;
+pub use crate::bg_public_h::GTS_RED_RETURN;
+pub use crate::bg_public_h::GTS_RED_TAKEN;
+pub use crate::bg_public_h::GTS_TEAMS_ARE_TIED;
+pub use crate::bg_public_h::GT_1FCTF;
+pub use crate::bg_public_h::GT_CTF;
+pub use crate::bg_public_h::GT_FFA;
+pub use crate::bg_public_h::GT_HARVESTER;
+pub use crate::bg_public_h::GT_MAX_GAME_TYPE;
+pub use crate::bg_public_h::GT_OBELISK;
+pub use crate::bg_public_h::GT_SINGLE_PLAYER;
+pub use crate::bg_public_h::GT_TEAM;
+pub use crate::bg_public_h::GT_TOURNAMENT;
+pub use crate::bg_public_h::IT_AMMO;
+pub use crate::bg_public_h::IT_ARMOR;
+pub use crate::bg_public_h::IT_BAD;
+pub use crate::bg_public_h::IT_HEALTH;
+pub use crate::bg_public_h::IT_HOLDABLE;
+pub use crate::bg_public_h::IT_PERSISTANT_POWERUP;
+pub use crate::bg_public_h::IT_POWERUP;
+pub use crate::bg_public_h::IT_TEAM;
+pub use crate::bg_public_h::IT_WEAPON;
+pub use crate::bg_public_h::PERS_ASSIST_COUNT;
+pub use crate::bg_public_h::PERS_ATTACKEE_ARMOR;
+pub use crate::bg_public_h::PERS_ATTACKER;
+pub use crate::bg_public_h::PERS_CAPTURES;
+pub use crate::bg_public_h::PERS_DEFEND_COUNT;
+pub use crate::bg_public_h::PERS_EXCELLENT_COUNT;
+pub use crate::bg_public_h::PERS_GAUNTLET_FRAG_COUNT;
+pub use crate::bg_public_h::PERS_HITS;
+pub use crate::bg_public_h::PERS_IMPRESSIVE_COUNT;
+pub use crate::bg_public_h::PERS_KILLED;
+pub use crate::bg_public_h::PERS_PLAYEREVENTS;
+pub use crate::bg_public_h::PERS_RANK;
+pub use crate::bg_public_h::PERS_SCORE;
+pub use crate::bg_public_h::PERS_SPAWN_COUNT;
+pub use crate::bg_public_h::PERS_TEAM;
+pub use crate::bg_public_h::PW_AMMOREGEN;
+pub use crate::bg_public_h::PW_BATTLESUIT;
+pub use crate::bg_public_h::PW_BLUEFLAG;
+pub use crate::bg_public_h::PW_DOUBLER;
+pub use crate::bg_public_h::PW_FLIGHT;
+pub use crate::bg_public_h::PW_GUARD;
+pub use crate::bg_public_h::PW_HASTE;
+pub use crate::bg_public_h::PW_INVIS;
+pub use crate::bg_public_h::PW_INVULNERABILITY;
+pub use crate::bg_public_h::PW_NEUTRALFLAG;
+pub use crate::bg_public_h::PW_NONE;
+pub use crate::bg_public_h::PW_NUM_POWERUPS;
+pub use crate::bg_public_h::PW_QUAD;
+pub use crate::bg_public_h::PW_REDFLAG;
+pub use crate::bg_public_h::PW_REGEN;
+pub use crate::bg_public_h::PW_SCOUT;
+pub use crate::bg_public_h::STAT_ARMOR;
+pub use crate::bg_public_h::STAT_CLIENTS_READY;
+pub use crate::bg_public_h::STAT_DEAD_YAW;
+pub use crate::bg_public_h::STAT_HEALTH;
+pub use crate::bg_public_h::STAT_HOLDABLE_ITEM;
+pub use crate::bg_public_h::STAT_MAX_HEALTH;
+pub use crate::bg_public_h::STAT_WEAPONS;
+pub use crate::bg_public_h::TEAM_BLUE;
+pub use crate::bg_public_h::TEAM_FREE;
+pub use crate::bg_public_h::TEAM_NUM_TEAMS;
+pub use crate::bg_public_h::TEAM_RED;
+pub use crate::bg_public_h::TEAM_SPECTATOR;
+pub use crate::g_local_h::clientConnected_t;
+pub use crate::g_local_h::clientPersistant_t;
+pub use crate::g_local_h::clientSession_t;
+pub use crate::g_local_h::gclient_s;
+pub use crate::g_local_h::gclient_t;
+pub use crate::g_local_h::gentity_s;
+pub use crate::g_local_h::gentity_t;
+pub use crate::g_local_h::level_locals_t;
+pub use crate::g_local_h::moverState_t;
+pub use crate::g_local_h::playerTeamStateState_t;
+pub use crate::g_local_h::playerTeamState_t;
+pub use crate::g_local_h::spectatorState_t;
+pub use crate::g_local_h::CON_CONNECTED;
+pub use crate::g_local_h::CON_CONNECTING;
+pub use crate::g_local_h::CON_DISCONNECTED;
+pub use crate::g_local_h::MOVER_1TO2;
+pub use crate::g_local_h::MOVER_2TO1;
+pub use crate::g_local_h::MOVER_POS1;
+pub use crate::g_local_h::MOVER_POS2;
+pub use crate::g_local_h::SPECTATOR_FOLLOW;
+pub use crate::g_local_h::SPECTATOR_FREE;
+pub use crate::g_local_h::SPECTATOR_NOT;
+pub use crate::g_local_h::SPECTATOR_SCOREBOARD;
+pub use crate::g_local_h::TEAM_ACTIVE;
+pub use crate::g_local_h::TEAM_BEGIN;
+pub use crate::g_public_h::entityShared_t;
+pub use crate::src::game::g_client::SelectSpawnPoint;
+pub use crate::src::game::g_client::SpotWouldTelefrag;
+pub use crate::src::game::g_combat::AddScore;
+pub use crate::src::game::g_items::RespawnItem;
+pub use crate::src::game::g_main::g_entities;
+pub use crate::src::game::g_main::g_gametype;
+pub use crate::src::game::g_main::g_maxclients;
+pub use crate::src::game::g_main::level;
+pub use crate::src::game::g_main::CalculateRanks;
+pub use crate::src::game::g_main::G_Error;
+pub use crate::src::game::g_main::G_Printf;
+pub use crate::src::game::g_syscalls::trap_InPVS;
+pub use crate::src::game::g_syscalls::trap_SendServerCommand;
+pub use crate::src::game::g_syscalls::trap_SetConfigstring;
+pub use crate::src::game::g_team::q_shared_h::VectorLength;
+pub use crate::src::game::g_utils::G_Find;
+pub use crate::src::game::g_utils::G_FreeEntity;
+pub use crate::src::game::g_utils::G_TempEntity;
+pub use crate::src::qcommon::q_math::vec3_origin;
+pub use crate::src::qcommon::q_shared::_flag_status;
+pub use crate::src::qcommon::q_shared::byte;
+pub use crate::src::qcommon::q_shared::cplane_s;
+pub use crate::src::qcommon::q_shared::cplane_t;
+pub use crate::src::qcommon::q_shared::cvarHandle_t;
+pub use crate::src::qcommon::q_shared::entityState_s;
+pub use crate::src::qcommon::q_shared::entityState_t;
+pub use crate::src::qcommon::q_shared::fileHandle_t;
+pub use crate::src::qcommon::q_shared::flagStatus_t;
+pub use crate::src::qcommon::q_shared::playerState_s;
+pub use crate::src::qcommon::q_shared::playerState_t;
+pub use crate::src::qcommon::q_shared::qboolean;
+pub use crate::src::qcommon::q_shared::qfalse;
+pub use crate::src::qcommon::q_shared::qtrue;
+pub use crate::src::qcommon::q_shared::trType_t;
+pub use crate::src::qcommon::q_shared::trace_t;
+pub use crate::src::qcommon::q_shared::trajectory_t;
+pub use crate::src::qcommon::q_shared::usercmd_s;
+pub use crate::src::qcommon::q_shared::usercmd_t;
+pub use crate::src::qcommon::q_shared::va;
+pub use crate::src::qcommon::q_shared::vec3_t;
+pub use crate::src::qcommon::q_shared::vec_t;
+pub use crate::src::qcommon::q_shared::vmCvar_t;
+pub use crate::src::qcommon::q_shared::Com_sprintf;
+pub use crate::src::qcommon::q_shared::FLAG_ATBASE;
+pub use crate::src::qcommon::q_shared::FLAG_DROPPED;
+pub use crate::src::qcommon::q_shared::FLAG_TAKEN;
+pub use crate::src::qcommon::q_shared::FLAG_TAKEN_BLUE;
+pub use crate::src::qcommon::q_shared::FLAG_TAKEN_RED;
+pub use crate::src::qcommon::q_shared::TR_GRAVITY;
+pub use crate::src::qcommon::q_shared::TR_INTERPOLATE;
+pub use crate::src::qcommon::q_shared::TR_LINEAR;
+pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
+pub use crate::src::qcommon::q_shared::TR_SINE;
+pub use crate::src::qcommon::q_shared::TR_STATIONARY;
+pub use crate::stdlib::__compar_fn_t;
+use crate::stdlib::memset;
+pub use crate::stdlib::qsort;
+pub use crate::stdlib::rand;
+use crate::stdlib::sqrt;
+use crate::stdlib::strchr;
+use crate::stdlib::strcmp;
+use crate::stdlib::strcpy;
+use crate::stdlib::strlen;
+use crate::stdlib::vsnprintf;
+/*
+===========================================================================
+Copyright (C) 1999-2005 Id Software, Inc.
+
+This file is part of Quake III Arena source code.
+
+Quake III Arena source code is free software; you can redistribute it
+and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License,
+or (at your option) any later version.
+
+Quake III Arena source code is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Quake III Arena source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+===========================================================================
+*/
+//
+
+pub type teamgame_t = teamgame_s;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct teamgame_s {
+    pub last_flag_capture: libc::c_float,
+    pub last_capture_team: libc::c_int,
+    pub redStatus: crate::src::qcommon::q_shared::flagStatus_t,
+    pub blueStatus: crate::src::qcommon::q_shared::flagStatus_t,
+    pub flagStatus: crate::src::qcommon::q_shared::flagStatus_t,
+    pub redTakenTime: libc::c_int,
+    pub blueTakenTime: libc::c_int,
+    pub redObeliskAttackedTime: libc::c_int,
+    pub blueObeliskAttackedTime: libc::c_int,
+}
+#[no_mangle]
+
+pub static mut teamgame: teamgame_t = teamgame_t {
+    last_flag_capture: 0.,
+    last_capture_team: 0,
+    redStatus: crate::src::qcommon::q_shared::FLAG_ATBASE,
+    blueStatus: crate::src::qcommon::q_shared::FLAG_ATBASE,
+    flagStatus: crate::src::qcommon::q_shared::FLAG_ATBASE,
+    redTakenTime: 0,
+    blueTakenTime: 0,
+    redObeliskAttackedTime: 0,
+    blueObeliskAttackedTime: 0,
+};
+#[no_mangle]
+
+pub static mut neutralObelisk: *mut crate::g_local_h::gentity_t =
+    0 as *const crate::g_local_h::gentity_t as *mut crate::g_local_h::gentity_t;
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_InitGame() {
+    crate::stdlib::memset(
+        &mut teamgame as *mut teamgame_t as *mut libc::c_void,
+        0 as libc::c_int,
+        ::std::mem::size_of::<teamgame_t>() as libc::c_ulong,
+    );
+    match crate::src::game::g_main::g_gametype.integer {
+        4 => {
+            // CTF
+            // CTF
+            // One Flag CTF
+            teamgame.redStatus = 4294967295 as crate::src::qcommon::q_shared::flagStatus_t; // Invalid to force update
+            Team_SetFlagStatus(
+                crate::bg_public_h::TEAM_RED as libc::c_int,
+                crate::src::qcommon::q_shared::FLAG_ATBASE,
+            ); // Invalid to force update
+            teamgame.blueStatus = 4294967295 as crate::src::qcommon::q_shared::flagStatus_t;
+            Team_SetFlagStatus(
+                crate::bg_public_h::TEAM_BLUE as libc::c_int,
+                crate::src::qcommon::q_shared::FLAG_ATBASE,
+            );
+        }
+        _ => {}
+    };
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn OtherTeam(mut team: libc::c_int) -> libc::c_int {
+    if team == crate::bg_public_h::TEAM_RED as libc::c_int {
+        return crate::bg_public_h::TEAM_BLUE as libc::c_int;
+    } else {
+        if team == crate::bg_public_h::TEAM_BLUE as libc::c_int {
+            return crate::bg_public_h::TEAM_RED as libc::c_int;
+        }
+    }
+    return team;
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn TeamName(mut team: libc::c_int) -> *const libc::c_char {
+    if team == crate::bg_public_h::TEAM_RED as libc::c_int {
+        return b"RED\x00" as *const u8 as *const libc::c_char;
+    } else {
+        if team == crate::bg_public_h::TEAM_BLUE as libc::c_int {
+            return b"BLUE\x00" as *const u8 as *const libc::c_char;
+        } else {
+            if team == crate::bg_public_h::TEAM_SPECTATOR as libc::c_int {
+                return b"SPECTATOR\x00" as *const u8 as *const libc::c_char;
+            }
+        }
+    }
+    return b"FREE\x00" as *const u8 as *const libc::c_char;
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn TeamColorString(mut team: libc::c_int) -> *const libc::c_char {
+    if team == crate::bg_public_h::TEAM_RED as libc::c_int {
+        return b"^1\x00" as *const u8 as *const libc::c_char;
+    } else {
+        if team == crate::bg_public_h::TEAM_BLUE as libc::c_int {
+            return b"^4\x00" as *const u8 as *const libc::c_char;
+        } else {
+            if team == crate::bg_public_h::TEAM_SPECTATOR as libc::c_int {
+                return b"^3\x00" as *const u8 as *const libc::c_char;
+            }
+        }
+    }
+    return b"^7\x00" as *const u8 as *const libc::c_char;
+}
+// NULL for everyone
+
+unsafe extern "C" fn PrintMsg(
+    mut ent: *mut crate::g_local_h::gentity_t,
+    mut fmt: *const libc::c_char,
+    mut args: ...
+) {
+    let mut msg: [libc::c_char; 1024] = [0; 1024];
+    let mut argptr: ::std::ffi::VaListImpl;
+    let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
+    argptr = args.clone();
+    if crate::stdlib::vsnprintf(
+        msg.as_mut_ptr(),
+        ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong,
+        fmt,
+        argptr.as_va_list(),
+    ) as libc::c_ulong
+        >= ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong
+    {
+        crate::src::game::g_main::G_Error(
+            b"PrintMsg overrun\x00" as *const u8 as *const libc::c_char,
+        );
+    }
+    loop
+    // double quotes are bad
+    {
+        p = crate::stdlib::strchr(msg.as_mut_ptr(), '\"' as i32);
+        if p.is_null() {
+            break;
+        }
+        *p = '\'' as i32 as libc::c_char
+    }
+    crate::src::game::g_syscalls::trap_SendServerCommand(
+        if ent.is_null() {
+            -(1 as libc::c_int) as libc::c_long
+        } else {
+            ent.wrapping_offset_from(crate::src::game::g_main::g_entities.as_mut_ptr())
+                as libc::c_long
+        } as libc::c_int,
+        crate::src::qcommon::q_shared::va(
+            b"print \"%s\"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            msg.as_mut_ptr(),
+        ),
+    );
+}
+/*
+==============
+AddTeamScore
+
+ used for gametype > GT_TEAM
+ for gametype GT_TEAM the level.teamScores is updated in AddScore in g_combat.c
+==============
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn AddTeamScore(
+    mut origin: *mut crate::src::qcommon::q_shared::vec_t,
+    mut team: libc::c_int,
+    mut score: libc::c_int,
+) {
+    let mut te: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    te = crate::src::game::g_utils::G_TempEntity(
+        origin,
+        crate::bg_public_h::EV_GLOBAL_TEAM_SOUND as libc::c_int,
+    );
+    (*te).r.svFlags |= 0x20 as libc::c_int;
+    if team == crate::bg_public_h::TEAM_RED as libc::c_int {
+        if crate::src::game::g_main::level.teamScores
+            [crate::bg_public_h::TEAM_RED as libc::c_int as usize]
+            + score
+            == crate::src::game::g_main::level.teamScores
+                [crate::bg_public_h::TEAM_BLUE as libc::c_int as usize]
+        {
+            //teams are tied sound
+            (*te).s.eventParm = crate::bg_public_h::GTS_TEAMS_ARE_TIED as libc::c_int
+        } else if crate::src::game::g_main::level.teamScores
+            [crate::bg_public_h::TEAM_RED as libc::c_int as usize]
+            <= crate::src::game::g_main::level.teamScores
+                [crate::bg_public_h::TEAM_BLUE as libc::c_int as usize]
+            && crate::src::game::g_main::level.teamScores
+                [crate::bg_public_h::TEAM_RED as libc::c_int as usize]
+                + score
+                > crate::src::game::g_main::level.teamScores
+                    [crate::bg_public_h::TEAM_BLUE as libc::c_int as usize]
+        {
+            // red took the lead sound
+            (*te).s.eventParm = crate::bg_public_h::GTS_REDTEAM_TOOK_LEAD as libc::c_int
+        } else {
+            // red scored sound
+            (*te).s.eventParm = crate::bg_public_h::GTS_REDTEAM_SCORED as libc::c_int
+        }
+    } else if crate::src::game::g_main::level.teamScores
+        [crate::bg_public_h::TEAM_BLUE as libc::c_int as usize]
+        + score
+        == crate::src::game::g_main::level.teamScores
+            [crate::bg_public_h::TEAM_RED as libc::c_int as usize]
+    {
+        //teams are tied sound
+        (*te).s.eventParm = crate::bg_public_h::GTS_TEAMS_ARE_TIED as libc::c_int
+    } else if crate::src::game::g_main::level.teamScores
+        [crate::bg_public_h::TEAM_BLUE as libc::c_int as usize]
+        <= crate::src::game::g_main::level.teamScores
+            [crate::bg_public_h::TEAM_RED as libc::c_int as usize]
+        && crate::src::game::g_main::level.teamScores
+            [crate::bg_public_h::TEAM_BLUE as libc::c_int as usize]
+            + score
+            > crate::src::game::g_main::level.teamScores
+                [crate::bg_public_h::TEAM_RED as libc::c_int as usize]
+    {
+        // blue took the lead sound
+        (*te).s.eventParm = crate::bg_public_h::GTS_BLUETEAM_TOOK_LEAD as libc::c_int
+    } else {
+        // blue scored sound
+        (*te).s.eventParm = crate::bg_public_h::GTS_BLUETEAM_SCORED as libc::c_int
+    }
+    crate::src::game::g_main::level.teamScores[team as usize] += score;
+}
+/*
+==============
+OnSameTeam
+==============
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn OnSameTeam(
+    mut ent1: *mut crate::g_local_h::gentity_t,
+    mut ent2: *mut crate::g_local_h::gentity_t,
+) -> crate::src::qcommon::q_shared::qboolean {
+    if (*ent1).client.is_null() || (*ent2).client.is_null() {
+        return crate::src::qcommon::q_shared::qfalse;
+    }
+    if crate::src::game::g_main::g_gametype.integer < crate::bg_public_h::GT_TEAM as libc::c_int {
+        return crate::src::qcommon::q_shared::qfalse;
+    }
+    if (*(*ent1).client).sess.sessionTeam as libc::c_uint
+        == (*(*ent2).client).sess.sessionTeam as libc::c_uint
+    {
+        return crate::src::qcommon::q_shared::qtrue;
+    }
+    return crate::src::qcommon::q_shared::qfalse;
+}
+
+static mut ctfFlagStatusRemap: [libc::c_char; 5] = [
+    '0' as i32 as libc::c_char,
+    '1' as i32 as libc::c_char,
+    '*' as i32 as libc::c_char,
+    '*' as i32 as libc::c_char,
+    '2' as i32 as libc::c_char,
+];
+
+static mut oneFlagStatusRemap: [libc::c_char; 5] = [
+    '0' as i32 as libc::c_char,
+    '1' as i32 as libc::c_char,
+    '2' as i32 as libc::c_char,
+    '3' as i32 as libc::c_char,
+    '4' as i32 as libc::c_char,
+];
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_SetFlagStatus(
+    mut team: libc::c_int,
+    mut status: crate::src::qcommon::q_shared::flagStatus_t,
+) {
+    let mut modified: crate::src::qcommon::q_shared::qboolean =
+        crate::src::qcommon::q_shared::qfalse;
+    match team {
+        1 => {
+            // CTF
+            if teamgame.redStatus as libc::c_uint != status as libc::c_uint {
+                teamgame.redStatus = status;
+                modified = crate::src::qcommon::q_shared::qtrue
+            }
+        }
+        2 => {
+            // CTF
+            if teamgame.blueStatus as libc::c_uint != status as libc::c_uint {
+                teamgame.blueStatus = status;
+                modified = crate::src::qcommon::q_shared::qtrue
+            }
+        }
+        0 => {
+            // One Flag CTF
+            if teamgame.flagStatus as libc::c_uint != status as libc::c_uint {
+                teamgame.flagStatus = status;
+                modified = crate::src::qcommon::q_shared::qtrue
+            }
+        }
+        _ => {}
+    }
+    if modified as u64 != 0 {
+        let mut st: [libc::c_char; 4] = [0; 4];
+        if crate::src::game::g_main::g_gametype.integer == crate::bg_public_h::GT_CTF as libc::c_int
+        {
+            st[0 as libc::c_int as usize] = ctfFlagStatusRemap[teamgame.redStatus as usize];
+            st[1 as libc::c_int as usize] = ctfFlagStatusRemap[teamgame.blueStatus as usize];
+            st[2 as libc::c_int as usize] = 0 as libc::c_int as libc::c_char
+        } else {
+            // GT_1FCTF
+            st[0 as libc::c_int as usize] = oneFlagStatusRemap[teamgame.flagStatus as usize];
+            st[1 as libc::c_int as usize] = 0 as libc::c_int as libc::c_char
+        }
+        crate::src::game::g_syscalls::trap_SetConfigstring(23 as libc::c_int, st.as_mut_ptr());
+    };
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_CheckDroppedItem(mut dropped: *mut crate::g_local_h::gentity_t) {
+    if (*(*dropped).item).giTag == crate::bg_public_h::PW_REDFLAG as libc::c_int {
+        Team_SetFlagStatus(
+            crate::bg_public_h::TEAM_RED as libc::c_int,
+            crate::src::qcommon::q_shared::FLAG_DROPPED,
+        );
+    } else if (*(*dropped).item).giTag == crate::bg_public_h::PW_BLUEFLAG as libc::c_int {
+        Team_SetFlagStatus(
+            crate::bg_public_h::TEAM_BLUE as libc::c_int,
+            crate::src::qcommon::q_shared::FLAG_DROPPED,
+        );
+    } else if (*(*dropped).item).giTag == crate::bg_public_h::PW_NEUTRALFLAG as libc::c_int {
+        Team_SetFlagStatus(
+            crate::bg_public_h::TEAM_FREE as libc::c_int,
+            crate::src::qcommon::q_shared::FLAG_DROPPED,
+        );
+    };
+}
+/*
+================
+Team_ForceGesture
+================
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_ForceGesture(mut team: libc::c_int) {
+    let mut i: libc::c_int = 0;
+    let mut ent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    i = 0 as libc::c_int;
+    while i < 64 as libc::c_int {
+        ent = &mut *crate::src::game::g_main::g_entities
+            .as_mut_ptr()
+            .offset(i as isize) as *mut crate::g_local_h::gentity_t;
+        if !((*ent).inuse as u64 == 0) {
+            if !(*ent).client.is_null() {
+                if !((*(*ent).client).sess.sessionTeam as libc::c_uint != team as libc::c_uint) {
+                    //
+                    (*ent).flags |= 0x8000 as libc::c_int
+                }
+            }
+        }
+        i += 1
+    }
+}
+/*
+================
+Team_FragBonuses
+
+Calculate the bonuses for flag defense, flag carrier defense, etc.
+Note that bonuses are not cumulative.  You get one, they are in importance
+order.
+================
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_FragBonuses(
+    mut targ: *mut crate::g_local_h::gentity_t,
+    mut inflictor: *mut crate::g_local_h::gentity_t,
+    mut attacker: *mut crate::g_local_h::gentity_t,
+) {
+    let mut i: libc::c_int = 0;
+    let mut ent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    let mut flag_pw: libc::c_int = 0;
+    let mut enemy_flag_pw: libc::c_int = 0;
+    let mut otherteam: libc::c_int = 0;
+    let mut tokens: libc::c_int = 0;
+    let mut flag: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    let mut carrier: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    let mut c: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut v1: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
+    let mut v2: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
+    let mut team: libc::c_int = 0;
+    // no bonus for fragging yourself or team mates
+    if (*targ).client.is_null()
+        || (*attacker).client.is_null()
+        || targ == attacker
+        || OnSameTeam(targ, attacker) as libc::c_uint != 0
+    {
+        return;
+    } // whoever died isn't on a team
+    team = (*(*targ).client).sess.sessionTeam as libc::c_int;
+    otherteam = OtherTeam((*(*targ).client).sess.sessionTeam as libc::c_int);
+    if otherteam < 0 as libc::c_int {
+        return;
+    }
+    // same team, if the flag at base, check to he has the enemy flag
+    if team == crate::bg_public_h::TEAM_RED as libc::c_int {
+        flag_pw = crate::bg_public_h::PW_REDFLAG as libc::c_int;
+        enemy_flag_pw = crate::bg_public_h::PW_BLUEFLAG as libc::c_int
+    } else {
+        flag_pw = crate::bg_public_h::PW_BLUEFLAG as libc::c_int;
+        enemy_flag_pw = crate::bg_public_h::PW_REDFLAG as libc::c_int
+    }
+    // did the attacker frag the flag carrier?
+    tokens = 0 as libc::c_int;
+    if (*(*targ).client).ps.powerups[enemy_flag_pw as usize] != 0 {
+        (*(*attacker).client).pers.teamState.lastfraggedcarrier =
+            crate::src::game::g_main::level.time as libc::c_float;
+        crate::src::game::g_combat::AddScore(
+            attacker,
+            (*targ).r.currentOrigin.as_mut_ptr(),
+            2 as libc::c_int,
+        );
+        (*(*attacker).client).pers.teamState.fragcarrier += 1;
+        PrintMsg(
+            0 as *mut crate::g_local_h::gentity_t,
+            b"%s^7 fragged %s\'s flag carrier!\n\x00" as *const u8 as *const libc::c_char,
+            (*(*attacker).client).pers.netname.as_mut_ptr(),
+            TeamName(team),
+        );
+        // the target had the flag, clear the hurt carrier
+        // field on the other team
+        i = 0 as libc::c_int;
+        while i < crate::src::game::g_main::g_maxclients.integer {
+            ent = crate::src::game::g_main::g_entities
+                .as_mut_ptr()
+                .offset(i as isize);
+            if (*ent).inuse as libc::c_uint != 0
+                && (*(*ent).client).sess.sessionTeam as libc::c_uint == otherteam as libc::c_uint
+            {
+                (*(*ent).client).pers.teamState.lasthurtcarrier = 0 as libc::c_int as libc::c_float
+            }
+            i += 1
+        }
+        return;
+    }
+    // did the attacker frag a head carrier? other->client->ps.generic1
+    if tokens != 0 {
+        (*(*attacker).client).pers.teamState.lastfraggedcarrier =
+            crate::src::game::g_main::level.time as libc::c_float;
+        crate::src::game::g_combat::AddScore(
+            attacker,
+            (*targ).r.currentOrigin.as_mut_ptr(),
+            2 as libc::c_int * tokens * tokens,
+        );
+        (*(*attacker).client).pers.teamState.fragcarrier += 1;
+        PrintMsg(
+            0 as *mut crate::g_local_h::gentity_t,
+            b"%s^7 fragged %s\'s skull carrier!\n\x00" as *const u8 as *const libc::c_char,
+            (*(*attacker).client).pers.netname.as_mut_ptr(),
+            TeamName(team),
+        );
+        // the target had the flag, clear the hurt carrier
+        // field on the other team
+        i = 0 as libc::c_int;
+        while i < crate::src::game::g_main::g_maxclients.integer {
+            ent = crate::src::game::g_main::g_entities
+                .as_mut_ptr()
+                .offset(i as isize);
+            if (*ent).inuse as libc::c_uint != 0
+                && (*(*ent).client).sess.sessionTeam as libc::c_uint == otherteam as libc::c_uint
+            {
+                (*(*ent).client).pers.teamState.lasthurtcarrier = 0 as libc::c_int as libc::c_float
+            }
+            i += 1
+        }
+        return;
+    }
+    if (*(*targ).client).pers.teamState.lasthurtcarrier != 0.
+        && crate::src::game::g_main::level.time as libc::c_float
+            - (*(*targ).client).pers.teamState.lasthurtcarrier
+            < 8000 as libc::c_int as libc::c_float
+        && (*(*attacker).client).ps.powerups[flag_pw as usize] == 0
+    {
+        // attacker is on the same team as the flag carrier and
+        // fragged a guy who hurt our flag carrier
+        crate::src::game::g_combat::AddScore(
+            attacker,
+            (*targ).r.currentOrigin.as_mut_ptr(),
+            2 as libc::c_int,
+        );
+        (*(*attacker).client).pers.teamState.carrierdefense += 1;
+        (*(*targ).client).pers.teamState.lasthurtcarrier = 0 as libc::c_int as libc::c_float;
+        (*(*attacker).client).ps.persistant
+            [crate::bg_public_h::PERS_DEFEND_COUNT as libc::c_int as usize] += 1;
+        // add the sprite over the player's head
+        (*(*attacker).client).ps.eFlags &= !(0x8000 as libc::c_int
+            | 0x8 as libc::c_int
+            | 0x40 as libc::c_int
+            | 0x20000 as libc::c_int
+            | 0x10000 as libc::c_int
+            | 0x800 as libc::c_int);
+        (*(*attacker).client).ps.eFlags |= 0x10000 as libc::c_int;
+        (*(*attacker).client).rewardTime =
+            crate::src::game::g_main::level.time + 2000 as libc::c_int;
+        return;
+    }
+    // flag and flag carrier area defense bonuses
+    // we have to find the flag and carrier entities
+    // find the flag
+    match (*(*attacker).client).sess.sessionTeam as libc::c_uint {
+        1 => c = b"team_CTF_redflag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        2 => c = b"team_CTF_blueflag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        _ => return,
+    }
+    // find attacker's team's flag carrier
+    i = 0 as libc::c_int; // can't find attacker's flag
+    while i < crate::src::game::g_main::g_maxclients.integer {
+        carrier = crate::src::game::g_main::g_entities
+            .as_mut_ptr()
+            .offset(i as isize);
+        if (*carrier).inuse as libc::c_uint != 0
+            && (*(*carrier).client).ps.powerups[flag_pw as usize] != 0
+        {
+            break;
+        }
+        carrier = 0 as *mut crate::g_local_h::gentity_t;
+        i += 1
+    }
+    flag = 0 as *mut crate::g_local_h::gentity_t;
+    loop {
+        flag = crate::src::game::g_utils::G_Find(
+            flag,
+            &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut libc::c_char
+                as crate::stddef_h::size_t as libc::c_int,
+            c,
+        );
+        if flag.is_null() {
+            break;
+        }
+        if (*flag).flags & 0x1000 as libc::c_int == 0 {
+            break;
+        }
+    }
+    if flag.is_null() {
+        return;
+    }
+    // ok we have the attackers flag and a pointer to the carrier
+    // check to see if we are defending the base's flag
+    v1[0 as libc::c_int as usize] = (*targ).r.currentOrigin[0 as libc::c_int as usize]
+        - (*flag).r.currentOrigin[0 as libc::c_int as usize];
+    v1[1 as libc::c_int as usize] = (*targ).r.currentOrigin[1 as libc::c_int as usize]
+        - (*flag).r.currentOrigin[1 as libc::c_int as usize];
+    v1[2 as libc::c_int as usize] = (*targ).r.currentOrigin[2 as libc::c_int as usize]
+        - (*flag).r.currentOrigin[2 as libc::c_int as usize];
+    v2[0 as libc::c_int as usize] = (*attacker).r.currentOrigin[0 as libc::c_int as usize]
+        - (*flag).r.currentOrigin[0 as libc::c_int as usize];
+    v2[1 as libc::c_int as usize] = (*attacker).r.currentOrigin[1 as libc::c_int as usize]
+        - (*flag).r.currentOrigin[1 as libc::c_int as usize];
+    v2[2 as libc::c_int as usize] = (*attacker).r.currentOrigin[2 as libc::c_int as usize]
+        - (*flag).r.currentOrigin[2 as libc::c_int as usize];
+    if (VectorLength(v1.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t)
+        < 1000 as libc::c_int as libc::c_float
+        && crate::src::game::g_syscalls::trap_InPVS(
+            (*flag).r.currentOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
+            (*targ).r.currentOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
+        ) as libc::c_uint
+            != 0
+        || VectorLength(v2.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t)
+            < 1000 as libc::c_int as libc::c_float
+            && crate::src::game::g_syscalls::trap_InPVS(
+                (*flag).r.currentOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
+                (*attacker).r.currentOrigin.as_mut_ptr()
+                    as *const crate::src::qcommon::q_shared::vec_t,
+            ) as libc::c_uint
+                != 0)
+        && (*(*attacker).client).sess.sessionTeam as libc::c_uint
+            != (*(*targ).client).sess.sessionTeam as libc::c_uint
+    {
+        // we defended the base flag
+        crate::src::game::g_combat::AddScore(
+            attacker,
+            (*targ).r.currentOrigin.as_mut_ptr(),
+            1 as libc::c_int,
+        );
+        (*(*attacker).client).pers.teamState.basedefense += 1;
+        (*(*attacker).client).ps.persistant
+            [crate::bg_public_h::PERS_DEFEND_COUNT as libc::c_int as usize] += 1;
+        // add the sprite over the player's head
+        (*(*attacker).client).ps.eFlags &= !(0x8000 as libc::c_int
+            | 0x8 as libc::c_int
+            | 0x40 as libc::c_int
+            | 0x20000 as libc::c_int
+            | 0x10000 as libc::c_int
+            | 0x800 as libc::c_int);
+        (*(*attacker).client).ps.eFlags |= 0x10000 as libc::c_int;
+        (*(*attacker).client).rewardTime =
+            crate::src::game::g_main::level.time + 2000 as libc::c_int;
+        return;
+    }
+    if !carrier.is_null() && carrier != attacker {
+        v1[0 as libc::c_int as usize] = (*targ).r.currentOrigin[0 as libc::c_int as usize]
+            - (*carrier).r.currentOrigin[0 as libc::c_int as usize];
+        v1[1 as libc::c_int as usize] = (*targ).r.currentOrigin[1 as libc::c_int as usize]
+            - (*carrier).r.currentOrigin[1 as libc::c_int as usize];
+        v1[2 as libc::c_int as usize] = (*targ).r.currentOrigin[2 as libc::c_int as usize]
+            - (*carrier).r.currentOrigin[2 as libc::c_int as usize];
+        v2[0 as libc::c_int as usize] = (*attacker).r.currentOrigin[0 as libc::c_int as usize]
+            - (*carrier).r.currentOrigin[0 as libc::c_int as usize];
+        v2[1 as libc::c_int as usize] = (*attacker).r.currentOrigin[1 as libc::c_int as usize]
+            - (*carrier).r.currentOrigin[1 as libc::c_int as usize];
+        v2[2 as libc::c_int as usize] = (*attacker).r.currentOrigin[2 as libc::c_int as usize]
+            - (*carrier).r.currentOrigin[2 as libc::c_int as usize];
+        if (VectorLength(v1.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t)
+            < 1000 as libc::c_int as libc::c_float
+            && crate::src::game::g_syscalls::trap_InPVS(
+                (*carrier).r.currentOrigin.as_mut_ptr()
+                    as *const crate::src::qcommon::q_shared::vec_t,
+                (*targ).r.currentOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
+            ) as libc::c_uint
+                != 0
+            || VectorLength(v2.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t)
+                < 1000 as libc::c_int as libc::c_float
+                && crate::src::game::g_syscalls::trap_InPVS(
+                    (*carrier).r.currentOrigin.as_mut_ptr()
+                        as *const crate::src::qcommon::q_shared::vec_t,
+                    (*attacker).r.currentOrigin.as_mut_ptr()
+                        as *const crate::src::qcommon::q_shared::vec_t,
+                ) as libc::c_uint
+                    != 0)
+            && (*(*attacker).client).sess.sessionTeam as libc::c_uint
+                != (*(*targ).client).sess.sessionTeam as libc::c_uint
+        {
+            crate::src::game::g_combat::AddScore(
+                attacker,
+                (*targ).r.currentOrigin.as_mut_ptr(),
+                1 as libc::c_int,
+            );
+            (*(*attacker).client).pers.teamState.carrierdefense += 1;
+            (*(*attacker).client).ps.persistant
+                [crate::bg_public_h::PERS_DEFEND_COUNT as libc::c_int as usize] += 1;
+            // add the sprite over the player's head
+            (*(*attacker).client).ps.eFlags &= !(0x8000 as libc::c_int
+                | 0x8 as libc::c_int
+                | 0x40 as libc::c_int
+                | 0x20000 as libc::c_int
+                | 0x10000 as libc::c_int
+                | 0x800 as libc::c_int);
+            (*(*attacker).client).ps.eFlags |= 0x10000 as libc::c_int;
+            (*(*attacker).client).rewardTime =
+                crate::src::game::g_main::level.time + 2000 as libc::c_int;
+            return;
+        }
+    };
+}
+/*
+================
+Team_CheckHurtCarrier
+
+Check to see if attacker hurt the flag carrier.  Needed when handing out bonuses for assistance to flag
+carrier defense.
+================
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_CheckHurtCarrier(
+    mut targ: *mut crate::g_local_h::gentity_t,
+    mut attacker: *mut crate::g_local_h::gentity_t,
+) {
+    let mut flag_pw: libc::c_int = 0;
+    if (*targ).client.is_null() || (*attacker).client.is_null() {
+        return;
+    }
+    if (*(*targ).client).sess.sessionTeam as libc::c_uint
+        == crate::bg_public_h::TEAM_RED as libc::c_int as libc::c_uint
+    {
+        flag_pw = crate::bg_public_h::PW_BLUEFLAG as libc::c_int
+    } else {
+        flag_pw = crate::bg_public_h::PW_REDFLAG as libc::c_int
+    }
+    // flags
+    if (*(*targ).client).ps.powerups[flag_pw as usize] != 0
+        && (*(*targ).client).sess.sessionTeam as libc::c_uint
+            != (*(*attacker).client).sess.sessionTeam as libc::c_uint
+    {
+        (*(*attacker).client).pers.teamState.lasthurtcarrier =
+            crate::src::game::g_main::level.time as libc::c_float
+    }
+    // skulls
+    if (*(*targ).client).ps.generic1 != 0
+        && (*(*targ).client).sess.sessionTeam as libc::c_uint
+            != (*(*attacker).client).sess.sessionTeam as libc::c_uint
+    {
+        (*(*attacker).client).pers.teamState.lasthurtcarrier =
+            crate::src::game::g_main::level.time as libc::c_float
+    };
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_ResetFlag(mut team: libc::c_int) -> *mut crate::g_local_h::gentity_t {
+    let mut c: *mut libc::c_char = 0 as *mut libc::c_char;
+    let mut ent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    let mut rent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    match team {
+        1 => c = b"team_CTF_redflag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        2 => c = b"team_CTF_blueflag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+        0 => {
+            c = b"team_CTF_neutralflag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+        }
+        _ => return 0 as *mut crate::g_local_h::gentity_t,
+    }
+    ent = 0 as *mut crate::g_local_h::gentity_t;
+    loop {
+        ent = crate::src::game::g_utils::G_Find(
+            ent,
+            &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut libc::c_char
+                as crate::stddef_h::size_t as libc::c_int,
+            c,
+        );
+        if ent.is_null() {
+            break;
+        }
+        if (*ent).flags & 0x1000 as libc::c_int != 0 {
+            crate::src::game::g_utils::G_FreeEntity(ent);
+        } else {
+            rent = ent;
+            crate::src::game::g_items::RespawnItem(ent);
+        }
+    }
+    Team_SetFlagStatus(team, crate::src::qcommon::q_shared::FLAG_ATBASE);
+    return rent;
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_ResetFlags() {
+    if crate::src::game::g_main::g_gametype.integer == crate::bg_public_h::GT_CTF as libc::c_int {
+        Team_ResetFlag(crate::bg_public_h::TEAM_RED as libc::c_int);
+        Team_ResetFlag(crate::bg_public_h::TEAM_BLUE as libc::c_int);
+    };
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_ReturnFlagSound(
+    mut ent: *mut crate::g_local_h::gentity_t,
+    mut team: libc::c_int,
+) {
+    let mut te: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    if ent.is_null() {
+        crate::src::game::g_main::G_Printf(
+            b"Warning:  NULL passed to Team_ReturnFlagSound\n\x00" as *const u8
+                as *const libc::c_char,
+        );
+        return;
+    }
+    te = crate::src::game::g_utils::G_TempEntity(
+        (*ent).s.pos.trBase.as_mut_ptr(),
+        crate::bg_public_h::EV_GLOBAL_TEAM_SOUND as libc::c_int,
+    );
+    if team == crate::bg_public_h::TEAM_BLUE as libc::c_int {
+        (*te).s.eventParm = crate::bg_public_h::GTS_RED_RETURN as libc::c_int
+    } else {
+        (*te).s.eventParm = crate::bg_public_h::GTS_BLUE_RETURN as libc::c_int
+    }
+    (*te).r.svFlags |= 0x20 as libc::c_int;
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_TakeFlagSound(
+    mut ent: *mut crate::g_local_h::gentity_t,
+    mut team: libc::c_int,
+) {
+    let mut te: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    if ent.is_null() {
+        crate::src::game::g_main::G_Printf(
+            b"Warning:  NULL passed to Team_TakeFlagSound\n\x00" as *const u8
+                as *const libc::c_char,
+        );
+        return;
+    }
+    // only play sound when the flag was at the base
+    // or not picked up the last 10 seconds
+    match team {
+        1 => {
+            if teamgame.blueStatus as libc::c_uint
+                != crate::src::qcommon::q_shared::FLAG_ATBASE as libc::c_int as libc::c_uint
+            {
+                if teamgame.blueTakenTime
+                    > crate::src::game::g_main::level.time - 10000 as libc::c_int
+                {
+                    return;
+                }
+            }
+            teamgame.blueTakenTime = crate::src::game::g_main::level.time
+        }
+        2 => {
+            // CTF
+            if teamgame.redStatus as libc::c_uint
+                != crate::src::qcommon::q_shared::FLAG_ATBASE as libc::c_int as libc::c_uint
+            {
+                if teamgame.redTakenTime
+                    > crate::src::game::g_main::level.time - 10000 as libc::c_int
+                {
+                    return;
+                }
+            }
+            teamgame.redTakenTime = crate::src::game::g_main::level.time
+        }
+        _ => {}
+    }
+    te = crate::src::game::g_utils::G_TempEntity(
+        (*ent).s.pos.trBase.as_mut_ptr(),
+        crate::bg_public_h::EV_GLOBAL_TEAM_SOUND as libc::c_int,
+    );
+    if team == crate::bg_public_h::TEAM_BLUE as libc::c_int {
+        (*te).s.eventParm = crate::bg_public_h::GTS_RED_TAKEN as libc::c_int
+    } else {
+        (*te).s.eventParm = crate::bg_public_h::GTS_BLUE_TAKEN as libc::c_int
+    }
+    (*te).r.svFlags |= 0x20 as libc::c_int;
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_CaptureFlagSound(
+    mut ent: *mut crate::g_local_h::gentity_t,
+    mut team: libc::c_int,
+) {
+    let mut te: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    if ent.is_null() {
+        crate::src::game::g_main::G_Printf(
+            b"Warning:  NULL passed to Team_CaptureFlagSound\n\x00" as *const u8
+                as *const libc::c_char,
+        );
+        return;
+    }
+    te = crate::src::game::g_utils::G_TempEntity(
+        (*ent).s.pos.trBase.as_mut_ptr(),
+        crate::bg_public_h::EV_GLOBAL_TEAM_SOUND as libc::c_int,
+    );
+    if team == crate::bg_public_h::TEAM_BLUE as libc::c_int {
+        (*te).s.eventParm = crate::bg_public_h::GTS_BLUE_CAPTURE as libc::c_int
+    } else {
+        (*te).s.eventParm = crate::bg_public_h::GTS_RED_CAPTURE as libc::c_int
+    }
+    (*te).r.svFlags |= 0x20 as libc::c_int;
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_ReturnFlag(mut team: libc::c_int) {
+    Team_ReturnFlagSound(Team_ResetFlag(team), team);
+    if team == crate::bg_public_h::TEAM_FREE as libc::c_int {
+        PrintMsg(
+            0 as *mut crate::g_local_h::gentity_t,
+            b"The flag has returned!\n\x00" as *const u8 as *const libc::c_char,
+        );
+    } else {
+        PrintMsg(
+            0 as *mut crate::g_local_h::gentity_t,
+            b"The %s flag has returned!\n\x00" as *const u8 as *const libc::c_char,
+            TeamName(team),
+        );
+    };
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_FreeEntity(mut ent: *mut crate::g_local_h::gentity_t) {
+    if (*(*ent).item).giTag == crate::bg_public_h::PW_REDFLAG as libc::c_int {
+        Team_ReturnFlag(crate::bg_public_h::TEAM_RED as libc::c_int);
+    } else if (*(*ent).item).giTag == crate::bg_public_h::PW_BLUEFLAG as libc::c_int {
+        Team_ReturnFlag(crate::bg_public_h::TEAM_BLUE as libc::c_int);
+    } else if (*(*ent).item).giTag == crate::bg_public_h::PW_NEUTRALFLAG as libc::c_int {
+        Team_ReturnFlag(crate::bg_public_h::TEAM_FREE as libc::c_int);
+    };
+}
+/*
+==============
+Team_DroppedFlagThink
+
+Automatically set in Launch_Item if the item is one of the flags
+
+Flags are unique in that if they are dropped, the base flag must be respawned when they time out
+==============
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_DroppedFlagThink(mut ent: *mut crate::g_local_h::gentity_t) {
+    let mut team: libc::c_int = crate::bg_public_h::TEAM_FREE as libc::c_int;
+    if (*(*ent).item).giTag == crate::bg_public_h::PW_REDFLAG as libc::c_int {
+        team = crate::bg_public_h::TEAM_RED as libc::c_int
+    } else if (*(*ent).item).giTag == crate::bg_public_h::PW_BLUEFLAG as libc::c_int {
+        team = crate::bg_public_h::TEAM_BLUE as libc::c_int
+    } else if (*(*ent).item).giTag == crate::bg_public_h::PW_NEUTRALFLAG as libc::c_int {
+        team = crate::bg_public_h::TEAM_FREE as libc::c_int
+    }
+    Team_ReturnFlagSound(Team_ResetFlag(team), team);
+    // Reset Flag will delete this entity
+}
+/*
+==============
+Team_DroppedFlagThink
+==============
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_TouchOurFlag(
+    mut ent: *mut crate::g_local_h::gentity_t,
+    mut other: *mut crate::g_local_h::gentity_t,
+    mut team: libc::c_int,
+) -> libc::c_int {
+    let mut i: libc::c_int = 0;
+    let mut player: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    let mut cl: *mut crate::g_local_h::gclient_t = (*other).client;
+    let mut enemy_flag: libc::c_int = 0;
+    if (*cl).sess.sessionTeam as libc::c_uint
+        == crate::bg_public_h::TEAM_RED as libc::c_int as libc::c_uint
+    {
+        enemy_flag = crate::bg_public_h::PW_BLUEFLAG as libc::c_int
+    } else {
+        enemy_flag = crate::bg_public_h::PW_REDFLAG as libc::c_int
+    }
+    if (*ent).flags & 0x1000 as libc::c_int != 0 {
+        // hey, it's not home.  return it by teleporting it back
+        PrintMsg(
+            0 as *mut crate::g_local_h::gentity_t,
+            b"%s^7 returned the %s flag!\n\x00" as *const u8 as *const libc::c_char,
+            (*cl).pers.netname.as_mut_ptr(),
+            TeamName(team),
+        );
+        crate::src::game::g_combat::AddScore(
+            other,
+            (*ent).r.currentOrigin.as_mut_ptr(),
+            1 as libc::c_int,
+        );
+        (*(*other).client).pers.teamState.flagrecovery += 1;
+        (*(*other).client).pers.teamState.lastreturnedflag =
+            crate::src::game::g_main::level.time as libc::c_float;
+        //ResetFlag will remove this entity!  We must return zero
+        Team_ReturnFlagSound(Team_ResetFlag(team), team);
+        return 0 as libc::c_int;
+    }
+    // the flag is at home base.  if the player has the enemy
+    // flag, he's just won!
+    if (*cl).ps.powerups[enemy_flag as usize] == 0 {
+        return 0 as libc::c_int;
+    } // We don't have the flag
+    PrintMsg(
+        0 as *mut crate::g_local_h::gentity_t,
+        b"%s^7 captured the %s flag!\n\x00" as *const u8 as *const libc::c_char,
+        (*cl).pers.netname.as_mut_ptr(),
+        TeamName(OtherTeam(team)),
+    );
+    (*cl).ps.powerups[enemy_flag as usize] = 0 as libc::c_int;
+    teamgame.last_flag_capture = crate::src::game::g_main::level.time as libc::c_float;
+    teamgame.last_capture_team = team;
+    // Increase the team's score
+    AddTeamScore(
+        (*ent).s.pos.trBase.as_mut_ptr(),
+        (*(*other).client).sess.sessionTeam as libc::c_int,
+        1 as libc::c_int,
+    );
+    Team_ForceGesture((*(*other).client).sess.sessionTeam as libc::c_int);
+    (*(*other).client).pers.teamState.captures += 1;
+    // add the sprite over the player's head
+    (*(*other).client).ps.eFlags &= !(0x8000 as libc::c_int
+        | 0x8 as libc::c_int
+        | 0x40 as libc::c_int
+        | 0x20000 as libc::c_int
+        | 0x10000 as libc::c_int
+        | 0x800 as libc::c_int);
+    (*(*other).client).ps.eFlags |= 0x800 as libc::c_int;
+    (*(*other).client).rewardTime = crate::src::game::g_main::level.time + 2000 as libc::c_int;
+    (*(*other).client).ps.persistant[crate::bg_public_h::PERS_CAPTURES as libc::c_int as usize] +=
+        1;
+    // other gets another 10 frag bonus
+    crate::src::game::g_combat::AddScore(
+        other,
+        (*ent).r.currentOrigin.as_mut_ptr(),
+        5 as libc::c_int,
+    );
+    Team_CaptureFlagSound(ent, team);
+    // Ok, let's do the player loop, hand out the bonuses
+    i = 0 as libc::c_int;
+    while i < crate::src::game::g_main::g_maxclients.integer {
+        player = &mut *crate::src::game::g_main::g_entities
+            .as_mut_ptr()
+            .offset(i as isize) as *mut crate::g_local_h::gentity_t;
+        // also make sure we don't award assist bonuses to the flag carrier himself.
+        if !((*player).inuse as u64 == 0 || player == other) {
+            if (*(*player).client).sess.sessionTeam as libc::c_uint
+                != (*cl).sess.sessionTeam as libc::c_uint
+            {
+                (*(*player).client).pers.teamState.lasthurtcarrier =
+                    -(5 as libc::c_int) as libc::c_float
+            } else if (*(*player).client).sess.sessionTeam as libc::c_uint
+                == (*cl).sess.sessionTeam as libc::c_uint
+            {
+                // award extra points for capture assists
+                if (*(*player).client).pers.teamState.lastreturnedflag
+                    + 10000 as libc::c_int as libc::c_float
+                    > crate::src::game::g_main::level.time as libc::c_float
+                {
+                    crate::src::game::g_combat::AddScore(
+                        player,
+                        (*ent).r.currentOrigin.as_mut_ptr(),
+                        1 as libc::c_int,
+                    );
+                    (*(*other).client).pers.teamState.assists += 1;
+                    (*(*player).client).ps.persistant
+                        [crate::bg_public_h::PERS_ASSIST_COUNT as libc::c_int as usize] += 1;
+                    // add the sprite over the player's head
+                    (*(*player).client).ps.eFlags &= !(0x8000 as libc::c_int
+                        | 0x8 as libc::c_int
+                        | 0x40 as libc::c_int
+                        | 0x20000 as libc::c_int
+                        | 0x10000 as libc::c_int
+                        | 0x800 as libc::c_int);
+                    (*(*player).client).ps.eFlags |= 0x20000 as libc::c_int;
+                    (*(*player).client).rewardTime =
+                        crate::src::game::g_main::level.time + 2000 as libc::c_int
+                }
+                if (*(*player).client).pers.teamState.lastfraggedcarrier
+                    + 10000 as libc::c_int as libc::c_float
+                    > crate::src::game::g_main::level.time as libc::c_float
+                {
+                    crate::src::game::g_combat::AddScore(
+                        player,
+                        (*ent).r.currentOrigin.as_mut_ptr(),
+                        2 as libc::c_int,
+                    );
+                    (*(*other).client).pers.teamState.assists += 1;
+                    (*(*player).client).ps.persistant
+                        [crate::bg_public_h::PERS_ASSIST_COUNT as libc::c_int as usize] += 1;
+                    // add the sprite over the player's head
+                    (*(*player).client).ps.eFlags &= !(0x8000 as libc::c_int
+                        | 0x8 as libc::c_int
+                        | 0x40 as libc::c_int
+                        | 0x20000 as libc::c_int
+                        | 0x10000 as libc::c_int
+                        | 0x800 as libc::c_int);
+                    (*(*player).client).ps.eFlags |= 0x20000 as libc::c_int;
+                    (*(*player).client).rewardTime =
+                        crate::src::game::g_main::level.time + 2000 as libc::c_int
+                }
+            }
+        }
+        i += 1
+    }
+    Team_ResetFlags();
+    crate::src::game::g_main::CalculateRanks();
+    return 0 as libc::c_int;
+    // Do not respawn this automatically
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_TouchEnemyFlag(
+    mut ent: *mut crate::g_local_h::gentity_t,
+    mut other: *mut crate::g_local_h::gentity_t,
+    mut team: libc::c_int,
+) -> libc::c_int {
+    let mut cl: *mut crate::g_local_h::gclient_t = (*other).client; // flags never expire
+    PrintMsg(
+        0 as *mut crate::g_local_h::gentity_t,
+        b"%s^7 got the %s flag!\n\x00" as *const u8 as *const libc::c_char,
+        (*(*other).client).pers.netname.as_mut_ptr(),
+        TeamName(team),
+    ); // flags never expire
+    if team == crate::bg_public_h::TEAM_RED as libc::c_int {
+        (*cl).ps.powerups[crate::bg_public_h::PW_REDFLAG as libc::c_int as usize] =
+            2147483647 as libc::c_int
+    } else {
+        (*cl).ps.powerups[crate::bg_public_h::PW_BLUEFLAG as libc::c_int as usize] =
+            2147483647 as libc::c_int
+    }
+    Team_SetFlagStatus(team, crate::src::qcommon::q_shared::FLAG_TAKEN);
+    (*cl).pers.teamState.flagsince = crate::src::game::g_main::level.time as libc::c_float;
+    Team_TakeFlagSound(ent, team);
+    return -(1 as libc::c_int);
+    // Do not respawn this automatically, but do delete it if it was FL_DROPPED
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn Pickup_Team(
+    mut ent: *mut crate::g_local_h::gentity_t,
+    mut other: *mut crate::g_local_h::gentity_t,
+) -> libc::c_int {
+    let mut team: libc::c_int = 0;
+    let mut cl: *mut crate::g_local_h::gclient_t = (*other).client;
+    // figure out what team this flag is
+    if crate::stdlib::strcmp(
+        (*ent).classname,
+        b"team_CTF_redflag\x00" as *const u8 as *const libc::c_char,
+    ) == 0 as libc::c_int
+    {
+        team = crate::bg_public_h::TEAM_RED as libc::c_int
+    } else if crate::stdlib::strcmp(
+        (*ent).classname,
+        b"team_CTF_blueflag\x00" as *const u8 as *const libc::c_char,
+    ) == 0 as libc::c_int
+    {
+        team = crate::bg_public_h::TEAM_BLUE as libc::c_int
+    } else {
+        PrintMsg(
+            other,
+            b"Don\'t know what team the flag is on.\n\x00" as *const u8 as *const libc::c_char,
+        );
+        return 0 as libc::c_int;
+    }
+    // GT_CTF
+    if team as libc::c_uint == (*cl).sess.sessionTeam as libc::c_uint {
+        return Team_TouchOurFlag(ent, other, team);
+    }
+    return Team_TouchEnemyFlag(ent, other, team);
+}
+/*
+===========
+Team_GetLocation
+
+Report a location for the player. Uses placed nearby target_location entities
+============
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_GetLocation(
+    mut ent: *mut crate::g_local_h::gentity_t,
+) -> *mut crate::g_local_h::gentity_t {
+    let mut eloc: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    let mut best: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    let mut bestlen: libc::c_float = 0.;
+    let mut len: libc::c_float = 0.;
+    let mut origin: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
+    best = 0 as *mut crate::g_local_h::gentity_t;
+    bestlen = (3 as libc::c_int as libc::c_double * 8192.0f64 * 8192.0f64) as libc::c_float;
+    origin[0 as libc::c_int as usize] = (*ent).r.currentOrigin[0 as libc::c_int as usize];
+    origin[1 as libc::c_int as usize] = (*ent).r.currentOrigin[1 as libc::c_int as usize];
+    origin[2 as libc::c_int as usize] = (*ent).r.currentOrigin[2 as libc::c_int as usize];
+    eloc = crate::src::game::g_main::level.locationHead;
+    while !eloc.is_null() {
+        len = (origin[0 as libc::c_int as usize]
+            - (*eloc).r.currentOrigin[0 as libc::c_int as usize])
+            * (origin[0 as libc::c_int as usize]
+                - (*eloc).r.currentOrigin[0 as libc::c_int as usize])
+            + (origin[1 as libc::c_int as usize]
+                - (*eloc).r.currentOrigin[1 as libc::c_int as usize])
+                * (origin[1 as libc::c_int as usize]
+                    - (*eloc).r.currentOrigin[1 as libc::c_int as usize])
+            + (origin[2 as libc::c_int as usize]
+                - (*eloc).r.currentOrigin[2 as libc::c_int as usize])
+                * (origin[2 as libc::c_int as usize]
+                    - (*eloc).r.currentOrigin[2 as libc::c_int as usize]);
+        if !(len > bestlen) {
+            if !(crate::src::game::g_syscalls::trap_InPVS(
+                origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
+                (*eloc).r.currentOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
+            ) as u64
+                == 0)
+            {
+                bestlen = len;
+                best = eloc
+            }
+        }
+        eloc = (*eloc).nextTrain
+    }
+    return best;
+}
+/*
+===========
+Team_GetLocation
+
+Report a location for the player. Uses placed nearby target_location entities
+============
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn Team_GetLocationMsg(
+    mut ent: *mut crate::g_local_h::gentity_t,
+    mut loc: *mut libc::c_char,
+    mut loclen: libc::c_int,
+) -> crate::src::qcommon::q_shared::qboolean {
+    let mut best: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    best = Team_GetLocation(ent);
+    if best.is_null() {
+        return crate::src::qcommon::q_shared::qfalse;
+    }
+    if (*best).count != 0 {
+        if (*best).count < 0 as libc::c_int {
+            (*best).count = 0 as libc::c_int
+        }
+        if (*best).count > 7 as libc::c_int {
+            (*best).count = 7 as libc::c_int
+        }
+        crate::src::qcommon::q_shared::Com_sprintf(
+            loc,
+            loclen,
+            b"%c%c%s^7\x00" as *const u8 as *const libc::c_char,
+            '^' as i32,
+            (*best).count + '0' as i32,
+            (*best).message,
+        );
+    } else {
+        crate::src::qcommon::q_shared::Com_sprintf(
+            loc,
+            loclen,
+            b"%s\x00" as *const u8 as *const libc::c_char,
+            (*best).message,
+        );
+    }
+    return crate::src::qcommon::q_shared::qtrue;
+}
+#[no_mangle]
+
+pub unsafe extern "C" fn SelectRandomTeamSpawnPoint(
+    mut teamstate: libc::c_int,
+    mut team: crate::bg_public_h::team_t,
+) -> *mut crate::g_local_h::gentity_t {
+    let mut spot: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    let mut count: libc::c_int = 0;
+    let mut selection: libc::c_int = 0;
+    let mut spots: [*mut crate::g_local_h::gentity_t; 32] =
+        [0 as *mut crate::g_local_h::gentity_t; 32];
+    let mut classname: *mut libc::c_char = 0 as *mut libc::c_char;
+    if teamstate == crate::g_local_h::TEAM_BEGIN as libc::c_int {
+        if team as libc::c_uint == crate::bg_public_h::TEAM_RED as libc::c_int as libc::c_uint {
+            classname =
+                b"team_CTF_redplayer\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+        } else if team as libc::c_uint
+            == crate::bg_public_h::TEAM_BLUE as libc::c_int as libc::c_uint
+        {
+            classname =
+                b"team_CTF_blueplayer\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+        } else {
+            return 0 as *mut crate::g_local_h::gentity_t;
+        }
+    } else if team as libc::c_uint == crate::bg_public_h::TEAM_RED as libc::c_int as libc::c_uint {
+        classname =
+            b"team_CTF_redspawn\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+    } else if team as libc::c_uint == crate::bg_public_h::TEAM_BLUE as libc::c_int as libc::c_uint {
+        classname =
+            b"team_CTF_bluespawn\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
+    } else {
+        return 0 as *mut crate::g_local_h::gentity_t;
+    }
+    count = 0 as libc::c_int;
+    spot = 0 as *mut crate::g_local_h::gentity_t;
+    loop {
+        spot = crate::src::game::g_utils::G_Find(
+            spot,
+            &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut libc::c_char
+                as crate::stddef_h::size_t as libc::c_int,
+            classname,
+        );
+        if spot.is_null() {
+            break;
+        }
+        if crate::src::game::g_client::SpotWouldTelefrag(spot) as u64 != 0 {
+            continue;
+        }
+        spots[count as usize] = spot;
+        count += 1;
+        if count == 32 as libc::c_int {
+            break;
+        }
+    }
+    if count == 0 {
+        // no spots that won't telefrag
+        return crate::src::game::g_utils::G_Find(
+            0 as *mut crate::g_local_h::gentity_t,
+            &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut libc::c_char
+                as crate::stddef_h::size_t as libc::c_int,
+            classname,
+        );
+    }
+    selection = crate::stdlib::rand() % count;
+    return spots[selection as usize];
+}
+/*
+===========
+SelectCTFSpawnPoint
+
+============
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn SelectCTFSpawnPoint(
+    mut team: crate::bg_public_h::team_t,
+    mut teamstate: libc::c_int,
+    mut origin: *mut crate::src::qcommon::q_shared::vec_t,
+    mut angles: *mut crate::src::qcommon::q_shared::vec_t,
+    mut isbot: crate::src::qcommon::q_shared::qboolean,
+) -> *mut crate::g_local_h::gentity_t {
+    let mut spot: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    spot = SelectRandomTeamSpawnPoint(teamstate, team);
+    if spot.is_null() {
+        return crate::src::game::g_client::SelectSpawnPoint(
+            crate::src::qcommon::q_math::vec3_origin.as_mut_ptr(),
+            origin,
+            angles,
+            isbot,
+        );
+    }
+    *origin.offset(0 as libc::c_int as isize) = (*spot).s.origin[0 as libc::c_int as usize];
+    *origin.offset(1 as libc::c_int as isize) = (*spot).s.origin[1 as libc::c_int as usize];
+    *origin.offset(2 as libc::c_int as isize) = (*spot).s.origin[2 as libc::c_int as usize];
+    let ref mut fresh0 = *origin.offset(2 as libc::c_int as isize);
+    *fresh0 += 9 as libc::c_int as libc::c_float;
+    *angles.offset(0 as libc::c_int as isize) = (*spot).s.angles[0 as libc::c_int as usize];
+    *angles.offset(1 as libc::c_int as isize) = (*spot).s.angles[1 as libc::c_int as usize];
+    *angles.offset(2 as libc::c_int as isize) = (*spot).s.angles[2 as libc::c_int as usize];
+    return spot;
+}
+/*---------------------------------------------------------------------------*/
+
+unsafe extern "C" fn SortClients(
+    mut a: *const libc::c_void,
+    mut b: *const libc::c_void,
+) -> libc::c_int {
+    return *(a as *mut libc::c_int) - *(b as *mut libc::c_int);
+}
+/*
+==================
+TeamplayLocationsMessage
+
+Format:
+    clientNum location health armor weapon powerups
+
+==================
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn TeamplayInfoMessage(mut ent: *mut crate::g_local_h::gentity_t) {
+    let mut entry: [libc::c_char; 1024] = [0; 1024];
+    let mut string: [libc::c_char; 8192] = [0; 8192];
+    let mut stringlength: libc::c_int = 0;
+    let mut i: libc::c_int = 0;
+    let mut j: libc::c_int = 0;
+    let mut player: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    let mut cnt: libc::c_int = 0;
+    let mut h: libc::c_int = 0;
+    let mut a: libc::c_int = 0;
+    let mut clients: [libc::c_int; 32] = [0; 32];
+    let mut team: libc::c_int = 0;
+    if (*(*ent).client).pers.teamInfo as u64 == 0 {
+        return;
+    }
+    // send team info to spectator for team of followed client
+    if (*(*ent).client).sess.sessionTeam as libc::c_uint
+        == crate::bg_public_h::TEAM_SPECTATOR as libc::c_int as libc::c_uint
+    {
+        if (*(*ent).client).sess.spectatorState as libc::c_uint
+            != crate::g_local_h::SPECTATOR_FOLLOW as libc::c_int as libc::c_uint
+            || (*(*ent).client).sess.spectatorClient < 0 as libc::c_int
+        {
+            return;
+        }
+        team = (*crate::src::game::g_main::g_entities
+            [(*(*ent).client).sess.spectatorClient as usize]
+            .client)
+            .sess
+            .sessionTeam as libc::c_int
+    } else {
+        team = (*(*ent).client).sess.sessionTeam as libc::c_int
+    }
+    if team != crate::bg_public_h::TEAM_RED as libc::c_int
+        && team != crate::bg_public_h::TEAM_BLUE as libc::c_int
+    {
+        return;
+    }
+    // figure out what client should be on the display
+    // we are limited to 8, but we want to use the top eight players
+    // but in client order (so they don't keep changing position on the overlay)
+    i = 0 as libc::c_int;
+    cnt = 0 as libc::c_int;
+    while i < crate::src::game::g_main::g_maxclients.integer && cnt < 32 as libc::c_int {
+        player = crate::src::game::g_main::g_entities
+            .as_mut_ptr()
+            .offset(crate::src::game::g_main::level.sortedClients[i as usize] as isize);
+        if (*player).inuse as libc::c_uint != 0
+            && (*(*player).client).sess.sessionTeam as libc::c_uint == team as libc::c_uint
+        {
+            let fresh1 = cnt;
+            cnt = cnt + 1;
+            clients[fresh1 as usize] = crate::src::game::g_main::level.sortedClients[i as usize]
+        }
+        i += 1
+    }
+    // We have the top eight players, sort them by clientNum
+    crate::stdlib::qsort(
+        clients.as_mut_ptr() as *mut libc::c_void,
+        cnt as crate::stddef_h::size_t,
+        ::std::mem::size_of::<libc::c_int>() as libc::c_ulong,
+        Some(
+            SortClients
+                as unsafe extern "C" fn(
+                    _: *const libc::c_void,
+                    _: *const libc::c_void,
+                ) -> libc::c_int,
+        ),
+    );
+    // send the latest information on all clients
+    string[0 as libc::c_int as usize] = 0 as libc::c_int as libc::c_char;
+    stringlength = 0 as libc::c_int;
+    i = 0 as libc::c_int;
+    cnt = 0 as libc::c_int;
+    while i < crate::src::game::g_main::g_maxclients.integer && cnt < 32 as libc::c_int {
+        player = crate::src::game::g_main::g_entities
+            .as_mut_ptr()
+            .offset(i as isize);
+        if (*player).inuse as libc::c_uint != 0
+            && (*(*player).client).sess.sessionTeam as libc::c_uint == team as libc::c_uint
+        {
+            h = (*(*player).client).ps.stats
+                [crate::bg_public_h::STAT_HEALTH as libc::c_int as usize];
+            a = (*(*player).client).ps.stats
+                [crate::bg_public_h::STAT_ARMOR as libc::c_int as usize];
+            if h < 0 as libc::c_int {
+                h = 0 as libc::c_int
+            }
+            if a < 0 as libc::c_int {
+                a = 0 as libc::c_int
+            }
+            crate::src::qcommon::q_shared::Com_sprintf(
+                entry.as_mut_ptr(),
+                ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
+                b" %i %i %i %i %i %i\x00" as *const u8 as *const libc::c_char,
+                i,
+                (*(*player).client).pers.teamState.location,
+                h,
+                a,
+                (*(*player).client).ps.weapon,
+                (*player).s.powerups,
+            );
+            j = crate::stdlib::strlen(entry.as_mut_ptr()) as libc::c_int;
+            if (stringlength + j) as libc::c_ulong
+                >= ::std::mem::size_of::<[libc::c_char; 8192]>() as libc::c_ulong
+            {
+                break;
+            }
+            crate::stdlib::strcpy(
+                string.as_mut_ptr().offset(stringlength as isize),
+                entry.as_mut_ptr(),
+            );
+            stringlength += j;
+            cnt += 1
+        }
+        i += 1
+    }
+    crate::src::game::g_syscalls::trap_SendServerCommand(
+        ent.wrapping_offset_from(crate::src::game::g_main::g_entities.as_mut_ptr()) as libc::c_long
+            as libc::c_int,
+        crate::src::qcommon::q_shared::va(
+            b"tinfo %i %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+            cnt,
+            string.as_mut_ptr(),
+        ),
+    );
+}
+/*
+===========================================================================
+Copyright (C) 1999-2005 Id Software, Inc.
+
+This file is part of Quake III Arena source code.
+
+Quake III Arena source code is free software; you can redistribute it
+and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License,
+or (at your option) any later version.
+
+Quake III Arena source code is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Quake III Arena source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+===========================================================================
+*/
+//
+// what you get for capture
+// what your team gets for capture
+// what you get for recovery
+// what you get for picking up enemy flag
+// what you get for fragging enemy flag carrier
+// seconds until auto return
+// bonus for fraggin someone who has recently hurt your flag carrier
+// bonus for fraggin someone while either you or your target are near your flag carrier
+// bonus for fraggin someone while either you or your target are near your flag
+// awarded for returning a flag that causes a capture to happen almost immediately
+// award for fragging a flag carrier if a capture happens almost immediately
+// the radius around an object being defended where a target will be worth extra frags
+// the radius around an object being defended where an attacker will get extra frags when making kills
+// speed of grapple in flight
+// speed player is pulled at
+// Prototypes
+#[no_mangle]
+
+pub unsafe extern "C" fn CheckTeamStatus() {
+    let mut i: libc::c_int = 0;
+    let mut loc: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    let mut ent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
+    if crate::src::game::g_main::level.time - crate::src::game::g_main::level.lastTeamLocationTime
+        > 1000 as libc::c_int
+    {
+        crate::src::game::g_main::level.lastTeamLocationTime = crate::src::game::g_main::level.time;
+        i = 0 as libc::c_int;
+        while i < crate::src::game::g_main::g_maxclients.integer {
+            ent = crate::src::game::g_main::g_entities
+                .as_mut_ptr()
+                .offset(i as isize);
+            if !((*(*ent).client).pers.connected as libc::c_uint
+                != crate::g_local_h::CON_CONNECTED as libc::c_int as libc::c_uint)
+            {
+                if (*ent).inuse as libc::c_uint != 0
+                    && ((*(*ent).client).sess.sessionTeam as libc::c_uint
+                        == crate::bg_public_h::TEAM_RED as libc::c_int as libc::c_uint
+                        || (*(*ent).client).sess.sessionTeam as libc::c_uint
+                            == crate::bg_public_h::TEAM_BLUE as libc::c_int as libc::c_uint)
+                {
+                    loc = Team_GetLocation(ent);
+                    if !loc.is_null() {
+                        (*(*ent).client).pers.teamState.location = (*loc).health
+                    } else {
+                        (*(*ent).client).pers.teamState.location = 0 as libc::c_int
+                    }
+                }
+            }
+            i += 1
+        }
+        i = 0 as libc::c_int;
+        while i < crate::src::game::g_main::g_maxclients.integer {
+            ent = crate::src::game::g_main::g_entities
+                .as_mut_ptr()
+                .offset(i as isize);
+            if !((*(*ent).client).pers.connected as libc::c_uint
+                != crate::g_local_h::CON_CONNECTED as libc::c_int as libc::c_uint)
+            {
+                if (*ent).inuse as u64 != 0 {
+                    TeamplayInfoMessage(ent);
+                }
+            }
+            i += 1
+        }
+    };
+}
+/*-----------------------------------------------------------------*/
+/*QUAKED team_CTF_redplayer (1 0 0) (-16 -16 -16) (16 16 32)
+Only in CTF games.  Red players spawn here at game start.
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn SP_team_CTF_redplayer(mut ent: *mut crate::g_local_h::gentity_t) {}
+/*QUAKED team_CTF_blueplayer (0 0 1) (-16 -16 -16) (16 16 32)
+Only in CTF games.  Blue players spawn here at game start.
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn SP_team_CTF_blueplayer(mut ent: *mut crate::g_local_h::gentity_t) {}
+/*QUAKED team_CTF_redspawn (1 0 0) (-16 -16 -24) (16 16 32)
+potential spawning position for red team in CTF games.
+Targets will be fired when someone spawns in on them.
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn SP_team_CTF_redspawn(mut ent: *mut crate::g_local_h::gentity_t) {}
+/*QUAKED team_CTF_bluespawn (0 0 1) (-16 -16 -24) (16 16 32)
+potential spawning position for blue team in CTF games.
+Targets will be fired when someone spawns in on them.
+*/
+#[no_mangle]
+
+pub unsafe extern "C" fn SP_team_CTF_bluespawn(mut ent: *mut crate::g_local_h::gentity_t) {}

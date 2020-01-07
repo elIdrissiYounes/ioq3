@@ -1,0 +1,21 @@
+
+
+[package]
+name = "ioquake3"
+authors = ["C2Rust"]
+version = "0.0.0"
+publish = false
+edition = "2018"
+autobins = false
+
+[[bin]]
+name = "ioquake3"
+path = "lib.rs"
+
+
+[dependencies]
+c2rust-asm-casts = "0.1"
+libc = "0.2"
+
+
+
