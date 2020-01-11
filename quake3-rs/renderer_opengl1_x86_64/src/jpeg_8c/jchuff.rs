@@ -190,8 +190,6 @@ pub use crate::src::jpeg_8c::jerror::JWRN_JPEG_EOF;
 pub use crate::src::jpeg_8c::jerror::JWRN_MUST_RESYNC;
 pub use crate::src::jpeg_8c::jerror::JWRN_NOT_SEQUENTIAL;
 pub use crate::src::jpeg_8c::jerror::JWRN_TOO_MUCH_DATA;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -259,7 +257,7 @@ unsafe extern "C" fn jpeg_make_c_derived_tbl(
     let mut dtbl: *mut c_derived_tbl = 0 as *mut c_derived_tbl;
     let mut p: i32 = 0;
     let mut i: i32 = 0;
-    let mut l: i32 = 0;
+    let mut _l: i32 = 0;
     let mut lastp: i32 = 0;
     let mut si: i32 = 0;
     let mut maxsymbol: i32 = 0;
@@ -700,7 +698,7 @@ unsafe extern "C" fn emit_restart_s(
     mut state: *mut working_state,
     mut restart_num: i32,
 ) -> crate::jmorecfg_h::boolean {
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     if flush_bits_s(state) == 0 {
         return 0i32;
     }
@@ -776,7 +774,7 @@ unsafe extern "C" fn encode_mcu_DC_first(
     let mut temp: i32 = 0;
     let mut temp2: i32 = 0;
     let mut nbits: i32 = 0;
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     let mut ci: i32 = 0;
     let mut Al: i32 = (*cinfo).Al;
     let mut block: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
@@ -867,7 +865,7 @@ unsafe extern "C" fn encode_mcu_AC_first(
     let mut temp2: i32 = 0;
     let mut nbits: i32 = 0;
     let mut r: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut Se: i32 = 0;
     let mut Al: i32 = 0;
     let mut natural_order: *const i32 = 0 as *const i32;
@@ -986,7 +984,7 @@ unsafe extern "C" fn encode_mcu_DC_refine(
 ) -> crate::jmorecfg_h::boolean {
     let mut entropy: huff_entropy_ptr = (*cinfo).entropy as huff_entropy_ptr;
     let mut temp: i32 = 0;
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     let mut Al: i32 = (*cinfo).Al;
     let mut block: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
     (*entropy).next_output_byte = (*(*cinfo).dest).next_output_byte;
@@ -1167,7 +1165,7 @@ unsafe extern "C" fn encode_one_block(
     let mut temp: i32 = 0;
     let mut temp2: i32 = 0;
     let mut nbits: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut r: i32 = 0;
     let mut i: i32 = 0;
     let mut Se: i32 = (*(*state).cinfo).lim_Se;
@@ -1307,7 +1305,7 @@ unsafe extern "C" fn encode_mcu_huff(
         },
         cinfo: 0 as *mut crate::jpeglib_h::jpeg_compress_struct,
     };
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     let mut ci: i32 = 0;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
@@ -1428,7 +1426,7 @@ unsafe extern "C" fn htest_one_block(
 ) {
     let mut temp: i32 = 0;
     let mut nbits: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut r: i32 = 0;
     let mut Se: i32 = (*cinfo).lim_Se;
     let mut natural_order: *const i32 = (*cinfo).natural_order;
@@ -1520,7 +1518,7 @@ unsafe extern "C" fn encode_mcu_gather(
     mut MCU_data: *mut crate::jpeglib_h::JBLOCKROW,
 ) -> crate::jmorecfg_h::boolean {
     let mut entropy: huff_entropy_ptr = (*cinfo).entropy as huff_entropy_ptr;
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     let mut ci: i32 = 0;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
@@ -1827,7 +1825,7 @@ unsafe extern "C" fn start_pass_huff(
     mut gather_statistics: crate::jmorecfg_h::boolean,
 ) {
     let mut entropy: huff_entropy_ptr = (*cinfo).entropy as huff_entropy_ptr;
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     let mut tbl: i32 = 0;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
@@ -2028,7 +2026,7 @@ unsafe extern "C" fn start_pass_huff(
 
 pub unsafe extern "C" fn jinit_huff_encoder(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
     let mut entropy: huff_entropy_ptr = 0 as *mut huff_entropy_encoder;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     entropy = Some(
         (*(*cinfo).mem)
             .alloc_small

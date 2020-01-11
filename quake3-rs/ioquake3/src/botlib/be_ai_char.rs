@@ -6,12 +6,7 @@ pub use crate::botlib_h::bsp_surface_s;
 pub use crate::botlib_h::bsp_surface_t;
 pub use crate::botlib_h::bsp_trace_s;
 pub use crate::botlib_h::bsp_trace_t;
-use crate::src::botlib::be_interface::botimport;
-use crate::src::botlib::l_libvar::LibVarGetValue;
-use crate::src::botlib::l_log::Log_Write;
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetClearedMemory;
-use crate::src::botlib::l_memory::GetMemory;
+
 pub use crate::src::botlib::l_precomp::define_s;
 pub use crate::src::botlib::l_precomp::define_t;
 pub use crate::src::botlib::l_precomp::indent_s;
@@ -47,11 +42,7 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::fabs;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strncpy;
+
 //a bot character
 
 pub type bot_character_t = bot_character_s;
@@ -129,7 +120,7 @@ pub unsafe extern "C" fn BotCharacterFromHandle(mut handle: i32) -> *mut bot_cha
 #[no_mangle]
 
 pub unsafe extern "C" fn BotDumpCharacter(mut ch: *mut bot_character_t) {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
     crate::src::botlib::l_log::Log_Write(
         b"%s\n\x00" as *const u8 as *mut i8,
         (*ch).filename.as_mut_ptr(),
@@ -520,7 +511,7 @@ pub unsafe extern "C" fn BotLoadCharacterFromFile(
 #[no_mangle]
 
 pub unsafe extern "C" fn BotFindCachedCharacter(mut charfile: *mut i8, mut skill: f32) -> i32 {
-    let mut handle: i32 = 0; //end for
+    let mut _handle: i32 = 0; //end for
 
     for handle in 1..=64 {
         if !botcharacters[handle as usize].is_null() {
@@ -770,7 +761,7 @@ pub unsafe extern "C" fn BotInterpolateCharacters(
     let mut ch1: *mut bot_character_t = 0 as *mut bot_character_t;
     let mut ch2: *mut bot_character_t = 0 as *mut bot_character_t;
     let mut out: *mut bot_character_t = 0 as *mut bot_character_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut handle: i32 = 0;
     let mut scale: f32 = 0.;
     ch1 = BotCharacterFromHandle(handle1);

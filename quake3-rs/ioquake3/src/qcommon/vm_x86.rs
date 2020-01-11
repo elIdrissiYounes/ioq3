@@ -27,11 +27,7 @@ pub use crate::src::qcommon::common::Z_Free;
 pub use crate::src::qcommon::common::Z_Malloc;
 pub use crate::src::qcommon::vm::currentVM;
 pub use crate::src::qcommon::vm::VM_BlockCopy;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::mmap;
-use crate::stdlib::mprotect;
-use crate::stdlib::munmap;
+
 pub use crate::vm_local_h::vmSymbol_s;
 pub use crate::vm_local_h::vm_s;
 pub use crate::vm_local_h::OP_ADD;
@@ -523,7 +519,7 @@ Relative call to vm->codeBase + callOfs
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn EmitCallRel(mut vm: *mut crate::qcommon_h::vm_t, mut callOfs: i32) {
+pub unsafe extern "C" fn EmitCallRel(mut _vm: *mut crate::qcommon_h::vm_t, mut callOfs: i32) {
     EmitString(b"E8\x00" as *const u8 as *const i8); // call 0x12345678
     Emit4(callOfs - compiledOfs - 4);
 }
@@ -535,7 +531,7 @@ Call to DoSyscall()
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn EmitCallDoSyscall(mut vm: *mut crate::qcommon_h::vm_t) -> i32 {
+pub unsafe extern "C" fn EmitCallDoSyscall(mut _vm: *mut crate::qcommon_h::vm_t) -> i32 {
     // use edx register to store DoSyscall address
     EmitRexString(0x48, b"BA\x00" as *const u8 as *const i8); // mov edx, DoSyscall
     EmitPtr(::std::mem::transmute::<
@@ -1747,7 +1743,7 @@ pub unsafe extern "C" fn VM_CallCompiled(
         0 as *mut crate::src::qcommon::q_shared::byte;
     let mut opStack: *mut i32 = 0 as *mut i32;
     let mut opStackOfs: i32 = 0;
-    let mut arg: i32 = 0;
+    let mut _arg: i32 = 0;
     crate::src::qcommon::vm::currentVM = vm;
     // interpret the code
     (*vm).currentlyInterpreting = crate::src::qcommon::q_shared::qtrue;

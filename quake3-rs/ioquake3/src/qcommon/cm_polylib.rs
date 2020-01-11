@@ -31,7 +31,6 @@ pub mod q_shared_h {
         *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
         *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -42,8 +41,7 @@ pub use crate::be_aas_h::C2RustUnnamed_0;
 pub use crate::src::qcommon::cm_polylib::q_shared_h::CrossProduct;
 pub use crate::src::qcommon::cm_polylib::q_shared_h::VectorLength;
 pub use crate::src::qcommon::common::Com_Error;
-use crate::src::qcommon::common::Z_Free;
-use crate::src::qcommon::common::Z_Malloc;
+
 pub use crate::src::qcommon::q_math::vec3_origin;
 pub use crate::src::qcommon::q_math::VectorNormalize2;
 pub use crate::src::qcommon::q_shared::qboolean;
@@ -56,12 +54,7 @@ pub use crate::src::qcommon::q_shared::ERR_DROP;
 pub use crate::src::qcommon::q_shared::ERR_FATAL;
 pub use crate::src::qcommon::q_shared::ERR_NEED_CD;
 pub use crate::src::qcommon::q_shared::ERR_SERVERDISCONNECT;
-use crate::stdlib::printf;
 
-use crate::stdlib::fabs;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -167,7 +160,7 @@ pub static mut c_removed: i32 = 0;
 pub unsafe extern "C" fn RemoveColinearPoints(
     mut w: *mut crate::src::qcommon::cm_polylib::winding_t,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
     let mut v1: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -271,7 +264,7 @@ WindingArea
 pub unsafe extern "C" fn WindingArea(
     mut w: *mut crate::src::qcommon::cm_polylib::winding_t,
 ) -> crate::src::qcommon::q_shared::vec_t {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut d1: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut d2: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut cross: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -321,7 +314,7 @@ pub unsafe extern "C" fn WindingBounds(
 ) {
     let mut v: crate::src::qcommon::q_shared::vec_t = 0.;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let ref mut fresh0 = *mins.offset(2);
     *fresh0 = 65535f32;
     let ref mut fresh1 = *mins.offset(1);
@@ -359,7 +352,7 @@ pub unsafe extern "C" fn WindingCenter(
     mut w: *mut crate::src::qcommon::cm_polylib::winding_t,
     mut center: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut scale: f32 = 0.;
     *center.offset(0) = crate::src::qcommon::q_math::vec3_origin[0];
     *center.offset(1) = crate::src::qcommon::q_math::vec3_origin[1];
@@ -388,7 +381,7 @@ pub unsafe extern "C" fn BaseWindingForPlane(
     mut normal: *mut crate::src::qcommon::q_shared::vec_t,
     mut dist: crate::src::qcommon::q_shared::vec_t,
 ) -> *mut crate::src::qcommon::cm_polylib::winding_t {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut x: i32 = 0;
     let mut max: crate::src::qcommon::q_shared::vec_t = 0.;
     let mut v: crate::src::qcommon::q_shared::vec_t = 0.;
@@ -509,7 +502,7 @@ ReverseWinding
 pub unsafe extern "C" fn ReverseWinding(
     mut w: *mut crate::src::qcommon::cm_polylib::winding_t,
 ) -> *mut crate::src::qcommon::cm_polylib::winding_t {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut c: *mut crate::src::qcommon::cm_polylib::winding_t =
         0 as *mut crate::src::qcommon::cm_polylib::winding_t;
     c = AllocWinding((*w).numpoints);
@@ -561,7 +554,7 @@ pub unsafe extern "C" fn ClipWindingEpsilon(
     let mut counts: [i32; 3] = [0; 3];
     static mut dot: crate::src::qcommon::q_shared::vec_t = 0.;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut p1: *mut crate::src::qcommon::q_shared::vec_t =
         0 as *mut crate::src::qcommon::q_shared::vec_t;
     let mut p2: *mut crate::src::qcommon::q_shared::vec_t =
@@ -708,7 +701,7 @@ pub unsafe extern "C" fn ChopWindingInPlace(
     let mut counts: [i32; 3] = [0; 3];
     static mut dot: crate::src::qcommon::q_shared::vec_t = 0.;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut p1: *mut crate::src::qcommon::q_shared::vec_t =
         0 as *mut crate::src::qcommon::q_shared::vec_t;
     let mut p2: *mut crate::src::qcommon::q_shared::vec_t =
@@ -956,7 +949,7 @@ pub unsafe extern "C" fn WindingOnPlaneSide(
 ) -> i32 {
     let mut front: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
     let mut back: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut d: crate::src::qcommon::q_shared::vec_t = 0.;
     front = crate::src::qcommon::q_shared::qfalse;
     back = crate::src::qcommon::q_shared::qfalse;
@@ -1025,7 +1018,7 @@ pub unsafe extern "C" fn AddWindingToConvexHull(
     mut hull: *mut *mut crate::src::qcommon::cm_polylib::winding_t,
     mut normal: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
     let mut p: *mut f32 = 0 as *mut f32;

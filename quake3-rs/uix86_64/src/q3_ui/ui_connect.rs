@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::src::qcommon::q_shared::connstate_t;
 pub use crate::src::qcommon::q_shared::qboolean;
 pub use crate::src::qcommon::q_shared::qfalse;
@@ -301,7 +299,7 @@ pub use crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer;
 pub use crate::src::ui::ui_syscalls::trap_Cvar_VariableValue;
 pub use crate::src::ui::ui_syscalls::trap_GetClientState;
 pub use crate::src::ui::ui_syscalls::trap_GetConfigString;
-use crate::stdlib::strlen;
+
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menucommon_s;
 pub use crate::ui_local_h::menufield_s;

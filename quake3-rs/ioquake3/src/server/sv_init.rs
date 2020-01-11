@@ -59,8 +59,7 @@ pub use crate::src::client::cl_main::CL_Disconnect;
 pub use crate::src::client::cl_main::CL_MapLoading;
 pub use crate::src::client::cl_main::CL_ShutdownAll;
 pub use crate::src::client::cl_main::CL_StartHunkUsers;
-use crate::src::qcommon::cm_load::CM_ClearMap;
-use crate::src::qcommon::cm_load::CM_LoadMap;
+
 pub use crate::src::qcommon::cmd::Cbuf_AddText;
 pub use crate::src::qcommon::common::com_dedicated;
 pub use crate::src::qcommon::common::com_errorEntered;
@@ -179,10 +178,7 @@ pub use crate::src::server::sv_main::SV_MasterShutdown;
 pub use crate::src::server::sv_main::SV_SendServerCommand;
 pub use crate::src::server::sv_snapshot::SV_SendClientSnapshot;
 pub use crate::src::server::sv_world::SV_ClearWorld;
-use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
+
 pub use crate::vm_local_h::vm_s;
 /*
 ===========================================================================
@@ -658,7 +654,7 @@ SV_ClearServer
 */
 
 unsafe extern "C" fn SV_ClearServer() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in 0..1024 {
         if !crate::src::server::sv_main::sv.configstrings[i as usize].is_null() {
@@ -991,7 +987,7 @@ Only called at main exe startup, not for each game
 #[no_mangle]
 
 pub unsafe extern "C" fn SV_Init() {
-    let mut index: i32 = 0;
+    let mut _index: i32 = 0;
     crate::src::server::sv_ccmds::SV_AddOperatorCommands();
     // serverinfo vars
     crate::src::qcommon::cvar::Cvar_Get(
@@ -1787,7 +1783,7 @@ pub unsafe extern "C" fn SV_Shutdown(mut finalmsg: *mut i8) {
     SV_ClearServer();
     // free server static data
     if !crate::src::server::sv_main::svs.clients.is_null() {
-        let mut index: i32 = 0;
+        let mut _index: i32 = 0;
 
         for index in 0..(*crate::src::server::sv_main::sv_maxclients).integer {
             crate::src::server::sv_client::SV_FreeClient(

@@ -27,7 +27,6 @@ pub mod q_shared_h {
                 + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -90,7 +89,7 @@ pub use crate::botlib_h::bsp_trace_s;
 pub use crate::botlib_h::bsp_trace_t;
 pub use crate::src::botlib::be_aas_move::q_shared_h::VectorCompare;
 pub use crate::src::botlib::be_aas_move::q_shared_h::VectorLength;
-use crate::src::botlib::l_libvar::LibVarValue;
+
 pub use crate::src::qcommon::q_math::vec3_origin;
 pub use crate::src::qcommon::q_math::AngleVectors;
 pub use crate::src::qcommon::q_math::VectorNormalize;
@@ -108,23 +107,7 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::abs;
-use crate::stdlib::fabsf;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
 
-use crate::src::botlib::be_aas_bspq3::AAS_PointContents;
-use crate::src::botlib::be_aas_bspq3::AAS_Trace;
-use crate::src::botlib::be_aas_debug::AAS_ClearShownDebugLines;
-use crate::src::botlib::be_aas_debug::AAS_DebugLine;
-use crate::src::botlib::be_aas_main::aasworld;
-use crate::src::botlib::be_aas_sample::AAS_PlaneFromNum;
-use crate::src::botlib::be_aas_sample::AAS_PointAreaNum;
-use crate::src::botlib::be_aas_sample::AAS_PointInsideFace;
-use crate::src::botlib::be_aas_sample::AAS_PointPresenceType;
-use crate::src::botlib::be_aas_sample::AAS_PresenceTypeBoundingBox;
-use crate::src::botlib::be_aas_sample::AAS_TraceAreas;
-use crate::src::botlib::be_aas_sample::AAS_TraceClientBBox;
 extern "C" {
     /*
     ===========================================================================
@@ -506,7 +489,7 @@ pub unsafe extern "C" fn AAS_AgainstLadder(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
 ) -> i32 {
     let mut areanum: i32 = 0; //end if
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut facenum: i32 = 0;
     let mut side: i32 = 0;
     let mut org: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -1057,7 +1040,7 @@ pub unsafe extern "C" fn AAS_ClipToBBox(
     mut maxs: *mut crate::src::qcommon::q_shared::vec_t,
 ) -> i32 {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut side: i32 = 0;
     let mut front: f32 = 0.;
     let mut back: f32 = 0.;

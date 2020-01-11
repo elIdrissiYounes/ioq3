@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod entcode_h {
     /*OPT: ec_window must be at least 32 bits, but if you have fast arithmetic on a
     larger type, you can speed up the decoder by using it here.*/
@@ -70,7 +68,7 @@ pub mod pitch_h {
         mut y: *const crate::arch_h::opus_val16,
         mut N: i32,
     ) -> crate::arch_h::opus_val32 {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut xy: crate::arch_h::opus_val32 = 0f32;
 
         for i in 0..N {
@@ -78,7 +76,6 @@ pub mod pitch_h {
         }
         return xy;
     }
-    use crate::arch_h::opus_val32;
 }
 pub use crate::opus_types_h::opus_uint32;
 pub use crate::stdlib::__uint32_t;
@@ -87,8 +84,7 @@ pub use crate::stdlib::uint32_t;
 pub use crate::arch_h::celt_norm;
 pub use crate::arch_h::opus_val16;
 pub use crate::arch_h::opus_val32;
-use crate::src::opus_1_2_1::celt::cwrs::decode_pulses;
-use crate::src::opus_1_2_1::celt::cwrs::encode_pulses;
+
 pub use crate::src::opus_1_2_1::celt::entcode::ec_ctx;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_dec;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_enc;
@@ -96,10 +92,7 @@ pub use crate::src::opus_1_2_1::celt::entcode::ec_window;
 pub use crate::src::opus_1_2_1::celt::vq::entcode_h::celt_udiv;
 pub use crate::src::opus_1_2_1::celt::vq::mathops_h::fast_atan2f;
 pub use crate::src::opus_1_2_1::celt::vq::pitch_h::celt_inner_prod_c;
-use crate::stdlib::cos;
-use crate::stdlib::fabs;
-use crate::stdlib::floor;
-use crate::stdlib::sqrt;
+
 /* Copyright (c) 2007-2008 CSIRO
 Copyright (c) 2007-2009 Xiph.Org Foundation
 Written by Jean-Marc Valin */
@@ -289,11 +282,11 @@ pub unsafe extern "C" fn op_pvq_search_c(
     mut iy: *mut i32,
     mut K: i32,
     mut N: i32,
-    mut arch: i32,
+    mut _arch: i32,
 ) -> crate::arch_h::opus_val16 {
     let mut y: *mut crate::arch_h::celt_norm = 0 as *mut crate::arch_h::celt_norm;
     let mut signx: *mut i32 = 0 as *mut i32;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut pulsesLeft: i32 = 0;
     let mut sum: crate::arch_h::opus_val32 = 0.;
@@ -378,7 +371,7 @@ pub unsafe extern "C" fn op_pvq_search_c(
         pulsesLeft = 0
     }
 
-    for i in 0..pulsesLeft {
+    for _i in 0..pulsesLeft {
         let mut Rxy: crate::arch_h::opus_val16 = 0.;
 
         let mut Ryy: crate::arch_h::opus_val16 = 0.;
@@ -520,7 +513,7 @@ pub unsafe extern "C" fn renormalise_vector(
     mut X: *mut crate::arch_h::celt_norm,
     mut N: i32,
     mut gain: crate::arch_h::opus_val16,
-    mut arch: i32,
+    mut _arch: i32,
 ) {
     let mut i: i32 = 0;
     let mut E: crate::arch_h::opus_val32 = 0.;
@@ -594,7 +587,7 @@ pub unsafe extern "C" fn stereo_itheta(
     mut Y: *const crate::arch_h::celt_norm,
     mut stereo: i32,
     mut N: i32,
-    mut arch: i32,
+    mut _arch: i32,
 ) -> i32 {
     let mut i: i32 = 0;
     let mut itheta: i32 = 0;

@@ -25,7 +25,7 @@ pub use crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer;
 pub use crate::src::ui::ui_syscalls::trap_Cvar_VariableValue;
 pub use crate::src::ui::ui_syscalls::trap_GetConfigString;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
-use crate::stdlib::memset;
+
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
 pub use crate::ui_local_h::menucommon_s;
@@ -202,7 +202,7 @@ Add current server to favorites
 pub unsafe extern "C" fn Favorites_Add() {
     let mut adrstr: [i8; 128] = [0; 128];
     let mut serverbuff: [i8; 128] = [0; 128];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut best: i32 = 0;
     crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer(
         b"cl_currentServerAddress\x00" as *const u8 as *const i8,

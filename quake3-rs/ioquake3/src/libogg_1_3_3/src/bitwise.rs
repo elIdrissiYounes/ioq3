@@ -2,12 +2,6 @@ use ::libc;
 
 pub use crate::ogg_h::oggpack_buffer;
 
-use crate::stdlib::free;
-use crate::stdlib::malloc;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::realloc;
-
 static mut mask: [usize; 33] = [
     0,
     0x1,

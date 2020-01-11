@@ -13,14 +13,7 @@ pub use crate::ogg_h::ogg_packet;
 pub use crate::ogg_h::ogg_page;
 pub use crate::ogg_h::ogg_stream_state;
 pub use crate::ogg_h::ogg_sync_state;
-use crate::stdlib::free;
-use crate::stdlib::malloc;
-use crate::stdlib::memchr;
-use crate::stdlib::memcmp;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::realloc;
+
 /* *******************************************************************
 *                                                                  *
 * THIS FILE IS PART OF THE Ogg CONTAINER SOURCE CODE.              *
@@ -114,7 +107,7 @@ page, it's counted */
 #[no_mangle]
 
 pub unsafe extern "C" fn ogg_page_packets(mut og: *const crate::ogg_h::ogg_page) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut n: i32 = *(*og).header.offset(26) as i32;
     let mut count: i32 = 0;
 
@@ -829,7 +822,7 @@ pub unsafe extern "C" fn ogg_sync_pageseek(
     }
     if (*oy).headerbytes == 0 {
         let mut headerbytes: i32 = 0;
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         if bytes < 27 {
             return 0isize;
         }

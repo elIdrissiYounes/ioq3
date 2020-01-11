@@ -607,9 +607,9 @@ pub unsafe extern "C" fn GL_SelectTexture(mut unit: i32) {
 
 pub unsafe extern "C" fn GL_BindMultitexture(
     mut image0: *mut crate::tr_common_h::image_t,
-    mut env0: crate::stdlib::GLuint,
+    mut _env0: crate::stdlib::GLuint,
     mut image1: *mut crate::tr_common_h::image_t,
-    mut env1: crate::stdlib::GLuint,
+    mut _env1: crate::stdlib::GLuint,
 ) {
     let mut texnum0: i32 = 0;
     let mut texnum1: i32 = 0;
@@ -1408,8 +1408,8 @@ pub unsafe extern "C" fn RE_StretchRaw(
 #[no_mangle]
 
 pub unsafe extern "C" fn RE_UploadCinematic(
-    mut w: i32,
-    mut h: i32,
+    mut _w: i32,
+    mut _h: i32,
     mut cols: i32,
     mut rows: i32,
     mut data: *const crate::src::qcommon::q_shared::byte,
@@ -1626,7 +1626,7 @@ Also called by RE_EndRegistration
 #[no_mangle]
 
 pub unsafe extern "C" fn RB_ShowImages() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut image: *mut crate::tr_common_h::image_t = 0 as *mut crate::tr_common_h::image_t;
     let mut x: f32 = 0.;
     let mut y: f32 = 0.;
@@ -1756,7 +1756,7 @@ pub unsafe extern "C" fn RB_SwapBuffers(mut data: *const libc::c_void) -> *const
     // we measure overdraw by reading back the stencil buffer and
     // counting up the number of increments that have happened
     if (*crate::src::renderergl1::tr_init::r_measureOverdraw).integer != 0 {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut sum: isize = 0;
         let mut stencilReadback: *mut u8 = 0 as *mut u8;
         stencilReadback = crate::src::renderergl1::tr_main::ri

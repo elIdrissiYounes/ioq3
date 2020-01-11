@@ -99,7 +99,6 @@ pub mod q_shared_h {
                 + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
-    use crate::stdlib::sqrt;
 
     // entity index
     // entityType_t
@@ -422,14 +421,11 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::sqrt;
 
 pub use crate::src::game::g_client::stdlib_h::atoi;
-use crate::src::game::g_team::SelectCTFSpawnPoint;
-use crate::stdlib::memset;
+
 pub use crate::stdlib::rand;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
+
 pub use crate::stdlib::strtol;
 /*
 ===========================================================================
@@ -500,7 +496,7 @@ The intermission will be viewed from this point.  Target an info_notnull for the
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn SP_info_player_intermission(mut ent: *mut crate::g_local_h::gentity_t) {}
+pub unsafe extern "C" fn SP_info_player_intermission(mut _ent: *mut crate::g_local_h::gentity_t) {}
 /*
 =======================================================================
 
@@ -519,7 +515,7 @@ SpotWouldTelefrag
 pub unsafe extern "C" fn SpotWouldTelefrag(
     mut spot: *mut crate::g_local_h::gentity_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut num: i32 = 0;
     let mut touch: [i32; 1024] = [0; 1024];
     let mut hit: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
@@ -1023,7 +1019,7 @@ pub unsafe extern "C" fn SetClientViewAngle(
     mut ent: *mut crate::g_local_h::gentity_t,
     mut angle: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     // set the delta angle
 
     for i in 0..3 {
@@ -1065,7 +1061,7 @@ pub unsafe extern "C" fn TeamCount(
     mut ignoreClientNum: i32,
     mut team: crate::bg_public_h::team_t,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut count: i32 = 0;
 
     for i in 0..crate::src::game::g_main::level.maxclients {
@@ -1097,7 +1093,7 @@ Returns the client number of the team leader
 #[no_mangle]
 
 pub unsafe extern "C" fn TeamLeader(mut team: i32) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in 0..crate::src::game::g_main::level.maxclients {
         if !((*crate::src::game::g_main::level.clients.offset(i as isize))
@@ -2224,7 +2220,7 @@ server system housekeeping.
 pub unsafe extern "C" fn ClientDisconnect(mut clientNum: i32) {
     let mut ent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut tent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     // cleanup if we are kicking a bot that
     // hasn't spawned yet
     crate::src::game::g_bot::G_RemoveQueuedBotBegin(clientNum);

@@ -9,8 +9,7 @@ pub use crate::src::qcommon::q_shared::byte;
 pub use crate::src::qcommon::q_shared::qboolean;
 pub use crate::src::qcommon::q_shared::qfalse;
 pub use crate::src::qcommon::q_shared::qtrue;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -518,7 +517,7 @@ pub unsafe extern "C" fn Huff_Decompress(mut mbuf: *mut crate::qcommon_h::msg_t,
 #[no_mangle]
 
 pub unsafe extern "C" fn Huff_Compress(mut mbuf: *mut crate::qcommon_h::msg_t, mut offset: i32) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut ch: i32 = 0;
     let mut size: i32 = 0;
     let mut seq: [crate::src::qcommon::q_shared::byte; 65536] = [0; 65536];

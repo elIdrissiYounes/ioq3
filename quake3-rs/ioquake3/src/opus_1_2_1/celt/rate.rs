@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod entcode_h {
     /*OPT: ec_window must be at least 32 bits, but if you have fast arithmetic on a
     larger type, you can speed up the decoder by using it here.*/
@@ -44,10 +42,7 @@ pub use crate::src::opus_1_2_1::celt::entcode::ec_ctx;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_dec;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_enc;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_window;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_uint;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_bit_logp;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_uint;
+
 pub use crate::src::opus_1_2_1::celt::rate::entcode_h::celt_udiv;
 /* Copyright (c) 2007-2008 CSIRO
 Copyright (c) 2007-2009 Xiph.Org Foundation
@@ -111,7 +106,7 @@ unsafe extern "C" fn interp_bits2pulses(
     let mut psum: crate::opus_types_h::opus_int32 = 0;
     let mut lo: i32 = 0;
     let mut hi: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut logM: i32 = 0;
     let mut stereo: i32 = 0;
@@ -127,7 +122,7 @@ unsafe extern "C" fn interp_bits2pulses(
     lo = 0;
     hi = (1) << 6;
 
-    for i in 0..6 {
+    for _i in 0..6 {
         let mut mid: i32 = lo + hi >> 1;
 
         psum = 0;

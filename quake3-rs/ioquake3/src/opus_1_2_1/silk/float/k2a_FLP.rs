@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::opus_types_h::opus_int32;
 pub use crate::stdlib::__int32_t;
 pub use crate::stdlib::int32_t;
@@ -83,7 +81,7 @@ pub unsafe extern "C" fn silk_k2a_FLP(
 /* I     prediction order                                           */
 {
     let mut k: i32 = 0;
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut rck: f32 = 0.;
     let mut tmp1: f32 = 0.;
     let mut tmp2: f32 = 0.;

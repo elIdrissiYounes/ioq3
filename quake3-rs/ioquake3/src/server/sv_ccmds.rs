@@ -142,7 +142,7 @@ pub use crate::src::qcommon::q_shared::Q_IsColorString;
 pub use crate::src::qcommon::q_shared::Q_stricmp;
 pub use crate::src::qcommon::q_shared::Q_stricmpn;
 pub use crate::src::qcommon::q_shared::Q_strncpyz;
-use crate::src::qcommon::q_shared::ShortSwap;
+
 pub use crate::src::qcommon::q_shared::TR_GRAVITY;
 pub use crate::src::qcommon::q_shared::TR_INTERPOLATE;
 pub use crate::src::qcommon::q_shared::TR_LINEAR;
@@ -170,11 +170,7 @@ pub use crate::src::server::sv_main::svs;
 pub use crate::src::server::sv_main::SV_AddServerCommand;
 pub use crate::src::server::sv_main::SV_SendServerCommand;
 pub use crate::src::server::sv_world::SV_SectorList_f;
-use crate::stdlib::memmove;
-use crate::stdlib::strcat;
-use crate::stdlib::strchr;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
+
 pub use crate::vm_local_h::vm_s;
 /*
 ===========================================================================
@@ -1096,7 +1092,7 @@ Save bans to file.
 */
 
 unsafe extern "C" fn SV_WriteBans() {
-    let mut index: i32 = 0;
+    let mut _index: i32 = 0;
     let mut writeto: crate::src::qcommon::q_shared::fileHandle_t = 0;
     let mut filepath: [i8; 64] = [0; 64];
     if (*crate::src::server::sv_main::sv_banFile).string.is_null()
@@ -2001,7 +1997,7 @@ SV_CompleteMapName
 ==================
 */
 
-unsafe extern "C" fn SV_CompleteMapName(mut args: *mut i8, mut argNum: i32) {
+unsafe extern "C" fn SV_CompleteMapName(mut _args: *mut i8, mut argNum: i32) {
     if argNum == 2 {
         crate::src::qcommon::common::Field_CompleteFilename(
             b"maps\x00" as *const u8 as *const i8,
@@ -2017,7 +2013,7 @@ SV_CompletePlayerName
 ==================
 */
 
-unsafe extern "C" fn SV_CompletePlayerName(mut args: *mut i8, mut argNum: i32) {
+unsafe extern "C" fn SV_CompletePlayerName(mut _args: *mut i8, mut argNum: i32) {
     if argNum == 2 {
         let mut names: [[i8; 32]; 64] = [[0; 32]; 64];
         let mut namesPtr: [*const i8; 64] = [0 as *const i8; 64];

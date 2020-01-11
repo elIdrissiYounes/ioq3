@@ -179,7 +179,7 @@ pub use crate::src::game::g_syscalls::trap_SendConsoleCommand;
 pub use crate::src::game::g_syscalls::trap_SendServerCommand;
 pub use crate::src::game::g_syscalls::trap_SetConfigstring;
 pub use crate::src::game::g_syscalls::trap_UnlinkEntity;
-use crate::src::game::g_team::CheckTeamStatus;
+
 pub use crate::src::game::g_utils::G_Find;
 pub use crate::src::game::g_utils::G_FreeEntity;
 pub use crate::src::game::g_utils::G_ModelIndex;
@@ -225,10 +225,6 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::memset;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
-use crate::stdlib::vsnprintf;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -1671,15 +1667,15 @@ pub unsafe extern "C" fn vmMain(
     mut arg0: i32,
     mut arg1: i32,
     mut arg2: i32,
-    mut arg3: i32,
-    mut arg4: i32,
-    mut arg5: i32,
-    mut arg6: i32,
-    mut arg7: i32,
-    mut arg8: i32,
-    mut arg9: i32,
-    mut arg10: i32,
-    mut arg11: i32,
+    mut _arg3: i32,
+    mut _arg4: i32,
+    mut _arg5: i32,
+    mut _arg6: i32,
+    mut _arg7: i32,
+    mut _arg8: i32,
+    mut _arg9: i32,
+    mut _arg10: i32,
+    mut _arg11: i32,
 ) -> crate::stdlib::intptr_t {
     match command {
         0 => {
@@ -2089,7 +2085,7 @@ pub unsafe extern "C" fn G_ShutdownGame(mut restart: i32) {
 //===================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn Com_Error(mut level_0: i32, mut error: *const i8, mut args: ...) -> ! {
+pub unsafe extern "C" fn Com_Error(mut _level_0: i32, mut error: *const i8, mut args: ...) -> ! {
     let mut argptr: ::std::ffi::VaListImpl;
     let mut text: [i8; 1024] = [0; 1024];
     argptr = args.clone();
@@ -2284,7 +2280,7 @@ spectator in the game and restart
 #[no_mangle]
 
 pub unsafe extern "C" fn AddTournamentPlayer() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut client: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
     let mut nextInLine: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
     if level.numPlayingClients >= 2 {
@@ -2820,7 +2816,7 @@ BeginIntermission
 #[no_mangle]
 
 pub unsafe extern "C" fn BeginIntermission() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut client: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     if level.intermissiontime != 0 {
         return;
@@ -3523,7 +3519,7 @@ SetLeader
 #[no_mangle]
 
 pub unsafe extern "C" fn SetLeader(mut team: i32, mut client: i32) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if (*level.clients.offset(client as isize)).pers.connected == crate::g_local_h::CON_DISCONNECTED
     {
         PrintTeam(

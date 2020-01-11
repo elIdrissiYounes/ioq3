@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::stdlib::__int32_t;
 pub use crate::stdlib::__uint32_t;
 pub use crate::stdlib::int32_t;
@@ -11,9 +9,7 @@ pub use crate::src::opus_1_2_1::celt::entcode::ec_ctx;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_dec;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_enc;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_window;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_update;
-use crate::src::opus_1_2_1::celt::entdec::ec_decode_bin;
-use crate::src::opus_1_2_1::celt::entenc::ec_encode_bin;
+
 /* When called, decay is positive and at most 11456. */
 
 unsafe extern "C" fn ec_laplace_get_freq1(mut fs0: u32, mut decay: i32) -> u32 {

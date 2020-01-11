@@ -50,10 +50,7 @@ pub use crate::botlib_h::bsp_surface_s;
 pub use crate::botlib_h::bsp_surface_t;
 pub use crate::botlib_h::bsp_trace_s;
 pub use crate::botlib_h::bsp_trace_t;
-use crate::src::botlib::be_aas_main::aasworld;
-use crate::src::botlib::be_interface::botimport;
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetClearedMemory;
+
 pub use crate::src::qcommon::q_shared::byte;
 pub use crate::src::qcommon::q_shared::cplane_s;
 pub use crate::src::qcommon::q_shared::cplane_t;
@@ -68,8 +65,7 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::abs;
-use crate::stdlib::memcpy;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -137,7 +133,7 @@ pub struct optimized_s {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_KeepEdge(mut edge: *mut crate::aasfile_h::aas_edge_t) -> i32 {
+pub unsafe extern "C" fn AAS_KeepEdge(mut _edge: *mut crate::aasfile_h::aas_edge_t) -> i32 {
     return 1;
 }
 //end of the function AAS_KeepFace
@@ -153,7 +149,7 @@ pub unsafe extern "C" fn AAS_OptimizeEdge(
     mut optimized: *mut optimized_t,
     mut edgenum: i32,
 ) -> i32 {
-    let mut i: i32 = 0; //end if
+    let mut _i: i32 = 0; //end if
     let mut optedgenum: i32 = 0;
     let mut edge: *mut crate::aasfile_h::aas_edge_t = 0 as *mut crate::aasfile_h::aas_edge_t;
     let mut optedge: *mut crate::aasfile_h::aas_edge_t = 0 as *mut crate::aasfile_h::aas_edge_t;
@@ -254,7 +250,7 @@ pub unsafe extern "C" fn AAS_OptimizeFace(
     mut optimized: *mut optimized_t,
     mut facenum: i32,
 ) -> i32 {
-    let mut i: i32 = 0; //end if
+    let mut _i: i32 = 0; //end if
     let mut edgenum: i32 = 0;
     let mut optedgenum: i32 = 0;
     let mut optfacenum: i32 = 0;

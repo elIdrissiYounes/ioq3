@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::src::qcommon::q_shared::byte;
 #[no_mangle]
 
@@ -77,7 +75,7 @@ pub unsafe extern "C" fn CRC_Value(mut crcvalue: u16) -> u16 {
 
 pub unsafe extern "C" fn CRC_ProcessString(mut data: *mut u8, mut length: i32) -> u16 {
     let mut crcvalue: u16 = 0; //end for
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut ind: i32 = 0;
     CRC_Init(&mut crcvalue);
 

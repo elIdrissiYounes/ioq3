@@ -475,11 +475,6 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::atan2;
-use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -505,7 +500,7 @@ pub unsafe extern "C" fn AddRemap(
     mut newShader: *const i8,
     mut timeOffset: f32,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in 0..remapCount {
         if crate::src::qcommon::q_shared::Q_stricmp(
@@ -540,7 +535,7 @@ pub unsafe extern "C" fn AddRemap(
 pub unsafe extern "C" fn BuildShaderStateConfig() -> *const i8 {
     static mut buff: [i8; 4096] = [0; 4096];
     let mut out: [i8; 133] = [0; 133];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     crate::stdlib::memset(buff.as_mut_ptr() as *mut libc::c_void, 0, 1024);
 
     for i in 0..remapCount {
@@ -941,7 +936,7 @@ angles and bad trails.
 
 pub unsafe extern "C" fn G_Spawn() -> *mut crate::g_local_h::gentity_t {
     let mut i: i32 = 0; // shut up warning
-    let mut force: i32 = 0;
+    let mut _force: i32 = 0;
     let mut e: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     e = 0 as *mut crate::g_local_h::gentity_t;
 
@@ -1214,7 +1209,7 @@ G_Sound
 
 pub unsafe extern "C" fn G_Sound(
     mut ent: *mut crate::g_local_h::gentity_t,
-    mut channel: i32,
+    mut _channel: i32,
     mut soundIndex: i32,
 ) {
     let mut te: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;

@@ -13,7 +13,6 @@ pub mod q_shared_h {
                 + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -155,9 +154,7 @@ pub use crate::src::sdl::sdl_glimp::qglUnlockArraysEXT;
 pub use crate::src::sdl::sdl_glimp::qglVertex3fv;
 pub use crate::src::sdl::sdl_glimp::qglVertexPointer;
 pub use crate::src::sdl::sdl_glimp::GLimp_LogComment;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
+
 pub use crate::stdlib::GLclampd;
 pub use crate::stdlib::GLenum;
 pub use crate::stdlib::GLfloat;
@@ -415,7 +412,7 @@ unsafe extern "C" fn R_DrawStripElements(
     mut indexes: *const crate::tr_local_h::glIndex_t,
     mut element: Option<unsafe extern "C" fn(_: crate::stdlib::GLint) -> ()>,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut last: [i32; 3] = [-(1), -(1), -(1)];
     let mut even: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
     c_begins += 1;
@@ -770,7 +767,7 @@ Draws vertex normals for debugging
 */
 
 unsafe extern "C" fn DrawNormals(mut input: *mut crate::tr_local_h::shaderCommands_t) {
-    let mut i: i32 = 0; // never occluded
+    let mut _i: i32 = 0; // never occluded
     let mut temp: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     crate::src::renderergl1::tr_backend::GL_Bind(crate::src::renderergl1::tr_main::tr.whiteImage);
     crate::src::sdl::sdl_glimp::qglColor3f.expect("non-null function pointer")(1f32, 1f32, 1f32);
@@ -1128,7 +1125,7 @@ Blends a fog texture on top of everything else
 
 unsafe extern "C" fn RB_FogPass() {
     let mut fog: *mut crate::tr_local_h::fog_t = 0 as *mut crate::tr_local_h::fog_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     crate::src::sdl::sdl_glimp::qglEnableClientState.expect("non-null function pointer")(0x8076u32);
     crate::src::sdl::sdl_glimp::qglColorPointer.expect("non-null function pointer")(
         4,

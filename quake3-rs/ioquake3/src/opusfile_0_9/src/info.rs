@@ -9,19 +9,11 @@ pub use crate::stdlib::uint32_t;
 
 pub use crate::opus_types_h::opus_int32;
 pub use crate::opus_types_h::opus_uint32;
-use crate::src::opusfile_0_9::src::internal::op_strncasecmp;
+
 pub use crate::src::opusfile_0_9::src::opusfile::OpusHead;
 pub use crate::src::opusfile_0_9::src::opusfile::OpusPictureTag;
 pub use crate::src::opusfile_0_9::src::opusfile::OpusTags;
-use crate::stdlib::free;
-use crate::stdlib::malloc;
-use crate::stdlib::memcmp;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::realloc;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
+
 /* *******************************************************************
  *                                                                  *
  * THIS FILE IS PART OF THE libopusfile SOFTWARE CODEC SOURCE CODE. *
@@ -117,7 +109,7 @@ pub unsafe extern "C" fn opus_head_parse(
         }
     } else if head.mapping_family == 1 {
         let mut size: crate::stddef_h::size_t = 0;
-        let mut ci: i32 = 0;
+        let mut _ci: i32 = 0;
         if head.channel_count < 1 || head.channel_count > 8 {
             return -(133i32);
         }
@@ -289,7 +281,7 @@ unsafe extern "C" fn opus_tags_parse_impl(
     let mut count: crate::opus_types_h::opus_uint32 = 0;
     let mut len: crate::stddef_h::size_t = 0;
     let mut ncomments: i32 = 0;
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     len = _len;
     if len < 8 {
         return -(132i32);
@@ -445,7 +437,7 @@ unsafe extern "C" fn opus_tags_copy_impl(
     let mut vendor: *mut i8 = 0 as *mut i8;
     let mut ncomments: i32 = 0;
     let mut ret: i32 = 0;
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     vendor = (*_src).vendor;
     (*_dst).vendor = op_strdup_with_len(vendor, crate::stdlib::strlen(vendor));
     if (*_dst).vendor.is_null() as i32 as isize != 0 {
@@ -669,7 +661,7 @@ pub unsafe extern "C" fn opus_tags_query(
     let mut tag_len: crate::stddef_h::size_t = 0;
     let mut found: i32 = 0;
     let mut ncomments: i32 = 0;
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     tag_len = crate::stdlib::strlen(_tag);
     if (tag_len > 2147483647i32 as crate::stddef_h::size_t) as i32 as isize != 0 {
         return 0 as *const i8;
@@ -703,7 +695,7 @@ pub unsafe extern "C" fn opus_tags_query_count(
     let mut tag_len: crate::stddef_h::size_t = 0;
     let mut found: i32 = 0;
     let mut ncomments: i32 = 0;
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     tag_len = crate::stdlib::strlen(_tag);
     if (tag_len > 2147483647i32 as crate::stddef_h::size_t) as i32 as isize != 0 {
         return 0i32;
@@ -749,7 +741,7 @@ unsafe extern "C" fn opus_tags_get_gain(
 ) -> i32 {
     let mut comments: *mut *mut i8 = 0 as *mut *mut i8;
     let mut ncomments: i32 = 0;
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     comments = (*_tags).user_comments;
     ncomments = (*_tags).comments;
     /*Look for the first valid tag with the name _tag_name and use that.*/
@@ -1045,7 +1037,7 @@ unsafe extern "C" fn opus_picture_tag_parse_impl(
     i = 0;
     while i < _base64_sz {
         let mut value: crate::opus_types_h::opus_uint32 = 0;
-        let mut j: i32 = 0;
+        let mut _j: i32 = 0;
         value = 0;
 
         for j in 0..4 {

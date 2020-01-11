@@ -45,8 +45,6 @@ pub mod os_support_h {
         crate::stdlib::free(ptr);
     }
 
-    use crate::stdlib::free;
-    use crate::stdlib::malloc;
     /* OS_SUPPORT_H */
     /*#ifdef __GNUC__
     #pragma GCC poison printf sprintf
@@ -62,20 +60,18 @@ pub use crate::opus_private_h::OpusRepacketizer;
 pub use crate::opus_types_h::opus_int16;
 pub use crate::opus_types_h::opus_int32;
 pub use crate::src::opus_1_2_1::src::opus::encode_size;
-use crate::src::opus_1_2_1::src::opus::opus_packet_get_samples_per_frame;
+
 pub use crate::src::opus_1_2_1::src::opus::opus_packet_parse_impl;
-use crate::src::opus_1_2_1::src::opus_decoder::opus_packet_get_nb_frames;
+
 pub use crate::stddef_h::size_t;
 pub use crate::stdlib::__int16_t;
 pub use crate::stdlib::__int32_t;
 pub use crate::stdlib::int16_t;
 pub use crate::stdlib::int32_t;
-use crate::stdlib::memmove;
 
 pub use crate::src::opus_1_2_1::src::repacketizer::os_support_h::opus_alloc;
 pub use crate::src::opus_1_2_1::src::repacketizer::os_support_h::opus_free;
-use crate::stdlib::free;
-use crate::stdlib::malloc;
+
 /* Copyright (c) 2011 Xiph.Org Foundation
 Written by Jean-Marc Valin */
 /*
@@ -1100,7 +1096,7 @@ pub unsafe extern "C" fn opus_multistream_packet_pad(
     mut new_len: crate::opus_types_h::opus_int32,
     mut nb_streams: i32,
 ) -> i32 {
-    let mut s: i32 = 0;
+    let mut _s: i32 = 0;
     let mut count: i32 = 0;
     let mut toc: u8 = 0;
     let mut size: [crate::opus_types_h::opus_int16; 48] = [0; 48];
@@ -1119,7 +1115,7 @@ pub unsafe extern "C" fn opus_multistream_packet_pad(
     amount = new_len - len;
     /* Seek to last stream */
 
-    for s in 0..nb_streams - 1 {
+    for _s in 0..nb_streams - 1 {
         if len <= 0 {
             return -(4i32);
         }
@@ -1165,7 +1161,7 @@ pub unsafe extern "C" fn opus_multistream_packet_unpad(
     mut len: crate::opus_types_h::opus_int32,
     mut nb_streams: i32,
 ) -> crate::opus_types_h::opus_int32 {
-    let mut s: i32 = 0;
+    let mut _s: i32 = 0;
     let mut toc: u8 = 0;
     let mut size: [crate::opus_types_h::opus_int16; 48] = [0; 48];
     let mut packet_offset: crate::opus_types_h::opus_int32 = 0;

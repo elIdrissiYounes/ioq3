@@ -401,8 +401,7 @@ pub use crate::src::client::cl_scrn::SCR_DrawSmallChar;
 pub use crate::src::client::cl_scrn::SCR_DrawSmallStringExt;
 pub use crate::src::client::cl_scrn::SCR_UpdateScreen;
 pub use crate::src::client::cl_ui::uivm;
-use crate::src::opus_1_2_1::src::opus_decoder::OpusDecoder;
-use crate::src::opus_1_2_1::src::opus_encoder::OpusEncoder;
+
 pub use crate::ui_public_h::UIMENU_BAD_CD_KEY;
 pub use crate::ui_public_h::UIMENU_INGAME;
 pub use crate::ui_public_h::UIMENU_MAIN;
@@ -423,12 +422,7 @@ pub use crate::ui_public_h::UI_SET_ACTIVE_MENU;
 pub use crate::ui_public_h::UI_SHUTDOWN;
 
 pub use crate::src::client::cl_keys::stdlib_h::atoi;
-use crate::src::client::snd_main::S_StopAllSounds;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::strcat;
-use crate::stdlib::strchr;
-use crate::stdlib::strlen;
+
 pub use crate::stdlib::strtol;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
@@ -2266,7 +2260,7 @@ pub unsafe extern "C" fn Field_VariableSizeDraw(
     mut edit: *mut crate::qcommon_h::field_t,
     mut x: i32,
     mut y: i32,
-    mut width: i32,
+    mut _width: i32,
     mut size: i32,
     mut showCursor: crate::src::qcommon::q_shared::qboolean,
     mut noColorEscape: crate::src::qcommon::q_shared::qboolean,
@@ -2391,7 +2385,7 @@ Field_Paste
 pub unsafe extern "C" fn Field_Paste(mut edit: *mut crate::qcommon_h::field_t) {
     let mut cbd: *mut i8 = 0 as *mut i8;
     let mut pasteLen: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     cbd = crate::src::sys::sys_main::Sys_GetClipboardData();
     if cbd.is_null() {
         return;
@@ -2428,7 +2422,7 @@ pub unsafe extern "C" fn Field_KeyDownEvent(
         Field_Paste(edit);
         return;
     }
-    key = ({
+    key = {
         let mut __res: i32 = 0;
         if ::std::mem::size_of::<i32>() > 1 {
             if 0 != 0 {
@@ -2445,7 +2439,7 @@ pub unsafe extern "C" fn Field_KeyDownEvent(
             __res = *(*crate::stdlib::__ctype_tolower_loc()).offset(key as isize)
         }
         __res
-    });
+    };
     len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr()) as i32;
     match key {
         140 => {
@@ -2671,11 +2665,11 @@ pub unsafe extern "C" fn Console_Key(mut key: i32) {
             if ::std::mem::size_of::<i32>() > 1 {
                 if 0 != 0 {
                     let mut __c: i32 = key;
-                    __res = (if __c < -(128) || __c > 255 {
+                    __res = if __c < -(128) || __c > 255 {
                         __c
                     } else {
                         *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
-                    })
+                    }
                 } else {
                     __res = tolower(key)
                 }
@@ -2701,11 +2695,11 @@ pub unsafe extern "C" fn Console_Key(mut key: i32) {
             if ::std::mem::size_of::<i32>() > 1 {
                 if 0 != 0 {
                     let mut __c: i32 = key;
-                    __res = (if __c < -(128) || __c > 255 {
+                    __res = if __c < -(128) || __c > 255 {
                         __c
                     } else {
                         *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
-                    })
+                    }
                 } else {
                     __res = tolower(key)
                 }
@@ -2871,7 +2865,7 @@ pub unsafe extern "C" fn Key_StringToKeynum(mut str: *mut i8) -> i32 {
         return -(1i32);
     }
     if *str.offset(1) == 0 {
-        return ({
+        return {
             let mut __res: i32 = 0;
             if ::std::mem::size_of::<i8>() > 1usize {
                 if 0 != 0 {
@@ -2889,7 +2883,7 @@ pub unsafe extern "C" fn Key_StringToKeynum(mut str: *mut i8) -> i32 {
                     .offset(*str.offset(0isize) as i32 as isize)
             }
             __res
-        });
+        };
     }
     // check for hex code
     n = crate::src::qcommon::q_shared::Com_HexStrToInt(str);
@@ -3065,7 +3059,7 @@ Key_Bind_f
 #[no_mangle]
 
 pub unsafe extern "C" fn Key_Bind_f() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut c: i32 = 0;
     let mut b: i32 = 0;
     let mut cmd: [i8; 1024] = [0; 1024];

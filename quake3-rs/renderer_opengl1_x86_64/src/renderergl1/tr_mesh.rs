@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::stddef_h::size_t;
 
 pub use crate::qfiles_h::dshader_t;
@@ -70,8 +68,7 @@ pub use crate::src::renderergl1::tr_main::R_AddDrawSurf;
 pub use crate::src::renderergl1::tr_main::R_CullLocalBox;
 pub use crate::src::renderergl1::tr_main::R_CullLocalPointAndRadius;
 pub use crate::src::renderergl1::tr_shader::R_GetShaderByHandle;
-use crate::stdlib::fabs;
-use crate::stdlib::strcmp;
+
 pub use crate::tr_common_h::image_s;
 pub use crate::tr_common_h::image_t;
 pub use crate::tr_common_h::imgFlags_t;
@@ -361,7 +358,7 @@ unsafe extern "C" fn R_CullModel(
     let mut bounds: [crate::src::qcommon::q_shared::vec3_t; 2] = [[0.; 3]; 2];
     let mut oldFrame: *mut crate::qfiles_h::md3Frame_t = 0 as *mut crate::qfiles_h::md3Frame_t;
     let mut newFrame: *mut crate::qfiles_h::md3Frame_t = 0 as *mut crate::qfiles_h::md3Frame_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     // compute frame pointers
     newFrame = ((header as *mut crate::src::qcommon::q_shared::byte)
         .offset((*header).ofsFrames as isize) as *mut crate::qfiles_h::md3Frame_t)
@@ -559,7 +556,7 @@ pub unsafe extern "C" fn R_ComputeFogNum(
     mut header: *mut crate::qfiles_h::md3Header_t,
     mut ent: *mut crate::tr_local_h::trRefEntity_t,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut fog: *mut crate::tr_local_h::fog_t = 0 as *mut crate::tr_local_h::fog_t;
     let mut md3Frame: *mut crate::qfiles_h::md3Frame_t = 0 as *mut crate::qfiles_h::md3Frame_t;

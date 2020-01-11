@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::bg_public_h::animation_s;
 pub use crate::bg_public_h::animation_t;
 pub use crate::bg_public_h::gametype_t;
@@ -405,9 +403,7 @@ pub use crate::src::cgame::cg_weapons::CG_MissileHitWall;
 pub use crate::src::cgame::cg_weapons::CG_OutOfAmmoChange;
 pub use crate::src::cgame::cg_weapons::CG_RailTrail;
 pub use crate::src::cgame::cg_weapons::CG_ShotgunFire;
-use crate::stdlib::rand;
-use crate::stdlib::strcat;
-use crate::stdlib::strcpy;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.

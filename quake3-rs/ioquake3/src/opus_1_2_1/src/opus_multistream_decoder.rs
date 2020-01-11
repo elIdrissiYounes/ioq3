@@ -100,7 +100,6 @@ pub mod float_cast_h {
         return float2int(x) as crate::opus_types_h::opus_int16;
     }
 
-    use crate::opus_types_h::opus_int16;
     use ::std::arch::x86_64::_mm_cvt_ss2si;
     use ::std::arch::x86_64::_mm_set_ss;
     /* FLOAT_CAST_H */
@@ -152,8 +151,6 @@ pub mod os_support_h {
         return crate::stdlib::malloc(size);
     }
 
-    use crate::stdlib::free;
-    use crate::stdlib::malloc;
     /* OS_SUPPORT_H */
     /*#ifdef __GNUC__
     #pragma GCC poison printf sprintf
@@ -184,11 +181,7 @@ pub use crate::opus_types_h::opus_int32;
 pub use crate::opus_types_h::opus_uint32;
 pub use crate::src::opus_1_2_1::src::opus::opus_packet_parse_impl;
 pub use crate::src::opus_1_2_1::src::opus_decoder::opus_decode_native;
-use crate::src::opus_1_2_1::src::opus_decoder::opus_decoder_ctl;
-use crate::src::opus_1_2_1::src::opus_decoder::opus_decoder_get_size;
-use crate::src::opus_1_2_1::src::opus_decoder::opus_decoder_init;
-use crate::src::opus_1_2_1::src::opus_decoder::opus_packet_get_nb_samples;
-use crate::src::opus_1_2_1::src::opus_decoder::OpusDecoder;
+
 pub use crate::src::opus_1_2_1::src::opus_multistream::get_left_channel;
 pub use crate::src::opus_1_2_1::src::opus_multistream::get_mono_channel;
 pub use crate::src::opus_1_2_1::src::opus_multistream::get_right_channel;
@@ -201,8 +194,7 @@ pub use crate::src::opus_1_2_1::src::opus_multistream_decoder::float_cast_h::flo
 pub use crate::src::opus_1_2_1::src::opus_multistream_decoder::float_cast_h::FLOAT2INT16;
 pub use crate::src::opus_1_2_1::src::opus_multistream_decoder::os_support_h::opus_alloc;
 pub use crate::src::opus_1_2_1::src::opus_multistream_decoder::os_support_h::opus_free;
-use crate::stdlib::free;
-use crate::stdlib::malloc;
+
 /* Copyright (c) 2011 Xiph.Org Foundation
 Written by Jean-Marc Valin */
 /*
@@ -380,7 +372,7 @@ unsafe extern "C" fn opus_multistream_packet_validate(
     mut nb_streams: i32,
     mut Fs: crate::opus_types_h::opus_int32,
 ) -> i32 {
-    let mut s: i32 = 0;
+    let mut _s: i32 = 0;
     let mut count: i32 = 0;
     let mut toc: u8 = 0;
     let mut size: [crate::opus_types_h::opus_int16; 48] = [0; 48];
@@ -441,8 +433,8 @@ unsafe extern "C" fn opus_multistream_decode_native(
     let mut Fs: crate::opus_types_h::opus_int32 = 0;
     let mut coupled_size: i32 = 0;
     let mut mono_size: i32 = 0;
-    let mut s: i32 = 0;
-    let mut c: i32 = 0;
+    let mut _s: i32 = 0;
+    let mut _c: i32 = 0;
     let mut ptr: *mut i8 = 0 as *mut i8;
     let mut do_plc: i32 = 0;
     let mut buf: *mut crate::arch_h::opus_val16 = 0 as *mut crate::arch_h::opus_val16;
@@ -774,7 +766,7 @@ pub unsafe extern "C" fn opus_multistream_decoder_ctl(
             current_block = 7330218953828964527;
         }
         4031 => {
-            let mut s: i32 = 0;
+            let mut _s: i32 = 0;
             let mut value_0: *mut crate::opus_types_h::opus_uint32 =
                 ap.as_va_list()
                     .arg::<*mut crate::opus_types_h::opus_uint32>();
@@ -812,7 +804,7 @@ pub unsafe extern "C" fn opus_multistream_decoder_ctl(
             }
         }
         4028 => {
-            let mut s_0: i32 = 0;
+            let mut _s_0: i32 = 0;
 
             for s_0 in 0..(*st).layout.nb_streams {
                 let mut dec_1: *mut crate::src::opus_1_2_1::src::opus_decoder::OpusDecoder =
@@ -835,7 +827,7 @@ pub unsafe extern "C" fn opus_multistream_decoder_ctl(
             current_block = 7330218953828964527;
         }
         5122 => {
-            let mut s_1: i32 = 0;
+            let mut _s_1: i32 = 0;
             let mut stream_id: crate::opus_types_h::opus_int32 = 0;
             let mut value_1: *mut *mut crate::src::opus_1_2_1::src::opus_decoder::OpusDecoder =
                 0 as *mut *mut crate::src::opus_1_2_1::src::opus_decoder::OpusDecoder;
@@ -861,7 +853,7 @@ pub unsafe extern "C" fn opus_multistream_decoder_ctl(
             }
         }
         4034 | 4046 => {
-            let mut s_2: i32 = 0;
+            let mut _s_2: i32 = 0;
             /* This works for int32 params */
             let mut value_2: crate::opus_types_h::opus_int32 =
                 ap.as_va_list().arg::<crate::opus_types_h::opus_int32>();

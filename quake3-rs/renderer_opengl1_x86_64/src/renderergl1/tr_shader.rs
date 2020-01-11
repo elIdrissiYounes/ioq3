@@ -6,7 +6,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub mod ctype_h {
@@ -123,14 +122,7 @@ pub use crate::src::renderergl1::tr_shade::RB_StageIteratorVertexLitTexture;
 pub use crate::src::renderergl1::tr_shader::stdlib_float_h::atof;
 pub use crate::src::renderergl1::tr_sky::RB_StageIteratorSky;
 pub use crate::src::renderergl1::tr_sky::R_InitSkyTexCoords;
-use crate::stdlib::memcmp;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
-use crate::stdlib::strtod;
+
 pub use crate::stdlib::GLenum;
 pub use crate::stdlib::GLuint;
 pub use crate::tr_common_h::image_s;
@@ -317,10 +309,8 @@ pub use crate::tr_local_h::TMOD_TRANSFORM;
 pub use crate::tr_local_h::TMOD_TURBULENT;
 
 pub use crate::src::renderergl1::tr_shader::ctype_h::tolower;
-use crate::src::sdl::sdl_glimp::qglActiveTextureARB;
+
 pub use crate::stdlib::__ctype_tolower_loc;
-use crate::stdlib::cos;
-use crate::stdlib::sin;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -608,7 +598,7 @@ unsafe extern "C" fn ParseVector(
     mut v: *mut f32,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut token: *mut i8 = 0 as *mut i8;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     // FIXME: spaces are currently required after parens, should change parseext...
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
@@ -2400,7 +2390,7 @@ unsafe extern "C" fn ParseDeform(mut text: *mut *mut i8) {
         return;
     }
     if crate::src::qcommon::q_shared::Q_stricmp(token, b"move\x00" as *const u8 as *const i8) == 0 {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
 
         for i in 0..3 {
             token = crate::src::qcommon::q_shared::COM_ParseExt(
@@ -3726,8 +3716,8 @@ GeneratePermanentShader
 
 unsafe extern "C" fn GeneratePermanentShader() -> *mut crate::tr_local_h::shader_t {
     let mut newShader: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
-    let mut i: i32 = 0;
-    let mut b: i32 = 0;
+    let mut _i: i32 = 0;
+    let mut _b: i32 = 0;
     let mut size: i32 = 0;
     let mut hash: i32 = 0;
     if crate::src::renderergl1::tr_main::tr.numShaders == (1) << 14 {
@@ -4438,7 +4428,7 @@ pub unsafe extern "C" fn RE_RegisterShaderFromImage(
     mut name: *const i8,
     mut lightmapIndex: i32,
     mut image: *mut crate::tr_common_h::image_t,
-    mut mipRawImage: crate::src::qcommon::q_shared::qboolean,
+    mut _mipRawImage: crate::src::qcommon::q_shared::qboolean,
 ) -> crate::src::qcommon::q_shared::qhandle_t {
     let mut hash: i32 = 0;
     let mut sh: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
@@ -4730,7 +4720,7 @@ A second parameter will cause it to print in sorted order
 #[no_mangle]
 
 pub unsafe extern "C" fn R_ShaderList_f() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut count: i32 = 0;
     let mut shader_0: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
     crate::src::renderergl1::tr_main::ri

@@ -8,11 +8,6 @@ pub struct drft_lookup {
 }
 use ::libc;
 
-use crate::stdlib::calloc;
-use crate::stdlib::cos;
-use crate::stdlib::free;
-use crate::stdlib::memset;
-use crate::stdlib::sin;
 /* *******************************************************************
 *                                                                  *
 * THIS FILE IS PART OF THE OggVorbis SOFTWARE CODEC SOURCE CODE.   *
@@ -56,7 +51,7 @@ unsafe extern "C" fn drfti1(mut n: i32, mut wa: *mut f32, mut ifac: *mut i32) {
     let mut l2: i32 = 0;
     let mut ib: i32 = 0;
     let mut ld: i32 = 0;
-    let mut ii: i32 = 0;
+    let mut _ii: i32 = 0;
     let mut ip: i32 = 0;
     let mut is: i32 = 0;
     let mut nq: i32 = 0;
@@ -121,7 +116,7 @@ unsafe extern "C" fn drfti1(mut n: i32, mut wa: *mut f32, mut ifac: *mut i32) {
             argld = ld as f32 * argh;
             fi = 0.0;
 
-            for ii in (2..ido).step_by(2 as usize) {
+            for _ii in (2..ido).step_by(2 as usize) {
                 fi += 1.0;
 
                 arg = fi * argld;
@@ -160,7 +155,7 @@ unsafe extern "C" fn dradf2(
     mut ch: *mut f32,
     mut wa1: *mut f32,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut k: i32 = 0;
     let mut ti2: f32 = 0.;
     let mut tr2: f32 = 0.;
@@ -253,7 +248,7 @@ unsafe extern "C" fn dradf4(
     mut wa3: *mut f32,
 ) {
     static mut hsqt2: f32 = 0.70710678118654752;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut k: i32 = 0;
     let mut t0: i32 = 0;
     let mut t1: i32 = 0;
@@ -421,7 +416,7 @@ unsafe extern "C" fn dradfg(
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
-    let mut l: i32 = 0;
+    let mut _l: i32 = 0;
     let mut ic: i32 = 0;
     let mut ik: i32 = 0;
     let mut is: i32 = 0;
@@ -628,7 +623,7 @@ unsafe extern "C" fn dradfg(
     t2 = ipp2 * idl1;
     t3 = (ip - 1) * idl1;
 
-    for l in 1..ipph {
+    for _l in 1..ipph {
         t1 += idl1;
 
         t2 -= idl1;
@@ -866,7 +861,7 @@ unsafe extern "C" fn drftf1(
     mut ifac: *mut i32,
 ) {
     let mut i: i32 = 0;
-    let mut k1: i32 = 0;
+    let mut _k1: i32 = 0;
     let mut l1: i32 = 0;
     let mut l2: i32 = 0;
     let mut na: i32 = 0;
@@ -982,7 +977,7 @@ unsafe extern "C" fn dradb2(
     mut ch: *mut f32,
     mut wa1: *mut f32,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut k: i32 = 0;
     let mut t0: i32 = 0;
     let mut t1: i32 = 0;
@@ -1073,7 +1068,7 @@ unsafe extern "C" fn dradb3(
 ) {
     static mut taur: f32 = -0.5;
     static mut taui: f32 = 0.8660254037844386;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut k: i32 = 0;
     let mut t0: i32 = 0;
     let mut t1: i32 = 0;
@@ -1193,7 +1188,7 @@ unsafe extern "C" fn dradb4(
     mut wa3: *mut f32,
 ) {
     static mut sqrt2: f32 = 1.414213562373095;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut k: i32 = 0;
     let mut t0: i32 = 0;
     let mut t1: i32 = 0;
@@ -1373,7 +1368,7 @@ unsafe extern "C" fn dradbg(
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
-    let mut l: i32 = 0;
+    let mut _l: i32 = 0;
     let mut ik: i32 = 0;
     let mut is: i32 = 0;
     let mut t0: i32 = 0;
@@ -1562,7 +1557,7 @@ unsafe extern "C" fn dradbg(
     t9 = t2;
     t3 = (ip - 1) * idl1;
 
-    for l in 1..ipph {
+    for _l in 1..ipph {
         t1 += idl1;
 
         t2 -= idl1;
@@ -1836,7 +1831,7 @@ unsafe extern "C" fn drftb1(
     mut ifac: *mut i32,
 ) {
     let mut i: i32 = 0;
-    let mut k1: i32 = 0;
+    let mut _k1: i32 = 0;
     let mut l1: i32 = 0;
     let mut l2: i32 = 0;
     let mut na: i32 = 0;

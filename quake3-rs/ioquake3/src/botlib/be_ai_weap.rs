@@ -69,13 +69,7 @@ pub use crate::src::botlib::be_ai_weight::FindFuzzyWeight;
 pub use crate::src::botlib::be_ai_weight::FreeWeightConfig;
 pub use crate::src::botlib::be_ai_weight::FuzzyWeight;
 pub use crate::src::botlib::be_ai_weight::ReadWeightConfig;
-use crate::src::botlib::be_interface::botimport;
-use crate::src::botlib::l_libvar::LibVarSet;
-use crate::src::botlib::l_libvar::LibVarString;
-use crate::src::botlib::l_libvar::LibVarValue;
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetClearedHunkMemory;
-use crate::src::botlib::l_memory::GetClearedMemory;
+
 pub use crate::src::botlib::l_precomp::define_s;
 pub use crate::src::botlib::l_precomp::define_t;
 pub use crate::src::botlib::l_precomp::indent_s;
@@ -112,9 +106,7 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::strcmp;
+
 //weapon configuration: set of weapons with projectiles
 
 pub type weaponconfig_t = weaponconfig_s;
@@ -304,7 +296,7 @@ pub unsafe extern "C" fn LoadWeaponConfig(mut filename: *mut i8) -> *mut weaponc
         next: 0 as *mut crate::src::botlib::l_script::token_s,
     }; //end if
     let mut path: [i8; 64] = [0; 64];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut source: *mut crate::src::botlib::l_precomp::source_t =
         0 as *mut crate::src::botlib::l_precomp::source_t;
@@ -625,7 +617,7 @@ pub unsafe extern "C" fn WeaponWeightIndex(
     mut wc: *mut weaponconfig_t,
 ) -> *mut i32 {
     let mut index: *mut i32 = 0 as *mut i32;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     //initialize item weight index
     index = crate::src::botlib::l_memory::GetClearedMemory(
         (::std::mem::size_of::<i32>()).wrapping_mul((*wc).numweapons as usize),
@@ -743,7 +735,7 @@ pub unsafe extern "C" fn BotChooseBestFightWeapon(
     mut weaponstate: i32,
     mut inventory: *mut i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut index: i32 = 0;
     let mut bestweapon: i32 = 0;
     let mut weight: f32 = 0.;
@@ -793,7 +785,7 @@ pub unsafe extern "C" fn BotChooseBestFightWeapon(
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn BotResetWeaponState(mut weaponstate: i32) {}
+pub unsafe extern "C" fn BotResetWeaponState(mut _weaponstate: i32) {}
 //returns a handle to a newly allocated weapon state
 //end of the function BotResetWeaponState
 //========================================================================
@@ -805,7 +797,7 @@ pub unsafe extern "C" fn BotResetWeaponState(mut weaponstate: i32) {}
 #[no_mangle]
 
 pub unsafe extern "C" fn BotAllocWeaponState() -> i32 {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
 
     for i in 1..=64 {
         if botweaponstates[i as usize].is_null() {

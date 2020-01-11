@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::stdlib::__uint16_t;
 pub use crate::stdlib::uint16_t;
 pub use crate::stdlib::Uint16;
@@ -27,12 +25,7 @@ pub use crate::src::qcommon::q_shared::PRINT_ALL;
 pub use crate::src::qcommon::q_shared::PRINT_DEVELOPER;
 pub use crate::src::qcommon::q_shared::PRINT_ERROR;
 pub use crate::src::qcommon::q_shared::PRINT_WARNING;
-use crate::src::renderergl1::tr_init::glConfig;
-use crate::src::renderergl1::tr_init::r_ignorehwgamma;
-use crate::src::renderergl1::tr_main::ri;
-use crate::stdlib::SDL_GetError;
-use crate::stdlib::SDL_SetWindowGammaRamp;
-use crate::stdlib::SDL_Window;
+
 pub use crate::tr_public_h::refimport_t;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
@@ -152,7 +145,7 @@ GLimp_SetGamma
 pub unsafe extern "C" fn GLimp_SetGamma(mut red: *mut u8, mut green: *mut u8, mut blue: *mut u8) {
     let mut table: [[crate::stdlib::Uint16; 256]; 3] = [[0; 256]; 3];
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     if crate::src::renderergl1::tr_init::glConfig.deviceSupportsGamma as u64 == 0
         || (*crate::src::renderergl1::tr_init::r_ignorehwgamma).integer > 0
     {

@@ -6,7 +6,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub mod stdlib_h {
@@ -134,11 +133,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::memcpy;
-use crate::stdlib::sscanf;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
-use crate::stdlib::strstr;
+
 pub use crate::stdlib::strtod;
 pub use crate::stdlib::strtol;
 extern "C" {
@@ -291,7 +286,7 @@ pub unsafe extern "C" fn G_SpawnString(
     mut defaultString: *const i8,
     mut out: *mut *mut i8,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if crate::src::game::g_main::level.spawning as u64 == 0 {
         *out = defaultString as *mut i8
         //		G_Error( "G_SpawnString() called while not spawning" );
@@ -368,7 +363,7 @@ pub static mut fields: [field_t; 20] = [field_t {
 }; 20];
 #[no_mangle]
 
-pub unsafe extern "C" fn SP_item_botroam(mut ent: *mut crate::g_local_h::gentity_t) {}
+pub unsafe extern "C" fn SP_item_botroam(mut _ent: *mut crate::g_local_h::gentity_t) {}
 #[no_mangle]
 
 pub static mut spawns: [spawn_t; 49] = unsafe {

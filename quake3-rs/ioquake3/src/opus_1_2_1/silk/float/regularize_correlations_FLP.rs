@@ -1,4 +1,3 @@
-use ::libc;
 /* **********************************************************************
 Copyright (c) 2006-2011, Skype Limited. All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -36,7 +35,7 @@ pub unsafe extern "C" fn silk_regularize_correlations_FLP(
 )
 /* I    Dimension of XX                             */
 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in 0..D {
         *(&mut *XX.offset(0) as *mut f32).offset((i * D + i) as isize) += noise;

@@ -283,9 +283,7 @@ pub use crate::src::ui::ui_syscalls::trap_Key_GetOverstrikeMode;
 pub use crate::src::ui::ui_syscalls::trap_Key_IsDown;
 pub use crate::src::ui::ui_syscalls::trap_Key_SetOverstrikeMode;
 pub use crate::stdlib::__ctype_tolower_loc;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::strlen;
+
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menucommon_s;
 pub use crate::ui_local_h::menufield_s;
@@ -487,11 +485,11 @@ pub unsafe extern "C" fn MField_KeyDownEvent(
             if ::std::mem::size_of::<i32>() > 1 {
                 if 0 != 0 {
                     let mut __c: i32 = key;
-                    __res = (if __c < -(128) || __c > 255 {
+                    __res = if __c < -(128) || __c > 255 {
                         __c
                     } else {
                         *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
-                    })
+                    }
                 } else {
                     __res = tolower(key)
                 }
@@ -513,11 +511,11 @@ pub unsafe extern "C" fn MField_KeyDownEvent(
             if ::std::mem::size_of::<i32>() > 1 {
                 if 0 != 0 {
                     let mut __c: i32 = key;
-                    __res = (if __c < -(128) || __c > 255 {
+                    __res = if __c < -(128) || __c > 255 {
                         __c
                     } else {
                         *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
-                    })
+                    }
                 } else {
                     __res = tolower(key)
                 }

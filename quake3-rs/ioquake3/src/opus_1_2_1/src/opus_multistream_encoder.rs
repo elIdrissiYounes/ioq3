@@ -96,7 +96,7 @@ pub mod mathops_h {
         frac = -0.41445418 + frac * (0.95909232 + frac * (-0.33951290 + frac * 0.16541097));
         return (1 + integer) as f32 + frac;
     }
-    use crate::opus_types_h::opus_uint32;
+
     /* MATHOPS_H */
     /* FIXED_POINT */
 }
@@ -146,8 +146,6 @@ pub mod os_support_h {
         return crate::stdlib::malloc(size);
     }
 
-    use crate::stdlib::free;
-    use crate::stdlib::malloc;
     /* OS_SUPPORT_H */
     /*#ifdef __GNUC__
     #pragma GCC poison printf sprintf
@@ -203,7 +201,7 @@ pub mod pitch_h {
         mut y: *const crate::arch_h::opus_val16,
         mut N: i32,
     ) -> crate::arch_h::opus_val32 {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut xy: crate::arch_h::opus_val32 = 0f32;
 
         for i in 0..N {
@@ -211,7 +209,6 @@ pub mod pitch_h {
         }
         return xy;
     }
-    use crate::arch_h::opus_val32;
 }
 
 pub use crate::internal::__builtin_va_list;
@@ -240,19 +237,14 @@ pub use crate::src::opus_1_2_1::src::opus_encoder::downmix_float;
 pub use crate::src::opus_1_2_1::src::opus_encoder::downmix_int;
 pub use crate::src::opus_1_2_1::src::opus_encoder::frame_size_select;
 pub use crate::src::opus_1_2_1::src::opus_encoder::opus_encode_native;
-use crate::src::opus_1_2_1::src::opus_encoder::opus_encoder_ctl;
-use crate::src::opus_1_2_1::src::opus_encoder::opus_encoder_get_size;
-use crate::src::opus_1_2_1::src::opus_encoder::opus_encoder_init;
-use crate::src::opus_1_2_1::src::opus_encoder::OpusEncoder;
+
 pub use crate::src::opus_1_2_1::src::opus_multistream::get_left_channel;
 pub use crate::src::opus_1_2_1::src::opus_multistream::get_mono_channel;
 pub use crate::src::opus_1_2_1::src::opus_multistream::get_right_channel;
 pub use crate::src::opus_1_2_1::src::opus_multistream::validate_layout;
 pub use crate::src::opus_1_2_1::src::opus_multistream_encoder::arch_h::celt_isnan;
 pub use crate::src::opus_1_2_1::src::opus_multistream_encoder::opus_private_h::align;
-use crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_cat;
-use crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_get_nb_frames;
-use crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_init;
+
 pub use crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_out_range_impl;
 pub use crate::stddef_h::size_t;
 
@@ -265,20 +257,11 @@ pub use crate::src::opus_1_2_1::celt::modes::OpusCustomMode;
 pub use crate::src::opus_1_2_1::celt::modes::PulseCache;
 pub use crate::src::opus_1_2_1::src::opus_multistream_encoder::mathops_h::celt_log2;
 pub use crate::stdarg_h::va_list;
-use crate::stdlib::floor;
 
-use crate::src::opus_1_2_1::celt::bands::compute_band_energies;
-use crate::src::opus_1_2_1::celt::celt::resampling_factor;
-use crate::src::opus_1_2_1::celt::celt_encoder::celt_preemphasis;
-use crate::src::opus_1_2_1::celt::quant_bands::amp2Log2;
 pub use crate::src::opus_1_2_1::src::opus_multistream_encoder::cpu_support_h::opus_select_arch;
 pub use crate::src::opus_1_2_1::src::opus_multistream_encoder::os_support_h::opus_alloc;
 pub use crate::src::opus_1_2_1::src::opus_multistream_encoder::os_support_h::opus_free;
 pub use crate::src::opus_1_2_1::src::opus_multistream_encoder::pitch_h::celt_inner_prod_c;
-use crate::stdlib::free;
-use crate::stdlib::malloc;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -391,7 +374,7 @@ static mut vorbis_mappings: [VorbisLayout; 8] = [
 unsafe extern "C" fn ms_get_preemph_mem(
     mut st: *mut OpusMSEncoder,
 ) -> *mut crate::arch_h::opus_val32 {
-    let mut s: i32 = 0;
+    let mut _s: i32 = 0;
     let mut ptr: *mut i8 = 0 as *mut i8;
     let mut coupled_size: i32 = 0;
     let mut mono_size: i32 = 0;
@@ -416,7 +399,7 @@ unsafe extern "C" fn ms_get_preemph_mem(
 unsafe extern "C" fn ms_get_window_mem(
     mut st: *mut OpusMSEncoder,
 ) -> *mut crate::arch_h::opus_val32 {
-    let mut s: i32 = 0;
+    let mut _s: i32 = 0;
     let mut ptr: *mut i8 = 0 as *mut i8;
     let mut coupled_size: i32 = 0;
     let mut mono_size: i32 = 0;
@@ -438,7 +421,7 @@ unsafe extern "C" fn ms_get_window_mem(
 unsafe extern "C" fn validate_encoder_layout(
     mut layout: *const crate::opus_private_h::ChannelLayout,
 ) -> i32 {
-    let mut s: i32 = 0;
+    let mut _s: i32 = 0;
 
     for s in 0..(*layout).nb_streams {
         if s < (*layout).nb_coupled_streams {
@@ -592,7 +575,7 @@ pub unsafe extern "C" fn surround_analysis(
     }
     c = 0;
     while c < channels {
-        let mut frame: i32 = 0;
+        let mut _frame: i32 = 0;
         let mut nb_frames: i32 = frame_size / freq_size;
         crate::stdlib::memcpy(
             in_0 as *mut libc::c_void,
@@ -1020,7 +1003,7 @@ pub unsafe extern "C" fn opus_multistream_surround_encoder_init(
             return -(5i32);
         }
     } else if mapping_family == 1 && channels <= 8 && channels >= 1 {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         *streams = vorbis_mappings[(channels - 1i32) as usize].nb_streams;
         *coupled_streams = vorbis_mappings[(channels - 1i32) as usize].nb_coupled_streams;
 
@@ -1274,7 +1257,7 @@ unsafe extern "C" fn rate_allocation(
     mut rate: *mut crate::opus_types_h::opus_int32,
     mut frame_size: i32,
 ) -> crate::opus_types_h::opus_int32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut rate_sum: crate::opus_types_h::opus_int32 = 0;
     let mut Fs: crate::opus_types_h::opus_int32 = 0;
     let mut ptr: *mut i8 = 0 as *mut i8;
@@ -1824,7 +1807,7 @@ pub unsafe extern "C" fn opus_multistream_encoder_ctl(
             }
         }
         4003 => {
-            let mut s: i32 = 0;
+            let mut _s: i32 = 0;
             let mut value_0: *mut crate::opus_types_h::opus_int32 =
                 ap.as_va_list()
                     .arg::<*mut crate::opus_types_h::opus_int32>();
@@ -1873,7 +1856,7 @@ pub unsafe extern "C" fn opus_multistream_encoder_ctl(
             current_block = 1677945370889843322;
         }
         4031 => {
-            let mut s_0: i32 = 0;
+            let mut _s_0: i32 = 0;
             let mut value_2: *mut crate::opus_types_h::opus_uint32 =
                 ap.as_va_list()
                     .arg::<*mut crate::opus_types_h::opus_uint32>();
@@ -1912,7 +1895,7 @@ pub unsafe extern "C" fn opus_multistream_encoder_ctl(
         }
         4036 | 4010 | 4006 | 4020 | 4004 | 4008 | 4024 | 4000 | 4012 | 4014 | 4016 | 11002
         | 4022 | 4042 | 4046 => {
-            let mut s_1: i32 = 0;
+            let mut _s_1: i32 = 0;
             /* This works for int32 params */
             let mut value_3: crate::opus_types_h::opus_int32 =
                 ap.as_va_list().arg::<crate::opus_types_h::opus_int32>();
@@ -1940,7 +1923,7 @@ pub unsafe extern "C" fn opus_multistream_encoder_ctl(
             current_block = 1677945370889843322;
         }
         5120 => {
-            let mut s_2: i32 = 0;
+            let mut _s_2: i32 = 0;
             let mut stream_id: crate::opus_types_h::opus_int32 = 0;
             let mut value_4: *mut *mut crate::src::opus_1_2_1::src::opus_encoder::OpusEncoder =
                 0 as *mut *mut crate::src::opus_1_2_1::src::opus_encoder::OpusEncoder;
@@ -1983,7 +1966,7 @@ pub unsafe extern "C" fn opus_multistream_encoder_ctl(
             }
         }
         4028 => {
-            let mut s_3: i32 = 0;
+            let mut _s_3: i32 = 0;
             if (*st).mapping_type == MAPPING_TYPE_SURROUND {
                 crate::stdlib::memset(
                     ms_get_preemph_mem(st) as *mut libc::c_void,

@@ -133,7 +133,7 @@ pub use crate::src::qcommon::q_shared::Q_strcat;
 pub use crate::src::qcommon::q_shared::Q_stricmp;
 pub use crate::src::qcommon::q_shared::Q_strncmp;
 pub use crate::src::qcommon::q_shared::Q_strncpyz;
-use crate::src::qcommon::q_shared::ShortSwap;
+
 pub use crate::src::qcommon::q_shared::TR_GRAVITY;
 pub use crate::src::qcommon::q_shared::TR_INTERPOLATE;
 pub use crate::src::qcommon::q_shared::TR_LINEAR;
@@ -155,14 +155,7 @@ pub use crate::src::server::sv_init::SV_Shutdown;
 pub use crate::src::server::sv_net_chan::SV_Netchan_Process;
 pub use crate::src::server::sv_snapshot::SV_SendClientMessages;
 pub use crate::src::sys::sys_unix::Sys_Milliseconds;
-use crate::stdlib::memcmp;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strncmp;
-use crate::stdlib::vsnprintf;
+
 pub use crate::vm_local_h::vm_s;
 /*
 ===========================================================================
@@ -855,7 +848,7 @@ unsafe extern "C" fn SVC_BucketForAddress(
     mut period: i32,
 ) -> *mut crate::server_h::leakyBucket_t {
     let mut bucket: *mut crate::server_h::leakyBucket_t = 0 as *mut crate::server_h::leakyBucket_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut hash: isize = SVC_HashForAddress(address);
     let mut now: i32 = crate::src::sys::sys_unix::Sys_Milliseconds();
     bucket = bucketHashes[hash as usize];
@@ -1006,7 +999,7 @@ the simple info query.
 unsafe extern "C" fn SVC_Status(mut from: crate::qcommon_h::netadr_t) {
     let mut player: [i8; 1024] = [0; 1024];
     let mut status: [i8; 16384] = [0; 16384];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut cl: *mut crate::server_h::client_t = 0 as *mut crate::server_h::client_t;
     let mut ps: *mut crate::src::qcommon::q_shared::playerState_t =
         0 as *mut crate::src::qcommon::q_shared::playerState_t;
@@ -1100,7 +1093,7 @@ if a user is interested in a server to do a full status
 #[no_mangle]
 
 pub unsafe extern "C" fn SVC_Info(mut from: crate::qcommon_h::netadr_t) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut count: i32 = 0;
     let mut humans: i32 = 0;
     let mut gamedir: *mut i8 = 0 as *mut i8;
@@ -1309,7 +1302,7 @@ Redirect all printfs
 
 unsafe extern "C" fn SVC_RemoteCommand(
     mut from: crate::qcommon_h::netadr_t,
-    mut msg: *mut crate::qcommon_h::msg_t,
+    mut _msg: *mut crate::qcommon_h::msg_t,
 ) {
     let mut valid: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
     let mut remaining: [i8; 1024] = [0; 1024];
@@ -1554,7 +1547,7 @@ Updates the cl->ping variables
 
 unsafe extern "C" fn SV_CalcPings() {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut cl: *mut crate::server_h::client_t = 0 as *mut crate::server_h::client_t;
     let mut total: i32 = 0;
     let mut count: i32 = 0;

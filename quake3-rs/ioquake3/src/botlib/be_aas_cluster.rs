@@ -50,13 +50,7 @@ pub use crate::botlib_h::bsp_surface_s;
 pub use crate::botlib_h::bsp_surface_t;
 pub use crate::botlib_h::bsp_trace_s;
 pub use crate::botlib_h::bsp_trace_t;
-use crate::src::botlib::be_aas_main::aasworld;
-use crate::src::botlib::be_aas_main::AAS_Error;
-use crate::src::botlib::be_aas_reach::AAS_AreaReachability;
-use crate::src::botlib::l_libvar::LibVarGetValue;
-use crate::src::botlib::l_log::Log_Write;
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetClearedMemory;
+
 pub use crate::src::qcommon::q_shared::byte;
 pub use crate::src::qcommon::q_shared::cplane_s;
 pub use crate::src::qcommon::q_shared::cplane_t;
@@ -71,8 +65,7 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::abs;
-use crate::stdlib::memset;
+
 extern "C" {
     /*
     ===========================================================================
@@ -722,7 +715,7 @@ pub unsafe extern "C" fn AAS_NumberClusterAreas(mut clusternum: i32) {
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_FindClusters() -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut cluster: *mut crate::aasfile_h::aas_cluster_t =
         0 as *mut crate::aasfile_h::aas_cluster_t;
     AAS_RemoveClusterAreas();
@@ -1146,7 +1139,7 @@ pub unsafe extern "C" fn AAS_ConnectedAreas(
     mut numareas: i32,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut connectedareas: [i32; 1024] = [0; 1024]; //end for
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     crate::stdlib::memset(
         connectedareas.as_mut_ptr() as *mut libc::c_void,
         0,
@@ -1182,7 +1175,7 @@ pub unsafe extern "C" fn AAS_GetAdjacentAreasWithLessPresenceTypes_r(
     mut numareas: i32,
     mut curareanum: i32,
 ) -> i32 {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
     let mut j: i32 = 0;
     let mut presencetype: i32 = 0;
     let mut otherpresencetype: i32 = 0;
@@ -1528,7 +1521,7 @@ pub unsafe extern "C" fn AAS_CheckAreaForPossiblePortals(mut areanum: i32) -> i3
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_FindPossiblePortals() {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
     let mut numpossibleportals: i32 = 0;
     numpossibleportals = 0;
 
@@ -1572,7 +1565,7 @@ pub unsafe extern "C" fn AAS_RemoveAllPortals() {
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_TestPortals() -> i32 {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
     let mut portal: *mut crate::aasfile_h::aas_portal_t = 0 as *mut crate::aasfile_h::aas_portal_t;
 
     for i in 1..crate::src::botlib::be_aas_main::aasworld.numportals {
@@ -1617,7 +1610,7 @@ pub unsafe extern "C" fn AAS_TestPortals() -> i32 {
 
 pub unsafe extern "C" fn AAS_CountForcedClusterPortals() {
     let mut num: i32 = 0; //end for
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     num = 0;
 
     for i in 1..crate::src::botlib::be_aas_main::aasworld.numareas {

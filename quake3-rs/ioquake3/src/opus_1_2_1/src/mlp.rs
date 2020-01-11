@@ -6,7 +6,6 @@ pub struct MLP {
     pub topo: *const i32,
     pub weights: *const f32,
 }
-use ::libc;
 
 pub mod arch_h {
 
@@ -62,7 +61,7 @@ pub use crate::stdlib::uint32_t;
 pub use crate::mathops_h::C2RustUnnamed_61;
 pub use crate::src::opus_1_2_1::src::mlp::arch_h::celt_isnan;
 pub use crate::src::opus_1_2_1::src::mlp::tansig_table_h::tansig_table;
-use crate::stdlib::floor;
+
 /* Copyright (c) 2008-2011 Octasic Inc.
 Written by Jean-Marc Valin */
 /*
@@ -132,7 +131,7 @@ pub unsafe extern "C" fn mlp_process(
     /* Copy to tmp_in */
     j = 0;
     while j < *(*m).topo.offset(1) {
-        let mut k: i32 = 0;
+        let mut _k: i32 = 0;
         let fresh0 = W;
         W = W.offset(1);
         let mut sum: f32 = *fresh0;
@@ -149,7 +148,7 @@ pub unsafe extern "C" fn mlp_process(
     }
     j = 0;
     while j < *(*m).topo.offset(2) {
-        let mut k_0: i32 = 0;
+        let mut _k_0: i32 = 0;
         let fresh2 = W;
         W = W.offset(1);
         let mut sum_0: f32 = *fresh2;

@@ -206,7 +206,6 @@ pub use crate::src::jpeg_8c::jutils::jpeg_natural_order4;
 pub use crate::src::jpeg_8c::jutils::jpeg_natural_order5;
 pub use crate::src::jpeg_8c::jutils::jpeg_natural_order6;
 pub use crate::src::jpeg_8c::jutils::jpeg_natural_order7;
-use crate::stdlib::memcpy;
 
 pub const M_APP0: C2RustUnnamed_53 = 224;
 
@@ -383,7 +382,7 @@ unsafe extern "C" fn get_soi(
     mut cinfo: crate::jpeglib_h::j_decompress_ptr,
 ) -> crate::jmorecfg_h::boolean
 /* Process an SOI marker */ {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JTRC_SOI as i32;
     Some(
         (*(*cinfo).err)
@@ -731,7 +730,7 @@ unsafe extern "C" fn get_sos(
 ) -> crate::jmorecfg_h::boolean
 /* Process a SOS marker */ {
     let mut length: crate::jmorecfg_h::INT32 = 0; /* Number of components */
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut ci: i32 = 0;
     let mut n: i32 = 0;
     let mut c: i32 = 0;
@@ -3093,7 +3092,7 @@ unsafe extern "C" fn reset_marker_reader(mut cinfo: crate::jpeglib_h::j_decompre
 
 pub unsafe extern "C" fn jinit_marker_reader(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
     let mut marker: my_marker_ptr = 0 as *mut my_marker_reader;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     /* Create subobject in permanent pool */
     marker = Some(
         (*(*cinfo).mem)

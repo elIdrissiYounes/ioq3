@@ -111,40 +111,17 @@ pub use crate::stdlib::stat;
 pub use crate::stdlib::timezone;
 pub use crate::stdlib::DIR;
 
-use crate::src::sys::con_log::CON_LogRead;
-use crate::src::sys::sys_main::Sys_SigHandler;
 pub use crate::src::sys::sys_unix::sys_stat_h::stat;
-use crate::stdlib::__errno_location;
+
 pub use crate::stdlib::__sighandler_t;
 pub use crate::stdlib::__xstat;
-use crate::stdlib::exit;
-use crate::stdlib::getenv;
+
 pub use crate::stdlib::kill;
-use crate::stdlib::memset;
+
 pub use crate::stdlib::mkdir;
 pub use crate::stdlib::mkfifo;
-use crate::stdlib::setenv;
-pub use crate::stdlib::signal;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
-use crate::stdlib::strstr;
-use crate::stdlib::unsetenv;
 
-use crate::stdlib::__xpg_basename;
-use crate::stdlib::close;
-use crate::stdlib::dirname;
-use crate::stdlib::execvp;
-use crate::stdlib::fcntl;
-use crate::stdlib::fesetround;
-use crate::stdlib::fork;
-use crate::stdlib::getcwd;
-use crate::stdlib::getpid;
-use crate::stdlib::getuid;
-use crate::stdlib::isatty;
-use crate::stdlib::open;
-use crate::stdlib::usleep;
-use crate::stdlib::wait;
-use crate::stdlib::write;
+pub use crate::stdlib::signal;
 
 pub type dialogCommandBuilder_t = Option<
     unsafe extern "C" fn(_: crate::qcommon_h::dialogType_t, _: *const i8, _: *const i8) -> (),
@@ -1513,7 +1490,7 @@ Sys_XmessageCommand
 unsafe extern "C" fn Sys_XmessageCommand(
     mut type_0: crate::qcommon_h::dialogType_t,
     mut message: *const i8,
-    mut title: *const i8,
+    mut _title: *const i8,
 ) {
     Sys_ClearExecBuffer();
     Sys_AppendToExecBuffer(b"xmessage\x00" as *const u8 as *const i8);

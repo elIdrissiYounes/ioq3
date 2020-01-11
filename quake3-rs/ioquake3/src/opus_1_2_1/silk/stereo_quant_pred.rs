@@ -1,8 +1,6 @@
-use ::libc;
-
 pub use crate::opus_types_h::opus_int16;
 pub use crate::opus_types_h::opus_int32;
-use crate::src::opus_1_2_1::silk::tables_other::silk_stereo_pred_quant_Q13;
+
 pub use crate::stdlib::__int16_t;
 pub use crate::stdlib::__int32_t;
 pub use crate::stdlib::int16_t;
@@ -96,9 +94,9 @@ pub unsafe extern "C" fn silk_stereo_quant_pred(
 )
 /* O    Quantization indices                        */
 {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut n: i32 = 0;
+    let mut _i: i32 = 0;
+    let mut _j: i32 = 0;
+    let mut _n: i32 = 0;
     let mut low_Q13: crate::opus_types_h::opus_int32 = 0;
     let mut step_Q13: crate::opus_types_h::opus_int32 = 0;
     let mut lvl_Q13: crate::opus_types_h::opus_int32 = 0;

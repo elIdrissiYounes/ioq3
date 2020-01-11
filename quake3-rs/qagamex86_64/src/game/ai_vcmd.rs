@@ -51,26 +51,7 @@ pub use crate::src::qcommon::q_shared::vec3_t;
 pub use crate::src::qcommon::q_shared::vec_t;
 pub use crate::src::qcommon::q_shared::Q_stricmp;
 pub use crate::src::qcommon::q_shared::Q_strncpyz;
-use crate::stdlib::memcpy;
 
-use crate::src::game::ai_cmd::notleader;
-use crate::src::game::ai_dmq3::ctf_blueflag;
-use crate::src::game::ai_dmq3::ctf_redflag;
-use crate::src::game::ai_dmq3::gametype;
-use crate::src::game::ai_dmq3::BotGetAlternateRouteGoal;
-use crate::src::game::ai_dmq3::BotOppositeTeam;
-use crate::src::game::ai_dmq3::BotPointAreaNum;
-use crate::src::game::ai_dmq3::BotRememberLastOrderedTask;
-use crate::src::game::ai_dmq3::BotSameTeam;
-use crate::src::game::ai_dmq3::BotSetTeamStatus;
-use crate::src::game::ai_dmq3::BotTeam;
-use crate::src::game::ai_dmq3::BotTeamFlagCarrier;
-use crate::src::game::ai_dmq3::ClientName;
-use crate::src::game::ai_dmq3::EasyClientName;
-use crate::src::game::ai_dmq3::TeamPlayIsOn;
-use crate::src::game::ai_team::BotGetTeamMateTaskPreference;
-use crate::src::game::ai_team::BotSetTeamMateTaskPreference;
-use crate::src::game::ai_team::BotVoiceChatOnly;
 pub use crate::src::game::ai_vcmd::stdlib_h::atoi;
 pub use crate::stdlib::rand;
 pub use crate::stdlib::strtol;
@@ -128,7 +109,7 @@ BotVoiceChat_GetFlag
 pub unsafe extern "C" fn BotVoiceChat_GetFlag(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut client: i32,
-    mut mode: i32,
+    mut _mode: i32,
 ) {
     //
     if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_CTF as i32 {
@@ -209,7 +190,7 @@ BotVoiceChat_Defend
 pub unsafe extern "C" fn BotVoiceChat_Defend(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut client: i32,
-    mut mode: i32,
+    mut _mode: i32,
 ) {
     if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_CTF as i32 {
         //
@@ -282,7 +263,7 @@ BotVoiceChat_Patrol
 pub unsafe extern "C" fn BotVoiceChat_Patrol(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut client: i32,
-    mut mode: i32,
+    mut _mode: i32,
 ) {
     //
     (*bs).decisionmaker = client;
@@ -312,7 +293,7 @@ BotVoiceChat_Camp
 pub unsafe extern "C" fn BotVoiceChat_Camp(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut client: i32,
-    mut mode: i32,
+    mut _mode: i32,
 ) {
     let mut areanum: i32 = 0;
     let mut entinfo: crate::be_aas_h::aas_entityinfo_t = crate::be_aas_h::aas_entityinfo_t {
@@ -411,7 +392,7 @@ BotVoiceChat_FollowMe
 pub unsafe extern "C" fn BotVoiceChat_FollowMe(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut client: i32,
-    mut mode: i32,
+    mut _mode: i32,
 ) {
     let mut areanum: i32 = 0;
     let mut entinfo: crate::be_aas_h::aas_entityinfo_t = crate::be_aas_h::aas_entityinfo_t {
@@ -507,7 +488,7 @@ BotVoiceChat_FollowFlagCarrier
 
 pub unsafe extern "C" fn BotVoiceChat_FollowFlagCarrier(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-    mut client: i32,
+    mut _client: i32,
     mut mode: i32,
 ) {
     let mut carrier: i32 = 0;
@@ -527,7 +508,7 @@ BotVoiceChat_ReturnFlag
 pub unsafe extern "C" fn BotVoiceChat_ReturnFlag(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut client: i32,
-    mut mode: i32,
+    mut _mode: i32,
 ) {
     //if not in CTF mode
     if crate::src::game::ai_dmq3::gametype != crate::bg_public_h::GT_CTF as i32 {
@@ -558,7 +539,7 @@ BotVoiceChat_StartLeader
 pub unsafe extern "C" fn BotVoiceChat_StartLeader(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut client: i32,
-    mut mode: i32,
+    mut _mode: i32,
 ) {
     crate::src::game::ai_dmq3::ClientName(
         client,
@@ -576,7 +557,7 @@ BotVoiceChat_StopLeader
 pub unsafe extern "C" fn BotVoiceChat_StopLeader(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut client: i32,
-    mut mode: i32,
+    mut _mode: i32,
 ) {
     let mut netname: [i8; 256] = [0; 256];
     if crate::src::qcommon::q_shared::Q_stricmp(
@@ -602,8 +583,8 @@ BotVoiceChat_WhoIsLeader
 
 pub unsafe extern "C" fn BotVoiceChat_WhoIsLeader(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-    mut client: i32,
-    mut mode: i32,
+    mut _client: i32,
+    mut _mode: i32,
 ) {
     let mut netname: [i8; 256] = [0; 256];
     if crate::src::game::ai_dmq3::TeamPlayIsOn() == 0 {
@@ -641,7 +622,7 @@ BotVoiceChat_WantOnDefense
 pub unsafe extern "C" fn BotVoiceChat_WantOnDefense(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut client: i32,
-    mut mode: i32,
+    mut _mode: i32,
 ) {
     let mut netname: [i8; 36] = [0; 36];
     let mut preference: i32 = 0;
@@ -675,7 +656,7 @@ BotVoiceChat_WantOnOffense
 pub unsafe extern "C" fn BotVoiceChat_WantOnOffense(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut client: i32,
-    mut mode: i32,
+    mut _mode: i32,
 ) {
     let mut netname: [i8; 36] = [0; 36];
     let mut preference: i32 = 0;
@@ -702,9 +683,9 @@ pub unsafe extern "C" fn BotVoiceChat_WantOnOffense(
 #[no_mangle]
 
 pub unsafe extern "C" fn BotVoiceChat_Dummy(
-    mut bs: *mut crate::src::game::ai_main::bot_state_t,
-    mut client: i32,
-    mut mode: i32,
+    mut _bs: *mut crate::src::game::ai_main::bot_state_t,
+    mut _client: i32,
+    mut _mode: i32,
 ) {
 }
 #[no_mangle]

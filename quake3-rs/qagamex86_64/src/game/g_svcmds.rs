@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod stdlib_h {
     #[inline]
 
@@ -119,8 +117,7 @@ pub use crate::src::game::g_syscalls::trap_Argv;
 pub use crate::src::game::g_syscalls::trap_Cvar_Set;
 pub use crate::src::game::g_syscalls::trap_SendConsoleCommand;
 pub use crate::src::game::g_syscalls::trap_SendServerCommand;
-use crate::stdlib::strchr;
-use crate::stdlib::strlen;
+
 pub use crate::stdlib::strtol;
 extern "C" {
     #[no_mangle]
@@ -268,8 +265,8 @@ UpdateIPBans
 unsafe extern "C" fn UpdateIPBans() {
     let mut b: [crate::src::qcommon::q_shared::byte; 4] = [0, 0, 0, 0];
     let mut m: [crate::src::qcommon::q_shared::byte; 4] = [0, 0, 0, 0];
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _i: i32 = 0;
+    let mut _j: i32 = 0;
     let mut iplist_final: [i8; 256] = [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -483,7 +480,7 @@ pub unsafe extern "C" fn Svcmd_RemoveIP_f() {
         mask: 0,
         compare: 0,
     };
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut str: [i8; 1024] = [0; 1024];
     if crate::src::game::g_syscalls::trap_Argc() < 2 {
         crate::src::game::g_main::G_Printf(
@@ -612,7 +609,7 @@ pub unsafe extern "C" fn Svcmd_EntityList_f() {
 
 pub unsafe extern "C" fn ClientForString(mut s: *const i8) -> *mut crate::g_local_h::gclient_t {
     let mut cl: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut idnum: i32 = 0;
     // numeric values are just slot numbers
     if *s.offset(0) as i32 >= '0' as i32 && *s.offset(0) as i32 <= '9' as i32 {

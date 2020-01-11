@@ -9,8 +9,7 @@ pub use crate::snd_local_h::sfx_s;
 pub use crate::snd_local_h::sfx_t;
 pub use crate::snd_local_h::sndBuffer;
 pub use crate::snd_local_h::sndBuffer_s;
-use crate::src::client::cl_avi::CL_VideoRecording;
-use crate::src::client::cl_avi::CL_WriteAVIAudioFrame;
+
 pub use crate::src::client::snd_adpcm::S_AdpcmGetSamples;
 pub use crate::src::client::snd_dma::dma;
 pub use crate::src::client::snd_dma::loop_channels;
@@ -35,8 +34,7 @@ pub use crate::src::qcommon::q_shared::qfalse;
 pub use crate::src::qcommon::q_shared::qtrue;
 pub use crate::src::qcommon::q_shared::vec3_t;
 pub use crate::src::qcommon::q_shared::vec_t;
-use crate::stdlib::memset;
-use crate::stdlib::sin;
+
 /* Previous output value */
 /* Index into stepsize table */
 // couldn't be loaded, so use buzz
@@ -268,7 +266,7 @@ unsafe extern "C" fn S_PaintChannelFrom16_scalar(
     let mut leftvol: i32 = 0;
     let mut rightvol: i32 = 0;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut samp: *mut crate::snd_local_h::portable_samplepair_t =
         0 as *mut crate::snd_local_h::portable_samplepair_t;
     let mut chunk: *mut crate::snd_local_h::sndBuffer = 0 as *mut crate::snd_local_h::sndBuffer;
@@ -575,7 +573,7 @@ S_PaintChannels
 pub unsafe extern "C" fn S_PaintChannels(mut endtime: i32) {
     let mut i: i32 = 0;
     let mut end: i32 = 0;
-    let mut stream: i32 = 0;
+    let mut _stream: i32 = 0;
     let mut ch: *mut crate::snd_local_h::channel_t = 0 as *mut crate::snd_local_h::channel_t;
     let mut sc: *mut crate::snd_local_h::sfx_t = 0 as *mut crate::snd_local_h::sfx_t;
     let mut ltime: i32 = 0;

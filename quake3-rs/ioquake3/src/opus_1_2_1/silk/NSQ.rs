@@ -36,10 +36,10 @@ pub mod Inlines_h {
         let mut b32_nrm: crate::opus_types_h::opus_int32 = 0;
         let mut result: crate::opus_types_h::opus_int32 = 0;
         /* Compute number of bits head room and normalize inputs */
-        a_headrm = silk_CLZ32((if a32 > 0 { a32 } else { -a32 })) - 1; /* Q: a_headrm                  */
+        a_headrm = silk_CLZ32(if a32 > 0 { a32 } else { -a32 }) - 1; /* Q: a_headrm                  */
         a32_nrm = ((a32 as crate::opus_types_h::opus_uint32) << a_headrm)
             as crate::opus_types_h::opus_int32; /* Q: b_headrm                  */
-        b_headrm = silk_CLZ32((if b32 > 0 { b32 } else { -b32 })) - 1;
+        b_headrm = silk_CLZ32(if b32 > 0 { b32 } else { -b32 }) - 1;
         b32_nrm = ((b32 as crate::opus_types_h::opus_uint32) << b_headrm)
             as crate::opus_types_h::opus_int32;
         /* Inverse of b32, with 14 bits of precision */
@@ -105,7 +105,7 @@ pub mod Inlines_h {
         let mut err_Q32: crate::opus_types_h::opus_int32 = 0;
         let mut result: crate::opus_types_h::opus_int32 = 0;
         /* Compute number of bits head room and normalize input */
-        b_headrm = silk_CLZ32((if b32 > 0 { b32 } else { -b32 })) - 1; /* Q: b_headrm                */
+        b_headrm = silk_CLZ32(if b32 > 0 { b32 } else { -b32 }) - 1; /* Q: b_headrm                */
         b32_nrm = ((b32 as crate::opus_types_h::opus_uint32) << b_headrm)
             as crate::opus_types_h::opus_int32;
         /* Inverse of b32, with 14 bits of precision */
@@ -156,9 +156,7 @@ pub mod Inlines_h {
             return 0i32;
         };
     }
-    use crate::opus_types_h::opus_int16;
-    use crate::opus_types_h::opus_int32;
-    use crate::opus_types_h::opus_uint32;
+
     use crate::src::opus_1_2_1::silk::NSQ::macros_h::silk_CLZ32;
     /* SILK_FIX_INLINES_H */
 }
@@ -248,7 +246,7 @@ pub mod NSQ_h {
         let mut out: crate::opus_types_h::opus_int32 = 0;
         let mut tmp1: crate::opus_types_h::opus_int32 = 0;
         let mut tmp2: crate::opus_types_h::opus_int32 = 0;
-        let mut j: i32 = 0;
+        let mut _j: i32 = 0;
         tmp2 = *data0.offset(0);
         tmp1 = *data1.offset(0);
         *data1.offset(0) = tmp2;
@@ -278,8 +276,7 @@ pub mod NSQ_h {
         out = ((out as crate::opus_types_h::opus_uint32) << 1) as crate::opus_types_h::opus_int32;
         return out;
     }
-    use crate::opus_types_h::opus_int32;
-    use crate::opus_types_h::opus_uint32;
+
     /* SILK_NSQ_H */
 }
 
@@ -296,15 +293,13 @@ pub use crate::opus_types_h::opus_uint32;
 pub use crate::resampler_structs_h::_silk_resampler_state_struct;
 pub use crate::resampler_structs_h::silk_resampler_state_struct;
 pub use crate::resampler_structs_h::C2RustUnnamed_64;
-use crate::src::opus_1_2_1::silk::tables_other::silk_Quantization_Offsets_Q10;
-use crate::src::opus_1_2_1::silk::LPC_analysis_filter::silk_LPC_analysis_filter;
+
 pub use crate::src::opus_1_2_1::silk::NSQ::macros_h::silk_CLZ32;
 pub use crate::src::opus_1_2_1::silk::NSQ::Inlines_h::silk_DIV32_varQ;
 pub use crate::src::opus_1_2_1::silk::NSQ::Inlines_h::silk_INVERSE32_varQ;
 pub use crate::src::opus_1_2_1::silk::NSQ::NSQ_h::silk_NSQ_noise_shape_feedback_loop_c;
 pub use crate::src::opus_1_2_1::silk::NSQ::NSQ_h::silk_noise_shape_quantizer_short_prediction_c;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
+
 pub use crate::structs_h::silk_LP_state;
 pub use crate::structs_h::silk_NLSF_CB_struct;
 pub use crate::structs_h::silk_VAD_state;
@@ -486,7 +481,7 @@ pub unsafe extern "C" fn silk_NSQ_c(
 )
 /* I    LTP state scaling               */
 {
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut lag: i32 = 0;
     let mut start_idx: i32 = 0;
     let mut LSF_interpolation_flag: i32 = 0;
@@ -677,11 +672,11 @@ unsafe extern "C" fn silk_noise_shape_quantizer(
     mut length: i32,
     mut shapingLPCOrder: i32,
     mut predictLPCOrder: i32,
-    mut arch: i32,
+    mut _arch: i32,
 )
 /* I    Architecture                    */
 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut LTP_pred_Q13: crate::opus_types_h::opus_int32 = 0;
     let mut LPC_pred_Q10: crate::opus_types_h::opus_int32 = 0;
     let mut n_AR_Q12: crate::opus_types_h::opus_int32 = 0;

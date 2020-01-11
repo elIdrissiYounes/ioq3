@@ -1,5 +1,3 @@
-use ::libc;
-
 /* JERROR_H */
 
 /* Informational/debugging messages */
@@ -592,7 +590,7 @@ unsafe extern "C" fn emit_sof(mut cinfo: crate::jpeglib_h::j_compress_ptr, mut c
 unsafe extern "C" fn emit_sos(mut cinfo: crate::jpeglib_h::j_compress_ptr)
 /* Emit a SOS marker */
 {
-    let mut i: i32 = 0; /* length */
+    let mut _i: i32 = 0; /* length */
     let mut td: i32 = 0;
     let mut ta: i32 = 0;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =

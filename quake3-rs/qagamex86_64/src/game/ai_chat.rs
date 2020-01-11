@@ -139,19 +139,7 @@ pub use crate::g_local_h::SPECTATOR_SCOREBOARD;
 pub use crate::g_local_h::TEAM_ACTIVE;
 pub use crate::g_local_h::TEAM_BEGIN;
 pub use crate::src::game::ai_chat::stdlib_h::atoi;
-use crate::src::game::ai_dmq3::bot_fastchat;
-use crate::src::game::ai_dmq3::bot_nochat;
-use crate::src::game::ai_dmq3::gametype;
-use crate::src::game::ai_dmq3::BotEntityVisible;
-use crate::src::game::ai_dmq3::BotIsDead;
-use crate::src::game::ai_dmq3::BotIsObserver;
-use crate::src::game::ai_dmq3::BotSameTeam;
-use crate::src::game::ai_dmq3::ClientName;
-use crate::src::game::ai_dmq3::EasyClientName;
-use crate::src::game::ai_dmq3::EntityIsDead;
-use crate::src::game::ai_dmq3::EntityIsInvisible;
-use crate::src::game::ai_dmq3::EntityIsShooting;
-use crate::src::game::ai_dmq3::TeamPlayIsOn;
+
 pub use crate::src::game::ai_main::bot_activategoal_s;
 pub use crate::src::game::ai_main::bot_activategoal_t;
 pub use crate::src::game::ai_main::bot_state_s;
@@ -173,9 +161,7 @@ pub use crate::src::game::g_syscalls::trap_GetConfigstring;
 pub use crate::src::game::g_syscalls::trap_GetServerinfo;
 pub use crate::src::game::g_syscalls::trap_PointContents;
 pub use crate::stdlib::rand;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strncpy;
+
 pub use crate::stdlib::strtol;
 /*
 ==================
@@ -185,7 +171,7 @@ BotNumActivePlayers
 #[no_mangle]
 
 pub unsafe extern "C" fn BotNumActivePlayers() -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut num: i32 = 0;
     let mut buf: [i8; 1024] = [0; 1024];
     num = 0;
@@ -226,7 +212,7 @@ BotIsFirstInRankings
 pub unsafe extern "C" fn BotIsFirstInRankings(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut score: i32 = 0;
     let mut buf: [i8; 1024] = [0; 1024];
     let mut ps: crate::src::qcommon::q_shared::playerState_t =
@@ -319,7 +305,7 @@ BotIsLastInRankings
 pub unsafe extern "C" fn BotIsLastInRankings(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut score: i32 = 0;
     let mut buf: [i8; 1024] = [0; 1024];
     let mut ps: crate::src::qcommon::q_shared::playerState_t =
@@ -410,7 +396,7 @@ BotFirstClientInRankings
 #[no_mangle]
 
 pub unsafe extern "C" fn BotFirstClientInRankings() -> *mut i8 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut bestscore: i32 = 0;
     let mut bestclient: i32 = 0;
     let mut buf: [i8; 1024] = [0; 1024];
@@ -506,7 +492,7 @@ BotLastClientInRankings
 #[no_mangle]
 
 pub unsafe extern "C" fn BotLastClientInRankings() -> *mut i8 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut worstscore: i32 = 0;
     let mut bestclient: i32 = 0;
     let mut buf: [i8; 1024] = [0; 1024];
@@ -746,7 +732,7 @@ pub unsafe extern "C" fn BotVisibleEnemies(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
 ) -> i32 {
     let mut vis: f32 = 0.;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut entinfo: crate::be_aas_h::aas_entityinfo_t = crate::be_aas_h::aas_entityinfo_t {
         valid: 0,
         type_0: 0,
@@ -1905,7 +1891,7 @@ BotChatTime
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn BotChatTime(mut bs: *mut crate::src::game::ai_main::bot_state_t) -> f32 {
+pub unsafe extern "C" fn BotChatTime(mut _bs: *mut crate::src::game::ai_main::bot_state_t) -> f32 {
     //int cpm;
     //cpm = trap_Characteristic_BInteger(bs->character, CHARACTERISTIC_CHAT_CPM, 1, 4000);
     return 2f32;

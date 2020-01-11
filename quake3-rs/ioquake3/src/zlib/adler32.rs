@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::stdlib::__off_t;
 pub use crate::stdlib::off_t;
 pub use crate::zconf_h::uInt;

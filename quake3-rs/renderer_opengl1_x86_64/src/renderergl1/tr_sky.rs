@@ -317,11 +317,7 @@ pub use crate::src::sdl::sdl_glimp::qglPushMatrix;
 pub use crate::src::sdl::sdl_glimp::qglTexCoord2fv;
 pub use crate::src::sdl::sdl_glimp::qglTranslatef;
 pub use crate::src::sdl::sdl_glimp::qglVertex3fv;
-use crate::stdlib::ceil;
-use crate::stdlib::fabs;
-use crate::stdlib::floor;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
+
 pub use crate::stdlib::GLclampd;
 pub use crate::stdlib::GLenum;
 pub use crate::stdlib::GLfloat;
@@ -629,7 +625,7 @@ unsafe extern "C" fn ClipSkyPolygon(
     let mut newv: [[crate::src::qcommon::q_shared::vec3_t; 64]; 2] = [[[0.; 3]; 64]; 2];
     let mut newc: [i32; 2] = [0; 2];
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     if nump > 64 - 2 {
         crate::src::renderergl1::tr_main::ri
             .Error
@@ -757,7 +753,7 @@ RB_ClipSkyPolygons
 pub unsafe extern "C" fn RB_ClipSkyPolygons(mut input: *mut crate::tr_local_h::shaderCommands_t) {
     let mut p: [crate::src::qcommon::q_shared::vec3_t; 5] = [[0.; 3]; 5]; // need one extra point for clipping
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     ClearSkyBox();
     i = 0;
     while i < (*input).numIndexes {
@@ -814,7 +810,7 @@ unsafe extern "C" fn MakeSkyVec(
         [2, -(1), -(3)],
     ]; // div sqrt(3)
     let mut b: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut k: i32 = 0;
     let mut boxSize: f32 = 0.;
     boxSize = (crate::src::renderergl1::tr_backend::backEnd.viewParms.zFar as f64 / 1.75) as f32;
@@ -862,7 +858,7 @@ unsafe extern "C" fn DrawSkySide(
     mut mins: *const i32,
     mut maxs: *const i32,
 ) {
-    let mut s: i32 = 0;
+    let mut _s: i32 = 0;
     let mut t: i32 = 0;
     crate::src::renderergl1::tr_backend::GL_Bind(image);
     t = *mins.offset(1) + 8 / 2;
@@ -904,8 +900,8 @@ unsafe extern "C" fn DrawSkyBox(mut shader: *mut crate::tr_local_h::shader_t) {
     while i < 6 {
         let mut sky_mins_subd: [i32; 2] = [0; 2];
         let mut sky_maxs_subd: [i32; 2] = [0; 2];
-        let mut s: i32 = 0;
-        let mut t: i32 = 0;
+        let mut _s: i32 = 0;
+        let mut _t: i32 = 0;
         sky_mins[0][i as usize] =
             (crate::stdlib::floor((sky_mins[0][i as usize] * (8i32 / 2) as f32) as f64)
                 / (8i32 / 2) as f64) as f32;
@@ -1063,14 +1059,14 @@ unsafe extern "C" fn FillCloudySkySide(
     };
 }
 
-unsafe extern "C" fn FillCloudBox(mut shader: *const crate::tr_local_h::shader_t, mut stage: i32) {
+unsafe extern "C" fn FillCloudBox(mut _shader: *const crate::tr_local_h::shader_t, mut stage: i32) {
     let mut i: i32 = 0;
     i = 0;
     while i < 6 {
         let mut sky_mins_subd: [i32; 2] = [0; 2];
         let mut sky_maxs_subd: [i32; 2] = [0; 2];
-        let mut s: i32 = 0;
-        let mut t: i32 = 0;
+        let mut _s: i32 = 0;
+        let mut _t: i32 = 0;
         let mut MIN_T: f32 = 0.;
         // FIXME? shader->sky.fullClouds )
         MIN_T = -(8i32 / 2) as f32;
@@ -1201,8 +1197,8 @@ pub unsafe extern "C" fn R_BuildCloudData(mut input: *mut crate::tr_local_h::sha
 
 pub unsafe extern "C" fn R_InitSkyTexCoords(mut heightCloud: f32) {
     let mut i: i32 = 0;
-    let mut s: i32 = 0;
-    let mut t: i32 = 0;
+    let mut _s: i32 = 0;
+    let mut _t: i32 = 0;
     let mut radiusWorld: f32 = 4096f32;
     let mut p: f32 = 0.;
     let mut sRad: f32 = 0.;

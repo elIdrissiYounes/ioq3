@@ -1,24 +1,12 @@
-use ::libc;
-
 pub use crate::stdlib::intptr_t;
 
-use crate::src::q3_ui::ui_atoms::UI_ConsoleCommand;
-use crate::src::q3_ui::ui_atoms::UI_Init;
-use crate::src::q3_ui::ui_atoms::UI_IsFullscreen;
-use crate::src::q3_ui::ui_atoms::UI_KeyEvent;
-use crate::src::q3_ui::ui_atoms::UI_MouseEvent;
-use crate::src::q3_ui::ui_atoms::UI_Refresh;
-use crate::src::q3_ui::ui_atoms::UI_SetActiveMenu;
-use crate::src::q3_ui::ui_atoms::UI_Shutdown;
-use crate::src::q3_ui::ui_connect::UI_DrawConnectScreen;
 pub use crate::src::qcommon::q_shared::cvarHandle_t;
 pub use crate::src::qcommon::q_shared::qboolean;
 pub use crate::src::qcommon::q_shared::qfalse;
 pub use crate::src::qcommon::q_shared::qtrue;
 pub use crate::src::qcommon::q_shared::vmCvar_t;
 pub use crate::src::qcommon::q_shared::C2RustUnnamed_0;
-use crate::src::ui::ui_syscalls::trap_Cvar_Register;
-use crate::src::ui::ui_syscalls::trap_Cvar_Update;
+
 pub use crate::ui_public_h::uiMenuCommand_t;
 pub use crate::ui_public_h::UIMENU_BAD_CD_KEY;
 pub use crate::ui_public_h::UIMENU_INGAME;
@@ -90,16 +78,16 @@ pub unsafe extern "C" fn vmMain(
     mut command: i32,
     mut arg0: i32,
     mut arg1: i32,
-    mut arg2: i32,
-    mut arg3: i32,
-    mut arg4: i32,
-    mut arg5: i32,
-    mut arg6: i32,
-    mut arg7: i32,
-    mut arg8: i32,
-    mut arg9: i32,
-    mut arg10: i32,
-    mut arg11: i32,
+    mut _arg2: i32,
+    mut _arg3: i32,
+    mut _arg4: i32,
+    mut _arg5: i32,
+    mut _arg6: i32,
+    mut _arg7: i32,
+    mut _arg8: i32,
+    mut _arg9: i32,
+    mut _arg10: i32,
+    mut _arg11: i32,
 ) -> crate::stdlib::intptr_t {
     match command {
         0 => {

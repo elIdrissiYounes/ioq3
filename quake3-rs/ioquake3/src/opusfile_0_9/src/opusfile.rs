@@ -124,14 +124,7 @@ pub use crate::src::libogg_1_3_3::src::framing::ogg_sync_pageout;
 pub use crate::src::libogg_1_3_3::src::framing::ogg_sync_pageseek;
 pub use crate::src::libogg_1_3_3::src::framing::ogg_sync_reset;
 pub use crate::src::libogg_1_3_3::src::framing::ogg_sync_wrote;
-use crate::src::opus_1_2_1::src::opus::opus_packet_get_samples_per_frame;
-use crate::src::opus_1_2_1::src::opus::opus_pcm_soft_clip;
-use crate::src::opus_1_2_1::src::opus_decoder::opus_packet_get_nb_frames;
-use crate::src::opus_1_2_1::src::opus_multistream_decoder::opus_multistream_decode_float;
-use crate::src::opus_1_2_1::src::opus_multistream_decoder::opus_multistream_decoder_create;
-use crate::src::opus_1_2_1::src::opus_multistream_decoder::opus_multistream_decoder_ctl;
-use crate::src::opus_1_2_1::src::opus_multistream_decoder::opus_multistream_decoder_destroy;
-use crate::src::opus_1_2_1::src::opus_multistream_decoder::OpusMSDecoder;
+
 pub use crate::src::opusfile_0_9::src::info::opus_head_parse;
 pub use crate::src::opusfile_0_9::src::info::opus_tags_clear;
 pub use crate::src::opusfile_0_9::src::info::opus_tags_get_album_gain;
@@ -139,13 +132,7 @@ pub use crate::src::opusfile_0_9::src::info::opus_tags_get_track_gain;
 pub use crate::src::opusfile_0_9::src::info::opus_tags_parse;
 pub use crate::src::opusfile_0_9::src::stream::op_fopen;
 pub use crate::src::opusfile_0_9::src::stream::op_mem_stream_create;
-use crate::stdlib::free;
-use crate::stdlib::malloc;
-use crate::stdlib::memcmp;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::realloc;
+
 /*We use this to remember the pages we found while enumerating the links of a
  chained stream.
 We keep track of the starting and ending offsets, as well as the point we
@@ -1565,7 +1552,7 @@ unsafe extern "C" fn op_predict_link_start(
     mut _bias: crate::opus_types_h::opus_int32,
 ) -> i64 {
     let mut bisect: i64 = 0;
-    let mut sri: i32 = 0;
+    let mut _sri: i32 = 0;
     let mut srj: i32 = 0;
     /*Require that we be at least OP_CHUNK_SIZE from the end.
     We don't require that we be at least OP_CHUNK_SIZE from the beginning,
@@ -4677,7 +4664,7 @@ unsafe extern "C" fn op_stereo_filter(
             while i < _nsamples {
                 let mut l: f32 = 0.;
                 let mut r: f32 = 0.;
-                let mut ci: i32 = 0;
+                let mut _ci: i32 = 0;
                 r = 0f32;
                 l = r;
 

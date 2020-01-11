@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::stdlib::__jmp_buf;
 pub use crate::stdlib::__sigset_t;
 

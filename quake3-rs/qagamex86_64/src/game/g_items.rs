@@ -214,11 +214,9 @@ pub use crate::src::game::g_syscalls::trap_LinkEntity;
 pub use crate::src::game::g_syscalls::trap_PointContents;
 pub use crate::src::game::g_syscalls::trap_SetConfigstring;
 pub use crate::src::game::g_syscalls::trap_Trace;
-use crate::src::game::g_team::Pickup_Team;
+
 pub use crate::src::game::g_team::Team_CheckDroppedItem;
-use crate::src::game::g_team::Team_DroppedFlagThink;
-use crate::src::game::g_team::Team_FreeEntity;
-use crate::src::game::g_team::Team_InitGame;
+
 pub use crate::src::game::g_utils::vtos;
 pub use crate::src::game::g_utils::G_AddEvent;
 pub use crate::src::game::g_utils::G_AddPredictableEvent;
@@ -257,8 +255,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::memset;
-use crate::stdlib::rand;
+
 //======================================================================
 #[no_mangle]
 
@@ -267,7 +264,7 @@ pub unsafe extern "C" fn Pickup_Powerup(
     mut other: *mut crate::g_local_h::gentity_t,
 ) -> i32 {
     let mut quantity: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut client: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
     if (*(*other).client).ps.powerups[(*(*ent).item).giTag as usize] == 0 {
         // round timing to seconds to make multiple powerup timers
@@ -600,7 +597,7 @@ Touch_Item
 pub unsafe extern "C" fn Touch_Item(
     mut ent: *mut crate::g_local_h::gentity_t,
     mut other: *mut crate::g_local_h::gentity_t,
-    mut trace: *mut crate::src::qcommon::q_shared::trace_t,
+    mut _trace: *mut crate::src::qcommon::q_shared::trace_t,
 ) {
     let mut respawn: i32 = 0; // dead people can't pickup
     let mut predict: crate::src::qcommon::q_shared::qboolean =
@@ -848,8 +845,8 @@ Respawn the item
 
 pub unsafe extern "C" fn Use_Item(
     mut ent: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
-    mut activator: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
+    mut _activator: *mut crate::g_local_h::gentity_t,
 ) {
     RespawnItem(ent);
 }
@@ -1056,7 +1053,7 @@ so the client will know which ones to precache
 
 pub unsafe extern "C" fn SaveRegisteredItems() {
     let mut string: [i8; 257] = [0; 257];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut count: i32 = 0;
     count = 0;
 

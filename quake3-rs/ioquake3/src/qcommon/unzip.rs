@@ -58,8 +58,6 @@ use ::libc;
 pub use crate::stdlib::__off_t;
 pub use crate::stdlib::off_t;
 
-use crate::src::qcommon::common::Z_Free;
-use crate::src::qcommon::common::Z_Malloc;
 pub use crate::src::qcommon::ioapi::close_file_func;
 pub use crate::src::qcommon::ioapi::fill_fopen_filefunc;
 pub use crate::src::qcommon::ioapi::open_file_func;
@@ -74,8 +72,7 @@ pub use crate::src::zlib::crc32::crc32;
 pub use crate::src::zlib::inflate::inflate;
 pub use crate::src::zlib::inflate::inflateEnd;
 pub use crate::src::zlib::inflate::inflateInit2_;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
+
 pub use crate::zconf_h::uInt;
 pub use crate::zconf_h::uLong;
 pub use crate::zconf_h::voidp;

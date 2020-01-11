@@ -128,9 +128,6 @@ pub mod SigProc_FIX_h {
         return if a > b { a } else { b };
     }
 
-    use crate::opus_types_h::opus_int16;
-    use crate::opus_types_h::opus_int32;
-    use crate::opus_types_h::opus_uint32;
     /* SILK_SIGPROC_FIX_H */
     /*    silk_SMMUL: Signed top word multiply.
     ARMv6        2 instruction cycles.
@@ -207,7 +204,7 @@ pub mod Inlines_h {
         let mut err_Q32: crate::opus_types_h::opus_int32 = 0;
         let mut result: crate::opus_types_h::opus_int32 = 0;
         /* Compute number of bits head room and normalize input */
-        b_headrm = silk_CLZ32((if b32 > 0 { b32 } else { -b32 })) - 1; /* Q: b_headrm                */
+        b_headrm = silk_CLZ32(if b32 > 0 { b32 } else { -b32 }) - 1; /* Q: b_headrm                */
         b32_nrm = ((b32 as crate::opus_types_h::opus_uint32) << b_headrm)
             as crate::opus_types_h::opus_int32;
         /* Inverse of b32, with 14 bits of precision */
@@ -258,9 +255,7 @@ pub mod Inlines_h {
             return 0i32;
         };
     }
-    use crate::opus_types_h::opus_int16;
-    use crate::opus_types_h::opus_int32;
-    use crate::opus_types_h::opus_uint32;
+
     use crate::src::opus_1_2_1::silk::PLC::macros_h::silk_CLZ32;
     use crate::src::opus_1_2_1::silk::PLC::SigProc_FIX_h::silk_ROR32;
     /* SILK_FIX_INLINES_H */
@@ -280,8 +275,7 @@ pub use crate::resampler_structs_h::_silk_resampler_state_struct;
 pub use crate::resampler_structs_h::silk_resampler_state_struct;
 pub use crate::resampler_structs_h::C2RustUnnamed_64;
 pub use crate::src::opus_1_2_1::silk::PLC::macros_h::silk_CLZ32;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
+
 pub use crate::structs_h::silk_CNG_struct;
 pub use crate::structs_h::silk_NLSF_CB_struct;
 pub use crate::structs_h::silk_PLC_struct;
@@ -487,8 +481,8 @@ unsafe extern "C" fn silk_PLC_energy(
     mut subfr_length: i32,
     mut nb_subfr: i32,
 ) {
-    let mut i: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _i: i32 = 0;
+    let mut _k: i32 = 0;
     let mut exc_buf: *mut crate::opus_types_h::opus_int16 =
         0 as *mut crate::opus_types_h::opus_int16;
     let mut exc_buf_ptr: *mut crate::opus_types_h::opus_int16 =
@@ -557,7 +551,7 @@ unsafe extern "C" fn silk_PLC_conceal(
 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut lag: i32 = 0;
     let mut idx: i32 = 0;
     let mut sLTP_buf_idx: i32 = 0;
@@ -725,7 +719,7 @@ unsafe extern "C" fn silk_PLC_conceal(
     /* LTP synthesis filtering */
     /* **************************/
 
-    for k in 0..(*psDec).nb_subfr {
+    for _k in 0..(*psDec).nb_subfr {
         pred_lag_ptr = &mut *sLTP_Q14.offset((sLTP_buf_idx - lag + 5 / 2) as isize)
             as *mut crate::opus_types_h::opus_int32;
 

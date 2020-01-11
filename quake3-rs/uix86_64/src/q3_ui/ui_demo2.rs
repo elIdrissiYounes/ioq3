@@ -267,8 +267,7 @@ pub use crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText;
 pub use crate::src::ui::ui_syscalls::trap_Cvar_VariableValue;
 pub use crate::src::ui::ui_syscalls::trap_FS_GetFileList;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
-use crate::stdlib::memset;
-use crate::stdlib::strlen;
+
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
 pub use crate::ui_local_h::menucommon_s;
@@ -592,7 +591,7 @@ Demos_MenuInit
 
 unsafe extern "C" fn Demos_MenuInit() {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut len: i32 = 0;
     let mut demoname: *mut i8 = 0 as *mut i8;
     let mut extension: [i8; 32] = [0; 32];

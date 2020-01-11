@@ -7,7 +7,6 @@ pub struct mdct_lookup {
     pub kfft: [*const crate::src::opus_1_2_1::celt::kiss_fft::kiss_fft_state; 4],
     pub trig: *const f32,
 }
-use ::libc;
 
 pub use crate::arch_h::opus_val16;
 pub use crate::opus_types_h::opus_int16;
@@ -70,7 +69,7 @@ pub unsafe extern "C" fn clt_mdct_forward_c(
     mut overlap: i32,
     mut shift: i32,
     mut stride: i32,
-    mut arch: i32,
+    mut _arch: i32,
 ) {
     let mut i: i32 = 0;
     let mut N: i32 = 0;
@@ -264,7 +263,7 @@ pub unsafe extern "C" fn clt_mdct_backward_c(
     mut overlap: i32,
     mut shift: i32,
     mut stride: i32,
-    mut arch: i32,
+    mut _arch: i32,
 ) {
     let mut i: i32 = 0;
     let mut N: i32 = 0;

@@ -103,31 +103,9 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::fprintf;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::sprintf;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strncpy;
 
-use crate::src::botlib::be_aas_main::AAS_Time;
 pub use crate::src::botlib::be_ai_chat::ctype_h::toupper;
-use crate::src::botlib::be_ea::EA_Command;
-use crate::src::botlib::be_interface::botDeveloper;
-use crate::src::botlib::be_interface::botimport;
-use crate::src::botlib::l_libvar::LibVarGetValue;
-use crate::src::botlib::l_libvar::LibVarString;
-use crate::src::botlib::l_libvar::LibVarValue;
-use crate::src::botlib::l_log::Log_FilePointer;
-use crate::src::botlib::l_log::Log_Write;
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetClearedHunkMemory;
-use crate::src::botlib::l_memory::GetClearedMemory;
+
 pub use crate::stdlib::__ctype_toupper_loc;
 
 #[repr(C)]
@@ -385,7 +363,7 @@ pub unsafe extern "C" fn BotChatStateFromHandle(mut handle: i32) -> *mut bot_cha
 #[no_mangle]
 
 pub unsafe extern "C" fn InitConsoleMessageHeap() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut max_messages: i32 = 0;
     if !consolemessageheap.is_null() {
         crate::src::botlib::l_memory::FreeMemory(consolemessageheap as *mut libc::c_void);
@@ -762,11 +740,11 @@ pub unsafe extern "C" fn StringContains(
                 if ::std::mem::size_of::<i8>() > 1 {
                     if 0 != 0 {
                         let mut __c: i32 = *str1.offset(j as isize) as i32;
-                        __res = (if __c < -(128) || __c > 255 {
+                        __res = if __c < -(128) || __c > 255 {
                             __c
                         } else {
                             *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                        })
+                        }
                     } else {
                         __res = toupper(*str1.offset(j as isize) as i32)
                     }
@@ -780,11 +758,11 @@ pub unsafe extern "C" fn StringContains(
                 if ::std::mem::size_of::<i8>() > 1 {
                     if 0 != 0 {
                         let mut __c: i32 = *str2.offset(j as isize) as i32;
-                        __res = (if __c < -(128) || __c > 255 {
+                        __res = if __c < -(128) || __c > 255 {
                             __c
                         } else {
                             *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                        })
+                        }
                     } else {
                         __res = toupper(*str2.offset(j as isize) as i32)
                     }
@@ -857,11 +835,11 @@ pub unsafe extern "C" fn StringContainsWord(
                 if ::std::mem::size_of::<i8>() > 1 {
                     if 0 != 0 {
                         let mut __c: i32 = *str1.offset(j as isize) as i32;
-                        __res = (if __c < -(128) || __c > 255 {
+                        __res = if __c < -(128) || __c > 255 {
                             __c
                         } else {
                             *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                        })
+                        }
                     } else {
                         __res = toupper(*str1.offset(j as isize) as i32)
                     }
@@ -875,11 +853,11 @@ pub unsafe extern "C" fn StringContainsWord(
                 if ::std::mem::size_of::<i8>() > 1 {
                     if 0 != 0 {
                         let mut __c: i32 = *str2.offset(j as isize) as i32;
-                        __res = (if __c < -(128) || __c > 255 {
+                        __res = if __c < -(128) || __c > 255 {
                             __c
                         } else {
                             *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                        })
+                        }
                     } else {
                         __res = toupper(*str2.offset(j as isize) as i32)
                     }
@@ -1024,7 +1002,7 @@ pub unsafe extern "C" fn BotDumpSynonymList(mut synlist: *mut bot_synonymlist_t)
 #[no_mangle]
 
 pub unsafe extern "C" fn BotLoadSynonyms(mut filename: *mut i8) -> *mut bot_synonymlist_t {
-    let mut pass: i32 = 0; //make compiler happy
+    let mut _pass: i32 = 0; //make compiler happy
     let mut size: i32 = 0; //make compiler happy
     let mut contextlevel: i32 = 0; //make compiler happy
     let mut numsynonyms: i32 = 0;
@@ -1601,7 +1579,7 @@ pub unsafe extern "C" fn BotDumpRandomStringList(mut randomlist: *mut bot_random
 #[no_mangle]
 
 pub unsafe extern "C" fn BotLoadRandomStrings(mut filename: *mut i8) -> *mut bot_randomlist_t {
-    let mut pass: i32 = 0;
+    let mut _pass: i32 = 0;
     let mut size: i32 = 0;
     let mut ptr: *mut i8 = 0 as *mut i8;
     let mut chatmessagestring: [i8; 256] = [0; 256];
@@ -2318,7 +2296,7 @@ pub unsafe extern "C" fn BotFindMatch(
     mut match_0: *mut crate::src::botlib::be_ai_chat::bot_match_t,
     mut context: usize,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut ms: *mut bot_matchtemplate_t = 0 as *mut bot_matchtemplate_t;
     crate::src::qcommon::q_shared::Q_strncpyz((*match_0).string.as_mut_ptr(), str, 256);
     //remove any trailing enters
@@ -3218,7 +3196,7 @@ pub unsafe extern "C" fn BotLoadInitialChat(
     mut chatfile: *mut i8,
     mut chatname: *mut i8,
 ) -> *mut bot_chat_t {
-    let mut pass: i32 = 0;
+    let mut _pass: i32 = 0;
     let mut foundchat: i32 = 0;
     let mut indent: i32 = 0;
     let mut size: i32 = 0;
@@ -3514,7 +3492,7 @@ pub unsafe extern "C" fn BotLoadChatFile(
     mut chatname: *mut i8,
 ) -> i32 {
     let mut cs: *mut bot_chatstate_t = 0 as *mut bot_chatstate_t;
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut avail: i32 = 0;
     cs = BotChatStateFromHandle(chatstate);
     if cs.is_null() {
@@ -4653,7 +4631,7 @@ pub unsafe extern "C" fn BotResetChatAI() {
 #[no_mangle]
 
 pub unsafe extern "C" fn BotAllocChatState() -> i32 {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
 
     for i in 1..=64 {
         if botchatstates[i as usize].is_null() {

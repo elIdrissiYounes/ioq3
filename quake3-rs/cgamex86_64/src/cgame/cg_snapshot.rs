@@ -96,7 +96,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::memcpy;
+
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -350,7 +350,7 @@ A new snapshot has just been read in from the client system.
 */
 
 unsafe extern "C" fn CG_SetNextSnap(mut snap: *mut crate::cg_public_h::snapshot_t) {
-    let mut num: i32 = 0;
+    let mut _num: i32 = 0;
     let mut es: *mut crate::src::qcommon::q_shared::entityState_t =
         0 as *mut crate::src::qcommon::q_shared::entityState_t;
     let mut cent: *mut crate::cg_local_h::centity_t = 0 as *mut crate::cg_local_h::centity_t;

@@ -6,7 +6,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub use crate::bg_public_h::animation_s;
@@ -258,13 +257,6 @@ pub use crate::src::cgame::cg_syscalls::trap_R_SetColor;
 pub use crate::src::cgame::cg_syscalls::trap_S_StartLocalSound;
 pub use crate::src::cgame::cg_weapons::CG_DrawWeaponSelect;
 pub use crate::src::cgame::cg_weapons::CG_RegisterItemVisuals;
-use crate::stdlib::cos;
-use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::sin;
-use crate::stdlib::strlen;
-use crate::stdlib::strtod;
-use crate::stdlib::tan;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -1085,7 +1077,7 @@ unsafe extern "C" fn CG_DrawFPS(mut y: f32) -> f32 {
     let mut w: i32 = 0;
     static mut previousTimes: [i32; 4] = [0; 4];
     static mut index: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut total: i32 = 0;
     let mut fps: i32 = 0;
     static mut previous: i32 = 0;
@@ -1160,7 +1152,7 @@ unsafe extern "C" fn CG_DrawTeamOverlay(
     let mut h: i32 = 0;
     let mut xx: i32 = 0;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut len: i32 = 0;
     let mut p: *const i8 = 0 as *const i8;
     let mut hcolor: crate::src::qcommon::q_shared::vec4_t = [0.; 4];
@@ -3009,7 +3001,7 @@ CG_DrawWarmup
 unsafe extern "C" fn CG_DrawWarmup() {
     let mut w: i32 = 0;
     let mut sec: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut cw: i32 = 0;
     let mut ci1: *mut crate::cg_local_h::clientInfo_t = 0 as *mut crate::cg_local_h::clientInfo_t;
     let mut ci2: *mut crate::cg_local_h::clientInfo_t = 0 as *mut crate::cg_local_h::clientInfo_t;

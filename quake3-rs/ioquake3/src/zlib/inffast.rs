@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::src::zlib::inflate::inflate_mode;
 pub use crate::src::zlib::inflate::inflate_state;
 pub use crate::src::zlib::inflate::BAD;

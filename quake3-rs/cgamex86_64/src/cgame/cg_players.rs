@@ -6,7 +6,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub mod stdlib_h {
@@ -280,13 +279,9 @@ pub use crate::src::cgame::cg_syscalls::trap_R_RegisterSkin;
 pub use crate::src::cgame::cg_syscalls::trap_S_AddLoopingSound;
 pub use crate::src::cgame::cg_syscalls::trap_S_RegisterSound;
 pub use crate::src::cgame::cg_weapons::CG_AddPlayerWeapon;
-use crate::stdlib::acos;
-use crate::stdlib::fabs;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
+
 pub use crate::stdlib::rand;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
+
 pub use crate::stdlib::strtod;
 pub use crate::stdlib::strtol;
 /*
@@ -734,7 +729,7 @@ unsafe extern "C" fn CG_FindClientModelFile(
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut team: *mut i8 = 0 as *mut i8;
     let mut charactersFolder: *mut i8 = 0 as *mut i8;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if crate::src::cgame::cg_main::cgs.gametype >= crate::bg_public_h::GT_TEAM {
         match (*ci).team {
             2 => team = b"blue\x00" as *const u8 as *mut i8,
@@ -867,7 +862,7 @@ unsafe extern "C" fn CG_FindClientHeadFile(
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut team: *mut i8 = 0 as *mut i8;
     let mut headsFolder: *mut i8 = 0 as *mut i8;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if crate::src::cgame::cg_main::cgs.gametype >= crate::bg_public_h::GT_TEAM {
         match (*ci).team {
             2 => team = b"blue\x00" as *const u8 as *mut i8,
@@ -1553,7 +1548,7 @@ CG_ScanForExistingClientInfo
 unsafe extern "C" fn CG_ScanForExistingClientInfo(
     mut ci: *mut crate::cg_local_h::clientInfo_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut match_0: *mut crate::cg_local_h::clientInfo_t =
         0 as *mut crate::cg_local_h::clientInfo_t;
 
@@ -3373,7 +3368,7 @@ pub unsafe extern "C" fn CG_LightVerts(
     mut numVerts: i32,
     mut verts: *mut crate::tr_types_h::polyVert_t,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut incoming: f32 = 0.;
     let mut ambientLight: crate::src::qcommon::q_shared::vec3_t = [0.; 3];

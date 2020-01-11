@@ -13,7 +13,6 @@ pub mod q_shared_h {
                 + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -249,9 +248,7 @@ pub use crate::src::qcommon::q_shared::usercmd_t;
 pub use crate::src::qcommon::q_shared::vec3_t;
 pub use crate::src::qcommon::q_shared::vec_t;
 pub use crate::src::qcommon::q_shared::C2RustUnnamed_0;
-use crate::stdlib::abs;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
+
 extern "C" {
     /*
     ================
@@ -376,7 +373,7 @@ PM_AddTouchEnt
 #[no_mangle]
 
 pub unsafe extern "C" fn PM_AddTouchEnt(mut entityNum: i32) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if entityNum == ((1) << 10) - 2 {
         return;
     }
@@ -759,7 +756,7 @@ PM_WaterMove
 */
 
 unsafe extern "C" fn PM_WaterMove() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut wishvel: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut wishspeed: f32 = 0.;
     let mut wishdir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -828,7 +825,7 @@ Only with the flight powerup
 */
 
 unsafe extern "C" fn PM_FlyMove() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut wishvel: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut wishspeed: f32 = 0.;
     let mut wishdir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -866,7 +863,7 @@ PM_AirMove
 */
 
 unsafe extern "C" fn PM_AirMove() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut wishvel: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut fmove: f32 = 0.;
     let mut smove: f32 = 0.;
@@ -964,7 +961,7 @@ PM_WalkMove
 */
 
 unsafe extern "C" fn PM_WalkMove() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut wishvel: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut fmove: f32 = 0.;
     let mut smove: f32 = 0.;
@@ -1128,7 +1125,7 @@ unsafe extern "C" fn PM_NoclipMove() {
     let mut friction: f32 = 0.;
     let mut control: f32 = 0.;
     let mut newspeed: f32 = 0.;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut wishvel: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut fmove: f32 = 0.;
     let mut smove: f32 = 0.;
@@ -1302,9 +1299,9 @@ PM_CorrectAllSolid
 unsafe extern "C" fn PM_CorrectAllSolid(
     mut trace: *mut crate::src::qcommon::q_shared::trace_t,
 ) -> i32 {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _i: i32 = 0;
+    let mut _j: i32 = 0;
+    let mut _k: i32 = 0;
     let mut point: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     if (*pm).debugLevel != 0 {
         crate::src::cgame::cg_main::Com_Printf(

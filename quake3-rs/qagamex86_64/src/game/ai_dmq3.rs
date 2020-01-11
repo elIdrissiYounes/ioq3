@@ -47,7 +47,6 @@ pub mod q_shared_h {
         *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
         *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -384,10 +383,7 @@ pub use crate::g_local_h::SPECTATOR_NOT;
 pub use crate::g_local_h::SPECTATOR_SCOREBOARD;
 pub use crate::g_local_h::TEAM_ACTIVE;
 pub use crate::g_local_h::TEAM_BEGIN;
-use crate::src::game::ai_chat::BotChatTime;
-use crate::src::game::ai_chat::BotChat_EnterGame;
-use crate::src::game::ai_chat::BotValidChatPosition;
-use crate::src::game::ai_cmd::BotMatchMessage;
+
 pub use crate::src::game::ai_dmq3::ctype_h::toupper;
 pub use crate::src::game::ai_dmq3::stdlib_h::atoi;
 pub use crate::src::game::ai_main::bot_activategoal_s;
@@ -465,28 +461,11 @@ pub use crate::src::game::g_syscalls::trap_SetUserinfo;
 pub use crate::src::game::g_syscalls::trap_UnifyWhiteSpaces;
 pub use crate::src::game::g_utils::G_ModelIndex;
 pub use crate::stdlib::__ctype_toupper_loc;
-use crate::stdlib::fabs;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
+
 pub use crate::stdlib::rand;
-use crate::stdlib::sqrt;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
-use crate::stdlib::strncpy;
-use crate::stdlib::strstr;
+
 pub use crate::stdlib::strtol;
 
-use crate::src::game::ai_dmnet::AIEnter_Seek_ActivateEntity;
-use crate::src::game::ai_dmnet::AIEnter_Seek_LTG;
-use crate::src::game::ai_dmnet::AIEnter_Stand;
-use crate::src::game::ai_dmnet::AINode_Seek_LTG;
-use crate::src::game::ai_dmnet::AINode_Seek_NBG;
-use crate::src::game::ai_dmnet::AINode_Stand;
-use crate::src::game::ai_dmnet::BotDumpNodeSwitches;
-use crate::src::game::ai_dmnet::BotResetNodeSwitches;
-use crate::src::game::ai_team::BotTeamAI;
-use crate::src::game::ai_team::BotVoiceChat;
 extern "C" {
     #[no_mangle]
     pub static mut bot_developer: crate::src::qcommon::q_shared::vmCvar_t;
@@ -979,7 +958,7 @@ BotSetTeamStatus
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn BotSetTeamStatus(mut bs: *mut crate::src::game::ai_main::bot_state_t) {}
+pub unsafe extern "C" fn BotSetTeamStatus(mut _bs: *mut crate::src::game::ai_main::bot_state_t) {}
 // set last ordered task
 /*
 ==================
@@ -1614,7 +1593,7 @@ ClientFromName
 #[no_mangle]
 
 pub unsafe extern "C" fn ClientFromName(mut name: *mut i8) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut buf: [i8; 1024] = [0; 1024];
 
     for i in 0..crate::src::game::g_main::level.maxclients {
@@ -1650,7 +1629,7 @@ pub unsafe extern "C" fn ClientOnSameTeamFromName(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut name: *mut i8,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut buf: [i8; 1024] = [0; 1024];
 
     for i in 0..crate::src::game::g_main::level.maxclients {
@@ -1693,11 +1672,11 @@ pub unsafe extern "C" fn stristr(mut str: *mut i8, mut charset: *mut i8) -> *mut
                 if ::std::mem::size_of::<i8>() > 1 {
                     if 0 != 0 {
                         let mut __c: i32 = *charset.offset(i as isize) as i32;
-                        __res = (if __c < -(128) || __c > 255 {
+                        __res = if __c < -(128) || __c > 255 {
                             __c
                         } else {
                             *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                        })
+                        }
                     } else {
                         __res = toupper(*charset.offset(i as isize) as i32)
                     }
@@ -1711,11 +1690,11 @@ pub unsafe extern "C" fn stristr(mut str: *mut i8, mut charset: *mut i8) -> *mut
                 if ::std::mem::size_of::<i8>() > 1 {
                     if 0 != 0 {
                         let mut __c: i32 = *str.offset(i as isize) as i32;
-                        __res = (if __c < -(128) || __c > 255 {
+                        __res = if __c < -(128) || __c > 255 {
                             __c
                         } else {
                             *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                        })
+                        }
                     } else {
                         __res = toupper(*str.offset(i as isize) as i32)
                     }
@@ -1961,8 +1940,8 @@ BotCheckItemPickup
 #[no_mangle]
 
 pub unsafe extern "C" fn BotCheckItemPickup(
-    mut bs: *mut crate::src::game::ai_main::bot_state_t,
-    mut oldinventory: *mut i32,
+    mut _bs: *mut crate::src::game::ai_main::bot_state_t,
+    mut _oldinventory: *mut i32,
 ) {
 }
 //update the inventory
@@ -2535,7 +2514,7 @@ BotWantsToHelp
 #[no_mangle]
 
 pub unsafe extern "C" fn BotWantsToHelp(
-    mut bs: *mut crate::src::game::ai_main::bot_state_t,
+    mut _bs: *mut crate::src::game::ai_main::bot_state_t,
 ) -> i32 {
     return crate::src::qcommon::q_shared::qtrue as i32;
 }
@@ -2869,7 +2848,7 @@ pub unsafe extern "C" fn BotRoamGoal(
     mut goal: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
     let mut pc: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut len: f32 = 0.;
     let mut rnd: f32 = 0.;
     let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -2898,7 +2877,7 @@ pub unsafe extern "C" fn BotRoamGoal(
         ent: 0,
     };
 
-    for i in 0..10 {
+    for _i in 0..10 {
         //start at the bot origin
         bestorg[0] = (*bs).origin[0];
 
@@ -3003,7 +2982,7 @@ pub unsafe extern "C" fn BotAttackMove(
     mut tfl: i32,
 ) -> crate::be_ai_move_h::bot_moveresult_t {
     let mut movetype: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut attackentity: i32 = 0;
     let mut attack_skill: f32 = 0.;
     let mut jumper: f32 = 0.;
@@ -3198,7 +3177,7 @@ pub unsafe extern "C" fn BotAttackMove(
         }
     }
 
-    for i in 0..2 {
+    for _i in 0..2 {
         hordir[0] = forward[0];
 
         hordir[1] = forward[1];
@@ -3300,7 +3279,7 @@ pub unsafe extern "C" fn InFieldOfVision(
     mut fov: f32,
     mut angles: *mut crate::src::qcommon::q_shared::vec_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut diff: f32 = 0.;
     let mut angle: f32 = 0.;
 
@@ -3347,7 +3326,7 @@ pub unsafe extern "C" fn BotEntityVisible(
     mut fov: f32,
     mut ent: i32,
 ) -> f32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut contents_mask: i32 = 0;
     let mut passent: i32 = 0;
     let mut hitent: i32 = 0;
@@ -3606,7 +3585,7 @@ pub unsafe extern "C" fn BotFindEnemy(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut curenemy: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut healthdecrease: i32 = 0;
     let mut f: f32 = 0.;
     let mut alertness: f32 = 0.;
@@ -3902,7 +3881,7 @@ BotTeamFlagCarrierVisible
 pub unsafe extern "C" fn BotTeamFlagCarrierVisible(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut vis: f32 = 0.;
     let mut entinfo: crate::be_aas_h::aas_entityinfo_t = crate::be_aas_h::aas_entityinfo_t {
         valid: 0,
@@ -3970,7 +3949,7 @@ BotTeamFlagCarrier
 pub unsafe extern "C" fn BotTeamFlagCarrier(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut entinfo: crate::be_aas_h::aas_entityinfo_t = crate::be_aas_h::aas_entityinfo_t {
         valid: 0,
         type_0: 0,
@@ -4027,7 +4006,7 @@ BotEnemyFlagCarrierVisible
 pub unsafe extern "C" fn BotEnemyFlagCarrierVisible(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut vis: f32 = 0.;
     let mut entinfo: crate::be_aas_h::aas_entityinfo_t = crate::be_aas_h::aas_entityinfo_t {
         valid: 0,
@@ -5153,7 +5132,7 @@ BotMapScripts
 pub unsafe extern "C" fn BotMapScripts(mut bs: *mut crate::src::game::ai_main::bot_state_t) {
     let mut info: [i8; 1024] = [0; 1024];
     let mut mapname: [i8; 128] = [0; 128];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut shootbutton: i32 = 0;
     let mut aim_accuracy: f32 = 0.;
     let mut entinfo: crate::be_aas_h::aas_entityinfo_t = crate::be_aas_h::aas_entityinfo_t {
@@ -5820,7 +5799,7 @@ BotTriggerMultipleGoal
 #[no_mangle]
 
 pub unsafe extern "C" fn BotTriggerMultipleActivateGoal(
-    mut bs: *mut crate::src::game::ai_main::bot_state_t,
+    mut _bs: *mut crate::src::game::ai_main::bot_state_t,
     mut bspent: i32,
     mut activategoal: *mut crate::src::game::ai_main::bot_activategoal_t,
 ) -> i32 {
@@ -5948,7 +5927,7 @@ pub unsafe extern "C" fn BotPushOntoActivateGoalStack(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut activategoal: *mut crate::src::game::ai_main::bot_activategoal_t,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut best: i32 = 0;
     let mut besttime: f32 = 0.;
     best = -(1);
@@ -6005,7 +5984,7 @@ pub unsafe extern "C" fn BotEnableActivateGoalAreas(
     mut activategoal: *mut crate::src::game::ai_main::bot_activategoal_t,
     mut enable: i32,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if (*activategoal).areasdisabled == (enable == 0) as i32 {
         return;
     }
@@ -6031,7 +6010,7 @@ pub unsafe extern "C" fn BotIsGoingToActivateEntity(
 ) -> i32 {
     let mut a: *mut crate::src::game::ai_main::bot_activategoal_t =
         0 as *mut crate::src::game::ai_main::bot_activategoal_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     a = (*bs).activatestack;
     while !a.is_null() {
         if !((*a).time < crate::src::game::ai_main::floattime) {
@@ -7607,7 +7586,7 @@ BotDeathmatchAI
 
 pub unsafe extern "C" fn BotDeathmatchAI(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
-    mut thinktime: f32,
+    mut _thinktime: f32,
 ) {
     let mut gender: [i8; 144] = [0; 144];
     let mut name: [i8; 144] = [0; 144];

@@ -22,8 +22,7 @@ pub use crate::src::ui::ui_syscalls::trap_Cvar_Set;
 pub use crate::src::ui::ui_syscalls::trap_FS_GetFileList;
 pub use crate::src::ui::ui_syscalls::trap_Print;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
-use crate::stdlib::memset;
-use crate::stdlib::strlen;
+
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
 pub use crate::ui_local_h::menucommon_s;
@@ -282,7 +281,7 @@ unsafe extern "C" fn UI_Mods_LoadMods() {
     let mut dirlist: [i8; 2048] = [0; 2048];
     let mut dirptr: *mut i8 = 0 as *mut i8;
     let mut descptr: *mut i8 = 0 as *mut i8;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut dirlen: i32 = 0;
     s_mods.list.itemnames = s_mods.descriptionList.as_mut_ptr() as *mut *const i8;
     s_mods.descriptionPtr = s_mods.description.as_mut_ptr();
@@ -301,7 +300,7 @@ unsafe extern "C" fn UI_Mods_LoadMods() {
     );
     dirptr = dirlist.as_mut_ptr();
 
-    for i in 0..numdirs {
+    for _i in 0..numdirs {
         dirlen = crate::stdlib::strlen(dirptr).wrapping_add(1usize) as i32;
 
         descptr = dirptr.offset(dirlen as isize);

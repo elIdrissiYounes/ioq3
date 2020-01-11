@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod SigProc_FIX_h {
     /* Compute reflection coefficients from input signal */
     /* O    Residual energy                                             */
@@ -367,7 +365,7 @@ pub unsafe extern "C" fn silk_NLSF_VQ_weights_laroia(
 )
 /* I     Input vector dimension (even)                              */
 {
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut tmp1_int: crate::opus_types_h::opus_int32 = 0;
     let mut tmp2_int: crate::opus_types_h::opus_int32 = 0;
     /* First value */

@@ -94,10 +94,7 @@ pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 pub use crate::src::ui::ui_syscalls::trap_R_SetColor;
 pub use crate::src::ui::ui_syscalls::trap_S_StartLocalSound;
 pub use crate::src::ui::ui_syscalls::trap_UpdateScreen;
-use crate::stdlib::memcpy;
-use crate::stdlib::sin;
-use crate::stdlib::strlen;
-use crate::stdlib::vsnprintf;
+
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -209,7 +206,7 @@ pub static mut m_entersound: crate::src::qcommon::q_shared::qboolean =
 // after a frame, so caching won't disrupt the sound
 #[no_mangle]
 
-pub unsafe extern "C" fn Com_Error(mut level: i32, mut error: *const i8, mut args: ...) -> ! {
+pub unsafe extern "C" fn Com_Error(mut _level: i32, mut error: *const i8, mut args: ...) -> ! {
     let mut argptr: ::std::ffi::VaListImpl;
     let mut text: [i8; 1024] = [0; 1024];
     argptr = args.clone();
@@ -1329,7 +1326,7 @@ UI_MouseEvent
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_MouseEvent(mut dx: i32, mut dy: i32) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut bias: i32 = 0;
     let mut m: *mut crate::ui_local_h::menucommon_s = 0 as *mut crate::ui_local_h::menucommon_s;
     if uis.activemenu.is_null() {

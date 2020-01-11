@@ -437,7 +437,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub use crate::internal::__builtin_va_list;
@@ -467,16 +466,7 @@ pub use crate::stdlib::_ISxdigit;
 pub use crate::stdlib::__ctype_b_loc;
 pub use crate::stdlib::__ctype_tolower_loc;
 pub use crate::stdlib::__ctype_toupper_loc;
-use crate::stdlib::memmove;
-use crate::stdlib::strcat;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strncpy;
-use crate::stdlib::strrchr;
-use crate::stdlib::strtod;
-use crate::stdlib::vsnprintf;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -1237,7 +1227,7 @@ pub unsafe extern "C" fn SkipRestOfLine(mut data: *mut *mut i8) {
 
 pub unsafe extern "C" fn Parse1DMatrix(mut buf_p: *mut *mut i8, mut x: i32, mut m: *mut f32) {
     let mut token: *mut i8 = 0 as *mut i8;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     COM_MatchToken(buf_p, b"(\x00" as *const u8 as *mut i8);
 
     for i in 0..x {
@@ -1255,7 +1245,7 @@ pub unsafe extern "C" fn Parse2DMatrix(
     mut x: i32,
     mut m: *mut f32,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     COM_MatchToken(buf_p, b"(\x00" as *const u8 as *mut i8);
 
     for i in 0..y {
@@ -1272,7 +1262,7 @@ pub unsafe extern "C" fn Parse3DMatrix(
     mut x: i32,
     mut m: *mut f32,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     COM_MatchToken(buf_p, b"(\x00" as *const u8 as *mut i8);
 
     for i in 0..z {
@@ -1296,7 +1286,7 @@ pub unsafe extern "C" fn Com_HexStrToInt(mut str: *const i8) -> i32 {
         && *str.offset(1) as i32 == 'x' as i32
         && *str.offset(2) as i32 != '\u{0}' as i32
     {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut n: i32 = 0;
         let mut len: i32 = crate::stdlib::strlen(str) as i32;
 

@@ -6,7 +6,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub mod stdlib_h {
@@ -145,15 +144,12 @@ pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterSkin;
 pub use crate::src::ui::ui_syscalls::trap_R_RenderScene;
 pub use crate::src::ui::ui_syscalls::trap_S_StartLocalSound;
-use crate::stdlib::atan2;
-use crate::stdlib::fabs;
-use crate::stdlib::memset;
+
 pub use crate::stdlib::rand;
-use crate::stdlib::sin;
-use crate::stdlib::strchr;
+
 pub use crate::stdlib::strtod;
 pub use crate::stdlib::strtol;
-use crate::stdlib::tan;
+
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -458,7 +454,7 @@ unsafe extern "C" fn UI_PositionEntityOnTag(
     mut parentModel: crate::src::qcommon::q_shared::clipHandle_t,
     mut tagName: *mut i8,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut lerped: crate::src::qcommon::q_shared::orientation_t =
         crate::src::qcommon::q_shared::orientation_t {
             origin: [0.; 3],
@@ -510,7 +506,7 @@ unsafe extern "C" fn UI_PositionRotatedEntityOnTag(
     mut parentModel: crate::src::qcommon::q_shared::clipHandle_t,
     mut tagName: *mut i8,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut lerped: crate::src::qcommon::q_shared::orientation_t =
         crate::src::qcommon::q_shared::orientation_t {
             origin: [0.; 3],
@@ -924,7 +920,7 @@ UI_PlayerFloatSprite
 */
 
 unsafe extern "C" fn UI_PlayerFloatSprite(
-    mut pi: *mut crate::ui_local_h::playerInfo_t,
+    mut _pi: *mut crate::ui_local_h::playerInfo_t,
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut shader: crate::src::qcommon::q_shared::qhandle_t,
 ) {

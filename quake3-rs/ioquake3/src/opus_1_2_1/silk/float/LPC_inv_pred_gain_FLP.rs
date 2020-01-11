@@ -3,7 +3,7 @@ use ::libc;
 pub use crate::opus_types_h::opus_int32;
 pub use crate::stdlib::__int32_t;
 pub use crate::stdlib::int32_t;
-use crate::stdlib::memcpy;
+
 /* **********************************************************************
 Copyright (c) 2006-2011, Skype Limited. All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -77,7 +77,7 @@ pub unsafe extern "C" fn silk_LPC_inverse_pred_gain_FLP(
 ) -> f32
 /* I    prediction order                                            */ {
     let mut k: i32 = 0;
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut invGain: f64 = 0.;
     let mut rc: f64 = 0.;
     let mut rc_mult1: f64 = 0.;

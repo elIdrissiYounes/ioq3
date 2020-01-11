@@ -11,7 +11,6 @@ pub mod qcommon_h {
         return fi.f;
     }
 
-    use crate::src::qcommon::q_shared::floatint_t;
     // _QCOMMON_H_
     // flags for sv_allowDownload and cl_allowDownload
 }
@@ -351,8 +350,7 @@ pub use crate::src::client::cl_cin::CIN_StopCinematic;
 pub use crate::src::client::cl_console::Con_ClearNotify;
 pub use crate::src::client::cl_console::Con_Close;
 pub use crate::src::client::cl_keys::Key_GetCatcher;
-use crate::src::client::cl_keys::Key_GetKey;
-use crate::src::client::cl_keys::Key_IsDown;
+
 pub use crate::src::client::cl_keys::Key_SetCatcher;
 pub use crate::src::client::cl_main::cgvm;
 pub use crate::src::client::cl_main::cl;
@@ -373,44 +371,9 @@ pub use crate::src::client::cl_parse::cl_connectedToCheatServer;
 pub use crate::src::client::cl_parse::cl_connectedToPureServer;
 pub use crate::src::client::cl_parse::CL_SystemInfoChanged;
 pub use crate::src::client::cl_scrn::SCR_UpdateScreen;
-use crate::src::client::libmumblelink::mumble_islinked;
-use crate::src::client::libmumblelink::mumble_link;
-use crate::src::client::snd_main::S_AddLoopingSound;
-use crate::src::client::snd_main::S_AddRealLoopingSound;
-use crate::src::client::snd_main::S_ClearLoopingSounds;
-use crate::src::client::snd_main::S_RegisterSound;
-use crate::src::client::snd_main::S_Respatialize;
-use crate::src::client::snd_main::S_StartBackgroundTrack;
-use crate::src::client::snd_main::S_StartLocalSound;
-use crate::src::client::snd_main::S_StartSound;
-use crate::src::client::snd_main::S_StopBackgroundTrack;
-use crate::src::client::snd_main::S_StopLoopingSound;
-use crate::src::client::snd_main::S_UpdateEntityPosition;
-use crate::src::opus_1_2_1::src::opus_decoder::opus_decoder_create;
-use crate::src::opus_1_2_1::src::opus_decoder::OpusDecoder;
-use crate::src::opus_1_2_1::src::opus_encoder::opus_encoder_create;
-use crate::src::opus_1_2_1::src::opus_encoder::OpusEncoder;
-use crate::src::qcommon::cm_load::CM_InlineModel;
-use crate::src::qcommon::cm_load::CM_LoadMap;
-use crate::src::qcommon::cm_load::CM_NumInlineModels;
-use crate::src::qcommon::cm_load::CM_TempBoxModel;
-use crate::src::qcommon::cm_test::CM_PointContents;
-use crate::src::qcommon::cm_test::CM_TransformedPointContents;
-use crate::src::qcommon::cm_trace::CM_BoxTrace;
-use crate::src::qcommon::cm_trace::CM_TransformedBoxTrace;
+
 pub use crate::stdlib::abs;
-use crate::stdlib::atan2;
-use crate::stdlib::ceil;
-use crate::stdlib::cos;
-use crate::stdlib::floor;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::sin;
-use crate::stdlib::sqrt;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
-use crate::stdlib::strncpy;
+
 pub use crate::stdlib::strtol;
 extern "C" {
     /*
@@ -546,7 +509,7 @@ pub unsafe extern "C" fn CL_GetSnapshot(
     mut snapshot: *mut crate::cg_public_h::snapshot_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut clSnap: *mut crate::client_h::clSnapshot_t = 0 as *mut crate::client_h::clSnapshot_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut count: i32 = 0;
     if snapshotNumber > crate::src::client::cl_main::cl.snap.messageNum {
         crate::src::qcommon::common::Com_Error(
@@ -633,7 +596,7 @@ CL_ConfigstringModified
 pub unsafe extern "C" fn CL_ConfigstringModified() {
     let mut old: *mut i8 = 0 as *mut i8;
     let mut s: *mut i8 = 0 as *mut i8;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut index: i32 = 0;
     let mut dup: *mut i8 = 0 as *mut i8;
     let mut oldGs: crate::src::qcommon::q_shared::gameState_t =
@@ -2277,7 +2240,7 @@ pub unsafe extern "C" fn CL_FirstSnapshot() {
         );
     }
     if crate::src::client::cl_main::clc.voipCodecInitialized as u64 == 0 {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut error: i32 = 0;
         crate::src::client::cl_main::clc.opusEncoder =
             crate::src::opus_1_2_1::src::opus_encoder::opus_encoder_create(

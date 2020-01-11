@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod macros_h {
     #[inline]
 
@@ -65,7 +63,7 @@ pub mod Inlines_h {
         *lz = lzeros;
         *frac_Q7 = silk_ROR32(in_0, 24 - lzeros) & 0x7f;
     }
-    use crate::opus_types_h::opus_int32;
+
     use crate::src::opus_1_2_1::silk::lin2log::macros_h::silk_CLZ32;
     use crate::src::opus_1_2_1::silk::lin2log::SigProc_FIX_h::silk_ROR32;
     /* SILK_FIX_INLINES_H */
@@ -229,8 +227,7 @@ pub mod SigProc_FIX_h {
             return (x << (32u32).wrapping_sub(r) | x >> r) as crate::opus_types_h::opus_int32;
         };
     }
-    use crate::opus_types_h::opus_int32;
-    use crate::opus_types_h::opus_uint32;
+
     /* SILK_SIGPROC_FIX_H */
     /*    silk_SMMUL: Signed top word multiply.
     ARMv6        2 instruction cycles.

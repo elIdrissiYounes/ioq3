@@ -54,26 +54,14 @@ pub use crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy;
 pub use crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global;
 pub use crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy;
 pub use crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy_global;
-use crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog;
+
 pub use crate::src::libvorbis_1_3_6::lib::sharedbook::vorbis_book_init_decode;
 pub use crate::src::libvorbis_1_3_6::lib::sharedbook::vorbis_book_init_encode;
 pub use crate::src::libvorbis_1_3_6::lib::sharedbook::vorbis_staticbook_destroy;
 pub use crate::src::libvorbis_1_3_6::lib::smallft::drft_clear;
 pub use crate::src::libvorbis_1_3_6::lib::smallft::drft_init;
 pub use crate::src::libvorbis_1_3_6::lib::smallft::drft_lookup;
-use crate::src::libvorbis_1_3_6::lib::window::_vorbis_window_get;
-use crate::stdlib::calloc;
-use crate::stdlib::free;
-use crate::stdlib::malloc;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::realloc;
 
-use crate::src::libvorbis_1_3_6::lib::lpc::vorbis_lpc_from_data;
-use crate::src::libvorbis_1_3_6::lib::lpc::vorbis_lpc_predict;
-use crate::src::libvorbis_1_3_6::lib::registry::_floor_P;
-use crate::src::libvorbis_1_3_6::lib::registry::_residue_P;
 #[no_mangle]
 
 pub unsafe extern "C" fn vorbis_block_init(
@@ -190,7 +178,7 @@ pub unsafe extern "C" fn _vorbis_block_ripcord(mut vb: *mut crate::codec_h::vorb
 #[no_mangle]
 
 pub unsafe extern "C" fn vorbis_block_clear(mut vb: *mut crate::codec_h::vorbis_block) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut vbi: *mut crate::codec_internal_h::vorbis_block_internal =
         (*vb).internal as *mut crate::codec_internal_h::vorbis_block_internal;
     _vorbis_block_ripcord(vb);
@@ -393,7 +381,7 @@ unsafe extern "C" fn _vds_shared_init(
     (*v).pcmret = crate::stdlib::malloc(
         ((*vi).channels as usize).wrapping_mul(::std::mem::size_of::<*mut f32>()),
     ) as *mut *mut f32;
-    let mut i_0: i32 = 0;
+    let mut _i_0: i32 = 0;
 
     for i_0 in 0..(*vi).channels {
         let ref mut fresh2 = *(*v).pcm.offset(i_0 as isize);
@@ -996,7 +984,7 @@ pub unsafe extern "C" fn vorbis_synthesis_blockin(
         (*v).backend_state as *mut crate::codec_internal_h::private_state;
     let mut hs: i32 = (*ci).halfrate_flag;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     if vb.is_null() {
         return -(131i32);
     }
@@ -1242,7 +1230,7 @@ pub unsafe extern "C" fn vorbis_synthesis_pcmout(
     let mut vi: *mut crate::codec_h::vorbis_info = (*v).vi;
     if (*v).pcm_returned > -(1) && (*v).pcm_returned < (*v).pcm_current {
         if !pcm.is_null() {
-            let mut i: i32 = 0;
+            let mut _i: i32 = 0;
 
             for i in 0..(*vi).channels {
                 let ref mut fresh13 = *(*v).pcmret.offset(i as isize);
@@ -1353,7 +1341,7 @@ pub unsafe extern "C" fn vorbis_synthesis_lapout(
         (*v).pcm_current += n1 - n0
     }
     if !pcm.is_null() {
-        let mut i_0: i32 = 0;
+        let mut _i_0: i32 = 0;
 
         for i_0 in 0..(*vi).channels {
             let ref mut fresh14 = *(*v).pcmret.offset(i_0 as isize);

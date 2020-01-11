@@ -13,9 +13,7 @@ pub use crate::opus_types_h::opus_uint32;
 pub use crate::resampler_structs_h::_silk_resampler_state_struct;
 pub use crate::resampler_structs_h::silk_resampler_state_struct;
 pub use crate::resampler_structs_h::C2RustUnnamed_64;
-use crate::src::opus_1_2_1::silk::resampler_private_up2_HQ::silk_resampler_private_up2_HQ;
-use crate::src::opus_1_2_1::silk::resampler_rom::silk_resampler_frac_FIR_12;
-use crate::stdlib::memcpy;
+
 /* **********************************************************************
 Copyright (c) 2006-2011, Skype Limited. All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -50,7 +48,7 @@ unsafe extern "C" fn silk_resampler_private_IIR_FIR_INTERPOL(
     mut max_index_Q16: crate::opus_types_h::opus_int32,
     mut index_increment_Q16: crate::opus_types_h::opus_int32,
 ) -> *mut crate::opus_types_h::opus_int16 {
-    let mut index_Q16: crate::opus_types_h::opus_int32 = 0;
+    let mut _index_Q16: crate::opus_types_h::opus_int32 = 0;
     let mut res_Q15: crate::opus_types_h::opus_int32 = 0;
     let mut buf_ptr: *mut crate::opus_types_h::opus_int16 =
         0 as *mut crate::opus_types_h::opus_int16;

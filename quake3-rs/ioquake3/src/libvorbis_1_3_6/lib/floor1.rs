@@ -33,16 +33,13 @@ pub use crate::ogg_h::oggpack_buffer;
 pub use crate::src::libogg_1_3_3::src::bitwise::oggpack_read;
 pub use crate::src::libogg_1_3_3::src::bitwise::oggpack_write;
 pub use crate::src::libvorbis_1_3_6::lib::bitrate::bitrate_manager_info;
-use crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc;
+
 pub use crate::src::libvorbis_1_3_6::lib::codebook::codebook;
 pub use crate::src::libvorbis_1_3_6::lib::codebook::static_codebook;
 pub use crate::src::libvorbis_1_3_6::lib::codebook::vorbis_book_decode;
 pub use crate::src::libvorbis_1_3_6::lib::codebook::vorbis_book_encode;
 pub use crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy;
 pub use crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global;
-use crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog;
-use crate::stdlib::memset;
-use crate::stdlib::rint;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -353,7 +350,7 @@ unsafe extern "C" fn floor1_unpack(
 }
 
 unsafe extern "C" fn floor1_look(
-    mut vd: *mut crate::codec_h::vorbis_dsp_state,
+    mut _vd: *mut crate::codec_h::vorbis_dsp_state,
     mut in_0: *mut libc::c_void,
 ) -> *mut libc::c_void {
     let mut sortpointer: [*mut i32; 65] = [0 as *mut i32; 65];
@@ -365,7 +362,7 @@ unsafe extern "C" fn floor1_look(
     )
         as *mut crate::codec_internal_h::vorbis_look_floor1;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut n: i32 = 0;
     (*look).vi = info;
     (*look).n = (*info).postlist[1];
@@ -842,7 +839,7 @@ unsafe extern "C" fn accumulate_fit(
     mut n: i32,
     mut info: *mut crate::backends_h::vorbis_info_floor1,
 ) -> i32 {
-    let mut i: isize = 0;
+    let mut _i: isize = 0;
     let mut xa: i32 = 0;
     let mut ya: i32 = 0;
     let mut x2a: i32 = 0;
@@ -915,7 +912,7 @@ unsafe extern "C" fn fit_line(
     let mut y2b: f64 = 0f64;
     let mut xyb: f64 = 0f64;
     let mut bn: f64 = 0f64;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut x0: i32 = (*a.offset(0)).x0;
     let mut x1: i32 = (*a.offset((fits - 1i32) as isize)).x1;
 
@@ -1579,7 +1576,7 @@ unsafe extern "C" fn floor1_inverse1(
         (*(*(*vb).vd).vi).codec_setup as *mut crate::codec_internal_h::codec_setup_info;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut books: *mut crate::src::libvorbis_1_3_6::lib::codebook::codebook = (*ci).fullbooks;
     /* unpack wrapped/predicted values from stream */
     if crate::src::libogg_1_3_3::src::bitwise::oggpack_read(&mut (*vb).opb, 1) == 1 {

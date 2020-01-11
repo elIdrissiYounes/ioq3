@@ -1,5 +1,3 @@
-use ::libc;
-
 /* JERROR_H */
 
 /* Informational/debugging messages */
@@ -510,7 +508,7 @@ unsafe extern "C" fn null_convert(
     let mut inptr: crate::jpeglib_h::JSAMPROW = 0 as *mut crate::jmorecfg_h::JSAMPLE;
     let mut outptr: crate::jpeglib_h::JSAMPROW = 0 as *mut crate::jmorecfg_h::JSAMPLE;
     let mut col: crate::jmorecfg_h::JDIMENSION = 0;
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     let mut nc: i32 = (*cinfo).num_components;
     let mut num_cols: crate::jmorecfg_h::JDIMENSION = (*cinfo).image_width;
     loop {
@@ -540,7 +538,7 @@ unsafe extern "C" fn null_convert(
  * Empty method for start_pass.
  */
 
-unsafe extern "C" fn null_method(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
+unsafe extern "C" fn null_method(mut _cinfo: crate::jpeglib_h::j_compress_ptr) {
     /* no work needed */
 }
 /*

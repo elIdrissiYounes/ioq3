@@ -40,10 +40,7 @@ pub use crate::botlib_h::bsp_surface_s;
 pub use crate::botlib_h::bsp_surface_t;
 pub use crate::botlib_h::bsp_trace_s;
 pub use crate::botlib_h::bsp_trace_t;
-use crate::src::botlib::be_interface::botimport;
-use crate::src::botlib::l_libvar::LibVarGetValue;
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetClearedMemory;
+
 pub use crate::src::botlib::l_precomp::define_s;
 pub use crate::src::botlib::l_precomp::define_t;
 pub use crate::src::botlib::l_precomp::indent_s;
@@ -82,10 +79,7 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::rand;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
+
 #[no_mangle]
 
 pub static mut weightFileList: [*mut crate::src::botlib::be_ai_weight::weightconfig_t; 128] =
@@ -252,7 +246,7 @@ pub unsafe extern "C" fn FreeFuzzySeperators_r(
 pub unsafe extern "C" fn FreeWeightConfig2(
     mut config: *mut crate::src::botlib::be_ai_weight::weightconfig_t,
 ) {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
 
     for i in 0..(*config).numweights {
         FreeFuzzySeperators_r((*config).weights[i as usize].firstseperator);
@@ -510,7 +504,7 @@ pub unsafe extern "C" fn ReadWeightConfig(
 ) -> *mut crate::src::botlib::be_ai_weight::weightconfig_t {
     let mut newindent: i32 = 0;
     let mut avail: i32 = 0;
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut token: crate::src::botlib::l_script::token_t = crate::src::botlib::l_script::token_t {
         string: [0; 1024],
         type_0: 0,
@@ -735,7 +729,7 @@ pub unsafe extern "C" fn FindFuzzyWeight(
     mut wc: *mut crate::src::botlib::be_ai_weight::weightconfig_t,
     mut name: *mut i8,
 ) -> i32 {
-    let mut i: i32 = 0; //end if
+    let mut _i: i32 = 0; //end if
 
     for i in 0..(*wc).numweights {
         if crate::stdlib::strcmp((*wc).weights[i as usize].name, name) == 0 {

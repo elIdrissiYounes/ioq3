@@ -28,7 +28,7 @@ pub use crate::qcommon_h::vm_t;
 pub use crate::src::qcommon::vm::VM_BlockCopy;
 pub use crate::src::qcommon::vm::VM_Debug;
 pub use crate::src::qcommon::vm::VM_ValueToSymbol;
-use crate::stdlib::memcpy;
+
 pub use crate::vm_local_h::vmSymbol_s;
 pub use crate::vm_local_h::vm_s;
 pub use crate::vm_local_h::OP_ADD;
@@ -341,7 +341,7 @@ pub unsafe extern "C" fn VM_CallInterpreted(
     let mut codeImage: *mut i32 = 0 as *mut i32;
     let mut v1: i32 = 0;
     let mut dataMask: i32 = 0;
-    let mut arg: i32 = 0;
+    let mut _arg: i32 = 0;
     // interpret the code
     (*vm).currentlyInterpreting = crate::src::qcommon::q_shared::qtrue;
     // we might be called recursively, so this might not be the very top

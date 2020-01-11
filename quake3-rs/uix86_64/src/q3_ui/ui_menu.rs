@@ -51,9 +51,7 @@ pub use crate::src::ui::ui_syscalls::trap_R_ClearScene;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterModel;
 pub use crate::src::ui::ui_syscalls::trap_R_RenderScene;
 pub use crate::src::ui::ui_syscalls::trap_VerifyCDKey;
-use crate::stdlib::memset;
-use crate::stdlib::sin;
-use crate::stdlib::strlen;
+
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -395,7 +393,7 @@ pub unsafe extern "C" fn MainMenu_Cache() {
 #[no_mangle]
 
 pub unsafe extern "C" fn ErrorMessage_Key(
-    mut key: i32,
+    mut _key: i32,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
     crate::src::ui::ui_syscalls::trap_Cvar_Set(
         b"com_errorMessage\x00" as *const u8 as *const i8,
@@ -562,7 +560,7 @@ unsafe extern "C" fn UI_TeamArenaExists() -> crate::src::qcommon::q_shared::qboo
     let mut dirlist: [i8; 2048] = [0; 2048];
     let mut dirptr: *mut i8 = 0 as *mut i8;
     let mut descptr: *mut i8 = 0 as *mut i8;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut dirlen: i32 = 0;
     numdirs = crate::src::ui::ui_syscalls::trap_FS_GetFileList(
         b"$modlist\x00" as *const u8 as *const i8,
@@ -572,7 +570,7 @@ unsafe extern "C" fn UI_TeamArenaExists() -> crate::src::qcommon::q_shared::qboo
     );
     dirptr = dirlist.as_mut_ptr();
 
-    for i in 0..numdirs {
+    for _i in 0..numdirs {
         dirlen = crate::stdlib::strlen(dirptr).wrapping_add(1usize) as i32;
 
         descptr = dirptr.offset(dirlen as isize);

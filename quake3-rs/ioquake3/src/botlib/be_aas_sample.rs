@@ -31,7 +31,6 @@ pub mod q_shared_h {
         *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
         *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -90,18 +89,11 @@ pub use crate::botlib_h::bsp_surface_s;
 pub use crate::botlib_h::bsp_surface_t;
 pub use crate::botlib_h::bsp_trace_s;
 pub use crate::botlib_h::bsp_trace_t;
-use crate::src::botlib::be_aas_bspq3::AAS_EntityCollision;
-use crate::src::botlib::be_aas_main::aasworld;
-use crate::src::botlib::be_aas_reach::AAS_AreaReachability;
+
 pub use crate::src::botlib::be_aas_sample::q_shared_h::CrossProduct;
 pub use crate::src::botlib::be_aas_sample::q_shared_h::VectorInverse;
 pub use crate::src::botlib::be_aas_sample::q_shared_h::VectorLength;
-use crate::src::botlib::be_interface::botDeveloper;
-use crate::src::botlib::be_interface::botimport;
-use crate::src::botlib::l_libvar::LibVarValue;
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetClearedHunkMemory;
-use crate::src::botlib::l_memory::GetHunkMemory;
+
 pub use crate::src::qcommon::q_math::VectorNormalize;
 pub use crate::src::qcommon::q_shared::byte;
 pub use crate::src::qcommon::q_shared::cplane_s;
@@ -117,9 +109,6 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::abs;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
 
 pub type aas_tracestack_t = aas_tracestack_s;
 
@@ -199,7 +188,7 @@ pub unsafe extern "C" fn AAS_PresenceTypeBoundingBox(
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_InitAASLinkHeap() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut max_aaslinks: i32 = 0;
     max_aaslinks = crate::src::botlib::be_aas_main::aasworld.linkheapsize;
     //if there's no link heap present
@@ -1384,7 +1373,7 @@ pub unsafe extern "C" fn AAS_InsideFace(
     mut point: *mut crate::src::qcommon::q_shared::vec_t,
     mut epsilon: f32,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut firstvertex: i32 = 0;
     let mut edgenum: i32 = 0;
     let mut v0: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -1470,7 +1459,7 @@ pub unsafe extern "C" fn AAS_PointInsideFace(
     mut point: *mut crate::src::qcommon::q_shared::vec_t,
     mut epsilon: f32,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut firstvertex: i32 = 0;
     let mut edgenum: i32 = 0;
     let mut v1: *mut crate::src::qcommon::q_shared::vec_t =
@@ -1556,7 +1545,7 @@ pub unsafe extern "C" fn AAS_AreaGroundFace(
     mut areanum: i32,
     mut point: *mut crate::src::qcommon::q_shared::vec_t,
 ) -> *mut crate::aasfile_h::aas_face_t {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
     let mut facenum: i32 = 0;
     let mut up: crate::src::qcommon::q_shared::vec3_t = [0f32, 0f32, 1f32];
     let mut normal: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -1650,7 +1639,7 @@ pub unsafe extern "C" fn AAS_FacePlane(
 pub unsafe extern "C" fn AAS_TraceEndFace(
     mut trace: *mut crate::be_aas_h::aas_trace_t,
 ) -> *mut crate::aasfile_h::aas_face_t {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut facenum: i32 = 0;
     let mut area: *mut crate::aasfile_h::aas_area_t = 0 as *mut crate::aasfile_h::aas_area_t;
     let mut face: *mut crate::aasfile_h::aas_face_t = 0 as *mut crate::aasfile_h::aas_face_t;
@@ -1740,7 +1729,7 @@ pub unsafe extern "C" fn AAS_BoxOnPlaneSide2(
     mut absmaxs: *mut crate::src::qcommon::q_shared::vec_t,
     mut p: *mut crate::aasfile_h::aas_plane_t,
 ) -> i32 {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
     let mut sides: i32 = 0; //end if
     let mut dist1: f32 = 0.;
     let mut dist2: f32 = 0.;

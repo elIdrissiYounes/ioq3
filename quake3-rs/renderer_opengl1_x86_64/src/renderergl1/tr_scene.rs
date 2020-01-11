@@ -85,8 +85,7 @@ pub use crate::src::renderergl1::tr_main::R_AddDrawSurf;
 pub use crate::src::renderergl1::tr_main::R_RenderView;
 pub use crate::src::renderergl1::tr_shader::R_GetShaderByHandle;
 pub use crate::src::sdl::sdl_glimp::GLimp_LogComment;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
+
 pub use crate::tr_common_h::image_s;
 pub use crate::tr_common_h::image_t;
 pub use crate::tr_common_h::imgFlags_t;
@@ -368,7 +367,7 @@ pub unsafe extern "C" fn RE_AddPolyToScene(
     mut numPolys: i32,
 ) {
     let mut poly: *mut crate::tr_local_h::srfPoly_t = 0 as *mut crate::tr_local_h::srfPoly_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut fogIndex: i32 = 0;
     let mut fog: *mut crate::tr_local_h::fog_t = 0 as *mut crate::tr_local_h::fog_t;
@@ -1129,7 +1128,7 @@ pub unsafe extern "C" fn RE_RenderScene(mut fd: *const crate::tr_types_h::refdef
         crate::src::qcommon::q_shared::qfalse;
     if crate::src::renderergl1::tr_main::tr.refdef.rdflags & 0x1 == 0 {
         let mut areaDiff: i32 = 0;
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         // compare the area bits
         areaDiff = 0;
 

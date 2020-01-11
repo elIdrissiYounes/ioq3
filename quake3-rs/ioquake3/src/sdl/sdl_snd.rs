@@ -18,8 +18,7 @@ pub use crate::src::qcommon::q_shared::qboolean;
 pub use crate::src::qcommon::q_shared::qfalse;
 pub use crate::src::qcommon::q_shared::qtrue;
 pub use crate::src::qcommon::q_shared::Q_stricmp;
-use crate::stdlib::calloc;
-use crate::stdlib::free;
+
 pub use crate::stdlib::uint16_t;
 pub use crate::stdlib::uint32_t;
 pub use crate::stdlib::uint8_t;
@@ -31,7 +30,7 @@ pub use crate::stdlib::SDL_ClearQueuedAudio;
 pub use crate::stdlib::SDL_CloseAudioDevice;
 pub use crate::stdlib::SDL_DequeueAudio;
 pub use crate::stdlib::SDL_GetCurrentAudioDriver;
-use crate::stdlib::SDL_GetError;
+
 pub use crate::stdlib::SDL_GetQueuedAudioSize;
 pub use crate::stdlib::SDL_LockAudioDevice;
 pub use crate::stdlib::SDL_OpenAudioDevice;
@@ -44,13 +43,6 @@ pub use crate::stdlib::Uint32;
 pub use crate::stdlib::Uint8;
 pub use crate::stdlib::SDL_FALSE;
 pub use crate::stdlib::SDL_TRUE;
-
-use crate::src::client::cl_main::cl_useMumble;
-use crate::src::qcommon::cvar::Cvar_Get;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::SDL_Init;
-use crate::stdlib::SDL_QuitSubSystem;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -124,7 +116,7 @@ SNDDMA_AudioCallback
 */
 
 unsafe extern "C" fn SNDDMA_AudioCallback(
-    mut userdata: *mut libc::c_void,
+    mut _userdata: *mut libc::c_void,
     mut stream: *mut crate::stdlib::Uint8,
     mut len: i32,
 ) {
@@ -272,7 +264,7 @@ unsafe extern "C" fn SNDDMA_PrintAudiospec(
     mut str: *const i8,
     mut spec: *const crate::stdlib::SDL_AudioSpec,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut fmt: *mut i8 = 0 as *mut i8;
     crate::src::qcommon::common::Com_Printf(b"%s:\n\x00" as *const u8 as *const i8, str);
 

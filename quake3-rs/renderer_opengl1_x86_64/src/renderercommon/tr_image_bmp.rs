@@ -24,8 +24,7 @@ pub use crate::src::qcommon::q_shared::FMV_ID_IDLE;
 pub use crate::src::qcommon::q_shared::FMV_ID_WAIT;
 pub use crate::src::qcommon::q_shared::FMV_LOOPED;
 pub use crate::src::qcommon::q_shared::FMV_PLAY;
-use crate::src::renderergl1::tr_main::ri;
-use crate::stdlib::memcpy;
+
 pub use crate::tr_public_h::refimport_t;
 
 #[repr(C)]
@@ -130,7 +129,7 @@ pub unsafe extern "C" fn R_LoadBMP(
     let mut pixbuf: *mut crate::src::qcommon::q_shared::byte =
         0 as *mut crate::src::qcommon::q_shared::byte;
     let mut row: i32 = 0;
-    let mut column: i32 = 0;
+    let mut _column: i32 = 0;
     let mut buf_p: *mut crate::src::qcommon::q_shared::byte =
         0 as *mut crate::src::qcommon::q_shared::byte;
     let mut end: *mut crate::src::qcommon::q_shared::byte =
@@ -351,7 +350,7 @@ pub unsafe extern "C" fn R_LoadBMP(
     while row >= 0 {
         pixbuf = bmpRGBA.offset((row * columns * 4) as isize);
 
-        for column in 0..columns {
+        for _column in 0..columns {
             let mut red: u8 = 0;
 
             let mut green: u8 = 0;

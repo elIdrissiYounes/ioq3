@@ -1,5 +1,3 @@
-use ::libc;
-
 /* JERROR_H */
 
 /* Informational/debugging messages */
@@ -296,7 +294,7 @@ unsafe extern "C" fn forward_DCT(
         /* Quantize/descale the coefficients, and store into coef_blocks[] */
         let mut temp: crate::jdct_h::DCTELEM = 0;
         let mut qval: crate::jdct_h::DCTELEM = 0;
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut output_ptr: crate::jpeglib_h::JCOEFPTR =
             (*coef_blocks.offset(bi as isize)).as_mut_ptr();
 
@@ -359,7 +357,7 @@ unsafe extern "C" fn forward_DCT_float(
         );
         /* Quantize/descale the coefficients, and store into coef_blocks[] */
         let mut temp: f32 = 0.;
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut output_ptr: crate::jpeglib_h::JCOEFPTR =
             (*coef_blocks.offset(bi as isize)).as_mut_ptr();
 
@@ -917,8 +915,8 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                  * use a multiplication rather than a division.
                  */
                 let mut fdtbl: *mut f32 = 0 as *mut f32;
-                let mut row: i32 = 0;
-                let mut col: i32 = 0;
+                let mut _row: i32 = 0;
+                let mut _col: i32 = 0;
                 static mut aanscalefactor: [f64; 8] = [
                     1.0,
                     1.387039845,

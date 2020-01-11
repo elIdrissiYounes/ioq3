@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::stddef_h::size_t;
 
 pub use crate::qfiles_h::dshader_t;
@@ -73,7 +71,7 @@ pub use crate::src::renderergl1::tr_mesh::R_ComputeLOD;
 pub use crate::src::renderergl1::tr_shade::tess;
 pub use crate::src::renderergl1::tr_shader::R_GetShaderByHandle;
 pub use crate::src::renderergl1::tr_surface::RB_CheckOverflow;
-use crate::stdlib::strcmp;
+
 pub use crate::tr_common_h::image_s;
 pub use crate::tr_common_h::image_t;
 pub use crate::tr_common_h::imgFlags_t;
@@ -289,7 +287,7 @@ unsafe extern "C" fn R_MDRCullModel(
     let mut bounds: [crate::src::qcommon::q_shared::vec3_t; 2] = [[0.; 3]; 2];
     let mut oldFrame: *mut crate::qfiles_h::mdrFrame_t = 0 as *mut crate::qfiles_h::mdrFrame_t;
     let mut newFrame: *mut crate::qfiles_h::mdrFrame_t = 0 as *mut crate::qfiles_h::mdrFrame_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut frameSize: i32 = 0;
     frameSize = &mut *(*(0 as *mut crate::qfiles_h::mdrFrame_t))
         .bones
@@ -409,7 +407,7 @@ pub unsafe extern "C" fn R_MDRComputeFogNum(
     mut header: *mut crate::qfiles_h::mdrHeader_t,
     mut ent: *mut crate::tr_local_h::trRefEntity_t,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut fog: *mut crate::tr_local_h::fog_t = 0 as *mut crate::tr_local_h::fog_t;
     let mut mdrFrame: *mut crate::qfiles_h::mdrFrame_t = 0 as *mut crate::qfiles_h::mdrFrame_t;

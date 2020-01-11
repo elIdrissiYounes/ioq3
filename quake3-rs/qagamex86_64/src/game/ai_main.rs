@@ -404,38 +404,11 @@ pub use crate::src::game::g_syscalls::trap_GetConfigstring;
 pub use crate::src::game::g_syscalls::trap_SendConsoleCommand;
 pub use crate::src::game::g_syscalls::trap_SetConfigstring;
 pub use crate::src::game::g_syscalls::trap_Trace;
-use crate::stdlib::fabs;
 
-use crate::src::game::ai_chat::BotChatTest;
-use crate::src::game::ai_chat::BotChat_ExitGame;
-use crate::src::game::ai_dmq3::bot_challenge;
-use crate::src::game::ai_dmq3::bot_fastchat;
-use crate::src::game::ai_dmq3::bot_grapple;
-use crate::src::game::ai_dmq3::bot_nochat;
-use crate::src::game::ai_dmq3::bot_rocketjump;
-use crate::src::game::ai_dmq3::bot_testrchat;
-use crate::src::game::ai_dmq3::gametype;
-use crate::src::game::ai_dmq3::BotCTFCarryingFlag;
-use crate::src::game::ai_dmq3::BotClearActivateGoalStack;
-use crate::src::game::ai_dmq3::BotDeathmatchAI;
-use crate::src::game::ai_dmq3::BotFreeWaypoints;
-use crate::src::game::ai_dmq3::BotPointAreaNum;
-use crate::src::game::ai_dmq3::BotSetupDeathmatchAI;
-use crate::src::game::ai_dmq3::BotSynonymContext;
-use crate::src::game::ai_dmq3::BotTeam;
-use crate::src::game::ai_dmq3::ClientFromName;
-use crate::src::game::ai_dmq3::ClientName;
-use crate::src::game::ai_dmq3::EasyClientName;
 pub use crate::src::game::ai_main::stdlib_h::atoi;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::sscanf;
-use crate::stdlib::strchr;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
+
 pub use crate::stdlib::strtol;
-use crate::stdlib::vsnprintf;
+
 extern "C" {
     #[no_mangle]
     pub fn ExitLevel();
@@ -837,7 +810,7 @@ pub unsafe extern "C" fn BotAI_BotInitialChat(
     mut type_0: *mut i8,
     mut args: ...
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut mcontext: i32 = 0;
     let mut ap: ::std::ffi::VaListImpl;
     let mut p: *mut i8 = 0 as *mut i8;
@@ -1471,7 +1444,7 @@ BotWriteInterbreeded
 pub unsafe extern "C" fn BotWriteInterbreeded(mut filename: *mut i8) {
     let mut rank: f32 = 0.;
     let mut bestrank: f32 = 0.;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut bestbot: i32 = 0;
     bestrank = 0f32;
     bestbot = -(1);
@@ -1701,7 +1674,7 @@ pub unsafe extern "C" fn BotChangeViewAngles(
     let mut maxchange: f32 = 0.;
     let mut anglespeed: f32 = 0.;
     let mut disired_speed: f32 = 0.;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if (*bs).ideal_viewangles[0] > 180f32 {
         (*bs).ideal_viewangles[0] -= 360f32
     }
@@ -1803,7 +1776,7 @@ pub unsafe extern "C" fn BotInputToUserCommand(
     let mut forward: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut right: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut temp: i16 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut f: f32 = 0.;
     let mut r: f32 = 0.;
     let mut u: f32 = 0.;
@@ -2659,7 +2632,7 @@ BotAILoadMap
 #[no_mangle]
 
 pub unsafe extern "C" fn BotAILoadMap(mut restart: i32) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut mapname: crate::src::qcommon::q_shared::vmCvar_t =
         crate::src::qcommon::q_shared::vmCvar_t {
             handle: 0,

@@ -67,7 +67,6 @@ pub mod mathops_h {
         return res.f;
     }
 
-    use crate::stdlib::floor;
     /* MATHOPS_H */
     /* FIXED_POINT */
 }
@@ -184,7 +183,6 @@ pub mod float_cast_h {
         return float2int(x) as crate::opus_types_h::opus_int16;
     }
 
-    use crate::opus_types_h::opus_int16;
     use ::std::arch::x86_64::_mm_cvt_ss2si;
     use ::std::arch::x86_64::_mm_set_ss;
     /* FLOAT_CAST_H */
@@ -204,8 +202,6 @@ pub mod os_support_h {
         crate::stdlib::free(ptr);
     }
 
-    use crate::stdlib::free;
-    use crate::stdlib::malloc;
     /* OS_SUPPORT_H */
     /*#ifdef __GNUC__
     #pragma GCC poison printf sprintf
@@ -231,8 +227,7 @@ pub use crate::stdlib::uint32_t;
 pub use crate::opus_types_h::opus_int16;
 pub use crate::opus_types_h::opus_int32;
 pub use crate::opus_types_h::opus_uint32;
-use crate::src::opus_1_2_1::celt::celt_decoder::opus_custom_decoder_ctl;
-use crate::src::opus_1_2_1::celt::celt_decoder::OpusCustomDecoder;
+
 pub use crate::src::opus_1_2_1::celt::mdct::mdct_lookup;
 pub use crate::src::opus_1_2_1::celt::modes::OpusCustomMode;
 pub use crate::src::opus_1_2_1::celt::modes::PulseCache;
@@ -255,29 +250,15 @@ pub use crate::opus_private_h::C2RustUnnamed_98;
 pub use crate::src::opus_1_2_1::src::opus::opus_packet_parse_impl;
 pub use crate::src::opus_1_2_1::src::opus_decoder::mathops_h::celt_exp2;
 pub use crate::src::opus_1_2_1::src::opus_decoder::opus_private_h::align;
-use crate::stdlib::floor;
 
-use crate::src::opus_1_2_1::celt::celt_decoder::celt_decode_with_ec;
-use crate::src::opus_1_2_1::celt::celt_decoder::celt_decoder_get_size;
-use crate::src::opus_1_2_1::celt::celt_decoder::celt_decoder_init;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_init;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_uint;
-use crate::src::opus_1_2_1::silk::dec_API::silk_Decode;
-use crate::src::opus_1_2_1::silk::dec_API::silk_Get_Decoder_Size;
-use crate::src::opus_1_2_1::silk::dec_API::silk_InitDecoder;
-use crate::src::opus_1_2_1::src::opus::opus_packet_get_samples_per_frame;
-use crate::src::opus_1_2_1::src::opus::opus_pcm_soft_clip;
 pub use crate::src::opus_1_2_1::src::opus_decoder::cpu_support_h::opus_select_arch;
 pub use crate::src::opus_1_2_1::src::opus_decoder::stack_alloc_h::_opus_false;
-use crate::stdlib::free;
-use crate::stdlib::malloc;
 
 pub use crate::src::opus_1_2_1::src::opus_decoder::float_cast_h::float2int;
 pub use crate::src::opus_1_2_1::src::opus_decoder::float_cast_h::FLOAT2INT16;
 pub use crate::src::opus_1_2_1::src::opus_decoder::os_support_h::opus_alloc;
 pub use crate::src::opus_1_2_1::src::opus_decoder::os_support_h::opus_free;
-use crate::stdlib::memset;
+
 /* Copyright (c) 2010 Xiph.Org Foundation, Skype Limited
 Written by Jean-Marc Valin and Koen Vos */
 /*
@@ -473,7 +454,7 @@ unsafe extern "C" fn smooth_fade(
     mut window: *const crate::arch_h::opus_val16,
     mut Fs: crate::opus_types_h::opus_int32,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut c: i32 = 0;
     let mut inc: i32 = 48000 / Fs;
     c = 0;
@@ -550,7 +531,7 @@ unsafe extern "C" fn opus_decode_frame(
     let mut redundancy: i32 = 0;
     let mut redundancy_bytes: i32 = 0;
     let mut celt_to_silk: i32 = 0;
-    let mut c: i32 = 0;
+    let mut _c: i32 = 0;
     let mut F2_5: i32 = 0;
     let mut F5: i32 = 0;
     let mut F10: i32 = 0;
@@ -1059,7 +1040,7 @@ pub unsafe extern "C" fn opus_decode_native(
     mut packet_offset: *mut crate::opus_types_h::opus_int32,
     mut soft_clip: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut nb_samples: i32 = 0;
     let mut count: i32 = 0;
     let mut offset: i32 = 0;

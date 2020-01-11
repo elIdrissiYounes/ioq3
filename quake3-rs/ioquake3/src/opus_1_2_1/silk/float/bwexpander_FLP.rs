@@ -1,4 +1,3 @@
-use ::libc;
 /* **********************************************************************
 Copyright (c) 2006-2011, Skype Limited. All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -61,7 +60,7 @@ POSSIBILITY OF SUCH DAMAGE.
 pub unsafe extern "C" fn silk_bwexpander_FLP(mut ar: *mut f32, d: i32, chirp: f32)
 /* I    chirp factor (typically in range (0..1) )                   */
 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut cfac: f32 = chirp;
 
     for i in 0..d - 1 {

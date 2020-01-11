@@ -408,18 +408,6 @@ pub use crate::keycodes_h::K_WORLD_95;
 pub use crate::keycodes_h::MAX_KEYS;
 pub use crate::multi_h::CURLM;
 
-use crate::src::client::cl_keys::chatField;
-use crate::src::client::cl_keys::chat_playerNum;
-use crate::src::client::cl_keys::chat_team;
-use crate::src::client::cl_keys::g_consoleField;
-use crate::src::client::cl_keys::historyEditLines;
-use crate::src::client::cl_keys::Field_BigDraw;
-use crate::src::client::cl_keys::Field_Draw;
-use crate::src::opus_1_2_1::src::opus_decoder::OpusDecoder;
-use crate::src::opus_1_2_1::src::opus_encoder::OpusEncoder;
-use crate::stdlib::memcpy;
-use crate::stdlib::strlen;
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct console_t {
@@ -623,7 +611,7 @@ Con_Clear_f
 #[no_mangle]
 
 pub unsafe extern "C" fn Con_Clear_f() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in 0..32768 {
         con.text[i as usize] = (('7' as i32 - '0' as i32 & 0x7) << 8 | ' ' as i32) as i16;
@@ -643,7 +631,7 @@ Save the console contents out to a file
 pub unsafe extern "C" fn Con_Dump_f() {
     let mut l: i32 = 0;
     let mut x: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut line: *mut i16 = 0 as *mut i16;
     let mut f: crate::src::qcommon::q_shared::fileHandle_t = 0;
     let mut bufferlen: i32 = 0;
@@ -771,7 +759,7 @@ If the line width has changed, reformat the buffer.
 
 pub unsafe extern "C" fn Con_CheckResize() {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut width: i32 = 0;
     let mut oldwidth: i32 = 0;
     let mut oldtotallines: i32 = 0;
@@ -835,7 +823,7 @@ Cmd_CompleteTxtName
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Cmd_CompleteTxtName(mut args: *mut i8, mut argNum: i32) {
+pub unsafe extern "C" fn Cmd_CompleteTxtName(mut _args: *mut i8, mut argNum: i32) {
     if argNum == 2 {
         crate::src::qcommon::common::Field_CompleteFilename(
             b"\x00" as *const u8 as *const i8,
@@ -853,7 +841,7 @@ Con_Init
 #[no_mangle]
 
 pub unsafe extern "C" fn Con_Init() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     con_notifytime = crate::src::qcommon::cvar::Cvar_Get(
         b"con_notifytime\x00" as *const u8 as *const i8,
         b"3\x00" as *const u8 as *const i8,
@@ -1118,10 +1106,10 @@ Draws the last few lines of output transparently over the game top
 #[no_mangle]
 
 pub unsafe extern "C" fn Con_DrawNotify() {
-    let mut x: i32 = 0;
+    let mut _x: i32 = 0;
     let mut v: i32 = 0;
     let mut text: *mut i16 = 0 as *mut i16;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut time: i32 = 0;
     let mut skip: i32 = 0;
     let mut currentColor: i32 = 0;

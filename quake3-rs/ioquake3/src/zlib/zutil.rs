@@ -1,9 +1,5 @@
-use ::libc;
-
 pub use crate::stdlib::__off_t;
-use crate::stdlib::calloc;
-use crate::stdlib::free;
-use crate::stdlib::malloc;
+
 pub use crate::stdlib::off_t;
 pub use crate::zconf_h::uInt;
 pub use crate::zconf_h::uLong;

@@ -1,4 +1,3 @@
-use ::libc;
 /* *******************************************************************
  *                                                                  *
  * THIS FILE IS PART OF THE libopusfile SOFTWARE CODEC SOURCE CODE. *
@@ -15,7 +14,7 @@ ASCII characters.*/
 #[no_mangle]
 
 pub unsafe extern "C" fn op_strncasecmp(mut _a: *const i8, mut _b: *const i8, mut _n: i32) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in 0.._n {
         let mut a: i32 = 0;

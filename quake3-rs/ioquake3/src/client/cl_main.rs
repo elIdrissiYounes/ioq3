@@ -15,7 +15,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub use crate::internal::__builtin_va_list;
@@ -353,12 +352,7 @@ pub use crate::vm_local_h::vm_s;
 
 pub use crate::curl_h::CURL;
 pub use crate::multi_h::CURLM;
-use crate::src::opus_1_2_1::src::opus_decoder::opus_decoder_destroy;
-use crate::src::opus_1_2_1::src::opus_decoder::OpusDecoder;
-use crate::src::opus_1_2_1::src::opus_encoder::opus_encode;
-use crate::src::opus_1_2_1::src::opus_encoder::opus_encoder_ctl;
-use crate::src::opus_1_2_1::src::opus_encoder::opus_encoder_destroy;
-use crate::src::opus_1_2_1::src::opus_encoder::OpusEncoder;
+
 pub use crate::tr_public_h::refexport_t;
 pub use crate::tr_public_h::refimport_t;
 pub use crate::tr_public_h::GetRefAPI_t;
@@ -416,22 +410,7 @@ pub use crate::cg_public_h::CG_SHUTDOWN;
 pub use crate::opus_types_h::opus_int16;
 pub use crate::opus_types_h::opus_int32;
 pub use crate::src::client::cl_main::stdlib_float_h::atof;
-use crate::src::qcommon::q_shared::ShortSwap;
-use crate::stdlib::fabs;
-use crate::stdlib::fprintf;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::sprintf;
-use crate::stdlib::sqrt;
-use crate::stdlib::sscanf;
-use crate::stdlib::stderr;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
-use crate::stdlib::strrchr;
-use crate::stdlib::strstr;
-use crate::stdlib::vsnprintf;
+
 pub use crate::ui_public_h::UIMENU_BAD_CD_KEY;
 pub use crate::ui_public_h::UIMENU_INGAME;
 pub use crate::ui_public_h::UIMENU_MAIN;
@@ -450,36 +429,6 @@ pub use crate::ui_public_h::UI_MOUSE_EVENT;
 pub use crate::ui_public_h::UI_REFRESH;
 pub use crate::ui_public_h::UI_SET_ACTIVE_MENU;
 pub use crate::ui_public_h::UI_SHUTDOWN;
-
-use crate::src::client::cl_curl::cl_cURLLib;
-use crate::src::client::cl_curl::CL_cURL_BeginDownload;
-use crate::src::client::cl_curl::CL_cURL_Init;
-use crate::src::client::cl_curl::CL_cURL_PerformDownload;
-use crate::src::client::cl_curl::CL_cURL_Shutdown;
-use crate::src::client::cl_keys::g_consoleField;
-use crate::src::client::libmumblelink::mumble_islinked;
-use crate::src::client::libmumblelink::mumble_unlink;
-use crate::src::client::libmumblelink::mumble_update_coordinates;
-use crate::src::client::snd_main::S_AvailableCaptureSamples;
-use crate::src::client::snd_main::S_BeginRegistration;
-use crate::src::client::snd_main::S_Capture;
-use crate::src::client::snd_main::S_DisableSounds;
-use crate::src::client::snd_main::S_Init;
-use crate::src::client::snd_main::S_MasterGain;
-use crate::src::client::snd_main::S_Shutdown;
-use crate::src::client::snd_main::S_StartCapture;
-use crate::src::client::snd_main::S_StopAllSounds;
-use crate::src::client::snd_main::S_StopCapture;
-use crate::src::client::snd_main::S_Update;
-use crate::src::qcommon::cm_load::CM_ClearMap;
-use crate::src::qcommon::cm_patch::CM_DrawDebugSurface;
-use crate::src::qcommon::cm_test::CM_ClusterPVS;
-use crate::src::sys::sys_main::Sys_LoadDll;
-use crate::src::sys::sys_unix::Sys_GLimpInit;
-use crate::src::sys::sys_unix::Sys_GLimpSafeInit;
-use crate::stdlib::SDL_GetError;
-use crate::stdlib::SDL_LoadFunction;
-use crate::stdlib::SDL_UnloadObject;
 
 pub type serverStatus_t = serverStatus_s;
 
@@ -1795,7 +1744,7 @@ unsafe extern "C" fn CL_CaptureVoip() {
             static mut sampbuffer: [crate::stdlib::int16_t; 2880] = [0; 2880];
             let mut voipPower: f32 = 0.0;
             let mut voipFrames: i32 = 0;
-            let mut i: i32 = 0;
+            let mut _i: i32 = 0;
             let mut bytes: i32 = 0;
             if samples > 20 * 48 * 3 {
                 samples = 20 * 48 * 3
@@ -2382,7 +2331,7 @@ pub unsafe extern "C" fn CL_DemoCompleted() {
             );
             // Write a log of all the frame durations
             if !cl_timedemoLog.is_null() && crate::stdlib::strlen((*cl_timedemoLog).string) > 0 {
-                let mut i: i32 = 0;
+                let mut _i: i32 = 0;
                 let mut numFrames: i32 = 0;
                 let mut f: crate::src::qcommon::q_shared::fileHandle_t = 0;
                 if clc.timeDemoFrames - 1 > 4096 {
@@ -2619,7 +2568,7 @@ CL_CompleteDemoName
 ====================
 */
 
-unsafe extern "C" fn CL_CompleteDemoName(mut args: *mut i8, mut argNum: i32) {
+unsafe extern "C" fn CL_CompleteDemoName(mut _args: *mut i8, mut argNum: i32) {
     if argNum == 2 {
         let mut demoExt: [i8; 16] = [0; 16];
         crate::src::qcommon::q_shared::Com_sprintf(
@@ -3092,7 +3041,7 @@ pub unsafe extern "C" fn CL_Disconnect(mut showMainMenu: crate::src::qcommon::q_
         (*cl_voipUseVAD).integer = tmp
     }
     if clc.voipCodecInitialized as u64 != 0 {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         crate::src::opus_1_2_1::src::opus_encoder::opus_encoder_destroy(clc.opusEncoder);
 
         for i in 0..64 {
@@ -3312,7 +3261,7 @@ in anyway.
 
 pub unsafe extern "C" fn CL_RequestAuthorization() {
     let mut nums: [i8; 64] = [0; 64];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut l: i32 = 0;
     let mut fs: *mut crate::src::qcommon::q_shared::cvar_t =
@@ -3614,11 +3563,11 @@ CL_CompletePlayerName
 ==================
 */
 
-unsafe extern "C" fn CL_CompletePlayerName(mut args: *mut i8, mut argNum: i32) {
+unsafe extern "C" fn CL_CompletePlayerName(mut _args: *mut i8, mut argNum: i32) {
     if argNum == 2 {
         let mut names: [[i8; 32]; 64] = [[0; 32]; 64];
         let mut namesPtr: [*const i8; 64] = [0 as *const i8; 64];
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut clientCount: i32 = 0;
         let mut nameCount: i32 = 0;
         let mut info: *const i8 = 0 as *const i8;
@@ -6987,7 +6936,7 @@ pub unsafe extern "C" fn CL_ServerStatus(
     mut serverStatusString: *mut i8,
     mut maxLen: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut to: crate::qcommon_h::netadr_t = crate::qcommon_h::netadr_t {
         type_0: crate::qcommon_h::NA_BAD,
         ip: [0; 4],
@@ -7229,7 +7178,7 @@ CL_LocalServers_f
 pub unsafe extern "C" fn CL_LocalServers_f() {
     let mut message: *mut i8 = 0 as *mut i8;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut to: crate::qcommon_h::netadr_t = crate::qcommon_h::netadr_t {
         type_0: crate::qcommon_h::NA_BAD,
         ip: [0; 4],

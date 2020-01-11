@@ -66,7 +66,7 @@ pub use crate::src::sdl::sdl_glimp::qglStencilFunc;
 pub use crate::src::sdl::sdl_glimp::qglStencilOp;
 pub use crate::src::sdl::sdl_glimp::qglVertex3f;
 pub use crate::src::sdl::sdl_glimp::qglVertex3fv;
-use crate::stdlib::memset;
+
 pub use crate::stdlib::GLboolean;
 pub use crate::stdlib::GLenum;
 pub use crate::stdlib::GLfloat;
@@ -290,8 +290,8 @@ pub unsafe extern "C" fn R_RenderShadowEdges() {
     let mut i: i32 = 0;
     let mut c: i32 = 0;
     let mut c2: i32 = 0;
-    let mut j: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _j: i32 = 0;
+    let mut _k: i32 = 0;
     let mut i2: i32 = 0;
     let mut c_edges: i32 = 0;
     let mut c_rejected: i32 = 0;

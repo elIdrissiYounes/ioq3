@@ -24,7 +24,6 @@ pub mod q_shared_h {
         *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
         *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -172,10 +171,7 @@ pub use crate::src::cgame::cg_predict::CG_Trace;
 pub use crate::src::cgame::cg_syscalls::trap_R_AddLightToScene;
 pub use crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene;
 pub use crate::src::cgame::cg_syscalls::trap_S_StartSound;
-use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::sin;
-use crate::stdlib::sqrt;
+
 #[no_mangle]
 
 pub static mut cg_localEntities: [crate::cg_local_h::localEntity_t; 512] =

@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::bg_public_h::animation_s;
 pub use crate::bg_public_h::animation_t;
 pub use crate::bg_public_h::gametype_t;
@@ -134,7 +132,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::strlen;
+
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;

@@ -70,21 +70,9 @@ pub use crate::src::libvorbis_1_3_6::lib::sharedbook::vorbis_staticbook_destroy;
 pub use crate::src::libvorbis_1_3_6::lib::smallft::drft_lookup;
 
 pub use crate::src::libvorbis_1_3_6::lib::info::ctype_h::toupper;
-use crate::src::libvorbis_1_3_6::lib::registry::_floor_P;
-use crate::src::libvorbis_1_3_6::lib::registry::_mapping_P;
-use crate::src::libvorbis_1_3_6::lib::registry::_residue_P;
-use crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog;
+
 pub use crate::stdlib::__ctype_toupper_loc;
-use crate::stdlib::calloc;
-use crate::stdlib::free;
-use crate::stdlib::malloc;
-use crate::stdlib::memcmp;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::realloc;
-use crate::stdlib::strcat;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
+
 /* helpers */
 
 unsafe extern "C" fn _v_writestring(
@@ -186,11 +174,11 @@ unsafe extern "C" fn tagcompare(mut s1: *const i8, mut s2: *const i8, mut n: i32
             if ::std::mem::size_of::<i8>() > 1 {
                 if 0 != 0 {
                     let mut __c: i32 = *s1.offset(c as isize) as i32;
-                    __res = (if __c < -(128) || __c > 255 {
+                    __res = if __c < -(128) || __c > 255 {
                         __c
                     } else {
                         *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                    })
+                    }
                 } else {
                     __res = toupper(*s1.offset(c as isize) as i32)
                 }
@@ -204,11 +192,11 @@ unsafe extern "C" fn tagcompare(mut s1: *const i8, mut s2: *const i8, mut n: i32
             if ::std::mem::size_of::<i8>() > 1 {
                 if 0 != 0 {
                     let mut __c: i32 = *s2.offset(c as isize) as i32;
-                    __res = (if __c < -(128) || __c > 255 {
+                    __res = if __c < -(128) || __c > 255 {
                         __c
                     } else {
                         *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                    })
+                    }
                 } else {
                     __res = toupper(*s2.offset(c as isize) as i32)
                 }
@@ -231,7 +219,7 @@ pub unsafe extern "C" fn vorbis_comment_query(
     mut tag: *const i8,
     mut count: i32,
 ) -> *mut i8 {
-    let mut i: isize = 0;
+    let mut _i: isize = 0;
     let mut found: i32 = 0;
     let mut taglen: i32 = crate::stdlib::strlen(tag).wrapping_add(1usize) as i32;
     let mut fulltag: *mut i8 = crate::stdlib::malloc((taglen + 1) as usize) as *mut i8;
@@ -259,7 +247,7 @@ pub unsafe extern "C" fn vorbis_comment_query_count(
     mut vc: *mut crate::codec_h::vorbis_comment,
     mut tag: *const i8,
 ) -> i32 {
-    let mut i: i32 = 0; /* +1 for the = we append */
+    let mut _i: i32 = 0; /* +1 for the = we append */
     let mut count: i32 = 0;
     let mut taglen: i32 = crate::stdlib::strlen(tag).wrapping_add(1usize) as i32;
     let mut fulltag: *mut i8 = crate::stdlib::malloc((taglen + 1) as usize) as *mut i8;
@@ -278,7 +266,7 @@ pub unsafe extern "C" fn vorbis_comment_query_count(
 
 pub unsafe extern "C" fn vorbis_comment_clear(mut vc: *mut crate::codec_h::vorbis_comment) {
     if !vc.is_null() {
-        let mut i: isize = 0;
+        let mut _i: isize = 0;
         if !(*vc).user_comments.is_null() {
             for i in 0..(*vc).comments as isize {
                 if !(*(*vc).user_comments.offset(i)).is_null() {

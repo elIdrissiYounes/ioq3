@@ -140,7 +140,7 @@ pub mod mathops_h {
         mut x: *const crate::arch_h::opus_val16,
         mut len: i32,
     ) -> crate::arch_h::opus_val32 {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut maxval: crate::arch_h::opus_val16 = 0f32;
         let mut minval: crate::arch_h::opus_val16 = 0f32;
 
@@ -178,8 +178,6 @@ pub mod mathops_h {
         return res.f;
     }
 
-    use crate::arch_h::opus_val16;
-    use crate::stdlib::floor;
     /* MATHOPS_H */
     /* FIXED_POINT */
 }
@@ -286,7 +284,6 @@ pub mod float_cast_h {
         return float2int(x) as crate::opus_types_h::opus_int16;
     }
 
-    use crate::opus_types_h::opus_int16;
     use ::std::arch::x86_64::_mm_cvt_ss2si;
     use ::std::arch::x86_64::_mm_set_ss;
     /* FLOAT_CAST_H */
@@ -303,7 +300,7 @@ pub mod pitch_h {
         mut y: *const crate::arch_h::opus_val16,
         mut N: i32,
     ) -> crate::arch_h::opus_val32 {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut xy: crate::arch_h::opus_val32 = 0f32;
 
         for i in 0..N {
@@ -311,7 +308,6 @@ pub mod pitch_h {
         }
         return xy;
     }
-    use crate::arch_h::opus_val32;
 }
 
 pub mod os_support_h {
@@ -359,8 +355,6 @@ pub mod os_support_h {
         return crate::stdlib::malloc(size);
     }
 
-    use crate::stdlib::free;
-    use crate::stdlib::malloc;
     /* OS_SUPPORT_H */
     /*#ifdef __GNUC__
     #pragma GCC poison printf sprintf
@@ -386,8 +380,7 @@ pub use crate::stdlib::uint32_t;
 pub use crate::opus_types_h::opus_int16;
 pub use crate::opus_types_h::opus_int32;
 pub use crate::opus_types_h::opus_uint32;
-use crate::src::opus_1_2_1::celt::celt_encoder::opus_custom_encoder_ctl;
-use crate::src::opus_1_2_1::celt::celt_encoder::OpusCustomEncoder;
+
 pub use crate::src::opus_1_2_1::celt::mdct::mdct_lookup;
 pub use crate::src::opus_1_2_1::celt::modes::OpusCustomMode;
 pub use crate::src::opus_1_2_1::celt::modes::PulseCache;
@@ -419,11 +412,7 @@ pub use crate::opus_private_h::OpusRepacketizer;
 pub use crate::resampler_structs_h::silk_resampler_state_struct;
 pub use crate::resampler_structs_h::C2RustUnnamed_64;
 pub use crate::resampler_structs_h::_silk_resampler_state_struct;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_bit_logp;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_done;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_init;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_shrink;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_uint;
+
 pub use crate::src::opus_1_2_1::src::analysis::run_analysis;
 pub use crate::src::opus_1_2_1::src::analysis::tonality_analysis_init;
 pub use crate::src::opus_1_2_1::src::analysis::tonality_analysis_reset;
@@ -433,9 +422,7 @@ pub use crate::src::opus_1_2_1::src::opus_encoder::mathops_h::celt_exp2;
 pub use crate::src::opus_1_2_1::src::opus_encoder::mathops_h::celt_maxabs16;
 pub use crate::src::opus_1_2_1::src::opus_encoder::opus_private_h::align;
 pub use crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_out_range_impl;
-use crate::stdlib::fabs;
-use crate::stdlib::floor;
-use crate::stdlib::sqrt;
+
 pub use crate::structs_FLP_h::silk_encoder;
 pub use crate::structs_FLP_h::silk_encoder_state_FLP;
 pub use crate::structs_FLP_h::silk_shape_state_FLP;
@@ -447,25 +434,12 @@ pub use crate::structs_h::silk_nsq_state;
 pub use crate::structs_h::stereo_enc_state;
 pub use crate::structs_h::SideInfoIndices;
 
-use crate::src::opus_1_2_1::silk::enc_API::silk_Encode;
-use crate::src::opus_1_2_1::silk::enc_API::silk_Get_Encoder_Size;
-use crate::src::opus_1_2_1::silk::enc_API::silk_InitEncoder;
 pub use crate::src::opus_1_2_1::src::opus_encoder::float_cast_h::float2int;
 pub use crate::src::opus_1_2_1::src::opus_encoder::float_cast_h::FLOAT2INT16;
 pub use crate::src::opus_1_2_1::src::opus_encoder::pitch_h::celt_inner_prod_c;
-use crate::src::opus_1_2_1::src::repacketizer::opus_packet_pad;
-use crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_cat;
-use crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_init;
-use crate::stdlib::free;
-use crate::stdlib::malloc;
 
-use crate::src::opus_1_2_1::silk::lin2log::silk_lin2log;
-use crate::src::opus_1_2_1::silk::log2lin::silk_log2lin;
 pub use crate::src::opus_1_2_1::src::opus_encoder::os_support_h::opus_alloc;
 pub use crate::src::opus_1_2_1::src::opus_encoder::os_support_h::opus_free;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -777,7 +751,7 @@ unsafe extern "C" fn hp_cutoff(
     mut len: i32,
     mut channels: i32,
     mut Fs: crate::opus_types_h::opus_int32,
-    mut arch: i32,
+    mut _arch: i32,
 ) {
     let mut B_Q28: [crate::opus_types_h::opus_int32; 3] = [0; 3];
     let mut A_Q28: [crate::opus_types_h::opus_int32; 2] = [0; 2];
@@ -1222,7 +1196,7 @@ pub unsafe extern "C" fn compute_stereo_width(
     let mut qrrt_xx: crate::arch_h::opus_val16 = 0.;
     let mut qrrt_yy: crate::arch_h::opus_val16 = 0.;
     let mut frame_rate: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut short_alpha: crate::arch_h::opus_val16 = 0.;
     frame_rate = Fs / frame_size;
     short_alpha = 1.0 - 25f32 * 1.0 / (if 50 > frame_rate { 50 } else { frame_rate }) as f32;
@@ -1504,7 +1478,7 @@ unsafe extern "C" fn compute_frame_energy(
     mut pcm: *const crate::arch_h::opus_val16,
     mut frame_size: i32,
     mut channels: i32,
-    mut arch: i32,
+    mut _arch: i32,
 ) -> crate::arch_h::opus_val32 {
     let mut len: i32 = frame_size * channels;
     return celt_inner_prod_c(pcm, pcm, len) / len as f32;
@@ -1559,7 +1533,7 @@ unsafe extern "C" fn encode_multiframe_packet(
     mut lsb_depth: i32,
     mut float_api: i32,
 ) -> crate::opus_types_h::opus_int32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut ret: i32 = 0;
     let mut tmp_data: *mut u8 = 0 as *mut u8;
     let mut bak_mode: i32 = 0;
@@ -2502,7 +2476,7 @@ pub unsafe extern "C" fn opus_encode_native(
             let mut mask_sum: crate::arch_h::opus_val32 = 0f32;
             let mut masking_depth: crate::arch_h::opus_val16 = 0.;
             let mut rate_offset: crate::opus_types_h::opus_int32 = 0;
-            let mut c: i32 = 0;
+            let mut _c: i32 = 0;
             let mut end: i32 = 17;
             let mut srate: crate::opus_types_h::opus_int16 = 16000;
             if (*st).bandwidth == 1101 {
@@ -3290,7 +3264,7 @@ pub unsafe extern "C" fn opus_encode(
     mut data: *mut u8,
     mut max_data_bytes: crate::opus_types_h::opus_int32,
 ) -> crate::opus_types_h::opus_int32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut ret: i32 = 0;
     let mut frame_size: i32 = 0;
     let mut in_0: *mut f32 = 0 as *mut f32;

@@ -102,13 +102,7 @@ pub use crate::src::libvorbis_1_3_6::lib::smallft::drft_lookup;
 
 pub use crate::scales_h::C2RustUnnamed_58;
 pub use crate::src::libvorbis_1_3_6::lib::envelope::scales_h::todB;
-use crate::stdlib::calloc;
-use crate::stdlib::free;
-use crate::stdlib::malloc;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::realloc;
-use crate::stdlib::sin;
+
 /* *******************************************************************
 *                                                                  *
 * THIS FILE IS PART OF THE OggVorbis SOFTWARE CODEC SOURCE CODE.   *
@@ -136,7 +130,7 @@ pub unsafe extern "C" fn _ve_envelope_init(
         &mut (*ci).psy_g_param;
     let mut ch: i32 = (*vi).channels;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     (*e).winlength = 128;
     let mut n: i32 = (*e).winlength;
     (*e).searchstep = 64;
@@ -199,7 +193,7 @@ pub unsafe extern "C" fn _ve_envelope_init(
 pub unsafe extern "C" fn _ve_envelope_clear(
     mut e: *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_lookup,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     crate::src::libvorbis_1_3_6::lib::mdct::mdct_clear(&mut (*e).mdct);
 
     for i in 0..7 {
@@ -227,7 +221,7 @@ unsafe extern "C" fn _ve_amp(
     let mut n: isize = (*ve).winlength as isize;
     let mut ret: i32 = 0;
     let mut i: isize = 0;
-    let mut j: isize = 0;
+    let mut _j: isize = 0;
     let mut decay: f32 = 0.;
     /* we want to have a 'minimum bar' for energy, else we're just
     basing blocks on quantization noise that outweighs the signal
@@ -412,7 +406,7 @@ pub unsafe extern "C" fn _ve_envelope_search(
         &mut (*ci).psy_g_param;
     let mut ve: *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_lookup =
         (*((*v).backend_state as *mut crate::codec_internal_h::private_state)).ve;
-    let mut i: isize = 0;
+    let mut _i: isize = 0;
     let mut j: isize = 0;
     let mut first: i32 = ((*ve).current / (*ve).searchstep as isize) as i32;
     let mut last: i32 = (*v).pcm_current / (*ve).searchstep - 4;
@@ -512,7 +506,7 @@ pub unsafe extern "C" fn _ve_envelope_mark(mut v: *mut crate::codec_h::vorbis_ds
     }
     let mut first: isize = beginW / (*ve).searchstep as isize;
     let mut last: isize = endW / (*ve).searchstep as isize;
-    let mut i: isize = 0;
+    let mut _i: isize = 0;
 
     for i in first..last {
         if *(*ve).mark.offset(i) != 0 {

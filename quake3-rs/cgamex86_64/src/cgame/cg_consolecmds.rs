@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod stdlib_h {
     #[inline]
 

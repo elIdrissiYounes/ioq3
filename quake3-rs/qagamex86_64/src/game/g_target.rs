@@ -228,7 +228,7 @@ pub use crate::src::game::g_syscalls::trap_SendServerCommand;
 pub use crate::src::game::g_syscalls::trap_SetConfigstring;
 pub use crate::src::game::g_syscalls::trap_Trace;
 pub use crate::src::game::g_syscalls::trap_UnlinkEntity;
-use crate::src::game::g_team::Team_ReturnFlag;
+
 pub use crate::src::game::g_utils::vtos;
 pub use crate::src::game::g_utils::G_AddEvent;
 pub use crate::src::game::g_utils::G_Find;
@@ -238,9 +238,7 @@ pub use crate::src::game::g_utils::G_SetOrigin;
 pub use crate::src::game::g_utils::G_SoundIndex;
 pub use crate::src::game::g_utils::G_TeamCommand;
 pub use crate::src::game::g_utils::G_UseTargets;
-use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::strstr;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -271,7 +269,7 @@ Gives the activator all the items pointed to.
 
 pub unsafe extern "C" fn Use_Target_Give(
     mut ent: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     let mut t: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
@@ -342,8 +340,8 @@ Used to drop flight powerups into death puts.
 #[no_mangle]
 
 pub unsafe extern "C" fn Use_target_remove_powerups(
-    mut ent: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
+    mut _ent: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     if (*activator).client.is_null() {
@@ -388,7 +386,7 @@ pub unsafe extern "C" fn Think_Target_Delay(mut ent: *mut crate::g_local_h::gent
 
 pub unsafe extern "C" fn Use_Target_Delay(
     mut ent: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     (*ent).nextthink = (crate::src::game::g_main::level.time as f64
@@ -439,7 +437,7 @@ The activator is given this many points.
 
 pub unsafe extern "C" fn Use_Target_Score(
     mut ent: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     crate::src::game::g_combat::AddScore(
@@ -472,7 +470,7 @@ If "private", only the activator gets the message.  If no checks, all clients ge
 
 pub unsafe extern "C" fn Use_Target_Print(
     mut ent: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     if !(*activator).client.is_null() && (*ent).spawnflags & 4 != 0 {
@@ -541,7 +539,7 @@ Multiple identical looping sounds will just increase volume without any speed co
 
 pub unsafe extern "C" fn Use_Target_Speaker(
     mut ent: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     if (*ent).spawnflags & 3 != 0 {
@@ -747,7 +745,7 @@ pub unsafe extern "C" fn target_laser_off(mut self_0: *mut crate::g_local_h::gen
 
 pub unsafe extern "C" fn target_laser_use(
     mut self_0: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     (*self_0).activator = activator;
@@ -817,7 +815,7 @@ pub unsafe extern "C" fn SP_target_laser(mut self_0: *mut crate::g_local_h::gent
 
 pub unsafe extern "C" fn target_teleporter_use(
     mut self_0: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     let mut dest: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
@@ -871,7 +869,7 @@ if RANDOM is checked, only one of the targets will be fired, not all of them
 
 pub unsafe extern "C" fn target_relay_use(
     mut self_0: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     if (*self_0).spawnflags & 1 != 0
@@ -915,8 +913,8 @@ Kills the activator.
 #[no_mangle]
 
 pub unsafe extern "C" fn target_kill_use(
-    mut self_0: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
+    mut _self_0: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     crate::src::game::g_combat::G_Damage(

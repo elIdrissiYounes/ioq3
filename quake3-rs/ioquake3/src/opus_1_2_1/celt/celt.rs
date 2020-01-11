@@ -14,7 +14,7 @@ pub use crate::stdlib::__int16_t;
 pub use crate::stdlib::__int32_t;
 pub use crate::stdlib::int16_t;
 pub use crate::stdlib::int32_t;
-use crate::stdlib::memmove;
+
 /* CUSTOM_MODES */
 /* Copyright (c) 2007-2008 CSIRO
 Copyright (c) 2007-2010 Xiph.Org Foundation
@@ -106,7 +106,7 @@ pub unsafe extern "C" fn comb_filter(
     mut tapset1: i32,
     mut window: *const crate::arch_h::opus_val16,
     mut overlap: i32,
-    mut arch: i32,
+    mut _arch: i32,
 ) {
     let mut i: i32 = 0;
     /* printf ("%d %d %f %f\n", T0, T1, g0, g1); */

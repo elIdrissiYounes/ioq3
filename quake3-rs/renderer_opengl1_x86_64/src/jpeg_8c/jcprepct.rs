@@ -188,7 +188,6 @@ pub use crate::src::jpeg_8c::jerror::JWRN_MUST_RESYNC;
 pub use crate::src::jpeg_8c::jerror::JWRN_NOT_SEQUENTIAL;
 pub use crate::src::jpeg_8c::jerror::JWRN_TOO_MUCH_DATA;
 pub use crate::src::jpeg_8c::jutils::jcopy_sample_rows;
-use crate::stdlib::memcpy;
 
 pub type my_prep_ptr = *mut my_prep_controller;
 
@@ -406,7 +405,7 @@ unsafe extern "C" fn pre_process_context(
             if (*prep).rows_to_go == (*cinfo).image_height {
                 ci = 0;
                 while ci < (*cinfo).num_components {
-                    let mut row: i32 = 0;
+                    let mut _row: i32 = 0;
 
                     for row in 1..=(*cinfo).max_v_samp_factor {
                         crate::src::jpeg_8c::jutils::jcopy_sample_rows(
@@ -479,7 +478,7 @@ unsafe extern "C" fn create_context_buffer(mut cinfo: crate::jpeglib_h::j_compre
     let mut prep: my_prep_ptr = (*cinfo).prep as my_prep_ptr;
     let mut rgroup_height: i32 = (*cinfo).max_v_samp_factor;
     let mut ci: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
     let mut true_buffer: crate::jpeglib_h::JSAMPARRAY = 0 as *mut crate::jpeglib_h::JSAMPROW;

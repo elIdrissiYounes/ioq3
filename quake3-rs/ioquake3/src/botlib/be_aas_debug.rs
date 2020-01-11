@@ -74,9 +74,7 @@ pub use crate::botlib_h::bsp_surface_t;
 pub use crate::botlib_h::bsp_trace_s;
 pub use crate::botlib_h::bsp_trace_t;
 pub use crate::src::botlib::be_aas_debug::q_shared_h::CrossProduct;
-use crate::src::botlib::be_interface::botimport;
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetClearedMemory;
+
 pub use crate::src::qcommon::q_math::VectorNormalize;
 pub use crate::src::qcommon::q_shared::byte;
 pub use crate::src::qcommon::q_shared::cplane_s;
@@ -92,18 +90,7 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::abs;
-use crate::stdlib::memcpy;
 
-use crate::src::botlib::be_aas_main::aasworld;
-use crate::src::botlib::be_aas_main::AAS_Time;
-use crate::src::botlib::be_aas_move::aassettings;
-use crate::src::botlib::be_aas_move::AAS_HorizontalVelocityForJump;
-use crate::src::botlib::be_aas_move::AAS_JumpReachRunStart;
-use crate::src::botlib::be_aas_move::AAS_PredictClientMovement;
-use crate::src::botlib::be_aas_move::AAS_RocketJumpZVelocity;
-use crate::src::botlib::be_aas_sample::AAS_AreaCluster;
-use crate::src::botlib::be_aas_sample::AAS_PointAreaNum;
 #[no_mangle]
 
 pub static mut debuglines: [i32; 1024] = [0; 1024];
@@ -589,7 +576,7 @@ pub unsafe extern "C" fn AAS_ShowBoundingBox(
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_ShowFace(mut facenum: i32) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut color: i32 = 0;
     let mut edgenum: i32 = 0;
     let mut edge: *mut crate::aasfile_h::aas_edge_t = 0 as *mut crate::aasfile_h::aas_edge_t;
@@ -777,7 +764,7 @@ pub unsafe extern "C" fn AAS_ShowFacePolygon(mut facenum: i32, mut color: i32, m
 pub unsafe extern "C" fn AAS_ShowArea(mut areanum: i32, mut groundfacesonly: i32) {
     let mut areaedges: [i32; 1024] = [0; 1024];
     let mut numareaedges: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut n: i32 = 0;
     let mut color: i32 = 0;
@@ -1070,7 +1057,7 @@ pub unsafe extern "C" fn AAS_DrawCross(
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_PrintTravelType(mut traveltype: i32) {}
+pub unsafe extern "C" fn AAS_PrintTravelType(mut _traveltype: i32) {}
 //draw an arrow
 //draw an arrow
 //end of the function AAS_PrintTravelType

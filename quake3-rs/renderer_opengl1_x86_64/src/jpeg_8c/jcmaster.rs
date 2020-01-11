@@ -1,5 +1,3 @@
-use ::libc;
-
 /* JERROR_H */
 
 /* Informational/debugging messages */
@@ -790,7 +788,7 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
 {
     let mut scanptr: *const crate::jpeglib_h::jpeg_scan_info =
         0 as *const crate::jpeglib_h::jpeg_scan_info;
-    let mut scanno: i32 = 0;
+    let mut _scanno: i32 = 0;
     let mut ncomps: i32 = 0;
     let mut ci: i32 = 0;
     let mut coefi: i32 = 0;
@@ -1091,7 +1089,7 @@ unsafe extern "C" fn reduce_script(mut cinfo: crate::jpeglib_h::j_compress_ptr)
     let mut scanptr: *mut crate::jpeglib_h::jpeg_scan_info =
         0 as *mut crate::jpeglib_h::jpeg_scan_info;
     let mut idxout: i32 = 0;
-    let mut idxin: i32 = 0;
+    let mut _idxin: i32 = 0;
     /* Circumvent const declaration for this function */
     scanptr = (*cinfo).scan_info as *mut crate::jpeglib_h::jpeg_scan_info;
     idxout = 0;

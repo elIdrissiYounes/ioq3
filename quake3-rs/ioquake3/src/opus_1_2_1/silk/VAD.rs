@@ -108,8 +108,6 @@ pub mod SigProc_FIX_h {
         return if a > b { a } else { b };
     }
 
-    use crate::opus_types_h::opus_int32;
-    use crate::opus_types_h::opus_uint32;
     /* SILK_SIGPROC_FIX_H */
     /*    silk_SMMUL: Signed top word multiply.
     ARMv6        2 instruction cycles.
@@ -171,8 +169,7 @@ pub mod Inlines_h {
                 >> 16)) as crate::opus_types_h::opus_int32;
         return y;
     }
-    use crate::opus_types_h::opus_int16;
-    use crate::opus_types_h::opus_int32;
+
     use crate::src::opus_1_2_1::silk::VAD::macros_h::silk_CLZ32;
     use crate::src::opus_1_2_1::silk::VAD::SigProc_FIX_h::silk_ROR32;
     /* SILK_FIX_INLINES_H */
@@ -192,7 +189,7 @@ pub use crate::resampler_structs_h::_silk_resampler_state_struct;
 pub use crate::resampler_structs_h::silk_resampler_state_struct;
 pub use crate::resampler_structs_h::C2RustUnnamed_64;
 pub use crate::src::opus_1_2_1::silk::VAD::macros_h::silk_CLZ32;
-use crate::stdlib::memset;
+
 pub use crate::structs_h::silk_LP_state;
 pub use crate::structs_h::silk_NLSF_CB_struct;
 pub use crate::structs_h::silk_VAD_state;
@@ -466,7 +463,7 @@ pub unsafe extern "C" fn silk_VAD_GetSA_Q8_c(
     let mut SNR_Q7: i32 = 0;
     let mut i: i32 = 0;
     let mut b: i32 = 0;
-    let mut s: i32 = 0;
+    let mut _s: i32 = 0;
     let mut sumSquared: crate::opus_types_h::opus_int32 = 0;
     let mut smooth_coef_Q16: crate::opus_types_h::opus_int32 = 0;
     let mut HPstateTmp: crate::opus_types_h::opus_int16 = 0;
@@ -816,7 +813,7 @@ unsafe extern "C" fn silk_VAD_GetNoiseLevels(
 )
 /* I/O  Pointer to Silk VAD state                   */
 {
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut nl: crate::opus_types_h::opus_int32 = 0;
     let mut nrg: crate::opus_types_h::opus_int32 = 0;
     let mut inv_nrg: crate::opus_types_h::opus_int32 = 0;

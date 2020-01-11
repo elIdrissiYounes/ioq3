@@ -37,7 +37,7 @@ pub use crate::src::qcommon::q_shared::ERR_DROP;
 pub use crate::src::qcommon::q_shared::ERR_FATAL;
 pub use crate::src::qcommon::q_shared::ERR_NEED_CD;
 pub use crate::src::qcommon::q_shared::ERR_SERVERDISCONNECT;
-use crate::stdlib::memset;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -329,7 +329,7 @@ pub unsafe extern "C" fn CM_PointContents(
 ) -> i32 {
     let mut leafnum: i32 = 0;
     let mut i: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut brushnum: i32 = 0;
     let mut leaf: *mut crate::cm_local_h::cLeaf_t = 0 as *mut crate::cm_local_h::cLeaf_t;
     let mut b: *mut crate::cm_local_h::cbrush_t = 0 as *mut crate::cm_local_h::cbrush_t;

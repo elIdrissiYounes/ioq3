@@ -57,7 +57,7 @@ pub mod mathops_h {
         frac = -0.41445418 + frac * (0.95909232 + frac * (-0.33951290 + frac * 0.16541097));
         return (1 + integer) as f32 + frac;
     }
-    use crate::opus_types_h::opus_uint32;
+
     /* MATHOPS_H */
     /* FIXED_POINT */
 }
@@ -92,18 +92,7 @@ pub use crate::src::opus_1_2_1::celt::quant_bands::entcode_h::ec_get_buffer;
 pub use crate::src::opus_1_2_1::celt::quant_bands::entcode_h::ec_range_bytes;
 pub use crate::src::opus_1_2_1::celt::quant_bands::entcode_h::ec_tell;
 pub use crate::src::opus_1_2_1::celt::quant_bands::mathops_h::celt_log2;
-use crate::stdlib::floor;
 
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_bits;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_bit_logp;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_bits;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf;
-use crate::src::opus_1_2_1::celt::laplace::ec_laplace_decode;
-use crate::src::opus_1_2_1::celt::laplace::ec_laplace_encode;
-use crate::stdlib::abs;
-use crate::stdlib::memcpy;
 /* Copyright (c) 2007-2008 CSIRO
 Copyright (c) 2007-2009 Xiph.Org Foundation
 Written by Jean-Marc Valin */
@@ -224,7 +213,7 @@ unsafe extern "C" fn loss_distortion(
     mut C: i32,
 ) -> crate::arch_h::opus_val32 {
     let mut c: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut dist: crate::arch_h::opus_val32 = 0f32;
     c = 0;
     loop {
@@ -259,7 +248,7 @@ unsafe extern "C" fn quant_coarse_energy_impl(
     mut max_decay: crate::arch_h::opus_val16,
     mut lfe: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut c: i32 = 0;
     let mut badness: i32 = 0;
     let mut prev: [crate::arch_h::opus_val32; 2] = [0f32, 0f32];

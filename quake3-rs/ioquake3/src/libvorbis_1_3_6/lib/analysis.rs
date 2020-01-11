@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::config_types_h::ogg_int64_t;
 pub use crate::stdlib::__int64_t;
 pub use crate::stdlib::int64_t;
@@ -16,8 +14,7 @@ pub use crate::ogg_h::oggpack_buffer;
 pub use crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes;
 pub use crate::src::libogg_1_3_3::src::bitwise::oggpack_get_buffer;
 pub use crate::src::libogg_1_3_3::src::bitwise::oggpack_reset;
-use crate::src::libvorbis_1_3_6::lib::bitrate::vorbis_bitrate_managed;
-use crate::src::libvorbis_1_3_6::lib::registry::_mapping_P;
+
 /* *******************************************************************
 *                                                                  *
 * THIS FILE IS PART OF THE OggVorbis SOFTWARE CODEC SOURCE CODE.   *
@@ -41,7 +38,7 @@ pub unsafe extern "C" fn vorbis_analysis(
     mut op: *mut crate::ogg_h::ogg_packet,
 ) -> i32 {
     let mut ret: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut vbi: *mut crate::codec_internal_h::vorbis_block_internal =
         (*vb).internal as *mut crate::codec_internal_h::vorbis_block_internal;
     (*vb).glue_bits = 0isize;

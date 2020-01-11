@@ -279,7 +279,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::memset;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -550,7 +550,7 @@ Spectators will only interact with teleporters.
 #[no_mangle]
 
 pub unsafe extern "C" fn G_TouchTriggers(mut ent: *mut crate::g_local_h::gentity_t) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut num: i32 = 0;
     let mut touch: [i32; 1024] = [0; 1024];
     let mut hit: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
@@ -1442,7 +1442,7 @@ while a slow client may have multiple ClientEndFrame between ClientThink.
 #[no_mangle]
 
 pub unsafe extern "C" fn ClientEndFrame(mut ent: *mut crate::g_local_h::gentity_t) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if (*(*ent).client).sess.sessionTeam == crate::bg_public_h::TEAM_SPECTATOR {
         SpectatorClientEndFrame(ent);
         return;

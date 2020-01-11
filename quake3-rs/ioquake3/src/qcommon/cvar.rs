@@ -6,7 +6,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub mod stdlib_h {
@@ -71,10 +70,6 @@ pub use crate::src::qcommon::q_shared::ERR_DROP;
 pub use crate::src::qcommon::q_shared::ERR_FATAL;
 pub use crate::src::qcommon::q_shared::ERR_NEED_CD;
 pub use crate::src::qcommon::q_shared::ERR_SERVERDISCONNECT;
-use crate::stdlib::memset;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
 
 pub use crate::src::qcommon::cvar::ctype_h::tolower;
 pub use crate::src::qcommon::cvar::stdlib_h::atoi;

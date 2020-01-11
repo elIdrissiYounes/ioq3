@@ -1,5 +1,3 @@
-use ::libc;
-
 /* JERROR_H */
 
 /* Informational/debugging messages */
@@ -381,7 +379,7 @@ unsafe extern "C" fn null_convert(
     let mut count: crate::jmorecfg_h::JDIMENSION = 0;
     let mut num_components: i32 = (*cinfo).num_components;
     let mut num_cols: crate::jmorecfg_h::JDIMENSION = (*cinfo).output_width;
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     loop {
         num_rows -= 1;
         if !(num_rows >= 0) {
@@ -540,7 +538,7 @@ unsafe extern "C" fn ycck_cmyk_convert(
  * Empty method for start_pass.
  */
 
-unsafe extern "C" fn start_pass_dcolor(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
+unsafe extern "C" fn start_pass_dcolor(mut _cinfo: crate::jpeglib_h::j_decompress_ptr) {
     /* no work needed */
 }
 /*

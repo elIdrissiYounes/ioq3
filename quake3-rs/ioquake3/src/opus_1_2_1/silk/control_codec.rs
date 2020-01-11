@@ -177,8 +177,7 @@ pub mod SigProc_FLP_h {
             k -= 1
         }
     }
-    use crate::opus_types_h::opus_int16;
-    use crate::opus_types_h::opus_int32;
+
     use crate::src::opus_1_2_1::silk::control_codec::float_cast_h::float2int;
     /* SILK_SIGPROC_FLP_H */
 }
@@ -209,22 +208,13 @@ pub use crate::src::opus_1_2_1::silk::control_codec::SigProc_FIX_h::silk_max_int
 pub use crate::src::opus_1_2_1::silk::control_codec::SigProc_FIX_h::silk_min_int;
 pub use crate::src::opus_1_2_1::silk::resampler::silk_resampler;
 pub use crate::src::opus_1_2_1::silk::resampler::silk_resampler_init;
-use crate::stdlib::memset;
+
 pub use crate::structs_FLP_h::silk_encoder_state_FLP;
 pub use crate::structs_FLP_h::silk_shape_state_FLP;
 
-use crate::src::opus_1_2_1::silk::control_audio_bandwidth::silk_control_audio_bandwidth;
 pub use crate::src::opus_1_2_1::silk::control_codec::SigProc_FLP_h::silk_float2short_array;
 pub use crate::src::opus_1_2_1::silk::control_codec::SigProc_FLP_h::silk_short2float_array;
-use crate::src::opus_1_2_1::silk::tables_NLSF_CB_NB_MB::silk_NLSF_CB_NB_MB;
-use crate::src::opus_1_2_1::silk::tables_NLSF_CB_WB::silk_NLSF_CB_WB;
-use crate::src::opus_1_2_1::silk::tables_other::silk_uniform4_iCDF;
-use crate::src::opus_1_2_1::silk::tables_other::silk_uniform6_iCDF;
-use crate::src::opus_1_2_1::silk::tables_other::silk_uniform8_iCDF;
-use crate::src::opus_1_2_1::silk::tables_pitch_lag::silk_pitch_contour_10_ms_NB_iCDF;
-use crate::src::opus_1_2_1::silk::tables_pitch_lag::silk_pitch_contour_10_ms_iCDF;
-use crate::src::opus_1_2_1::silk::tables_pitch_lag::silk_pitch_contour_NB_iCDF;
-use crate::src::opus_1_2_1::silk::tables_pitch_lag::silk_pitch_contour_iCDF;
+
 /* Control the Silk encoder */
 /* Control encoder */
 #[no_mangle]

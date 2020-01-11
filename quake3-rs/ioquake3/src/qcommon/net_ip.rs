@@ -10,7 +10,6 @@ pub mod byteswap_h {
         return (__bsx as i32 >> 8 & 0xff | (__bsx as i32 & 0xff) << 8)
             as crate::stdlib::__uint16_t;
     }
-    use crate::stdlib::__uint16_t;
 }
 
 pub use crate::stddef_h::size_t;
@@ -107,12 +106,10 @@ pub use crate::stdlib::IPPROTO_UDP;
 pub use crate::stdlib::IPPROTO_UDPLITE;
 
 pub use crate::src::qcommon::net_ip::byteswap_h::__bswap_16;
-use crate::stdlib::__errno_location;
+
 pub use crate::stdlib::__socket_type;
 pub use crate::stdlib::addrinfo;
-use crate::stdlib::bind;
-use crate::stdlib::close;
-use crate::stdlib::connect;
+
 pub use crate::stdlib::freeaddrinfo;
 pub use crate::stdlib::freeifaddrs;
 pub use crate::stdlib::gai_strerror;
@@ -123,22 +120,12 @@ pub use crate::stdlib::getnameinfo;
 pub use crate::stdlib::hostent;
 pub use crate::stdlib::if_nametoindex;
 pub use crate::stdlib::ifaddrs;
-use crate::stdlib::ioctl;
-use crate::stdlib::memcmp;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::recv;
-use crate::stdlib::recvfrom;
-use crate::stdlib::send;
-use crate::stdlib::sendto;
-use crate::stdlib::setsockopt;
+
 pub use crate::stdlib::sockaddr;
 pub use crate::stdlib::sockaddr_storage;
-use crate::stdlib::socket;
+
 pub use crate::stdlib::socklen_t;
-use crate::stdlib::strerror;
-use crate::stdlib::strlen;
+
 pub use crate::stdlib::C2RustUnnamed_131;
 pub use crate::stdlib::IFF_ALLMULTI;
 pub use crate::stdlib::IFF_AUTOMEDIA;
@@ -1035,7 +1022,7 @@ LAN clients will have their rate var ignored
 pub unsafe extern "C" fn Sys_IsLANAddress(
     mut adr: crate::qcommon_h::netadr_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut index: i32 = 0;
+    let mut _index: i32 = 0;
     let mut run: i32 = 0;
     let mut addrsize: i32 = 0;
     let mut differed: crate::src::qcommon::q_shared::qboolean =

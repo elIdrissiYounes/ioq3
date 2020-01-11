@@ -75,7 +75,7 @@ pub mod os_h {
     done safely because all x86_64 CPUs supports SSE2. */
     #[inline]
 
-    pub unsafe extern "C" fn vorbis_fpu_setround(mut fpu: *mut crate::os_h::vorbis_fpu_control) {}
+    pub unsafe extern "C" fn vorbis_fpu_setround(mut _fpu: *mut crate::os_h::vorbis_fpu_control) {}
     #[inline]
 
     pub unsafe extern "C" fn vorbis_ftoi(mut f: f64) -> i32 {
@@ -83,7 +83,7 @@ pub mod os_h {
     }
     #[inline]
 
-    pub unsafe extern "C" fn vorbis_fpu_restore(mut fpu: crate::os_h::vorbis_fpu_control) {}
+    pub unsafe extern "C" fn vorbis_fpu_restore(mut _fpu: crate::os_h::vorbis_fpu_control) {}
 
     use ::std::arch::x86_64::_mm_cvtsd_si32;
     use ::std::arch::x86_64::_mm_load_sd;
@@ -169,19 +169,6 @@ pub use crate::src::libvorbis_1_3_6::lib::vorbisfile::os_h::vorbis_fpu_restore;
 pub use crate::src::libvorbis_1_3_6::lib::vorbisfile::os_h::vorbis_fpu_setround;
 pub use crate::src::libvorbis_1_3_6::lib::vorbisfile::os_h::vorbis_ftoi;
 
-use crate::stdlib::__errno_location;
-use crate::stdlib::calloc;
-use crate::stdlib::fclose;
-use crate::stdlib::fopen;
-use crate::stdlib::fread;
-use crate::stdlib::free;
-use crate::stdlib::fseek;
-use crate::stdlib::ftell;
-use crate::stdlib::malloc;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::realloc;
-use crate::stdlib::rint;
 extern "C" {
     #[no_mangle]
     pub fn vorbis_window(v: *mut crate::codec_h::vorbis_dsp_state, W: i32) -> *const f32;
@@ -1167,7 +1154,7 @@ unsafe extern "C" fn _fetch_and_process_packet(
                         } else {
                             0
                         };
-                        let mut i: i32 = 0;
+                        let mut _i: i32 = 0;
                         let mut samples: i32 = 0;
                         /* this packet has a pcm_offset on it (the last packet
                         completed on a page carries the offset) After processing
@@ -1460,7 +1447,7 @@ pub unsafe extern "C" fn ov_clear(
         crate::src::libvorbis_1_3_6::lib::block::vorbis_dsp_clear(&mut (*vf).vd);
         crate::src::libogg_1_3_3::src::framing::ogg_stream_clear(&mut (*vf).os);
         if !(*vf).vi.is_null() && (*vf).links != 0 {
-            let mut i: i32 = 0;
+            let mut _i: i32 = 0;
 
             for i in 0..(*vf).links {
                 crate::src::libvorbis_1_3_6::lib::info::vorbis_info_clear(
@@ -1625,7 +1612,7 @@ pub unsafe extern "C" fn ov_halfrate(
     mut vf: *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File,
     mut flag: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if (*vf).vi.is_null() {
         return -(131i32);
     }
@@ -1812,7 +1799,7 @@ pub unsafe extern "C" fn ov_bitrate(
     }
     if i < 0 {
         let mut bits: crate::config_types_h::ogg_int64_t = 0;
-        let mut i_0: i32 = 0;
+        let mut _i_0: i32 = 0;
         let mut br: f32 = 0.;
 
         for i_0 in 0..(*vf).links {
@@ -1914,7 +1901,7 @@ pub unsafe extern "C" fn ov_raw_total(
     }
     if i < 0 {
         let mut acc: crate::config_types_h::ogg_int64_t = 0;
-        let mut i_0: i32 = 0;
+        let mut _i_0: i32 = 0;
 
         for i_0 in 0..(*vf).links {
             acc += ov_raw_total(vf, i_0);
@@ -1943,7 +1930,7 @@ pub unsafe extern "C" fn ov_pcm_total(
     }
     if i < 0 {
         let mut acc: crate::config_types_h::ogg_int64_t = 0;
-        let mut i_0: i32 = 0;
+        let mut _i_0: i32 = 0;
 
         for i_0 in 0..(*vf).links {
             acc += ov_pcm_total(vf, i_0);
@@ -1972,7 +1959,7 @@ pub unsafe extern "C" fn ov_time_total(
     }
     if i < 0 {
         let mut acc: f64 = 0f64;
-        let mut i_0: i32 = 0;
+        let mut _i_0: i32 = 0;
 
         for i_0 in 0..(*vf).links {
             acc += ov_time_total(vf, i_0);
@@ -2125,7 +2112,7 @@ pub unsafe extern "C" fn ov_raw_seek(
                             accblock += lastblock + thisblock >> 2
                         }
                         if op.granulepos != -1 {
-                            let mut i: i32 = 0;
+                            let mut _i: i32 = 0;
                             let mut link: i32 = (*vf).current_link;
                             let mut granulepos: crate::config_types_h::ogg_int64_t =
                                 op.granulepos - *(*vf).pcmlengths.offset((link * 2) as isize);
@@ -3475,7 +3462,7 @@ pub unsafe extern "C" fn ov_crosslap(
     let mut w2: *const f32 = 0 as *const f32;
     let mut n1: i32 = 0;
     let mut n2: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut ret: i32 = 0;
     let mut hs1: i32 = 0;
     let mut hs2: i32 = 0;
@@ -3564,7 +3551,7 @@ unsafe extern "C" fn _ov_64_seek_lap(
     let mut ch1: i32 = 0;
     let mut ch2: i32 = 0;
     let mut hs: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut ret: i32 = 0;
     if (*vf).ready_state < 2 {
         return -(131i32);
@@ -3692,7 +3679,7 @@ unsafe extern "C" fn _ov_d_seek_lap(
     let mut ch1: i32 = 0;
     let mut ch2: i32 = 0;
     let mut hs: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut ret: i32 = 0;
     if (*vf).ready_state < 2 {
         return -(131i32);

@@ -49,12 +49,7 @@ pub use crate::src::qcommon::q_shared::EXEC_APPEND;
 pub use crate::src::qcommon::q_shared::EXEC_INSERT;
 pub use crate::src::qcommon::q_shared::EXEC_NOW;
 pub use crate::src::server::sv_game::SV_GameCommand;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
-use crate::stdlib::strpbrk;
+
 pub use crate::stdlib::strtol;
 
 #[repr(C)]
@@ -527,7 +522,7 @@ Returns a single string containing argv(1) to argv(argc()-1)
 
 pub unsafe extern "C" fn Cmd_Args() -> *mut i8 {
     static mut cmd_args: [i8; 1024] = [0; 1024];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     cmd_args[0] = 0;
 
     for i in 1..cmd_argc {
@@ -550,7 +545,7 @@ Returns a single string containing argv(arg) to argv(argc()-1)
 
 pub unsafe extern "C" fn Cmd_ArgsFrom(mut arg: i32) -> *mut i8 {
     static mut cmd_args: [i8; 8192] = [0; 8192];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     cmd_args[0] = 0;
     if arg < 0 {
         arg = 0
@@ -1041,7 +1036,7 @@ Cmd_CompleteCfgName
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Cmd_CompleteCfgName(mut args: *mut i8, mut argNum: i32) {
+pub unsafe extern "C" fn Cmd_CompleteCfgName(mut _args: *mut i8, mut argNum: i32) {
     if argNum == 2 {
         crate::src::qcommon::common::Field_CompleteFilename(
             b"\x00" as *const u8 as *const i8,

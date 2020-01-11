@@ -221,7 +221,6 @@ pub mod q_shared_h {
                 + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -330,11 +329,7 @@ pub use crate::src::renderergl1::tr_shade::tess;
 pub use crate::src::renderergl1::tr_shader::R_FindShader;
 pub use crate::src::renderergl1::tr_shader::R_GetShaderByHandle;
 pub use crate::src::renderergl1::tr_surface::RB_CheckOverflow;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
+
 pub use crate::tr_common_h::image_s;
 pub use crate::tr_common_h::image_t;
 pub use crate::tr_common_h::imgFlags_t;
@@ -2056,7 +2051,7 @@ unsafe extern "C" fn R_CullIQM(
         0 as *mut crate::src::qcommon::q_shared::vec_t;
     let mut newBounds: *mut crate::src::qcommon::q_shared::vec_t =
         0 as *mut crate::src::qcommon::q_shared::vec_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if (*data).bounds.is_null() {
         crate::src::renderergl1::tr_main::tr.pc.c_box_cull_md3_clip += 1;
         return 1i32;
@@ -2107,7 +2102,7 @@ pub unsafe extern "C" fn R_ComputeIQMFogNum(
     mut data: *mut crate::tr_local_h::iqmData_t,
     mut ent: *mut crate::tr_local_h::trRefEntity_t,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut fog: *mut crate::tr_local_h::fog_t = 0 as *mut crate::tr_local_h::fog_t;
     let mut bounds: *const crate::src::qcommon::q_shared::vec_t =

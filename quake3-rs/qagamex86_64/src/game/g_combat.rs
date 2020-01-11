@@ -244,7 +244,6 @@ pub mod q_shared_h {
                 + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -576,9 +575,7 @@ pub use crate::src::game::g_syscalls::trap_LinkEntity;
 pub use crate::src::game::g_syscalls::trap_PointContents;
 pub use crate::src::game::g_syscalls::trap_Trace;
 pub use crate::src::game::g_team::OnSameTeam;
-use crate::src::game::g_team::Team_CheckHurtCarrier;
-use crate::src::game::g_team::Team_FragBonuses;
-use crate::src::game::g_team::Team_ReturnFlag;
+
 pub use crate::src::game::g_utils::vectoyaw;
 pub use crate::src::game::g_utils::G_AddEvent;
 pub use crate::src::game::g_utils::G_Find;
@@ -586,10 +583,7 @@ pub use crate::src::game::g_utils::G_FreeEntity;
 pub use crate::src::game::g_utils::G_TempEntity;
 pub use crate::src::game::g_weapon::LogAccuracyHit;
 pub use crate::src::game::g_weapon::Weapon_HookFree;
-use crate::stdlib::ceil;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
-use crate::stdlib::strcmp;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -812,10 +806,10 @@ body_die
 
 pub unsafe extern "C" fn body_die(
     mut self_0: *mut crate::g_local_h::gentity_t,
-    mut inflictor: *mut crate::g_local_h::gentity_t,
-    mut attacker: *mut crate::g_local_h::gentity_t,
-    mut damage: i32,
-    mut meansOfDeath: i32,
+    mut _inflictor: *mut crate::g_local_h::gentity_t,
+    mut _attacker: *mut crate::g_local_h::gentity_t,
+    mut _damage: i32,
+    mut _meansOfDeath: i32,
 ) {
     if (*self_0).health > -(40) {
         return;
@@ -995,14 +989,14 @@ pub unsafe extern "C" fn player_die(
     mut self_0: *mut crate::g_local_h::gentity_t,
     mut inflictor: *mut crate::g_local_h::gentity_t,
     mut attacker: *mut crate::g_local_h::gentity_t,
-    mut damage: i32,
+    mut _damage: i32,
     mut meansOfDeath: i32,
 ) {
     let mut ent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut anim: i32 = 0;
     let mut contents: i32 = 0;
     let mut killer: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut killerName: *mut i8 = 0 as *mut i8;
     let mut obit: *mut i8 = 0 as *mut i8;
     if (*(*self_0).client).ps.pm_type == crate::bg_public_h::PM_DEAD as i32 {
@@ -1330,7 +1324,7 @@ pub unsafe extern "C" fn G_Damage(
     mut inflictor: *mut crate::g_local_h::gentity_t,
     mut attacker: *mut crate::g_local_h::gentity_t,
     mut dir: *mut crate::src::qcommon::q_shared::vec_t,
-    mut point: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _point: *mut crate::src::qcommon::q_shared::vec_t,
     mut damage: i32,
     mut dflags: i32,
     mut mod_0: i32,
@@ -1970,7 +1964,7 @@ pub unsafe extern "C" fn G_RadiusDamage(
     let mut v: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut i: i32 = 0;
-    let mut e: i32 = 0;
+    let mut _e: i32 = 0;
     let mut hitClient: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     if radius < 1f32 {

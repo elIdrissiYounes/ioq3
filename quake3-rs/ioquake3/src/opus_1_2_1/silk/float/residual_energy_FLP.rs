@@ -1,7 +1,3 @@
-use ::libc;
-
-use crate::src::opus_1_2_1::silk::float::energy_FLP::silk_energy_FLP;
-use crate::src::opus_1_2_1::silk::float::LPC_analysis_filter_FLP::silk_LPC_analysis_filter_FLP;
 /* 16th order LPC analysis filter */
 /* O    LPC residual signal                         */
 /* I    LPC coefficients                            */
@@ -32,7 +28,7 @@ pub unsafe extern "C" fn silk_residual_energy_covar_FLP(
 ) -> f32
 /* I    Dimension                                   */ {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut k: i32 = 0;
     let mut tmp: f32 = 0.;
     let mut nrg: f32 = 0.0;

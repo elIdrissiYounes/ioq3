@@ -51,8 +51,6 @@ pub mod mathops_h {
         return res.f;
     }
 
-    use crate::stdlib::floor;
-
     /* MATHOPS_H */
     /* FIXED_POINT */
 }
@@ -75,7 +73,7 @@ pub mod rate_h {
         mut LM: i32,
         mut bits: i32,
     ) -> i32 {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut lo: i32 = 0;
         let mut hi: i32 = 0;
         let mut cache: *const u8 = 0 as *const u8;
@@ -90,7 +88,7 @@ pub mod rate_h {
         hi = *cache.offset(0) as i32;
         bits -= 1;
 
-        for i in 0..6 {
+        for _i in 0..6 {
             let mut mid: i32 = lo + hi + 1 >> 1;
 
             if *cache.offset(mid as isize) as i32 >= bits {
@@ -148,7 +146,7 @@ pub mod pitch_h {
         mut xy1: *mut crate::arch_h::opus_val32,
         mut xy2: *mut crate::arch_h::opus_val32,
     ) {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut xy01: crate::arch_h::opus_val32 = 0f32;
         let mut xy02: crate::arch_h::opus_val32 = 0f32;
 
@@ -169,7 +167,7 @@ pub mod pitch_h {
         mut y: *const crate::arch_h::opus_val16,
         mut N: i32,
     ) -> crate::arch_h::opus_val32 {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut xy: crate::arch_h::opus_val32 = 0f32;
 
         for i in 0..N {
@@ -177,7 +175,6 @@ pub mod pitch_h {
         }
         return xy;
     }
-    use crate::arch_h::opus_val32;
 }
 
 pub use crate::stdlib::__int16_t;
@@ -213,28 +210,11 @@ pub use crate::src::opus_1_2_1::celt::entcode::ec_dec;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_enc;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_tell_frac;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_window;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_bits;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_uint;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_update;
-use crate::src::opus_1_2_1::celt::entdec::ec_decode;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_bit_logp;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_bits;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_uint;
-use crate::src::opus_1_2_1::celt::entenc::ec_encode;
+
 pub use crate::src::opus_1_2_1::celt::kiss_fft::arch_fft_state;
 pub use crate::src::opus_1_2_1::celt::kiss_fft::kiss_fft_state;
 pub use crate::src::opus_1_2_1::celt::kiss_fft::kiss_twiddle_cpx;
 pub use crate::src::opus_1_2_1::celt::mathops::isqrt32;
-use crate::src::opus_1_2_1::celt::quant_bands::eMeans;
-use crate::src::opus_1_2_1::celt::vq::alg_quant;
-use crate::src::opus_1_2_1::celt::vq::alg_unquant;
-use crate::src::opus_1_2_1::celt::vq::renormalise_vector;
-use crate::src::opus_1_2_1::celt::vq::stereo_itheta;
-use crate::stdlib::floor;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -392,9 +372,9 @@ pub unsafe extern "C" fn compute_band_energies(
     mut end: i32,
     mut C: i32,
     mut LM: i32,
-    mut arch: i32,
+    mut _arch: i32,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut c: i32 = 0;
     let mut N: i32 = 0;
     let mut eBands: *const crate::opus_types_h::opus_int16 = (*m).eBands;
@@ -434,7 +414,7 @@ pub unsafe extern "C" fn normalise_bands(
     mut C: i32,
     mut M: i32,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut c: i32 = 0;
     let mut N: i32 = 0;
     let mut eBands: *const crate::opus_types_h::opus_int16 = (*m).eBands;
@@ -442,7 +422,7 @@ pub unsafe extern "C" fn normalise_bands(
     c = 0;
     loop {
         for i in 0..end {
-            let mut j: i32 = 0;
+            let mut _j: i32 = 0;
 
             let mut g: crate::arch_h::opus_val16 =
                 1.0 / (1e-27 + *bandE.offset((i + c * (*m).nbEBands) as isize));
@@ -555,8 +535,8 @@ pub unsafe extern "C" fn anti_collapse(
 ) {
     let mut c: i32 = 0;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _j: i32 = 0;
+    let mut _k: i32 = 0;
     i = start;
     while i < end {
         let mut N0: i32 = 0;
@@ -711,7 +691,7 @@ unsafe extern "C" fn stereo_merge(
     mut Y: *mut crate::arch_h::celt_norm,
     mut mid: crate::arch_h::opus_val16,
     mut N: i32,
-    mut arch: i32,
+    mut _arch: i32,
 ) {
     let mut j: i32 = 0;
     let mut xp: crate::arch_h::opus_val32 = 0f32;
@@ -771,7 +751,7 @@ pub unsafe extern "C" fn spreading_decision(
     mut C: i32,
     mut M: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut c: i32 = 0;
     let mut N0: i32 = 0;
     let mut sum: i32 = 0;
@@ -787,7 +767,7 @@ pub unsafe extern "C" fn spreading_decision(
     c = 0;
     loop {
         for i in 0..end {
-            let mut j: i32 = 0;
+            let mut _j: i32 = 0;
 
             let mut N: i32 = 0;
 
@@ -994,7 +974,7 @@ unsafe extern "C" fn interleave_hadamard(
 
 pub unsafe extern "C" fn haar1(mut X: *mut crate::arch_h::celt_norm, mut N0: i32, mut stride: i32) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     N0 >>= 1;
     i = 0;
     while i < stride {
@@ -2126,7 +2106,7 @@ pub unsafe extern "C" fn quant_all_bands(
     mut arch: i32,
     mut disable_inv: i32,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut remaining_bits: crate::opus_types_h::opus_int32 = 0;
     let mut eBands: *const crate::opus_types_h::opus_int16 = (*m).eBands;
     let mut norm: *mut crate::arch_h::celt_norm = 0 as *mut crate::arch_h::celt_norm;

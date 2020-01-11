@@ -136,11 +136,7 @@ pub use crate::src::sdl::sdl_glimp::qglShadeModel;
 pub use crate::src::sdl::sdl_glimp::GLimp_Init;
 pub use crate::src::sdl::sdl_glimp::GLimp_Minimize;
 pub use crate::src::sdl::sdl_glimp::GLimp_Shutdown;
-use crate::stdlib::memset;
-use crate::stdlib::sin;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
+
 pub use crate::stdlib::GLboolean;
 pub use crate::stdlib::GLclampd;
 pub use crate::stdlib::GLenum;
@@ -1160,7 +1156,7 @@ pub unsafe extern "C" fn R_GetModeInfo(
 */
 
 unsafe extern "C" fn R_ModeList_f() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
@@ -1556,15 +1552,15 @@ pub unsafe extern "C" fn R_LevelShot() {
         0 as *mut crate::src::qcommon::q_shared::byte;
     let mut offset: crate::stddef_h::size_t = 0;
     let mut padlen: i32 = 0;
-    let mut x: i32 = 0;
-    let mut y: i32 = 0;
+    let mut _x: i32 = 0;
+    let mut _y: i32 = 0;
     let mut r: i32 = 0;
     let mut g: i32 = 0;
     let mut b: i32 = 0;
     let mut xScale: f32 = 0.;
     let mut yScale: f32 = 0.;
-    let mut xx: i32 = 0;
-    let mut yy: i32 = 0;
+    let mut _xx: i32 = 0;
+    let mut _yy: i32 = 0;
     crate::src::qcommon::q_shared::Com_sprintf(
         checkname.as_mut_ptr(),
         ::std::mem::size_of::<[i8; 4096]>() as i32,
@@ -3140,7 +3136,7 @@ R_Init
 
 pub unsafe extern "C" fn R_Init() {
     let mut err: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut ptr: *mut crate::src::qcommon::q_shared::byte =
         0 as *mut crate::src::qcommon::q_shared::byte;
     crate::src::renderergl1::tr_main::ri

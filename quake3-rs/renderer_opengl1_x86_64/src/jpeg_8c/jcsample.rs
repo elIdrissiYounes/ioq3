@@ -1,5 +1,3 @@
-use ::libc;
-
 /* JERROR_H */
 
 /* Informational/debugging messages */
@@ -276,7 +274,7 @@ pub type downsample1_ptr = Option<
  * Initialize for a downsampling pass.
  */
 
-unsafe extern "C" fn start_pass_downsample(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
+unsafe extern "C" fn start_pass_downsample(mut _cinfo: crate::jpeglib_h::j_compress_ptr) {
     /* no work for now */
 }
 /*
@@ -367,8 +365,8 @@ unsafe extern "C" fn int_downsample(
     let mut v_expand: i32 = 0;
     let mut numpix: i32 = 0;
     let mut numpix2: i32 = 0;
-    let mut h: i32 = 0;
-    let mut v: i32 = 0;
+    let mut _h: i32 = 0;
+    let mut _v: i32 = 0;
     let mut outcol: crate::jmorecfg_h::JDIMENSION = 0;
     let mut outcol_h: crate::jmorecfg_h::JDIMENSION = 0;
     let mut output_cols: crate::jmorecfg_h::JDIMENSION = (*compptr)
@@ -402,7 +400,7 @@ unsafe extern "C" fn int_downsample(
 
             for v in 0..v_expand {
                 inptr = (*input_data.offset((inrow + v) as isize)).offset(outcol_h as isize);
-                for h in 0..h_expand {
+                for _h in 0..h_expand {
                     let fresh1 = inptr;
 
                     inptr = inptr.offset(1);

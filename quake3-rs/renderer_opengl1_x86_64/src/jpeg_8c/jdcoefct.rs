@@ -164,10 +164,10 @@ unsafe extern "C" fn decompress_onepass(
     let mut last_iMCU_row: crate::jmorecfg_h::JDIMENSION =
         (*cinfo).total_iMCU_rows.wrapping_sub(1u32);
     let mut blkn: i32 = 0;
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     let mut xindex: i32 = 0;
     let mut yindex: i32 = 0;
-    let mut yoffset: i32 = 0;
+    let mut _yoffset: i32 = 0;
     let mut useful_width: i32 = 0;
     let mut output_ptr: crate::jpeglib_h::JSAMPARRAY = 0 as *mut crate::jpeglib_h::JSAMPROW;
     let mut start_col: crate::jmorecfg_h::JDIMENSION = 0;
@@ -275,7 +275,7 @@ unsafe extern "C" fn decompress_onepass(
  * Dummy consume-input routine for single-pass operation.
  */
 
-unsafe extern "C" fn dummy_consume_data(mut cinfo: crate::jpeglib_h::j_decompress_ptr) -> i32 {
+unsafe extern "C" fn dummy_consume_data(mut _cinfo: crate::jpeglib_h::j_decompress_ptr) -> i32 {
     return 0;
     /* Always indicate nothing was done */
 }
@@ -291,9 +291,9 @@ unsafe extern "C" fn consume_data(mut cinfo: crate::jpeglib_h::j_decompress_ptr)
     let mut MCU_col_num: crate::jmorecfg_h::JDIMENSION = 0;
     let mut blkn: i32 = 0;
     let mut ci: i32 = 0;
-    let mut xindex: i32 = 0;
-    let mut yindex: i32 = 0;
-    let mut yoffset: i32 = 0;
+    let mut _xindex: i32 = 0;
+    let mut _yindex: i32 = 0;
+    let mut _yoffset: i32 = 0;
     let mut start_col: crate::jmorecfg_h::JDIMENSION = 0;
     let mut buffer: [crate::jpeglib_h::JBLOCKARRAY; 4] = [0 as *mut crate::jpeglib_h::JBLOCKROW; 4];
     let mut buffer_ptr: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
@@ -338,7 +338,7 @@ unsafe extern "C" fn consume_data(mut cinfo: crate::jpeglib_h::j_decompress_ptr)
                 for yindex in 0..(*compptr).MCU_height {
                     buffer_ptr = (*buffer[ci as usize].offset((yindex + yoffset) as isize))
                         .offset(start_col as isize);
-                    for xindex in 0..(*compptr).MCU_width {
+                    for _xindex in 0..(*compptr).MCU_width {
                         let fresh0 = buffer_ptr;
 
                         buffer_ptr = buffer_ptr.offset(1);
@@ -511,7 +511,7 @@ unsafe extern "C" fn smoothing_ok(
     let mut coef: my_coef_ptr = (*cinfo).coef as my_coef_ptr;
     let mut smoothing_useful: crate::jmorecfg_h::boolean = 0;
     let mut ci: i32 = 0;
-    let mut coefi: i32 = 0;
+    let mut _coefi: i32 = 0;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
     let mut qtable: *mut crate::jpeglib_h::JQUANT_TBL = 0 as *mut crate::jpeglib_h::JQUANT_TBL;
@@ -969,7 +969,7 @@ pub unsafe extern "C" fn jinit_d_coef_controller(
     } else {
         /* We only need a single-MCU buffer. */
         let mut buffer: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         buffer = Some(
             (*(*cinfo).mem)
                 .alloc_large

@@ -35,14 +35,6 @@ pub use crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global;
 
 pub use crate::highlevel_h::highlevel_byblocktype;
 pub use crate::highlevel_h::highlevel_encode_setup;
-use crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc;
-use crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog;
-use crate::stdlib::abs;
-use crate::stdlib::calloc;
-use crate::stdlib::free;
-use crate::stdlib::malloc;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -537,7 +529,7 @@ unsafe extern "C" fn _encodepart(
     mut n: i32,
     mut book: *mut crate::src::libvorbis_1_3_6::lib::codebook::codebook,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut bits: i32 = 0;
     let mut dim: i32 = (*book).dim as i32;
     let mut step: i32 = n / dim;
@@ -557,7 +549,7 @@ unsafe extern "C" fn _01class(
     mut ch: i32,
 ) -> *mut *mut isize {
     let mut i: isize = 0;
-    let mut j: isize = 0;
+    let mut _j: isize = 0;
     let mut k: isize = 0;
     let mut look: *mut vorbis_look_residue0 = vl as *mut vorbis_look_residue0;
     let mut info: *mut crate::backends_h::vorbis_info_residue0 = (*look).info;
@@ -641,7 +633,7 @@ unsafe extern "C" fn _2class(
 ) -> *mut *mut isize {
     let mut i: isize = 0;
     let mut j: isize = 0;
-    let mut k: isize = 0;
+    let mut _k: isize = 0;
     let mut l: isize = 0;
     let mut look: *mut vorbis_look_residue0 = vl as *mut vorbis_look_residue0;
     let mut info: *mut crate::backends_h::vorbis_info_residue0 = (*look).info;
@@ -717,7 +709,7 @@ unsafe extern "C" fn _01forward(
     let mut i: isize = 0;
     let mut j: isize = 0;
     let mut k: isize = 0;
-    let mut s: isize = 0;
+    let mut _s: isize = 0;
     let mut look: *mut vorbis_look_residue0 = vl as *mut vorbis_look_residue0;
     let mut info: *mut crate::backends_h::vorbis_info_residue0 = (*look).info;
     /* move all this setup out later */
@@ -934,7 +926,7 @@ pub unsafe extern "C" fn res0_inverse(
     mut nonzero: *mut i32,
     mut ch: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut used: i32 = 0;
 
     for i in 0..ch {
@@ -969,15 +961,15 @@ pub unsafe extern "C" fn res0_inverse(
 
 pub unsafe extern "C" fn res1_forward(
     mut opb: *mut crate::ogg_h::oggpack_buffer,
-    mut vb: *mut crate::codec_h::vorbis_block,
+    mut _vb: *mut crate::codec_h::vorbis_block,
     mut vl: *mut libc::c_void,
     mut in_0: *mut *mut i32,
     mut nonzero: *mut i32,
     mut ch: i32,
     mut partword: *mut *mut isize,
-    mut submap: i32,
+    mut _submap: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut used: i32 = 0;
 
     for i in 0..ch {
@@ -1018,7 +1010,7 @@ pub unsafe extern "C" fn res1_class(
     mut nonzero: *mut i32,
     mut ch: i32,
 ) -> *mut *mut isize {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut used: i32 = 0;
 
     for i in 0..ch {
@@ -1044,7 +1036,7 @@ pub unsafe extern "C" fn res1_inverse(
     mut nonzero: *mut i32,
     mut ch: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut used: i32 = 0;
 
     for i in 0..ch {
@@ -1084,7 +1076,7 @@ pub unsafe extern "C" fn res2_class(
     mut nonzero: *mut i32,
     mut ch: i32,
 ) -> *mut *mut isize {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut used: i32 = 0;
 
     for i in 0..ch {
@@ -1110,9 +1102,9 @@ pub unsafe extern "C" fn res2_forward(
     mut nonzero: *mut i32,
     mut ch: i32,
     mut partword: *mut *mut isize,
-    mut submap: i32,
+    mut _submap: i32,
 ) -> i32 {
-    let mut i: isize = 0;
+    let mut _i: isize = 0;
     let mut j: isize = 0;
     let mut k: isize = 0;
     let mut n: isize = ((*vb).pcmend / 2i32) as isize;

@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::opus_types_h::opus_int16;
 pub use crate::opus_types_h::opus_int32;
 pub use crate::stdlib::__int16_t;
@@ -128,7 +126,7 @@ pub unsafe extern "C" fn silk_bwexpander(
 )
 /* I    Chirp factor (typically in the range 0 to 1)                */
 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut chirp_minus_one_Q16: crate::opus_types_h::opus_int32 = chirp_Q16 - 65536;
     /* NB: Dont use silk_SMULWB, instead of silk_RSHIFT_ROUND( silk_MUL(), 16 ), below.  */
     /* Bias in silk_SMULWB can lead to unstable filters                                */

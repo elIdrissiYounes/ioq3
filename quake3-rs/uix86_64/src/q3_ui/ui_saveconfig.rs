@@ -27,7 +27,7 @@ pub use crate::src::qcommon::q_shared::EXEC_INSERT;
 pub use crate::src::qcommon::q_shared::EXEC_NOW;
 pub use crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
-use crate::stdlib::memset;
+
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
 pub use crate::ui_local_h::menucommon_s;
@@ -192,7 +192,7 @@ UI_SaveConfigMenu_BackEvent
 ===============
 */
 
-unsafe extern "C" fn UI_SaveConfigMenu_BackEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+unsafe extern "C" fn UI_SaveConfigMenu_BackEvent(mut _ptr: *mut libc::c_void, mut event: i32) {
     if event != 3 {
         return;
     }
@@ -204,7 +204,7 @@ UI_SaveConfigMenu_SaveEvent
 ===============
 */
 
-unsafe extern "C" fn UI_SaveConfigMenu_SaveEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+unsafe extern "C" fn UI_SaveConfigMenu_SaveEvent(mut _ptr: *mut libc::c_void, mut event: i32) {
     let mut configname: [i8; 64] = [0; 64];
     if event != 3 {
         return;

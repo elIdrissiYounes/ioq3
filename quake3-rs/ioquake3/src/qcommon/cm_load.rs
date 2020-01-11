@@ -29,13 +29,10 @@ pub use crate::qfiles_h::MST_TRIANGLE_SOUP;
 pub use crate::src::qcommon::cm_patch::patchCollide_s;
 pub use crate::src::qcommon::cm_patch::CM_ClearLevelPatches;
 pub use crate::src::qcommon::cm_patch::CM_GeneratePatchCollide;
-use crate::src::qcommon::common::Com_DPrintf;
+
 pub use crate::src::qcommon::common::Com_Error;
 pub use crate::src::qcommon::common::Hunk_Alloc;
-use crate::src::qcommon::cvar::Cvar_Get;
-use crate::src::qcommon::files::FS_FreeFile;
-use crate::src::qcommon::files::FS_ReadFile;
-use crate::src::qcommon::md4::Com_BlockChecksum;
+
 pub use crate::src::qcommon::q_math::SetPlaneSignbits;
 pub use crate::src::qcommon::q_shared::byte;
 pub use crate::src::qcommon::q_shared::clipHandle_t;
@@ -58,9 +55,7 @@ pub use crate::src::qcommon::q_shared::ERR_DROP;
 pub use crate::src::qcommon::q_shared::ERR_FATAL;
 pub use crate::src::qcommon::q_shared::ERR_NEED_CD;
 pub use crate::src::qcommon::q_shared::ERR_SERVERDISCONNECT;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::strcmp;
+
 extern "C" {
     #[no_mangle]
     pub fn CM_FloodAreaConnections();
@@ -307,7 +302,7 @@ pub unsafe extern "C" fn CMod_LoadNodes(mut l: *mut crate::qfiles_h::lump_t) {
     let mut child: i32 = 0;
     let mut out: *mut crate::cm_local_h::cNode_t = 0 as *mut crate::cm_local_h::cNode_t;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut count: i32 = 0;
     in_0 = cmod_base.offset((*l).fileofs as isize) as *mut crate::qfiles_h::dnode_t;
     if ((*l).filelen as usize).wrapping_rem(::std::mem::size_of::<crate::qfiles_h::dnode_t>()) != 0
@@ -482,7 +477,7 @@ CMod_LoadPlanes
 
 pub unsafe extern "C" fn CMod_LoadPlanes(mut l: *mut crate::qfiles_h::lump_t) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut out: *mut crate::src::qcommon::q_shared::cplane_t =
         0 as *mut crate::src::qcommon::q_shared::cplane_t;
     let mut in_0: *mut crate::qfiles_h::dplane_t = 0 as *mut crate::qfiles_h::dplane_t;

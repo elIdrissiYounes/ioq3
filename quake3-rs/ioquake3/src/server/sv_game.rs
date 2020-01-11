@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod qcommon_h {
 
     #[inline]
@@ -11,7 +9,6 @@ pub mod qcommon_h {
         return fi.f;
     }
 
-    use crate::src::qcommon::q_shared::floatint_t;
     // _QCOMMON_H_
     // flags for sv_allowDownload and cl_allowDownload
 }
@@ -304,16 +301,7 @@ pub use crate::src::botlib::be_ai_goal::bot_goal_s;
 pub use crate::src::botlib::be_ai_move::bot_initmove_s;
 pub use crate::src::botlib::be_ai_move::bot_moveresult_s;
 pub use crate::src::botlib::be_ai_weap::weaponinfo_s;
-use crate::src::qcommon::cm_load::CM_EntityString;
-use crate::src::qcommon::cm_load::CM_InlineModel;
-use crate::src::qcommon::cm_load::CM_LeafArea;
-use crate::src::qcommon::cm_load::CM_LeafCluster;
-use crate::src::qcommon::cm_load::CM_ModelBounds;
-use crate::src::qcommon::cm_test::CM_AdjustAreaPortalState;
-use crate::src::qcommon::cm_test::CM_AreasConnected;
-use crate::src::qcommon::cm_test::CM_ClusterPVS;
-use crate::src::qcommon::cm_test::CM_PointLeafnum;
-use crate::src::qcommon::cm_trace::CM_TransformedBoxTrace;
+
 pub use crate::src::qcommon::cmd::Cbuf_ExecuteText;
 pub use crate::src::qcommon::cmd::Cmd_Argc;
 pub use crate::src::qcommon::cmd::Cmd_ArgvBuffer;
@@ -418,15 +406,7 @@ pub use crate::src::server::sv_world::SV_PointContents;
 pub use crate::src::server::sv_world::SV_Trace;
 pub use crate::src::server::sv_world::SV_UnlinkEntity;
 pub use crate::src::sys::sys_unix::Sys_Milliseconds;
-use crate::stdlib::atan2;
-use crate::stdlib::ceil;
-use crate::stdlib::cos;
-use crate::stdlib::floor;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::sin;
-use crate::stdlib::sqrt;
-use crate::stdlib::strncpy;
+
 pub use crate::stdlib::strtol;
 pub use crate::vm_local_h::vm_s;
 /*
@@ -2613,7 +2593,7 @@ Called for both a full init and a restart
 */
 
 unsafe extern "C" fn SV_InitGameVM(mut restart: crate::src::qcommon::q_shared::qboolean) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     // start the entity parsing at the beginning
     crate::src::server::sv_main::sv.entityParsePoint =
         crate::src::qcommon::cm_load::CM_EntityString();

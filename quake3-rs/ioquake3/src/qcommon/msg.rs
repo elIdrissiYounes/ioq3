@@ -47,9 +47,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::strlen;
+
 extern "C" {
     #[no_mangle]
     pub static mut cl_shownet: *mut crate::src::qcommon::q_shared::cvar_t;
@@ -501,7 +499,7 @@ pub unsafe extern "C" fn MSG_WriteString(mut sb: *mut crate::qcommon_h::msg_t, m
         MSG_WriteData(sb, b"\x00" as *const u8 as *const libc::c_void, 1i32);
     } else {
         let mut l: i32 = 0;
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut string: [i8; 1024] = [0; 1024];
         l = crate::stdlib::strlen(s) as i32;
         if l >= 1024 {
@@ -540,7 +538,7 @@ pub unsafe extern "C" fn MSG_WriteBigString(
         MSG_WriteData(sb, b"\x00" as *const u8 as *const libc::c_void, 1i32);
     } else {
         let mut l: i32 = 0;
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut string: [i8; 8192] = [0; 8192];
         l = crate::stdlib::strlen(s) as i32;
         if l >= 8192 {
@@ -1853,12 +1851,12 @@ pub static mut msg_hData: [i32; 256] = [
 
 pub unsafe extern "C" fn MSG_initHuffman() {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     msgInit = crate::src::qcommon::q_shared::qtrue;
     crate::src::qcommon::huffman::Huff_Init(&mut msgHuff);
     i = 0;
     while i < 256 {
-        for j in 0..msg_hData[i as usize] {
+        for _j in 0..msg_hData[i as usize] {
             crate::src::qcommon::huffman::Huff_addRef(
                 &mut msgHuff.compressor,
                 i as crate::src::qcommon::q_shared::byte,

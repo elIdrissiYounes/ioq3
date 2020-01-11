@@ -142,19 +142,7 @@ pub use crate::src::client::cl_main::cls;
 pub use crate::src::client::cl_main::re;
 pub use crate::src::client::cl_scrn::SCR_AdjustFrom640;
 pub use crate::src::client::cl_ui::uivm;
-use crate::src::client::snd_dma::s_rawend;
-use crate::src::client::snd_main::S_RawSamples;
-use crate::src::client::snd_main::S_StopAllSounds;
-use crate::src::client::snd_main::S_Update;
-use crate::src::opus_1_2_1::src::opus_decoder::OpusDecoder;
-use crate::src::opus_1_2_1::src::opus_encoder::OpusEncoder;
-use crate::stdlib::abs;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strstr;
+
 extern "C" {
     #[no_mangle]
     pub static mut s_soundtime: i32;
@@ -365,7 +353,7 @@ pub unsafe extern "C" fn CIN_CloseAllVideos() {
 }
 
 unsafe extern "C" fn CIN_HandleForVideo() -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in 0..16 {
         if cinTable[i as usize].fileName[0] as i32 == 0 {
@@ -2177,8 +2165,8 @@ unsafe extern "C" fn recurseQuad(
 unsafe extern "C" fn setupQuad(mut xOff: isize, mut yOff: isize) {
     let mut numQuadCels: isize = 0; // for overflow
     let mut i: isize = 0; // eoq
-    let mut x: isize = 0;
-    let mut y: isize = 0;
+    let mut _x: isize = 0;
+    let mut _y: isize = 0;
     let mut temp: *mut crate::src::qcommon::q_shared::byte =
         0 as *mut crate::src::qcommon::q_shared::byte;
     if xOff == cin.oldXOff
@@ -2281,7 +2269,7 @@ unsafe extern "C" fn readQuadInfo(mut qData: *mut crate::src::qcommon::q_shared:
 unsafe extern "C" fn RoQPrepMcomp(mut xoff: isize, mut yoff: isize) {
     let mut i: isize = 0;
     let mut j: isize = 0;
-    let mut x: isize = 0;
+    let mut _x: isize = 0;
     let mut y: isize = 0;
     let mut temp: isize = 0;
     let mut temp2: isize = 0;
@@ -3008,7 +2996,7 @@ pub unsafe extern "C" fn CIN_ResampleCinematic(mut handle: i32, mut buf2: *mut i
             0 as *mut crate::src::qcommon::q_shared::byte;
         let mut bc3: *mut crate::src::qcommon::q_shared::byte =
             0 as *mut crate::src::qcommon::q_shared::byte;
-        let mut ic: i32 = 0;
+        let mut _ic: i32 = 0;
         let mut iiy: i32 = 0;
         bc2 = buf2 as *mut crate::src::qcommon::q_shared::byte;
         bc3 = buf3 as *mut crate::src::qcommon::q_shared::byte;
@@ -3035,7 +3023,7 @@ pub unsafe extern "C" fn CIN_ResampleCinematic(mut handle: i32, mut buf2: *mut i
             0 as *mut crate::src::qcommon::q_shared::byte;
         let mut bc3_0: *mut crate::src::qcommon::q_shared::byte =
             0 as *mut crate::src::qcommon::q_shared::byte;
-        let mut ic_0: i32 = 0;
+        let mut _ic_0: i32 = 0;
         let mut iiy_0: i32 = 0;
         bc2_0 = buf2 as *mut crate::src::qcommon::q_shared::byte;
         bc3_0 = buf3 as *mut crate::src::qcommon::q_shared::byte;

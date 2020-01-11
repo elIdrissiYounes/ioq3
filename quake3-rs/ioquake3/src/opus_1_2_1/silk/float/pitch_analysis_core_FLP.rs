@@ -117,10 +117,8 @@ pub mod SigProc_FLP_h {
     pub unsafe extern "C" fn silk_log2(mut x: f64) -> f32 {
         return (3.32192809488736 * crate::stdlib::log10(x)) as f32;
     }
-    use crate::opus_types_h::opus_int16;
-    use crate::opus_types_h::opus_int32;
+
     use crate::src::opus_1_2_1::silk::float::pitch_analysis_core_FLP::float_cast_h::float2int;
-    use crate::stdlib::log10;
 
     /* SILK_SIGPROC_FLP_H */
 }
@@ -150,7 +148,7 @@ pub use crate::arch_h::opus_val32;
 pub use crate::opus_types_h::opus_int16;
 pub use crate::opus_types_h::opus_int32;
 pub use crate::opus_types_h::opus_uint32;
-use crate::src::opus_1_2_1::celt::pitch::celt_pitch_xcorr_c;
+
 pub use crate::src::opus_1_2_1::silk::float::energy_FLP::silk_energy_FLP;
 pub use crate::src::opus_1_2_1::silk::float::inner_product_FLP::silk_inner_product_FLP;
 pub use crate::src::opus_1_2_1::silk::float::pitch_analysis_core_FLP::float_cast_h::float2int;
@@ -160,17 +158,10 @@ pub use crate::src::opus_1_2_1::silk::float::pitch_analysis_core_FLP::SigProc_FL
 pub use crate::src::opus_1_2_1::silk::float::pitch_analysis_core_FLP::SigProc_FLP_h::silk_log2;
 pub use crate::src::opus_1_2_1::silk::float::pitch_analysis_core_FLP::SigProc_FLP_h::silk_short2float_array;
 pub use crate::src::opus_1_2_1::silk::float::sort_FLP::silk_insertion_sort_decreasing_FLP;
-use crate::src::opus_1_2_1::silk::pitch_est_tables::silk_CB_lags_stage2;
-use crate::src::opus_1_2_1::silk::pitch_est_tables::silk_CB_lags_stage2_10_ms;
-use crate::src::opus_1_2_1::silk::pitch_est_tables::silk_CB_lags_stage3;
-use crate::src::opus_1_2_1::silk::pitch_est_tables::silk_CB_lags_stage3_10_ms;
-use crate::src::opus_1_2_1::silk::pitch_est_tables::silk_Lag_range_stage3;
-use crate::src::opus_1_2_1::silk::pitch_est_tables::silk_Lag_range_stage3_10_ms;
-use crate::src::opus_1_2_1::silk::pitch_est_tables::silk_nb_cbk_searchs_stage3;
+
 pub use crate::src::opus_1_2_1::silk::resampler_down2::silk_resampler_down2;
 pub use crate::src::opus_1_2_1::silk::resampler_down2_3::silk_resampler_down2_3;
-use crate::stdlib::log10;
-use crate::stdlib::memset;
+
 /* **********************************************************************
 Copyright (c) 2006-2011, Skype Limited. All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -909,7 +900,7 @@ unsafe extern "C" fn silk_P_Ana_calc_corr_st3(
 /* I Run-time architecture                                          */
 {
     let mut target_ptr: *const f32 = 0 as *const f32; /* Pointer to middle of frame */
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
     let mut lag_counter: i32 = 0;
@@ -1018,7 +1009,7 @@ unsafe extern "C" fn silk_P_Ana_calc_energy_st3(
     let mut energy: f64 = 0.;
     let mut k: i32 = 0;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut lag_counter: i32 = 0;
     let mut nb_cbk_search: i32 = 0;
     let mut delta: i32 = 0;

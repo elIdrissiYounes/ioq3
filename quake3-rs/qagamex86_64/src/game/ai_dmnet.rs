@@ -36,7 +36,6 @@ pub mod q_shared_h {
             + *v.offset(1) * *v.offset(1)
             + *v.offset(2) * *v.offset(2);
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -159,63 +158,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::sqrt;
-use crate::stdlib::strcat;
-use crate::stdlib::strcpy;
 
-use crate::src::game::ai_chat::BotChatTime;
-use crate::src::game::ai_chat::BotChat_Death;
-use crate::src::game::ai_chat::BotChat_EndLevel;
-use crate::src::game::ai_chat::BotChat_EnemySuicide;
-use crate::src::game::ai_chat::BotChat_HitNoDeath;
-use crate::src::game::ai_chat::BotChat_HitNoKill;
-use crate::src::game::ai_chat::BotChat_HitTalking;
-use crate::src::game::ai_chat::BotChat_Kill;
-use crate::src::game::ai_chat::BotChat_Random;
-use crate::src::game::ai_chat::BotChat_StartLevel;
-use crate::src::game::ai_dmq3::bot_grapple;
-use crate::src::game::ai_dmq3::ctf_blueflag;
-use crate::src::game::ai_dmq3::ctf_redflag;
-use crate::src::game::ai_dmq3::gametype;
-use crate::src::game::ai_dmq3::BotAIBlocked;
-use crate::src::game::ai_dmq3::BotAIPredictObstacles;
-use crate::src::game::ai_dmq3::BotAimAtEnemy;
-use crate::src::game::ai_dmq3::BotAlternateRoute;
-use crate::src::game::ai_dmq3::BotAttackMove;
-use crate::src::game::ai_dmq3::BotBattleUseItems;
-use crate::src::game::ai_dmq3::BotCTFCarryingFlag;
-use crate::src::game::ai_dmq3::BotCanAndWantsToRocketJump;
-use crate::src::game::ai_dmq3::BotCheckAttack;
-use crate::src::game::ai_dmq3::BotChooseWeapon;
-use crate::src::game::ai_dmq3::BotClearActivateGoalStack;
-use crate::src::game::ai_dmq3::BotEntityVisible;
-use crate::src::game::ai_dmq3::BotFindEnemy;
-use crate::src::game::ai_dmq3::BotHasPersistantPowerupAndWeapon;
-use crate::src::game::ai_dmq3::BotInLavaOrSlime;
-use crate::src::game::ai_dmq3::BotIntermission;
-use crate::src::game::ai_dmq3::BotIsDead;
-use crate::src::game::ai_dmq3::BotIsObserver;
-use crate::src::game::ai_dmq3::BotMapScripts;
-use crate::src::game::ai_dmq3::BotPointAreaNum;
-use crate::src::game::ai_dmq3::BotPopFromActivateGoalStack;
-use crate::src::game::ai_dmq3::BotRoamGoal;
-use crate::src::game::ai_dmq3::BotSetupForMovement;
-use crate::src::game::ai_dmq3::BotTeam;
-use crate::src::game::ai_dmq3::BotTeamGoals;
-use crate::src::game::ai_dmq3::BotUpdateBattleInventory;
-use crate::src::game::ai_dmq3::BotWantsToCamp;
-use crate::src::game::ai_dmq3::BotWantsToChase;
-use crate::src::game::ai_dmq3::BotWantsToRetreat;
-use crate::src::game::ai_dmq3::ClientName;
-use crate::src::game::ai_dmq3::EasyClientName;
-use crate::src::game::ai_dmq3::EntityIsDead;
-use crate::src::game::ai_dmq3::EntityIsInvisible;
-use crate::src::game::ai_dmq3::EntityIsShooting;
-use crate::src::game::ai_dmq3::InFieldOfVision;
-use crate::src::game::ai_team::BotVoiceChatOnly;
 #[no_mangle]
 
 pub static mut numnodeswitches: i32 = 0;
@@ -240,7 +183,7 @@ BotDumpNodeSwitches
 #[no_mangle]
 
 pub unsafe extern "C" fn BotDumpNodeSwitches(mut bs: *mut crate::src::game::ai_main::bot_state_t) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut netname: [i8; 36] = [0; 36];
     crate::src::game::ai_dmq3::ClientName(
         (*bs).client,
@@ -2152,7 +2095,7 @@ pub unsafe extern "C" fn BotClearPath(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
     mut moveresult: *mut crate::be_ai_move_h::bot_moveresult_t,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut bestmine: i32 = 0;
     let mut dist: f32 = 0.;
     let mut bestdist: f32 = 0.;

@@ -6,7 +6,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub mod stdlib_h {
@@ -53,18 +52,9 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::sscanf;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strncpy;
 
 pub use crate::src::botlib::be_aas_bspq3::stdlib_h::atoi;
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetClearedHunkMemory;
-use crate::src::botlib::l_memory::GetHunkMemory;
+
 pub use crate::stdlib::strtod;
 pub use crate::stdlib::strtol;
 extern "C" {
@@ -301,8 +291,8 @@ pub unsafe extern "C" fn AAS_inPVS(
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_inPHS(
-    mut p1: *mut crate::src::qcommon::q_shared::vec_t,
-    mut p2: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _p1: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _p2: *mut crate::src::qcommon::q_shared::vec_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
     return crate::src::qcommon::q_shared::qtrue;
 }
@@ -336,7 +326,9 @@ pub unsafe extern "C" fn AAS_BSPModelMinsMaxsOrigin(
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_UnlinkFromBSPLeaves(mut leaves: *mut crate::be_aas_def_h::bsp_link_t) {
+pub unsafe extern "C" fn AAS_UnlinkFromBSPLeaves(
+    mut _leaves: *mut crate::be_aas_def_h::bsp_link_t,
+) {
 }
 //end of the function AAS_UnlinkFromBSPLeaves
 //===========================================================================
@@ -348,10 +340,10 @@ pub unsafe extern "C" fn AAS_UnlinkFromBSPLeaves(mut leaves: *mut crate::be_aas_
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_BSPLinkEntity(
-    mut absmins: *mut crate::src::qcommon::q_shared::vec_t,
-    mut absmaxs: *mut crate::src::qcommon::q_shared::vec_t,
-    mut entnum: i32,
-    mut modelnum: i32,
+    mut _absmins: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _absmaxs: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _entnum: i32,
+    mut _modelnum: i32,
 ) -> *mut crate::be_aas_def_h::bsp_link_t {
     return 0 as *mut crate::be_aas_def_h::bsp_link_t;
 }
@@ -365,10 +357,10 @@ pub unsafe extern "C" fn AAS_BSPLinkEntity(
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_BoxEntities(
-    mut absmins: *mut crate::src::qcommon::q_shared::vec_t,
-    mut absmaxs: *mut crate::src::qcommon::q_shared::vec_t,
-    mut list: *mut i32,
-    mut maxcount: i32,
+    mut _absmins: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _absmaxs: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _list: *mut i32,
+    mut _maxcount: i32,
 ) -> i32 {
     return 0;
 }
@@ -566,7 +558,7 @@ pub unsafe extern "C" fn AAS_IntForBSPEpairKey(
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_FreeBSPEntities() {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
     let mut ent: *mut bsp_entity_t = 0 as *mut bsp_entity_t;
     let mut epair: *mut bsp_epair_t = 0 as *mut bsp_epair_t;
     let mut nextepair: *mut bsp_epair_t = 0 as *mut bsp_epair_t;
@@ -720,12 +712,12 @@ pub unsafe extern "C" fn AAS_ParseBSPEntities() {
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_BSPTraceLight(
-    mut start: *mut crate::src::qcommon::q_shared::vec_t,
-    mut end: *mut crate::src::qcommon::q_shared::vec_t,
-    mut endpos: *mut crate::src::qcommon::q_shared::vec_t,
-    mut red: *mut i32,
-    mut green: *mut i32,
-    mut blue: *mut i32,
+    mut _start: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _end: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _endpos: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _red: *mut i32,
+    mut _green: *mut i32,
+    mut _blue: *mut i32,
 ) -> i32 {
     return 0;
 }

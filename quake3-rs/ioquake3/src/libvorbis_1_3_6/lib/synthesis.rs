@@ -29,8 +29,7 @@ pub use crate::src::libogg_1_3_3::src::bitwise::oggpack_read;
 pub use crate::src::libogg_1_3_3::src::bitwise::oggpack_readinit;
 pub use crate::src::libvorbis_1_3_6::lib::bitrate::bitrate_manager_info;
 pub use crate::src::libvorbis_1_3_6::lib::bitrate::bitrate_manager_state;
-use crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc;
-use crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_ripcord;
+
 pub use crate::src::libvorbis_1_3_6::lib::codebook::codebook;
 pub use crate::src::libvorbis_1_3_6::lib::codebook::static_codebook;
 pub use crate::src::libvorbis_1_3_6::lib::envelope::envelope_band;
@@ -41,8 +40,7 @@ pub use crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy;
 pub use crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global;
 pub use crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy;
 pub use crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy_global;
-use crate::src::libvorbis_1_3_6::lib::registry::_mapping_P;
-use crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog;
+
 pub use crate::src::libvorbis_1_3_6::lib::smallft::drft_lookup;
 /* *******************************************************************
 *                                                                  *
@@ -94,7 +92,7 @@ pub unsafe extern "C" fn vorbis_synthesis(
     };
     let mut type_0: i32 = 0;
     let mut mode: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if vd.is_null() || b.is_null() || vi.is_null() || ci.is_null() || opb.is_null() {
         return -(136i32);
     }

@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod q_shared_h {
     /*
     ===========================================================================
@@ -422,8 +420,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::rand;
-use crate::stdlib::sqrt;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -520,7 +517,7 @@ pub unsafe extern "C" fn multi_trigger(
 
 pub unsafe extern "C" fn Use_Multi(
     mut ent: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     multi_trigger(ent, activator);
@@ -530,7 +527,7 @@ pub unsafe extern "C" fn Use_Multi(
 pub unsafe extern "C" fn Touch_Multi(
     mut self_0: *mut crate::g_local_h::gentity_t,
     mut other: *mut crate::g_local_h::gentity_t,
-    mut trace: *mut crate::src::qcommon::q_shared::trace_t,
+    mut _trace: *mut crate::src::qcommon::q_shared::trace_t,
 ) {
     if (*other).client.is_null() {
         return;
@@ -619,7 +616,7 @@ trigger_push
 pub unsafe extern "C" fn trigger_push_touch(
     mut self_0: *mut crate::g_local_h::gentity_t,
     mut other: *mut crate::g_local_h::gentity_t,
-    mut trace: *mut crate::src::qcommon::q_shared::trace_t,
+    mut _trace: *mut crate::src::qcommon::q_shared::trace_t,
 ) {
     if (*other).client.is_null() {
         return;
@@ -703,7 +700,7 @@ pub unsafe extern "C" fn SP_trigger_push(mut self_0: *mut crate::g_local_h::gent
 
 pub unsafe extern "C" fn Use_target_push(
     mut self_0: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     if (*activator).client.is_null() {
@@ -797,7 +794,7 @@ trigger_teleport
 pub unsafe extern "C" fn trigger_teleporter_touch(
     mut self_0: *mut crate::g_local_h::gentity_t,
     mut other: *mut crate::g_local_h::gentity_t,
-    mut trace: *mut crate::src::qcommon::q_shared::trace_t,
+    mut _trace: *mut crate::src::qcommon::q_shared::trace_t,
 ) {
     let mut dest: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     if (*other).client.is_null() {
@@ -880,8 +877,8 @@ NO_PROTECTION	*nothing* stops the damage
 
 pub unsafe extern "C" fn hurt_use(
     mut self_0: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
-    mut activator: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
+    mut _activator: *mut crate::g_local_h::gentity_t,
 ) {
     if (*self_0).r.linked as u64 != 0 {
         crate::src::game::g_syscalls::trap_UnlinkEntity(self_0);
@@ -894,7 +891,7 @@ pub unsafe extern "C" fn hurt_use(
 pub unsafe extern "C" fn hurt_touch(
     mut self_0: *mut crate::g_local_h::gentity_t,
     mut other: *mut crate::g_local_h::gentity_t,
-    mut trace: *mut crate::src::qcommon::q_shared::trace_t,
+    mut _trace: *mut crate::src::qcommon::q_shared::trace_t,
 ) {
     let mut dflags: i32 = 0;
     if (*other).takedamage as u64 == 0 {
@@ -999,7 +996,7 @@ pub unsafe extern "C" fn func_timer_think(mut self_0: *mut crate::g_local_h::gen
 
 pub unsafe extern "C" fn func_timer_use(
     mut self_0: *mut crate::g_local_h::gentity_t,
-    mut other: *mut crate::g_local_h::gentity_t,
+    mut _other: *mut crate::g_local_h::gentity_t,
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     (*self_0).activator = activator;

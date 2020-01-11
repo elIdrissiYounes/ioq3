@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::bg_public_h::gitem_s;
 pub use crate::bg_public_h::gitem_t;
 pub use crate::bg_public_h::itemType_t;
@@ -261,8 +259,7 @@ pub use crate::src::game::g_utils::G_AddEvent;
 pub use crate::src::game::g_utils::G_ModelIndex;
 pub use crate::src::game::g_utils::G_SetOrigin;
 pub use crate::src::game::g_utils::G_Spawn;
-use crate::stdlib::strcat;
-use crate::stdlib::strlen;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.

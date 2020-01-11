@@ -9,17 +9,7 @@ pub use crate::server_h::svEntity_t;
 pub use crate::server_h::SS_DEAD;
 pub use crate::server_h::SS_GAME;
 pub use crate::server_h::SS_LOADING;
-use crate::src::qcommon::cm_load::CM_InlineModel;
-use crate::src::qcommon::cm_load::CM_LeafArea;
-use crate::src::qcommon::cm_load::CM_LeafCluster;
-use crate::src::qcommon::cm_load::CM_ModelBounds;
-use crate::src::qcommon::cm_load::CM_TempBoxModel;
-use crate::src::qcommon::cm_test::CM_BoxLeafnums;
-use crate::src::qcommon::cm_test::CM_PointContents;
-use crate::src::qcommon::cm_test::CM_TransformedPointContents;
-use crate::src::qcommon::cm_trace::CM_BoxTrace;
-use crate::src::qcommon::cm_trace::CM_TransformedBoxTrace;
-use crate::src::qcommon::common::Com_DPrintf;
+
 pub use crate::src::qcommon::common::Com_Printf;
 pub use crate::src::qcommon::q_math::vec3_origin;
 pub use crate::src::qcommon::q_math::RadiusFromBounds;
@@ -49,7 +39,6 @@ pub use crate::src::server::sv_game::SV_GEntityForSvEntity;
 pub use crate::src::server::sv_game::SV_GentityNum;
 pub use crate::src::server::sv_game::SV_SvEntityForGentity;
 pub use crate::src::server::sv_main::sv;
-use crate::stdlib::memset;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -799,7 +788,7 @@ pub unsafe extern "C" fn SV_Trace(
         contentmask: 0,
         capsule: 0,
     };
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if mins.is_null() {
         mins = crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
     }
@@ -1039,7 +1028,7 @@ pub unsafe extern "C" fn SV_PointContents(
     let mut touch: [i32; 1024] = [0; 1024];
     let mut hit: *mut crate::g_public_h::sharedEntity_t =
         0 as *mut crate::g_public_h::sharedEntity_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut num: i32 = 0;
     let mut contents: i32 = 0;
     let mut c2: i32 = 0;

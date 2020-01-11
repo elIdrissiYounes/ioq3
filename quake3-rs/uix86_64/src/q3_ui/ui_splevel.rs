@@ -73,7 +73,7 @@ pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 pub use crate::src::ui::ui_syscalls::trap_R_SetColor;
 pub use crate::src::ui::ui_syscalls::trap_S_RegisterSound;
 pub use crate::src::ui::ui_syscalls::trap_S_StartLocalSound;
-use crate::stdlib::sin;
+
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -103,9 +103,7 @@ pub use crate::ui_local_h::AWARD_IMPRESSIVE;
 pub use crate::ui_local_h::AWARD_PERFECT;
 
 pub use crate::src::q3_ui::ui_splevel::stdlib_h::atoi;
-use crate::stdlib::memset;
-use crate::stdlib::strcpy;
-use crate::stdlib::strrchr;
+
 pub use crate::stdlib::strtol;
 
 #[repr(C)]
@@ -669,7 +667,7 @@ unsafe extern "C" fn UI_SPLevelMenu_SetMenuArena(
 }
 
 unsafe extern "C" fn UI_SPLevelMenu_SetMenuItems() {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut level: i32 = 0;
     let mut arenaInfo: *const i8 = 0 as *const i8;
     if selectedArenaSet > currentSet {
@@ -836,7 +834,7 @@ unsafe extern "C" fn UI_SPLevelMenu_ResetAction(
     UI_SPLevelMenu();
 }
 
-unsafe extern "C" fn UI_SPLevelMenu_ResetEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+unsafe extern "C" fn UI_SPLevelMenu_ResetEvent(mut _ptr: *mut libc::c_void, mut event: i32) {
     if event != 3 {
         return;
     }
@@ -879,7 +877,7 @@ UI_SPLevelMenu_LeftArrowEvent
 */
 
 unsafe extern "C" fn UI_SPLevelMenu_LeftArrowEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut notification: i32,
 ) {
     if notification != 3 {
@@ -898,7 +896,7 @@ UI_SPLevelMenu_RightArrowEvent
 */
 
 unsafe extern "C" fn UI_SPLevelMenu_RightArrowEvent(
-    mut ptr: *mut libc::c_void,
+    mut _ptr: *mut libc::c_void,
     mut notification: i32,
 ) {
     if notification != 3 {
@@ -916,7 +914,10 @@ UI_SPLevelMenu_PlayerEvent
 =================
 */
 
-unsafe extern "C" fn UI_SPLevelMenu_PlayerEvent(mut ptr: *mut libc::c_void, mut notification: i32) {
+unsafe extern "C" fn UI_SPLevelMenu_PlayerEvent(
+    mut _ptr: *mut libc::c_void,
+    mut notification: i32,
+) {
     if notification != 3 {
         return;
     }
@@ -945,7 +946,7 @@ UI_SPLevelMenu_NextEvent
 =================
 */
 
-unsafe extern "C" fn UI_SPLevelMenu_NextEvent(mut ptr: *mut libc::c_void, mut notification: i32) {
+unsafe extern "C" fn UI_SPLevelMenu_NextEvent(mut _ptr: *mut libc::c_void, mut notification: i32) {
     if notification != 3 {
         return;
     }
@@ -963,7 +964,7 @@ UI_SPLevelMenu_BackEvent
 =================
 */
 
-unsafe extern "C" fn UI_SPLevelMenu_BackEvent(mut ptr: *mut libc::c_void, mut notification: i32) {
+unsafe extern "C" fn UI_SPLevelMenu_BackEvent(mut _ptr: *mut libc::c_void, mut notification: i32) {
     if notification != 3 {
         return;
     }
@@ -978,7 +979,10 @@ UI_SPLevelMenu_CustomEvent
 =================
 */
 
-unsafe extern "C" fn UI_SPLevelMenu_CustomEvent(mut ptr: *mut libc::c_void, mut notification: i32) {
+unsafe extern "C" fn UI_SPLevelMenu_CustomEvent(
+    mut _ptr: *mut libc::c_void,
+    mut notification: i32,
+) {
     if notification != 3 {
         return;
     }
@@ -1263,7 +1267,7 @@ UI_SPLevelMenu_Cache
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_SPLevelMenu_Cache() {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
         b"menu/art/maps_select\x00" as *const u8 as *const i8,
     );

@@ -221,15 +221,7 @@ pub use crate::src::opus_1_2_1::src::analysis::mathops_h::fast_atan2f;
 pub use crate::src::opus_1_2_1::src::mlp::mlp_process;
 pub use crate::src::opus_1_2_1::src::mlp::MLP;
 pub use crate::src::opus_1_2_1::src::mlp_data::net;
-use crate::stdlib::fabs;
-use crate::stdlib::floor;
-use crate::stdlib::log;
-use crate::stdlib::log10;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::pow;
-use crate::stdlib::sqrt;
+
 /* Copyright (c) 2011 Xiph.Org Foundation
 Written by Jean-Marc Valin */
 /*
@@ -316,7 +308,7 @@ unsafe extern "C" fn silk_resampler_down2_hp(
     mut inLen: i32,
 ) -> crate::arch_h::opus_val32
 /* I    Number of input samples                                     */ {
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut len2: i32 = inLen / 2;
     let mut in32: crate::arch_h::opus_val32 = 0.;
     let mut out32: crate::arch_h::opus_val32 = 0.;
@@ -1054,11 +1046,11 @@ unsafe extern "C" fn tonality_analysis(
     }
     i = 0;
     while i < 8 {
-        let mut j: i32 = 0;
+        let mut _j: i32 = 0;
         let mut mindist: f32 = 1e15;
 
         for j in 0..8 {
-            let mut k: i32 = 0;
+            let mut _k: i32 = 0;
 
             let mut dist: f32 = 0f32;
             for k in 0..18 {

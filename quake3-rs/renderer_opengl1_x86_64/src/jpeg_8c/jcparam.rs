@@ -189,7 +189,7 @@ pub use crate::src::jpeg_8c::jerror::JWRN_JPEG_EOF;
 pub use crate::src::jpeg_8c::jerror::JWRN_MUST_RESYNC;
 pub use crate::src::jpeg_8c::jerror::JWRN_NOT_SEQUENTIAL;
 pub use crate::src::jpeg_8c::jerror::JWRN_TOO_MUCH_DATA;
-use crate::stdlib::memcpy;
+
 /*
  * jcparam.c
  *
@@ -222,7 +222,7 @@ pub unsafe extern "C" fn jpeg_add_quant_table(
 {
     let mut qtblptr: *mut *mut crate::jpeglib_h::JQUANT_TBL =
         0 as *mut *mut crate::jpeglib_h::JQUANT_TBL;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut temp: isize = 0;
     /* Safety check to ensure start_compress not called yet. */
     if (*cinfo).global_state != 100 {
@@ -405,7 +405,7 @@ unsafe extern "C" fn add_huff_table(
 /* Define a Huffman table */
 {
     let mut nsymbols: i32 = 0;
-    let mut len: i32 = 0;
+    let mut _len: i32 = 0;
     if (*htblptr).is_null() {
         *htblptr = crate::src::jpeg_8c::jcomapi::jpeg_alloc_huff_table(
             cinfo as crate::jpeglib_h::j_common_ptr,
@@ -523,7 +523,7 @@ unsafe extern "C" fn std_huff_tables(mut cinfo: crate::jpeglib_h::j_compress_ptr
 #[no_mangle]
 
 pub unsafe extern "C" fn jpeg_set_defaults(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     /* Safety check to ensure start_compress not called yet. */
     if (*cinfo).global_state != 100 {
         (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STATE as i32;
@@ -893,7 +893,7 @@ unsafe extern "C" fn fill_scans(
     mut Al: i32,
 ) -> *mut crate::jpeglib_h::jpeg_scan_info
 /* Support routine: generate one scan for each component */ {
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
 
     for ci in 0..ncomps {
         (*scanptr).comps_in_scan = 1;
@@ -920,7 +920,7 @@ unsafe extern "C" fn fill_dc_scans(
     mut Al: i32,
 ) -> *mut crate::jpeglib_h::jpeg_scan_info
 /* Support routine: generate interleaved DC scan if possible, else N scans */ {
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     if ncomps <= 4 {
         /* Single interleaved DC scan */
         (*scanptr).comps_in_scan = ncomps;

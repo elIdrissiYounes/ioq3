@@ -171,7 +171,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::vsnprintf;
+
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -205,10 +205,7 @@ pub use crate::tr_types_h::TC_S3TC;
 pub use crate::tr_types_h::TC_S3TC_ARB;
 
 pub use crate::src::cgame::cg_main::stdlib_h::atoi;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
+
 pub use crate::stdlib::strtol;
 
 #[repr(C)]
@@ -260,15 +257,15 @@ pub unsafe extern "C" fn vmMain(
     mut arg0: i32,
     mut arg1: i32,
     mut arg2: i32,
-    mut arg3: i32,
-    mut arg4: i32,
-    mut arg5: i32,
-    mut arg6: i32,
-    mut arg7: i32,
-    mut arg8: i32,
-    mut arg9: i32,
-    mut arg10: i32,
-    mut arg11: i32,
+    mut _arg3: i32,
+    mut _arg4: i32,
+    mut _arg5: i32,
+    mut _arg6: i32,
+    mut _arg7: i32,
+    mut _arg8: i32,
+    mut _arg9: i32,
+    mut _arg10: i32,
+    mut _arg11: i32,
 ) -> crate::stdlib::intptr_t {
     match command {
         0 => {
@@ -3163,7 +3160,7 @@ pub unsafe extern "C" fn CG_Error(mut msg: *const i8, mut args: ...) -> ! {
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn Com_Error(mut level: i32, mut error: *const i8, mut args: ...) -> ! {
+pub unsafe extern "C" fn Com_Error(mut _level: i32, mut error: *const i8, mut args: ...) -> ! {
     let mut argptr: ::std::ffi::VaListImpl;
     let mut text: [i8; 1024] = [0; 1024];
     argptr = args.clone();
@@ -4151,7 +4148,7 @@ unsafe extern "C" fn CG_RegisterGraphics() {
         let mut name: [i8; 10] = [0; 10];
         let mut mins: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
         let mut maxs: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-        let mut j: i32 = 0;
+        let mut _j: i32 = 0;
         crate::src::qcommon::q_shared::Com_sprintf(
             name.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 10]>() as i32,
@@ -4239,7 +4236,7 @@ CG_RegisterClients
 */
 
 unsafe extern "C" fn CG_RegisterClients() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     crate::src::cgame::cg_info::CG_LoadingClient(cg.clientNum);
     crate::src::cgame::cg_players::CG_NewClientInfo(cg.clientNum);
 
@@ -4439,12 +4436,12 @@ CG_EventHandling
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn CG_EventHandling(mut type_0: i32) {}
+pub unsafe extern "C" fn CG_EventHandling(mut _type_0: i32) {}
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_KeyEvent(
-    mut key: i32,
-    mut down: crate::src::qcommon::q_shared::qboolean,
+    mut _key: i32,
+    mut _down: crate::src::qcommon::q_shared::qboolean,
 ) {
 }
 /*
@@ -4651,7 +4648,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 #[no_mangle]
 
-pub unsafe extern "C" fn CG_MouseEvent(mut x: i32, mut y: i32) {}
+pub unsafe extern "C" fn CG_MouseEvent(mut _x: i32, mut _y: i32) {}
 unsafe extern "C" fn run_static_initializers() {
     cvarTableSize = (::std::mem::size_of::<[cvarTable_t; 83]>())
         .wrapping_div(::std::mem::size_of::<cvarTable_t>()) as i32

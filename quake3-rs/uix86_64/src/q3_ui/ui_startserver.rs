@@ -73,11 +73,9 @@ pub use crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer;
 pub use crate::src::ui::ui_syscalls::trap_Cvar_VariableValue;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 pub use crate::stdlib::__compar_fn_t;
-use crate::stdlib::memset;
+
 pub use crate::stdlib::qsort;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strrchr;
+
 pub use crate::stdlib::strtol;
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
@@ -700,8 +698,8 @@ StartServer_GametypeEvent
 =================
 */
 
-unsafe extern "C" fn StartServer_GametypeEvent(mut ptr: *mut libc::c_void, mut event: i32) {
-    let mut i: i32 = 0;
+unsafe extern "C" fn StartServer_GametypeEvent(mut _ptr: *mut libc::c_void, mut event: i32) {
+    let mut _i: i32 = 0;
     let mut count: i32 = 0;
     let mut gamebits: i32 = 0;
     let mut matchbits: i32 = 0;
@@ -1688,7 +1686,7 @@ BotAlreadySelected
 unsafe extern "C" fn BotAlreadySelected(
     mut checkName: *const i8,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
 
     for n in 1..12 {
         if !(s_serveroptions.playerType[n as usize].curvalue != 1) {
@@ -2126,7 +2124,7 @@ unsafe extern "C" fn ServerOptions_LevelshotDraw(mut self_0: *mut libc::c_void) 
 
 unsafe extern "C" fn ServerOptions_InitBotNames() {
     let mut count: i32 = 0;
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut arenaInfo: *const i8 = 0 as *const i8;
     let mut botInfo: *const i8 = 0 as *const i8;
     let mut p: *mut i8 = 0 as *mut i8;
@@ -3121,7 +3119,7 @@ UI_BotSelectMenu_BuildList
 */
 
 unsafe extern "C" fn UI_BotSelectMenu_BuildList() {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     botSelectInfo.modelpage = 0;
     botSelectInfo.numBots = crate::src::q3_ui::ui_gameinfo::UI_GetNumBots();
     botSelectInfo.numpages = botSelectInfo.numBots / (4 * 4);
@@ -3313,7 +3311,7 @@ UI_BotSelectMenu_LeftEvent
 =================
 */
 
-unsafe extern "C" fn UI_BotSelectMenu_LeftEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+unsafe extern "C" fn UI_BotSelectMenu_LeftEvent(mut _ptr: *mut libc::c_void, mut event: i32) {
     if event != 3 {
         return;
     }
@@ -3329,7 +3327,7 @@ UI_BotSelectMenu_RightEvent
 =================
 */
 
-unsafe extern "C" fn UI_BotSelectMenu_RightEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+unsafe extern "C" fn UI_BotSelectMenu_RightEvent(mut _ptr: *mut libc::c_void, mut event: i32) {
     if event != 3 {
         return;
     }
@@ -3368,7 +3366,7 @@ UI_BotSelectMenu_BackEvent
 =================
 */
 
-unsafe extern "C" fn UI_BotSelectMenu_BackEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+unsafe extern "C" fn UI_BotSelectMenu_BackEvent(mut _ptr: *mut libc::c_void, mut event: i32) {
     if event != 3 {
         return;
     }
@@ -3380,7 +3378,7 @@ UI_BotSelectMenu_SelectEvent
 =================
 */
 
-unsafe extern "C" fn UI_BotSelectMenu_SelectEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+unsafe extern "C" fn UI_BotSelectMenu_SelectEvent(mut _ptr: *mut libc::c_void, mut event: i32) {
     if event != 3 {
         return;
     }

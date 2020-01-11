@@ -207,7 +207,6 @@ pub mod q_shared_h {
         *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
         *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -225,11 +224,11 @@ pub use crate::src::qcommon::cm_polylib::CopyWinding;
 pub use crate::src::qcommon::cm_polylib::FreeWinding;
 pub use crate::src::qcommon::cm_polylib::WindingBounds;
 pub use crate::src::qcommon::cm_test::CM_BoundsIntersect;
-use crate::src::qcommon::common::Com_DPrintf;
+
 pub use crate::src::qcommon::common::Com_Error;
 pub use crate::src::qcommon::common::Com_Printf;
 pub use crate::src::qcommon::common::Hunk_Alloc;
-use crate::src::qcommon::cvar::Cvar_Get;
+
 pub use crate::src::qcommon::q_math::vec3_origin;
 pub use crate::src::qcommon::q_math::AddPointToBounds;
 pub use crate::src::qcommon::q_math::ClearBounds;
@@ -254,10 +253,7 @@ pub use crate::src::qcommon::q_shared::ERR_DROP;
 pub use crate::src::qcommon::q_shared::ERR_FATAL;
 pub use crate::src::qcommon::q_shared::ERR_NEED_CD;
 pub use crate::src::qcommon::q_shared::ERR_SERVERDISCONNECT;
-use crate::stdlib::fabs;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
+
 extern "C" {
     /*
     =======================================================================
@@ -406,7 +402,7 @@ unsafe extern "C" fn CM_SignbitsForNormal(
     mut normal: *mut crate::src::qcommon::q_shared::vec_t,
 ) -> i32 {
     let mut bits: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     bits = 0;
 
     for j in 0..3 {
@@ -792,7 +788,7 @@ unsafe extern "C" fn CM_RemoveDegenerateColumns(
 ) {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     i = 0;
     while i < (*grid).width - 1 {
         j = 0;
@@ -933,7 +929,7 @@ CM_FindPlane2
 #[no_mangle]
 
 pub unsafe extern "C" fn CM_FindPlane2(mut plane: *mut f32, mut flipped: *mut i32) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     // see if the points are close enough to an existing plane
 
     for i in 0..numPlanes {
@@ -965,7 +961,7 @@ CM_FindPlane
 
 unsafe extern "C" fn CM_FindPlane(mut p1: *mut f32, mut p2: *mut f32, mut p3: *mut f32) -> i32 {
     let mut plane: [f32; 4] = [0.; 4];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut d: f32 = 0.;
     if CM_PlaneFromPoints(plane.as_mut_ptr(), p1, p2, p3) as u64 == 0 {
         return -(1i32);
@@ -1179,13 +1175,13 @@ CM_SetBorderInward
 unsafe extern "C" fn CM_SetBorderInward(
     mut facet: *mut crate::src::qcommon::cm_patch::facet_t,
     mut grid: *mut crate::src::qcommon::cm_patch::cGrid_t,
-    mut gridPlanes: *mut [[i32; 2]; 129],
+    mut _gridPlanes: *mut [[i32; 2]; 129],
     mut i: i32,
     mut j: i32,
     mut which: i32,
 ) {
     let mut k: i32 = 0;
-    let mut l: i32 = 0;
+    let mut _l: i32 = 0;
     let mut points: [*mut f32; 4] = [0 as *mut f32; 4];
     let mut numPoints: i32 = 0;
     match which {
@@ -2603,7 +2599,7 @@ pub unsafe extern "C" fn CM_DrawDebugSurface(
         0 as *mut crate::src::qcommon::cm_polylib::winding_t;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut n: i32 = 0;
     let mut curplanenum: i32 = 0;
     let mut planenum: i32 = 0;

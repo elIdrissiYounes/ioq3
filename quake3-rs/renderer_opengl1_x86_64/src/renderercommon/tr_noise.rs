@@ -1,8 +1,3 @@
-use ::libc;
-
-use crate::stdlib::floor;
-use crate::stdlib::rand;
-
 static mut s_noise_table: [f32; 256] = [0.; 256];
 
 static mut s_noise_perm: [i32; 256] = [0; 256];
@@ -83,7 +78,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #[no_mangle]
 
 pub unsafe extern "C" fn R_NoiseGet4f(mut x: f32, mut y: f32, mut z: f32, mut t: f64) -> f32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut ix: i32 = 0;
     let mut iy: i32 = 0;
     let mut iz: i32 = 0;

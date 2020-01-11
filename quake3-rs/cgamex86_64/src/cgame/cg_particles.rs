@@ -25,7 +25,6 @@ pub mod q_shared_h {
         v[2] = *p2.offset(2) - *p1.offset(2);
         return VectorLength(v.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t);
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -36,7 +35,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub mod stdlib_h {
@@ -178,12 +176,9 @@ pub use crate::src::cgame::cg_particles::stdlib_h::atoi;
 pub use crate::src::cgame::cg_predict::CG_Trace;
 pub use crate::src::cgame::cg_syscalls::trap_R_AddPolyToScene;
 pub use crate::src::cgame::cg_syscalls::trap_R_RegisterShader;
-use crate::stdlib::cos;
-use crate::stdlib::floor;
-use crate::stdlib::memset;
+
 pub use crate::stdlib::rand;
-use crate::stdlib::sin;
-use crate::stdlib::sqrt;
+
 pub use crate::stdlib::strtod;
 pub use crate::stdlib::strtol;
 
@@ -392,7 +387,7 @@ pub unsafe extern "C" fn CG_ClearParticles() {
     // Ridah, init the shaderAnims
     i = 0;
     while !shaderAnimNames[i as usize].is_null() {
-        let mut j: i32 = 0;
+        let mut _j: i32 = 0;
 
         for j in 0..shaderAnimCounts[i as usize] {
             shaderAnims[i as usize][j as usize] =
@@ -420,7 +415,7 @@ CG_AddParticleToScene
 pub unsafe extern "C" fn CG_AddParticleToScene(
     mut p: *mut cparticle_t,
     mut org: *mut crate::src::qcommon::q_shared::vec_t,
-    mut alpha: f32,
+    mut _alpha: f32,
 ) {
     let mut point: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut verts: [crate::tr_types_h::polyVert_t; 4] = [crate::tr_types_h::polyVert_t {
@@ -1820,7 +1815,7 @@ pub unsafe extern "C" fn CG_ParticleExplosion(
 // Rafael Shrapnel
 #[no_mangle]
 
-pub unsafe extern "C" fn CG_AddParticleShrapnel(mut le: *mut crate::cg_local_h::localEntity_t) {}
+pub unsafe extern "C" fn CG_AddParticleShrapnel(mut _le: *mut crate::cg_local_h::localEntity_t) {}
 // done.
 #[no_mangle]
 
@@ -1977,7 +1972,7 @@ pub unsafe extern "C" fn CG_ParticleImpactSmokePuff(
 pub unsafe extern "C" fn CG_Particle_Bleed(
     mut pshader: crate::src::qcommon::q_shared::qhandle_t,
     mut start: *mut crate::src::qcommon::q_shared::vec_t,
-    mut dir: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _dir: *mut crate::src::qcommon::q_shared::vec_t,
     mut fleshEntityNum: i32,
     mut duration: i32,
 ) {
@@ -2138,7 +2133,7 @@ pub unsafe extern "C" fn CG_Particle_OilSlick(
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn CG_OilSlickRemove(mut cent: *mut crate::cg_local_h::centity_t) {
+pub unsafe extern "C" fn CG_OilSlickRemove(mut _cent: *mut crate::cg_local_h::centity_t) {
     let mut p: *mut cparticle_t = 0 as *mut cparticle_t;
     let mut next: *mut cparticle_t = 0 as *mut cparticle_t;
     let mut id: i32 = 0;
@@ -2173,8 +2168,8 @@ pub unsafe extern "C" fn ValidBloodPool(
     let mut x_pos: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut center_pos: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut end_pos: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut x: i32 = 0;
-    let mut y: i32 = 0;
+    let mut _x: i32 = 0;
+    let mut _y: i32 = 0;
     let mut fwidth: i32 = 0;
     let mut fheight: i32 = 0;
     let mut trace: crate::src::qcommon::q_shared::trace_t =
@@ -2264,7 +2259,7 @@ pub unsafe extern "C" fn ValidBloodPool(
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_BloodPool(
-    mut le: *mut crate::cg_local_h::localEntity_t,
+    mut _le: *mut crate::cg_local_h::localEntity_t,
     mut pshader: crate::src::qcommon::q_shared::qhandle_t,
     mut tr: *mut crate::src::qcommon::q_shared::trace_t,
 ) {
@@ -2321,7 +2316,7 @@ pub unsafe extern "C" fn CG_BloodPool(
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_ParticleBloodCloud(
-    mut cent: *mut crate::cg_local_h::centity_t,
+    mut _cent: *mut crate::cg_local_h::centity_t,
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut dir: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
@@ -2462,7 +2457,7 @@ pub unsafe extern "C" fn CG_ParticleSparks(
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_ParticleDust(
-    mut cent: *mut crate::cg_local_h::centity_t,
+    mut _cent: *mut crate::cg_local_h::centity_t,
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut dir: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
@@ -2575,7 +2570,7 @@ pub unsafe extern "C" fn CG_ParticleMisc(
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut size: i32,
     mut duration: i32,
-    mut alpha: f32,
+    mut _alpha: f32,
 ) {
     let mut p: *mut cparticle_t = 0 as *mut cparticle_t;
     if pshader == 0 {

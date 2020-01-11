@@ -137,14 +137,7 @@ pub use crate::stdlib::GLsizei;
 pub use crate::stdlib::GLuint;
 pub use crate::stdlib::GLvoid;
 pub use crate::stdlib::__ctype_tolower_loc;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::pow;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strncmp;
-use crate::stdlib::strstr;
+
 pub use crate::tr_common_h::image_s;
 pub use crate::tr_common_h::image_t;
 pub use crate::tr_common_h::imgFlags_t;
@@ -532,7 +525,7 @@ R_SumOfUsedImages
 
 pub unsafe extern "C" fn R_SumOfUsedImages() -> i32 {
     let mut total: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     total = 0;
 
     for i in 0..crate::src::renderergl1::tr_main::tr.numImages {
@@ -553,7 +546,7 @@ R_ImageList_f
 #[no_mangle]
 
 pub unsafe extern "C" fn R_ImageList_f() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut estTotalSize: i32 = 0;
     crate::src::renderergl1::tr_main::ri
         .Printf
@@ -716,7 +709,7 @@ unsafe extern "C" fn ResampleTexture(
     mut outheight: i32,
 ) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut inrow: *mut u32 = 0 as *mut u32;
     let mut inrow2: *mut u32 = 0 as *mut u32;
     let mut frac: u32 = 0;
@@ -879,9 +872,9 @@ Proper linear filter
 */
 
 unsafe extern "C" fn R_MipMap2(mut in_0: *mut u32, mut inWidth: i32, mut inHeight: i32) {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _i: i32 = 0;
+    let mut _j: i32 = 0;
+    let mut _k: i32 = 0;
     let mut outpix: *mut crate::src::qcommon::q_shared::byte =
         0 as *mut crate::src::qcommon::q_shared::byte;
     let mut inWidthMask: i32 = 0;
@@ -1518,7 +1511,7 @@ pub unsafe extern "C" fn R_CreateImage(
     mut height: i32,
     mut type_0: crate::tr_common_h::imgType_t,
     mut flags: crate::tr_common_h::imgFlags_t,
-    mut internalFormat: i32,
+    mut _internalFormat: i32,
 ) -> *mut crate::tr_common_h::image_t {
     let mut image: *mut crate::tr_common_h::image_t = 0 as *mut crate::tr_common_h::image_t;
     let mut isLightmap: crate::src::qcommon::q_shared::qboolean =
@@ -1929,8 +1922,8 @@ pub unsafe extern "C" fn R_FindImageFile(
 }
 
 unsafe extern "C" fn R_CreateDlightImage() {
-    let mut x: i32 = 0;
-    let mut y: i32 = 0;
+    let mut _x: i32 = 0;
+    let mut _y: i32 = 0;
     let mut data: [[[crate::src::qcommon::q_shared::byte; 4]; 16]; 16] = [[[0; 4]; 16]; 16];
     let mut b: i32 = 0;
     // make a centered inverse-square falloff blob for dynamic lighting
@@ -2021,8 +2014,8 @@ pub unsafe extern "C" fn R_FogFactor(mut s: f32, mut t: f32) -> f32 {
 }
 
 unsafe extern "C" fn R_CreateFogImage() {
-    let mut x: i32 = 0;
-    let mut y: i32 = 0;
+    let mut _x: i32 = 0;
+    let mut _y: i32 = 0;
     let mut data: *mut crate::src::qcommon::q_shared::byte =
         0 as *mut crate::src::qcommon::q_shared::byte;
     let mut d: f32 = 0.;
@@ -2065,7 +2058,7 @@ unsafe extern "C" fn R_CreateFogImage() {
 }
 
 unsafe extern "C" fn R_CreateDefaultImage() {
-    let mut x: i32 = 0;
+    let mut _x: i32 = 0;
     let mut data: [[[crate::src::qcommon::q_shared::byte; 4]; 16]; 16] = [[[0; 4]; 16]; 16];
     // the default image will be a box, to allow you to see the mapping coordinates
     crate::stdlib::memset(
@@ -2126,7 +2119,7 @@ R_CreateBuiltinImages
 
 pub unsafe extern "C" fn R_CreateBuiltinImages() {
     let mut x: i32 = 0;
-    let mut y: i32 = 0;
+    let mut _y: i32 = 0;
     let mut data: [[[crate::src::qcommon::q_shared::byte; 4]; 16]; 16] = [[[0; 4]; 16]; 16];
     R_CreateDefaultImage();
     // we use a solid white image instead of disabling texturing
@@ -2313,7 +2306,7 @@ R_DeleteTextures
 #[no_mangle]
 
 pub unsafe extern "C" fn R_DeleteTextures() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in 0..crate::src::renderergl1::tr_main::tr.numImages {
         crate::src::sdl::sdl_glimp::qglDeleteTextures.expect("non-null function pointer")(
@@ -3018,8 +3011,8 @@ R_SkinList_f
 #[no_mangle]
 
 pub unsafe extern "C" fn R_SkinList_f() {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _i: i32 = 0;
+    let mut _j: i32 = 0;
     let mut skin: *mut crate::tr_local_h::skin_t = 0 as *mut crate::tr_local_h::skin_t;
     crate::src::renderergl1::tr_main::ri
         .Printf

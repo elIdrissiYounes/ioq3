@@ -323,12 +323,9 @@ pub use crate::src::ui::ui_syscalls::trap_LAN_GetServerCount;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 pub use crate::src::ui::ui_syscalls::trap_SetPbClStatus;
 pub use crate::stdlib::__compar_fn_t;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
+
 pub use crate::stdlib::qsort;
-use crate::stdlib::strcat;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
+
 pub use crate::stdlib::strtol;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
@@ -1718,7 +1715,7 @@ Load cvar address book entries into local lists.
 #[no_mangle]
 
 pub unsafe extern "C" fn ArenaServers_LoadFavorites() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut numtempitems: i32 = 0;
     let mut adrstr: [i8; 64] = [0; 64];
@@ -2042,7 +2039,7 @@ ArenaServers_StartRefresh
 */
 
 unsafe extern "C" fn ArenaServers_StartRefresh() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut myargs: [i8; 32] = [0; 32];
     let mut protocol: [i8; 32] = [0; 32];
     crate::stdlib::memset(
@@ -2452,7 +2449,7 @@ ArenaServers_MenuInit
 */
 
 unsafe extern "C" fn ArenaServers_MenuInit() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut y: i32 = 0;
     static mut statusbuffer: [i8; 64] = [0; 64];
     // zero set all our globals

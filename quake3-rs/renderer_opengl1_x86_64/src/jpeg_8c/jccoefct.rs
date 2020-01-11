@@ -344,9 +344,9 @@ unsafe extern "C" fn compress_data(
         (*cinfo).total_iMCU_rows.wrapping_sub(1u32);
     let mut blkn: i32 = 0;
     let mut bi: i32 = 0;
-    let mut ci: i32 = 0;
-    let mut yindex: i32 = 0;
-    let mut yoffset: i32 = 0;
+    let mut _ci: i32 = 0;
+    let mut _yindex: i32 = 0;
+    let mut _yoffset: i32 = 0;
     let mut blockcnt: i32 = 0;
     let mut ypos: crate::jmorecfg_h::JDIMENSION = 0;
     let mut xpos: crate::jmorecfg_h::JDIMENSION = 0;
@@ -628,15 +628,15 @@ unsafe extern "C" fn compress_first_pass(
 
 unsafe extern "C" fn compress_output(
     mut cinfo: crate::jpeglib_h::j_compress_ptr,
-    mut input_buf: crate::jpeglib_h::JSAMPIMAGE,
+    mut _input_buf: crate::jpeglib_h::JSAMPIMAGE,
 ) -> crate::jmorecfg_h::boolean {
     let mut coef: my_coef_ptr = (*cinfo).coef as my_coef_ptr; /* index of current MCU within row */
     let mut MCU_col_num: crate::jmorecfg_h::JDIMENSION = 0;
     let mut blkn: i32 = 0;
     let mut ci: i32 = 0;
-    let mut xindex: i32 = 0;
-    let mut yindex: i32 = 0;
-    let mut yoffset: i32 = 0;
+    let mut _xindex: i32 = 0;
+    let mut _yindex: i32 = 0;
+    let mut _yoffset: i32 = 0;
     let mut start_col: crate::jmorecfg_h::JDIMENSION = 0;
     let mut buffer: [crate::jpeglib_h::JBLOCKARRAY; 4] = [0 as *mut crate::jpeglib_h::JBLOCKROW; 4];
     let mut buffer_ptr: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
@@ -680,7 +680,7 @@ unsafe extern "C" fn compress_output(
                 for yindex in 0..(*compptr).MCU_height {
                     buffer_ptr = (*buffer[ci as usize].offset((yindex + yoffset) as isize))
                         .offset(start_col as isize);
-                    for xindex in 0..(*compptr).MCU_width {
+                    for _xindex in 0..(*compptr).MCU_width {
                         let fresh0 = buffer_ptr;
 
                         buffer_ptr = buffer_ptr.offset(1);
@@ -783,7 +783,7 @@ pub unsafe extern "C" fn jinit_c_coef_controller(
     } else {
         /* We only need a single-MCU buffer. */
         let mut buffer: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         buffer = Some(
             (*(*cinfo).mem)
                 .alloc_large

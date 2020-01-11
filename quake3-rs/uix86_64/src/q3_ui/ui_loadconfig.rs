@@ -266,9 +266,7 @@ pub use crate::src::qcommon::q_shared::EXEC_NOW;
 pub use crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText;
 pub use crate::src::ui::ui_syscalls::trap_FS_GetFileList;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
-use crate::stdlib::memset;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
+
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
 pub use crate::ui_local_h::menucommon_s;
@@ -589,7 +587,7 @@ LoadConfig_MenuInit
 */
 
 unsafe extern "C" fn LoadConfig_MenuInit() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut len: i32 = 0;
     let mut configname: *mut i8 = 0 as *mut i8;
     UI_LoadConfig_Cache();

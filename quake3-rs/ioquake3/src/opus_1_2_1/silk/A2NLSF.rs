@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod SigProc_FIX_h {
     /* compute whitening filter coefficients from normalized line spectral frequencies */
     /* O    monic whitening filter coefficients in Q12,  [ d ]          */
@@ -148,7 +146,7 @@ pub use crate::opus_types_h::opus_int16;
 pub use crate::opus_types_h::opus_int32;
 pub use crate::opus_types_h::opus_uint32;
 pub use crate::src::opus_1_2_1::silk::bwexpander_32::silk_bwexpander_32;
-use crate::src::opus_1_2_1::silk::table_LSF_cos::silk_LSFCosTab_FIX_Q12;
+
 pub use crate::src::opus_1_2_1::silk::A2NLSF::SigProc_FIX_h::silk_min_32;
 /* Helper function for A2NLSF(..)                    */
 /* Transforms polynomials from cos(n*f) to cos(f)^n  */
@@ -267,7 +265,7 @@ pub unsafe extern "C" fn silk_A2NLSF(
 {
     let mut i: i32 = 0;
     let mut k: i32 = 0;
-    let mut m: i32 = 0;
+    let mut _m: i32 = 0;
     let mut dd: i32 = 0;
     let mut root_ix: i32 = 0;
     let mut ffrac: i32 = 0;

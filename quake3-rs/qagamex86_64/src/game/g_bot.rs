@@ -6,7 +6,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub mod stdlib_h {
@@ -149,11 +148,7 @@ pub use crate::src::game::g_syscalls::trap_SendConsoleCommand;
 pub use crate::src::game::g_syscalls::trap_SendServerCommand;
 pub use crate::src::game::g_syscalls::trap_SetUserinfo;
 pub use crate::stdlib::rand;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strrchr;
+
 pub use crate::stdlib::strtod;
 pub use crate::stdlib::strtol;
 extern "C" {
@@ -434,7 +429,7 @@ G_GetArenaInfoByNumber
 #[no_mangle]
 
 pub unsafe extern "C" fn G_GetArenaInfoByMap(mut map: *const i8) -> *const i8 {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
 
     for n in 0..g_numArenas {
         if crate::src::qcommon::q_shared::Q_stricmp(
@@ -496,7 +491,7 @@ Returns number of bots with name on specified team or whole server if team is -1
 #[no_mangle]
 
 pub unsafe extern "C" fn G_CountBotPlayersByName(mut name: *const i8, mut team: i32) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut num: i32 = 0;
     let mut cl: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
     num = 0;
@@ -532,7 +527,7 @@ Get random least used bot info on team or whole server if team is -1.
 
 pub unsafe extern "C" fn G_SelectRandomBotInfo(mut team: i32) -> i32 {
     let mut selection: [i32; 1024] = [0; 1024];
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut num: i32 = 0;
     let mut count: i32 = 0;
     let mut bestCount: i32 = 0;
@@ -615,7 +610,7 @@ G_RemoveRandomBot
 #[no_mangle]
 
 pub unsafe extern "C" fn G_RemoveRandomBot(mut team: i32) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut cl: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
 
     for i in 0..crate::src::game::g_main::g_maxclients.integer {
@@ -646,7 +641,7 @@ G_CountHumanPlayers
 #[no_mangle]
 
 pub unsafe extern "C" fn G_CountHumanPlayers(mut team: i32) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut num: i32 = 0;
     let mut cl: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
     num = 0;
@@ -674,7 +669,7 @@ Check connected and connecting (delay join) bots.
 #[no_mangle]
 
 pub unsafe extern "C" fn G_CountBotPlayers(mut team: i32) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut num: i32 = 0;
     let mut cl: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
     num = 0;
@@ -812,7 +807,7 @@ AddBotToSpawnQueue
 */
 
 unsafe extern "C" fn AddBotToSpawnQueue(mut clientNum: i32, mut delay: i32) {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
 
     for n in 0..16 {
         if botSpawnQueue[n as usize].spawnTime == 0 {
@@ -1489,7 +1484,7 @@ G_GetBotInfoByName
 #[no_mangle]
 
 pub unsafe extern "C" fn G_GetBotInfoByName(mut name: *const i8) -> *mut i8 {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut value: *mut i8 = 0 as *mut i8;
 
     for n in 0..g_numBots {

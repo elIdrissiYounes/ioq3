@@ -256,7 +256,6 @@ pub const JERR_BAD_ALLOC_CHUNK: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 2
 pub const JERR_BAD_ALIGN_TYPE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 1;
 
 pub const JMSG_NOMESSAGE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 0;
-use ::libc;
 
 pub use crate::stddef_h::size_t;
 
@@ -289,10 +288,7 @@ pub use crate::jpeglib_h::JBLOCKROW;
 pub use crate::jpeglib_h::JSAMPARRAY;
 pub use crate::jpeglib_h::JSAMPROW;
 pub use crate::src::jpeg_8c::jcomapi::jpeg_destroy;
-use crate::stdlib::exit;
-use crate::stdlib::fprintf;
-use crate::stdlib::sprintf;
-use crate::stdlib::stderr;
+
 /*
  * jerror.c
  *

@@ -1044,16 +1044,6 @@ pub use crate::scales_h::C2RustUnnamed_58;
 pub use crate::src::libvorbis_1_3_6::lib::psy::masking_h::tonemasks;
 pub use crate::src::libvorbis_1_3_6::lib::psy::masking_h::ATH;
 pub use crate::src::libvorbis_1_3_6::lib::psy::scales_h::unitnorm;
-use crate::stdlib::atan;
-use crate::stdlib::ceil;
-use crate::stdlib::exp;
-use crate::stdlib::fabs;
-use crate::stdlib::floor;
-use crate::stdlib::log;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::rint;
-use crate::stdlib::sqrt;
 
 static mut stereo_threshholds: [f64; 9] = [0.0, 0.5, 1.0, 1.5, 2.5, 4.5, 8.5, 16.5, 9e10];
 
@@ -1161,7 +1151,7 @@ unsafe extern "C" fn setup_tone_curves(
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
-    let mut m: i32 = 0;
+    let mut _m: i32 = 0;
     let mut ath: [f32; 56] = [0.; 56];
     let mut workc: [[[f32; 56]; 8]; 17] = [[[0.; 56]; 8]; 17];
     let mut athc: [[f32; 56]; 8] = [[0.; 56]; 8];
@@ -1683,7 +1673,7 @@ pub unsafe extern "C" fn _vp_psy_clear(
     mut p: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
 ) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     if !p.is_null() {
         if !(*p).ath.is_null() {
             crate::stdlib::free((*p).ath as *mut libc::c_void);
@@ -2823,14 +2813,14 @@ pub unsafe extern "C" fn _vp_couple_quantize_normalize(
     }
     i = 0;
     while i < n {
-        let mut k: i32 = 0;
+        let mut _k: i32 = 0;
         let mut j: i32 = 0;
         let mut jn: i32 = if partition > n - i {
             (n) - i
         } else {
             partition
         };
-        let mut step: i32 = 0;
+        let mut _step: i32 = 0;
         let mut track: i32 = 0;
         crate::stdlib::memcpy(
             nz as *mut libc::c_void,

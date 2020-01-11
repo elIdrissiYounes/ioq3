@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod float_cast_h {
     /* Copyright (C) 2001 Erik de Castro Lopo <erikd AT mega-nerd DOT com> */
     /*
@@ -87,13 +85,7 @@ pub use crate::resampler_structs_h::silk_resampler_state_struct;
 pub use crate::resampler_structs_h::C2RustUnnamed_64;
 pub use crate::src::opus_1_2_1::silk::float::wrappers_FLP::float_cast_h::float2int;
 pub use crate::src::opus_1_2_1::silk::float::wrappers_FLP::SigProc_FLP_h::silk_float2int;
-use crate::src::opus_1_2_1::silk::process_NLSFs::silk_process_NLSFs;
-use crate::src::opus_1_2_1::silk::quant_LTP_gains::silk_quant_LTP_gains;
-use crate::src::opus_1_2_1::silk::tables_other::silk_LTPScales_table_Q14;
-use crate::src::opus_1_2_1::silk::NSQ_del_dec::silk_NSQ_del_dec_c;
-use crate::src::opus_1_2_1::silk::A2NLSF::silk_A2NLSF;
-use crate::src::opus_1_2_1::silk::NLSF2A::silk_NLSF2A;
-use crate::src::opus_1_2_1::silk::NSQ::silk_NSQ_c;
+
 pub use crate::stdlib::__int16_t;
 pub use crate::stdlib::__int32_t;
 pub use crate::stdlib::__uint16_t;
@@ -148,7 +140,7 @@ pub unsafe extern "C" fn silk_A2NLSF_FLP(
 )
 /* I    LPC order                                   */
 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut a_fix_Q16: [crate::opus_types_h::opus_int32; 16] = [0; 16];
 
     for i in 0..LPC_order {
@@ -194,7 +186,7 @@ pub unsafe extern "C" fn silk_process_NLSFs_FLP(
 )
 /* I    Previous Normalized LSFs (0 - (2^15-1))     */
 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut PredCoef_Q12: [[crate::opus_types_h::opus_int16; 16]; 2] = [[0; 16]; 2];
     crate::src::opus_1_2_1::silk::process_NLSFs::silk_process_NLSFs(

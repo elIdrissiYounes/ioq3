@@ -6,7 +6,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub use crate::bg_public_h::animation_s;
@@ -201,15 +200,7 @@ pub use crate::src::cgame::cg_syscalls::trap_S_StartSound;
 pub use crate::src::cgame::cg_syscalls::trap_SetUserCmdValue;
 pub use crate::src::cgame::cg_view::stdlib_float_h::atof;
 pub use crate::src::cgame::cg_weapons::CG_AddViewWeapon;
-use crate::stdlib::atan2;
-use crate::stdlib::cos;
-use crate::stdlib::fabs;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::sin;
-use crate::stdlib::sqrt;
-use crate::stdlib::strtod;
-use crate::stdlib::tan;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.

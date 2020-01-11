@@ -104,10 +104,7 @@ pub use crate::botlib_h::bsp_surface_s;
 pub use crate::botlib_h::bsp_surface_t;
 pub use crate::botlib_h::bsp_trace_s;
 pub use crate::botlib_h::bsp_trace_t;
-use crate::src::botlib::be_interface::botimport;
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetClearedMemory;
-use crate::src::botlib::l_memory::GetMemory;
+
 pub use crate::src::qcommon::q_shared::byte;
 pub use crate::src::qcommon::q_shared::cplane_s;
 pub use crate::src::qcommon::q_shared::cplane_t;
@@ -124,15 +121,7 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strncmp;
-use crate::stdlib::vsnprintf;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -1256,7 +1245,7 @@ pub unsafe extern "C" fn PS_ReadNumber(
     mut token: *mut crate::src::botlib::l_script::token_t,
 ) -> i32 {
     let mut len: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut octal: i32 = 0;
     let mut dot: i32 = 0;
     let mut c: i8 = 0;
@@ -1376,7 +1365,7 @@ pub unsafe extern "C" fn PS_ReadNumber(
         }
     }
 
-    for i in 0..2 {
+    for _i in 0..2 {
         c = *(*script).script_p;
 
         if (c as i32 == 'l' as i32 || c as i32 == 'L' as i32) && (*token).subtype & 0x2000 == 0 {

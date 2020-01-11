@@ -19,7 +19,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub mod stdlib_h {
@@ -235,15 +234,11 @@ pub use crate::src::game::g_syscalls::trap_SendServerCommand;
 pub use crate::src::game::g_syscalls::trap_SetConfigstring;
 pub use crate::src::game::g_syscalls::trap_SetUserinfo;
 pub use crate::src::game::g_team::OnSameTeam;
-use crate::src::game::g_team::Team_GetLocationMsg;
+
 pub use crate::src::game::g_utils::vtos;
 pub use crate::src::game::g_utils::G_FreeEntity;
 pub use crate::src::game::g_utils::G_Spawn;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::strcat;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
+
 pub use crate::stdlib::strtod;
 pub use crate::stdlib::strtol;
 /*
@@ -416,7 +411,7 @@ ConcatArgs
 #[no_mangle]
 
 pub unsafe extern "C" fn ConcatArgs(mut start: i32) -> *mut i8 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut c: i32 = 0;
     let mut tlen: i32 = 0;
     static mut line: [i8; 1024] = [0; 1024];
@@ -464,7 +459,7 @@ StringIsInteger
 pub unsafe extern "C" fn StringIsInteger(
     mut s: *const i8,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut len: i32 = 0;
     let mut foundDigit: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
@@ -558,7 +553,7 @@ Give items to a client
 pub unsafe extern "C" fn Cmd_Give_f(mut ent: *mut crate::g_local_h::gentity_t) {
     let mut name: *mut i8 = 0 as *mut i8;
     let mut it: *mut crate::bg_public_h::gitem_t = 0 as *mut crate::bg_public_h::gitem_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut give_all: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     let mut it_ent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
@@ -2157,11 +2152,11 @@ pub unsafe extern "C" fn Cmd_Vote_f(mut ent: *mut crate::g_local_h::gentity_t) {
         if ::std::mem::size_of::<i8>() > 1 {
             if 0 != 0 {
                 let mut __c: i32 = msg[0] as i32;
-                __res = (if __c < -(128) || __c > 255 {
+                __res = if __c < -(128) || __c > 255 {
                     __c
                 } else {
                     *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
-                })
+                }
             } else {
                 __res = tolower(msg[0] as i32)
             }
@@ -2528,11 +2523,11 @@ pub unsafe extern "C" fn Cmd_TeamVote_f(mut ent: *mut crate::g_local_h::gentity_
         if ::std::mem::size_of::<i8>() > 1 {
             if 0 != 0 {
                 let mut __c: i32 = msg[0] as i32;
-                __res = (if __c < -(128) || __c > 255 {
+                __res = if __c < -(128) || __c > 255 {
                     __c
                 } else {
                     *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
-                })
+                }
             } else {
                 __res = tolower(msg[0] as i32)
             }
@@ -2575,7 +2570,7 @@ pub unsafe extern "C" fn Cmd_SetViewpos_f(mut ent: *mut crate::g_local_h::gentit
     let mut origin: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut angles: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut buffer: [i8; 1024] = [0; 1024];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if crate::src::game::g_main::g_cheats.integer == 0 {
         crate::src::game::g_syscalls::trap_SendServerCommand(
             ent.wrapping_offset_from(crate::src::game::g_main::g_entities.as_mut_ptr()) as i32,
@@ -2618,7 +2613,7 @@ Cmd_Stats_f
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Cmd_Stats_f(mut ent: *mut crate::g_local_h::gentity_t) {
+pub unsafe extern "C" fn Cmd_Stats_f(mut _ent: *mut crate::g_local_h::gentity_t) {
     /*
         int max, n, i;
 

@@ -13,14 +13,7 @@ pub use crate::opus_types_h::opus_uint32;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_ctx;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_dec;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_window;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf;
-use crate::stdlib::memset;
 
-use crate::src::opus_1_2_1::silk::code_signs::silk_decode_signs;
-use crate::src::opus_1_2_1::silk::shell_coder::silk_shell_decoder;
-use crate::src::opus_1_2_1::silk::tables_other::silk_lsb_iCDF;
-use crate::src::opus_1_2_1::silk::tables_pulses_per_block::silk_pulses_per_block_iCDF;
-use crate::src::opus_1_2_1::silk::tables_pulses_per_block::silk_rate_levels_iCDF;
 /* **********************************************************************
 Copyright (c) 2006-2011, Skype Limited. All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -344,8 +337,8 @@ pub unsafe extern "C" fn silk_decode_pulses(
 /* I    Frame length                                */
 {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _j: i32 = 0;
+    let mut _k: i32 = 0;
     let mut iter: i32 = 0;
     let mut abs_q: i32 = 0;
     let mut nLS: i32 = 0;
@@ -437,7 +430,7 @@ pub unsafe extern "C" fn silk_decode_pulses(
 
             for k in 0..16 {
                 abs_q = *pulses_ptr.offset(k as isize) as i32;
-                for j in 0..nLS {
+                for _j in 0..nLS {
                     abs_q = ((abs_q as crate::opus_types_h::opus_uint32) << 1)
                         as crate::opus_types_h::opus_int32;
 

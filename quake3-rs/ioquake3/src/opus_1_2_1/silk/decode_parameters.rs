@@ -13,15 +13,7 @@ pub use crate::opus_types_h::opus_uint32;
 pub use crate::resampler_structs_h::_silk_resampler_state_struct;
 pub use crate::resampler_structs_h::silk_resampler_state_struct;
 pub use crate::resampler_structs_h::C2RustUnnamed_64;
-use crate::src::opus_1_2_1::silk::bwexpander::silk_bwexpander;
-use crate::src::opus_1_2_1::silk::decode_pitch::silk_decode_pitch;
-use crate::src::opus_1_2_1::silk::gain_quant::silk_gains_dequant;
-use crate::src::opus_1_2_1::silk::tables_LTP::silk_LTP_vq_ptrs_Q7;
-use crate::src::opus_1_2_1::silk::tables_other::silk_LTPScales_table_Q14;
-use crate::src::opus_1_2_1::silk::NLSF_decode::silk_NLSF_decode;
-use crate::src::opus_1_2_1::silk::NLSF2A::silk_NLSF2A;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
+
 pub use crate::structs_h::silk_CNG_struct;
 pub use crate::structs_h::silk_NLSF_CB_struct;
 pub use crate::structs_h::silk_PLC_struct;
@@ -337,7 +329,7 @@ pub unsafe extern "C" fn silk_decode_parameters(
 /* I    The type of conditional coding to use       */
 {
     let mut i: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut Ix: i32 = 0;
     let mut pNLSF_Q15: [crate::opus_types_h::opus_int16; 16] = [0; 16];
     let mut pNLSF0_Q15: [crate::opus_types_h::opus_int16; 16] = [0; 16];

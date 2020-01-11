@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod q_shared_h {
     /*
     ===========================================================================
@@ -251,7 +249,6 @@ pub mod q_shared_h {
         *v.offset(1) = -*v.offset(1);
         *v.offset(2) = -*v.offset(2);
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -482,7 +479,7 @@ pub use crate::src::game::g_syscalls::trap_LinkEntity;
 pub use crate::src::game::g_syscalls::trap_SetBrushModel;
 pub use crate::src::game::g_syscalls::trap_Trace;
 pub use crate::src::game::g_syscalls::trap_UnlinkEntity;
-use crate::src::game::g_team::Team_DroppedFlagThink;
+
 pub use crate::src::game::g_utils::tv;
 pub use crate::src::game::g_utils::vtos;
 pub use crate::src::game::g_utils::G_AddEvent;
@@ -494,9 +491,6 @@ pub use crate::src::game::g_utils::G_SoundIndex;
 pub use crate::src::game::g_utils::G_Spawn;
 pub use crate::src::game::g_utils::G_TempEntity;
 pub use crate::src::game::g_utils::G_UseTargets;
-use crate::stdlib::fabs;
-use crate::stdlib::sqrt;
-use crate::stdlib::strcmp;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -609,7 +603,7 @@ pub unsafe extern "C" fn G_TransposeMatrix(
     mut transpose: *mut crate::src::qcommon::q_shared::vec3_t,
 ) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     i = 0;
     while i < 3 {
         for j in 0..3 {
@@ -894,7 +888,7 @@ pub unsafe extern "C" fn G_MoverPush(
     mut obstacle: *mut *mut crate::g_local_h::gentity_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut i: i32 = 0;
-    let mut e: i32 = 0;
+    let mut _e: i32 = 0;
     let mut check: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut mins: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut maxs: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -1611,7 +1605,7 @@ Touch_DoorTriggerSpectator
 unsafe extern "C" fn Touch_DoorTriggerSpectator(
     mut ent: *mut crate::g_local_h::gentity_t,
     mut other: *mut crate::g_local_h::gentity_t,
-    mut trace: *mut crate::src::qcommon::q_shared::trace_t,
+    mut _trace: *mut crate::src::qcommon::q_shared::trace_t,
 ) {
     let mut axis: i32 = 0;
     let mut doorMin: f32 = 0.;
@@ -1679,7 +1673,7 @@ pub unsafe extern "C" fn Think_SpawnNewDoorTrigger(mut ent: *mut crate::g_local_
     let mut other: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut mins: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut maxs: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut best: i32 = 0;
     if ent.is_null() {
         return;
@@ -1897,7 +1891,7 @@ Don't allow decent if a living player is on it
 pub unsafe extern "C" fn Touch_Plat(
     mut ent: *mut crate::g_local_h::gentity_t,
     mut other: *mut crate::g_local_h::gentity_t,
-    mut trace: *mut crate::src::qcommon::q_shared::trace_t,
+    mut _trace: *mut crate::src::qcommon::q_shared::trace_t,
 ) {
     if (*other).client.is_null()
         || (*(*other).client).ps.stats[crate::bg_public_h::STAT_HEALTH as usize] <= 0
@@ -1921,7 +1915,7 @@ If the plat is at the bottom position, start it going up
 pub unsafe extern "C" fn Touch_PlatCenterTrigger(
     mut ent: *mut crate::g_local_h::gentity_t,
     mut other: *mut crate::g_local_h::gentity_t,
-    mut trace: *mut crate::src::qcommon::q_shared::trace_t,
+    mut _trace: *mut crate::src::qcommon::q_shared::trace_t,
 ) {
     if (*other).client.is_null() {
         return;
@@ -2092,7 +2086,7 @@ Touch_Button
 pub unsafe extern "C" fn Touch_Button(
     mut ent: *mut crate::g_local_h::gentity_t,
     mut other: *mut crate::g_local_h::gentity_t,
-    mut trace: *mut crate::src::qcommon::q_shared::trace_t,
+    mut _trace: *mut crate::src::qcommon::q_shared::trace_t,
 ) {
     if (*other).client.is_null() {
         return;

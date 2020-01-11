@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod q_shared_h {
 
     #[inline]
@@ -27,7 +25,6 @@ pub mod q_shared_h {
                 + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -293,7 +290,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::sqrt;
+
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -593,7 +590,7 @@ pub unsafe extern "C" fn CG_PointContents(
     mut point: *const crate::src::qcommon::q_shared::vec_t,
     mut passEntityNum: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut ent: *mut crate::src::qcommon::q_shared::entityState_t =
         0 as *mut crate::src::qcommon::q_shared::entityState_t;
     let mut cent: *mut crate::cg_local_h::centity_t = 0 as *mut crate::cg_local_h::centity_t;
@@ -782,7 +779,7 @@ Predict push triggers and items
 */
 
 unsafe extern "C" fn CG_TouchTriggerPrediction() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut trace: crate::src::qcommon::q_shared::trace_t =
         crate::src::qcommon::q_shared::trace_t {
             allsolid: crate::src::qcommon::q_shared::qfalse,

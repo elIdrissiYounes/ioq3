@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::bg_public_h::gitem_s;
 pub use crate::bg_public_h::gitem_t;
 pub use crate::bg_public_h::holdable_t;
@@ -217,9 +215,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::cos;
-use crate::stdlib::fabs;
-use crate::stdlib::sin;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -1007,7 +1003,7 @@ BG_FindItemForPowerup
 pub unsafe extern "C" fn BG_FindItemForPowerup(
     mut pw: crate::bg_public_h::powerup_t,
 ) -> *mut crate::bg_public_h::gitem_t {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in 0..bg_numItems {
         if (bg_itemlist[i as usize].giType == crate::bg_public_h::IT_POWERUP
@@ -1031,7 +1027,7 @@ BG_FindItemForHoldable
 pub unsafe extern "C" fn BG_FindItemForHoldable(
     mut pw: crate::bg_public_h::holdable_t,
 ) -> *mut crate::bg_public_h::gitem_t {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in 0..bg_numItems {
         if bg_itemlist[i as usize].giType == crate::bg_public_h::IT_HOLDABLE
@@ -1522,7 +1518,7 @@ pub unsafe extern "C" fn BG_PlayerStateToEntityState(
     mut s: *mut crate::src::qcommon::q_shared::entityState_t,
     mut snap: crate::src::qcommon::q_shared::qboolean,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if (*ps).pm_type == crate::bg_public_h::PM_INTERMISSION as i32
         || (*ps).pm_type == crate::bg_public_h::PM_SPECTATOR as i32
     {
@@ -1607,7 +1603,7 @@ pub unsafe extern "C" fn BG_PlayerStateToEntityStateExtraPolate(
     mut time: i32,
     mut snap: crate::src::qcommon::q_shared::qboolean,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if (*ps).pm_type == crate::bg_public_h::PM_INTERMISSION as i32
         || (*ps).pm_type == crate::bg_public_h::PM_SPECTATOR as i32
     {

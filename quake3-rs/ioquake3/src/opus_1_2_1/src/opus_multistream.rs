@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::opus_private_h::ChannelLayout;
 /* Copyright (c) 2011 Xiph.Org Foundation
 Written by Jean-Marc Valin */
@@ -32,7 +30,7 @@ Written by Jean-Marc Valin */
 pub unsafe extern "C" fn validate_layout(
     mut layout: *const crate::opus_private_h::ChannelLayout,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut max_channel: i32 = 0;
     max_channel = (*layout).nb_streams + (*layout).nb_coupled_streams;
     if max_channel > 255 {
@@ -55,7 +53,7 @@ pub unsafe extern "C" fn get_left_channel(
     mut stream_id: i32,
     mut prev: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in if prev < 0 { 0 } else { (prev) + 1 }..(*layout).nb_channels {
         if (*layout).mapping[i as usize] as i32 == stream_id * 2 {
@@ -71,7 +69,7 @@ pub unsafe extern "C" fn get_right_channel(
     mut stream_id: i32,
     mut prev: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in if prev < 0 { 0 } else { (prev) + 1 }..(*layout).nb_channels {
         if (*layout).mapping[i as usize] as i32 == stream_id * 2 + 1 {
@@ -87,7 +85,7 @@ pub unsafe extern "C" fn get_mono_channel(
     mut stream_id: i32,
     mut prev: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in if prev < 0 { 0 } else { (prev) + 1 }..(*layout).nb_channels {
         if (*layout).mapping[i as usize] as i32 == stream_id + (*layout).nb_coupled_streams {

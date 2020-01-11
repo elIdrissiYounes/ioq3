@@ -189,7 +189,6 @@ pub use crate::src::jpeg_8c::jerror::JWRN_JPEG_EOF;
 pub use crate::src::jpeg_8c::jerror::JWRN_MUST_RESYNC;
 pub use crate::src::jpeg_8c::jerror::JWRN_NOT_SEQUENTIAL;
 pub use crate::src::jpeg_8c::jerror::JWRN_TOO_MUCH_DATA;
-use crate::stdlib::memset;
 
 pub type arith_entropy_ptr = *mut arith_entropy_encoder;
 
@@ -538,7 +537,7 @@ unsafe extern "C" fn emit_restart(
     mut restart_num: i32,
 ) {
     let mut entropy: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
     finish_pass(cinfo);
@@ -588,7 +587,7 @@ unsafe extern "C" fn encode_mcu_DC_first(
     let mut entropy: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
     let mut block: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
     let mut st: *mut u8 = 0 as *mut u8;
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     let mut ci: i32 = 0;
     let mut tbl: i32 = 0;
     let mut v: i32 = 0;
@@ -822,7 +821,7 @@ unsafe extern "C" fn encode_mcu_DC_refine(
     let mut entropy: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
     let mut st: *mut u8 = 0 as *mut u8;
     let mut Al: i32 = 0;
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     /* Emit restart marker if needed */
     if (*cinfo).restart_interval != 0 {
         if (*entropy).restarts_to_go == 0 {
@@ -981,7 +980,7 @@ unsafe extern "C" fn encode_mcu(
         0 as *mut crate::jpeglib_h::jpeg_component_info;
     let mut block: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
     let mut st: *mut u8 = 0 as *mut u8;
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     let mut ci: i32 = 0;
     let mut tbl: i32 = 0;
     let mut k: i32 = 0;
@@ -1166,7 +1165,7 @@ unsafe extern "C" fn start_pass(
     mut gather_statistics: crate::jmorecfg_h::boolean,
 ) {
     let mut entropy: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     let mut tbl: i32 = 0;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
@@ -1339,7 +1338,7 @@ unsafe extern "C" fn start_pass(
 
 pub unsafe extern "C" fn jinit_arith_encoder(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
     let mut entropy: arith_entropy_ptr = 0 as *mut arith_entropy_encoder;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     entropy = Some(
         (*(*cinfo).mem)
             .alloc_small

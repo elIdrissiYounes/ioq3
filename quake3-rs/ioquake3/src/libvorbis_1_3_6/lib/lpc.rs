@@ -1,6 +1,5 @@
 use ::libc;
 
-use crate::stdlib::memset;
 /* *******************************************************************
 *                                                                  *
 * THIS FILE IS PART OF THE OggVorbis SOFTWARE CODEC SOURCE CODE.   *
@@ -169,7 +168,7 @@ pub unsafe extern "C" fn vorbis_lpc_predict(
          prime[0...m-1] initial values (allocated size of n+m-1)
     out: data[0...n-1] data samples */
     let mut i: isize = 0;
-    let mut j: isize = 0;
+    let mut _j: isize = 0;
     let mut o: isize = 0;
     let mut p: isize = 0;
     let mut y: f32 = 0.;
@@ -197,7 +196,7 @@ pub unsafe extern "C" fn vorbis_lpc_predict(
         o = i;
         p = m as isize;
 
-        for j in 0..m as isize {
+        for _j in 0..m as isize {
             let fresh4 = o;
 
             o = o + 1;

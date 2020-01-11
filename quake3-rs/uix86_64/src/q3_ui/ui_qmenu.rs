@@ -275,10 +275,7 @@ pub use crate::src::ui::ui_syscalls::trap_Error;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 pub use crate::src::ui::ui_syscalls::trap_R_SetColor;
 pub use crate::src::ui::ui_syscalls::trap_S_RegisterSound;
-use crate::stdlib::sin;
-use crate::stdlib::strcat;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
+
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -1143,7 +1140,7 @@ pub unsafe extern "C" fn ScrollList_Key(
     let mut x: i32 = 0;
     let mut y: i32 = 0;
     let mut w: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut c: i32 = 0;
     let mut cursorx: i32 = 0;
@@ -1450,7 +1447,7 @@ pub unsafe extern "C" fn ScrollList_Draw(mut l: *mut crate::ui_local_h::menulist
     let mut x: i32 = 0;
     let mut u: i32 = 0;
     let mut y: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut base: i32 = 0;
     let mut column: i32 = 0;
     let mut color: *mut f32 = 0 as *mut f32;
@@ -1722,7 +1719,7 @@ Menu_Draw
 #[no_mangle]
 
 pub unsafe extern "C" fn Menu_Draw(mut menu: *mut crate::ui_local_h::menuframework_s) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut itemptr: *mut crate::ui_local_h::menucommon_s =
         0 as *mut crate::ui_local_h::menucommon_s;
 
@@ -1807,7 +1804,7 @@ Menu_ActivateItem
 #[no_mangle]
 
 pub unsafe extern "C" fn Menu_ActivateItem(
-    mut s: *mut crate::ui_local_h::menuframework_s,
+    mut _s: *mut crate::ui_local_h::menuframework_s,
     mut item: *mut crate::ui_local_h::menucommon_s,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
     if (*item).callback.is_some() {

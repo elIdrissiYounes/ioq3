@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::stddef_h::size_t;
 
 pub use crate::jmorecfg_h::boolean;
@@ -337,7 +335,7 @@ unsafe extern "C" fn set_wraparound_pointers(mut cinfo: crate::jpeglib_h::j_deco
 {
     let mut main_ptr: my_main_ptr = (*cinfo).main as my_main_ptr; /* height of a row group of component */
     let mut ci: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut rgroup: i32 = 0;
     let mut M: i32 = (*cinfo).min_DCT_v_scaled_size;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
@@ -382,7 +380,7 @@ unsafe extern "C" fn set_bottom_pointers(mut cinfo: crate::jpeglib_h::j_decompre
 {
     let mut main_ptr: my_main_ptr = (*cinfo).main as my_main_ptr;
     let mut ci: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut rgroup: i32 = 0;
     let mut iMCUheight: i32 = 0;
     let mut rows_left: i32 = 0;

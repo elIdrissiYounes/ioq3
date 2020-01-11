@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod stdlib_h {
     #[inline]
 
@@ -102,7 +100,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::sscanf;
+
 pub use crate::stdlib::strtol;
 /*
 ===========================================================================

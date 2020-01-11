@@ -57,20 +57,16 @@ pub use crate::src::qcommon::q_shared::qtrue;
 pub use crate::src::qcommon::q_shared::va;
 pub use crate::src::qcommon::q_shared::Q_CountChar;
 pub use crate::src::qcommon::q_shared::Q_strncpyz;
-use crate::src::qcommon::q_shared::ShortSwap;
+
 pub use crate::src::qcommon::q_shared::ERR_DISCONNECT;
 pub use crate::src::qcommon::q_shared::ERR_DROP;
 pub use crate::src::qcommon::q_shared::ERR_FATAL;
 pub use crate::src::qcommon::q_shared::ERR_NEED_CD;
 pub use crate::src::qcommon::q_shared::ERR_SERVERDISCONNECT;
 pub use crate::src::sys::sys_unix::Sys_Milliseconds;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
+
 pub use crate::stdlib::strtol;
-use crate::stdlib::vsnprintf;
+
 //=============================================================================
 
 pub type packetQueue_t = packetQueue_s;
@@ -577,7 +573,7 @@ pub unsafe extern "C" fn NET_SendLoopPacket(
     mut sock: crate::qcommon_h::netsrc_t,
     mut length: i32,
     mut data: *const libc::c_void,
-    mut to: crate::qcommon_h::netadr_t,
+    mut _to: crate::qcommon_h::netadr_t,
 ) {
     let mut i: i32 = 0;
     let mut loop_0: *mut loopback_t = 0 as *mut loopback_t;
@@ -749,7 +745,7 @@ pub unsafe extern "C" fn NET_OutOfBandData(
     mut len: i32,
 ) {
     let mut string: [crate::src::qcommon::q_shared::byte; 32768] = [0; 32768];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut mbuf: crate::qcommon_h::msg_t = crate::qcommon_h::msg_t {
         allowoverflow: crate::src::qcommon::q_shared::qfalse,
         overflowed: crate::src::qcommon::q_shared::qfalse,

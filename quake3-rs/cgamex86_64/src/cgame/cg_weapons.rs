@@ -36,7 +36,6 @@ pub mod q_shared_h {
         *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
         *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -380,10 +379,9 @@ pub use crate::src::cgame::cg_syscalls::trap_S_AddLoopingSound;
 pub use crate::src::cgame::cg_syscalls::trap_S_RegisterSound;
 pub use crate::src::cgame::cg_syscalls::trap_S_StartSound;
 pub use crate::src::cgame::cg_weapons::stdlib_h::atoi;
-use crate::stdlib::memset;
+
 pub use crate::stdlib::rand;
-use crate::stdlib::sin;
-use crate::stdlib::sqrt;
+
 pub use crate::stdlib::strtol;
 /*
 ===========================================================================
@@ -928,7 +926,7 @@ CG_GrappleTrail
 
 pub unsafe extern "C" fn CG_GrappleTrail(
     mut ent: *mut crate::cg_local_h::centity_t,
-    mut wi: *const crate::cg_local_h::weaponInfo_t,
+    mut _wi: *const crate::cg_local_h::weaponInfo_t,
 ) {
     let mut origin: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut es: *mut crate::src::qcommon::q_shared::entityState_t =
@@ -1039,7 +1037,7 @@ pub unsafe extern "C" fn CG_RegisterWeapon(mut weaponNum: i32) {
     let mut path: [i8; 64] = [0; 64];
     let mut mins: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut maxs: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     weaponInfo = &mut *crate::src::cgame::cg_main::cg_weapons
         .as_mut_ptr()
         .offset(weaponNum as isize) as *mut crate::cg_local_h::weaponInfo_t;
@@ -1653,7 +1651,7 @@ unsafe extern "C" fn CG_LightningBolt(
         && crate::src::cgame::cg_main::cg_trueLightning.value != 0f32
     {
         let mut angle: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
 
         for i in 0..3 {
             let mut a: f32 = (*cent).lerpAngles[i as usize]
@@ -1834,7 +1832,7 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
     mut parent: *mut crate::tr_types_h::refEntity_t,
     mut ps: *mut crate::src::qcommon::q_shared::playerState_t,
     mut cent: *mut crate::cg_local_h::centity_t,
-    mut team: i32,
+    mut _team: i32,
 ) {
     let mut gun: crate::tr_types_h::refEntity_t = crate::tr_types_h::refEntity_t {
         reType: crate::tr_types_h::RT_MODEL,
@@ -2625,7 +2623,7 @@ pub unsafe extern "C" fn CG_MissileHitWall(
     mut clientNum: i32,
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut dir: *mut crate::src::qcommon::q_shared::vec_t,
-    mut soundType: crate::cg_local_h::impactSound_t,
+    mut _soundType: crate::cg_local_h::impactSound_t,
 ) {
     let mut mod_0: crate::src::qcommon::q_shared::qhandle_t = 0;
     let mut mark: crate::src::qcommon::q_shared::qhandle_t = 0;

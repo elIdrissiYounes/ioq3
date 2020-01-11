@@ -95,27 +95,7 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::fabs;
-use crate::stdlib::sprintf;
-use crate::stdlib::vsnprintf;
 
-use crate::src::botlib::be_interface::botimport;
-use crate::src::botlib::l_log::Log_Write;
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetClearedMemory;
-use crate::src::botlib::l_memory::GetMemory;
-use crate::stdlib::ctime;
-use crate::stdlib::free;
-use crate::stdlib::labs;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strncat;
-use crate::stdlib::time;
 //end of the function PC_Directive_endif
 //============================================================================
 //
@@ -528,7 +508,7 @@ pub unsafe extern "C" fn PC_ReadDefineParms(
         0 as *mut crate::src::botlib::l_script::token_t;
     let mut last: *mut crate::src::botlib::l_script::token_t =
         0 as *mut crate::src::botlib::l_script::token_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut done: i32 = 0;
     let mut lastcomma: i32 = 0;
     let mut numparms: i32 = 0;
@@ -1293,7 +1273,7 @@ pub unsafe extern "C" fn PC_ExpandDefine(
         next: 0 as *mut crate::src::botlib::l_script::token_s,
     };
     let mut parmnum: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     //if it is a builtin define
     if (*define).builtin != 0 {
         return PC_ExpandBuiltinDefine(source, deftoken, define, firsttoken, lasttoken);
@@ -2193,7 +2173,7 @@ pub unsafe extern "C" fn PC_RemoveAllGlobalDefines() {
 #[no_mangle]
 
 pub unsafe extern "C" fn PC_CopyDefine(
-    mut source: *mut crate::src::botlib::l_precomp::source_t,
+    mut _source: *mut crate::src::botlib::l_precomp::source_t,
     mut define: *mut crate::src::botlib::l_precomp::define_t,
 ) -> *mut crate::src::botlib::l_precomp::define_t {
     let mut newdefine: *mut crate::src::botlib::l_precomp::define_t =
@@ -4721,7 +4701,7 @@ pub unsafe extern "C" fn FreeSource(mut source: *mut crate::src::botlib::l_preco
         0 as *mut crate::src::botlib::l_precomp::define_t;
     let mut indent: *mut crate::src::botlib::l_precomp::indent_t =
         0 as *mut crate::src::botlib::l_precomp::indent_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     //PC_PrintDefineHashTable(source->definehash);
     //free all the scripts
     while !(*source).scriptstack.is_null() {

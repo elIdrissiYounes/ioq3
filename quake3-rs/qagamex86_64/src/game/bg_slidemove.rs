@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod q_shared_h {
 
     #[inline]
@@ -140,7 +138,7 @@ pub unsafe extern "C" fn PM_SlideMove(
     let mut primal_velocity: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut clipVelocity: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut k: i32 = 0;
     let mut trace: crate::src::qcommon::q_shared::trace_t =
         crate::src::qcommon::q_shared::trace_t {

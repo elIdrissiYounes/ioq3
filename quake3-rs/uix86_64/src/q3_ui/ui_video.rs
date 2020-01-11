@@ -45,9 +45,7 @@ pub use crate::src::ui::ui_syscalls::trap_Cvar_SetValue;
 pub use crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer;
 pub use crate::src::ui::ui_syscalls::trap_Cvar_VariableValue;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
-use crate::stdlib::memset;
-use crate::stdlib::strchr;
-use crate::stdlib::strlen;
+
 pub use crate::stdlib::strtol;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
@@ -277,7 +275,7 @@ DriverInfo_MenuDraw
 */
 
 unsafe extern "C" fn DriverInfo_MenuDraw() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut y: i32 = 0;
     crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut s_driverinfo.menu);
     crate::src::q3_ui::ui_atoms::UI_DrawString(
@@ -399,7 +397,7 @@ UI_DriverInfo_Menu
 
 unsafe extern "C" fn UI_DriverInfo_Menu() {
     let mut eptr: *mut i8 = 0 as *mut i8;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut len: i32 = 0;
     // zero set all our globals
     crate::stdlib::memset(
@@ -1556,7 +1554,7 @@ GraphicsOptions_ApplyChanges
 */
 
 unsafe extern "C" fn GraphicsOptions_ApplyChanges(
-    mut unused: *mut libc::c_void,
+    mut _unused: *mut libc::c_void,
     mut notification: i32,
 ) {
     if notification != 3 {
@@ -1821,7 +1819,7 @@ GraphicsOptions_TQEvent
 ================
 */
 
-unsafe extern "C" fn GraphicsOptions_TQEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+unsafe extern "C" fn GraphicsOptions_TQEvent(mut _ptr: *mut libc::c_void, mut event: i32) {
     if event != 3 {
         return;
     }

@@ -43,11 +43,7 @@ pub use crate::src::ui::ui_syscalls::trap_FS_FOpenFile;
 pub use crate::src::ui::ui_syscalls::trap_FS_GetFileList;
 pub use crate::src::ui::ui_syscalls::trap_FS_Read;
 pub use crate::src::ui::ui_syscalls::trap_Print;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strstr;
+
 pub use crate::stdlib::strtol;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
@@ -437,7 +433,7 @@ UI_GetArenaInfoByNumber
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_GetArenaInfoByNumber(mut num: i32) -> *const i8 {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut value: *mut i8 = 0 as *mut i8;
     if num < 0 || num >= ui_numArenas {
         crate::src::ui::ui_syscalls::trap_Print(crate::src::qcommon::q_shared::va(
@@ -467,7 +463,7 @@ UI_GetArenaInfoByNumber
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_GetArenaInfoByMap(mut map: *const i8) -> *const i8 {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
 
     for n in 0..ui_numArenas {
         if crate::src::qcommon::q_shared::Q_stricmp(
@@ -491,7 +487,7 @@ UI_GetSpecialArenaInfo
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_GetSpecialArenaInfo(mut tag: *const i8) -> *const i8 {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
 
     for n in 0..ui_numArenas {
         if crate::src::qcommon::q_shared::Q_stricmp(
@@ -637,7 +633,7 @@ UI_GetBotInfoByName
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_GetBotInfoByName(mut name: *const i8) -> *mut i8 {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut value: *mut i8 = 0 as *mut i8;
 
     for n in 0..ui_numBots {
@@ -665,7 +661,7 @@ Returns the player's best finish on a given level, 0 if the have not played the 
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_GetBestScore(mut level: i32, mut score: *mut i32, mut skill: *mut i32) {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut skillScore: i32 = 0;
     let mut bestScore: i32 = 0;
     let mut bestScoreSkill: i32 = 0;
@@ -1099,8 +1095,8 @@ UI_SPUnlock_f
 pub unsafe extern "C" fn UI_SPUnlock_f() {
     let mut arenaKey: [i8; 16] = [0; 16];
     let mut scores: [i8; 1024] = [0; 1024];
-    let mut level: i32 = 0;
-    let mut tier: i32 = 0;
+    let mut _level: i32 = 0;
+    let mut _tier: i32 = 0;
     // get scores for skill 1
     crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer(
         b"g_spScores1\x00" as *const u8 as *const i8,
@@ -1143,7 +1139,7 @@ UI_SPUnlockMedals_f
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_SPUnlockMedals_f() {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut key: [i8; 16] = [0; 16];
     let mut awardData: [i8; 1024] = [0; 1024];
     crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer(

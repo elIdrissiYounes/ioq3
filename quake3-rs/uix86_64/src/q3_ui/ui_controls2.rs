@@ -361,11 +361,7 @@ pub use crate::src::ui::ui_syscalls::trap_Key_KeynumToStringBuf;
 pub use crate::src::ui::ui_syscalls::trap_Key_SetBinding;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterModel;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
-use crate::stdlib::fabs;
-use crate::stdlib::memset;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
+
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -2599,7 +2595,7 @@ Controls_StatusBar
 =================
 */
 
-unsafe extern "C" fn Controls_StatusBar(mut self_0: *mut libc::c_void) {
+unsafe extern "C" fn Controls_StatusBar(mut _self_0: *mut libc::c_void) {
     crate::src::q3_ui::ui_atoms::UI_DrawString(
         (640f64 * 0.50) as i32,
         (480f64 * 0.80) as i32,

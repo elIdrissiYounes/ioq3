@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::qfiles_h::drawVert_t;
 pub use crate::qfiles_h::dshader_t;
 pub use crate::qfiles_h::md3Header_t;
@@ -384,7 +382,7 @@ unsafe extern "C" fn R_DlightFace(
     mut dlightBits: i32,
 ) -> i32 {
     let mut d: f32 = 0.;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut dl: *mut crate::tr_local_h::dlight_t = 0 as *mut crate::tr_local_h::dlight_t;
 
     for i in 0..crate::src::renderergl1::tr_main::tr.refdef.num_dlights {
@@ -416,7 +414,7 @@ unsafe extern "C" fn R_DlightGrid(
     mut grid: *mut crate::tr_local_h::srfGridMesh_t,
     mut dlightBits: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut dl: *mut crate::tr_local_h::dlight_t = 0 as *mut crate::tr_local_h::dlight_t;
 
     for i in 0..crate::src::renderergl1::tr_main::tr.refdef.num_dlights {

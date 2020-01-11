@@ -1,8 +1,5 @@
 use ::libc;
 
-use crate::stdlib::memcpy;
-use crate::stdlib::strlen;
-
 static mut consoleLog: [i8; 32768] = [0; 32768];
 
 static mut writePos: u32 = 0;

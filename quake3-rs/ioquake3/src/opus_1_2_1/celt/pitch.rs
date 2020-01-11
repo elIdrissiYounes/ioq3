@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod entcode_h {
     /* Tested exhaustively for all n and for 1<=d<=256 */
     #[inline]
@@ -23,7 +21,7 @@ pub mod pitch_h {
         mut xy1: *mut crate::arch_h::opus_val32,
         mut xy2: *mut crate::arch_h::opus_val32,
     ) {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut xy01: crate::arch_h::opus_val32 = 0f32;
         let mut xy02: crate::arch_h::opus_val32 = 0f32;
 
@@ -151,7 +149,7 @@ pub mod pitch_h {
         mut y: *const crate::arch_h::opus_val16,
         mut N: i32,
     ) -> crate::arch_h::opus_val32 {
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
         let mut xy: crate::arch_h::opus_val32 = 0f32;
 
         for i in 0..N {
@@ -159,8 +157,6 @@ pub mod pitch_h {
         }
         return xy;
     }
-    use crate::arch_h::opus_val16;
-    use crate::arch_h::opus_val32;
 }
 
 pub use crate::arch_h::celt_sig;
@@ -169,12 +165,9 @@ pub use crate::arch_h::opus_val32;
 pub use crate::opus_types_h::opus_uint32;
 pub use crate::src::opus_1_2_1::celt::pitch::entcode_h::celt_udiv;
 pub use crate::stdlib::__uint32_t;
-use crate::stdlib::abs;
-use crate::stdlib::sqrt;
+
 pub use crate::stdlib::uint32_t;
 
-use crate::src::opus_1_2_1::celt::celt_lpc::_celt_autocorr;
-use crate::src::opus_1_2_1::celt::celt_lpc::_celt_lpc;
 pub use crate::src::opus_1_2_1::celt::pitch::pitch_h::celt_inner_prod_c;
 pub use crate::src::opus_1_2_1::celt::pitch::pitch_h::dual_inner_prod_c;
 pub use crate::src::opus_1_2_1::celt::pitch::pitch_h::xcorr_kernel_c;
@@ -218,7 +211,7 @@ unsafe extern "C" fn find_best_pitch(
     mut best_pitch: *mut i32,
 ) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut Syy: crate::arch_h::opus_val32 = 1f32;
     let mut best_num: [crate::arch_h::opus_val16; 2] = [0.; 2];
     let mut best_den: [crate::arch_h::opus_val32; 2] = [0.; 2];
@@ -271,7 +264,7 @@ unsafe extern "C" fn celt_fir5(
     mut N: i32,
     mut mem: *mut crate::arch_h::opus_val16,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut num0: crate::arch_h::opus_val16 = 0.;
     let mut num1: crate::arch_h::opus_val16 = 0.;
     let mut num2: crate::arch_h::opus_val16 = 0.;
@@ -412,7 +405,7 @@ pub unsafe extern "C" fn celt_pitch_xcorr_c(
     mut xcorr: *mut crate::arch_h::opus_val32,
     mut len: i32,
     mut max_pitch: i32,
-    mut arch: i32,
+    mut _arch: i32,
 ) {
     /* This is a simple version of the pitch correlation that should work
     well on DSPs like Blackfin and TI C5x/C6x */
@@ -449,7 +442,7 @@ pub unsafe extern "C" fn pitch_search(
     mut pitch: *mut i32,
     mut arch: i32,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut lag: i32 = 0;
     let mut best_pitch: [i32; 2] = [0, 0];
@@ -580,10 +573,10 @@ pub unsafe extern "C" fn remove_doubling(
     mut T0_: *mut i32,
     mut prev_period: i32,
     mut prev_gain: crate::arch_h::opus_val16,
-    mut arch: i32,
+    mut _arch: i32,
 ) -> crate::arch_h::opus_val16 {
     let mut k: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut T: i32 = 0;
     let mut T0: i32 = 0;
     let mut g: crate::arch_h::opus_val16 = 0.;

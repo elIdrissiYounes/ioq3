@@ -1,4 +1,3 @@
-use ::libc;
 /* **********************************************************************
 Copyright (c) 2006-2011, Skype Limited. All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -73,7 +72,7 @@ pub unsafe extern "C" fn silk_schur_FLP(
 ) -> f32
 /* I    order                                                       */ {
     let mut k: i32 = 0;
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut C: [[f64; 2]; 25] = [[0.; 2]; 25];
     let mut Ctmp1: f64 = 0.;
     let mut Ctmp2: f64 = 0.;

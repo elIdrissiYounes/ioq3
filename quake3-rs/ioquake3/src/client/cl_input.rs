@@ -200,13 +200,7 @@ pub use crate::ui_public_h::UI_SHUTDOWN;
 pub use crate::vm_local_h::vm_s;
 
 pub use crate::src::client::cl_input::stdlib_h::atoi;
-use crate::src::client::cl_keys::anykeydown;
-use crate::src::opus_1_2_1::src::opus_decoder::OpusDecoder;
-use crate::src::opus_1_2_1::src::opus_encoder::OpusEncoder;
-use crate::stdlib::fabs;
-use crate::stdlib::memset;
-use crate::stdlib::powf;
-use crate::stdlib::sqrt;
+
 pub use crate::stdlib::strtol;
 /*
 ===========================================================================
@@ -908,7 +902,7 @@ CL_MouseEvent
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn CL_MouseEvent(mut dx: i32, mut dy: i32, mut time: i32) {
+pub unsafe extern "C" fn CL_MouseEvent(mut dx: i32, mut dy: i32, mut _time: i32) {
     if crate::src::client::cl_keys::Key_GetCatcher() & 0x2 != 0 {
         crate::src::qcommon::vm::VM_Call(
             crate::src::client::cl_ui::uivm,
@@ -939,7 +933,7 @@ Joystick values stay set until changed
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn CL_JoystickEvent(mut axis: i32, mut value: i32, mut time: i32) {
+pub unsafe extern "C" fn CL_JoystickEvent(mut axis: i32, mut value: i32, mut _time: i32) {
     if axis < 0 || axis >= 16 {
         crate::src::qcommon::common::Com_Error(
             crate::src::qcommon::q_shared::ERR_DROP as i32,
@@ -1124,7 +1118,7 @@ CL_CmdButtons
 #[no_mangle]
 
 pub unsafe extern "C" fn CL_CmdButtons(mut cmd: *mut crate::src::qcommon::q_shared::usercmd_t) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     //
     // figure button bits
     // send a button bit even if the key was pressed and released in

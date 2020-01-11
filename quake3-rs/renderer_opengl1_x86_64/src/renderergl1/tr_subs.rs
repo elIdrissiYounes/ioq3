@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::internal::__builtin_va_list;
 pub use crate::internal::__va_list_tag;
 pub use crate::src::jpeg_8c::jerror::C2RustUnnamed_1;
@@ -25,9 +23,9 @@ pub use crate::src::qcommon::q_shared::PRINT_ALL;
 pub use crate::src::qcommon::q_shared::PRINT_DEVELOPER;
 pub use crate::src::qcommon::q_shared::PRINT_ERROR;
 pub use crate::src::qcommon::q_shared::PRINT_WARNING;
-use crate::src::renderergl1::tr_main::ri;
+
 pub use crate::stdarg_h::va_list;
-use crate::stdlib::vsnprintf;
+
 pub use crate::tr_public_h::refimport_t;
 /*
 ===========================================================================

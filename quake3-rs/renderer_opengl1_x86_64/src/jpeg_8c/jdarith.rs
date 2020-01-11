@@ -198,7 +198,6 @@ pub use crate::src::jpeg_8c::jerror::JWRN_JPEG_EOF;
 pub use crate::src::jpeg_8c::jerror::JWRN_MUST_RESYNC;
 pub use crate::src::jpeg_8c::jerror::JWRN_NOT_SEQUENTIAL;
 pub use crate::src::jpeg_8c::jerror::JWRN_TOO_MUCH_DATA;
-use crate::stdlib::memset;
 
 pub type arith_entropy_ptr = *mut arith_entropy_decoder;
 
@@ -374,7 +373,7 @@ unsafe extern "C" fn arith_decode(
 
 unsafe extern "C" fn process_restart(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
     let mut entropy: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
     /* Advance past the RSTn marker */
@@ -448,7 +447,7 @@ unsafe extern "C" fn decode_mcu_DC_first(
     let mut entropy: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
     let mut block: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
     let mut st: *mut u8 = 0 as *mut u8;
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     let mut ci: i32 = 0;
     let mut tbl: i32 = 0;
     let mut sign: i32 = 0;
@@ -669,7 +668,7 @@ unsafe extern "C" fn decode_mcu_DC_refine(
     let mut entropy: arith_entropy_ptr = (*cinfo).entropy as arith_entropy_ptr;
     let mut st: *mut u8 = 0 as *mut u8;
     let mut p1: i32 = 0;
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     /* Process restart marker if needed */
     if (*cinfo).restart_interval != 0 {
         if (*entropy).restarts_to_go == 0 {
@@ -798,7 +797,7 @@ unsafe extern "C" fn decode_mcu(
         0 as *mut crate::jpeglib_h::jpeg_component_info;
     let mut block: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
     let mut st: *mut u8 = 0 as *mut u8;
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     let mut ci: i32 = 0;
     let mut tbl: i32 = 0;
     let mut sign: i32 = 0;
@@ -1058,7 +1057,7 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
          */
         ci = 0;
         while ci < (*cinfo).comps_in_scan {
-            let mut coefi: i32 = 0;
+            let mut _coefi: i32 = 0;
             let mut cindex: i32 = (*(*cinfo).cur_comp_info[ci as usize]).component_index;
             let mut coef_bit_ptr: *mut i32 = &mut *(*(*cinfo).coef_bits.offset(cindex as isize))
                 .as_mut_ptr()

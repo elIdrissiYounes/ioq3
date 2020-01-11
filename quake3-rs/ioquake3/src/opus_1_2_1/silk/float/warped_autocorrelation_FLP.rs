@@ -1,4 +1,3 @@
-use ::libc;
 /* **********************************************************************
 Copyright (c) 2006-2011, Skype Limited. All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -94,7 +93,7 @@ pub unsafe extern "C" fn silk_warped_autocorrelation_FLP(
 )
 /* I    Correlation order (even)                    */
 {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut i: i32 = 0;
     let mut tmp1: f64 = 0.;
     let mut tmp2: f64 = 0.;

@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod resampler_rom_h {
     /* **********************************************************************
     Copyright (c) 2006-2011, Skype Limited. All rights reserved.
@@ -33,7 +31,7 @@ pub mod resampler_rom_h {
 
     pub static mut silk_resampler_down2_1: crate::opus_types_h::opus_int16 =
         (39809i32 - 65536) as crate::opus_types_h::opus_int16;
-    use crate::opus_types_h::opus_int16;
+
     /* SILK_FIX_RESAMPLER_ROM_H */
 }
 

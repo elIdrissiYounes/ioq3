@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::opus_types_h::opus_int32;
 pub use crate::stdlib::__int32_t;
 pub use crate::stdlib::int32_t;
@@ -129,7 +127,7 @@ pub unsafe extern "C" fn silk_bwexpander_32(
 )
 /* I    Chirp factor in Q16                                         */
 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut chirp_minus_one_Q16: crate::opus_types_h::opus_int32 = chirp_Q16 - 65536;
 
     for i in 0..d - 1 {

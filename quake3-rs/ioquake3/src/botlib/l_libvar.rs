@@ -43,15 +43,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 pub type libvar_t = crate::src::botlib::l_libvar::libvar_s;
 use ::libc;
 
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetMemory;
 pub use crate::src::qcommon::q_shared::qboolean;
 pub use crate::src::qcommon::q_shared::qfalse;
 pub use crate::src::qcommon::q_shared::qtrue;
 pub use crate::src::qcommon::q_shared::Q_stricmp;
-use crate::stdlib::memset;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.

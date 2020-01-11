@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod q_shared_h {
 
     #[inline]
@@ -13,7 +11,6 @@ pub mod q_shared_h {
                 + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -160,7 +157,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::sqrt;
+
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -224,7 +221,7 @@ If the ammo has gone low enough to generate the warning, play a sound
 #[no_mangle]
 
 pub unsafe extern "C" fn CG_CheckAmmo() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut total: i32 = 0;
     let mut previous: i32 = 0;
     let mut weapons: i32 = 0;

@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod macros_h {
     #[inline]
 
@@ -95,7 +93,7 @@ pub mod Inlines_h {
         let mut err_Q32: crate::opus_types_h::opus_int32 = 0;
         let mut result: crate::opus_types_h::opus_int32 = 0;
         /* Compute number of bits head room and normalize input */
-        b_headrm = silk_CLZ32((if b32 > 0 { b32 } else { -b32 })) - 1; /* Q: b_headrm                */
+        b_headrm = silk_CLZ32(if b32 > 0 { b32 } else { -b32 }) - 1; /* Q: b_headrm                */
         b32_nrm = ((b32 as crate::opus_types_h::opus_uint32) << b_headrm)
             as crate::opus_types_h::opus_int32;
         /* Inverse of b32, with 14 bits of precision */
@@ -146,9 +144,7 @@ pub mod Inlines_h {
             return 0i32;
         };
     }
-    use crate::opus_types_h::opus_int16;
-    use crate::opus_types_h::opus_int32;
-    use crate::opus_types_h::opus_uint32;
+
     use crate::src::opus_1_2_1::silk::LPC_inv_pred_gain::macros_h::silk_CLZ32;
     /* SILK_FIX_INLINES_H */
 }
@@ -173,7 +169,7 @@ unsafe extern "C" fn LPC_inverse_pred_gain_QA_c(
 ) -> crate::opus_types_h::opus_int32
 /* I   Prediction order                                         */ {
     let mut k: i32 = 0;
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut mult2Q: i32 = 0;
     let mut invGain_Q30: crate::opus_types_h::opus_int32 = 0;
     let mut rc_Q31: crate::opus_types_h::opus_int32 = 0;
@@ -210,13 +206,11 @@ unsafe extern "C" fn LPC_inverse_pred_gain_QA_c(
             return 0i32;
         }
         mult2Q = 32
-            - silk_CLZ32(
-                (if rc_mult1_Q30 > 0 {
-                    rc_mult1_Q30
-                } else {
-                    -rc_mult1_Q30
-                }),
-            );
+            - silk_CLZ32(if rc_mult1_Q30 > 0 {
+                rc_mult1_Q30
+            } else {
+                -rc_mult1_Q30
+            });
         rc_mult2 = silk_INVERSE32_varQ(rc_mult1_Q30, mult2Q + 30);
 
         for n in 0..k + 1 >> 1 {
@@ -705,7 +699,7 @@ pub unsafe extern "C" fn silk_LPC_inverse_pred_gain_c(
     order: i32,
 ) -> crate::opus_types_h::opus_int32
 /* I   Prediction order                                             */ {
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut Atmp_QA: [crate::opus_types_h::opus_int32; 24] = [0; 24];
     let mut DC_resp: crate::opus_types_h::opus_int32 = 0;
     /* Increase Q domain of the AR coefficients */

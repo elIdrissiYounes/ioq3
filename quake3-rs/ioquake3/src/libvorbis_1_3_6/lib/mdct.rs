@@ -10,13 +10,6 @@ pub struct mdct_lookup {
 }
 use ::libc;
 
-use crate::stdlib::cos;
-use crate::stdlib::free;
-use crate::stdlib::log;
-use crate::stdlib::malloc;
-use crate::stdlib::memset;
-use crate::stdlib::rint;
-use crate::stdlib::sin;
 /* *******************************************************************
 *                                                                  *
 * THIS FILE IS PART OF THE OggVorbis SOFTWARE CODEC SOURCE CODE.   *
@@ -102,7 +95,7 @@ pub unsafe extern "C" fn mdct_init(
     }
     /* bitreverse lookup... */
     let mut mask: i32 = ((1) << log2n - 1) - 1;
-    let mut i_0: i32 = 0;
+    let mut _i_0: i32 = 0;
     let mut j: i32 = 0;
     let mut msb: i32 = (1) << log2n - 2;
 

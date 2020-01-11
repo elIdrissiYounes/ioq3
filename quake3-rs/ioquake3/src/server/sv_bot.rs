@@ -349,9 +349,7 @@ pub use crate::src::botlib::be_ai_move::bot_initmove_s;
 pub use crate::src::botlib::be_ai_move::bot_moveresult_s;
 pub use crate::src::botlib::be_ai_weap::weaponinfo_s;
 pub use crate::src::botlib::be_interface::GetBotLibAPI;
-use crate::src::qcommon::cm_load::CM_EntityString;
-use crate::src::qcommon::cm_load::CM_InlineModel;
-use crate::src::qcommon::cm_load::CM_ModelBounds;
+
 pub use crate::src::qcommon::common::com_basegame;
 pub use crate::src::qcommon::common::Com_Error;
 pub use crate::src::qcommon::common::Com_Printf;
@@ -425,8 +423,7 @@ pub use crate::src::server::sv_main::svs;
 pub use crate::src::server::sv_world::SV_ClipToEntity;
 pub use crate::src::server::sv_world::SV_PointContents;
 pub use crate::src::server::sv_world::SV_Trace;
-use crate::stdlib::memcpy;
-use crate::stdlib::vsnprintf;
+
 pub use crate::vm_local_h::vm_s;
 extern "C" {
     #[no_mangle]
@@ -538,7 +535,7 @@ BotDrawDebugPolygons
 
 pub unsafe extern "C" fn BotDrawDebugPolygons(
     mut drawPoly: Option<unsafe extern "C" fn(_: i32, _: i32, _: *mut f32) -> ()>,
-    mut value: i32,
+    mut _value: i32,
 ) {
     static mut bot_debug: *mut crate::src::qcommon::q_shared::cvar_t =
         0 as *mut crate::src::qcommon::q_shared::cvar_t;

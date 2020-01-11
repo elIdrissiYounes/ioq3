@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::arch_h::opus_val32;
 pub use crate::opus_types_h::opus_int16;
 pub use crate::opus_types_h::opus_uint32;
@@ -7,11 +5,10 @@ pub use crate::src::opus_1_2_1::celt::entcode::ec_ctx;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_dec;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_enc;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_window;
-use crate::src::opus_1_2_1::celt::entdec::ec_dec_uint;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_uint;
+
 pub use crate::stdlib::__int16_t;
 pub use crate::stdlib::__uint32_t;
-use crate::stdlib::abs;
+
 pub use crate::stdlib::int16_t;
 pub use crate::stdlib::uint32_t;
 /* Copyright (c) 2007-2008 CSIRO

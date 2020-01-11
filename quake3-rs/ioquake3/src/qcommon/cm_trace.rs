@@ -232,8 +232,7 @@ pub use crate::src::qcommon::cm_load::c_traces;
 pub use crate::src::qcommon::cm_load::cm;
 pub use crate::src::qcommon::cm_load::cm_noCurves;
 pub use crate::src::qcommon::cm_load::CM_ClipHandleToModel;
-use crate::src::qcommon::cm_load::CM_ModelBounds;
-use crate::src::qcommon::cm_load::CM_TempBoxModel;
+
 pub use crate::src::qcommon::cm_patch::patchCollide_s;
 pub use crate::src::qcommon::cm_patch::CM_PositionTestInPatchCollide;
 pub use crate::src::qcommon::cm_patch::CM_TraceThroughPatchCollide;
@@ -258,8 +257,7 @@ pub use crate::src::qcommon::q_shared::qtrue;
 pub use crate::src::qcommon::q_shared::trace_t;
 pub use crate::src::qcommon::q_shared::vec3_t;
 pub use crate::src::qcommon::q_shared::vec_t;
-use crate::stdlib::fabs;
-use crate::stdlib::memset;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -332,7 +330,7 @@ pub unsafe extern "C" fn TransposeMatrix(
 ) {
     // FIXME
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     i = 0;
     while i < 3 {
         for j in 0..3 {
@@ -655,7 +653,7 @@ pub unsafe extern "C" fn CM_TestCapsuleInCapsule(
     mut tw: *mut crate::cm_local_h::traceWork_t,
     mut model: crate::src::qcommon::q_shared::clipHandle_t,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut mins: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut maxs: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut top: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -772,7 +770,7 @@ pub unsafe extern "C" fn CM_TestBoundingBoxInCapsule(
     let mut size: [crate::src::qcommon::q_shared::vec3_t; 2] = [[0.; 3]; 2];
     let mut h: crate::src::qcommon::q_shared::clipHandle_t = 0;
     let mut cmod: *mut crate::cm_local_h::cmodel_t = 0 as *mut crate::cm_local_h::cmodel_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     // mins maxs of the capsule
     crate::src::qcommon::cm_load::CM_ModelBounds(model, mins.as_mut_ptr(), maxs.as_mut_ptr());
     // offset for capsule center
@@ -1452,7 +1450,7 @@ pub unsafe extern "C" fn CM_TraceCapsuleThroughCapsule(
     mut tw: *mut crate::cm_local_h::traceWork_t,
     mut model: crate::src::qcommon::q_shared::clipHandle_t,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut mins: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut maxs: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut top: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -1572,7 +1570,7 @@ pub unsafe extern "C" fn CM_TraceBoundingBoxThroughCapsule(
     let mut size: [crate::src::qcommon::q_shared::vec3_t; 2] = [[0.; 3]; 2];
     let mut h: crate::src::qcommon::q_shared::clipHandle_t = 0;
     let mut cmod: *mut crate::cm_local_h::cmodel_t = 0 as *mut crate::cm_local_h::cmodel_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     // mins maxs of the capsule
     crate::src::qcommon::cm_load::CM_ModelBounds(model, mins.as_mut_ptr(), maxs.as_mut_ptr());
     // offset for capsule center
@@ -2105,7 +2103,7 @@ pub unsafe extern "C" fn CM_TransformedBoxTrace(
     let mut symetricSize: [crate::src::qcommon::q_shared::vec3_t; 2] = [[0.; 3]; 2];
     let mut matrix: [crate::src::qcommon::q_shared::vec3_t; 3] = [[0.; 3]; 3];
     let mut transpose: [crate::src::qcommon::q_shared::vec3_t; 3] = [[0.; 3]; 3];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut halfwidth: f32 = 0.;
     let mut halfheight: f32 = 0.;
     let mut t: f32 = 0.;

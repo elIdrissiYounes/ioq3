@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::stdlib::__int16_t;
 pub use crate::stdlib::__int32_t;
 pub use crate::stdlib::__uint32_t;
@@ -10,10 +8,7 @@ pub use crate::stdlib::uint32_t;
 pub use crate::opus_types_h::opus_int16;
 pub use crate::opus_types_h::opus_int32;
 pub use crate::opus_types_h::opus_uint32;
-use crate::src::opus_1_2_1::silk::bwexpander_32::silk_bwexpander_32;
-use crate::src::opus_1_2_1::silk::table_LSF_cos::silk_LSFCosTab_FIX_Q12;
-use crate::src::opus_1_2_1::silk::LPC_fit::silk_LPC_fit;
-use crate::src::opus_1_2_1::silk::LPC_inv_pred_gain::silk_LPC_inverse_pred_gain_c;
+
 /* helper function for NLSF2A(..) */
 #[inline]
 
@@ -248,7 +243,7 @@ pub unsafe extern "C" fn silk_NLSF2A(
     mut a_Q12: *mut crate::opus_types_h::opus_int16,
     mut NLSF: *const crate::opus_types_h::opus_int16,
     d: i32,
-    mut arch: i32,
+    mut _arch: i32,
 )
 /* I    Run-time architecture                                       */
 {

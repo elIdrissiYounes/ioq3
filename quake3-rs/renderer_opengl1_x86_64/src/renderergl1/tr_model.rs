@@ -107,11 +107,7 @@ pub use crate::src::renderergl1::tr_model_iqm::R_IQMLerpTag;
 pub use crate::src::renderergl1::tr_model_iqm::R_LoadIQM;
 pub use crate::src::renderergl1::tr_scene::RE_ClearScene;
 pub use crate::src::renderergl1::tr_shader::R_FindShader;
-use crate::stdlib::memcpy;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
+
 pub use crate::tr_common_h::image_s;
 pub use crate::tr_common_h::image_t;
 pub use crate::tr_common_h::imgFlags_t;
@@ -986,7 +982,7 @@ unsafe extern "C" fn R_LoadMDR(
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
-    let mut l: i32 = 0;
+    let mut _l: i32 = 0;
     let mut pinmodel: *mut crate::qfiles_h::mdrHeader_t = 0 as *mut crate::qfiles_h::mdrHeader_t;
     let mut mdr: *mut crate::qfiles_h::mdrHeader_t = 0 as *mut crate::qfiles_h::mdrHeader_t;
     let mut frame: *mut crate::qfiles_h::mdrFrame_t = 0 as *mut crate::qfiles_h::mdrFrame_t;
@@ -1212,7 +1208,7 @@ unsafe extern "C" fn R_LoadMDR(
         .offset((*pinmodel).ofsLODs as isize) as *mut crate::qfiles_h::mdrLOD_t;
     // swap all the LOD's
 
-    for l in 0..(*mdr).numLODs {
+    for _l in 0..(*mdr).numLODs {
         if lod.offset(1) as *mut crate::src::qcommon::q_shared::byte
             > (mdr as *mut crate::src::qcommon::q_shared::byte).offset(size as isize)
         {
@@ -1624,8 +1620,8 @@ R_Modellist_f
 #[no_mangle]
 
 pub unsafe extern "C" fn R_Modellist_f() {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _i: i32 = 0;
+    let mut _j: i32 = 0;
     let mut mod_0: *mut crate::tr_local_h::model_t = 0 as *mut crate::tr_local_h::model_t;
     let mut total: i32 = 0;
     let mut lods: i32 = 0;
@@ -1705,8 +1701,8 @@ pub unsafe extern "C" fn R_GetAnimTag(
     mut dest: *mut crate::qfiles_h::md3Tag_t,
 ) -> *mut crate::qfiles_h::md3Tag_t {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _j: i32 = 0;
+    let mut _k: i32 = 0;
     let mut frameSize: i32 = 0;
     let mut frame: *mut crate::qfiles_h::mdrFrame_t = 0 as *mut crate::qfiles_h::mdrFrame_t;
     let mut tag: *mut crate::qfiles_h::mdrTag_t = 0 as *mut crate::qfiles_h::mdrTag_t;
@@ -1795,7 +1791,7 @@ pub unsafe extern "C" fn R_LerpTag(
         origin: [0.; 3],
         axis: [[0.; 3]; 3],
     };
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut frontLerp: f32 = 0.;
     let mut backLerp: f32 = 0.;
     let mut model: *mut crate::tr_local_h::model_t = 0 as *mut crate::tr_local_h::model_t;

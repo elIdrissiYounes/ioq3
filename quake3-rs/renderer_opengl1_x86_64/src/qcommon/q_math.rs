@@ -133,7 +133,7 @@ pub mod q_shared_h {
         *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
         *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
-    use crate::stdlib::sqrt;
+
     // __Q_SHARED_H
 }
 
@@ -149,14 +149,7 @@ pub use crate::src::qcommon::q_shared::qtrue;
 pub use crate::src::qcommon::q_shared::vec3_t;
 pub use crate::src::qcommon::q_shared::vec4_t;
 pub use crate::src::qcommon::q_shared::vec_t;
-use crate::stdlib::acos;
-use crate::stdlib::atan2;
-use crate::stdlib::cos;
-use crate::stdlib::fabs;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::sin;
-use crate::stdlib::sqrt;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -445,7 +438,7 @@ pub unsafe extern "C" fn ClampShort(mut i: i32) -> i16 {
 #[no_mangle]
 
 pub unsafe extern "C" fn DirToByte(mut dir: *mut crate::src::qcommon::q_shared::vec_t) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut best: i32 = 0;
     let mut d: f32 = 0.;
     let mut bestd: f32 = 0.;
@@ -990,7 +983,7 @@ SetPlaneSignbits
 
 pub unsafe extern "C" fn SetPlaneSignbits(mut out: *mut crate::src::qcommon::q_shared::cplane_t) {
     let mut bits: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     // for fast box on planeside test
     bits = 0;
 
@@ -1062,7 +1055,7 @@ pub unsafe extern "C" fn RadiusFromBounds(
     mut mins: *const crate::src::qcommon::q_shared::vec_t,
     mut maxs: *const crate::src::qcommon::q_shared::vec_t,
 ) -> f32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut corner: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut a: f32 = 0.;
     let mut b: f32 = 0.;
@@ -1427,7 +1420,7 @@ pub unsafe extern "C" fn PerpendicularVector(
     mut src: *const crate::src::qcommon::q_shared::vec_t,
 ) {
     let mut pos: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut minelem: f32 = 1.0;
     let mut tempvec: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     /*

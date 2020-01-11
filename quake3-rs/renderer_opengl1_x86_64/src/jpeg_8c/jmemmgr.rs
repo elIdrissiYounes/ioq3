@@ -168,9 +168,7 @@ pub use crate::src::jpeg_8c::jmemnobs::jpeg_mem_available;
 pub use crate::src::jpeg_8c::jmemnobs::jpeg_mem_init;
 pub use crate::src::jpeg_8c::jmemnobs::jpeg_mem_term;
 pub use crate::src::jpeg_8c::jmemnobs::jpeg_open_backing_store;
-use crate::src::jpeg_8c::jutils::jzero_far;
-use crate::stdlib::getenv;
-use crate::stdlib::sscanf;
+
 /* System-dependent control info */
 
 #[repr(C)]

@@ -198,7 +198,6 @@ pub use crate::src::jpeg_8c::jerror::JWRN_MUST_RESYNC;
 pub use crate::src::jpeg_8c::jerror::JWRN_NOT_SEQUENTIAL;
 pub use crate::src::jpeg_8c::jerror::JWRN_TOO_MUCH_DATA;
 pub use crate::src::jpeg_8c::jutils::jpeg_natural_order;
-use crate::stdlib::memset;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -736,7 +735,7 @@ unsafe extern "C" fn process_restart(
     mut cinfo: crate::jpeglib_h::j_decompress_ptr,
 ) -> crate::jmorecfg_h::boolean {
     let mut entropy: huff_entropy_ptr = (*cinfo).entropy as huff_entropy_ptr;
-    let mut ci: i32 = 0;
+    let mut _ci: i32 = 0;
     /* Throw away any unused bits remaining in bit buffer; */
     /* include any full bytes in next_marker's count of discarded bytes */
     (*(*cinfo).marker).discarded_bytes = (*(*cinfo).marker)
@@ -803,7 +802,7 @@ unsafe extern "C" fn decode_mcu_DC_first(
     let mut Al: i32 = (*cinfo).Al;
     let mut s: i32 = 0;
     let mut r: i32 = 0;
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     let mut ci: i32 = 0;
     let mut block: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
     let mut get_buffer: bit_buf_type = 0;
@@ -1113,7 +1112,7 @@ unsafe extern "C" fn decode_mcu_DC_refine(
 ) -> crate::jmorecfg_h::boolean {
     let mut entropy: huff_entropy_ptr = (*cinfo).entropy as huff_entropy_ptr; /* 1 in the bit position being coded */
     let mut p1: i32 = (1) << (*cinfo).Al;
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     let mut block: crate::jpeglib_h::JBLOCKROW = 0 as *mut crate::jpeglib_h::JBLOCK;
     let mut get_buffer: bit_buf_type = 0;
     let mut bits_left: i32 = 0;
@@ -1499,7 +1498,7 @@ unsafe extern "C" fn decode_mcu_sub(
     let mut entropy: huff_entropy_ptr = (*cinfo).entropy as huff_entropy_ptr;
     let mut natural_order: *const i32 = 0 as *const i32;
     let mut Se: i32 = 0;
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     let mut get_buffer: bit_buf_type = 0;
     let mut bits_left: i32 = 0;
     let mut br_state: bitread_working_state = bitread_working_state {
@@ -1835,7 +1834,7 @@ unsafe extern "C" fn decode_mcu(
     mut MCU_data: *mut crate::jpeglib_h::JBLOCKROW,
 ) -> crate::jmorecfg_h::boolean {
     let mut entropy: huff_entropy_ptr = (*cinfo).entropy as huff_entropy_ptr;
-    let mut blkn: i32 = 0;
+    let mut _blkn: i32 = 0;
     let mut get_buffer: bit_buf_type = 0;
     let mut bits_left: i32 = 0;
     let mut br_state: bitread_working_state = bitread_working_state {
@@ -2247,7 +2246,7 @@ unsafe extern "C" fn start_pass_huff_decoder(mut cinfo: crate::jpeglib_h::j_deco
          */
         ci = 0;
         while ci < (*cinfo).comps_in_scan {
-            let mut coefi: i32 = 0;
+            let mut _coefi: i32 = 0;
             let mut cindex: i32 = (*(*cinfo).cur_comp_info[ci as usize]).component_index;
             let mut coef_bit_ptr: *mut i32 = &mut *(*(*cinfo).coef_bits.offset(cindex as isize))
                 .as_mut_ptr()
@@ -2564,7 +2563,7 @@ pub unsafe extern "C" fn jinit_huff_decoder(mut cinfo: crate::jpeglib_h::j_decom
     if (*cinfo).progressive_mode != 0 {
         /* Create progression status table */
         let mut coef_bit_ptr: *mut i32 = 0 as *mut i32;
-        let mut ci: i32 = 0;
+        let mut _ci: i32 = 0;
         (*cinfo).coef_bits = Some(
             (*(*cinfo).mem)
                 .alloc_small
@@ -2577,7 +2576,7 @@ pub unsafe extern "C" fn jinit_huff_decoder(mut cinfo: crate::jpeglib_h::j_decom
         ) as *mut [i32; 64];
         coef_bit_ptr = &mut *(*(*cinfo).coef_bits.offset(0)).as_mut_ptr().offset(0) as *mut i32;
 
-        for ci in 0..(*cinfo).num_components {
+        for _ci in 0..(*cinfo).num_components {
             i = 0;
 
             while i < 64 {

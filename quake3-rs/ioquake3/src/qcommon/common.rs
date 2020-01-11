@@ -6,7 +6,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub mod ctype_h {
@@ -227,27 +226,12 @@ pub use crate::src::sys::sys_main::Sys_Quit;
 pub use crate::src::sys::sys_unix::Sys_Milliseconds;
 pub use crate::src::sys::sys_unix::Sys_RandomBytes;
 pub use crate::src::sys::sys_unix::Sys_SetEnv;
-use crate::stdlib::calloc;
-use crate::stdlib::getenv;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::srand;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strtod;
-use crate::stdlib::vsnprintf;
 
 pub use crate::src::qcommon::common::ctype_h::tolower;
 pub use crate::src::qcommon::common::ctype_h::toupper;
 pub use crate::stdlib::__ctype_tolower_loc;
 pub use crate::stdlib::__ctype_toupper_loc;
-use crate::stdlib::asctime;
-use crate::stdlib::localtime;
-use crate::stdlib::time;
-use crate::stdlib::umask;
+
 extern "C" {
     #[no_mangle]
     pub fn CIN_CloseAllVideos();
@@ -964,7 +948,7 @@ skip loading of q3config.cfg
 #[no_mangle]
 
 pub unsafe extern "C" fn Com_SafeMode() -> crate::src::qcommon::q_shared::qboolean {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in 0..com_numConsoleLines {
         crate::src::qcommon::cmd::Cmd_TokenizeString(com_consoleLines[i as usize]);
@@ -1042,7 +1026,7 @@ will keep the demoloop from immediately starting
 #[no_mangle]
 
 pub unsafe extern "C" fn Com_AddStartupCommands() -> crate::src::qcommon::q_shared::qboolean {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut added: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
     added = crate::src::qcommon::q_shared::qfalse;
     // quote every token, so args with semicolons can work
@@ -1142,11 +1126,11 @@ pub unsafe extern "C" fn Com_StringContains(
                 if ::std::mem::size_of::<i8>() > 1 {
                     if 0 != 0 {
                         let mut __c: i32 = *str1.offset(j as isize) as i32;
-                        __res = (if __c < -(128) || __c > 255 {
+                        __res = if __c < -(128) || __c > 255 {
                             __c
                         } else {
                             *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                        })
+                        }
                     } else {
                         __res = toupper(*str1.offset(j as isize) as i32)
                     }
@@ -1160,11 +1144,11 @@ pub unsafe extern "C" fn Com_StringContains(
                 if ::std::mem::size_of::<i8>() > 1 {
                     if 0 != 0 {
                         let mut __c: i32 = *str2.offset(j as isize) as i32;
-                        __res = (if __c < -(128) || __c > 255 {
+                        __res = if __c < -(128) || __c > 255 {
                             __c
                         } else {
                             *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                        })
+                        }
                     } else {
                         __res = toupper(*str2.offset(j as isize) as i32)
                     }
@@ -1250,11 +1234,11 @@ pub unsafe extern "C" fn Com_Filter(
                         if ::std::mem::size_of::<i8>() > 1 {
                             if 0 != 0 {
                                 let mut __c: i32 = *name as i32;
-                                __res = (if __c < -(128) || __c > 255 {
+                                __res = if __c < -(128) || __c > 255 {
                                     __c
                                 } else {
                                     *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                                })
+                                }
                             } else {
                                 __res = toupper(*name as i32)
                             }
@@ -1268,11 +1252,11 @@ pub unsafe extern "C" fn Com_Filter(
                         if ::std::mem::size_of::<i8>() > 1 {
                             if 0 != 0 {
                                 let mut __c: i32 = *filter as i32;
-                                __res = (if __c < -(128) || __c > 255 {
+                                __res = if __c < -(128) || __c > 255 {
                                     __c
                                 } else {
                                     *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                                })
+                                }
                             } else {
                                 __res = toupper(*filter as i32)
                             }
@@ -1286,11 +1270,11 @@ pub unsafe extern "C" fn Com_Filter(
                         if ::std::mem::size_of::<i8>() > 1 {
                             if 0 != 0 {
                                 let mut __c: i32 = *name as i32;
-                                __res = (if __c < -(128) || __c > 255 {
+                                __res = if __c < -(128) || __c > 255 {
                                     __c
                                 } else {
                                     *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                                })
+                                }
                             } else {
                                 __res = toupper(*name as i32)
                             }
@@ -1304,11 +1288,11 @@ pub unsafe extern "C" fn Com_Filter(
                         if ::std::mem::size_of::<i8>() > 1 {
                             if 0 != 0 {
                                 let mut __c: i32 = *filter.offset(2) as i32;
-                                __res = (if __c < -(128) || __c > 255 {
+                                __res = if __c < -(128) || __c > 255 {
                                     __c
                                 } else {
                                     *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                                })
+                                }
                             } else {
                                 __res = toupper(*filter.offset(2) as i32)
                             }
@@ -1331,11 +1315,11 @@ pub unsafe extern "C" fn Com_Filter(
                         if ::std::mem::size_of::<i8>() > 1 {
                             if 0 != 0 {
                                 let mut __c: i32 = *filter as i32;
-                                __res = (if __c < -(128) || __c > 255 {
+                                __res = if __c < -(128) || __c > 255 {
                                     __c
                                 } else {
                                     *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                                })
+                                }
                             } else {
                                 __res = toupper(*filter as i32)
                             }
@@ -1349,11 +1333,11 @@ pub unsafe extern "C" fn Com_Filter(
                         if ::std::mem::size_of::<i8>() > 1 {
                             if 0 != 0 {
                                 let mut __c: i32 = *name as i32;
-                                __res = (if __c < -(128) || __c > 255 {
+                                __res = if __c < -(128) || __c > 255 {
                                     __c
                                 } else {
                                     *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                                })
+                                }
                             } else {
                                 __res = toupper(*name as i32)
                             }
@@ -1389,11 +1373,11 @@ pub unsafe extern "C" fn Com_Filter(
                 if ::std::mem::size_of::<i8>() > 1 {
                     if 0 != 0 {
                         let mut __c: i32 = *filter as i32;
-                        __res = (if __c < -(128) || __c > 255 {
+                        __res = if __c < -(128) || __c > 255 {
                             __c
                         } else {
                             *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                        })
+                        }
                     } else {
                         __res = toupper(*filter as i32)
                     }
@@ -1406,11 +1390,11 @@ pub unsafe extern "C" fn Com_Filter(
                 if ::std::mem::size_of::<i8>() > 1 {
                     if 0 != 0 {
                         let mut __c: i32 = *name as i32;
-                        __res = (if __c < -(128) || __c > 255 {
+                        __res = if __c < -(128) || __c > 255 {
                             __c
                         } else {
                             *(*crate::stdlib::__ctype_toupper_loc()).offset(__c as isize)
-                        })
+                        }
                     } else {
                         __res = toupper(*name as i32)
                     }
@@ -3991,7 +3975,7 @@ pub unsafe extern "C" fn Com_ReadFromPipe() {
             break;
         }
         let mut brk: *mut i8 = 0 as *mut i8;
-        let mut i: i32 = 0;
+        let mut _i: i32 = 0;
 
         for i in accu..accu + read {
             if buf[i as usize] as i32 == '\u{0}' as i32 {
@@ -4482,11 +4466,11 @@ unsafe extern "C" fn FindMatches(mut s: *const i8) {
                 if ::std::mem::size_of::<i8>() > 1 {
                     if 0 != 0 {
                         let mut __c: i32 = shortestMatch[i as usize] as i32;
-                        __res = (if __c < -(128) || __c > 255 {
+                        __res = if __c < -(128) || __c > 255 {
                             __c
                         } else {
                             *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
-                        })
+                        }
                     } else {
                         __res = tolower(shortestMatch[i as usize] as i32)
                     }
@@ -4500,11 +4484,11 @@ unsafe extern "C" fn FindMatches(mut s: *const i8) {
                 if ::std::mem::size_of::<i8>() > 1 {
                     if 0 != 0 {
                         let mut __c: i32 = *s.offset(i as isize) as i32;
-                        __res = (if __c < -(128) || __c > 255 {
+                        __res = if __c < -(128) || __c > 255 {
                             __c
                         } else {
                             *(*crate::stdlib::__ctype_tolower_loc()).offset(__c as isize)
-                        })
+                        }
                     } else {
                         __res = tolower(*s.offset(i as isize) as i32)
                     }

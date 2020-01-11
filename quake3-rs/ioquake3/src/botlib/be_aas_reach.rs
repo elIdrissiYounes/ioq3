@@ -31,7 +31,6 @@ pub mod q_shared_h {
         *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
         *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -104,7 +103,7 @@ pub use crate::src::botlib::be_aas_reach::q_shared_h::CrossProduct;
 pub use crate::src::botlib::be_aas_reach::q_shared_h::VectorInverse;
 pub use crate::src::botlib::be_aas_reach::q_shared_h::VectorLength;
 pub use crate::src::botlib::be_aas_reach::stdlib_h::atoi;
-use crate::src::botlib::l_log::Log_Write;
+
 pub use crate::src::qcommon::q_math::AngleVectors;
 pub use crate::src::qcommon::q_math::VectorNormalize;
 pub use crate::src::qcommon::q_shared::byte;
@@ -122,43 +121,9 @@ pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
 pub use crate::stdlib::abs;
-use crate::stdlib::fabs;
-use crate::stdlib::fabsf;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
-use crate::stdlib::strcmp;
-pub use crate::stdlib::strtol;
-use crate::stdlib::tan;
 
-use crate::src::botlib::be_aas_bspq3::AAS_BSPModelMinsMaxsOrigin;
-use crate::src::botlib::be_aas_bspq3::AAS_FloatForBSPEpairKey;
-use crate::src::botlib::be_aas_bspq3::AAS_IntForBSPEpairKey;
-use crate::src::botlib::be_aas_bspq3::AAS_NextBSPEntity;
-use crate::src::botlib::be_aas_bspq3::AAS_PointContents;
-use crate::src::botlib::be_aas_bspq3::AAS_Trace;
-use crate::src::botlib::be_aas_bspq3::AAS_ValueForBSPEpairKey;
-use crate::src::botlib::be_aas_bspq3::AAS_VectorForBSPEpairKey;
-use crate::src::botlib::be_aas_debug::AAS_PermanentLine;
-use crate::src::botlib::be_aas_main::aasworld;
-use crate::src::botlib::be_aas_main::AAS_Error;
-use crate::src::botlib::be_aas_move::aassettings;
-use crate::src::botlib::be_aas_move::AAS_BFGJumpZVelocity;
-use crate::src::botlib::be_aas_move::AAS_ClientMovementHitBBox;
-use crate::src::botlib::be_aas_move::AAS_DropToFloor;
-use crate::src::botlib::be_aas_move::AAS_HorizontalVelocityForJump;
-use crate::src::botlib::be_aas_move::AAS_PredictClientMovement;
-use crate::src::botlib::be_aas_move::AAS_RocketJumpZVelocity;
-use crate::src::botlib::be_aas_sample::AAS_AreaPresenceType;
-use crate::src::botlib::be_aas_sample::AAS_LinkEntityClientBBox;
-use crate::src::botlib::be_aas_sample::AAS_PointAreaNum;
-use crate::src::botlib::be_aas_sample::AAS_PointInsideFace;
-use crate::src::botlib::be_aas_sample::AAS_TraceAreas;
-use crate::src::botlib::be_aas_sample::AAS_TraceClientBBox;
-use crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas;
-use crate::src::botlib::l_libvar::LibVarGetValue;
-use crate::src::botlib::l_libvar::LibVarValue;
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetClearedMemory;
+pub use crate::stdlib::strtol;
+
 extern "C" {
     /*
     ===========================================================================
@@ -326,7 +291,7 @@ pub static mut numlreachabilities: i32 = 0;
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_FaceArea(mut face: *mut crate::aasfile_h::aas_face_t) -> f32 {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
     let mut edgenum: i32 = 0;
     let mut side: i32 = 0;
     let mut total: f32 = 0.;
@@ -416,7 +381,7 @@ pub unsafe extern "C" fn AAS_FaceArea(mut face: *mut crate::aasfile_h::aas_face_
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_AreaVolume(mut areanum: i32) -> f32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut edgenum: i32 = 0;
     let mut facenum: i32 = 0;
     let mut side: i32 = 0;
@@ -1006,7 +971,7 @@ pub unsafe extern "C" fn AAS_BestReachableArea(
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_SetupReachabilityHeap() {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
     reachabilityheap = crate::src::botlib::l_memory::GetClearedMemory(
         (65536i32 as usize).wrapping_mul(::std::mem::size_of::<aas_lreachability_t>()),
     ) as *mut aas_lreachability_t;
@@ -1115,7 +1080,7 @@ pub unsafe extern "C" fn AAS_AreaReachability(mut areanum: i32) -> i32 {
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_AreaGroundFaceArea(mut areanum: i32) -> f32 {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
     let mut total: f32 = 0.;
     let mut area: *mut crate::aasfile_h::aas_area_t = 0 as *mut crate::aasfile_h::aas_area_t;
     let mut face: *mut crate::aasfile_h::aas_face_t = 0 as *mut crate::aasfile_h::aas_face_t;
@@ -1154,7 +1119,7 @@ pub unsafe extern "C" fn AAS_FaceCenter(
     mut facenum: i32,
     mut center: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
     let mut scale: f32 = 0.;
     let mut face: *mut crate::aasfile_h::aas_face_t = 0 as *mut crate::aasfile_h::aas_face_t;
     let mut edge: *mut crate::aasfile_h::aas_edge_t = 0 as *mut crate::aasfile_h::aas_edge_t;
@@ -1620,7 +1585,7 @@ pub unsafe extern "C" fn AAS_NearbySolidOrGap(
 
 pub unsafe extern "C" fn AAS_Reachability_Swim(mut area1num: i32, mut area2num: i32) -> i32 {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut face1num: i32 = 0;
     let mut face2num: i32 = 0;
     let mut side1: i32 = 0;
@@ -1748,7 +1713,7 @@ pub unsafe extern "C" fn AAS_Reachability_EqualFloorHeight(
     let mut j: i32 = 0;
     let mut edgenum: i32 = 0;
     let mut edgenum1: i32 = 0;
-    let mut edgenum2: i32 = 0;
+    let mut _edgenum2: i32 = 0;
     let mut foundreach: i32 = 0;
     let mut side: i32 = 0;
     let mut height: f32 = 0.;
@@ -2062,7 +2027,7 @@ pub unsafe extern "C" fn AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(
     mut area2num: i32,
 ) -> i32 {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut k: i32 = 0;
     let mut l: i32 = 0;
     let mut edge1num: i32 = 0;
@@ -3634,7 +3599,7 @@ pub unsafe extern "C" fn AAS_Reachability_Jump(mut area1num: i32, mut area2num: 
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
-    let mut l: i32 = 0;
+    let mut _l: i32 = 0;
     let mut face1num: i32 = 0;
     let mut face2num: i32 = 0;
     let mut edge1num: i32 = 0;
@@ -5239,7 +5204,7 @@ pub unsafe extern "C" fn AAS_Reachability_Elevator() {
     let mut area2num: i32 = 0;
     let mut modelnum: i32 = 0;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut k: i32 = 0;
     let mut l: i32 = 0;
     let mut n: i32 = 0;
@@ -5677,10 +5642,10 @@ pub unsafe extern "C" fn AAS_FindFaceReachabilities(
     mut plane: *mut crate::aasfile_h::aas_plane_t,
     mut towardsface: i32,
 ) -> *mut aas_lreachability_t {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _i: i32 = 0;
+    let mut _j: i32 = 0;
     let mut k: i32 = 0;
-    let mut l: i32 = 0;
+    let mut _l: i32 = 0;
     let mut facenum: i32 = 0;
     let mut edgenum: i32 = 0;
     let mut bestfacenum: i32 = 0;
@@ -6949,7 +6914,7 @@ pub unsafe extern "C" fn AAS_Reachability_JumpPad() {
 
 pub unsafe extern "C" fn AAS_Reachability_Grapple(mut area1num: i32, mut area2num: i32) -> i32 {
     let mut face2num: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut areanum: i32 = 0;
     let mut numareas: i32 = 0;
@@ -7382,7 +7347,7 @@ pub unsafe extern "C" fn AAS_Reachability_Grapple(mut area1num: i32, mut area2nu
 
 pub unsafe extern "C" fn AAS_SetWeaponJumpAreaFlags() {
     let mut ent: i32 = 0; //end for
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut mins: crate::src::qcommon::q_shared::vec3_t = [-15f32, -15f32, -15f32];
     let mut maxs: crate::src::qcommon::q_shared::vec3_t = [15f32, 15f32, 15f32];
     let mut origin: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -7542,7 +7507,7 @@ pub unsafe extern "C" fn AAS_SetWeaponJumpAreaFlags() {
 
 pub unsafe extern "C" fn AAS_Reachability_WeaponJump(mut area1num: i32, mut area2num: i32) -> i32 {
     let mut face2num: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut n: i32 = 0;
     let mut ret: i32 = 0;
     let mut visualize: i32 = 0;
@@ -7797,11 +7762,11 @@ pub unsafe extern "C" fn AAS_Reachability_WeaponJump(mut area1num: i32, mut area
 
 pub unsafe extern "C" fn AAS_Reachability_WalkOffLedge(mut areanum: i32) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut k: i32 = 0;
     let mut l: i32 = 0;
     let mut m: i32 = 0;
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut p: i32 = 0;
     let mut areas: [i32; 10] = [0; 10];
     let mut numareas: i32 = 0;
@@ -8259,7 +8224,7 @@ pub unsafe extern "C" fn AAS_StoreReachability() {
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_ContinueInitReachability(mut time: f32) -> i32 {
+pub unsafe extern "C" fn AAS_ContinueInitReachability(mut _time: f32) -> i32 {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut todo: i32 = 0;

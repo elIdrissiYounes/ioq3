@@ -311,8 +311,7 @@ pub use crate::src::ui::ui_syscalls::trap_Key_SetCatcher;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 pub use crate::src::ui::ui_syscalls::trap_S_RegisterSound;
 pub use crate::src::ui::ui_syscalls::trap_S_StartLocalSound;
-use crate::stdlib::memset;
-use crate::stdlib::strlen;
+
 pub use crate::stdlib::strtol;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
@@ -515,7 +514,7 @@ UI_SPPostgameMenu_AgainEvent
 =================
 */
 
-unsafe extern "C" fn UI_SPPostgameMenu_AgainEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+unsafe extern "C" fn UI_SPPostgameMenu_AgainEvent(mut _ptr: *mut libc::c_void, mut event: i32) {
     if event != 3 {
         return;
     }
@@ -531,7 +530,7 @@ UI_SPPostgameMenu_NextEvent
 =================
 */
 
-unsafe extern "C" fn UI_SPPostgameMenu_NextEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+unsafe extern "C" fn UI_SPPostgameMenu_NextEvent(mut _ptr: *mut libc::c_void, mut event: i32) {
     let mut currentSet: i32 = 0;
     let mut levelSet: i32 = 0;
     let mut level: i32 = 0;
@@ -568,7 +567,7 @@ UI_SPPostgameMenu_MenuEvent
 =================
 */
 
-unsafe extern "C" fn UI_SPPostgameMenu_MenuEvent(mut ptr: *mut libc::c_void, mut event: i32) {
+unsafe extern "C" fn UI_SPPostgameMenu_MenuEvent(mut _ptr: *mut libc::c_void, mut event: i32) {
     if event != 3 {
         return;
     }
@@ -906,7 +905,7 @@ UI_SPPostgameMenu_Cache
 #[no_mangle]
 
 pub unsafe extern "C" fn UI_SPPostgameMenu_Cache() {
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut buildscript: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     buildscript = crate::src::ui::ui_syscalls::trap_Cvar_VariableValue(
@@ -1192,7 +1191,7 @@ UI_SPPostgameMenu_f
 pub unsafe extern "C" fn UI_SPPostgameMenu_f() {
     let mut playerGameRank: i32 = 0; // in case they ended game as a spectator
     let mut playerClientNum: i32 = 0;
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut oldFrags: i32 = 0;
     let mut newFrags: i32 = 0;
     let mut arena: *const i8 = 0 as *const i8;

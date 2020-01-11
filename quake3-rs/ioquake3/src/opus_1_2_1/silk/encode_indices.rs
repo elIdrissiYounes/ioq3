@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::stdlib::__int16_t;
 pub use crate::stdlib::__int32_t;
 pub use crate::stdlib::__uint32_t;
@@ -16,21 +14,7 @@ pub use crate::resampler_structs_h::C2RustUnnamed_64;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_ctx;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_enc;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_window;
-use crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf;
-use crate::src::opus_1_2_1::silk::tables_LTP::silk_LTP_gain_iCDF_ptrs;
-use crate::src::opus_1_2_1::silk::tables_LTP::silk_LTP_per_index_iCDF;
-use crate::src::opus_1_2_1::silk::tables_gain::silk_delta_gain_iCDF;
-use crate::src::opus_1_2_1::silk::tables_gain::silk_gain_iCDF;
-use crate::src::opus_1_2_1::silk::tables_other::silk_LTPscale_iCDF;
-use crate::src::opus_1_2_1::silk::tables_other::silk_NLSF_EXT_iCDF;
-use crate::src::opus_1_2_1::silk::tables_other::silk_NLSF_interpolation_factor_iCDF;
-use crate::src::opus_1_2_1::silk::tables_other::silk_type_offset_VAD_iCDF;
-use crate::src::opus_1_2_1::silk::tables_other::silk_type_offset_no_VAD_iCDF;
-use crate::src::opus_1_2_1::silk::tables_other::silk_uniform4_iCDF;
-use crate::src::opus_1_2_1::silk::tables_other::silk_uniform8_iCDF;
-use crate::src::opus_1_2_1::silk::tables_pitch_lag::silk_pitch_delta_iCDF;
-use crate::src::opus_1_2_1::silk::tables_pitch_lag::silk_pitch_lag_iCDF;
-use crate::src::opus_1_2_1::silk::NLSF_unpack::silk_NLSF_unpack;
+
 pub use crate::structs_h::silk_LP_state;
 pub use crate::structs_h::silk_NLSF_CB_struct;
 pub use crate::structs_h::silk_VAD_state;
@@ -374,7 +358,7 @@ pub unsafe extern "C" fn silk_encode_indices(
 /* I    The type of conditional coding to use       */
 {
     let mut i: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut typeOffset: i32 = 0;
     let mut encode_absolute_lagIndex: i32 = 0;
     let mut delta_lagIndex: i32 = 0;

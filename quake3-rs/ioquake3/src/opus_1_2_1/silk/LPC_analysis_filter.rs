@@ -8,7 +8,7 @@ pub use crate::stdlib::__int32_t;
 pub use crate::stdlib::__uint32_t;
 pub use crate::stdlib::int16_t;
 pub use crate::stdlib::int32_t;
-use crate::stdlib::memset;
+
 pub use crate::stdlib::uint32_t;
 /* **********************************************************************
 Copyright (c) 2006-2011, Skype Limited. All rights reserved.
@@ -134,12 +134,12 @@ pub unsafe extern "C" fn silk_LPC_analysis_filter(
     mut B: *const crate::opus_types_h::opus_int16,
     len: crate::opus_types_h::opus_int32,
     d: crate::opus_types_h::opus_int32,
-    mut arch: i32,
+    mut _arch: i32,
 )
 /* I    Run-time architecture                                       */
 {
-    let mut j: i32 = 0;
-    let mut ix: i32 = 0;
+    let mut _j: i32 = 0;
+    let mut _ix: i32 = 0;
     let mut out32_Q12: crate::opus_types_h::opus_int32 = 0;
     let mut out32: crate::opus_types_h::opus_int32 = 0;
     let mut in_ptr: *const crate::opus_types_h::opus_int16 =

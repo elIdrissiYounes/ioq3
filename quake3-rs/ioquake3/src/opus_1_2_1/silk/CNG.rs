@@ -44,8 +44,6 @@ pub mod SigProc_FIX_h {
         };
     }
 
-    use crate::opus_types_h::opus_int32;
-    use crate::opus_types_h::opus_uint32;
     /* SILK_SIGPROC_FIX_H */
     /*    silk_SMMUL: Signed top word multiply.
     ARMv6        2 instruction cycles.
@@ -107,8 +105,7 @@ pub mod Inlines_h {
                 >> 16)) as crate::opus_types_h::opus_int32;
         return y;
     }
-    use crate::opus_types_h::opus_int16;
-    use crate::opus_types_h::opus_int32;
+
     use crate::src::opus_1_2_1::silk::CNG::macros_h::silk_CLZ32;
     use crate::src::opus_1_2_1::silk::CNG::SigProc_FIX_h::silk_ROR32;
     /* SILK_FIX_INLINES_H */
@@ -128,9 +125,7 @@ pub use crate::resampler_structs_h::_silk_resampler_state_struct;
 pub use crate::resampler_structs_h::silk_resampler_state_struct;
 pub use crate::resampler_structs_h::C2RustUnnamed_64;
 pub use crate::src::opus_1_2_1::silk::CNG::macros_h::silk_CLZ32;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
+
 pub use crate::structs_h::silk_CNG_struct;
 pub use crate::structs_h::silk_NLSF_CB_struct;
 pub use crate::structs_h::silk_PLC_struct;
@@ -180,7 +175,7 @@ unsafe extern "C" fn silk_CNG_exc(
 /* I/O  Seed to random index generator              */
 {
     let mut seed: crate::opus_types_h::opus_int32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut idx: i32 = 0;
     let mut exc_mask: i32 = 0;
     exc_mask = 255;
@@ -205,7 +200,7 @@ unsafe extern "C" fn silk_CNG_exc(
 pub unsafe extern "C" fn silk_CNG_Reset(mut psDec: *mut crate::structs_h::silk_decoder_state)
 /* I/O  Decoder state                               */
 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut NLSF_step_Q15: i32 = 0;
     let mut NLSF_acc_Q15: i32 = 0;
     NLSF_step_Q15 = 0x7fff / ((*psDec).LPC_order + 1);

@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod SigProc_FIX_h {
     /* Allocate opus_int16 aligned to 4-byte memory address */
     /* Useful Macros that can be adjusted to other platforms */
@@ -393,7 +391,7 @@ pub unsafe extern "C" fn silk_gains_ID(
     nb_subfr: i32,
 ) -> crate::opus_types_h::opus_int32
 /* I    number of subframes                         */ {
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut gainsID: crate::opus_types_h::opus_int32 = 0;
     gainsID = 0;
 

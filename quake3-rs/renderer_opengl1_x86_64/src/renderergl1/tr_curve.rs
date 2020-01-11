@@ -49,7 +49,6 @@ pub mod q_shared_h {
         *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
         *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -85,10 +84,7 @@ pub use crate::src::renderergl1::tr_curve::q_shared_h::VectorLengthSquared;
 pub use crate::tr_public_h::refimport_t;
 
 pub use crate::src::renderergl1::tr_init::r_subdivisions;
-use crate::src::renderergl1::tr_main::ri;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
+
 pub use crate::tr_local_h::srfGridMesh_s;
 pub use crate::tr_local_h::srfGridMesh_t;
 pub use crate::tr_local_h::surfaceType_t;
@@ -239,7 +235,7 @@ unsafe extern "C" fn MakeMeshNormals(
     mut ctrl: *mut [crate::qfiles_h::drawVert_t; 65],
 ) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut k: i32 = 0;
     let mut dist: i32 = 0;
     let mut normal: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -423,7 +419,7 @@ unsafe extern "C" fn InvertCtrl(
     mut ctrl: *mut [crate::qfiles_h::drawVert_t; 65],
 ) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut temp: crate::qfiles_h::drawVert_t = crate::qfiles_h::drawVert_t {
         xyz: [0.; 3],
         st: [0.; 2],
@@ -569,8 +565,8 @@ pub unsafe extern "C" fn R_CreateSurfaceGridMesh(
     mut ctrl: *mut [crate::qfiles_h::drawVert_t; 65],
     mut errorTable: *mut [f32; 65],
 ) -> *mut crate::tr_local_h::srfGridMesh_t {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _i: i32 = 0;
+    let mut _j: i32 = 0;
     let mut size: i32 = 0;
     let mut vert: *mut crate::qfiles_h::drawVert_t = 0 as *mut crate::qfiles_h::drawVert_t;
     let mut tmpVec: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -675,7 +671,7 @@ pub unsafe extern "C" fn R_SubdividePatchToGrid(
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
-    let mut l: i32 = 0;
+    let mut _l: i32 = 0;
     let mut prev: crate::qfiles_h::drawVert_t = {
         let mut init = crate::qfiles_h::drawVert_t {
             xyz: [0f32, 0f32, 0f32],
@@ -708,7 +704,7 @@ pub unsafe extern "C" fn R_SubdividePatchToGrid(
     };
     let mut len: f32 = 0.;
     let mut maxLen: f32 = 0.;
-    let mut dir: i32 = 0;
+    let mut _dir: i32 = 0;
     let mut t: i32 = 0;
     let mut ctrl: [[crate::qfiles_h::drawVert_t; 65]; 65] = [[crate::qfiles_h::drawVert_t {
         xyz: [0.; 3],
@@ -913,7 +909,7 @@ pub unsafe extern "C" fn R_GridInsertColumn(
     mut point: *mut crate::src::qcommon::q_shared::vec_t,
     mut loderror: f32,
 ) -> *mut crate::tr_local_h::srfGridMesh_t {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut width: i32 = 0;
     let mut height: i32 = 0;
@@ -1384,7 +1380,7 @@ pub unsafe extern "C" fn R_GridInsertRow(
     mut point: *mut crate::src::qcommon::q_shared::vec_t,
     mut loderror: f32,
 ) -> *mut crate::tr_local_h::srfGridMesh_t {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut width: i32 = 0;
     let mut height: i32 = 0;

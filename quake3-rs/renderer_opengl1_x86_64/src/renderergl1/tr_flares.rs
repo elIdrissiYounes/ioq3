@@ -214,7 +214,6 @@ pub mod stdlib_float_h {
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
         return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
-    use crate::stdlib::strtod;
 }
 
 pub use crate::qfiles_h::dshader_t;
@@ -262,9 +261,7 @@ pub use crate::src::sdl::sdl_glimp::qglOrtho;
 pub use crate::src::sdl::sdl_glimp::qglPopMatrix;
 pub use crate::src::sdl::sdl_glimp::qglPushMatrix;
 pub use crate::src::sdl::sdl_glimp::qglReadPixels;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
-use crate::stdlib::strtod;
+
 pub use crate::stdlib::GLdouble;
 pub use crate::stdlib::GLenum;
 pub use crate::stdlib::GLint;
@@ -569,7 +566,7 @@ R_ClearFlares
 #[no_mangle]
 
 pub unsafe extern "C" fn R_ClearFlares() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     crate::stdlib::memset(
         r_flareStructs.as_mut_ptr() as *mut libc::c_void,
         0,
@@ -601,7 +598,7 @@ pub unsafe extern "C" fn RB_AddFlare(
     mut color: *mut crate::src::qcommon::q_shared::vec_t,
     mut normal: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut f: *mut flare_t = 0 as *mut flare_t;
     let mut local: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut d: f32 = 1f32;

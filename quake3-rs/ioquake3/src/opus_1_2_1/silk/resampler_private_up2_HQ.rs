@@ -14,7 +14,7 @@ pub mod resampler_rom_h {
         25769,
         (55542i32 - 65536) as crate::opus_types_h::opus_int16,
     ];
-    use crate::opus_types_h::opus_int16;
+
     /* SILK_FIX_RESAMPLER_ROM_H */
 }
 

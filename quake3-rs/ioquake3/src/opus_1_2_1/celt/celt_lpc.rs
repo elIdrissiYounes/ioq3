@@ -143,14 +143,12 @@ pub mod pitch_h {
             *sum.offset(3) = *sum.offset(3) + tmp_2 * y_1
         };
     }
-
-    use crate::arch_h::opus_val16;
 }
 pub use crate::arch_h::opus_val16;
 pub use crate::arch_h::opus_val32;
 pub use crate::src::opus_1_2_1::celt::celt_lpc::pitch_h::xcorr_kernel_c;
 pub use crate::src::opus_1_2_1::celt::pitch::celt_pitch_xcorr_c;
-use crate::stdlib::memset;
+
 /* Copyright (c) 2009-2010 Xiph.Org Foundation
 Written by Jean-Marc Valin */
 /*
@@ -261,10 +259,10 @@ pub unsafe extern "C" fn celt_fir_c(
     mut y: *mut crate::arch_h::opus_val16,
     mut N: i32,
     mut ord: i32,
-    mut arch: i32,
+    mut _arch: i32,
 ) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut rnum: *mut crate::arch_h::opus_val16 = 0 as *mut crate::arch_h::opus_val16;
     let mut fresh19 = ::std::vec::from_elem(
         0,
@@ -314,10 +312,10 @@ pub unsafe extern "C" fn celt_iir(
     mut N: i32,
     mut ord: i32,
     mut mem: *mut crate::arch_h::opus_val16,
-    mut arch: i32,
+    mut _arch: i32,
 ) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut rden: *mut crate::arch_h::opus_val16 = 0 as *mut crate::arch_h::opus_val16;
     let mut y: *mut crate::arch_h::opus_val16 = 0 as *mut crate::arch_h::opus_val16;
     let mut fresh20 = ::std::vec::from_elem(
@@ -399,7 +397,7 @@ pub unsafe extern "C" fn _celt_autocorr(
 ) -> i32 {
     let mut d: crate::arch_h::opus_val32 = 0.;
     let mut i: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut fastN: i32 = n - lag;
     let mut shift: i32 = 0;
     let mut xptr: *const crate::arch_h::opus_val16 = 0 as *const crate::arch_h::opus_val16;

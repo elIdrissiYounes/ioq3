@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::opus_types_h::opus_int16;
 pub use crate::opus_types_h::opus_int32;
 pub use crate::stdlib::__int16_t;
@@ -277,7 +275,7 @@ pub unsafe extern "C" fn silk_inner_prod_aligned_scale(
     len: i32,
 ) -> crate::opus_types_h::opus_int32
 /*    I vector lengths                                              */ {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut sum: crate::opus_types_h::opus_int32 = 0;
 
     for i in 0..len {

@@ -273,7 +273,7 @@ pub use crate::tr_types_h::STEREO_RIGHT;
 
 pub use crate::src::renderergl1::tr_init::r_marksOnTriangleMeshes;
 pub use crate::src::renderergl1::tr_main::tr;
-use crate::stdlib::memcpy;
+
 pub use crate::tr_common_h::image_s;
 pub use crate::tr_common_h::image_t;
 pub use crate::tr_common_h::imgFlags_t;
@@ -446,7 +446,7 @@ unsafe extern "C" fn R_ChopPolyBehindPlane(
     let mut counts: [i32; 3] = [0; 3];
     let mut dot: f32 = 0.;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut p1: *mut f32 = 0 as *mut f32;
     let mut p2: *mut f32 = 0 as *mut f32;
     let mut clip: *mut f32 = 0 as *mut f32;
@@ -652,15 +652,15 @@ pub unsafe extern "C" fn R_AddMarkFragments(
     mut dists: *mut f32,
     mut maxPoints: i32,
     mut pointBuffer: *mut crate::src::qcommon::q_shared::vec_t,
-    mut maxFragments: i32,
+    mut _maxFragments: i32,
     mut fragmentBuffer: *mut crate::src::qcommon::q_shared::markFragment_t,
     mut returnedPoints: *mut i32,
     mut returnedFragments: *mut i32,
-    mut mins: *mut crate::src::qcommon::q_shared::vec_t,
-    mut maxs: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _mins: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _maxs: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
     let mut pingPong: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut mf: *mut crate::src::qcommon::q_shared::markFragment_t =
         0 as *mut crate::src::qcommon::q_shared::markFragment_t;
     // chop the surface by all the bounding planes of the to be projected polygon
@@ -1119,7 +1119,7 @@ pub unsafe extern "C" fn R_MarkFragments(
     let mut j: i32 = 0;
     let mut k: i32 = 0;
     let mut m: i32 = 0;
-    let mut n: i32 = 0;
+    let mut _n: i32 = 0;
     let mut surfaces: [*mut crate::tr_local_h::surfaceType_t; 64] =
         [0 as *mut crate::tr_local_h::surfaceType_t; 64];
     let mut mins: crate::src::qcommon::q_shared::vec3_t = [0.; 3];

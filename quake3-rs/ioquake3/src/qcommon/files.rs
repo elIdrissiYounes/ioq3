@@ -144,20 +144,13 @@ pub use crate::stdlib::fread;
 pub use crate::stdlib::fseek;
 pub use crate::stdlib::ftell;
 pub use crate::stdlib::fwrite;
-use crate::stdlib::memcpy;
-use crate::stdlib::memmove;
-use crate::stdlib::memset;
+
 pub use crate::stdlib::off_t;
 pub use crate::stdlib::qsort;
 pub use crate::stdlib::remove;
 pub use crate::stdlib::rename;
 pub use crate::stdlib::setvbuf;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
-use crate::stdlib::strrchr;
-use crate::stdlib::strstr;
+
 pub use crate::stdlib::strtol;
 pub use crate::stdlib::vsnprintf;
 pub use crate::zconf_h::uInt;
@@ -370,7 +363,7 @@ FS_PakIsPure
 pub unsafe extern "C" fn FS_PakIsPure(
     mut pack: *mut pack_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if fs_numServerPaks != 0 {
         for i in 0..fs_numServerPaks {
             if (*pack).checksum == fs_serverPaks[i as usize] {
@@ -444,7 +437,7 @@ unsafe extern "C" fn FS_HashFileName(mut fname: *const i8, mut hashSize: i32) ->
 }
 
 unsafe extern "C" fn FS_HandleForFile() -> crate::src::qcommon::q_shared::fileHandle_t {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in 1..64 {
         if fsh[i as usize].handleFiles.file.o.is_null() {
@@ -1307,7 +1300,7 @@ Return qtrue if filename has a demo extension
 
 pub unsafe extern "C" fn FS_IsDemoExt(
     mut filename: *const i8,
-    mut namelen: i32,
+    mut _namelen: i32,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut ext_test: *mut i8 = 0 as *mut i8;
     let mut index: i32 = 0;
@@ -2614,7 +2607,7 @@ pub unsafe extern "C" fn FS_CompareZipChecksum(
     mut zipfile: *const i8,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut thepak: *mut pack_t = 0 as *mut pack_t;
-    let mut index: i32 = 0;
+    let mut _index: i32 = 0;
     let mut checksum: i32 = 0;
     thepak = FS_LoadZipFile(zipfile, b"\x00" as *const u8 as *const i8);
     if thepak.is_null() {
@@ -2668,7 +2661,7 @@ unsafe extern "C" fn FS_AddFileToList(
     mut list: *mut *mut i8,
     mut nfiles: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if nfiles == 0x1000 - 1 {
         return nfiles;
     }
@@ -3064,7 +3057,7 @@ pub unsafe extern "C" fn FS_GetModList(mut listbuf: *mut i8, mut bufsize: i32) -
     let mut nMods: i32 = 0;
     let mut i: i32 = 0;
     let mut j: i32 = 0;
-    let mut k: i32 = 0;
+    let mut _k: i32 = 0;
     let mut nTotal: i32 = 0;
     let mut nLen: i32 = 0;
     let mut nPaks: i32 = 0;
@@ -3224,7 +3217,7 @@ pub unsafe extern "C" fn FS_Dir_f() {
     let mut extension: *mut i8 = 0 as *mut i8;
     let mut dirnames: *mut *mut i8 = 0 as *mut *mut i8;
     let mut ndirs: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if crate::src::qcommon::cmd::Cmd_Argc() < 2 || crate::src::qcommon::cmd::Cmd_Argc() > 3 {
         crate::src::qcommon::common::Com_Printf(
             b"usage: dir <directory> [extension]\n\x00" as *const u8 as *const i8,
@@ -3322,7 +3315,7 @@ FS_SortFileList
 #[no_mangle]
 
 pub unsafe extern "C" fn FS_SortFileList(mut filelist: *mut *mut i8, mut numfiles: i32) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut k: i32 = 0;
     let mut numsortedfiles: i32 = 0;
@@ -3376,7 +3369,7 @@ pub unsafe extern "C" fn FS_NewDir_f() {
     let mut filter: *mut i8 = 0 as *mut i8;
     let mut dirnames: *mut *mut i8 = 0 as *mut *mut i8;
     let mut ndirs: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if crate::src::qcommon::cmd::Cmd_Argc() < 2 {
         crate::src::qcommon::common::Com_Printf(
             b"usage: fdir <filter>\n\x00" as *const u8 as *const i8,
@@ -3891,7 +3884,7 @@ pub unsafe extern "C" fn FS_ComparePaks(
     let mut havepak: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     let mut origpos: *mut i8 = neededpaks;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if fs_numServerReferencedPaks == 0 {
         return crate::src::qcommon::q_shared::qfalse;
     }
@@ -4054,10 +4047,10 @@ Frees all resources.
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn FS_Shutdown(mut closemfp: crate::src::qcommon::q_shared::qboolean) {
+pub unsafe extern "C" fn FS_Shutdown(mut _closemfp: crate::src::qcommon::q_shared::qboolean) {
     let mut p: *mut searchpath_t = 0 as *mut searchpath_t;
     let mut next: *mut searchpath_t = 0 as *mut searchpath_t;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
 
     for i in 0..64 {
         if fsh[i as usize].fileSize != 0 {
@@ -5229,7 +5222,7 @@ pub unsafe extern "C" fn FS_FilenameCompletion(
 ) {
     let mut filenames: *mut *mut i8 = 0 as *mut *mut i8;
     let mut nfiles: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut filename: [i8; 1024] = [0; 1024];
     filenames = FS_ListFilteredFiles(dir, ext, 0 as *mut i8, &mut nfiles, allowNonPureFilesOnDisk);
     FS_SortFileList(filenames, nfiles);

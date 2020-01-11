@@ -232,7 +232,6 @@ pub mod q_shared_h {
                 + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -355,7 +354,7 @@ pub use crate::src::renderergl1::tr_main::tr;
 pub use crate::src::renderergl1::tr_model::R_AllocModel;
 pub use crate::src::renderergl1::tr_shader::R_FindShader;
 pub use crate::src::renderergl1::tr_shader::R_RemapShader;
-use crate::stdlib::sscanf;
+
 pub use crate::tr_common_h::image_s;
 pub use crate::tr_common_h::image_t;
 pub use crate::tr_common_h::imgFlags_t;
@@ -507,16 +506,6 @@ pub use crate::tr_local_h::TMOD_SCROLL;
 pub use crate::tr_local_h::TMOD_STRETCH;
 pub use crate::tr_local_h::TMOD_TRANSFORM;
 pub use crate::tr_local_h::TMOD_TURBULENT;
-
-use crate::stdlib::ceil;
-use crate::stdlib::fabs;
-use crate::stdlib::floor;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::sqrt;
-use crate::stdlib::strchr;
-use crate::stdlib::strcpy;
-use crate::stdlib::strlen;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -687,7 +676,7 @@ unsafe extern "C" fn R_LoadLightmaps(mut l: *mut crate::qfiles_h::lump_t) {
         0 as *mut crate::src::qcommon::q_shared::byte;
     let mut len: i32 = 0;
     let mut image: [crate::src::qcommon::q_shared::byte; 65536] = [0; 65536];
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut maxIntensity: f32 = 0f32;
     let mut sumIntensity: f64 = 0f64;
@@ -1216,9 +1205,9 @@ ParseFlare
 
 unsafe extern "C" fn ParseFlare(
     mut ds: *mut crate::qfiles_h::dsurface_t,
-    mut verts: *mut crate::qfiles_h::drawVert_t,
+    mut _verts: *mut crate::qfiles_h::drawVert_t,
     mut surf: *mut crate::tr_local_h::msurface_t,
-    mut indexes: *mut i32,
+    mut _indexes: *mut i32,
 ) {
     let mut flare: *mut crate::tr_local_h::srfFlare_t = 0 as *mut crate::tr_local_h::srfFlare_t;
     let mut i: i32 = 0;
@@ -1260,8 +1249,8 @@ pub unsafe extern "C" fn R_MergedWidthPoints(
     mut grid: *mut crate::tr_local_h::srfGridMesh_t,
     mut offset: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _i: i32 = 0;
+    let mut _j: i32 = 0;
 
     for i in 1..(*grid).width - 1 {
         for j in i + 1..(*grid).width - 1 {
@@ -1304,8 +1293,8 @@ pub unsafe extern "C" fn R_MergedHeightPoints(
     mut grid: *mut crate::tr_local_h::srfGridMesh_t,
     mut offset: i32,
 ) -> i32 {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _i: i32 = 0;
+    let mut _j: i32 = 0;
 
     for i in 1..(*grid).height - 1 {
         for j in i + 1..(*grid).height - 1 {
@@ -2914,7 +2903,7 @@ might still appear at that side.
 #[no_mangle]
 
 pub unsafe extern "C" fn R_TryStitchingPatch(mut grid1num: i32) -> i32 {
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut numstitches: i32 = 0;
     let mut grid1: *mut crate::tr_local_h::srfGridMesh_t =
         0 as *mut crate::tr_local_h::srfGridMesh_t;
@@ -2955,7 +2944,7 @@ R_StitchAllPatches
 #[no_mangle]
 
 pub unsafe extern "C" fn R_StitchAllPatches() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut stitched: i32 = 0;
     let mut numstitches: i32 = 0;
     let mut grid1: *mut crate::tr_local_h::srfGridMesh_t =
@@ -3184,7 +3173,7 @@ unsafe extern "C" fn R_LoadSubmodels(mut l: *mut crate::qfiles_h::lump_t) {
     let mut in_0: *mut crate::qfiles_h::dmodel_t = 0 as *mut crate::qfiles_h::dmodel_t;
     let mut out: *mut crate::tr_local_h::bmodel_t = 0 as *mut crate::tr_local_h::bmodel_t;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut count: i32 = 0;
     in_0 = fileBase.offset((*l).fileofs as isize) as *mut crate::qfiles_h::dmodel_t;
     if ((*l).filelen as usize).wrapping_rem(::std::mem::size_of::<crate::qfiles_h::dmodel_t>()) != 0
@@ -3460,7 +3449,7 @@ R_LoadPlanes
 
 unsafe extern "C" fn R_LoadPlanes(mut l: *mut crate::qfiles_h::lump_t) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut out: *mut crate::src::qcommon::q_shared::cplane_t =
         0 as *mut crate::src::qcommon::q_shared::cplane_t;
     let mut in_0: *mut crate::qfiles_h::dplane_t = 0 as *mut crate::qfiles_h::dplane_t;

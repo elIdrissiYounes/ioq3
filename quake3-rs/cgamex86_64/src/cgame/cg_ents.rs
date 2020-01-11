@@ -176,9 +176,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::cos;
-use crate::stdlib::memset;
-use crate::stdlib::rand;
+
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -245,7 +243,7 @@ pub unsafe extern "C" fn CG_PositionEntityOnTag(
     mut parentModel: crate::src::qcommon::q_shared::qhandle_t,
     mut tagName: *mut i8,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut lerped: crate::src::qcommon::q_shared::orientation_t =
         crate::src::qcommon::q_shared::orientation_t {
             origin: [0.; 3],
@@ -301,7 +299,7 @@ pub unsafe extern "C" fn CG_PositionRotatedEntityOnTag(
     mut parentModel: crate::src::qcommon::q_shared::qhandle_t,
     mut tagName: *mut i8,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut lerped: crate::src::qcommon::q_shared::orientation_t =
         crate::src::qcommon::q_shared::orientation_t {
             origin: [0.; 3],
@@ -1238,7 +1236,7 @@ pub unsafe extern "C" fn CG_TransposeMatrix(
     mut transpose: *mut crate::src::qcommon::q_shared::vec3_t,
 ) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     i = 0;
     while i < 3 {
         for j in 0..3 {

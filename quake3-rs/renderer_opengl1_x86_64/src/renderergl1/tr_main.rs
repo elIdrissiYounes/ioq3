@@ -33,7 +33,6 @@ pub mod q_shared_h {
                 + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -139,10 +138,7 @@ pub use crate::src::sdl::sdl_glimp::qglColor3f;
 pub use crate::src::sdl::sdl_glimp::qglDepthRange;
 pub use crate::src::sdl::sdl_glimp::qglEnd;
 pub use crate::src::sdl::sdl_glimp::qglVertex3fv;
-use crate::stdlib::memset;
-use crate::stdlib::sin;
-use crate::stdlib::sqrt;
-use crate::stdlib::tan;
+
 pub use crate::stdlib::GLclampd;
 pub use crate::stdlib::GLenum;
 pub use crate::stdlib::GLfloat;
@@ -584,7 +580,7 @@ pub unsafe extern "C" fn R_CullLocalBox(
     mut bounds: *mut crate::src::qcommon::q_shared::vec3_t,
 ) -> i32 {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut transformed: [crate::src::qcommon::q_shared::vec3_t; 8] = [[0.; 3]; 8];
     let mut dists: [f32; 8] = [0.; 8];
     let mut v: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -675,7 +671,7 @@ pub unsafe extern "C" fn R_CullPointAndRadius(
     mut pt: *mut crate::src::qcommon::q_shared::vec_t,
     mut radius: f32,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut dist: f32 = 0.;
     let mut frust: *mut crate::src::qcommon::q_shared::cplane_t =
         0 as *mut crate::src::qcommon::q_shared::cplane_t;
@@ -936,7 +932,7 @@ myGlMultMatrix
 
 pub unsafe extern "C" fn myGlMultMatrix(mut a: *const f32, mut b: *const f32, mut out: *mut f32) {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     i = 0;
     while i < 4 {
         for j in 0..4 {
@@ -1092,7 +1088,7 @@ pub unsafe extern "C" fn R_RotateForViewer() {
 
 unsafe extern "C" fn R_SetFarClip() {
     let mut farthestCornerDistance: f32 = 0f32;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     // if not rendering the world (icons, menus, etc)
     // set a 2k far clip plane
     if tr.refdef.rdflags & 0x1 != 0 {
@@ -1344,7 +1340,7 @@ pub unsafe extern "C" fn R_MirrorPoint(
     mut camera: *mut crate::src::qcommon::q_shared::orientation_t,
     mut out: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut local: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut transformed: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut d: f32 = 0.;
@@ -1493,7 +1489,7 @@ pub unsafe extern "C" fn R_GetPortalOrientations(
     mut pvsOrigin: *mut crate::src::qcommon::q_shared::vec_t,
     mut mirror: *mut crate::src::qcommon::q_shared::qboolean,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut originalPlane: crate::src::qcommon::q_shared::cplane_t =
         crate::src::qcommon::q_shared::cplane_t {
             normal: [0.; 3],
@@ -1706,7 +1702,7 @@ unsafe extern "C" fn IsMirror(
     mut drawSurf: *const crate::tr_local_h::drawSurf_t,
     mut entityNum: i32,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut originalPlane: crate::src::qcommon::q_shared::cplane_t =
         crate::src::qcommon::q_shared::cplane_t {
             normal: [0.; 3],
@@ -1781,7 +1777,7 @@ unsafe extern "C" fn IsMirror(
 
 unsafe extern "C" fn SurfIsOffscreen(
     mut drawSurf: *const crate::tr_local_h::drawSurf_t,
-    mut clipDest: *mut crate::src::qcommon::q_shared::vec4_t,
+    mut _clipDest: *mut crate::src::qcommon::q_shared::vec4_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut shortest: f32 = 100000000f32;
     let mut entityNum: i32 = 0;
@@ -1807,7 +1803,7 @@ unsafe extern "C" fn SurfIsOffscreen(
         .expect("non-null function pointer")((*drawSurf).surface as *mut libc::c_void);
     i = 0;
     while i < crate::src::renderergl1::tr_shade::tess.numVertexes {
-        let mut j: i32 = 0;
+        let mut _j: i32 = 0;
         let mut pointFlags: u32 = 0;
         R_TransformModelToClip(
             crate::src::renderergl1::tr_shade::tess.xyz[i as usize].as_mut_ptr()
@@ -2081,7 +2077,7 @@ See if a sprite is inside a fog volume
 #[no_mangle]
 
 pub unsafe extern "C" fn R_SpriteFogNum(mut ent: *mut crate::tr_local_h::trRefEntity_t) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     let mut fog: *mut crate::tr_local_h::fog_t = 0 as *mut crate::tr_local_h::fog_t;
     if tr.refdef.rdflags & 0x1 != 0 {

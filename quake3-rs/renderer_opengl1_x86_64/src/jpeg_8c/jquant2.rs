@@ -287,7 +287,7 @@ pub type LOCFSERROR = i32;
 unsafe extern "C" fn prescan_quantize(
     mut cinfo: crate::jpeglib_h::j_decompress_ptr,
     mut input_buf: crate::jpeglib_h::JSAMPARRAY,
-    mut output_buf: crate::jpeglib_h::JSAMPARRAY,
+    mut _output_buf: crate::jpeglib_h::JSAMPARRAY,
     mut num_rows: i32,
 ) {
     let mut cquantize: my_cquantize_ptr = (*cinfo).cquantize as my_cquantize_ptr;
@@ -667,9 +667,9 @@ unsafe extern "C" fn compute_color(
     let mut cquantize: my_cquantize_ptr = (*cinfo).cquantize as my_cquantize_ptr;
     let mut histogram: hist3d = (*cquantize).histogram;
     let mut histp: histptr = 0 as *mut histcell;
-    let mut c0: i32 = 0;
-    let mut c1: i32 = 0;
-    let mut c2: i32 = 0;
+    let mut _c0: i32 = 0;
+    let mut _c1: i32 = 0;
+    let mut _c2: i32 = 0;
     let mut c0min: i32 = 0;
     let mut c0max: i32 = 0;
     let mut c1min: i32 = 0;
@@ -725,7 +725,7 @@ unsafe extern "C" fn select_colors(
 {
     let mut boxlist: boxptr = 0 as *mut box_0;
     let mut numboxes: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     /* Allocate workspace for box list */
     boxlist = Some(
         (*(*cinfo).mem)
@@ -1029,8 +1029,8 @@ unsafe extern "C" fn fill_inverse_cmap(
     let mut minc1: i32 = 0;
     let mut minc2: i32 = 0;
     let mut ic0: i32 = 0;
-    let mut ic1: i32 = 0;
-    let mut ic2: i32 = 0;
+    let mut _ic1: i32 = 0;
+    let mut _ic2: i32 = 0;
     let mut cptr: *mut crate::jmorecfg_h::JSAMPLE = 0 as *mut crate::jmorecfg_h::JSAMPLE;
     let mut cachep: histptr = 0 as *mut histcell;
     /* This array lists the candidate colormap indexes. */
@@ -1074,7 +1074,7 @@ unsafe extern "C" fn fill_inverse_cmap(
             cachep = &mut *(*(*histogram.offset((c0 + ic0) as isize)).offset((c1 + ic1) as isize))
                 .as_mut_ptr()
                 .offset(c2 as isize) as *mut histcell;
-            for ic2 in 0..(1) << 5 - 3 {
+            for _ic2 in 0..(1) << 5 - 3 {
                 let fresh7 = cptr;
 
                 cptr = cptr.offset(1);
@@ -1366,7 +1366,7 @@ unsafe extern "C" fn init_error_limit(mut cinfo: crate::jpeglib_h::j_decompress_
         *table.offset(in_0 as isize) = out;
         *table.offset(-in_0 as isize) = -out;
         in_0 += 1;
-        out += (if in_0 & 1 != 0 { 0 } else { 1 })
+        out += if in_0 & 1 != 0 { 0 } else { 1 }
     }
     /* Clamp the rest to final out value (which is (MAXJSAMPLE+1)/8) */
     while in_0 <= 255 {
@@ -1388,7 +1388,7 @@ unsafe extern "C" fn finish_pass1(mut cinfo: crate::jpeglib_h::j_decompress_ptr)
     (*cquantize).needs_zeroed = 1;
 }
 
-unsafe extern "C" fn finish_pass2(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
+unsafe extern "C" fn finish_pass2(mut _cinfo: crate::jpeglib_h::j_decompress_ptr) {
     /* no work */
 }
 /*
@@ -1532,7 +1532,7 @@ unsafe extern "C" fn new_color_map_2_quant(mut cinfo: crate::jpeglib_h::j_decomp
 
 pub unsafe extern "C" fn jinit_2pass_quantizer(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
     let mut cquantize: my_cquantize_ptr = 0 as *mut my_cquantizer; /* flag optional arrays not allocated */
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     cquantize = Some(
         (*(*cinfo).mem)
             .alloc_small

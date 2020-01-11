@@ -1,5 +1,3 @@
-use ::libc;
-
 pub mod q_shared_h {
 
     /*
@@ -456,11 +454,7 @@ pub use crate::src::game::g_utils::G_AddEvent;
 pub use crate::src::game::g_utils::G_FreeEntity;
 pub use crate::src::game::g_utils::G_SetOrigin;
 pub use crate::src::game::g_utils::G_TempEntity;
-use crate::stdlib::ceil;
-use crate::stdlib::cos;
-use crate::stdlib::floor;
-use crate::stdlib::rand;
-use crate::stdlib::sin;
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -532,7 +526,7 @@ GAUNTLET
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Weapon_Gauntlet(mut ent: *mut crate::g_local_h::gentity_t) {}
+pub unsafe extern "C" fn Weapon_Gauntlet(mut _ent: *mut crate::g_local_h::gentity_t) {}
 /*
 ===============
 CheckGauntletAttack
@@ -1018,7 +1012,7 @@ pub unsafe extern "C" fn weapon_railgun_fire(mut ent: *mut crate::g_local_h::gen
     let mut tent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut traceEnt: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut damage: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut hits: i32 = 0;
     let mut unlinked: i32 = 0;
     let mut passent: i32 = 0;
@@ -1307,8 +1301,8 @@ set muzzle location relative to pivoting eye
 pub unsafe extern "C" fn CalcMuzzlePoint(
     mut ent: *mut crate::g_local_h::gentity_t,
     mut forward_0: *mut crate::src::qcommon::q_shared::vec_t,
-    mut right_0: *mut crate::src::qcommon::q_shared::vec_t,
-    mut up_0: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _right_0: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _up_0: *mut crate::src::qcommon::q_shared::vec_t,
     mut muzzlePoint: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
     *muzzlePoint.offset(0) = (*ent).s.pos.trBase[0];
@@ -1335,10 +1329,10 @@ set muzzle location relative to pivoting eye
 
 pub unsafe extern "C" fn CalcMuzzlePointOrigin(
     mut ent: *mut crate::g_local_h::gentity_t,
-    mut origin: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut forward_0: *mut crate::src::qcommon::q_shared::vec_t,
-    mut right_0: *mut crate::src::qcommon::q_shared::vec_t,
-    mut up_0: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _right_0: *mut crate::src::qcommon::q_shared::vec_t,
+    mut _up_0: *mut crate::src::qcommon::q_shared::vec_t,
     mut muzzlePoint: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
     *muzzlePoint.offset(0) = (*ent).s.pos.trBase[0];

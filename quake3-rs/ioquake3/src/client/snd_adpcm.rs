@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::snd_local_h::adpcm_state;
 pub use crate::snd_local_h::adpcm_state_t;
 pub use crate::snd_local_h::dma_t;

@@ -3064,7 +3064,7 @@ pub unsafe extern "C" fn crc32_combine(
     mut crc2: crate::zconf_h::uLong,
     mut len2: crate::stdlib::off_t,
 ) -> crate::zconf_h::uLong {
-    let mut n: i32 = 0; /* even-power-of-two zeros operator */
+    let mut _n: i32 = 0; /* even-power-of-two zeros operator */
     let mut row: usize = 0; /* odd-power-of-two zeros operator */
     let mut even: [usize; 32] = [0; 32];
     let mut odd: [usize; 32] = [0; 32];

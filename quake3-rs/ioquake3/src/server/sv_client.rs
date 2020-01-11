@@ -173,7 +173,7 @@ pub use crate::src::qcommon::q_shared::Info_SetValueForKey;
 pub use crate::src::qcommon::q_shared::Info_ValueForKey;
 pub use crate::src::qcommon::q_shared::Q_stricmp;
 pub use crate::src::qcommon::q_shared::Q_strncpyz;
-use crate::src::qcommon::q_shared::ShortSwap;
+
 pub use crate::src::qcommon::q_shared::ERR_DISCONNECT;
 pub use crate::src::qcommon::q_shared::ERR_DROP;
 pub use crate::src::qcommon::q_shared::ERR_FATAL;
@@ -222,13 +222,9 @@ pub use crate::src::server::sv_net_chan::SV_Netchan_TransmitNextFragment;
 pub use crate::src::server::sv_snapshot::SV_SendClientSnapshot;
 pub use crate::src::server::sv_snapshot::SV_SendMessageToClient;
 pub use crate::src::server::sv_snapshot::SV_UpdateServerCommandsToClient;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
+
 pub use crate::stdlib::rand;
-use crate::stdlib::strcmp;
-use crate::stdlib::strlen;
-use crate::stdlib::strrchr;
-use crate::stdlib::strstr;
+
 pub use crate::stdlib::strtol;
 pub use crate::vm_local_h::vm_s;
 
@@ -598,7 +594,7 @@ unsafe extern "C" fn SV_IsBanned(
     mut from: *mut crate::qcommon_h::netadr_t,
     mut isexception: crate::src::qcommon::q_shared::qboolean,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    let mut index: i32 = 0;
+    let mut _index: i32 = 0;
     let mut curban: *mut crate::server_h::serverBan_t = 0 as *mut crate::server_h::serverBan_t;
     if isexception as u64 == 0 {
         // If this is a query for a ban, first check whether the client is excepted
@@ -1943,7 +1939,7 @@ Return the shortest time interval for sending next packet to client
 #[no_mangle]
 
 pub unsafe extern "C" fn SV_SendQueuedMessages() -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut retval: i32 = -(1);
     let mut nextFragT: i32 = 0;
     let mut cl: *mut crate::server_h::client_t = 0 as *mut crate::server_h::client_t;
@@ -1974,7 +1970,7 @@ Send one round of download messages to all clients
 #[no_mangle]
 
 pub unsafe extern "C" fn SV_SendDownloadMessages() -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut numDLs: i32 = 0;
     let mut retval: i32 = 0;
     let mut cl: *mut crate::server_h::client_t = 0 as *mut crate::server_h::client_t;

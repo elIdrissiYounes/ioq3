@@ -66,13 +66,6 @@ pub use crate::stdlib::__off_t;
 pub use crate::stdlib::FILE;
 pub use crate::stdlib::_IO_FILE;
 
-use crate::stdlib::fclose;
-use crate::stdlib::ferror;
-use crate::stdlib::fopen;
-use crate::stdlib::fread;
-use crate::stdlib::fseek;
-use crate::stdlib::ftell;
-use crate::stdlib::fwrite;
 pub use crate::zconf_h::uLong;
 pub use crate::zconf_h::voidpf;
 /* ioapi.c -- IO base function header for compress/uncompress .zip
@@ -86,7 +79,7 @@ pub use crate::zconf_h::voidpf;
 #[no_mangle]
 
 pub unsafe extern "C" fn fopen_file_func(
-    mut opaque: crate::zconf_h::voidpf,
+    mut _opaque: crate::zconf_h::voidpf,
     mut filename: *const i8,
     mut mode: i32,
 ) -> crate::zconf_h::voidpf {
@@ -107,7 +100,7 @@ pub unsafe extern "C" fn fopen_file_func(
 #[no_mangle]
 
 pub unsafe extern "C" fn fread_file_func(
-    mut opaque: crate::zconf_h::voidpf,
+    mut _opaque: crate::zconf_h::voidpf,
     mut stream: crate::zconf_h::voidpf,
     mut buf: *mut libc::c_void,
     mut size: crate::zconf_h::uLong,
@@ -119,7 +112,7 @@ pub unsafe extern "C" fn fread_file_func(
 #[no_mangle]
 
 pub unsafe extern "C" fn fwrite_file_func(
-    mut opaque: crate::zconf_h::voidpf,
+    mut _opaque: crate::zconf_h::voidpf,
     mut stream: crate::zconf_h::voidpf,
     mut buf: *const libc::c_void,
     mut size: crate::zconf_h::uLong,
@@ -131,7 +124,7 @@ pub unsafe extern "C" fn fwrite_file_func(
 #[no_mangle]
 
 pub unsafe extern "C" fn ftell_file_func(
-    mut opaque: crate::zconf_h::voidpf,
+    mut _opaque: crate::zconf_h::voidpf,
     mut stream: crate::zconf_h::voidpf,
 ) -> isize {
     let mut ret: isize = 0;
@@ -141,7 +134,7 @@ pub unsafe extern "C" fn ftell_file_func(
 #[no_mangle]
 
 pub unsafe extern "C" fn fseek_file_func(
-    mut opaque: crate::zconf_h::voidpf,
+    mut _opaque: crate::zconf_h::voidpf,
     mut stream: crate::zconf_h::voidpf,
     mut offset: crate::zconf_h::uLong,
     mut origin: i32,
@@ -165,7 +158,7 @@ pub unsafe extern "C" fn fseek_file_func(
 #[no_mangle]
 
 pub unsafe extern "C" fn fclose_file_func(
-    mut opaque: crate::zconf_h::voidpf,
+    mut _opaque: crate::zconf_h::voidpf,
     mut stream: crate::zconf_h::voidpf,
 ) -> i32 {
     let mut ret: i32 = 0;
@@ -175,7 +168,7 @@ pub unsafe extern "C" fn fclose_file_func(
 #[no_mangle]
 
 pub unsafe extern "C" fn ferror_file_func(
-    mut opaque: crate::zconf_h::voidpf,
+    mut _opaque: crate::zconf_h::voidpf,
     mut stream: crate::zconf_h::voidpf,
 ) -> i32 {
     let mut ret: i32 = 0;

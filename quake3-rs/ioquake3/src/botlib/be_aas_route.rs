@@ -13,7 +13,6 @@ pub mod q_shared_h {
                 + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
-    use crate::stdlib::sqrt;
 
     // __Q_SHARED_H
 }
@@ -72,13 +71,7 @@ pub use crate::botlib_h::bsp_surface_t;
 pub use crate::botlib_h::bsp_trace_s;
 pub use crate::botlib_h::bsp_trace_t;
 pub use crate::src::botlib::be_aas_route::q_shared_h::VectorLength;
-use crate::src::botlib::l_crc::CRC_ProcessString;
-use crate::src::botlib::l_libvar::LibVarValue;
-use crate::src::botlib::l_log::Log_Write;
-use crate::src::botlib::l_memory::AvailableMemory;
-use crate::src::botlib::l_memory::FreeMemory;
-use crate::src::botlib::l_memory::GetClearedMemory;
-use crate::src::botlib::l_memory::GetMemory;
+
 pub use crate::src::qcommon::q_shared::byte;
 pub use crate::src::qcommon::q_shared::cplane_s;
 pub use crate::src::qcommon::q_shared::cplane_t;
@@ -94,25 +87,7 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::memcpy;
-use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::sqrt;
 
-use crate::src::botlib::be_aas_main::aasworld;
-use crate::src::botlib::be_aas_main::AAS_Error;
-use crate::src::botlib::be_aas_main::AAS_ProjectPointOntoVector;
-use crate::src::botlib::be_aas_main::AAS_Time;
-use crate::src::botlib::be_aas_reach::AAS_AreaCrouch;
-use crate::src::botlib::be_aas_reach::AAS_AreaDoNotEnter;
-use crate::src::botlib::be_aas_reach::AAS_AreaGroundFaceArea;
-use crate::src::botlib::be_aas_reach::AAS_AreaReachability;
-use crate::src::botlib::be_aas_reach::AAS_AreaSwim;
-use crate::src::botlib::be_aas_sample::AAS_PointAreaNum;
-use crate::src::botlib::be_aas_sample::AAS_TraceAreas;
-use crate::src::botlib::be_aas_sample::AAS_TraceClientBBox;
-use crate::src::botlib::be_interface::botDeveloper;
-use crate::src::botlib::be_interface::botimport;
 //end of the function AAS_CreateAllRoutingCache
 //===========================================================================
 //
@@ -257,7 +232,7 @@ unsafe extern "C" fn AAS_ClusterAreaNum(mut cluster: i32, mut areanum: i32) -> i
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_InitTravelFlagFromType() {
-    let mut i: i32 = 0; //end for
+    let mut _i: i32 = 0; //end for
 
     for i in 0..32 {
         crate::src::botlib::be_aas_main::aasworld.travelflagfortype[i as usize] = 0x1;
@@ -811,7 +786,7 @@ pub unsafe extern "C" fn AAS_AreaTravelTime(
 
 pub unsafe extern "C" fn AAS_CalculateAreaTravelTimes() {
     let mut i: i32 = 0;
-    let mut l: i32 = 0;
+    let mut _l: i32 = 0;
     let mut n: i32 = 0;
     let mut size: i32 = 0;
     let mut ptr: *mut i8 = 0 as *mut i8;
@@ -957,7 +932,7 @@ pub unsafe extern "C" fn AAS_CalculateAreaTravelTimes() {
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_PortalMaxTravelTime(mut portalnum: i32) -> i32 {
-    let mut l: i32 = 0;
+    let mut _l: i32 = 0;
     let mut n: i32 = 0;
     let mut t: i32 = 0;
     let mut maxt: i32 = 0;
@@ -1219,8 +1194,8 @@ pub unsafe extern "C" fn AAS_AllocRoutingCache(
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_FreeAllClusterAreaCache() {
-    let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _i: i32 = 0;
+    let mut _j: i32 = 0;
     let mut cache: *mut crate::be_aas_def_h::aas_routingcache_t =
         0 as *mut crate::be_aas_def_h::aas_routingcache_t;
     let mut nextcache: *mut crate::be_aas_def_h::aas_routingcache_t =
@@ -1337,7 +1312,7 @@ pub unsafe extern "C" fn AAS_InitClusterAreaCache() {
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_FreeAllPortalCache() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut cache: *mut crate::be_aas_def_h::aas_routingcache_t =
         0 as *mut crate::be_aas_def_h::aas_routingcache_t;
     let mut nextcache: *mut crate::be_aas_def_h::aas_routingcache_t =
@@ -1402,7 +1377,7 @@ pub unsafe extern "C" fn AAS_InitPortalCache() {
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_InitRoutingUpdate() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut maxreachabilityareas: i32 = 0;
     //free routing update fields if already existing
     if !crate::src::botlib::be_aas_main::aasworld
@@ -1463,7 +1438,7 @@ pub unsafe extern "C" fn AAS_InitRoutingUpdate() {
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_CreateAllRoutingCache() {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut j: i32 = 0;
     //int t;
     crate::src::botlib::be_aas_main::aasworld.initialized =
@@ -1931,7 +1906,7 @@ pub unsafe extern "C" fn AAS_ReadRouteCache() -> i32 {
 
 pub unsafe extern "C" fn AAS_InitReachabilityAreas() {
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut numareas: i32 = 0;
     let mut areas: [i32; 32] = [0; 32];
     let mut numreachareas: i32 = 0;
@@ -2724,7 +2699,7 @@ pub unsafe extern "C" fn AAS_AreaRouteToGoalArea(
     let mut clusternum: i32 = 0;
     let mut goalclusternum: i32 = 0;
     let mut portalnum: i32 = 0;
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut clusterareanum: i32 = 0;
     let mut bestreachnum: i32 = 0;
     let mut t: u16 = 0;
@@ -3177,7 +3152,7 @@ pub unsafe extern "C" fn AAS_PredictRoute(
     let mut curareanum: i32 = 0;
     let mut reachnum: i32 = 0;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     let mut testareanum: i32 = 0;
     let mut curorigin: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut reach: *mut crate::aasfile_h::aas_reachability_t =
@@ -3340,7 +3315,7 @@ pub unsafe extern "C" fn AAS_PredictRoute(
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_BridgeWalkable(mut areanum: i32) -> i32 {
+pub unsafe extern "C" fn AAS_BridgeWalkable(mut _areanum: i32) -> i32 {
     return crate::src::qcommon::q_shared::qfalse as i32;
 }
 //end of the function AAS_BridgeWalkable
@@ -3509,7 +3484,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_NextModelReachability(mut num: i32, mut modelnum: i32) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     if num <= 0 {
         num = 1
     } else if num >= crate::src::botlib::be_aas_main::aasworld.reachabilitysize {
@@ -3570,7 +3545,7 @@ pub unsafe extern "C" fn AAS_RandomGoalArea(
     mut goalareanum: *mut i32,
     mut goalorigin: *mut crate::src::qcommon::q_shared::vec_t,
 ) -> i32 {
-    let mut i: i32 = 0;
+    let mut _i: i32 = 0;
     let mut n: i32 = 0;
     let mut t: i32 = 0;
     let mut start: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -3592,7 +3567,7 @@ pub unsafe extern "C" fn AAS_RandomGoalArea(
     n = (crate::src::botlib::be_aas_main::aasworld.numareas as f32
         * ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32)) as i32; //end for
                                                                         //end if
-    for i in 0..crate::src::botlib::be_aas_main::aasworld.numareas {
+    for _i in 0..crate::src::botlib::be_aas_main::aasworld.numareas {
         if n <= 0 {
             n = 1
         }
@@ -3696,7 +3671,7 @@ pub unsafe extern "C" fn AAS_RandomGoalArea(
 //===========================================================================
 #[no_mangle]
 
-pub unsafe extern "C" fn AAS_AreaVisible(mut srcarea: i32, mut destarea: i32) -> i32 {
+pub unsafe extern "C" fn AAS_AreaVisible(mut _srcarea: i32, mut _destarea: i32) -> i32 {
     return crate::src::qcommon::q_shared::qfalse as i32;
 }
 //end of the function AAS_AreaVisible
@@ -3731,10 +3706,10 @@ pub unsafe extern "C" fn DistancePointToLine(
 #[no_mangle]
 
 pub unsafe extern "C" fn AAS_NearestHideArea(
-    mut srcnum: i32,
+    mut _srcnum: i32,
     mut origin: *mut crate::src::qcommon::q_shared::vec_t,
     mut areanum: i32,
-    mut enemynum: i32,
+    mut _enemynum: i32,
     mut enemyorigin: *mut crate::src::qcommon::q_shared::vec_t,
     mut enemyareanum: i32,
     mut travelflags: i32,

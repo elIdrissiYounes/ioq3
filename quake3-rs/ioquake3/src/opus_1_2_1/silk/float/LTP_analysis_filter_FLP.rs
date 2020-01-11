@@ -1,4 +1,3 @@
-use ::libc;
 /* **********************************************************************
 Copyright (c) 2006-2011, Skype Limited. All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -139,7 +138,7 @@ pub unsafe extern "C" fn silk_LTP_analysis_filter_FLP(
     let mut inv_gain: f32 = 0.;
     let mut k: i32 = 0;
     let mut i: i32 = 0;
-    let mut j: i32 = 0;
+    let mut _j: i32 = 0;
     x_ptr = x;
     LTP_res_ptr = LTP_res;
     k = 0;

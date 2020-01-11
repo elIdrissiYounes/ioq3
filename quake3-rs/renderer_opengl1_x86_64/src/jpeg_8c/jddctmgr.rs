@@ -1,5 +1,3 @@
-use ::libc;
-
 pub use crate::stddef_h::size_t;
 
 pub use crate::jdct_h::FLOAT_MULT_TYPE;
@@ -235,7 +233,6 @@ pub use crate::src::jpeg_8c::jidctint::jpeg_idct_8x16;
 pub use crate::src::jpeg_8c::jidctint::jpeg_idct_8x4;
 pub use crate::src::jpeg_8c::jidctint::jpeg_idct_9x9;
 pub use crate::src::jpeg_8c::jidctint::jpeg_idct_islow;
-use crate::stdlib::memset;
 
 pub type my_idct_ptr = *mut my_idct_controller;
 
@@ -812,7 +809,7 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
                         let mut fmtbl: *mut crate::jdct_h::FLOAT_MULT_TYPE =
                             (*compptr).dct_table as *mut crate::jdct_h::FLOAT_MULT_TYPE;
                         let mut row: i32 = 0;
-                        let mut col: i32 = 0;
+                        let mut _col: i32 = 0;
                         static mut aanscalefactor: [f64; 8] = [
                             1.0,
                             1.387039845,
