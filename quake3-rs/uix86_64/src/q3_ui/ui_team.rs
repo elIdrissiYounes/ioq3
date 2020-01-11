@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -42,12 +42,12 @@ pub use crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText;
 pub use crate::src::ui::ui_syscalls::trap_GetConfigString;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 use crate::stdlib::memset;
-pub use crate::stdlib::strtol;
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
 pub use crate::ui_local_h::menucommon_s;
 pub use crate::ui_local_h::menuframework_s;
 pub use crate::ui_local_h::menutext_s;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -334,23 +334,23 @@ pub unsafe extern "C" fn TeamMain_MenuInit() {
         3 | 4 | _ => s_teammain.joingame.generic.flags |= 0x2000 as libc::c_int as libc::c_uint,
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_teammain.menu,
+        &mut s_teammain.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_teammain.frame as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_teammain.menu,
+        &mut s_teammain.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_teammain.joinred as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_teammain.menu,
+        &mut s_teammain.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_teammain.joinblue as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_teammain.menu,
+        &mut s_teammain.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_teammain.joingame as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_teammain.menu,
+        &mut s_teammain.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_teammain.spectate as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
 }
@@ -434,5 +434,7 @@ UI_TeamMainMenu
 
 pub unsafe extern "C" fn UI_TeamMainMenu() {
     TeamMain_MenuInit();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_teammain.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_teammain.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

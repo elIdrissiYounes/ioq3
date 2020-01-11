@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -38,7 +38,6 @@ pub use crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText;
 pub use crate::src::ui::ui_syscalls::trap_Cvar_Set;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 use crate::stdlib::memset;
-pub use crate::stdlib::strtol;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -60,6 +59,7 @@ pub use crate::ui_local_h::menucommon_s;
 pub use crate::ui_local_h::menuframework_s;
 pub use crate::ui_local_h::menutext_s;
 pub use crate::ui_local_h::uiStatic_t;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -715,68 +715,68 @@ unsafe extern "C" fn UI_CinematicsMenu_Init() {
     cinematicsMenuInfo.back.focuspic =
         b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.cin_idlogo as *mut crate::ui_local_h::menutext_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.cin_intro as *mut crate::ui_local_h::menutext_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.cin_tier1 as *mut crate::ui_local_h::menutext_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.cin_tier2 as *mut crate::ui_local_h::menutext_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.cin_tier3 as *mut crate::ui_local_h::menutext_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.cin_tier4 as *mut crate::ui_local_h::menutext_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.cin_tier5 as *mut crate::ui_local_h::menutext_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.cin_tier6 as *mut crate::ui_local_h::menutext_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.cin_tier7 as *mut crate::ui_local_h::menutext_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.cin_end as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cinematicsMenuInfo.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
 }
@@ -810,7 +810,9 @@ UI_CinematicsMenu
 
 pub unsafe extern "C" fn UI_CinematicsMenu() {
     UI_CinematicsMenu_Init();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut cinematicsMenuInfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }
 /*
 ===========================================================================
@@ -895,7 +897,7 @@ pub unsafe extern "C" fn UI_CinematicsMenu_f() {
     n = atoi(crate::src::q3_ui::ui_atoms::UI_Argv(1 as libc::c_int));
     UI_CinematicsMenu();
     crate::src::q3_ui::ui_qmenu::Menu_SetCursorToItem(
-        &mut cinematicsMenuInfo.menu,
+        &mut cinematicsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         cinematicsMenuInfo.menu.items[(n + 3 as libc::c_int) as usize],
     );
 }

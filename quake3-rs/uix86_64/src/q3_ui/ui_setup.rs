@@ -543,35 +543,35 @@ unsafe extern "C" fn UI_SetupMenu_Init() {
     setupMenuInfo.back.focuspic =
         b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut setupMenuInfo.menu,
+        &mut setupMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut setupMenuInfo.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut setupMenuInfo.menu,
+        &mut setupMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut setupMenuInfo.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut setupMenuInfo.menu,
+        &mut setupMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut setupMenuInfo.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut setupMenuInfo.menu,
+        &mut setupMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut setupMenuInfo.setupplayer as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut setupMenuInfo.menu,
+        &mut setupMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut setupMenuInfo.setupcontrols as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut setupMenuInfo.menu,
+        &mut setupMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut setupMenuInfo.setupsystem as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut setupMenuInfo.menu,
+        &mut setupMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut setupMenuInfo.game as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut setupMenuInfo.menu,
+        &mut setupMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut setupMenuInfo.cdkey as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     //	Menu_AddItem( &setupMenuInfo.menu, &setupMenuInfo.load );
@@ -581,12 +581,12 @@ unsafe extern "C" fn UI_SetupMenu_Init() {
     ) == 0.
     {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut setupMenuInfo.menu,
+            &mut setupMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut setupMenuInfo.defaults as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
         );
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut setupMenuInfo.menu,
+        &mut setupMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut setupMenuInfo.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
 }
@@ -676,5 +676,7 @@ UI_SetupMenu
 
 pub unsafe extern "C" fn UI_SetupMenu() {
     UI_SetupMenu_Init();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut setupMenuInfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut setupMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

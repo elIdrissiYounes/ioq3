@@ -810,72 +810,72 @@ unsafe extern "C" fn Preferences_MenuInit() {
     s_preferences.back.focuspic =
         b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.crosshair as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.simpleitems as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.wallmarks as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.brass as *mut crate::ui_local_h::menuradiobutton_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.dynamiclights as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.identifytarget as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.highqualitysky as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.synceveryframe as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.forcemodel as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.drawteamoverlay as *mut crate::ui_local_h::menulist_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.allowdownload as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_preferences.menu,
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_preferences.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     Preferences_SetMenuItems();
@@ -1009,5 +1009,7 @@ UI_PreferencesMenu
 
 pub unsafe extern "C" fn UI_PreferencesMenu() {
     Preferences_MenuInit();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_preferences.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_preferences.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

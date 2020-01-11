@@ -122,6 +122,8 @@ pub unsafe extern "C" fn silk_init_encoder(
     /* Used to deactivate LSF interpolation, pitch prediction */
     (*psEnc).sCmn.first_frame_after_reset = 1 as libc::c_int;
     /* Initialize Silk VAD */
-    ret += crate::src::opus_1_2_1::silk::VAD::silk_VAD_Init(&mut (*psEnc).sCmn.sVAD);
+    ret += crate::src::opus_1_2_1::silk::VAD::silk_VAD_Init(
+        &mut (*psEnc).sCmn.sVAD as *mut _ as *mut crate::structs_h::silk_VAD_state,
+    );
     return ret;
 }

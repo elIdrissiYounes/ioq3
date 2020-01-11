@@ -337,8 +337,6 @@ pub use crate::src::ui::ui_syscalls::trap_Cvar_VariableValue;
 pub use crate::src::ui::ui_syscalls::trap_Key_GetOverstrikeMode;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 use crate::stdlib::memset;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -365,6 +363,8 @@ pub use crate::ui_local_h::menutext_s;
 pub use crate::ui_local_h::mfield_t;
 pub use crate::ui_local_h::playerInfo_t;
 pub use crate::ui_local_h::uiStatic_t;
+use ::libc::strcmp;
+use ::libc::strcpy;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -985,14 +985,14 @@ unsafe extern "C" fn PlayerSettings_DrawPlayer(mut self_0: *mut libc::c_void) {
         buf.as_mut_ptr(),
         ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
     );
-    if crate::stdlib::strcmp(buf.as_mut_ptr(), s_playersettings.playerModel.as_mut_ptr())
+    if ::libc::strcmp(buf.as_mut_ptr(), s_playersettings.playerModel.as_mut_ptr())
         != 0 as libc::c_int
     {
         crate::src::q3_ui::ui_players::UI_PlayerInfo_SetModel(
-            &mut s_playersettings.playerinfo,
+            &mut s_playersettings.playerinfo as *mut _ as *mut crate::ui_local_h::playerInfo_t,
             buf.as_mut_ptr(),
         );
-        crate::stdlib::strcpy(s_playersettings.playerModel.as_mut_ptr(), buf.as_mut_ptr());
+        ::libc::strcpy(s_playersettings.playerModel.as_mut_ptr(), buf.as_mut_ptr());
         viewangles[1 as libc::c_int as usize] =
             (180 as libc::c_int - 30 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
         viewangles[0 as libc::c_int as usize] =
@@ -1000,7 +1000,7 @@ unsafe extern "C" fn PlayerSettings_DrawPlayer(mut self_0: *mut libc::c_void) {
         viewangles[2 as libc::c_int as usize] =
             0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
         crate::src::q3_ui::ui_players::UI_PlayerInfo_SetInfo(
-            &mut s_playersettings.playerinfo,
+            &mut s_playersettings.playerinfo as *mut _ as *mut crate::ui_local_h::playerInfo_t,
             crate::bg_public_h::LEGS_IDLE as libc::c_int,
             crate::bg_public_h::TORSO_STAND as libc::c_int,
             viewangles.as_mut_ptr(),
@@ -1015,7 +1015,7 @@ unsafe extern "C" fn PlayerSettings_DrawPlayer(mut self_0: *mut libc::c_void) {
         (*b).generic.y as libc::c_float,
         (*b).width as libc::c_float,
         (*b).height as libc::c_float,
-        &mut s_playersettings.playerinfo,
+        &mut s_playersettings.playerinfo as *mut _ as *mut crate::ui_local_h::playerInfo_t,
         crate::src::q3_ui::ui_atoms::uis.realtime / 2 as libc::c_int,
     );
 }
@@ -1057,7 +1057,10 @@ unsafe extern "C" fn PlayerSettings_MenuKey(
     {
         PlayerSettings_SaveChanges();
     }
-    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(&mut s_playersettings.menu, key);
+    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(
+        &mut s_playersettings.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        key,
+    );
 }
 /*
 =================
@@ -1099,13 +1102,13 @@ unsafe extern "C" fn PlayerSettings_SetMenuItems() {
     viewangles[2 as libc::c_int as usize] =
         0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
     crate::src::q3_ui::ui_players::UI_PlayerInfo_SetModel(
-        &mut s_playersettings.playerinfo,
+        &mut s_playersettings.playerinfo as *mut _ as *mut crate::ui_local_h::playerInfo_t,
         crate::src::q3_ui::ui_atoms::UI_Cvar_VariableString(
             b"model\x00" as *const u8 as *const libc::c_char,
         ),
     );
     crate::src::q3_ui::ui_players::UI_PlayerInfo_SetInfo(
-        &mut s_playersettings.playerinfo,
+        &mut s_playersettings.playerinfo as *mut _ as *mut crate::ui_local_h::playerInfo_t,
         crate::bg_public_h::LEGS_IDLE as libc::c_int,
         crate::bg_public_h::TORSO_STAND as libc::c_int,
         viewangles.as_mut_ptr(),
@@ -1286,43 +1289,43 @@ unsafe extern "C" fn PlayerSettings_MenuInit() {
     s_playersettings.item_null.width = 640 as libc::c_int;
     s_playersettings.item_null.height = 480 as libc::c_int;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playersettings.menu,
+        &mut s_playersettings.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playersettings.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playersettings.menu,
+        &mut s_playersettings.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playersettings.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playersettings.menu,
+        &mut s_playersettings.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playersettings.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playersettings.menu,
+        &mut s_playersettings.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playersettings.name as *mut crate::ui_local_h::menufield_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playersettings.menu,
+        &mut s_playersettings.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playersettings.handicap as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playersettings.menu,
+        &mut s_playersettings.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playersettings.effects as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playersettings.menu,
+        &mut s_playersettings.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playersettings.model as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playersettings.menu,
+        &mut s_playersettings.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playersettings.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playersettings.menu,
+        &mut s_playersettings.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playersettings.player as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playersettings.menu,
+        &mut s_playersettings.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playersettings.item_null as *mut crate::ui_local_h::menubitmap_s
             as *mut libc::c_void,
     );
@@ -1478,5 +1481,7 @@ UI_PlayerSettingsMenu
 
 pub unsafe extern "C" fn UI_PlayerSettingsMenu() {
     PlayerSettings_MenuInit();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_playersettings.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_playersettings.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

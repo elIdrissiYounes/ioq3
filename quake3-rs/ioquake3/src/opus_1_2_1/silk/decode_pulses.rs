@@ -359,7 +359,7 @@ pub unsafe extern "C" fn silk_decode_pulses(
     /* Decode rate level */
     /* ********************/
     RateLevelIndex = crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
-        psRangeDec,
+        psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         crate::src::opus_1_2_1::silk::tables_pulses_per_block::silk_rate_levels_iCDF
             [(signalType >> 1 as libc::c_int) as usize]
             .as_ptr(),
@@ -381,7 +381,7 @@ pub unsafe extern "C" fn silk_decode_pulses(
     while i < iter {
         nLshifts[i as usize] = 0 as libc::c_int;
         sum_pulses[i as usize] = crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
-            psRangeDec,
+            psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             cdf_ptr,
             8 as libc::c_int as libc::c_uint,
         );
@@ -390,7 +390,7 @@ pub unsafe extern "C" fn silk_decode_pulses(
             nLshifts[i as usize] += 1;
             /* When we've already got 10 LSBs, we shift the table to not allow (SILK_MAX_PULSES + 1) */
             sum_pulses[i as usize] = crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
-                psRangeDec,
+                psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 crate::src::opus_1_2_1::silk::tables_pulses_per_block::silk_pulses_per_block_iCDF
                     [(10 as libc::c_int - 1 as libc::c_int) as usize]
                     .as_ptr()
@@ -412,7 +412,7 @@ pub unsafe extern "C" fn silk_decode_pulses(
                         * 16 as libc::c_int as crate::opus_types_h::opus_int16
                             as crate::opus_types_h::opus_int32) as isize,
                 ),
-                psRangeDec,
+                psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 sum_pulses[i as usize],
             );
         } else {
@@ -451,7 +451,7 @@ pub unsafe extern "C" fn silk_decode_pulses(
                     abs_q = ((abs_q as crate::opus_types_h::opus_uint32) << 1 as libc::c_int)
                         as crate::opus_types_h::opus_int32;
                     abs_q += crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
-                        psRangeDec,
+                        psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                         crate::src::opus_1_2_1::silk::tables_other::silk_lsb_iCDF.as_ptr(),
                         8 as libc::c_int as libc::c_uint,
                     );
@@ -469,7 +469,7 @@ pub unsafe extern "C" fn silk_decode_pulses(
     /* Decode and add signs to pulse signal */
     /* ***************************************/
     crate::src::opus_1_2_1::silk::code_signs::silk_decode_signs(
-        psRangeDec,
+        psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         pulses,
         frame_length,
         signalType,

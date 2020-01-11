@@ -364,8 +364,8 @@ pub unsafe extern "C" fn silk_decode_frame(
         /* Decode quantization indices of side info  */
         /* ********************************************/
         crate::src::opus_1_2_1::silk::decode_indices::silk_decode_indices(
-            psDec,
-            psRangeDec,
+            psDec as *mut crate::structs_h::silk_decoder_state,
+            psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             (*psDec).nFramesDecoded,
             lostFlag,
             condCoding,
@@ -374,7 +374,7 @@ pub unsafe extern "C" fn silk_decode_frame(
         /* Decode quantization indices of excitation */
         /* ********************************************/
         crate::src::opus_1_2_1::silk::decode_pulses::silk_decode_pulses(
-            psRangeDec,
+            psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             pulses,
             (*psDec).indices.signalType as libc::c_int,
             (*psDec).indices.quantOffsetType as libc::c_int,
@@ -384,14 +384,16 @@ pub unsafe extern "C" fn silk_decode_frame(
         /* Decode parameters and pulse signal       */
         /* *******************************************/
         crate::src::opus_1_2_1::silk::decode_parameters::silk_decode_parameters(
-            psDec, psDecCtrl, condCoding,
+            psDec as *mut crate::structs_h::silk_decoder_state,
+            psDecCtrl as *mut crate::structs_h::silk_decoder_control,
+            condCoding,
         );
         /* *******************************************************/
         /* Run inverse NSQ                                      */
         /* *******************************************************/
         crate::src::opus_1_2_1::silk::decode_core::silk_decode_core(
-            psDec,
-            psDecCtrl,
+            psDec as *mut crate::structs_h::silk_decoder_state,
+            psDecCtrl as *mut crate::structs_h::silk_decoder_control,
             pOut,
             pulses as *const crate::opus_types_h::opus_int16,
             arch,
@@ -399,7 +401,13 @@ pub unsafe extern "C" fn silk_decode_frame(
         /* *******************************************************/
         /* Update PLC state                                     */
         /* *******************************************************/
-        crate::src::opus_1_2_1::silk::PLC::silk_PLC(psDec, psDecCtrl, pOut, 0 as libc::c_int, arch);
+        crate::src::opus_1_2_1::silk::PLC::silk_PLC(
+            psDec as *mut crate::structs_h::silk_decoder_state,
+            psDecCtrl as *mut crate::structs_h::silk_decoder_control,
+            pOut,
+            0 as libc::c_int,
+            arch,
+        );
         (*psDec).lossCnt = 0 as libc::c_int;
         (*psDec).prevSignalType = (*psDec).indices.signalType as libc::c_int;
         /* A frame has been decoded without errors */
@@ -407,7 +415,13 @@ pub unsafe extern "C" fn silk_decode_frame(
     } else {
         /* Handle packet loss by extrapolation */
         (*psDec).indices.signalType = (*psDec).prevSignalType as libc::c_schar;
-        crate::src::opus_1_2_1::silk::PLC::silk_PLC(psDec, psDecCtrl, pOut, 1 as libc::c_int, arch);
+        crate::src::opus_1_2_1::silk::PLC::silk_PLC(
+            psDec as *mut crate::structs_h::silk_decoder_state,
+            psDecCtrl as *mut crate::structs_h::silk_decoder_control,
+            pOut,
+            1 as libc::c_int,
+            arch,
+        );
     }
     /* ************************/
     /* Update output buffer. */
@@ -429,11 +443,20 @@ pub unsafe extern "C" fn silk_decode_frame(
     /* ***********************************************/
     /* Comfort noise generation / estimation        */
     /* ***********************************************/
-    crate::src::opus_1_2_1::silk::CNG::silk_CNG(psDec, psDecCtrl, pOut, L);
+    crate::src::opus_1_2_1::silk::CNG::silk_CNG(
+        psDec as *mut crate::structs_h::silk_decoder_state,
+        psDecCtrl as *mut crate::structs_h::silk_decoder_control,
+        pOut,
+        L,
+    );
     /* ***************************************************************/
     /* Ensure smooth connection of extrapolated and good frames     */
     /* ***************************************************************/
-    crate::src::opus_1_2_1::silk::PLC::silk_PLC_glue_frames(psDec, pOut, L);
+    crate::src::opus_1_2_1::silk::PLC::silk_PLC_glue_frames(
+        psDec as *mut crate::structs_h::silk_decoder_state,
+        pOut,
+        L,
+    );
     /* Update some decoder state variables */
     (*psDec).lagPrev = (*psDecCtrl).pitchL[((*psDec).nb_subfr - 1 as libc::c_int) as usize];
     /* Set output frame length */

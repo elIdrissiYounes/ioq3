@@ -71,7 +71,6 @@ pub use crate::src::renderergl1::tr_main::R_CullLocalBox;
 pub use crate::src::renderergl1::tr_main::R_CullLocalPointAndRadius;
 pub use crate::src::renderergl1::tr_shader::R_GetShaderByHandle;
 use crate::stdlib::fabs;
-use crate::stdlib::strcmp;
 pub use crate::tr_common_h::image_s;
 pub use crate::tr_common_h::image_t;
 pub use crate::tr_common_h::imgFlags_t;
@@ -234,6 +233,7 @@ pub use crate::tr_local_h::TMOD_SCROLL;
 pub use crate::tr_local_h::TMOD_STRETCH;
 pub use crate::tr_local_h::TMOD_TRANSFORM;
 pub use crate::tr_local_h::TMOD_TURBULENT;
+use ::libc::strcmp;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -1023,8 +1023,9 @@ pub unsafe extern "C" fn R_AddMD3Surfaces(mut ent: *mut crate::tr_local_h::trRef
         || (*crate::src::renderergl1::tr_init::r_shadows).integer > 1 as libc::c_int
     {
         crate::src::renderergl1::tr_light::R_SetupEntityLighting(
-            &mut crate::src::renderergl1::tr_main::tr.refdef,
-            ent,
+            &mut crate::src::renderergl1::tr_main::tr.refdef as *mut _
+                as *const crate::tr_local_h::trRefdef_t,
+            ent as *mut crate::tr_local_h::trRefEntity_t,
         );
     }
     //
@@ -1040,18 +1041,20 @@ pub unsafe extern "C" fn R_AddMD3Surfaces(mut ent: *mut crate::tr_local_h::trRef
     while i < (*header).numSurfaces {
         if (*ent).e.customShader != 0 {
             shader = crate::src::renderergl1::tr_shader::R_GetShaderByHandle((*ent).e.customShader)
+                as *mut crate::tr_local_h::shader_s
         } else if (*ent).e.customSkin > 0 as libc::c_int
             && (*ent).e.customSkin < crate::src::renderergl1::tr_main::tr.numSkins
         {
             let mut skin: *mut crate::tr_local_h::skin_t = 0 as *mut crate::tr_local_h::skin_t;
             let mut j: libc::c_int = 0;
-            skin = crate::src::renderergl1::tr_image::R_GetSkinByHandle((*ent).e.customSkin);
+            skin = crate::src::renderergl1::tr_image::R_GetSkinByHandle((*ent).e.customSkin)
+                as *mut crate::tr_local_h::skin_s;
             // match the surface name to something in the skin file
             shader = crate::src::renderergl1::tr_main::tr.defaultShader;
             j = 0 as libc::c_int;
             while j < (*skin).numSurfaces {
                 // the names have both been lowercased
-                if crate::stdlib::strcmp(
+                if ::libc::strcmp(
                     (*(*skin).surfaces.offset(j as isize)).name.as_mut_ptr(),
                     (*surface).name.as_mut_ptr(),
                 ) == 0
@@ -1102,7 +1105,8 @@ pub unsafe extern "C" fn R_AddMD3Surfaces(mut ent: *mut crate::tr_local_h::trRef
         {
             crate::src::renderergl1::tr_main::R_AddDrawSurf(
                 surface as *mut libc::c_void as *mut crate::tr_local_h::surfaceType_t,
-                crate::src::renderergl1::tr_main::tr.shadowShader,
+                crate::src::renderergl1::tr_main::tr.shadowShader
+                    as *mut crate::tr_local_h::shader_s,
                 0 as libc::c_int,
                 crate::src::qcommon::q_shared::qfalse as libc::c_int,
             );
@@ -1115,7 +1119,8 @@ pub unsafe extern "C" fn R_AddMD3Surfaces(mut ent: *mut crate::tr_local_h::trRef
         {
             crate::src::renderergl1::tr_main::R_AddDrawSurf(
                 surface as *mut libc::c_void as *mut crate::tr_local_h::surfaceType_t,
-                crate::src::renderergl1::tr_main::tr.projectionShadowShader,
+                crate::src::renderergl1::tr_main::tr.projectionShadowShader
+                    as *mut crate::tr_local_h::shader_s,
                 0 as libc::c_int,
                 crate::src::qcommon::q_shared::qfalse as libc::c_int,
             );
@@ -1124,7 +1129,7 @@ pub unsafe extern "C" fn R_AddMD3Surfaces(mut ent: *mut crate::tr_local_h::trRef
         if personalModel as u64 == 0 {
             crate::src::renderergl1::tr_main::R_AddDrawSurf(
                 surface as *mut libc::c_void as *mut crate::tr_local_h::surfaceType_t,
-                shader,
+                shader as *mut crate::tr_local_h::shader_s,
                 fogNum,
                 crate::src::qcommon::q_shared::qfalse as libc::c_int,
             );

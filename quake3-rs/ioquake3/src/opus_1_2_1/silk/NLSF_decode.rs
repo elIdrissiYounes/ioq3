@@ -351,7 +351,7 @@ pub unsafe extern "C" fn silk_NLSF_decode(
     crate::src::opus_1_2_1::silk::NLSF_unpack::silk_NLSF_unpack(
         ec_ix.as_mut_ptr(),
         pred_Q8.as_mut_ptr(),
-        psNLSF_CB,
+        psNLSF_CB as *const crate::structs_h::silk_NLSF_CB_struct,
         *NLSFIndices.offset(0 as libc::c_int as isize) as libc::c_int,
     );
     /* Predictive residual dequantizer */

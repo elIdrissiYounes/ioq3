@@ -73,7 +73,6 @@ pub use crate::src::renderergl1::tr_mesh::R_ComputeLOD;
 pub use crate::src::renderergl1::tr_shade::tess;
 pub use crate::src::renderergl1::tr_shader::R_GetShaderByHandle;
 pub use crate::src::renderergl1::tr_surface::RB_CheckOverflow;
-use crate::stdlib::strcmp;
 pub use crate::tr_common_h::image_s;
 pub use crate::tr_common_h::image_t;
 pub use crate::tr_common_h::imgFlags_t;
@@ -244,6 +243,7 @@ pub use crate::tr_local_h::TMOD_SCROLL;
 pub use crate::tr_local_h::TMOD_STRETCH;
 pub use crate::tr_local_h::TMOD_TRANSFORM;
 pub use crate::tr_local_h::TMOD_TURBULENT;
+use ::libc::strcmp;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -529,7 +529,9 @@ pub unsafe extern "C" fn R_MDRAddAnimSurfaces(mut ent: *mut crate::tr_local_h::t
         return;
     }
     // figure out the current LOD of the model we're rendering, and set the lod pointer respectively.
-    lodnum = crate::src::renderergl1::tr_mesh::R_ComputeLOD(ent);
+    lodnum = crate::src::renderergl1::tr_mesh::R_ComputeLOD(
+        ent as *mut crate::tr_local_h::trRefEntity_t,
+    );
     // check whether this model has as that many LODs at all. If not, try the closest thing we got.
     if (*header).numLODs <= 0 as libc::c_int {
         return;
@@ -550,8 +552,9 @@ pub unsafe extern "C" fn R_MDRAddAnimSurfaces(mut ent: *mut crate::tr_local_h::t
         || (*crate::src::renderergl1::tr_init::r_shadows).integer > 1 as libc::c_int
     {
         crate::src::renderergl1::tr_light::R_SetupEntityLighting(
-            &mut crate::src::renderergl1::tr_main::tr.refdef,
-            ent,
+            &mut crate::src::renderergl1::tr_main::tr.refdef as *mut _
+                as *const crate::tr_local_h::trRefdef_t,
+            ent as *mut crate::tr_local_h::trRefEntity_t,
         );
     }
     // fogNum?
@@ -562,14 +565,16 @@ pub unsafe extern "C" fn R_MDRAddAnimSurfaces(mut ent: *mut crate::tr_local_h::t
     while i < (*lod).numSurfaces {
         if (*ent).e.customShader != 0 {
             shader = crate::src::renderergl1::tr_shader::R_GetShaderByHandle((*ent).e.customShader)
+                as *mut crate::tr_local_h::shader_s
         } else if (*ent).e.customSkin > 0 as libc::c_int
             && (*ent).e.customSkin < crate::src::renderergl1::tr_main::tr.numSkins
         {
-            skin = crate::src::renderergl1::tr_image::R_GetSkinByHandle((*ent).e.customSkin);
+            skin = crate::src::renderergl1::tr_image::R_GetSkinByHandle((*ent).e.customSkin)
+                as *mut crate::tr_local_h::skin_s;
             shader = crate::src::renderergl1::tr_main::tr.defaultShader;
             j = 0 as libc::c_int;
             while j < (*skin).numSurfaces {
-                if crate::stdlib::strcmp(
+                if ::libc::strcmp(
                     (*(*skin).surfaces.offset(j as isize)).name.as_mut_ptr(),
                     (*surface).name.as_mut_ptr(),
                 ) == 0
@@ -582,6 +587,7 @@ pub unsafe extern "C" fn R_MDRAddAnimSurfaces(mut ent: *mut crate::tr_local_h::t
             }
         } else if (*surface).shaderIndex > 0 as libc::c_int {
             shader = crate::src::renderergl1::tr_shader::R_GetShaderByHandle((*surface).shaderIndex)
+                as *mut crate::tr_local_h::shader_s
         } else {
             shader = crate::src::renderergl1::tr_main::tr.defaultShader
         }
@@ -595,7 +601,8 @@ pub unsafe extern "C" fn R_MDRAddAnimSurfaces(mut ent: *mut crate::tr_local_h::t
         {
             crate::src::renderergl1::tr_main::R_AddDrawSurf(
                 surface as *mut libc::c_void as *mut crate::tr_local_h::surfaceType_t,
-                crate::src::renderergl1::tr_main::tr.shadowShader,
+                crate::src::renderergl1::tr_main::tr.shadowShader
+                    as *mut crate::tr_local_h::shader_s,
                 0 as libc::c_int,
                 crate::src::qcommon::q_shared::qfalse as libc::c_int,
             );
@@ -608,7 +615,8 @@ pub unsafe extern "C" fn R_MDRAddAnimSurfaces(mut ent: *mut crate::tr_local_h::t
         {
             crate::src::renderergl1::tr_main::R_AddDrawSurf(
                 surface as *mut libc::c_void as *mut crate::tr_local_h::surfaceType_t,
-                crate::src::renderergl1::tr_main::tr.projectionShadowShader,
+                crate::src::renderergl1::tr_main::tr.projectionShadowShader
+                    as *mut crate::tr_local_h::shader_s,
                 0 as libc::c_int,
                 crate::src::qcommon::q_shared::qfalse as libc::c_int,
             );
@@ -616,7 +624,7 @@ pub unsafe extern "C" fn R_MDRAddAnimSurfaces(mut ent: *mut crate::tr_local_h::t
         if personalModel as u64 == 0 {
             crate::src::renderergl1::tr_main::R_AddDrawSurf(
                 surface as *mut libc::c_void as *mut crate::tr_local_h::surfaceType_t,
-                shader,
+                shader as *mut crate::tr_local_h::shader_s,
                 fogNum,
                 crate::src::qcommon::q_shared::qfalse as libc::c_int,
             );

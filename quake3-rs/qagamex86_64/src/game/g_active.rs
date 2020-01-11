@@ -355,7 +355,7 @@ pub unsafe extern "C" fn P_DamageFeedback(mut player: *mut crate::g_local_h::gen
     {
         (*player).pain_debounce_time = crate::src::game::g_main::level.time + 700 as libc::c_int;
         crate::src::game::g_utils::G_AddEvent(
-            player,
+            player as *mut crate::g_local_h::gentity_s,
             crate::bg_public_h::EV_PAIN as libc::c_int,
             (*player).health,
         );
@@ -414,9 +414,9 @@ pub unsafe extern "C" fn P_WorldEffects(mut ent: *mut crate::g_local_h::gentity_
                 (*ent).pain_debounce_time =
                     crate::src::game::g_main::level.time + 200 as libc::c_int;
                 crate::src::game::g_combat::G_Damage(
-                    ent,
-                    0 as *mut crate::g_local_h::gentity_t,
-                    0 as *mut crate::g_local_h::gentity_t,
+                    ent as *mut crate::g_local_h::gentity_s,
+                    0 as *mut crate::g_local_h::gentity_t as *mut crate::g_local_h::gentity_s,
+                    0 as *mut crate::g_local_h::gentity_t as *mut crate::g_local_h::gentity_s,
                     0 as *mut crate::src::qcommon::q_shared::vec_t,
                     0 as *mut crate::src::qcommon::q_shared::vec_t,
                     (*ent).damage,
@@ -438,16 +438,16 @@ pub unsafe extern "C" fn P_WorldEffects(mut ent: *mut crate::g_local_h::gentity_
         {
             if envirosuit as u64 != 0 {
                 crate::src::game::g_utils::G_AddEvent(
-                    ent,
+                    ent as *mut crate::g_local_h::gentity_s,
                     crate::bg_public_h::EV_POWERUP_BATTLESUIT as libc::c_int,
                     0 as libc::c_int,
                 );
             } else {
                 if (*ent).watertype & 8 as libc::c_int != 0 {
                     crate::src::game::g_combat::G_Damage(
-                        ent,
-                        0 as *mut crate::g_local_h::gentity_t,
-                        0 as *mut crate::g_local_h::gentity_t,
+                        ent as *mut crate::g_local_h::gentity_s,
+                        0 as *mut crate::g_local_h::gentity_t as *mut crate::g_local_h::gentity_s,
+                        0 as *mut crate::g_local_h::gentity_t as *mut crate::g_local_h::gentity_s,
                         0 as *mut crate::src::qcommon::q_shared::vec_t,
                         0 as *mut crate::src::qcommon::q_shared::vec_t,
                         30 as libc::c_int * waterlevel,
@@ -457,9 +457,9 @@ pub unsafe extern "C" fn P_WorldEffects(mut ent: *mut crate::g_local_h::gentity_
                 }
                 if (*ent).watertype & 16 as libc::c_int != 0 {
                     crate::src::game::g_combat::G_Damage(
-                        ent,
-                        0 as *mut crate::g_local_h::gentity_t,
-                        0 as *mut crate::g_local_h::gentity_t,
+                        ent as *mut crate::g_local_h::gentity_s,
+                        0 as *mut crate::g_local_h::gentity_t as *mut crate::g_local_h::gentity_s,
+                        0 as *mut crate::g_local_h::gentity_t as *mut crate::g_local_h::gentity_s,
                         0 as *mut crate::src::qcommon::q_shared::vec_t,
                         0 as *mut crate::src::qcommon::q_shared::vec_t,
                         10 as libc::c_int * waterlevel,
@@ -666,8 +666,10 @@ pub unsafe extern "C" fn G_TouchTriggers(mut ent: *mut crate::g_local_h::gentity
                     {
                         if (*hit).s.eType == crate::bg_public_h::ET_ITEM as libc::c_int {
                             if crate::src::game::bg_misc::BG_PlayerTouchesItem(
-                                &mut (*(*ent).client).ps,
-                                &mut (*hit).s,
+                                &mut (*(*ent).client).ps as *mut _
+                                    as *mut crate::src::qcommon::q_shared::playerState_s,
+                                &mut (*hit).s as *mut _
+                                    as *mut crate::src::qcommon::q_shared::entityState_s,
                                 crate::src::game::g_main::level.time,
                             ) as u64
                                 == 0
@@ -679,7 +681,7 @@ pub unsafe extern "C" fn G_TouchTriggers(mut ent: *mut crate::g_local_h::gentity
                         } else if crate::src::game::g_syscalls::trap_EntityContact(
                             mins.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                             maxs.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-                            hit,
+                            hit as *const crate::g_local_h::gentity_s,
                         ) as u64
                             == 0
                         {
@@ -810,19 +812,22 @@ pub unsafe extern "C" fn SpectatorThink(
                 ) -> libc::c_int,
         );
         // perform a pmove
-        crate::src::game::bg_pmove::Pmove(&mut pm);
+        crate::src::game::bg_pmove::Pmove(&mut pm as *mut _ as *mut crate::bg_public_h::pmove_t);
         // save results of pmove
         (*ent).s.origin[0 as libc::c_int as usize] = (*client).ps.origin[0 as libc::c_int as usize];
         (*ent).s.origin[1 as libc::c_int as usize] = (*client).ps.origin[1 as libc::c_int as usize];
         (*ent).s.origin[2 as libc::c_int as usize] = (*client).ps.origin[2 as libc::c_int as usize];
         G_TouchTriggers(ent);
-        crate::src::game::g_syscalls::trap_UnlinkEntity(ent);
+        crate::src::game::g_syscalls::trap_UnlinkEntity(ent as *mut crate::g_local_h::gentity_s);
     }
     (*client).oldbuttons = (*client).buttons;
     (*client).buttons = (*ucmd).buttons;
     // attack button cycles through spectators
     if (*client).buttons & 1 as libc::c_int != 0 && (*client).oldbuttons & 1 as libc::c_int == 0 {
-        crate::src::game::g_cmds::Cmd_FollowCycle_f(ent, 1 as libc::c_int);
+        crate::src::game::g_cmds::Cmd_FollowCycle_f(
+            ent as *mut crate::g_local_h::gentity_s,
+            1 as libc::c_int,
+        );
     };
 }
 /*
@@ -910,7 +915,7 @@ pub unsafe extern "C" fn ClientTimerActions(
                         * 1.1f64) as libc::c_int
                 }
                 crate::src::game::g_utils::G_AddEvent(
-                    ent,
+                    ent as *mut crate::g_local_h::gentity_s,
                     crate::bg_public_h::EV_POWERUP_REGEN as libc::c_int,
                     0 as libc::c_int,
                 );
@@ -929,7 +934,7 @@ pub unsafe extern "C" fn ClientTimerActions(
                         * 2 as libc::c_int
                 }
                 crate::src::game::g_utils::G_AddEvent(
-                    ent,
+                    ent as *mut crate::g_local_h::gentity_s,
                     crate::bg_public_h::EV_POWERUP_REGEN as libc::c_int,
                     0 as libc::c_int,
                 );
@@ -1014,9 +1019,11 @@ pub unsafe extern "C" fn ClientEvents(
                         (*ent).pain_debounce_time =
                             crate::src::game::g_main::level.time + 200 as libc::c_int;
                         crate::src::game::g_combat::G_Damage(
-                            ent,
-                            0 as *mut crate::g_local_h::gentity_t,
-                            0 as *mut crate::g_local_h::gentity_t,
+                            ent as *mut crate::g_local_h::gentity_s,
+                            0 as *mut crate::g_local_h::gentity_t
+                                as *mut crate::g_local_h::gentity_s,
+                            0 as *mut crate::g_local_h::gentity_t
+                                as *mut crate::g_local_h::gentity_s,
                             0 as *mut crate::src::qcommon::q_shared::vec_t,
                             0 as *mut crate::src::qcommon::q_shared::vec_t,
                             damage,
@@ -1027,7 +1034,7 @@ pub unsafe extern "C" fn ClientEvents(
                 }
             }
             23 => {
-                crate::src::game::g_weapon::FireWeapon(ent);
+                crate::src::game::g_weapon::FireWeapon(ent as *mut crate::g_local_h::gentity_s);
             }
             25 => {
                 // teleporter
@@ -1040,7 +1047,7 @@ pub unsafe extern "C" fn ClientEvents(
                 {
                     item = crate::src::game::bg_misc::BG_FindItemForPowerup(
                         crate::bg_public_h::PW_REDFLAG,
-                    );
+                    ) as *mut crate::bg_public_h::gitem_s;
                     j = crate::bg_public_h::PW_REDFLAG as libc::c_int
                 } else if (*(*ent).client).ps.powerups
                     [crate::bg_public_h::PW_BLUEFLAG as libc::c_int as usize]
@@ -1048,7 +1055,7 @@ pub unsafe extern "C" fn ClientEvents(
                 {
                     item = crate::src::game::bg_misc::BG_FindItemForPowerup(
                         crate::bg_public_h::PW_BLUEFLAG,
-                    );
+                    ) as *mut crate::bg_public_h::gitem_s;
                     j = crate::bg_public_h::PW_BLUEFLAG as libc::c_int
                 } else if (*(*ent).client).ps.powerups
                     [crate::bg_public_h::PW_NEUTRALFLAG as libc::c_int as usize]
@@ -1056,15 +1063,15 @@ pub unsafe extern "C" fn ClientEvents(
                 {
                     item = crate::src::game::bg_misc::BG_FindItemForPowerup(
                         crate::bg_public_h::PW_NEUTRALFLAG,
-                    );
+                    ) as *mut crate::bg_public_h::gitem_s;
                     j = crate::bg_public_h::PW_NEUTRALFLAG as libc::c_int
                 }
                 if !item.is_null() {
                     drop_0 = crate::src::game::g_items::Drop_Item(
-                        ent,
-                        item,
+                        ent as *mut crate::g_local_h::gentity_s,
+                        item as *mut crate::bg_public_h::gitem_s,
                         0 as libc::c_int as libc::c_float,
-                    );
+                    ) as *mut crate::g_local_h::gentity_s;
                     // decide how many seconds it has left
                     (*drop_0).count = ((*(*ent).client).ps.powerups[j as usize]
                         - crate::src::game::g_main::level.time)
@@ -1074,14 +1081,15 @@ pub unsafe extern "C" fn ClientEvents(
                     }
                     (*(*ent).client).ps.powerups[j as usize] = 0 as libc::c_int
                 }
+
                 crate::src::game::g_client::SelectSpawnPoint(
                     (*(*ent).client).ps.origin.as_mut_ptr(),
                     origin.as_mut_ptr(),
                     angles.as_mut_ptr(),
                     crate::src::qcommon::q_shared::qfalse,
-                );
+                ) as *mut crate::g_local_h::gentity_s;
                 crate::src::game::g_misc::TeleportPlayer(
-                    ent,
+                    ent as *mut crate::g_local_h::gentity_s,
                     origin.as_mut_ptr(),
                     angles.as_mut_ptr(),
                 );
@@ -1123,11 +1131,12 @@ pub unsafe extern "C" fn SendPendingPredictableEvents(
         extEvent = (*ps).externalEvent;
         (*ps).externalEvent = 0 as libc::c_int;
         // create temporary entity for event
-        t = crate::src::game::g_utils::G_TempEntity((*ps).origin.as_mut_ptr(), event);
+        t = crate::src::game::g_utils::G_TempEntity((*ps).origin.as_mut_ptr(), event)
+            as *mut crate::g_local_h::gentity_s;
         number = (*t).s.number;
         crate::src::game::bg_misc::BG_PlayerStateToEntityState(
-            ps,
-            &mut (*t).s,
+            ps as *mut crate::src::qcommon::q_shared::playerState_s,
+            &mut (*t).s as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
             crate::src::qcommon::q_shared::qtrue,
         );
         (*t).s.number = number;
@@ -1223,13 +1232,19 @@ pub unsafe extern "C" fn ClientThink_real(mut ent: *mut crate::g_local_h::gentit
             b"pmove_msec\x00" as *const u8 as *const libc::c_char,
             b"8\x00" as *const u8 as *const libc::c_char,
         );
-        crate::src::game::g_syscalls::trap_Cvar_Update(&mut crate::src::game::g_main::pmove_msec);
+        crate::src::game::g_syscalls::trap_Cvar_Update(
+            &mut crate::src::game::g_main::pmove_msec as *mut _
+                as *mut crate::src::qcommon::q_shared::vmCvar_t,
+        );
     } else if crate::src::game::g_main::pmove_msec.integer > 33 as libc::c_int {
         crate::src::game::g_syscalls::trap_Cvar_Set(
             b"pmove_msec\x00" as *const u8 as *const libc::c_char,
             b"33\x00" as *const u8 as *const libc::c_char,
         );
-        crate::src::game::g_syscalls::trap_Cvar_Update(&mut crate::src::game::g_main::pmove_msec);
+        crate::src::game::g_syscalls::trap_Cvar_Update(
+            &mut crate::src::game::g_main::pmove_msec as *mut _
+                as *mut crate::src::qcommon::q_shared::vmCvar_t,
+        );
     }
     if crate::src::game::g_main::pmove_fixed.integer != 0
         || (*client).pers.pmoveFixed as libc::c_uint != 0
@@ -1293,7 +1308,9 @@ pub unsafe extern "C" fn ClientThink_real(mut ent: *mut crate::g_local_h::gentit
         && !(*client).hook.is_null()
         && (*ucmd).buttons & 1 as libc::c_int == 0
     {
-        crate::src::game::g_weapon::Weapon_HookFree((*client).hook);
+        crate::src::game::g_weapon::Weapon_HookFree(
+            (*client).hook as *mut crate::g_local_h::gentity_s,
+        );
     }
     // set up for pmove
     oldEventSequence = (*client).ps.eventSequence;
@@ -1309,7 +1326,8 @@ pub unsafe extern "C" fn ClientThink_real(mut ent: *mut crate::g_local_h::gentit
         && (*ucmd).buttons & 1 as libc::c_int != 0
         && (*client).ps.weaponTime <= 0 as libc::c_int
     {
-        pm.gauntletHit = crate::src::game::g_weapon::CheckGauntletAttack(ent)
+        pm.gauntletHit =
+            crate::src::game::g_weapon::CheckGauntletAttack(ent as *mut crate::g_local_h::gentity_s)
     }
     if (*ent).flags & 0x8000 as libc::c_int != 0 {
         (*ent).flags &= !(0x8000 as libc::c_int);
@@ -1357,22 +1375,22 @@ pub unsafe extern "C" fn ClientThink_real(mut ent: *mut crate::g_local_h::gentit
     (*client).oldOrigin[0 as libc::c_int as usize] = (*client).ps.origin[0 as libc::c_int as usize];
     (*client).oldOrigin[1 as libc::c_int as usize] = (*client).ps.origin[1 as libc::c_int as usize];
     (*client).oldOrigin[2 as libc::c_int as usize] = (*client).ps.origin[2 as libc::c_int as usize];
-    crate::src::game::bg_pmove::Pmove(&mut pm);
+    crate::src::game::bg_pmove::Pmove(&mut pm as *mut _ as *mut crate::bg_public_h::pmove_t);
     // save results of pmove
     if (*(*ent).client).ps.eventSequence != oldEventSequence {
         (*ent).eventTime = crate::src::game::g_main::level.time
     }
     if crate::src::game::g_main::g_smoothClients.integer != 0 {
         crate::src::game::bg_misc::BG_PlayerStateToEntityStateExtraPolate(
-            &mut (*(*ent).client).ps,
-            &mut (*ent).s,
+            &mut (*(*ent).client).ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
+            &mut (*ent).s as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
             (*(*ent).client).ps.commandTime,
             crate::src::qcommon::q_shared::qtrue,
         );
     } else {
         crate::src::game::bg_misc::BG_PlayerStateToEntityState(
-            &mut (*(*ent).client).ps,
-            &mut (*ent).s,
+            &mut (*(*ent).client).ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
+            &mut (*ent).s as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
             crate::src::qcommon::q_shared::qtrue,
         );
     }
@@ -1399,7 +1417,7 @@ pub unsafe extern "C" fn ClientThink_real(mut ent: *mut crate::g_local_h::gentit
     // execute client events
     ClientEvents(ent, oldEventSequence);
     // link entity now, after any personal teleporters have been used
-    crate::src::game::g_syscalls::trap_LinkEntity(ent);
+    crate::src::game::g_syscalls::trap_LinkEntity(ent as *mut crate::g_local_h::gentity_s);
     if (*(*ent).client).noclip as u64 == 0 {
         G_TouchTriggers(ent);
     }
@@ -1433,12 +1451,12 @@ pub unsafe extern "C" fn ClientThink_real(mut ent: *mut crate::g_local_h::gentit
                 && crate::src::game::g_main::level.time - (*client).respawnTime
                     > crate::src::game::g_main::g_forcerespawn.integer * 1000 as libc::c_int
             {
-                crate::src::game::g_client::ClientRespawn(ent);
+                crate::src::game::g_client::ClientRespawn(ent as *mut crate::g_local_h::gentity_s);
                 return;
             }
             // pressing attack or use is the normal respawn method
             if (*ucmd).buttons & (1 as libc::c_int | 4 as libc::c_int) != 0 {
-                crate::src::game::g_client::ClientRespawn(ent);
+                crate::src::game::g_client::ClientRespawn(ent as *mut crate::g_local_h::gentity_s);
             }
         }
         return;
@@ -1460,7 +1478,10 @@ pub unsafe extern "C" fn ClientThink(mut clientNum: libc::c_int) {
     ent = crate::src::game::g_main::g_entities
         .as_mut_ptr()
         .offset(clientNum as isize);
-    crate::src::game::g_syscalls::trap_GetUsercmd(clientNum, &mut (*(*ent).client).pers.cmd);
+    crate::src::game::g_syscalls::trap_GetUsercmd(
+        clientNum,
+        &mut (*(*ent).client).pers.cmd as *mut _ as *mut crate::src::qcommon::q_shared::usercmd_s,
+    );
     // mark the time we got info, so we can display the
     // phone jack if they don't get any for a while
     (*(*ent).client).lastCmdTime = crate::src::game::g_main::level.time;
@@ -1593,15 +1614,15 @@ pub unsafe extern "C" fn ClientEndFrame(mut ent: *mut crate::g_local_h::gentity_
     // set the latest infor
     if crate::src::game::g_main::g_smoothClients.integer != 0 {
         crate::src::game::bg_misc::BG_PlayerStateToEntityStateExtraPolate(
-            &mut (*(*ent).client).ps,
-            &mut (*ent).s,
+            &mut (*(*ent).client).ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
+            &mut (*ent).s as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
             (*(*ent).client).ps.commandTime,
             crate::src::qcommon::q_shared::qtrue,
         );
     } else {
         crate::src::game::bg_misc::BG_PlayerStateToEntityState(
-            &mut (*(*ent).client).ps,
-            &mut (*ent).s,
+            &mut (*(*ent).client).ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
+            &mut (*ent).s as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
             crate::src::qcommon::q_shared::qtrue,
         );
     }

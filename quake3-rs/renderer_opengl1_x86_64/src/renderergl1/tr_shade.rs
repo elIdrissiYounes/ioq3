@@ -728,7 +728,9 @@ unsafe extern "C" fn R_BindAnimatedImage(mut bundle: *mut crate::tr_local_h::tex
         return;
     }
     if (*bundle).numImageAnimations <= 1 as libc::c_int {
-        crate::src::renderergl1::tr_backend::GL_Bind((*bundle).image[0 as libc::c_int as usize]);
+        crate::src::renderergl1::tr_backend::GL_Bind(
+            (*bundle).image[0 as libc::c_int as usize] as *mut crate::tr_common_h::image_s,
+        );
         return;
     }
     // it is necessary to do this messy calc to make sure animations line up
@@ -746,7 +748,9 @@ unsafe extern "C" fn R_BindAnimatedImage(mut bundle: *mut crate::tr_local_h::tex
     while index >= (*bundle).numImageAnimations as libc::c_long {
         index -= (*bundle).numImageAnimations as libc::c_long
     }
-    crate::src::renderergl1::tr_backend::GL_Bind((*bundle).image[index as usize]);
+    crate::src::renderergl1::tr_backend::GL_Bind(
+        (*bundle).image[index as usize] as *mut crate::tr_common_h::image_s,
+    );
 }
 /*
 ================
@@ -757,7 +761,9 @@ Draws triangle outlines for debugging
 */
 
 unsafe extern "C" fn DrawTris(mut input: *mut crate::tr_local_h::shaderCommands_t) {
-    crate::src::renderergl1::tr_backend::GL_Bind(crate::src::renderergl1::tr_main::tr.whiteImage); // padded for SIMD
+    crate::src::renderergl1::tr_backend::GL_Bind(
+        crate::src::renderergl1::tr_main::tr.whiteImage as *mut crate::tr_common_h::image_s,
+    ); // padded for SIMD
     crate::src::sdl::sdl_glimp::qglColor3f.expect("non-null function pointer")(
         1 as libc::c_int as crate::stdlib::GLfloat,
         1 as libc::c_int as crate::stdlib::GLfloat,
@@ -814,7 +820,9 @@ Draws vertex normals for debugging
 unsafe extern "C" fn DrawNormals(mut input: *mut crate::tr_local_h::shaderCommands_t) {
     let mut i: libc::c_int = 0; // never occluded
     let mut temp: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    crate::src::renderergl1::tr_backend::GL_Bind(crate::src::renderergl1::tr_main::tr.whiteImage);
+    crate::src::renderergl1::tr_backend::GL_Bind(
+        crate::src::renderergl1::tr_main::tr.whiteImage as *mut crate::tr_common_h::image_s,
+    );
     crate::src::sdl::sdl_glimp::qglColor3f.expect("non-null function pointer")(
         1 as libc::c_int as crate::stdlib::GLfloat,
         1 as libc::c_int as crate::stdlib::GLfloat,
@@ -1190,7 +1198,8 @@ unsafe extern "C" fn ProjectDlightTexture_scalar() {
                     colorArray.as_mut_ptr() as *const libc::c_void,
                 );
                 crate::src::renderergl1::tr_backend::GL_Bind(
-                    crate::src::renderergl1::tr_main::tr.dlightImage,
+                    crate::src::renderergl1::tr_main::tr.dlightImage
+                        as *mut crate::tr_common_h::image_s,
                 );
                 // include GLS_DEPTHFUNC_EQUAL so alpha tested surfaces don't add light
                 // where they aren't rendered
@@ -1264,7 +1273,9 @@ unsafe extern "C" fn RB_FogPass() {
     crate::src::renderergl1::tr_shade_calc::RB_CalcFogTexCoords(
         tess.svars.texcoords[0 as libc::c_int as usize].as_mut_ptr() as *mut libc::c_float,
     );
-    crate::src::renderergl1::tr_backend::GL_Bind(crate::src::renderergl1::tr_main::tr.fogImage);
+    crate::src::renderergl1::tr_backend::GL_Bind(
+        crate::src::renderergl1::tr_main::tr.fogImage as *mut crate::tr_common_h::image_s,
+    );
     if (*tess.shader).fogPass as libc::c_uint
         == crate::tr_local_h::FP_EQUAL as libc::c_int as libc::c_uint
     {
@@ -1410,7 +1421,7 @@ unsafe extern "C" fn ComputeColors(mut pStage: *mut crate::tr_local_h::shaderSta
         }
         8 => {
             crate::src::renderergl1::tr_shade_calc::RB_CalcWaveColor(
-                &mut (*pStage).rgbWave,
+                &mut (*pStage).rgbWave as *mut _ as *const crate::tr_local_h::waveForm_t,
                 tess.svars.colors.as_mut_ptr() as *mut libc::c_uchar,
             );
         }
@@ -1470,7 +1481,7 @@ unsafe extern "C" fn ComputeColors(mut pStage: *mut crate::tr_local_h::shaderSta
         }
         7 => {
             crate::src::renderergl1::tr_shade_calc::RB_CalcWaveAlpha(
-                &mut (*pStage).alphaWave,
+                &mut (*pStage).alphaWave as *mut _ as *const crate::tr_local_h::waveForm_t,
                 tess.svars.colors.as_mut_ptr() as *mut libc::c_uchar,
             );
         }
@@ -1727,7 +1738,8 @@ unsafe extern "C" fn ComputeTexCoords(mut pStage: *mut crate::tr_local_h::shader
                         &mut (*(*(*pStage).bundle.as_mut_ptr().offset(b as isize))
                             .texMods
                             .offset(tm as isize))
-                        .wave,
+                        .wave as *mut _
+                            as *const crate::tr_local_h::waveForm_t,
                         tess.svars.texcoords[b as usize].as_mut_ptr() as *mut libc::c_float,
                     );
                 }
@@ -1761,7 +1773,8 @@ unsafe extern "C" fn ComputeTexCoords(mut pStage: *mut crate::tr_local_h::shader
                         &mut (*(*(*pStage).bundle.as_mut_ptr().offset(b as isize))
                             .texMods
                             .offset(tm as isize))
-                        .wave,
+                        .wave as *mut _
+                            as *const crate::tr_local_h::waveForm_t,
                         tess.svars.texcoords[b as usize].as_mut_ptr() as *mut libc::c_float,
                     );
                 }
@@ -1769,7 +1782,8 @@ unsafe extern "C" fn ComputeTexCoords(mut pStage: *mut crate::tr_local_h::shader
                     crate::src::renderergl1::tr_shade_calc::RB_CalcTransformTexCoords(
                         &mut *(*(*pStage).bundle.as_mut_ptr().offset(b as isize))
                             .texMods
-                            .offset(tm as isize),
+                            .offset(tm as isize) as *mut _
+                            as *const crate::tr_local_h::texModInfo_t,
                         tess.svars.texcoords[b as usize].as_mut_ptr() as *mut libc::c_float,
                     );
                 }

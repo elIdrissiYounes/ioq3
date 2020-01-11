@@ -145,7 +145,7 @@ pub mod os_support_h {
     #[inline]
 
     pub unsafe extern "C" fn opus_free(mut ptr: *mut libc::c_void) {
-        crate::stdlib::free(ptr);
+        ::libc::free(ptr);
     }
     #[inline]
 
@@ -153,8 +153,8 @@ pub mod os_support_h {
         return crate::stdlib::malloc(size);
     }
 
-    use crate::stdlib::free;
     use crate::stdlib::malloc;
+    use ::libc::free;
     /* OS_SUPPORT_H */
     /*#ifdef __GNUC__
     #pragma GCC poison printf sprintf
@@ -283,10 +283,10 @@ pub use crate::src::opus_1_2_1::src::opus_multistream_encoder::cpu_support_h::op
 pub use crate::src::opus_1_2_1::src::opus_multistream_encoder::os_support_h::opus_alloc;
 pub use crate::src::opus_1_2_1::src::opus_multistream_encoder::os_support_h::opus_free;
 pub use crate::src::opus_1_2_1::src::opus_multistream_encoder::pitch_h::celt_inner_prod_c;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
+use ::libc::free;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -523,7 +523,7 @@ unsafe extern "C" fn validate_encoder_layout(
     while s < (*layout).nb_streams {
         if s < (*layout).nb_coupled_streams {
             if crate::src::opus_1_2_1::src::opus_multistream::get_left_channel(
-                layout,
+                layout as *const crate::opus_private_h::ChannelLayout,
                 s,
                 -(1 as libc::c_int),
             ) == -(1 as libc::c_int)
@@ -531,7 +531,7 @@ unsafe extern "C" fn validate_encoder_layout(
                 return 0 as libc::c_int;
             }
             if crate::src::opus_1_2_1::src::opus_multistream::get_right_channel(
-                layout,
+                layout as *const crate::opus_private_h::ChannelLayout,
                 s,
                 -(1 as libc::c_int),
             ) == -(1 as libc::c_int)
@@ -539,7 +539,7 @@ unsafe extern "C" fn validate_encoder_layout(
                 return 0 as libc::c_int;
             }
         } else if crate::src::opus_1_2_1::src::opus_multistream::get_mono_channel(
-            layout,
+            layout as *const crate::opus_private_h::ChannelLayout,
             s,
             -(1 as libc::c_int),
         ) == -(1 as libc::c_int)
@@ -757,7 +757,8 @@ pub unsafe extern "C" fn surround_analysis(
         while frame < nb_frames {
             let mut tmpE: [crate::arch_h::opus_val32; 21] = [0.; 21];
             crate::src::opus_1_2_1::celt::mdct::clt_mdct_forward_c(
-                &(*celt_mode).mdct,
+                &(*celt_mode).mdct as *const _
+                    as *const crate::src::opus_1_2_1::celt::mdct::mdct_lookup,
                 in_0.offset((960 as libc::c_int * frame) as isize),
                 freq,
                 (*celt_mode).window,
@@ -780,7 +781,7 @@ pub unsafe extern "C" fn surround_analysis(
                 }
             }
             crate::src::opus_1_2_1::celt::bands::compute_band_energies(
-                celt_mode,
+                celt_mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
                 freq,
                 tmpE.as_mut_ptr(),
                 21 as libc::c_int,
@@ -801,7 +802,7 @@ pub unsafe extern "C" fn surround_analysis(
             frame += 1
         }
         crate::src::opus_1_2_1::celt::quant_bands::amp2Log2(
-            celt_mode,
+            celt_mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
             21 as libc::c_int,
             21 as libc::c_int,
             bandE.as_mut_ptr(),
@@ -1038,7 +1039,10 @@ unsafe extern "C" fn opus_multistream_encoder_init_impl(
         (*st).layout.mapping[i as usize] = *mapping.offset(i as isize);
         i += 1
     }
-    if crate::src::opus_1_2_1::src::opus_multistream::validate_layout(&mut (*st).layout) == 0 {
+    if crate::src::opus_1_2_1::src::opus_multistream::validate_layout(
+        &mut (*st).layout as *mut _ as *const crate::opus_private_h::ChannelLayout,
+    ) == 0
+    {
         return -(1 as libc::c_int);
     }
     if mapping_type as libc::c_uint == MAPPING_TYPE_SURROUND as libc::c_int as libc::c_uint
@@ -1698,19 +1702,22 @@ unsafe extern "C" fn opus_multistream_encode_native(
         let mut c1: libc::c_int = 0;
         let mut c2: libc::c_int = 0;
         let mut ret: libc::c_int = 0;
-        crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_init(&mut rp);
+
+        crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_init(
+            &mut rp as *mut _ as *mut crate::opus_private_h::OpusRepacketizer,
+        ) as *mut crate::opus_private_h::OpusRepacketizer;
         enc_0 = ptr as *mut crate::src::opus_1_2_1::src::opus_encoder::OpusEncoder;
         if s < (*st).layout.nb_coupled_streams {
             let mut i: libc::c_int = 0;
             let mut left: libc::c_int = 0;
             let mut right: libc::c_int = 0;
             left = crate::src::opus_1_2_1::src::opus_multistream::get_left_channel(
-                &mut (*st).layout,
+                &mut (*st).layout as *mut _ as *const crate::opus_private_h::ChannelLayout,
                 s,
                 -(1 as libc::c_int),
             );
             right = crate::src::opus_1_2_1::src::opus_multistream::get_right_channel(
-                &mut (*st).layout,
+                &mut (*st).layout as *mut _ as *const crate::opus_private_h::ChannelLayout,
                 s,
                 -(1 as libc::c_int),
             );
@@ -1750,7 +1757,7 @@ unsafe extern "C" fn opus_multistream_encode_native(
             let mut i_0: libc::c_int = 0;
             let mut chan: libc::c_int =
                 crate::src::opus_1_2_1::src::opus_multistream::get_mono_channel(
-                    &mut (*st).layout,
+                    &mut (*st).layout as *mut _ as *const crate::opus_private_h::ChannelLayout,
                     s,
                     -(1 as libc::c_int),
                 );
@@ -1847,7 +1854,7 @@ unsafe extern "C" fn opus_multistream_encode_native(
         while taking into account the fact that the encoder can now return
         more than one frame at a time (e.g. 60 ms CELT-only) */
         ret = crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_cat(
-            &mut rp,
+            &mut rp as *mut _ as *mut crate::opus_private_h::OpusRepacketizer,
             tmp_data.as_mut_ptr(),
             len,
         );
@@ -1857,9 +1864,11 @@ unsafe extern "C" fn opus_multistream_encode_native(
             return -(3 as libc::c_int);
         }
         len = crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_out_range_impl(
-            &mut rp,
+            &mut rp as *mut _ as *mut crate::opus_private_h::OpusRepacketizer,
             0 as libc::c_int,
-            crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_get_nb_frames(&mut rp),
+            crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_get_nb_frames(
+                &mut rp as *mut _ as *mut crate::opus_private_h::OpusRepacketizer,
+            ),
             data,
             max_data_bytes - tot_size,
             (s != (*st).layout.nb_streams - 1 as libc::c_int) as libc::c_int,

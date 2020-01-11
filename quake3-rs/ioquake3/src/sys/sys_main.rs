@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -49,11 +49,11 @@ pub use crate::stdlib::__uint8_t;
 pub use crate::stdlib::intptr_t;
 pub use crate::stdlib::signal;
 pub use crate::stdlib::stat;
-pub use crate::stdlib::timespec;
 pub use crate::stdlib::uint32_t;
 pub use crate::stdlib::uint8_t;
 pub use crate::stdlib::FILE;
 pub use crate::stdlib::_IO_FILE;
+pub use ::libc::timespec;
 
 pub use crate::qcommon_h::cpuFeatures_t;
 pub use crate::qcommon_h::dialogResult_t;
@@ -119,25 +119,25 @@ pub use crate::stdlib::SDL_version;
 pub use crate::stdlib::Uint32;
 pub use crate::stdlib::Uint8;
 pub use crate::stdlib::__xstat;
-pub use crate::stdlib::exit;
 use crate::stdlib::fclose;
 use crate::stdlib::fopen;
 use crate::stdlib::fprintf;
 use crate::stdlib::fputs;
 use crate::stdlib::fread;
-use crate::stdlib::remove;
 use crate::stdlib::stderr;
 use crate::stdlib::stdout;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
-use crate::stdlib::strtok;
-pub use crate::stdlib::strtol;
 use crate::stdlib::vsnprintf;
 use crate::stdlib::SDL_GetClipboardText;
 use crate::stdlib::SDL_GetError;
 pub use crate::stdlib::SDL_FALSE;
 pub use crate::stdlib::SDL_TRUE;
+pub use ::libc::exit;
+use ::libc::remove;
+use ::libc::strchr;
+use ::libc::strcmp;
+use ::libc::strtok;
+pub use ::libc::strtol;
 
 use crate::src::sys::con_log::CON_LogWrite;
 use crate::src::sys::con_tty::CON_Init;
@@ -8491,7 +8491,7 @@ pub unsafe extern "C" fn Sys_GetClipboardData() -> *mut libc::c_char {
                 crate::src::qcommon::common::Z_Malloc(bufsize as libc::c_int) as *mut libc::c_char;
             crate::src::qcommon::q_shared::Q_strncpyz(data, cliptext, bufsize as libc::c_int);
             // find first listed char and set to '\0'
-            crate::stdlib::strtok(data, b"\n\r\x08\x00" as *const u8 as *const libc::c_char);
+            ::libc::strtok(data, b"\n\r\x08\x00" as *const u8 as *const libc::c_char);
         }
         crate::stdlib::SDL_free(cliptext as *mut libc::c_void);
     }
@@ -8527,7 +8527,7 @@ Sys_RemovePIDFile
 pub unsafe extern "C" fn Sys_RemovePIDFile(mut gamedir: *const libc::c_char) {
     let mut pidFile: *mut libc::c_char = Sys_PIDFileName(gamedir);
     if !pidFile.is_null() {
-        crate::stdlib::remove(pidFile);
+        ::libc::remove(pidFile);
     };
 }
 /*
@@ -8709,7 +8709,7 @@ unsafe extern "C" fn Sys_Exit(mut exitCode: libc::c_int) -> ! {
     }
     crate::src::qcommon::net_ip::NET_Shutdown();
     crate::src::sys::sys_unix::Sys_PlatformExit();
-    crate::stdlib::exit(exitCode);
+    ::libc::exit(exitCode);
 }
 /*
 =================
@@ -8902,15 +8902,15 @@ pub unsafe extern "C" fn Sys_FileTime(mut path: *mut libc::c_char) -> libc::c_in
         st_size: 0,
         st_blksize: 0,
         st_blocks: 0,
-        st_atim: crate::stdlib::timespec {
+        st_atim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
-        st_mtim: crate::stdlib::timespec {
+        st_mtim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
-        st_ctim: crate::stdlib::timespec {
+        st_ctim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
@@ -9162,20 +9162,20 @@ Sys_ParseArgs
 
 pub unsafe extern "C" fn Sys_ParseArgs(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) {
     if argc == 2 as libc::c_int {
-        if crate::stdlib::strcmp(
+        if ::libc::strcmp(
             *argv.offset(1 as libc::c_int as isize),
             b"--version\x00" as *const u8 as *const libc::c_char,
         ) == 0
-            || crate::stdlib::strcmp(
+            || ::libc::strcmp(
                 *argv.offset(1 as libc::c_int as isize),
                 b"-v\x00" as *const u8 as *const libc::c_char,
             ) == 0
         {
             let mut date: *const libc::c_char =
-                b"Jan  7 2020\x00" as *const u8 as *const libc::c_char;
+                b"Jan 10 2020\x00" as *const u8 as *const libc::c_char;
             crate::stdlib::fprintf(
                 crate::stdlib::stdout,
-                b"ioq3 1.36_GIT_a3a346c3-2019-12-19 client (%s)\n\x00" as *const u8
+                b"ioq3 1.36_GIT_d0fe4462-2020-01-10 client (%s)\n\x00" as *const u8
                     as *const libc::c_char,
                 date,
             );
@@ -10322,7 +10322,7 @@ unsafe fn main_0(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> lib
     i = 1 as libc::c_int;
     while i < argc {
         let containsSpaces: crate::src::qcommon::q_shared::qboolean =
-            (crate::stdlib::strchr(*argv.offset(i as isize), ' ' as i32)
+            (::libc::strchr(*argv.offset(i as isize), ' ' as i32)
                 != 0 as *mut libc::c_void as *mut libc::c_char) as libc::c_int
                 as crate::src::qcommon::q_shared::qboolean;
         if containsSpaces as u64 != 0 {

@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -47,12 +47,7 @@ pub use crate::src::ui::ui_syscalls::trap_FS_FOpenFile;
 pub use crate::src::ui::ui_syscalls::trap_FS_GetFileList;
 pub use crate::src::ui::ui_syscalls::trap_FS_Read;
 pub use crate::src::ui::ui_syscalls::trap_Print;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
-use crate::stdlib::strstr;
-pub use crate::stdlib::strtol;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -77,6 +72,11 @@ pub use crate::ui_local_h::AWARD_FRAGS;
 pub use crate::ui_local_h::AWARD_GAUNTLET;
 pub use crate::ui_local_h::AWARD_IMPRESSIVE;
 pub use crate::ui_local_h::AWARD_PERFECT;
+use ::libc::strcat;
+use ::libc::strcmp;
+use ::libc::strcpy;
+use ::libc::strstr;
+pub use ::libc::strtol;
 #[no_mangle]
 
 pub static mut ui_numBots: libc::c_int = 0;
@@ -148,7 +148,7 @@ pub unsafe extern "C" fn UI_ParseInfos(
         if *token.offset(0 as libc::c_int as isize) == 0 {
             break;
         }
-        if crate::stdlib::strcmp(token, b"{\x00" as *const u8 as *const libc::c_char) != 0 {
+        if ::libc::strcmp(token, b"{\x00" as *const u8 as *const libc::c_char) != 0 {
             crate::src::q3_ui::ui_atoms::Com_Printf(
                 b"Missing { in info file\n\x00" as *const u8 as *const libc::c_char,
             );
@@ -171,9 +171,7 @@ pub unsafe extern "C" fn UI_ParseInfos(
                     );
                     break;
                 } else {
-                    if crate::stdlib::strcmp(token, b"}\x00" as *const u8 as *const libc::c_char)
-                        == 0
-                    {
+                    if ::libc::strcmp(token, b"}\x00" as *const u8 as *const libc::c_char) == 0 {
                         break;
                     }
                     crate::src::qcommon::q_shared::Q_strncpyz(
@@ -187,10 +185,7 @@ pub unsafe extern "C" fn UI_ParseInfos(
                         crate::src::qcommon::q_shared::qfalse,
                     );
                     if *token.offset(0 as libc::c_int as isize) == 0 {
-                        crate::stdlib::strcpy(
-                            token,
-                            b"<NULL>\x00" as *const u8 as *const libc::c_char,
-                        );
+                        ::libc::strcpy(token, b"<NULL>\x00" as *const u8 as *const libc::c_char);
                     }
                     crate::src::qcommon::q_shared::Info_SetValueForKey(
                         info.as_mut_ptr(),
@@ -213,7 +208,7 @@ pub unsafe extern "C" fn UI_ParseInfos(
                     .wrapping_add(1 as libc::c_int as libc::c_ulong) as libc::c_int,
             ) as *mut libc::c_char;
             if !(*infos.offset(count as isize)).is_null() {
-                crate::stdlib::strcpy(*infos.offset(count as isize), info.as_mut_ptr());
+                ::libc::strcpy(*infos.offset(count as isize), info.as_mut_ptr());
                 count += 1
             }
         }
@@ -291,7 +286,7 @@ unsafe extern "C" fn UI_LoadArenas() {
     let mut otherNum: libc::c_int = 0;
     ui_numArenas = 0 as libc::c_int;
     crate::src::ui::ui_syscalls::trap_Cvar_Register(
-        &mut arenasFile,
+        &mut arenasFile as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"g_arenasFile\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x10 as libc::c_int | 0x40 as libc::c_int,
@@ -314,11 +309,11 @@ unsafe extern "C" fn UI_LoadArenas() {
     i = 0 as libc::c_int;
     while i < numdirs {
         dirlen = crate::stdlib::strlen(dirptr) as libc::c_int;
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             filename.as_mut_ptr(),
             b"scripts/\x00" as *const u8 as *const libc::c_char,
         );
-        crate::stdlib::strcat(filename.as_mut_ptr(), dirptr);
+        ::libc::strcat(filename.as_mut_ptr(), dirptr);
         UI_LoadArenasFromFile(filename.as_mut_ptr());
         i += 1;
         dirptr = dirptr.offset((dirlen + 1 as libc::c_int) as isize)
@@ -358,8 +353,7 @@ unsafe extern "C" fn UI_LoadArenas() {
         );
         // if no type specified, it will be treated as "ffa"
         if !(*type_0 == 0) {
-            if !crate::stdlib::strstr(type_0, b"single\x00" as *const u8 as *const libc::c_char)
-                .is_null()
+            if !::libc::strstr(type_0, b"single\x00" as *const u8 as *const libc::c_char).is_null()
             {
                 // check for special single player arenas (training, final)
                 tag = crate::src::qcommon::q_shared::Info_ValueForKey(
@@ -399,8 +393,7 @@ unsafe extern "C" fn UI_LoadArenas() {
         );
         // if no type specified, it will be treated as "ffa"
         if *type_0 != 0 {
-            if !crate::stdlib::strstr(type_0, b"single\x00" as *const u8 as *const libc::c_char)
-                .is_null()
+            if !::libc::strstr(type_0, b"single\x00" as *const u8 as *const libc::c_char).is_null()
             {
                 // check for special single player arenas (training, final)
                 tag = crate::src::qcommon::q_shared::Info_ValueForKey(
@@ -609,7 +602,7 @@ unsafe extern "C" fn UI_LoadBots() {
     let mut dirlen: libc::c_int = 0;
     ui_numBots = 0 as libc::c_int;
     crate::src::ui::ui_syscalls::trap_Cvar_Register(
-        &mut botsFile,
+        &mut botsFile as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"g_botsFile\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x10 as libc::c_int | 0x40 as libc::c_int,
@@ -632,11 +625,11 @@ unsafe extern "C" fn UI_LoadBots() {
     i = 0 as libc::c_int;
     while i < numdirs {
         dirlen = crate::stdlib::strlen(dirptr) as libc::c_int;
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             filename.as_mut_ptr(),
             b"scripts/\x00" as *const u8 as *const libc::c_char,
         );
-        crate::stdlib::strcat(filename.as_mut_ptr(), dirptr);
+        ::libc::strcat(filename.as_mut_ptr(), dirptr);
         UI_LoadBotsFromFile(filename.as_mut_ptr());
         i += 1;
         dirptr = dirptr.offset((dirlen + 1 as libc::c_int) as isize)

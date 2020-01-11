@@ -251,8 +251,8 @@ pub unsafe extern "C" fn jpeg_add_quant_table(
         .offset(which_tbl as isize) as *mut *mut crate::jpeglib_h::JQUANT_TBL;
     if (*qtblptr).is_null() {
         *qtblptr = crate::src::jpeg_8c::jcomapi::jpeg_alloc_quant_table(
-            cinfo as crate::jpeglib_h::j_common_ptr,
-        )
+            cinfo as crate::jpeglib_h::j_common_ptr as *mut crate::jpeglib_h::jpeg_common_struct,
+        ) as *mut crate::jpeglib_h::JQUANT_TBL
     }
     i = 0 as libc::c_int;
     while i < 64 as libc::c_int {
@@ -530,8 +530,8 @@ unsafe extern "C" fn add_huff_table(
     let mut len: libc::c_int = 0;
     if (*htblptr).is_null() {
         *htblptr = crate::src::jpeg_8c::jcomapi::jpeg_alloc_huff_table(
-            cinfo as crate::jpeglib_h::j_common_ptr,
-        )
+            cinfo as crate::jpeglib_h::j_common_ptr as *mut crate::jpeglib_h::jpeg_common_struct,
+        ) as *mut crate::jpeglib_h::JHUFF_TBL
     }
     /* Copy the number-of-symbols-of-each-code-length counts */
     crate::stdlib::memcpy(

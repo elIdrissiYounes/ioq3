@@ -60,7 +60,7 @@ pub use crate::src::qcommon::q_shared::ERR_NEED_CD;
 pub use crate::src::qcommon::q_shared::ERR_SERVERDISCONNECT;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
-use crate::stdlib::strcmp;
+use ::libc::strcmp;
 extern "C" {
     #[no_mangle]
     pub fn CM_FloodAreaConnections();
@@ -996,23 +996,23 @@ pub unsafe extern "C" fn CM_LoadMap(
         b"cm_noAreas\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     cm_noCurves = crate::src::qcommon::cvar::Cvar_Get(
         b"cm_noCurves\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     cm_playerCurveClip = crate::src::qcommon::cvar::Cvar_Get(
         b"cm_playerCurveClip\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::qcommon::common::Com_DPrintf(
         b"CM_LoadMap( %s, %i )\n\x00" as *const u8 as *const libc::c_char,
         name,
         clientload as libc::c_uint,
     );
-    if crate::stdlib::strcmp(cm.name.as_mut_ptr(), name) == 0 && clientload as libc::c_uint != 0 {
+    if ::libc::strcmp(cm.name.as_mut_ptr(), name) == 0 && clientload as libc::c_uint != 0 {
         *checksum = last_checksum as libc::c_int;
         return;
     }
@@ -1315,7 +1315,9 @@ pub unsafe extern "C" fn CM_InitBoxHull() {
         (*p).normal[0 as libc::c_int as usize] = (*p).normal[1 as libc::c_int as usize];
         (*p).normal[(i >> 1 as libc::c_int) as usize] =
             -(1 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
-        crate::src::qcommon::q_math::SetPlaneSignbits(p);
+        crate::src::qcommon::q_math::SetPlaneSignbits(
+            p as *mut crate::src::qcommon::q_shared::cplane_s,
+        );
         i += 1
     }
 }

@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -150,10 +150,10 @@ pub use crate::src::cgame::cg_syscalls::trap_S_ClearLoopingSounds;
 pub use crate::src::cgame::cg_syscalls::trap_S_RegisterSound;
 pub use crate::src::cgame::cg_syscalls::trap_S_StartLocalSound;
 use crate::stdlib::memset;
-use crate::stdlib::strcmp;
 use crate::stdlib::strncpy;
-use crate::stdlib::strstr;
-pub use crate::stdlib::strtol;
+use ::libc::strcmp;
+use ::libc::strstr;
+pub use ::libc::strtol;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -479,7 +479,7 @@ pub unsafe extern "C" fn CG_ShaderStateChanged() {
     let mut t: *mut libc::c_char = 0 as *mut libc::c_char;
     o = crate::src::cgame::cg_main::CG_ConfigString(24 as libc::c_int);
     while !o.is_null() && *o as libc::c_int != 0 {
-        n = crate::stdlib::strstr(o, b"=\x00" as *const u8 as *const libc::c_char);
+        n = ::libc::strstr(o, b"=\x00" as *const u8 as *const libc::c_char);
         if !(!n.is_null() && *n as libc::c_int != 0) {
             break;
         }
@@ -491,7 +491,7 @@ pub unsafe extern "C" fn CG_ShaderStateChanged() {
         originalShader[n.wrapping_offset_from(o) as libc::c_long as usize] =
             0 as libc::c_int as libc::c_char;
         n = n.offset(1);
-        t = crate::stdlib::strstr(n, b":\x00" as *const u8 as *const libc::c_char);
+        t = ::libc::strstr(n, b":\x00" as *const u8 as *const libc::c_char);
         if !(!t.is_null() && *t as libc::c_int != 0) {
             break;
         }
@@ -503,7 +503,7 @@ pub unsafe extern "C" fn CG_ShaderStateChanged() {
         newShader[t.wrapping_offset_from(n) as libc::c_long as usize] =
             0 as libc::c_int as libc::c_char;
         t = t.offset(1);
-        o = crate::stdlib::strstr(t, b"@\x00" as *const u8 as *const libc::c_char);
+        o = ::libc::strstr(t, b"@\x00" as *const u8 as *const libc::c_char);
         if !o.is_null() {
             crate::stdlib::strncpy(
                 timeOffset.as_mut_ptr(),
@@ -535,7 +535,8 @@ unsafe extern "C" fn CG_ConfigStringModified() {
     // get the gamestate from the client system, which will have the
     // new configstring already integrated
     crate::src::cgame::cg_syscalls::trap_GetGameState(
-        &mut crate::src::cgame::cg_main::cgs.gameState,
+        &mut crate::src::cgame::cg_main::cgs.gameState as *mut _
+            as *mut crate::src::qcommon::q_shared::gameState_t,
     );
     // look up the individual string that was modified
     str = crate::src::cgame::cg_main::CG_ConfigString(num);
@@ -812,7 +813,7 @@ unsafe extern "C" fn CG_ServerCommand() {
         // server claimed the command
         return;
     }
-    if crate::stdlib::strcmp(cmd, b"cp\x00" as *const u8 as *const libc::c_char) == 0 {
+    if ::libc::strcmp(cmd, b"cp\x00" as *const u8 as *const libc::c_char) == 0 {
         crate::src::cgame::cg_draw::CG_CenterPrint(
             crate::src::cgame::cg_main::CG_Argv(1 as libc::c_int),
             (480 as libc::c_int as libc::c_double * 0.30f64) as libc::c_int,
@@ -820,18 +821,18 @@ unsafe extern "C" fn CG_ServerCommand() {
         );
         return;
     }
-    if crate::stdlib::strcmp(cmd, b"cs\x00" as *const u8 as *const libc::c_char) == 0 {
+    if ::libc::strcmp(cmd, b"cs\x00" as *const u8 as *const libc::c_char) == 0 {
         CG_ConfigStringModified();
         return;
     }
-    if crate::stdlib::strcmp(cmd, b"print\x00" as *const u8 as *const libc::c_char) == 0 {
+    if ::libc::strcmp(cmd, b"print\x00" as *const u8 as *const libc::c_char) == 0 {
         crate::src::cgame::cg_main::CG_Printf(
             b"%s\x00" as *const u8 as *const libc::c_char,
             crate::src::cgame::cg_main::CG_Argv(1 as libc::c_int),
         );
         return;
     }
-    if crate::stdlib::strcmp(cmd, b"chat\x00" as *const u8 as *const libc::c_char) == 0 {
+    if ::libc::strcmp(cmd, b"chat\x00" as *const u8 as *const libc::c_char) == 0 {
         if crate::src::cgame::cg_main::cgs.gametype as libc::c_uint
             >= crate::bg_public_h::GT_TEAM as libc::c_int as libc::c_uint
             && crate::src::cgame::cg_main::cg_teamChatsOnly.integer != 0
@@ -854,7 +855,7 @@ unsafe extern "C" fn CG_ServerCommand() {
         );
         return;
     }
-    if crate::stdlib::strcmp(cmd, b"tchat\x00" as *const u8 as *const libc::c_char) == 0 {
+    if ::libc::strcmp(cmd, b"tchat\x00" as *const u8 as *const libc::c_char) == 0 {
         crate::src::cgame::cg_syscalls::trap_S_StartLocalSound(
             crate::src::cgame::cg_main::cgs.media.talkSound,
             crate::src::qcommon::q_shared::CHAN_LOCAL_SOUND as libc::c_int,
@@ -872,15 +873,15 @@ unsafe extern "C" fn CG_ServerCommand() {
         );
         return;
     }
-    if crate::stdlib::strcmp(cmd, b"scores\x00" as *const u8 as *const libc::c_char) == 0 {
+    if ::libc::strcmp(cmd, b"scores\x00" as *const u8 as *const libc::c_char) == 0 {
         CG_ParseScores();
         return;
     }
-    if crate::stdlib::strcmp(cmd, b"tinfo\x00" as *const u8 as *const libc::c_char) == 0 {
+    if ::libc::strcmp(cmd, b"tinfo\x00" as *const u8 as *const libc::c_char) == 0 {
         CG_ParseTeamInfo();
         return;
     }
-    if crate::stdlib::strcmp(cmd, b"map_restart\x00" as *const u8 as *const libc::c_char) == 0 {
+    if ::libc::strcmp(cmd, b"map_restart\x00" as *const u8 as *const libc::c_char) == 0 {
         CG_MapRestart();
         return;
     }
@@ -917,14 +918,14 @@ unsafe extern "C" fn CG_ServerCommand() {
         return;
     }
     // loaddeferred can be both a servercmd and a consolecmd
-    if crate::stdlib::strcmp(cmd, b"loaddefered\x00" as *const u8 as *const libc::c_char) == 0 {
+    if ::libc::strcmp(cmd, b"loaddefered\x00" as *const u8 as *const libc::c_char) == 0 {
         // FIXME: spelled wrong, but not changing for demo
         crate::src::cgame::cg_players::CG_LoadDeferredPlayers();
         return;
     }
     // clientLevelShot is sent before taking a special screenshot for
     // the menu system during development
-    if crate::stdlib::strcmp(
+    if ::libc::strcmp(
         cmd,
         b"clientLevelShot\x00" as *const u8 as *const libc::c_char,
     ) == 0

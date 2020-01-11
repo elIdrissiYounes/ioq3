@@ -1,5 +1,61 @@
 // =============== BEGIN q_shared_h ================
+pub type byte = libc::c_uchar;
+
+pub type qboolean = libc::c_uint;
+
+pub const qfalse: crate::src::qcommon::q_shared::qboolean = 0;
+
+pub const qtrue: crate::src::qcommon::q_shared::qboolean = 1;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union floatint_t {
+    pub f: libc::c_float,
+    pub i: libc::c_int,
+    pub ui: libc::c_uint,
+}
+
+pub type qhandle_t = libc::c_int;
+
+pub const EXEC_NOW: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 0;
+
+pub const EXEC_INSERT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 1;
+
+pub const EXEC_APPEND: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 2;
+
+pub const PRINT_ALL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 0;
+
+pub const PRINT_DEVELOPER: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 1;
+
+pub const PRINT_WARNING: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 2;
+
+pub const PRINT_ERROR: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 3;
+
+pub const ERR_FATAL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 0;
+
+pub const ERR_DROP: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 1;
+
+pub const ERR_SERVERDISCONNECT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 2;
+
+pub const ERR_DISCONNECT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 3;
+
+pub const ERR_NEED_CD: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 4;
+
+pub type ha_pref = libc::c_uint;
+
+pub const h_high: crate::src::qcommon::q_shared::ha_pref = 0;
+
+pub const h_low: crate::src::qcommon::q_shared::ha_pref = 1;
+
+pub const h_dontcare: crate::src::qcommon::q_shared::ha_pref = 2;
+
+pub type vec_t = libc::c_float;
+
 pub type vec2_t = [crate::src::qcommon::q_shared::vec_t; 2];
+
+pub type vec3_t = [crate::src::qcommon::q_shared::vec_t; 3];
+
+pub type vec4_t = [crate::src::qcommon::q_shared::vec_t; 4];
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -14,73 +70,7 @@ pub struct qint64 {
     pub b7: crate::src::qcommon::q_shared::byte,
 }
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct markFragment_t {
-    pub firstPoint: libc::c_int,
-    pub numPoints: libc::c_int,
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct orientation_t {
-    pub origin: crate::src::qcommon::q_shared::vec3_t,
-    pub axis: [crate::src::qcommon::q_shared::vec3_t; 3],
-}
-
-pub const ERR_NEED_CD: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 4;
-
-pub const ERR_DISCONNECT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 3;
-
-pub const ERR_SERVERDISCONNECT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 2;
-
-pub const ERR_DROP: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 1;
-
-pub const ERR_FATAL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 0;
-
-pub type byte = libc::c_uchar;
-
-pub type qboolean = libc::c_uint;
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub union floatint_t {
-    pub f: libc::c_float,
-    pub i: libc::c_int,
-    pub ui: libc::c_uint,
-}
-
-pub type vec_t = libc::c_float;
-
-pub type vec3_t = [crate::src::qcommon::q_shared::vec_t; 3];
-
-pub type vec4_t = [crate::src::qcommon::q_shared::vec_t; 4];
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct cplane_s {
-    pub normal: crate::src::qcommon::q_shared::vec3_t,
-    pub dist: libc::c_float,
-    pub type_0: crate::src::qcommon::q_shared::byte,
-    pub signbits: crate::src::qcommon::q_shared::byte,
-    pub pad: [crate::src::qcommon::q_shared::byte; 2],
-}
-
-pub type cplane_t = crate::src::qcommon::q_shared::cplane_s;
-
-pub const qtrue: crate::src::qcommon::q_shared::qboolean = 1;
-
-pub const qfalse: crate::src::qcommon::q_shared::qboolean = 0;
-
-pub const EXEC_APPEND: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 2;
-
-pub const EXEC_INSERT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 1;
-
-pub const EXEC_NOW: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 0;
-
-pub type qhandle_t = libc::c_int;
-
-pub type ha_pref = libc::c_uint;
+pub type cvar_t = crate::src::qcommon::q_shared::cvar_s;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -106,7 +96,31 @@ pub struct cvar_s {
     pub hashIndex: libc::c_int,
 }
 
-pub type cvar_t = crate::src::qcommon::q_shared::cvar_s;
+pub type cplane_t = crate::src::qcommon::q_shared::cplane_s;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct cplane_s {
+    pub normal: crate::src::qcommon::q_shared::vec3_t,
+    pub dist: libc::c_float,
+    pub type_0: crate::src::qcommon::q_shared::byte,
+    pub signbits: crate::src::qcommon::q_shared::byte,
+    pub pad: [crate::src::qcommon::q_shared::byte; 2],
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct markFragment_t {
+    pub firstPoint: libc::c_int,
+    pub numPoints: libc::c_int,
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct orientation_t {
+    pub origin: crate::src::qcommon::q_shared::vec3_t,
+    pub axis: [crate::src::qcommon::q_shared::vec3_t; 3],
+}
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -136,33 +150,19 @@ pub struct fontInfo_t {
 
 pub type e_status = libc::c_uint;
 
-pub const PRINT_ERROR: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 3;
-
-pub const PRINT_WARNING: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 2;
-
-pub const PRINT_DEVELOPER: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 1;
-
-pub const PRINT_ALL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 0;
-
-pub const h_dontcare: crate::src::qcommon::q_shared::ha_pref = 2;
-
-pub const h_low: crate::src::qcommon::q_shared::ha_pref = 1;
-
-pub const h_high: crate::src::qcommon::q_shared::ha_pref = 0;
-
-pub const FMV_ID_WAIT: crate::src::qcommon::q_shared::e_status = 6;
-
-pub const FMV_LOOPED: crate::src::qcommon::q_shared::e_status = 5;
-
-pub const FMV_ID_IDLE: crate::src::qcommon::q_shared::e_status = 4;
-
-pub const FMV_ID_BLT: crate::src::qcommon::q_shared::e_status = 3;
-
-pub const FMV_EOF: crate::src::qcommon::q_shared::e_status = 2;
+pub const FMV_IDLE: crate::src::qcommon::q_shared::e_status = 0;
 
 pub const FMV_PLAY: crate::src::qcommon::q_shared::e_status = 1;
 
-pub const FMV_IDLE: crate::src::qcommon::q_shared::e_status = 0;
+pub const FMV_EOF: crate::src::qcommon::q_shared::e_status = 2;
+
+pub const FMV_ID_BLT: crate::src::qcommon::q_shared::e_status = 3;
+
+pub const FMV_ID_IDLE: crate::src::qcommon::q_shared::e_status = 4;
+
+pub const FMV_LOOPED: crate::src::qcommon::q_shared::e_status = 5;
+
+pub const FMV_ID_WAIT: crate::src::qcommon::q_shared::e_status = 6;
 use ::libc;
 
 pub mod ctype_h {
@@ -191,9 +191,9 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub use crate::internal::__builtin_va_list;
@@ -224,15 +224,15 @@ pub use crate::stdlib::__ctype_b_loc;
 pub use crate::stdlib::__ctype_tolower_loc;
 pub use crate::stdlib::__ctype_toupper_loc;
 use crate::stdlib::memmove;
-use crate::stdlib::strcat;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 use crate::stdlib::strncpy;
-use crate::stdlib::strrchr;
-use crate::stdlib::strtod;
 use crate::stdlib::vsnprintf;
+use ::libc::strcat;
+use ::libc::strchr;
+use ::libc::strcmp;
+use ::libc::strcpy;
+use ::libc::strrchr;
+use ::libc::strtod;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -326,10 +326,10 @@ COM_GetExtension
 #[no_mangle]
 
 pub unsafe extern "C" fn COM_GetExtension(mut name: *const libc::c_char) -> *const libc::c_char {
-    let mut dot: *const libc::c_char = crate::stdlib::strrchr(name, '.' as i32);
+    let mut dot: *const libc::c_char = ::libc::strrchr(name, '.' as i32);
     let mut slash: *const libc::c_char = 0 as *const libc::c_char;
     if !dot.is_null() && {
-        slash = crate::stdlib::strrchr(name, '/' as i32);
+        slash = ::libc::strrchr(name, '/' as i32);
         (slash.is_null()) || slash < dot
     } {
         return dot.offset(1 as libc::c_int as isize);
@@ -349,10 +349,10 @@ pub unsafe extern "C" fn COM_StripExtension(
     mut out: *mut libc::c_char,
     mut destsize: libc::c_int,
 ) {
-    let mut dot: *const libc::c_char = crate::stdlib::strrchr(in_0, '.' as i32);
+    let mut dot: *const libc::c_char = ::libc::strrchr(in_0, '.' as i32);
     let mut slash: *const libc::c_char = 0 as *const libc::c_char;
     if !dot.is_null() && {
-        slash = crate::stdlib::strrchr(in_0, '/' as i32);
+        slash = ::libc::strrchr(in_0, '/' as i32);
         (slash.is_null()) || slash < dot
     } {
         destsize = if (destsize as libc::c_long)
@@ -409,10 +409,10 @@ pub unsafe extern "C" fn COM_DefaultExtension(
     mut maxSize: libc::c_int,
     mut extension: *const libc::c_char,
 ) {
-    let mut dot: *const libc::c_char = crate::stdlib::strrchr(path, '.' as i32);
+    let mut dot: *const libc::c_char = ::libc::strrchr(path, '.' as i32);
     let mut slash: *const libc::c_char = 0 as *const libc::c_char;
     if !dot.is_null() && {
-        slash = crate::stdlib::strrchr(path, '/' as i32);
+        slash = ::libc::strrchr(path, '/' as i32);
         (slash.is_null()) || slash < dot
     } {
         return;
@@ -942,7 +942,7 @@ pub unsafe extern "C" fn COM_MatchToken(
 ) {
     let mut token: *mut libc::c_char = 0 as *mut libc::c_char;
     token = COM_Parse(buf_p);
-    if crate::stdlib::strcmp(token, match_0) != 0 {
+    if ::libc::strcmp(token, match_0) != 0 {
         crate::src::renderergl1::tr_subs::Com_Error(
             crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
             b"MatchToken: %s != %s\x00" as *const u8 as *const libc::c_char,
@@ -1189,7 +1189,7 @@ pub unsafe extern "C" fn Q_isanumber(
     if *s as libc::c_int == '\u{0}' as i32 {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    d = crate::stdlib::strtod(s, &mut p);
+    d = ::libc::strtod(s, &mut p);
     return (*p as libc::c_int == '\u{0}' as i32) as libc::c_int
         as crate::src::qcommon::q_shared::qboolean;
 }
@@ -1744,7 +1744,7 @@ pub unsafe extern "C" fn Info_RemoveKey(mut s: *mut libc::c_char, mut key: *cons
             b"Info_RemoveKey: oversize infostring\x00" as *const u8 as *const libc::c_char,
         );
     }
-    if !crate::stdlib::strchr(key, '\\' as i32).is_null() {
+    if !::libc::strchr(key, '\\' as i32).is_null() {
         return;
     }
     loop {
@@ -1777,7 +1777,7 @@ pub unsafe extern "C" fn Info_RemoveKey(mut s: *mut libc::c_char, mut key: *cons
             *fresh27 = *fresh26
         }
         *o = 0 as libc::c_int as libc::c_char;
-        if crate::stdlib::strcmp(key, pkey.as_mut_ptr()) == 0 {
+        if ::libc::strcmp(key, pkey.as_mut_ptr()) == 0 {
             crate::stdlib::memmove(
                 start as *mut libc::c_void,
                 s as *const libc::c_void,
@@ -1811,7 +1811,7 @@ pub unsafe extern "C" fn Info_RemoveKey_Big(
             b"Info_RemoveKey_Big: oversize infostring\x00" as *const u8 as *const libc::c_char,
         );
     }
-    if !crate::stdlib::strchr(key, '\\' as i32).is_null() {
+    if !::libc::strchr(key, '\\' as i32).is_null() {
         return;
     }
     loop {
@@ -1844,7 +1844,7 @@ pub unsafe extern "C" fn Info_RemoveKey_Big(
             *fresh31 = *fresh30
         }
         *o = 0 as libc::c_int as libc::c_char;
-        if crate::stdlib::strcmp(key, pkey.as_mut_ptr()) == 0 {
+        if ::libc::strcmp(key, pkey.as_mut_ptr()) == 0 {
             crate::stdlib::memmove(
                 start as *mut libc::c_void,
                 s as *const libc::c_void,
@@ -1870,10 +1870,10 @@ can mess up the server's parsing
 pub unsafe extern "C" fn Info_Validate(
     mut s: *const libc::c_char,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    if !crate::stdlib::strchr(s, '\"' as i32).is_null() {
+    if !::libc::strchr(s, '\"' as i32).is_null() {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if !crate::stdlib::strchr(s, ';' as i32).is_null() {
+    if !::libc::strchr(s, ';' as i32).is_null() {
         return crate::src::qcommon::q_shared::qfalse;
     }
     return crate::src::qcommon::q_shared::qtrue;
@@ -1901,8 +1901,8 @@ pub unsafe extern "C" fn Info_SetValueForKey(
         );
     }
     while *blacklist != 0 {
-        if !crate::stdlib::strchr(key, *blacklist as libc::c_int).is_null()
-            || !crate::stdlib::strchr(value, *blacklist as libc::c_int).is_null()
+        if !::libc::strchr(key, *blacklist as libc::c_int).is_null()
+            || !::libc::strchr(value, *blacklist as libc::c_int).is_null()
         {
             crate::src::renderergl1::tr_subs::Com_Printf(
                 b"^3Can\'t use keys or values with a \'%c\': %s = %s\n\x00" as *const u8
@@ -1934,8 +1934,8 @@ pub unsafe extern "C" fn Info_SetValueForKey(
         );
         return;
     }
-    crate::stdlib::strcat(newi.as_mut_ptr(), s);
-    crate::stdlib::strcpy(s, newi.as_mut_ptr());
+    ::libc::strcat(newi.as_mut_ptr(), s);
+    ::libc::strcpy(s, newi.as_mut_ptr());
 }
 // mode parm for FS_FOpenFile
 //=============================================
@@ -1988,8 +1988,8 @@ pub unsafe extern "C" fn Info_SetValueForKey_Big(
         );
     }
     while *blacklist != 0 {
-        if !crate::stdlib::strchr(key, *blacklist as libc::c_int).is_null()
-            || !crate::stdlib::strchr(value, *blacklist as libc::c_int).is_null()
+        if !::libc::strchr(key, *blacklist as libc::c_int).is_null()
+            || !::libc::strchr(value, *blacklist as libc::c_int).is_null()
         {
             crate::src::renderergl1::tr_subs::Com_Printf(
                 b"^3Can\'t use keys or values with a \'%c\': %s = %s\n\x00" as *const u8
@@ -2021,7 +2021,7 @@ pub unsafe extern "C" fn Info_SetValueForKey_Big(
         );
         return;
     }
-    crate::stdlib::strcat(s, newi.as_mut_ptr());
+    ::libc::strcat(s, newi.as_mut_ptr());
 }
 //====================================================================
 /*

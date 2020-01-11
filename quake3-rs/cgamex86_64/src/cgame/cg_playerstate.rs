@@ -442,7 +442,10 @@ pub unsafe extern "C" fn CG_CheckPlayerstateEvents(
             .offset((*ps).clientNum as isize) as *mut crate::cg_local_h::centity_t;
         (*cent).currentState.event = (*ps).externalEvent;
         (*cent).currentState.eventParm = (*ps).externalEventParm;
-        crate::src::cgame::cg_event::CG_EntityEvent(cent, (*cent).lerpOrigin.as_mut_ptr());
+        crate::src::cgame::cg_event::CG_EntityEvent(
+            cent as *mut crate::cg_local_h::centity_s,
+            (*cent).lerpOrigin.as_mut_ptr(),
+        );
     }
     cent = &mut crate::src::cgame::cg_main::cg.predictedPlayerEntity;
     // go through the predictable events buffer
@@ -458,7 +461,10 @@ pub unsafe extern "C" fn CG_CheckPlayerstateEvents(
             (*cent).currentState.event = event;
             (*cent).currentState.eventParm =
                 (*ps).eventParms[(i & 2 as libc::c_int - 1 as libc::c_int) as usize];
-            crate::src::cgame::cg_event::CG_EntityEvent(cent, (*cent).lerpOrigin.as_mut_ptr());
+            crate::src::cgame::cg_event::CG_EntityEvent(
+                cent as *mut crate::cg_local_h::centity_s,
+                (*cent).lerpOrigin.as_mut_ptr(),
+            );
             crate::src::cgame::cg_main::cg.predictableEvents
                 [(i & 16 as libc::c_int - 1 as libc::c_int) as usize] = event;
             crate::src::cgame::cg_main::cg.eventSequence += 1
@@ -496,7 +502,7 @@ pub unsafe extern "C" fn CG_CheckChangedPredictableEvents(
                     (*cent).currentState.eventParm =
                         (*ps).eventParms[(i & 2 as libc::c_int - 1 as libc::c_int) as usize];
                     crate::src::cgame::cg_event::CG_EntityEvent(
-                        cent,
+                        cent as *mut crate::cg_local_h::centity_s,
                         (*cent).lerpOrigin.as_mut_ptr(),
                     );
                     crate::src::cgame::cg_main::cg.predictableEvents
@@ -576,7 +582,8 @@ pub unsafe extern "C" fn CG_CheckLocalSounds(
     {
         if (*ps).stats[crate::bg_public_h::STAT_HEALTH as libc::c_int as usize] > 0 as libc::c_int {
             crate::src::cgame::cg_event::CG_PainEvent(
-                &mut crate::src::cgame::cg_main::cg.predictedPlayerEntity,
+                &mut crate::src::cgame::cg_main::cg.predictedPlayerEntity as *mut _
+                    as *mut crate::cg_local_h::centity_s,
                 (*ps).stats[crate::bg_public_h::STAT_HEALTH as libc::c_int as usize],
             );
         }

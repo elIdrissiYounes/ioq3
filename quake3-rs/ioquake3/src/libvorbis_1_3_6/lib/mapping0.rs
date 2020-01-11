@@ -88,8 +88,8 @@ pub use crate::src::libvorbis_1_3_6::lib::smallft::drft_forward;
 pub use crate::src::libvorbis_1_3_6::lib::smallft::drft_lookup;
 use crate::src::libvorbis_1_3_6::lib::window::_vorbis_apply_window;
 use crate::stdlib::calloc;
-use crate::stdlib::free;
 use crate::stdlib::memset;
+use ::libc::free;
 /* *******************************************************************
 *                                                                  *
 * THIS FILE IS PART OF THE OggVorbis SOFTWARE CODEC SOURCE CODE.   *
@@ -123,7 +123,7 @@ unsafe extern "C" fn mapping0_free_info(mut i: *mut libc::c_void) {
             0 as libc::c_int,
             ::std::mem::size_of::<crate::backends_h::vorbis_info_mapping0>() as libc::c_ulong,
         );
-        crate::stdlib::free(info as *mut libc::c_void);
+        ::libc::free(info as *mut libc::c_void);
     };
 }
 
@@ -143,44 +143,44 @@ unsafe extern "C" fn mapping0_pack(
     of the beta code. */
     if (*info).submaps > 1 as libc::c_int {
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             1 as libc::c_int as libc::c_ulong,
             1 as libc::c_int,
         ); /* 2,3:reserved */
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             ((*info).submaps - 1 as libc::c_int) as libc::c_ulong,
             4 as libc::c_int,
         );
     } else {
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             0 as libc::c_int as libc::c_ulong,
             1 as libc::c_int,
         );
     }
     if (*info).coupling_steps > 0 as libc::c_int {
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             1 as libc::c_int as libc::c_ulong,
             1 as libc::c_int,
         );
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             ((*info).coupling_steps - 1 as libc::c_int) as libc::c_ulong,
             8 as libc::c_int,
         );
         i = 0 as libc::c_int;
         while i < (*info).coupling_steps {
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 (*info).coupling_mag[i as usize] as libc::c_ulong,
                 crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog(
                     ((*vi).channels - 1 as libc::c_int) as crate::config_types_h::ogg_uint32_t,
                 ),
             );
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 (*info).coupling_ang[i as usize] as libc::c_ulong,
                 crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog(
                     ((*vi).channels - 1 as libc::c_int) as crate::config_types_h::ogg_uint32_t,
@@ -190,13 +190,13 @@ unsafe extern "C" fn mapping0_pack(
         }
     } else {
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             0 as libc::c_int as libc::c_ulong,
             1 as libc::c_int,
         );
     }
     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-        opb,
+        opb as *mut crate::ogg_h::oggpack_buffer,
         0 as libc::c_int as libc::c_ulong,
         2 as libc::c_int,
     );
@@ -205,7 +205,7 @@ unsafe extern "C" fn mapping0_pack(
         i = 0 as libc::c_int; /* time submap unused */
         while i < (*vi).channels {
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 (*info).chmuxlist[i as usize] as libc::c_ulong,
                 4 as libc::c_int,
             );
@@ -215,17 +215,17 @@ unsafe extern "C" fn mapping0_pack(
     i = 0 as libc::c_int;
     while i < (*info).submaps {
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             0 as libc::c_int as libc::c_ulong,
             8 as libc::c_int,
         );
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             (*info).floorsubmap[i as usize] as libc::c_ulong,
             8 as libc::c_int,
         );
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             (*info).residuesubmap[i as usize] as libc::c_ulong,
             8 as libc::c_int,
         );
@@ -249,13 +249,17 @@ unsafe extern "C" fn mapping0_unpack(
     let mut ci: *mut crate::codec_internal_h::codec_setup_info =
         (*vi).codec_setup as *mut crate::codec_internal_h::codec_setup_info;
     if !((*vi).channels <= 0 as libc::c_int) {
-        b = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 1 as libc::c_int)
-            as libc::c_int;
+        b = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+            opb as *mut crate::ogg_h::oggpack_buffer,
+            1 as libc::c_int,
+        ) as libc::c_int;
         if !(b < 0 as libc::c_int) {
             if b != 0 {
-                (*info).submaps =
-                    (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 4 as libc::c_int)
-                        + 1 as libc::c_int as libc::c_long) as libc::c_int;
+                (*info).submaps = (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+                    opb as *mut crate::ogg_h::oggpack_buffer,
+                    4 as libc::c_int,
+                ) + 1 as libc::c_int as libc::c_long)
+                    as libc::c_int;
                 if (*info).submaps <= 0 as libc::c_int {
                     current_block = 1977384903651761240;
                 } else {
@@ -268,13 +272,15 @@ unsafe extern "C" fn mapping0_unpack(
             match current_block {
                 1977384903651761240 => {}
                 _ => {
-                    b = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 1 as libc::c_int)
-                        as libc::c_int;
+                    b = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+                        opb as *mut crate::ogg_h::oggpack_buffer,
+                        1 as libc::c_int,
+                    ) as libc::c_int;
                     if !(b < 0 as libc::c_int) {
                         if b != 0 {
                             (*info).coupling_steps =
                                 (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                    opb,
+                                    opb as *mut crate::ogg_h::oggpack_buffer,
                                     8 as libc::c_int,
                                 ) + 1 as libc::c_int as libc::c_long)
                                     as libc::c_int;
@@ -290,7 +296,7 @@ unsafe extern "C" fn mapping0_unpack(
                                     /* vi->channels > 0 is enforced in the caller */
                                     (*info).coupling_mag[i as usize] =
                                         crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                            opb,
+                                            opb as *mut crate::ogg_h::oggpack_buffer,
                                             crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog(
                                                 ((*vi).channels - 1 as libc::c_int)
                                                     as crate::config_types_h::ogg_uint32_t,
@@ -299,7 +305,7 @@ unsafe extern "C" fn mapping0_unpack(
                                     let mut testM: libc::c_int = (*info).coupling_mag[i as usize]; /* time submap unused */
                                     (*info).coupling_ang[i as usize] =
                                         crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                            opb,
+                                            opb as *mut crate::ogg_h::oggpack_buffer,
                                             crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog(
                                                 ((*vi).channels - 1 as libc::c_int)
                                                     as crate::config_types_h::ogg_uint32_t,
@@ -338,7 +344,7 @@ unsafe extern "C" fn mapping0_unpack(
                             1977384903651761240 => {}
                             _ => {
                                 if !(crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                    opb,
+                                    opb as *mut crate::ogg_h::oggpack_buffer,
                                     2 as libc::c_int,
                                 ) != 0 as libc::c_int as libc::c_long)
                                 {
@@ -351,7 +357,7 @@ unsafe extern "C" fn mapping0_unpack(
                                             }
                                             (*info).chmuxlist[i as usize] =
                                                 crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                                    opb,
+                                                    opb as *mut crate::ogg_h::oggpack_buffer,
                                                     4 as libc::c_int,
                                                 )
                                                     as libc::c_int;
@@ -375,13 +381,13 @@ unsafe extern "C" fn mapping0_unpack(
                                                     current_block = 2873832966593178012;
                                                     break;
                                                 }
-                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                              8 as
                                                                  libc::c_int);
                                                 (*info).floorsubmap[i as
                                                                         usize]
                                                     =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  8 as
                                                                      libc::c_int)
                                                         as libc::c_int;
@@ -395,7 +401,7 @@ unsafe extern "C" fn mapping0_unpack(
                                                 (*info).residuesubmap[i as
                                                                           usize]
                                                     =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  8 as
                                                                      libc::c_int)
                                                         as libc::c_int;
@@ -448,21 +454,21 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
     let mut nonzero: *mut libc::c_int = fresh0.as_mut_ptr() as *mut libc::c_int;
     let mut gmdct: *mut *mut libc::c_float =
         crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-            vb,
+            vb as *mut crate::codec_h::vorbis_block,
             ((*vi).channels as libc::c_ulong)
                 .wrapping_mul(::std::mem::size_of::<*mut libc::c_float>() as libc::c_ulong)
                 as libc::c_long,
         ) as *mut *mut libc::c_float;
     let mut iwork: *mut *mut libc::c_int =
         crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-            vb,
+            vb as *mut crate::codec_h::vorbis_block,
             ((*vi).channels as libc::c_ulong)
                 .wrapping_mul(::std::mem::size_of::<*mut libc::c_int>() as libc::c_ulong)
                 as libc::c_long,
         ) as *mut *mut libc::c_int;
     let mut floor_posts: *mut *mut *mut libc::c_int =
         crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-            vb,
+            vb as *mut crate::codec_h::vorbis_block,
             ((*vi).channels as libc::c_ulong)
                 .wrapping_mul(::std::mem::size_of::<*mut *mut libc::c_int>() as libc::c_ulong)
                 as libc::c_long,
@@ -495,14 +501,14 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
         let mut logfft: *mut libc::c_float = pcm;
         let ref mut fresh2 = *iwork.offset(i as isize);
         *fresh2 = crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-            vb,
+            vb as *mut crate::codec_h::vorbis_block,
             ((n / 2 as libc::c_int) as libc::c_ulong)
                 .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
                 as libc::c_long,
         ) as *mut libc::c_int;
         let ref mut fresh3 = *gmdct.offset(i as isize);
         *fresh3 = crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-            vb,
+            vb as *mut crate::codec_h::vorbis_block,
             ((n / 2 as libc::c_int) as libc::c_ulong)
                 .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
                 as libc::c_long,
@@ -521,13 +527,15 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
         /* only MDCT right now.... */
         crate::src::libvorbis_1_3_6::lib::mdct::mdct_forward(
             *(*b).transform[(*vb).W as usize].offset(0 as libc::c_int as isize)
+                as *mut crate::src::libvorbis_1_3_6::lib::mdct::mdct_lookup
                 as *mut crate::src::libvorbis_1_3_6::lib::mdct::mdct_lookup,
             pcm,
             *gmdct.offset(i as isize),
         );
         /* FFT yields more accurate tonal estimation (not phase sensitive) */
         crate::src::libvorbis_1_3_6::lib::smallft::drft_forward(
-            &mut *(*b).fft_look.as_mut_ptr().offset((*vb).W as isize),
+            &mut *(*b).fft_look.as_mut_ptr().offset((*vb).W as isize) as *mut _
+                as *mut crate::src::libvorbis_1_3_6::lib::smallft::drft_lookup,
             pcm,
         ); /* + .345 is a hack; the
            original todB estimation used on
@@ -584,13 +592,13 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
         i += 1
     }
     let mut noise: *mut libc::c_float = crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-        vb,
+        vb as *mut crate::codec_h::vorbis_block,
         ((n / 2 as libc::c_int) as libc::c_ulong)
             .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
             as libc::c_long,
     ) as *mut libc::c_float;
     let mut tone: *mut libc::c_float = crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-        vb,
+        vb as *mut crate::codec_h::vorbis_block,
         ((n / 2 as libc::c_int) as libc::c_ulong)
             .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
             as libc::c_long,
@@ -621,7 +629,7 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
         (*vb).mode = modenumber;
         let ref mut fresh5 = *floor_posts.offset(i as isize);
         *fresh5 = crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-            vb,
+            vb as *mut crate::codec_h::vorbis_block,
             (15 as libc::c_int as libc::c_ulong)
                 .wrapping_mul(::std::mem::size_of::<*mut libc::c_int>() as libc::c_ulong)
                 as libc::c_long,
@@ -643,13 +651,17 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
         to give noise parts of the spectrum, it also implicitly hands
         us a tonality estimate (the larger the value in the
         'noise_depth' vector, the more tonal that area is) */
-        crate::src::libvorbis_1_3_6::lib::psy::_vp_noisemask(psy_look, logmdct, noise); /* noise does not have by-frequency offset
-                                                                                        bias applied yet */
+        crate::src::libvorbis_1_3_6::lib::psy::_vp_noisemask(
+            psy_look as *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
+            logmdct,
+            noise,
+        ); /* noise does not have by-frequency offset
+           bias applied yet */
         /* second step: 'all the other crap'; all the stuff that isn't
         computed/fit for bitrate management goes in the second psy
         vector.  This includes tone masking, peak limiting and ATH */
         crate::src::libvorbis_1_3_6::lib::psy::_vp_tonemask(
-            psy_look,
+            psy_look as *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
             logfft_0,
             tone,
             global_ampmax,
@@ -660,7 +672,7 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
         performing bitrate management, the line fit is performed
         multiple times for up/down tweakage on demand. */
         crate::src::libvorbis_1_3_6::lib::psy::_vp_offset_and_mix(
-            psy_look,
+            psy_look as *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
             noise,
             tone,
             1 as libc::c_int,
@@ -677,24 +689,27 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
         let ref mut fresh6 = *(*floor_posts.offset(i as isize))
             .offset((15 as libc::c_int / 2 as libc::c_int) as isize);
         *fresh6 = crate::src::libvorbis_1_3_6::lib::floor1::floor1_fit(
-            vb,
+            vb as *mut crate::codec_h::vorbis_block,
             *(*b)
                 .flr
                 .offset((*info).floorsubmap[submap as usize] as isize)
+                as *mut crate::codec_internal_h::vorbis_look_floor1
                 as *mut crate::codec_internal_h::vorbis_look_floor1,
             logmdct,
             logmask,
         );
         /* are we managing bitrate?  If so, perform two more fits for
         later rate tweaking (fits represent hi/lo) */
-        if crate::src::libvorbis_1_3_6::lib::bitrate::vorbis_bitrate_managed(vb) != 0
+        if crate::src::libvorbis_1_3_6::lib::bitrate::vorbis_bitrate_managed(
+            vb as *mut crate::codec_h::vorbis_block,
+        ) != 0
             && !(*(*floor_posts.offset(i as isize))
                 .offset((15 as libc::c_int / 2 as libc::c_int) as isize))
             .is_null()
         {
             /* higher rate by way of lower noise curve */
             crate::src::libvorbis_1_3_6::lib::psy::_vp_offset_and_mix(
-                psy_look,
+                psy_look as *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
                 noise,
                 tone,
                 2 as libc::c_int,
@@ -705,17 +720,18 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
             let ref mut fresh7 = *(*floor_posts.offset(i as isize))
                 .offset((15 as libc::c_int - 1 as libc::c_int) as isize);
             *fresh7 = crate::src::libvorbis_1_3_6::lib::floor1::floor1_fit(
-                vb,
+                vb as *mut crate::codec_h::vorbis_block,
                 *(*b)
                     .flr
                     .offset((*info).floorsubmap[submap as usize] as isize)
+                    as *mut crate::codec_internal_h::vorbis_look_floor1
                     as *mut crate::codec_internal_h::vorbis_look_floor1,
                 logmdct,
                 logmask,
             );
             /* lower rate by way of higher noise curve */
             crate::src::libvorbis_1_3_6::lib::psy::_vp_offset_and_mix(
-                psy_look,
+                psy_look as *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
                 noise,
                 tone,
                 0 as libc::c_int,
@@ -726,10 +742,11 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
             let ref mut fresh8 =
                 *(*floor_posts.offset(i as isize)).offset(0 as libc::c_int as isize);
             *fresh8 = crate::src::libvorbis_1_3_6::lib::floor1::floor1_fit(
-                vb,
+                vb as *mut crate::codec_h::vorbis_block,
                 *(*b)
                     .flr
                     .offset((*info).floorsubmap[submap as usize] as isize)
+                    as *mut crate::codec_internal_h::vorbis_look_floor1
                     as *mut crate::codec_internal_h::vorbis_look_floor1,
                 logmdct,
                 logmask,
@@ -740,10 +757,11 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
             while k < 15 as libc::c_int / 2 as libc::c_int {
                 let ref mut fresh9 = *(*floor_posts.offset(i as isize)).offset(k as isize);
                 *fresh9 = crate::src::libvorbis_1_3_6::lib::floor1::floor1_interpolate_fit(
-                    vb,
+                    vb as *mut crate::codec_h::vorbis_block,
                     *(*b)
                         .flr
                         .offset((*info).floorsubmap[submap as usize] as isize)
+                        as *mut crate::codec_internal_h::vorbis_look_floor1
                         as *mut crate::codec_internal_h::vorbis_look_floor1,
                     *(*floor_posts.offset(i as isize)).offset(0 as libc::c_int as isize),
                     *(*floor_posts.offset(i as isize))
@@ -756,10 +774,11 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
             while k < 15 as libc::c_int - 1 as libc::c_int {
                 let ref mut fresh10 = *(*floor_posts.offset(i as isize)).offset(k as isize);
                 *fresh10 = crate::src::libvorbis_1_3_6::lib::floor1::floor1_interpolate_fit(
-                    vb,
+                    vb as *mut crate::codec_h::vorbis_block,
                     *(*b)
                         .flr
                         .offset((*info).floorsubmap[submap as usize] as isize)
+                        as *mut crate::codec_internal_h::vorbis_look_floor1
                         as *mut crate::codec_internal_h::vorbis_look_floor1,
                     *(*floor_posts.offset(i as isize))
                         .offset((15 as libc::c_int / 2 as libc::c_int) as isize),
@@ -798,13 +817,19 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
             .wrapping_mul((*vi).channels as libc::c_ulong) as usize,
     );
     let mut zerobundle: *mut libc::c_int = fresh12.as_mut_ptr() as *mut libc::c_int;
-    k = if crate::src::libvorbis_1_3_6::lib::bitrate::vorbis_bitrate_managed(vb) != 0 {
+    k = if crate::src::libvorbis_1_3_6::lib::bitrate::vorbis_bitrate_managed(
+        vb as *mut crate::codec_h::vorbis_block,
+    ) != 0
+    {
         0 as libc::c_int
     } else {
         (15 as libc::c_int) / 2 as libc::c_int
     };
     while k
-        <= (if crate::src::libvorbis_1_3_6::lib::bitrate::vorbis_bitrate_managed(vb) != 0 {
+        <= (if crate::src::libvorbis_1_3_6::lib::bitrate::vorbis_bitrate_managed(
+            vb as *mut crate::codec_h::vorbis_block,
+        ) != 0
+        {
             (15 as libc::c_int) - 1 as libc::c_int
         } else {
             (15 as libc::c_int) / 2 as libc::c_int
@@ -813,23 +838,23 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
         let mut opb: *mut crate::ogg_h::oggpack_buffer = (*vbi).packetblob[k as usize];
         /* ok, done encoding.  Next protopacket. */
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             0 as libc::c_int as libc::c_ulong,
             1 as libc::c_int,
         );
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             modenumber as libc::c_ulong,
             (*b).modebits,
         );
         if (*vb).W != 0 {
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 (*vb).lW as libc::c_ulong,
                 1 as libc::c_int,
             );
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 (*vb).nW as libc::c_ulong,
                 1 as libc::c_int,
             );
@@ -839,11 +864,12 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
             let mut submap_0: libc::c_int = (*info).chmuxlist[i as usize];
             let mut ilogmask: *mut libc::c_int = *iwork.offset(i as isize);
             *nonzero.offset(i as isize) = crate::src::libvorbis_1_3_6::lib::floor1::floor1_encode(
-                opb,
-                vb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
+                vb as *mut crate::codec_h::vorbis_block,
                 *(*b)
                     .flr
                     .offset((*info).floorsubmap[submap_0 as usize] as isize)
+                    as *mut crate::codec_internal_h::vorbis_look_floor1
                     as *mut crate::codec_internal_h::vorbis_look_floor1,
                 *(*floor_posts.offset(i as isize)).offset(k as isize),
                 ilogmask,
@@ -852,9 +878,10 @@ unsafe extern "C" fn mapping0_forward(mut vb: *mut crate::codec_h::vorbis_block)
         }
         crate::src::libvorbis_1_3_6::lib::psy::_vp_couple_quantize_normalize(
             k,
-            &mut (*ci).psy_g_param,
-            psy_look,
-            info,
+            &mut (*ci).psy_g_param as *mut _
+                as *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global,
+            psy_look as *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy,
+            info as *mut crate::backends_h::vorbis_info_mapping0,
             gmdct,
             iwork,
             nonzero,
@@ -1104,6 +1131,7 @@ unsafe extern "C" fn mapping0_inverse(
         let mut pcm_0: *mut libc::c_float = *(*vb).pcm.offset(i as isize);
         crate::src::libvorbis_1_3_6::lib::mdct::mdct_backward(
             *(*b).transform[(*vb).W as usize].offset(0 as libc::c_int as isize)
+                as *mut crate::src::libvorbis_1_3_6::lib::mdct::mdct_lookup
                 as *mut crate::src::libvorbis_1_3_6::lib::mdct::mdct_lookup,
             pcm_0,
             pcm_0,

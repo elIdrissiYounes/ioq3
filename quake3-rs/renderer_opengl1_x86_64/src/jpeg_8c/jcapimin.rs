@@ -268,7 +268,9 @@ pub unsafe extern "C" fn jpeg_CreateCompress(
     (*cinfo).client_data = client_data;
     (*cinfo).is_decompressor = 0 as libc::c_int;
     /* Initialize a memory manager instance for this object */
-    crate::src::jpeg_8c::jmemmgr::jinit_memory_mgr(cinfo as crate::jpeglib_h::j_common_ptr);
+    crate::src::jpeg_8c::jmemmgr::jinit_memory_mgr(
+        cinfo as crate::jpeglib_h::j_common_ptr as *mut crate::jpeglib_h::jpeg_common_struct,
+    );
     /* Zero out pointers to permanent structures. */
     (*cinfo).progress = 0 as *mut crate::jpeglib_h::jpeg_progress_mgr;
     (*cinfo).dest = 0 as *mut crate::jpeglib_h::jpeg_destination_mgr;
@@ -300,7 +302,9 @@ pub unsafe extern "C" fn jpeg_CreateCompress(
 #[no_mangle]
 
 pub unsafe extern "C" fn jpeg_destroy_compress(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
-    crate::src::jpeg_8c::jcomapi::jpeg_destroy(cinfo as crate::jpeglib_h::j_common_ptr);
+    crate::src::jpeg_8c::jcomapi::jpeg_destroy(
+        cinfo as crate::jpeglib_h::j_common_ptr as *mut crate::jpeglib_h::jpeg_common_struct,
+    );
     /* use common routine */
 }
 /*
@@ -310,7 +314,9 @@ pub unsafe extern "C" fn jpeg_destroy_compress(mut cinfo: crate::jpeglib_h::j_co
 #[no_mangle]
 
 pub unsafe extern "C" fn jpeg_abort_compress(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
-    crate::src::jpeg_8c::jcomapi::jpeg_abort(cinfo as crate::jpeglib_h::j_common_ptr);
+    crate::src::jpeg_8c::jcomapi::jpeg_abort(
+        cinfo as crate::jpeglib_h::j_common_ptr as *mut crate::jpeglib_h::jpeg_common_struct,
+    );
     /* use common routine */
 }
 /*
@@ -463,7 +469,9 @@ pub unsafe extern "C" fn jpeg_finish_compress(mut cinfo: crate::jpeglib_h::j_com
     )
     .expect("non-null function pointer")(cinfo);
     /* We can use jpeg_abort to release memory and reset global_state */
-    crate::src::jpeg_8c::jcomapi::jpeg_abort(cinfo as crate::jpeglib_h::j_common_ptr);
+    crate::src::jpeg_8c::jcomapi::jpeg_abort(
+        cinfo as crate::jpeglib_h::j_common_ptr as *mut crate::jpeglib_h::jpeg_common_struct,
+    );
 }
 /*
  * Write a special marker.
@@ -644,7 +652,9 @@ pub unsafe extern "C" fn jpeg_write_tables(mut cinfo: crate::jpeglib_h::j_compre
     )
     .expect("non-null function pointer")(cinfo);
     /* Initialize the marker writer ... bit of a crock to do it here. */
-    crate::src::jpeg_8c::jcmarker::jinit_marker_writer(cinfo);
+    crate::src::jpeg_8c::jcmarker::jinit_marker_writer(
+        cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+    );
     /* Write them tables! */
     Some(
         (*(*cinfo).marker)

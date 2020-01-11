@@ -97,8 +97,8 @@ pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
-use crate::stdlib::rand;
 use crate::stdlib::sqrt;
+use ::libc::rand;
 
 use crate::src::botlib::be_aas_main::aasworld;
 use crate::src::botlib::be_aas_main::AAS_Error;
@@ -3721,7 +3721,7 @@ pub unsafe extern "C" fn AAS_RandomGoalArea(
     }
     //
     n = (crate::src::botlib::be_aas_main::aasworld.numareas as libc::c_float
-        * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float)) as libc::c_int; //end for
     i = 0 as libc::c_int; //end if
     while i < crate::src::botlib::be_aas_main::aasworld.numareas {
@@ -3796,7 +3796,7 @@ pub unsafe extern "C" fn AAS_RandomGoalArea(
                     end.as_mut_ptr(),
                     4 as libc::c_int,
                     -(1 as libc::c_int),
-                );
+                ) as crate::be_aas_h::aas_trace_s;
                 if trace.startsolid as u64 == 0
                     && trace.fraction < 1 as libc::c_int as libc::c_float
                     && crate::src::botlib::be_aas_sample::AAS_PointAreaNum(

@@ -184,7 +184,9 @@ pub unsafe extern "C" fn silk_find_pred_coefs_FLP(
             (*psEnc).sCmn.arch,
         );
         crate::src::opus_1_2_1::silk::float::LTP_scale_ctrl_FLP::silk_LTP_scale_ctrl_FLP(
-            psEnc, psEncCtrl, condCoding,
+            psEnc as *mut crate::structs_FLP_h::silk_encoder_state_FLP,
+            psEncCtrl as *mut crate::structs_FLP_h::silk_encoder_control_FLP,
+            condCoding,
         );
         crate::src::opus_1_2_1::silk::float::LTP_analysis_filter_FLP::silk_LTP_analysis_filter_FLP(
             LPC_in_pre.as_mut_ptr(),
@@ -241,14 +243,14 @@ pub unsafe extern "C" fn silk_find_pred_coefs_FLP(
     }
     /* LPC_in_pre contains the LTP-filtered input for voiced, and the unfiltered input for unvoiced */
     crate::src::opus_1_2_1::silk::float::find_LPC_FLP::silk_find_LPC_FLP(
-        &mut (*psEnc).sCmn,
+        &mut (*psEnc).sCmn as *mut _ as *mut crate::structs_h::silk_encoder_state,
         NLSF_Q15.as_mut_ptr(),
         LPC_in_pre.as_mut_ptr() as *const libc::c_float,
         minInvGain,
     );
     /* Quantize LSFs */
     crate::src::opus_1_2_1::silk::float::wrappers_FLP::silk_process_NLSFs_FLP(
-        &mut (*psEnc).sCmn,
+        &mut (*psEnc).sCmn as *mut _ as *mut crate::structs_h::silk_encoder_state,
         (*psEncCtrl).PredCoef.as_mut_ptr(),
         NLSF_Q15.as_mut_ptr(),
         (*psEnc).sCmn.prev_NLSFq_Q15.as_mut_ptr() as *const crate::opus_types_h::opus_int16,

@@ -5,10 +5,10 @@ pub use crate::stddef_h::size_t;
 pub use crate::stdlib::__compar_fn_t;
 pub use crate::stdlib::__uint32_t;
 pub use crate::stdlib::calloc;
-pub use crate::stdlib::free;
 pub use crate::stdlib::malloc;
 pub use crate::stdlib::qsort;
 pub use crate::stdlib::uint32_t;
+pub use ::libc::free;
 
 pub use crate::src::libvorbis_1_3_6::lib::codebook::codebook;
 pub use crate::src::libvorbis_1_3_6::lib::codebook::static_codebook;
@@ -137,7 +137,7 @@ pub unsafe extern "C" fn _make_words(
             /* update ourself */
             if length < 32 as libc::c_int as libc::c_long && entry >> length != 0 {
                 /* error condition; the lengths must specify an overpopulated tree */
-                crate::stdlib::free(r as *mut libc::c_void);
+                ::libc::free(r as *mut libc::c_void);
                 return 0 as *mut crate::config_types_h::ogg_uint32_t;
             }
             let fresh0 = count;
@@ -195,7 +195,7 @@ pub unsafe extern "C" fn _make_words(
                 & 0xffffffff as libc::c_ulong >> 32 as libc::c_int as libc::c_long - i
                 != 0
             {
-                crate::stdlib::free(r as *mut libc::c_void);
+                ::libc::free(r as *mut libc::c_void);
                 return 0 as *mut crate::config_types_h::ogg_uint32_t;
             }
             i += 1
@@ -406,10 +406,10 @@ pub unsafe extern "C" fn vorbis_staticbook_destroy(
 ) {
     if (*b).allocedp != 0 {
         if !(*b).quantlist.is_null() {
-            crate::stdlib::free((*b).quantlist as *mut libc::c_void);
+            ::libc::free((*b).quantlist as *mut libc::c_void);
         }
         if !(*b).lengthlist.is_null() {
-            crate::stdlib::free((*b).lengthlist as *mut libc::c_void);
+            ::libc::free((*b).lengthlist as *mut libc::c_void);
         }
         crate::stdlib::memset(
             b as *mut libc::c_void,
@@ -417,7 +417,7 @@ pub unsafe extern "C" fn vorbis_staticbook_destroy(
             ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::codebook::static_codebook>()
                 as libc::c_ulong,
         );
-        crate::stdlib::free(b as *mut libc::c_void);
+        ::libc::free(b as *mut libc::c_void);
     };
     /* otherwise, it is in static memory */
 }
@@ -429,19 +429,19 @@ pub unsafe extern "C" fn vorbis_book_clear(
     /* static book is not cleared; we're likely called on the lookup and
     the static codebook belongs to the info struct */
     if !(*b).valuelist.is_null() {
-        crate::stdlib::free((*b).valuelist as *mut libc::c_void);
+        ::libc::free((*b).valuelist as *mut libc::c_void);
     }
     if !(*b).codelist.is_null() {
-        crate::stdlib::free((*b).codelist as *mut libc::c_void);
+        ::libc::free((*b).codelist as *mut libc::c_void);
     }
     if !(*b).dec_index.is_null() {
-        crate::stdlib::free((*b).dec_index as *mut libc::c_void);
+        ::libc::free((*b).dec_index as *mut libc::c_void);
     }
     if !(*b).dec_codelengths.is_null() {
-        crate::stdlib::free((*b).dec_codelengths as *mut libc::c_void);
+        ::libc::free((*b).dec_codelengths as *mut libc::c_void);
     }
     if !(*b).dec_firsttable.is_null() {
-        crate::stdlib::free((*b).dec_firsttable as *mut libc::c_void);
+        ::libc::free((*b).dec_firsttable as *mut libc::c_void);
     }
     crate::stdlib::memset(
         b as *mut libc::c_void,
@@ -605,7 +605,7 @@ pub unsafe extern "C" fn vorbis_book_init_decode(
                     *codes.offset(i as isize);
                 i += 1
             }
-            crate::stdlib::free(codes as *mut libc::c_void);
+            ::libc::free(codes as *mut libc::c_void);
             (*c).valuelist = _book_unquantize(s, n, sortindex);
             (*c).dec_index = crate::stdlib::malloc(
                 (n as libc::c_ulong)

@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -24,7 +24,7 @@ pub use crate::src::qcommon::q_shared::EXEC_NOW;
 use crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText;
 use crate::src::ui::ui_syscalls::trap_Cvar_SetValue;
 use crate::src::ui::ui_syscalls::trap_Cvar_VariableValue;
-pub use crate::stdlib::strtol;
+pub use ::libc::strtol;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.

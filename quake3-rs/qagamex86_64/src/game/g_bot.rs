@@ -4,16 +4,16 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -152,14 +152,14 @@ pub use crate::src::game::g_syscalls::trap_Print;
 pub use crate::src::game::g_syscalls::trap_SendConsoleCommand;
 pub use crate::src::game::g_syscalls::trap_SendServerCommand;
 pub use crate::src::game::g_syscalls::trap_SetUserinfo;
-pub use crate::stdlib::rand;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
-use crate::stdlib::strrchr;
-pub use crate::stdlib::strtod;
-pub use crate::stdlib::strtol;
+pub use ::libc::rand;
+use ::libc::strcat;
+use ::libc::strcmp;
+use ::libc::strcpy;
+use ::libc::strrchr;
+pub use ::libc::strtod;
+pub use ::libc::strtol;
 extern "C" {
     #[no_mangle]
     pub static mut podium1: *mut crate::g_local_h::gentity_t;
@@ -259,7 +259,7 @@ pub unsafe extern "C" fn G_ParseInfos(
         if *token.offset(0 as libc::c_int as isize) == 0 {
             break;
         }
-        if crate::stdlib::strcmp(token, b"{\x00" as *const u8 as *const libc::c_char) != 0 {
+        if ::libc::strcmp(token, b"{\x00" as *const u8 as *const libc::c_char) != 0 {
             crate::src::game::g_main::Com_Printf(
                 b"Missing { in info file\n\x00" as *const u8 as *const libc::c_char,
             );
@@ -282,9 +282,7 @@ pub unsafe extern "C" fn G_ParseInfos(
                     );
                     break;
                 } else {
-                    if crate::stdlib::strcmp(token, b"}\x00" as *const u8 as *const libc::c_char)
-                        == 0
-                    {
+                    if ::libc::strcmp(token, b"}\x00" as *const u8 as *const libc::c_char) == 0 {
                         break;
                     }
                     crate::src::qcommon::q_shared::Q_strncpyz(
@@ -298,10 +296,7 @@ pub unsafe extern "C" fn G_ParseInfos(
                         crate::src::qcommon::q_shared::qfalse,
                     );
                     if *token.offset(0 as libc::c_int as isize) == 0 {
-                        crate::stdlib::strcpy(
-                            token,
-                            b"<NULL>\x00" as *const u8 as *const libc::c_char,
-                        );
+                        ::libc::strcpy(token, b"<NULL>\x00" as *const u8 as *const libc::c_char);
                     }
                     crate::src::qcommon::q_shared::Info_SetValueForKey(
                         info.as_mut_ptr(),
@@ -324,7 +319,7 @@ pub unsafe extern "C" fn G_ParseInfos(
                     .wrapping_add(1 as libc::c_int as libc::c_ulong) as libc::c_int,
             ) as *mut libc::c_char;
             if !(*infos.offset(count as isize)).is_null() {
-                crate::stdlib::strcpy(*infos.offset(count as isize), info.as_mut_ptr());
+                ::libc::strcpy(*infos.offset(count as isize), info.as_mut_ptr());
                 count += 1
             }
         }
@@ -397,7 +392,7 @@ unsafe extern "C" fn G_LoadArenas() {
     let mut dirlen: libc::c_int = 0;
     g_numArenas = 0 as libc::c_int;
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut arenasFile,
+        &mut arenasFile as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"g_arenasFile\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x10 as libc::c_int | 0x40 as libc::c_int,
@@ -420,11 +415,11 @@ unsafe extern "C" fn G_LoadArenas() {
     i = 0 as libc::c_int;
     while i < numdirs {
         dirlen = crate::stdlib::strlen(dirptr) as libc::c_int;
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             filename.as_mut_ptr(),
             b"scripts/\x00" as *const u8 as *const libc::c_char,
         );
-        crate::stdlib::strcat(filename.as_mut_ptr(), dirptr);
+        ::libc::strcat(filename.as_mut_ptr(), dirptr);
         G_LoadArenasFromFile(filename.as_mut_ptr());
         i += 1;
         dirptr = dirptr.offset((dirlen + 1 as libc::c_int) as isize)
@@ -485,7 +480,7 @@ unsafe extern "C" fn PlayerIntroSound(mut modelAndSkin: *const libc::c_char) {
         modelAndSkin,
         ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
     );
-    skin = crate::stdlib::strrchr(model.as_mut_ptr(), '/' as i32);
+    skin = ::libc::strrchr(model.as_mut_ptr(), '/' as i32);
     if !skin.is_null() {
         let fresh1 = skin;
         skin = skin.offset(1);
@@ -608,7 +603,7 @@ pub unsafe extern "C" fn G_SelectRandomBotInfo(mut team: libc::c_int) -> libc::c
         n += 1
     }
     if num > 0 as libc::c_int {
-        num = ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        num = ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float
             * (num - 1 as libc::c_int) as libc::c_float) as libc::c_int;
         return selection[num as usize];
@@ -768,7 +763,9 @@ pub unsafe extern "C" fn G_CheckMinimumPlayers() {
         return;
     }
     checkminimumplayers_time = crate::src::game::g_main::level.time;
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut bot_minplayers);
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut bot_minplayers as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
     minplayers = bot_minplayers.integer;
     if minplayers <= 0 as libc::c_int {
         return;
@@ -941,7 +938,12 @@ pub unsafe extern "C" fn G_BotConnect(
         userinfo.as_mut_ptr(),
         b"skill\x00" as *const u8 as *const libc::c_char,
     )) as libc::c_float;
-    if crate::src::game::ai_main::BotAISetupClient(clientNum, &mut settings, restart) == 0 {
+    if crate::src::game::ai_main::BotAISetupClient(
+        clientNum,
+        &mut settings as *mut _ as *mut crate::g_local_h::bot_settings_s,
+        restart,
+    ) == 0
+    {
         crate::src::game::g_syscalls::trap_DropClient(
             clientNum,
             b"BotAISetupClient failed\x00" as *const u8 as *const libc::c_char,
@@ -1327,7 +1329,7 @@ pub unsafe extern "C" fn Svcmd_BotList_f() {
             ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
         );
         if *name.as_mut_ptr() == 0 {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 name.as_mut_ptr(),
                 b"UnnamedPlayer\x00" as *const u8 as *const libc::c_char,
             );
@@ -1341,7 +1343,7 @@ pub unsafe extern "C" fn Svcmd_BotList_f() {
             ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
         );
         if *funname.as_mut_ptr() == 0 {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 funname.as_mut_ptr(),
                 b"\x00" as *const u8 as *const libc::c_char,
             );
@@ -1355,7 +1357,7 @@ pub unsafe extern "C" fn Svcmd_BotList_f() {
             ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
         );
         if *model.as_mut_ptr() == 0 {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 model.as_mut_ptr(),
                 b"visor/default\x00" as *const u8 as *const libc::c_char,
             );
@@ -1369,7 +1371,7 @@ pub unsafe extern "C" fn Svcmd_BotList_f() {
             ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
         );
         if *aifile.as_mut_ptr() == 0 {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 aifile.as_mut_ptr(),
                 b"bots/default_c.c\x00" as *const u8 as *const libc::c_char,
             );
@@ -1526,7 +1528,7 @@ unsafe extern "C" fn G_LoadBots() {
     }
     g_numBots = 0 as libc::c_int;
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut botsFile,
+        &mut botsFile as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"g_botsFile\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x10 as libc::c_int | 0x40 as libc::c_int,
@@ -1549,11 +1551,11 @@ unsafe extern "C" fn G_LoadBots() {
     i = 0 as libc::c_int;
     while i < numdirs {
         dirlen = crate::stdlib::strlen(dirptr) as libc::c_int;
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             filename.as_mut_ptr(),
             b"scripts/\x00" as *const u8 as *const libc::c_char,
         );
-        crate::stdlib::strcat(filename.as_mut_ptr(), dirptr);
+        ::libc::strcat(filename.as_mut_ptr(), dirptr);
         G_LoadBotsFromFile(filename.as_mut_ptr());
         i += 1;
         dirptr = dirptr.offset((dirlen + 1 as libc::c_int) as isize)
@@ -1622,7 +1624,7 @@ pub unsafe extern "C" fn G_InitBots(mut restart: crate::src::qcommon::q_shared::
     G_LoadBots();
     G_LoadArenas();
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_minplayers,
+        &mut bot_minplayers as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_minplayers\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int,

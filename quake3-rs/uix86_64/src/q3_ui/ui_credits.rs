@@ -375,5 +375,7 @@ pub unsafe extern "C" fn UI_CreditMenu() {
             as unsafe extern "C" fn(_: libc::c_int) -> crate::src::qcommon::q_shared::sfxHandle_t,
     );
     s_credits.menu.fullscreen = crate::src::qcommon::q_shared::qtrue;
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_credits.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_credits.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

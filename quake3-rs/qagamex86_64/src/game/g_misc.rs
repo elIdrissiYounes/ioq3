@@ -456,8 +456,8 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::rand;
 use crate::stdlib::sin;
+use ::libc::rand;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -490,7 +490,10 @@ Used as a positional target for calculations in the utilities (spotlights, etc),
 #[no_mangle]
 
 pub unsafe extern "C" fn SP_info_camp(mut self_0: *mut crate::g_local_h::gentity_t) {
-    crate::src::game::g_utils::G_SetOrigin(self_0, (*self_0).s.origin.as_mut_ptr());
+    crate::src::game::g_utils::G_SetOrigin(
+        self_0 as *mut crate::g_local_h::gentity_s,
+        (*self_0).s.origin.as_mut_ptr(),
+    );
 }
 /*QUAKED info_null (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for calculations in the utilities (spotlights, etc), but removed during gameplay.
@@ -498,7 +501,7 @@ Used as a positional target for calculations in the utilities (spotlights, etc),
 #[no_mangle]
 
 pub unsafe extern "C" fn SP_info_null(mut self_0: *mut crate::g_local_h::gentity_t) {
-    crate::src::game::g_utils::G_FreeEntity(self_0);
+    crate::src::game::g_utils::G_FreeEntity(self_0 as *mut crate::g_local_h::gentity_s);
 }
 /*QUAKED info_notnull (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for in-game calculation, like jumppad targets.
@@ -507,7 +510,10 @@ target_position does the same thing
 #[no_mangle]
 
 pub unsafe extern "C" fn SP_info_notnull(mut self_0: *mut crate::g_local_h::gentity_t) {
-    crate::src::game::g_utils::G_SetOrigin(self_0, (*self_0).s.origin.as_mut_ptr());
+    crate::src::game::g_utils::G_SetOrigin(
+        self_0 as *mut crate::g_local_h::gentity_s,
+        (*self_0).s.origin.as_mut_ptr(),
+    );
 }
 /*QUAKED light (0 1 0) (-8 -8 -8) (8 8 8) linear
 Non-displayed light.
@@ -519,7 +525,7 @@ Lights pointed at a target will be spotlights.
 #[no_mangle]
 
 pub unsafe extern "C" fn SP_light(mut self_0: *mut crate::g_local_h::gentity_t) {
-    crate::src::game::g_utils::G_FreeEntity(self_0);
+    crate::src::game::g_utils::G_FreeEntity(self_0 as *mut crate::g_local_h::gentity_s);
 }
 /*
 ===========================================================================
@@ -742,16 +748,16 @@ pub unsafe extern "C" fn TeleportPlayer(
         tent = crate::src::game::g_utils::G_TempEntity(
             (*(*player).client).ps.origin.as_mut_ptr(),
             crate::bg_public_h::EV_PLAYER_TELEPORT_OUT as libc::c_int,
-        );
+        ) as *mut crate::g_local_h::gentity_s;
         (*tent).s.clientNum = (*player).s.clientNum;
         tent = crate::src::game::g_utils::G_TempEntity(
             origin,
             crate::bg_public_h::EV_PLAYER_TELEPORT_IN as libc::c_int,
-        );
+        ) as *mut crate::g_local_h::gentity_s;
         (*tent).s.clientNum = (*player).s.clientNum
     }
     // unlink to make sure it can't possibly interfere with G_KillBox
-    crate::src::game::g_syscalls::trap_UnlinkEntity(player);
+    crate::src::game::g_syscalls::trap_UnlinkEntity(player as *mut crate::g_local_h::gentity_s);
     (*(*player).client).ps.origin[0 as libc::c_int as usize] =
         *origin.offset(0 as libc::c_int as isize);
     (*(*player).client).ps.origin[1 as libc::c_int as usize] =
@@ -779,7 +785,10 @@ pub unsafe extern "C" fn TeleportPlayer(
         (*(*player).client).ps.pm_time = 160 as libc::c_int;
         (*(*player).client).ps.pm_flags |= 64 as libc::c_int;
         // set angles
-        crate::src::game::g_client::SetClientViewAngle(player, angles);
+        crate::src::game::g_client::SetClientViewAngle(
+            player as *mut crate::g_local_h::gentity_s,
+            angles,
+        );
     }
     // toggle the teleport bit so the client knows to not lerp
     (*(*player).client).ps.eFlags ^= 0x4 as libc::c_int;
@@ -787,12 +796,12 @@ pub unsafe extern "C" fn TeleportPlayer(
     if (*(*player).client).sess.sessionTeam as libc::c_uint
         != crate::bg_public_h::TEAM_SPECTATOR as libc::c_int as libc::c_uint
     {
-        crate::src::game::g_utils::G_KillBox(player);
+        crate::src::game::g_utils::G_KillBox(player as *mut crate::g_local_h::gentity_s);
     }
     // save results of pmove
     crate::src::game::bg_misc::BG_PlayerStateToEntityState(
-        &mut (*(*player).client).ps,
-        &mut (*player).s,
+        &mut (*(*player).client).ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
+        &mut (*player).s as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
         crate::src::qcommon::q_shared::qtrue,
     );
     // use the precise origin for linking
@@ -805,7 +814,7 @@ pub unsafe extern "C" fn TeleportPlayer(
     if (*(*player).client).sess.sessionTeam as libc::c_uint
         != crate::bg_public_h::TEAM_SPECTATOR as libc::c_int as libc::c_uint
     {
-        crate::src::game::g_syscalls::trap_LinkEntity(player);
+        crate::src::game::g_syscalls::trap_LinkEntity(player as *mut crate::g_local_h::gentity_s);
     };
 }
 /*QUAKED misc_teleporter_dest (1 0 0) (-32 -32 -24) (32 32 -16)
@@ -823,7 +832,7 @@ pub unsafe extern "C" fn SP_misc_teleporter_dest(mut ent: *mut crate::g_local_h:
 #[no_mangle]
 
 pub unsafe extern "C" fn SP_misc_model(mut ent: *mut crate::g_local_h::gentity_t) {
-    crate::src::game::g_utils::G_FreeEntity(ent);
+    crate::src::game::g_utils::G_FreeEntity(ent as *mut crate::g_local_h::gentity_s);
 }
 //===========================================================
 #[no_mangle]
@@ -832,13 +841,14 @@ pub unsafe extern "C" fn locateCamera(mut ent: *mut crate::g_local_h::gentity_t)
     let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut target: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut owner: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
-    owner = crate::src::game::g_utils::G_PickTarget((*ent).target);
+    owner =
+        crate::src::game::g_utils::G_PickTarget((*ent).target) as *mut crate::g_local_h::gentity_s;
     if owner.is_null() {
         crate::src::game::g_main::G_Printf(
             b"Couldn\'t find target for misc_partal_surface\n\x00" as *const u8
                 as *const libc::c_char,
         );
-        crate::src::game::g_utils::G_FreeEntity(ent);
+        crate::src::game::g_utils::G_FreeEntity(ent as *mut crate::g_local_h::gentity_s);
         return;
     }
     (*ent).r.ownerNum = (*owner).s.number;
@@ -861,7 +871,8 @@ pub unsafe extern "C" fn locateCamera(mut ent: *mut crate::g_local_h::gentity_t)
     (*ent).s.origin2[1 as libc::c_int as usize] = (*owner).s.origin[1 as libc::c_int as usize];
     (*ent).s.origin2[2 as libc::c_int as usize] = (*owner).s.origin[2 as libc::c_int as usize];
     // see if the portal_camera has a target
-    target = crate::src::game::g_utils::G_PickTarget((*owner).target);
+    target = crate::src::game::g_utils::G_PickTarget((*owner).target)
+        as *mut crate::g_local_h::gentity_s;
     if !target.is_null() {
         dir[0 as libc::c_int as usize] = (*target).s.origin[0 as libc::c_int as usize]
             - (*owner).s.origin[0 as libc::c_int as usize];
@@ -890,7 +901,7 @@ pub unsafe extern "C" fn SP_misc_portal_surface(mut ent: *mut crate::g_local_h::
         0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
     (*ent).r.maxs[1 as libc::c_int as usize] = (*ent).r.maxs[2 as libc::c_int as usize];
     (*ent).r.maxs[0 as libc::c_int as usize] = (*ent).r.maxs[1 as libc::c_int as usize];
-    crate::src::game::g_syscalls::trap_LinkEntity(ent);
+    crate::src::game::g_syscalls::trap_LinkEntity(ent as *mut crate::g_local_h::gentity_s);
     (*ent).r.svFlags = 0x40 as libc::c_int;
     (*ent).s.eType = crate::bg_public_h::ET_PORTAL as libc::c_int;
     if (*ent).target.is_null() {
@@ -919,7 +930,7 @@ pub unsafe extern "C" fn SP_misc_portal_camera(mut ent: *mut crate::g_local_h::g
         0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
     (*ent).r.maxs[1 as libc::c_int as usize] = (*ent).r.maxs[2 as libc::c_int as usize];
     (*ent).r.maxs[0 as libc::c_int as usize] = (*ent).r.maxs[1 as libc::c_int as usize];
-    crate::src::game::g_syscalls::trap_LinkEntity(ent);
+    crate::src::game::g_syscalls::trap_LinkEntity(ent as *mut crate::g_local_h::gentity_s);
     crate::src::game::g_spawn::G_SpawnFloat(
         b"roll\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
@@ -971,7 +982,7 @@ pub unsafe extern "C" fn Use_Shooter(
         right.as_mut_ptr(),
     );
     deg = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * (*ent).random as libc::c_double) as libc::c_float;
@@ -982,7 +993,7 @@ pub unsafe extern "C" fn Use_Shooter(
     dir[2 as libc::c_int as usize] =
         dir[2 as libc::c_int as usize] + up[2 as libc::c_int as usize] * deg;
     deg = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * (*ent).random as libc::c_double) as libc::c_float;
@@ -996,36 +1007,37 @@ pub unsafe extern "C" fn Use_Shooter(
     match (*ent).s.weapon {
         4 => {
             crate::src::game::g_missile::fire_grenade(
-                ent,
+                ent as *mut crate::g_local_h::gentity_s,
                 (*ent).s.origin.as_mut_ptr(),
                 dir.as_mut_ptr(),
-            );
+            ) as *mut crate::g_local_h::gentity_s;
         }
         5 => {
             crate::src::game::g_missile::fire_rocket(
-                ent,
+                ent as *mut crate::g_local_h::gentity_s,
                 (*ent).s.origin.as_mut_ptr(),
                 dir.as_mut_ptr(),
-            );
+            ) as *mut crate::g_local_h::gentity_s;
         }
         8 => {
             crate::src::game::g_missile::fire_plasma(
-                ent,
+                ent as *mut crate::g_local_h::gentity_s,
                 (*ent).s.origin.as_mut_ptr(),
                 dir.as_mut_ptr(),
-            );
+            ) as *mut crate::g_local_h::gentity_s;
         }
         _ => {}
     }
     crate::src::game::g_utils::G_AddEvent(
-        ent,
+        ent as *mut crate::g_local_h::gentity_s,
         crate::bg_public_h::EV_FIRE_WEAPON as libc::c_int,
         0 as libc::c_int,
     );
 }
 
 unsafe extern "C" fn InitShooter_Finish(mut ent: *mut crate::g_local_h::gentity_t) {
-    (*ent).enemy = crate::src::game::g_utils::G_PickTarget((*ent).target);
+    (*ent).enemy =
+        crate::src::game::g_utils::G_PickTarget((*ent).target) as *mut crate::g_local_h::gentity_s;
     (*ent).think = None;
     (*ent).nextthink = 0 as libc::c_int;
 }
@@ -1046,7 +1058,8 @@ pub unsafe extern "C" fn InitShooter(
     (*ent).s.weapon = weapon;
     crate::src::game::g_items::RegisterItem(crate::src::game::bg_misc::BG_FindItemForWeapon(
         weapon as crate::bg_public_h::weapon_t,
-    ));
+    ) as *mut crate::bg_public_h::gitem_s
+        as *mut crate::bg_public_h::gitem_s);
     crate::src::game::g_utils::G_SetMovedir(
         (*ent).s.angles.as_mut_ptr(),
         (*ent).movedir.as_mut_ptr(),
@@ -1065,7 +1078,7 @@ pub unsafe extern "C" fn InitShooter(
         );
         (*ent).nextthink = crate::src::game::g_main::level.time + 500 as libc::c_int
     }
-    crate::src::game::g_syscalls::trap_LinkEntity(ent);
+    crate::src::game::g_syscalls::trap_LinkEntity(ent as *mut crate::g_local_h::gentity_s);
 }
 /*QUAKED shooter_rocket (1 0 0) (-16 -16 -16) (16 16 16)
 Fires at either the target or the current direction.

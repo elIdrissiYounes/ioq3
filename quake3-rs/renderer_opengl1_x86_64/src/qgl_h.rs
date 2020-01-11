@@ -69,6 +69,64 @@ pub type Viewportproc = unsafe extern "C" fn(
     _: crate::stdlib::GLsizei,
     _: crate::stdlib::GLsizei,
 ) -> ();
+pub type ClearStencilproc = unsafe extern "C" fn(_: crate::stdlib::GLint) -> ();
+pub type GetErrorproc = unsafe extern "C" fn() -> crate::stdlib::GLenum;
+pub type StencilFuncproc = unsafe extern "C" fn(
+    _: crate::stdlib::GLenum,
+    _: crate::stdlib::GLint,
+    _: crate::stdlib::GLuint,
+) -> ();
+pub type StencilMaskproc = unsafe extern "C" fn(_: crate::stdlib::GLuint) -> ();
+pub type StencilOpproc = unsafe extern "C" fn(
+    _: crate::stdlib::GLenum,
+    _: crate::stdlib::GLenum,
+    _: crate::stdlib::GLenum,
+) -> ();
+pub type DeleteTexturesproc =
+    unsafe extern "C" fn(_: crate::stdlib::GLsizei, _: *const crate::stdlib::GLuint) -> ();
+pub type GenTexturesproc =
+    unsafe extern "C" fn(_: crate::stdlib::GLsizei, _: *mut crate::stdlib::GLuint) -> ();
+pub type TexParameteriproc = unsafe extern "C" fn(
+    _: crate::stdlib::GLenum,
+    _: crate::stdlib::GLenum,
+    _: crate::stdlib::GLint,
+) -> ();
+pub type GetIntegervproc =
+    unsafe extern "C" fn(_: crate::stdlib::GLenum, _: *mut crate::stdlib::GLint) -> ();
+pub type DrawElementsproc = unsafe extern "C" fn(
+    _: crate::stdlib::GLenum,
+    _: crate::stdlib::GLsizei,
+    _: crate::stdlib::GLenum,
+    _: *const libc::c_void,
+) -> ();
+pub type PolygonOffsetproc =
+    unsafe extern "C" fn(_: crate::stdlib::GLfloat, _: crate::stdlib::GLfloat) -> ();
+pub type GetBooleanvproc =
+    unsafe extern "C" fn(_: crate::stdlib::GLenum, _: *mut crate::stdlib::GLboolean) -> ();
+pub type Translatefproc = unsafe extern "C" fn(
+    _: crate::stdlib::GLfloat,
+    _: crate::stdlib::GLfloat,
+    _: crate::stdlib::GLfloat,
+) -> ();
+pub type LineWidthproc = unsafe extern "C" fn(_: crate::stdlib::GLfloat) -> ();
+pub type CopyTexSubImage2Dproc = unsafe extern "C" fn(
+    _: crate::stdlib::GLenum,
+    _: crate::stdlib::GLint,
+    _: crate::stdlib::GLint,
+    _: crate::stdlib::GLint,
+    _: crate::stdlib::GLint,
+    _: crate::stdlib::GLint,
+    _: crate::stdlib::GLsizei,
+    _: crate::stdlib::GLsizei,
+) -> ();
+pub type DrawArraysproc = unsafe extern "C" fn(
+    _: crate::stdlib::GLenum,
+    _: crate::stdlib::GLint,
+    _: crate::stdlib::GLsizei,
+) -> ();
+pub type Flushproc = unsafe extern "C" fn() -> ();
+pub type GetStringproc =
+    unsafe extern "C" fn(_: crate::stdlib::GLenum) -> *const crate::stdlib::GLubyte;
 pub type AlphaFuncproc =
     unsafe extern "C" fn(_: crate::stdlib::GLenum, _: crate::stdlib::GLclampf) -> ();
 pub type LoadIdentityproc = unsafe extern "C" fn() -> ();
@@ -79,11 +137,41 @@ pub type TexEnvfproc = unsafe extern "C" fn(
     _: crate::stdlib::GLenum,
     _: crate::stdlib::GLfloat,
 ) -> ();
+pub type PopMatrixproc = unsafe extern "C" fn() -> ();
+pub type PushMatrixproc = unsafe extern "C" fn() -> ();
+pub type Color4fproc = unsafe extern "C" fn(
+    _: crate::stdlib::GLfloat,
+    _: crate::stdlib::GLfloat,
+    _: crate::stdlib::GLfloat,
+    _: crate::stdlib::GLfloat,
+) -> ();
+pub type EnableClientStateproc = unsafe extern "C" fn(_: crate::stdlib::GLenum) -> ();
+pub type ShadeModelproc = unsafe extern "C" fn(_: crate::stdlib::GLenum) -> ();
+pub type ColorPointerproc = unsafe extern "C" fn(
+    _: crate::stdlib::GLint,
+    _: crate::stdlib::GLenum,
+    _: crate::stdlib::GLsizei,
+    _: *const libc::c_void,
+) -> ();
+pub type DisableClientStateproc = unsafe extern "C" fn(_: crate::stdlib::GLenum) -> ();
+pub type TexCoordPointerproc = unsafe extern "C" fn(
+    _: crate::stdlib::GLint,
+    _: crate::stdlib::GLenum,
+    _: crate::stdlib::GLsizei,
+    _: *const libc::c_void,
+) -> ();
+pub type VertexPointerproc = unsafe extern "C" fn(
+    _: crate::stdlib::GLint,
+    _: crate::stdlib::GLenum,
+    _: crate::stdlib::GLsizei,
+    _: *const libc::c_void,
+) -> ();
 pub type DepthRangeproc =
     unsafe extern "C" fn(_: crate::stdlib::GLclampd, _: crate::stdlib::GLclampd) -> ();
 pub type DrawBufferproc = unsafe extern "C" fn(_: crate::stdlib::GLenum) -> ();
 pub type PolygonModeproc =
     unsafe extern "C" fn(_: crate::stdlib::GLenum, _: crate::stdlib::GLenum) -> ();
+pub type ClearDepthproc = unsafe extern "C" fn(_: crate::stdlib::GLclampd) -> ();
 pub type Beginproc = unsafe extern "C" fn(_: crate::stdlib::GLenum) -> ();
 pub type ClipPlaneproc =
     unsafe extern "C" fn(_: crate::stdlib::GLenum, _: *const crate::stdlib::GLdouble) -> ();
@@ -105,107 +193,15 @@ pub type TexCoord2fproc =
     unsafe extern "C" fn(_: crate::stdlib::GLfloat, _: crate::stdlib::GLfloat) -> ();
 pub type Vertex2fproc =
     unsafe extern "C" fn(_: crate::stdlib::GLfloat, _: crate::stdlib::GLfloat) -> ();
-pub type ClearStencilproc = unsafe extern "C" fn(_: crate::stdlib::GLint) -> ();
-pub type GetErrorproc = unsafe extern "C" fn() -> crate::stdlib::GLenum;
-pub type StencilFuncproc = unsafe extern "C" fn(
-    _: crate::stdlib::GLenum,
-    _: crate::stdlib::GLint,
-    _: crate::stdlib::GLuint,
-) -> ();
-pub type StencilMaskproc = unsafe extern "C" fn(_: crate::stdlib::GLuint) -> ();
-pub type StencilOpproc = unsafe extern "C" fn(
-    _: crate::stdlib::GLenum,
-    _: crate::stdlib::GLenum,
-    _: crate::stdlib::GLenum,
-) -> ();
-pub type GetBooleanvproc =
-    unsafe extern "C" fn(_: crate::stdlib::GLenum, _: *mut crate::stdlib::GLboolean) -> ();
+pub type Vertex3fvproc = unsafe extern "C" fn(_: *const crate::stdlib::GLfloat) -> ();
+pub type ArrayElementproc = unsafe extern "C" fn(_: crate::stdlib::GLint) -> ();
+pub type Color4ubvproc = unsafe extern "C" fn(_: *const crate::stdlib::GLubyte) -> ();
+pub type TexCoord2fvproc = unsafe extern "C" fn(_: *const crate::stdlib::GLfloat) -> ();
 pub type Vertex3fproc = unsafe extern "C" fn(
     _: crate::stdlib::GLfloat,
     _: crate::stdlib::GLfloat,
     _: crate::stdlib::GLfloat,
 ) -> ();
-pub type DeleteTexturesproc =
-    unsafe extern "C" fn(_: crate::stdlib::GLsizei, _: *const crate::stdlib::GLuint) -> ();
-pub type GenTexturesproc =
-    unsafe extern "C" fn(_: crate::stdlib::GLsizei, _: *mut crate::stdlib::GLuint) -> ();
-pub type TexParameteriproc = unsafe extern "C" fn(
-    _: crate::stdlib::GLenum,
-    _: crate::stdlib::GLenum,
-    _: crate::stdlib::GLint,
-) -> ();
-pub type Translatefproc = unsafe extern "C" fn(
-    _: crate::stdlib::GLfloat,
-    _: crate::stdlib::GLfloat,
-    _: crate::stdlib::GLfloat,
-) -> ();
-pub type LineWidthproc = unsafe extern "C" fn(_: crate::stdlib::GLfloat) -> ();
-pub type PopMatrixproc = unsafe extern "C" fn() -> ();
-pub type PushMatrixproc = unsafe extern "C" fn() -> ();
-pub type GetIntegervproc =
-    unsafe extern "C" fn(_: crate::stdlib::GLenum, _: *mut crate::stdlib::GLint) -> ();
-pub type Color4fproc = unsafe extern "C" fn(
-    _: crate::stdlib::GLfloat,
-    _: crate::stdlib::GLfloat,
-    _: crate::stdlib::GLfloat,
-    _: crate::stdlib::GLfloat,
-) -> ();
-pub type EnableClientStateproc = unsafe extern "C" fn(_: crate::stdlib::GLenum) -> ();
-pub type ShadeModelproc = unsafe extern "C" fn(_: crate::stdlib::GLenum) -> ();
-pub type ClearDepthproc = unsafe extern "C" fn(_: crate::stdlib::GLclampd) -> ();
-pub type GetStringiproc = unsafe extern "C" fn(
-    _: crate::stdlib::GLenum,
-    _: crate::stdlib::GLuint,
-) -> *const crate::stdlib::GLubyte;
-pub type Vertex3fvproc = unsafe extern "C" fn(_: *const crate::stdlib::GLfloat) -> ();
-pub type DrawElementsproc = unsafe extern "C" fn(
-    _: crate::stdlib::GLenum,
-    _: crate::stdlib::GLsizei,
-    _: crate::stdlib::GLenum,
-    _: *const libc::c_void,
-) -> ();
-pub type PolygonOffsetproc =
-    unsafe extern "C" fn(_: crate::stdlib::GLfloat, _: crate::stdlib::GLfloat) -> ();
-pub type ColorPointerproc = unsafe extern "C" fn(
-    _: crate::stdlib::GLint,
-    _: crate::stdlib::GLenum,
-    _: crate::stdlib::GLsizei,
-    _: *const libc::c_void,
-) -> ();
-pub type DisableClientStateproc = unsafe extern "C" fn(_: crate::stdlib::GLenum) -> ();
-pub type TexCoordPointerproc = unsafe extern "C" fn(
-    _: crate::stdlib::GLint,
-    _: crate::stdlib::GLenum,
-    _: crate::stdlib::GLsizei,
-    _: *const libc::c_void,
-) -> ();
-pub type VertexPointerproc = unsafe extern "C" fn(
-    _: crate::stdlib::GLint,
-    _: crate::stdlib::GLenum,
-    _: crate::stdlib::GLsizei,
-    _: *const libc::c_void,
-) -> ();
-pub type ArrayElementproc = unsafe extern "C" fn(_: crate::stdlib::GLint) -> ();
-pub type Color4ubvproc = unsafe extern "C" fn(_: *const crate::stdlib::GLubyte) -> ();
-pub type TexCoord2fvproc = unsafe extern "C" fn(_: *const crate::stdlib::GLfloat) -> ();
-pub type CopyTexSubImage2Dproc = unsafe extern "C" fn(
-    _: crate::stdlib::GLenum,
-    _: crate::stdlib::GLint,
-    _: crate::stdlib::GLint,
-    _: crate::stdlib::GLint,
-    _: crate::stdlib::GLint,
-    _: crate::stdlib::GLint,
-    _: crate::stdlib::GLsizei,
-    _: crate::stdlib::GLsizei,
-) -> ();
-pub type DrawArraysproc = unsafe extern "C" fn(
-    _: crate::stdlib::GLenum,
-    _: crate::stdlib::GLint,
-    _: crate::stdlib::GLsizei,
-) -> ();
-pub type Flushproc = unsafe extern "C" fn() -> ();
-pub type GetStringproc =
-    unsafe extern "C" fn(_: crate::stdlib::GLenum) -> *const crate::stdlib::GLubyte;
 pub type Frustumproc = unsafe extern "C" fn(
     _: crate::stdlib::GLdouble,
     _: crate::stdlib::GLdouble,
@@ -382,6 +378,10 @@ pub type VertexAttribPointerproc = unsafe extern "C" fn(
     _: crate::stdlib::GLsizei,
     _: *const libc::c_void,
 ) -> ();
+pub type GetStringiproc = unsafe extern "C" fn(
+    _: crate::stdlib::GLenum,
+    _: crate::stdlib::GLuint,
+) -> *const crate::stdlib::GLubyte;
 pub type GenQueriesproc =
     unsafe extern "C" fn(_: crate::stdlib::GLsizei, _: *mut crate::stdlib::GLuint) -> ();
 pub type DeleteQueriesproc =

@@ -140,11 +140,8 @@ pub use crate::stdlib::__ctype_tolower_loc;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
 use crate::stdlib::pow;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 use crate::stdlib::strncmp;
-use crate::stdlib::strstr;
 pub use crate::tr_common_h::image_s;
 pub use crate::tr_common_h::image_t;
 pub use crate::tr_common_h::imgFlags_t;
@@ -291,6 +288,9 @@ pub use crate::tr_local_h::TMOD_SCROLL;
 pub use crate::tr_local_h::TMOD_STRETCH;
 pub use crate::tr_local_h::TMOD_TRANSFORM;
 pub use crate::tr_local_h::TMOD_TURBULENT;
+use ::libc::strcmp;
+use ::libc::strcpy;
+use ::libc::strstr;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -523,7 +523,7 @@ pub unsafe extern "C" fn GL_TextureMode(mut string: *const libc::c_char) {
             & crate::tr_common_h::IMGFLAG_MIPMAP as libc::c_int as libc::c_uint
             != 0
         {
-            crate::src::renderergl1::tr_backend::GL_Bind(glt);
+            crate::src::renderergl1::tr_backend::GL_Bind(glt as *mut crate::tr_common_h::image_s);
             crate::src::sdl::sdl_glimp::qglTexParameterf.expect("non-null function pointer")(
                 0xde1 as libc::c_int as crate::stdlib::GLenum,
                 0x2801 as libc::c_int as crate::stdlib::GLenum,
@@ -1794,7 +1794,7 @@ pub unsafe extern "C" fn R_CreateImage(
     crate::src::renderergl1::tr_main::tr.numImages += 1;
     (*image).type_0 = type_0;
     (*image).flags = flags;
-    crate::stdlib::strcpy((*image).imgName.as_mut_ptr(), name);
+    ::libc::strcpy((*image).imgName.as_mut_ptr(), name);
     (*image).width = width;
     (*image).height = height;
     if flags as libc::c_uint
@@ -1815,7 +1815,7 @@ pub unsafe extern "C" fn R_CreateImage(
     if crate::src::sdl::sdl_glimp::qglActiveTextureARB.is_some() {
         crate::src::renderergl1::tr_backend::GL_SelectTexture((*image).TMU);
     }
-    crate::src::renderergl1::tr_backend::GL_Bind(image);
+    crate::src::renderergl1::tr_backend::GL_Bind(image as *mut crate::tr_common_h::image_s);
     Upload32(
         pic as *mut libc::c_uint,
         (*image).width,
@@ -2138,9 +2138,9 @@ pub unsafe extern "C" fn R_FindImageFile(
     //
     image = hashTable[hash as usize];
     while !image.is_null() {
-        if crate::stdlib::strcmp(name, (*image).imgName.as_mut_ptr()) == 0 {
+        if ::libc::strcmp(name, (*image).imgName.as_mut_ptr()) == 0 {
             // the white image can be used with any set of parms, but other mismatches are errors
-            if crate::stdlib::strcmp(name, b"*white\x00" as *const u8 as *const libc::c_char) != 0 {
+            if ::libc::strcmp(name, b"*white\x00" as *const u8 as *const libc::c_char) != 0 {
                 if (*image).flags as libc::c_uint != flags as libc::c_uint {
                     crate::src::renderergl1::tr_main::ri
                         .Printf
@@ -2844,7 +2844,7 @@ pub unsafe extern "C" fn RE_RegisterSkin(
     (*skin).numSurfaces = 0 as libc::c_int;
     crate::src::renderergl1::tr_cmds::R_IssuePendingRenderCommands();
     // If not a .skin file, load as a single shader
-    if crate::stdlib::strcmp(
+    if ::libc::strcmp(
         name.offset(crate::stdlib::strlen(name) as isize)
             .offset(-(5 as libc::c_int as isize)),
         b".skin\x00" as *const u8 as *const libc::c_char,
@@ -2863,7 +2863,7 @@ pub unsafe extern "C" fn RE_RegisterSkin(
             name,
             -(1 as libc::c_int),
             crate::src::qcommon::q_shared::qtrue,
-        );
+        ) as *mut crate::tr_local_h::shader_s;
         return hSkin;
     }
     // load and parse the skin file
@@ -2891,8 +2891,7 @@ pub unsafe extern "C" fn RE_RegisterSkin(
         if *text_p as libc::c_int == ',' as i32 {
             text_p = text_p.offset(1)
         }
-        if !crate::stdlib::strstr(token, b"tag_\x00" as *const u8 as *const libc::c_char).is_null()
-        {
+        if !::libc::strstr(token, b"tag_\x00" as *const u8 as *const libc::c_char).is_null() {
             continue;
         }
         // parse the shader name
@@ -2911,7 +2910,7 @@ pub unsafe extern "C" fn RE_RegisterSkin(
                 token,
                 -(1 as libc::c_int),
                 crate::src::qcommon::q_shared::qtrue,
-            );
+            ) as *mut crate::tr_local_h::shader_s;
             (*skin).numSurfaces += 1
         }
         totalSurfaces += 1

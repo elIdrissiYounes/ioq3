@@ -1845,8 +1845,9 @@ unsafe extern "C" fn finish_pass_gather(mut cinfo: crate::jpeglib_h::j_compress_
                     as *mut *mut crate::jpeglib_h::JHUFF_TBL;
                 if (*htblptr).is_null() {
                     *htblptr = crate::src::jpeg_8c::jcomapi::jpeg_alloc_huff_table(
-                        cinfo as crate::jpeglib_h::j_common_ptr,
-                    )
+                        cinfo as crate::jpeglib_h::j_common_ptr
+                            as *mut crate::jpeglib_h::jpeg_common_struct,
+                    ) as *mut crate::jpeglib_h::JHUFF_TBL
                 }
                 jpeg_gen_optimal_table(cinfo, *htblptr, (*entropy).dc_count_ptrs[tbl as usize]);
                 did_dc[tbl as usize] = 1 as libc::c_int
@@ -1860,8 +1861,9 @@ unsafe extern "C" fn finish_pass_gather(mut cinfo: crate::jpeglib_h::j_compress_
                     as *mut *mut crate::jpeglib_h::JHUFF_TBL;
                 if (*htblptr).is_null() {
                     *htblptr = crate::src::jpeg_8c::jcomapi::jpeg_alloc_huff_table(
-                        cinfo as crate::jpeglib_h::j_common_ptr,
-                    )
+                        cinfo as crate::jpeglib_h::j_common_ptr
+                            as *mut crate::jpeglib_h::jpeg_common_struct,
+                    ) as *mut crate::jpeglib_h::JHUFF_TBL
                 }
                 jpeg_gen_optimal_table(cinfo, *htblptr, (*entropy).ac_count_ptrs[tbl as usize]);
                 did_ac[tbl as usize] = 1 as libc::c_int

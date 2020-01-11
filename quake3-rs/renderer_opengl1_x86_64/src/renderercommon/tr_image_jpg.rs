@@ -467,7 +467,9 @@ pub unsafe extern "C" fn R_LoadJPG(
      * This routine fills in the contents of struct jerr, and returns jerr's
      * address which we place into the link field in cinfo.
      */
-    cinfo.err = crate::src::jpeg_8c::jerror::jpeg_std_error(&mut jerr.pub_0);
+    cinfo.err = crate::src::jpeg_8c::jerror::jpeg_std_error(
+        &mut jerr.pub_0 as *mut _ as *mut crate::jpeglib_h::jpeg_error_mgr,
+    ) as *mut crate::jpeglib_h::jpeg_error_mgr;
     (*cinfo.err).error_exit =
         Some(R_JPGErrorExit as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr) -> ());
     (*cinfo.err).output_message =
@@ -477,7 +479,9 @@ pub unsafe extern "C" fn R_LoadJPG(
         /* If we get here, the JPEG code has signaled an error.
          * We need to clean up the JPEG object, close the input file, and return.
          */
-        crate::src::jpeg_8c::jdapimin::jpeg_destroy_decompress(&mut cinfo);
+        crate::src::jpeg_8c::jdapimin::jpeg_destroy_decompress(
+            &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_decompress_struct,
+        );
         crate::src::renderergl1::tr_main::ri
             .FS_FreeFile
             .expect("non-null function pointer")(fbuffer.v);
@@ -493,14 +497,21 @@ pub unsafe extern "C" fn R_LoadJPG(
     }
     /* Now we can initialize the JPEG decompression object. */
     crate::src::jpeg_8c::jdapimin::jpeg_CreateDecompress(
-        &mut cinfo,
+        &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_decompress_struct,
         80 as libc::c_int,
         ::std::mem::size_of::<crate::jpeglib_h::jpeg_decompress_struct>() as libc::c_ulong,
     );
     /* Step 2: specify data source (eg, a file) */
-    crate::src::jpeg_8c::jdatasrc::jpeg_mem_src(&mut cinfo, fbuffer.b, len as libc::c_ulong);
+    crate::src::jpeg_8c::jdatasrc::jpeg_mem_src(
+        &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_decompress_struct,
+        fbuffer.b,
+        len as libc::c_ulong,
+    );
     /* Step 3: read file parameters with jpeg_read_header() */
-    crate::src::jpeg_8c::jdapimin::jpeg_read_header(&mut cinfo, 1 as libc::c_int);
+    crate::src::jpeg_8c::jdapimin::jpeg_read_header(
+        &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_decompress_struct,
+        1 as libc::c_int,
+    );
     /* We can ignore the return value from jpeg_read_header since
      *   (a) suspension is not possible with the stdio data source, and
      *   (b) we passed TRUE to reject a tables-only JPEG file as an error.
@@ -513,7 +524,9 @@ pub unsafe extern "C" fn R_LoadJPG(
      */
     cinfo.out_color_space = crate::jpeglib_h::JCS_RGB;
     /* Step 5: Start decompressor */
-    crate::src::jpeg_8c::jdapistd::jpeg_start_decompress(&mut cinfo);
+    crate::src::jpeg_8c::jdapistd::jpeg_start_decompress(
+        &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_decompress_struct,
+    );
     /* We can ignore the return value since suspension is not possible
      * with the stdio data source.
      */
@@ -539,7 +552,9 @@ pub unsafe extern "C" fn R_LoadJPG(
         crate::src::renderergl1::tr_main::ri
             .FS_FreeFile
             .expect("non-null function pointer")(fbuffer.v);
-        crate::src::jpeg_8c::jdapimin::jpeg_destroy_decompress(&mut cinfo);
+        crate::src::jpeg_8c::jdapimin::jpeg_destroy_decompress(
+            &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_decompress_struct,
+        );
         crate::src::renderergl1::tr_main::ri
             .Error
             .expect("non-null function pointer")(
@@ -576,7 +591,7 @@ pub unsafe extern "C" fn R_LoadJPG(
         buf = out.offset(row_stride.wrapping_mul(cinfo.output_scanline) as isize);
         buffer = &mut buf;
         crate::src::jpeg_8c::jdapistd::jpeg_read_scanlines(
-            &mut cinfo,
+            &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_decompress_struct,
             buffer,
             1 as libc::c_int as crate::jmorecfg_h::JDIMENSION,
         );
@@ -603,13 +618,17 @@ pub unsafe extern "C" fn R_LoadJPG(
     }
     *pic = out;
     /* Step 7: Finish decompression */
-    crate::src::jpeg_8c::jdapimin::jpeg_finish_decompress(&mut cinfo);
+    crate::src::jpeg_8c::jdapimin::jpeg_finish_decompress(
+        &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_decompress_struct,
+    );
     /* We can ignore the return value since suspension is not possible
      * with the stdio data source.
      */
     /* Step 8: Release JPEG decompression object */
     /* This is an important step since it will release a good deal of memory. */
-    crate::src::jpeg_8c::jdapimin::jpeg_destroy_decompress(&mut cinfo);
+    crate::src::jpeg_8c::jdapimin::jpeg_destroy_decompress(
+        &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_decompress_struct,
+    );
     /* After finish_decompress, we can close the input file.
      * Here we postpone it until after no more JPEG errors are possible,
      * so as to simplify the setjmp error logic above.  (Actually, I don't
@@ -660,7 +679,9 @@ unsafe extern "C" fn empty_output_buffer(
     mut cinfo: crate::jpeglib_h::j_compress_ptr,
 ) -> crate::jmorecfg_h::boolean {
     let mut dest: my_dest_ptr = (*cinfo).dest as my_dest_ptr;
-    crate::src::jpeg_8c::jcapimin::jpeg_destroy_compress(cinfo);
+    crate::src::jpeg_8c::jcapimin::jpeg_destroy_compress(
+        cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+    );
     // Make crash fatal or we would probably leak memory.
     crate::src::renderergl1::tr_main::ri
         .Error
@@ -854,7 +875,9 @@ pub unsafe extern "C" fn RE_SaveJPGToBuffer(
     let mut row_stride: libc::c_int = 0;
     let mut outcount: crate::stddef_h::size_t = 0;
     /* Step 1: allocate and initialize JPEG compression object */
-    cinfo.err = crate::src::jpeg_8c::jerror::jpeg_std_error(&mut jerr.pub_0);
+    cinfo.err = crate::src::jpeg_8c::jerror::jpeg_std_error(
+        &mut jerr.pub_0 as *mut _ as *mut crate::jpeglib_h::jpeg_error_mgr,
+    ) as *mut crate::jpeglib_h::jpeg_error_mgr;
     (*cinfo.err).error_exit =
         Some(R_JPGErrorExit as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr) -> ());
     (*cinfo.err).output_message =
@@ -864,7 +887,9 @@ pub unsafe extern "C" fn RE_SaveJPGToBuffer(
         /* If we get here, the JPEG code has signaled an error.
          * We need to clean up the JPEG object and return.
          */
-        crate::src::jpeg_8c::jcapimin::jpeg_destroy_compress(&mut cinfo);
+        crate::src::jpeg_8c::jcapimin::jpeg_destroy_compress(
+            &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_compress_struct,
+        );
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
@@ -875,7 +900,7 @@ pub unsafe extern "C" fn RE_SaveJPGToBuffer(
     }
     /* Now we can initialize the JPEG compression object. */
     crate::src::jpeg_8c::jcapimin::jpeg_CreateCompress(
-        &mut cinfo,
+        &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_compress_struct,
         80 as libc::c_int,
         ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>() as libc::c_ulong,
     );
@@ -887,15 +912,24 @@ pub unsafe extern "C" fn RE_SaveJPGToBuffer(
     cinfo.image_height = image_height as crate::jmorecfg_h::JDIMENSION; /* # of color components per pixel */
     cinfo.input_components = 3 as libc::c_int; /* colorspace of input image */
     cinfo.in_color_space = crate::jpeglib_h::JCS_RGB;
-    crate::src::jpeg_8c::jcparam::jpeg_set_defaults(&mut cinfo);
-    crate::src::jpeg_8c::jcparam::jpeg_set_quality(&mut cinfo, quality, 1 as libc::c_int);
+    crate::src::jpeg_8c::jcparam::jpeg_set_defaults(
+        &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_compress_struct,
+    );
+    crate::src::jpeg_8c::jcparam::jpeg_set_quality(
+        &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_compress_struct,
+        quality,
+        1 as libc::c_int,
+    );
     /* If quality is set high, disable chroma subsampling */
     if quality >= 85 as libc::c_int {
         (*cinfo.comp_info.offset(0 as libc::c_int as isize)).h_samp_factor = 1 as libc::c_int;
         (*cinfo.comp_info.offset(0 as libc::c_int as isize)).v_samp_factor = 1 as libc::c_int
     }
     /* Step 4: Start compressor */
-    crate::src::jpeg_8c::jcapistd::jpeg_start_compress(&mut cinfo, 1 as libc::c_int);
+    crate::src::jpeg_8c::jcapistd::jpeg_start_compress(
+        &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_compress_struct,
+        1 as libc::c_int,
+    );
     /* Step 5: while (scan lines remain to be written) */
     /*           jpeg_write_scanlines(...); */
     row_stride = image_width * cinfo.input_components + padding; /* JSAMPLEs per row in image_buffer */
@@ -914,17 +948,21 @@ pub unsafe extern "C" fn RE_SaveJPGToBuffer(
         )
             as *mut crate::src::qcommon::q_shared::byte;
         crate::src::jpeg_8c::jcapistd::jpeg_write_scanlines(
-            &mut cinfo,
+            &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_compress_struct,
             row_pointer.as_mut_ptr(),
             1 as libc::c_int as crate::jmorecfg_h::JDIMENSION,
         );
     }
     /* Step 6: Finish compression */
-    crate::src::jpeg_8c::jcapimin::jpeg_finish_compress(&mut cinfo);
+    crate::src::jpeg_8c::jcapimin::jpeg_finish_compress(
+        &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_compress_struct,
+    );
     dest = cinfo.dest as my_dest_ptr;
     outcount = ((*dest).size as libc::c_ulong).wrapping_sub((*dest).pub_0.free_in_buffer);
     /* Step 7: release JPEG compression object */
-    crate::src::jpeg_8c::jcapimin::jpeg_destroy_compress(&mut cinfo);
+    crate::src::jpeg_8c::jcapimin::jpeg_destroy_compress(
+        &mut cinfo as *mut _ as *mut crate::jpeglib_h::jpeg_compress_struct,
+    );
     /* And we're done! */
     return outcount;
 }

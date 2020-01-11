@@ -5,7 +5,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -79,10 +79,7 @@ pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 pub use crate::stdlib::__compar_fn_t;
 use crate::stdlib::memset;
 pub use crate::stdlib::qsort;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
-use crate::stdlib::strrchr;
-pub use crate::stdlib::strtol;
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
 pub use crate::ui_local_h::menucommon_s;
@@ -92,6 +89,9 @@ pub use crate::ui_local_h::menulist_s;
 pub use crate::ui_local_h::menuradiobutton_s;
 pub use crate::ui_local_h::menutext_s;
 pub use crate::ui_local_h::mfield_t;
+use ::libc::strcpy;
+use ::libc::strrchr;
+pub use ::libc::strtol;
 extern "C" {
     // use ui_servers2.c definition
     #[no_mangle]
@@ -680,7 +680,7 @@ unsafe extern "C" fn StartServer_Update() {
     if s_startserver.nummaps == 0 {
         s_startserver.next.generic.flags |= 0x4000 as libc::c_int as libc::c_uint;
         // set the map name
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             s_startserver.mapname.string,
             b"NO MAPS FOUND\x00" as *const u8 as *const libc::c_char,
         );
@@ -1058,61 +1058,61 @@ unsafe extern "C" fn StartServer_MenuInit() {
     s_startserver.item_null.width = 640 as libc::c_int;
     s_startserver.item_null.height = 480 as libc::c_int;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_startserver.menu,
+        &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_startserver.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_startserver.menu,
+        &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_startserver.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_startserver.menu,
+        &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_startserver.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_startserver.menu,
+        &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_startserver.gametype as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     i = 0 as libc::c_int;
     while i < 4 as libc::c_int {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut s_startserver.menu,
+            &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut *s_startserver.mappics.as_mut_ptr().offset(i as isize)
                 as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
         );
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut s_startserver.menu,
+            &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut *s_startserver.mapbuttons.as_mut_ptr().offset(i as isize)
                 as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
         );
         i += 1
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_startserver.menu,
+        &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_startserver.arrows as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_startserver.menu,
+        &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_startserver.prevpage as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_startserver.menu,
+        &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_startserver.nextpage as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_startserver.menu,
+        &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_startserver.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_startserver.menu,
+        &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_startserver.next as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_startserver.menu,
+        &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_startserver.mapname as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_startserver.menu,
+        &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_startserver.item_null as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     StartServer_GametypeEvent(0 as *mut libc::c_void, 3 as libc::c_int);
@@ -1206,7 +1206,9 @@ pub unsafe extern "C" fn UI_StartServerMenu(
 ) {
     StartServer_MenuInit();
     s_startserver.multiplayer = multiplayer;
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_startserver.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_startserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }
 
 static mut s_serveroptions: serveroptions_t = serveroptions_t {
@@ -2222,7 +2224,7 @@ unsafe extern "C" fn ServerOptions_LevelshotDraw(mut self_0: *mut libc::c_void) 
         s_serveroptions.newBot = crate::src::qcommon::q_shared::qfalse
     }
     b = self_0 as *mut crate::ui_local_h::menubitmap_s;
-    crate::src::q3_ui::ui_qmenu::Bitmap_Draw(b);
+    crate::src::q3_ui::ui_qmenu::Bitmap_Draw(b as *mut crate::ui_local_h::menubitmap_s);
     x = (*b).generic.x;
     y = (*b).generic.y + (*b).height;
     crate::src::q3_ui::ui_atoms::UI_FillRect(
@@ -2361,7 +2363,7 @@ unsafe extern "C" fn ServerOptions_InitBotNames() {
     // set the rest of the bot slots to "---"
     n = count;
     while n < 12 as libc::c_int {
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             s_serveroptions.playerNameBuffers[n as usize].as_mut_ptr(),
             b"--------\x00" as *const u8 as *const libc::c_char,
         );
@@ -2545,7 +2547,7 @@ unsafe extern "C" fn ServerOptions_SetMenuItems() {
     );
     s_serveroptions.mappic.generic.name = picname.as_mut_ptr();
     // set the map name
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         s_serveroptions.mapnamebuffer.as_mut_ptr(),
         s_startserver.mapname.string,
     );
@@ -2882,42 +2884,42 @@ unsafe extern "C" fn ServerOptions_MenuInit(
     s_serveroptions.go.focuspic =
         b"menu/art/fight_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serveroptions.menu,
+        &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serveroptions.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serveroptions.menu,
+        &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serveroptions.mappic as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serveroptions.menu,
+        &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serveroptions.picframe as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serveroptions.menu,
+        &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serveroptions.botSkill as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serveroptions.menu,
+        &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serveroptions.player0 as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     n = 0 as libc::c_int;
     while n < 12 as libc::c_int {
         if n != 0 as libc::c_int {
             crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-                &mut s_serveroptions.menu,
+                &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
                 &mut *s_serveroptions.playerType.as_mut_ptr().offset(n as isize)
                     as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
             );
         }
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut s_serveroptions.menu,
+            &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut *s_serveroptions.playerName.as_mut_ptr().offset(n as isize)
                 as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
         );
         if s_serveroptions.gametype >= crate::bg_public_h::GT_TEAM as libc::c_int {
             crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-                &mut s_serveroptions.menu,
+                &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
                 &mut *s_serveroptions.playerTeam.as_mut_ptr().offset(n as isize)
                     as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
             );
@@ -2926,61 +2928,61 @@ unsafe extern "C" fn ServerOptions_MenuInit(
     }
     if s_serveroptions.gametype != crate::bg_public_h::GT_CTF as libc::c_int {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut s_serveroptions.menu,
+            &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut s_serveroptions.fraglimit as *mut crate::ui_local_h::menufield_s
                 as *mut libc::c_void,
         );
     } else {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut s_serveroptions.menu,
+            &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut s_serveroptions.flaglimit as *mut crate::ui_local_h::menufield_s
                 as *mut libc::c_void,
         );
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serveroptions.menu,
+        &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serveroptions.timelimit as *mut crate::ui_local_h::menufield_s as *mut libc::c_void,
     );
     if s_serveroptions.gametype >= crate::bg_public_h::GT_TEAM as libc::c_int {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut s_serveroptions.menu,
+            &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut s_serveroptions.friendlyfire as *mut crate::ui_local_h::menuradiobutton_s
                 as *mut libc::c_void,
         );
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serveroptions.menu,
+        &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serveroptions.pure_0 as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     if s_serveroptions.multiplayer as u64 != 0 {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut s_serveroptions.menu,
+            &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut s_serveroptions.dedicated as *mut crate::ui_local_h::menulist_s
                 as *mut libc::c_void,
         );
     }
     if s_serveroptions.multiplayer as u64 != 0 {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut s_serveroptions.menu,
+            &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut s_serveroptions.hostname as *mut crate::ui_local_h::menufield_s
                 as *mut libc::c_void,
         );
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serveroptions.menu,
+        &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serveroptions.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serveroptions.menu,
+        &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serveroptions.next as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serveroptions.menu,
+        &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serveroptions.go as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serveroptions.menu,
+        &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serveroptions.punkbuster as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     ServerOptions_SetMenuItems();
@@ -3022,7 +3024,9 @@ unsafe extern "C" fn UI_ServerOptionsMenu(
     mut multiplayer: crate::src::qcommon::q_shared::qboolean,
 ) {
     ServerOptions_MenuInit(multiplayer);
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_serveroptions.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_serveroptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }
 
 static mut botSelectInfo: botSelectInfo_t = botSelectInfo_t {
@@ -3362,7 +3366,7 @@ unsafe extern "C" fn ServerPlayerIcon(
         modelAndSkin,
         ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
     );
-    skin = crate::stdlib::strrchr(model.as_mut_ptr(), '/' as i32);
+    skin = ::libc::strrchr(model.as_mut_ptr(), '/' as i32);
     if !skin.is_null() {
         let fresh1 = skin;
         skin = skin.offset(1);
@@ -3795,46 +3799,46 @@ unsafe extern "C" fn UI_BotSelectMenu_Init(mut bot: *mut libc::c_char) {
     botSelectInfo.go.focuspic =
         b"menu/art/accept_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut botSelectInfo.menu,
+        &mut botSelectInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut botSelectInfo.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     i = 0 as libc::c_int;
     while i < 4 as libc::c_int * 4 as libc::c_int {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut botSelectInfo.menu,
+            &mut botSelectInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut *botSelectInfo.pics.as_mut_ptr().offset(i as isize)
                 as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
         );
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut botSelectInfo.menu,
+            &mut botSelectInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut *botSelectInfo.picbuttons.as_mut_ptr().offset(i as isize)
                 as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
         );
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut botSelectInfo.menu,
+            &mut botSelectInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut *botSelectInfo.picnames.as_mut_ptr().offset(i as isize)
                 as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
         );
         i += 1
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut botSelectInfo.menu,
+        &mut botSelectInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut botSelectInfo.arrows as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut botSelectInfo.menu,
+        &mut botSelectInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut botSelectInfo.left as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut botSelectInfo.menu,
+        &mut botSelectInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut botSelectInfo.right as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut botSelectInfo.menu,
+        &mut botSelectInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut botSelectInfo.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut botSelectInfo.menu,
+        &mut botSelectInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut botSelectInfo.go as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     UI_BotSelectMenu_BuildList();
@@ -3949,5 +3953,7 @@ UI_BotSelectMenu
 
 pub unsafe extern "C" fn UI_BotSelectMenu(mut bot: *mut libc::c_char) {
     UI_BotSelectMenu_Init(bot);
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut botSelectInfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut botSelectInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

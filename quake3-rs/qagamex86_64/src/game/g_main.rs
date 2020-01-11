@@ -5,7 +5,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -21,8 +21,8 @@ pub use crate::stddef_h::size_t;
 pub use crate::stdlib::__compar_fn_t;
 pub use crate::stdlib::intptr_t;
 pub use crate::stdlib::qsort;
-pub use crate::stdlib::srand;
-pub use crate::stdlib::strtol;
+pub use ::libc::srand;
+pub use ::libc::strtol;
 
 pub use crate::bg_public_h::gitem_s;
 pub use crate::bg_public_h::gitem_t;
@@ -230,9 +230,9 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
 use crate::stdlib::memset;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
 use crate::stdlib::vsnprintf;
+use ::libc::strcmp;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -1091,7 +1091,7 @@ static mut gameCvarTable: [cvarTable_t; 46] = unsafe {
                 vmCvar: 0 as *const crate::src::qcommon::q_shared::vmCvar_t
                     as *mut crate::src::qcommon::q_shared::vmCvar_t,
                 cvarName: b"gamedate\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-                defaultString: b"Jan  7 2020\x00" as *const u8 as *const libc::c_char
+                defaultString: b"Jan 10 2020\x00" as *const u8 as *const libc::c_char
                     as *mut libc::c_char,
                 cvarFlags: 0x40 as libc::c_int,
                 modificationCount: 0 as libc::c_int,
@@ -1832,7 +1832,7 @@ pub unsafe extern "C" fn G_FindTeams() {
                         if !((*e2).inuse as u64 == 0) {
                             if !(*e2).team.is_null() {
                                 if !((*e2).flags & 0x400 as libc::c_int != 0) {
-                                    if crate::stdlib::strcmp((*e).team, (*e2).team) == 0 {
+                                    if ::libc::strcmp((*e).team, (*e2).team) == 0 {
                                         c2 += 1;
                                         (*e2).teamchain = (*e).teamchain;
                                         (*e).teamchain = e2;
@@ -1881,7 +1881,7 @@ pub unsafe extern "C" fn G_RegisterCvars() {
     cv = gameCvarTable.as_mut_ptr();
     while i < gameCvarTableSize {
         crate::src::game::g_syscalls::trap_Cvar_Register(
-            (*cv).vmCvar,
+            (*cv).vmCvar as *mut crate::src::qcommon::q_shared::vmCvar_t,
             (*cv).cvarName,
             (*cv).defaultString,
             (*cv).cvarFlags,
@@ -1911,7 +1911,9 @@ pub unsafe extern "C" fn G_RegisterCvars() {
             b"g_gametype\x00" as *const u8 as *const libc::c_char,
             b"0\x00" as *const u8 as *const libc::c_char,
         );
-        crate::src::game::g_syscalls::trap_Cvar_Update(&mut g_gametype);
+        crate::src::game::g_syscalls::trap_Cvar_Update(
+            &mut g_gametype as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+        );
     }
     level.warmupModificationCount = g_warmup.modificationCount;
 }
@@ -1931,7 +1933,9 @@ pub unsafe extern "C" fn G_UpdateCvars() {
     cv = gameCvarTable.as_mut_ptr();
     while i < gameCvarTableSize {
         if !(*cv).vmCvar.is_null() {
-            crate::src::game::g_syscalls::trap_Cvar_Update((*cv).vmCvar);
+            crate::src::game::g_syscalls::trap_Cvar_Update(
+                (*cv).vmCvar as *mut crate::src::qcommon::q_shared::vmCvar_t,
+            );
             if (*cv).modificationCount != (*(*cv).vmCvar).modificationCount {
                 (*cv).modificationCount = (*(*cv).vmCvar).modificationCount;
                 if (*cv).trackChange as u64 != 0 {
@@ -1979,9 +1983,9 @@ pub unsafe extern "C" fn G_InitGame(
     );
     G_Printf(
         b"gamedate: %s\n\x00" as *const u8 as *const libc::c_char,
-        b"Jan  7 2020\x00" as *const u8 as *const libc::c_char,
+        b"Jan 10 2020\x00" as *const u8 as *const libc::c_char,
     );
-    crate::stdlib::srand(randomSeed as libc::c_uint);
+    ::libc::srand(randomSeed as libc::c_uint);
     G_RegisterCvars();
     crate::src::game::g_svcmds::G_ProcessIPBans();
     crate::src::game::g_mem::G_InitMemory();
@@ -2071,10 +2075,11 @@ pub unsafe extern "C" fn G_InitGame(
     }
     // let the server system know where the entites are
     crate::src::game::g_syscalls::trap_LocateGameData(
-        level.gentities,
+        level.gentities as *mut crate::g_local_h::gentity_s,
         level.num_entities,
         ::std::mem::size_of::<crate::g_local_h::gentity_t>() as libc::c_ulong as libc::c_int,
-        &mut (*level.clients.offset(0 as libc::c_int as isize)).ps,
+        &mut (*level.clients.offset(0 as libc::c_int as isize)).ps as *mut _
+            as *mut crate::src::qcommon::q_shared::playerState_s,
         ::std::mem::size_of::<crate::g_local_h::gclient_s>() as libc::c_ulong as libc::c_int,
     );
     // reserve some spots for dead player bodies
@@ -2386,7 +2391,8 @@ pub unsafe extern "C" fn AddTournamentPlayer() {
     crate::src::game::g_cmds::SetTeam(
         &mut *g_entities
             .as_mut_ptr()
-            .offset(nextInLine.wrapping_offset_from(level.clients) as libc::c_long as isize),
+            .offset(nextInLine.wrapping_offset_from(level.clients) as libc::c_long as isize)
+            as *mut _ as *mut crate::g_local_h::gentity_s,
         b"f\x00" as *const u8 as *const libc::c_char,
     );
 }
@@ -2441,7 +2447,8 @@ pub unsafe extern "C" fn RemoveTournamentLoser() {
     }
     // make them a spectator
     crate::src::game::g_cmds::SetTeam(
-        &mut *g_entities.as_mut_ptr().offset(clientNum as isize),
+        &mut *g_entities.as_mut_ptr().offset(clientNum as isize) as *mut _
+            as *mut crate::g_local_h::gentity_s,
         b"s\x00" as *const u8 as *const libc::c_char,
     );
 }
@@ -2465,7 +2472,8 @@ pub unsafe extern "C" fn RemoveTournamentWinner() {
     }
     // make them a spectator
     crate::src::game::g_cmds::SetTeam(
-        &mut *g_entities.as_mut_ptr().offset(clientNum as isize),
+        &mut *g_entities.as_mut_ptr().offset(clientNum as isize) as *mut _
+            as *mut crate::g_local_h::gentity_s,
         b"s\x00" as *const u8 as *const libc::c_char,
     );
 }
@@ -2834,7 +2842,7 @@ pub unsafe extern "C" fn SendScoreboardMessageToAllClients() {
             == crate::g_local_h::CON_CONNECTED as libc::c_int as libc::c_uint
         {
             crate::src::game::g_cmds::DeathmatchScoreboardMessage(
-                g_entities.as_mut_ptr().offset(i as isize),
+                g_entities.as_mut_ptr().offset(i as isize) as *mut crate::g_local_h::gentity_s,
             );
         }
         i += 1
@@ -2855,7 +2863,7 @@ pub unsafe extern "C" fn MoveClientToIntermission(mut ent: *mut crate::g_local_h
     if (*(*ent).client).sess.spectatorState as libc::c_uint
         == crate::g_local_h::SPECTATOR_FOLLOW as libc::c_int as libc::c_uint
     {
-        crate::src::game::g_cmds::StopFollowing(ent);
+        crate::src::game::g_cmds::StopFollowing(ent as *mut crate::g_local_h::gentity_s);
     }
     FindIntermissionPoint();
     // move to the spot
@@ -2907,19 +2915,20 @@ pub unsafe extern "C" fn FindIntermissionPoint() {
     let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     // find the intermission spot
     ent = crate::src::game::g_utils::G_Find(
-        0 as *mut crate::g_local_h::gentity_t,
+        0 as *mut crate::g_local_h::gentity_t as *mut crate::g_local_h::gentity_s,
         &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut libc::c_char
             as crate::stddef_h::size_t as libc::c_int,
         b"info_player_intermission\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::g_local_h::gentity_s;
     if ent.is_null() {
         // the map creator forgot to put in an intermission point...
+
         crate::src::game::g_client::SelectSpawnPoint(
             crate::src::qcommon::q_math::vec3_origin.as_mut_ptr(),
             level.intermission_origin.as_mut_ptr(),
             level.intermission_angle.as_mut_ptr(),
             crate::src::qcommon::q_shared::qfalse,
-        );
+        ) as *mut crate::g_local_h::gentity_s;
     } else {
         level.intermission_origin[0 as libc::c_int as usize] =
             (*ent).s.origin[0 as libc::c_int as usize];
@@ -2935,7 +2944,8 @@ pub unsafe extern "C" fn FindIntermissionPoint() {
             (*ent).s.angles[2 as libc::c_int as usize];
         // if it has a target, look towards it
         if !(*ent).target.is_null() {
-            target = crate::src::game::g_utils::G_PickTarget((*ent).target);
+            target = crate::src::game::g_utils::G_PickTarget((*ent).target)
+                as *mut crate::g_local_h::gentity_s;
             if !target.is_null() {
                 dir[0 as libc::c_int as usize] = (*target).s.origin[0 as libc::c_int as usize]
                     - level.intermission_origin[0 as libc::c_int as usize];
@@ -2977,7 +2987,9 @@ pub unsafe extern "C" fn BeginIntermission() {
         if !((*client).inuse as u64 == 0) {
             // respawn if dead
             if (*client).health <= 0 as libc::c_int {
-                crate::src::game::g_client::ClientRespawn(client);
+                crate::src::game::g_client::ClientRespawn(
+                    client as *mut crate::g_local_h::gentity_s,
+                );
             }
             MoveClientToIntermission(client);
         }
@@ -3367,7 +3379,9 @@ pub unsafe extern "C" fn CheckExitRules() {
             b"timelimit\x00" as *const u8 as *const libc::c_char,
             b"0\x00" as *const u8 as *const libc::c_char,
         );
-        crate::src::game::g_syscalls::trap_Cvar_Update(&mut g_timelimit);
+        crate::src::game::g_syscalls::trap_Cvar_Update(
+            &mut g_timelimit as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+        );
     }
     if g_timelimit.integer != 0 && level.warmupTime == 0 {
         if level.time - level.startTime >= g_timelimit.integer * 60000 as libc::c_int {
@@ -3389,7 +3403,9 @@ pub unsafe extern "C" fn CheckExitRules() {
             b"fraglimit\x00" as *const u8 as *const libc::c_char,
             b"0\x00" as *const u8 as *const libc::c_char,
         );
-        crate::src::game::g_syscalls::trap_Cvar_Update(&mut g_fraglimit);
+        crate::src::game::g_syscalls::trap_Cvar_Update(
+            &mut g_fraglimit as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+        );
     }
     if g_gametype.integer < crate::bg_public_h::GT_CTF as libc::c_int && g_fraglimit.integer != 0 {
         if level.teamScores[crate::bg_public_h::TEAM_RED as libc::c_int as usize]
@@ -3451,7 +3467,9 @@ pub unsafe extern "C" fn CheckExitRules() {
             b"capturelimit\x00" as *const u8 as *const libc::c_char,
             b"0\x00" as *const u8 as *const libc::c_char,
         );
-        crate::src::game::g_syscalls::trap_Cvar_Update(&mut g_capturelimit);
+        crate::src::game::g_syscalls::trap_Cvar_Update(
+            &mut g_capturelimit as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+        );
     }
     if g_gametype.integer >= crate::bg_public_h::GT_CTF as libc::c_int
         && g_capturelimit.integer != 0
@@ -4214,13 +4232,17 @@ pub unsafe extern "C" fn G_RunFrame(mut levelTime: libc::c_int) {
                 }
                 if (*ent).freeAfterEvent as u64 != 0 {
                     // tempEntities or dropped items completely go away after their event
-                    crate::src::game::g_utils::G_FreeEntity(ent);
+                    crate::src::game::g_utils::G_FreeEntity(
+                        ent as *mut crate::g_local_h::gentity_s,
+                    );
                     current_block_24 = 17216689946888361452;
                 } else {
                     if (*ent).unlinkAfterEvent as u64 != 0 {
                         // items that will respawn will hide themselves after their pickup event
                         (*ent).unlinkAfterEvent = crate::src::qcommon::q_shared::qfalse;
-                        crate::src::game::g_syscalls::trap_UnlinkEntity(ent);
+                        crate::src::game::g_syscalls::trap_UnlinkEntity(
+                            ent as *mut crate::g_local_h::gentity_s,
+                        );
                     }
                     current_block_24 = 17478428563724192186;
                 }
@@ -4235,16 +4257,24 @@ pub unsafe extern "C" fn G_RunFrame(mut levelTime: libc::c_int) {
                     if !((*ent).freeAfterEvent as u64 != 0) {
                         if !((*ent).r.linked as u64 == 0 && (*ent).neverFree as libc::c_uint != 0) {
                             if (*ent).s.eType == crate::bg_public_h::ET_MISSILE as libc::c_int {
-                                crate::src::game::g_missile::G_RunMissile(ent);
+                                crate::src::game::g_missile::G_RunMissile(
+                                    ent as *mut crate::g_local_h::gentity_s,
+                                );
                             } else if (*ent).s.eType == crate::bg_public_h::ET_ITEM as libc::c_int
                                 || (*ent).physicsObject as libc::c_uint != 0
                             {
-                                crate::src::game::g_items::G_RunItem(ent);
+                                crate::src::game::g_items::G_RunItem(
+                                    ent as *mut crate::g_local_h::gentity_s,
+                                );
                             } else if (*ent).s.eType == crate::bg_public_h::ET_MOVER as libc::c_int
                             {
-                                crate::src::game::g_mover::G_RunMover(ent);
+                                crate::src::game::g_mover::G_RunMover(
+                                    ent as *mut crate::g_local_h::gentity_s,
+                                );
                             } else if i < 64 as libc::c_int {
-                                crate::src::game::g_active::G_RunClient(ent);
+                                crate::src::game::g_active::G_RunClient(
+                                    ent as *mut crate::g_local_h::gentity_s,
+                                );
                             } else {
                                 G_RunThink(ent);
                             }
@@ -4262,7 +4292,7 @@ pub unsafe extern "C" fn G_RunFrame(mut levelTime: libc::c_int) {
     i = 0 as libc::c_int;
     while i < level.maxclients {
         if (*ent).inuse as u64 != 0 {
-            crate::src::game::g_active::ClientEndFrame(ent);
+            crate::src::game::g_active::ClientEndFrame(ent as *mut crate::g_local_h::gentity_s);
         }
         i += 1;
         ent = ent.offset(1)

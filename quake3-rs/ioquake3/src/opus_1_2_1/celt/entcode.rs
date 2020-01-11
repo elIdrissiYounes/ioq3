@@ -1,6 +1,10 @@
 // =============== BEGIN entcode_h ================
 pub type ec_window = crate::opus_types_h::opus_uint32;
 
+pub type ec_enc = crate::src::opus_1_2_1::celt::entcode::ec_ctx;
+
+pub type ec_dec = crate::src::opus_1_2_1::celt::entcode::ec_ctx;
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct ec_ctx {
@@ -17,10 +21,6 @@ pub struct ec_ctx {
     pub rem: libc::c_int,
     pub error: libc::c_int,
 }
-
-pub type ec_enc = crate::src::opus_1_2_1::celt::entcode::ec_ctx;
-
-pub type ec_dec = crate::src::opus_1_2_1::celt::entcode::ec_ctx;
 use ::libc;
 
 pub use crate::opus_types_h::opus_uint32;

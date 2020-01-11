@@ -68,8 +68,8 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::abs;
 use crate::stdlib::memcpy;
+use ::libc::abs;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -160,15 +160,14 @@ pub unsafe extern "C" fn AAS_OptimizeEdge(
     edge = &mut *crate::src::botlib::be_aas_main::aasworld
         .edges
         .offset(
-            (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum)
-                as isize,
+            (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum) as isize,
         ) as *mut crate::aasfile_h::aas_edge_t;
     if AAS_KeepEdge(edge) == 0 {
         return 0 as libc::c_int;
     }
     optedgenum = *(*optimized)
         .edgeoptimizeindex
-        .offset(crate::stdlib::abs(edgenum) as isize);
+        .offset(::libc::abs(edgenum) as isize);
     if optedgenum != 0 {
         //keep the edge reversed sign
         if edgenum > 0 as libc::c_int {
@@ -219,7 +218,7 @@ pub unsafe extern "C" fn AAS_OptimizeEdge(
     }
     *(*optimized)
         .edgeoptimizeindex
-        .offset(crate::stdlib::abs(edgenum) as isize) = (*optimized).numedges;
+        .offset(::libc::abs(edgenum) as isize) = (*optimized).numedges;
     optedgenum = (*optimized).numedges;
     (*optimized).numedges += 1;
     //keep the edge reversed sign
@@ -267,15 +266,14 @@ pub unsafe extern "C" fn AAS_OptimizeFace(
     face = &mut *crate::src::botlib::be_aas_main::aasworld
         .faces
         .offset(
-            (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(facenum)
-                as isize,
+            (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(facenum) as isize,
         ) as *mut crate::aasfile_h::aas_face_t;
     if AAS_KeepFace(face) == 0 {
         return 0 as libc::c_int;
     }
     optfacenum = *(*optimized)
         .faceoptimizeindex
-        .offset(crate::stdlib::abs(facenum) as isize);
+        .offset(::libc::abs(facenum) as isize);
     if optfacenum != 0 {
         //keep the face side sign
         if facenum > 0 as libc::c_int {
@@ -311,7 +309,7 @@ pub unsafe extern "C" fn AAS_OptimizeFace(
     }
     *(*optimized)
         .faceoptimizeindex
-        .offset(crate::stdlib::abs(facenum) as isize) = (*optimized).numfaces;
+        .offset(::libc::abs(facenum) as isize) = (*optimized).numfaces;
     optfacenum = (*optimized).numfaces;
     (*optimized).numfaces += 1;
     //keep the face side sign
@@ -623,7 +621,7 @@ pub unsafe extern "C" fn AAS_Optimize() {
                     (*crate::src::botlib::be_aas_main::aasworld
                         .reachability
                         .offset(i as isize))
-                    .facenum = *optimized.faceoptimizeindex.offset(crate::stdlib::abs(
+                    .facenum = *optimized.faceoptimizeindex.offset(::libc::abs(
                         (*crate::src::botlib::be_aas_main::aasworld
                             .reachability
                             .offset(i as isize))
@@ -645,7 +643,7 @@ pub unsafe extern "C" fn AAS_Optimize() {
                     (*crate::src::botlib::be_aas_main::aasworld
                         .reachability
                         .offset(i as isize))
-                    .edgenum = *optimized.edgeoptimizeindex.offset(crate::stdlib::abs(
+                    .edgenum = *optimized.edgeoptimizeindex.offset(::libc::abs(
                         (*crate::src::botlib::be_aas_main::aasworld
                             .reachability
                             .offset(i as isize))

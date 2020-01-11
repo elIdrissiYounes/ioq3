@@ -147,7 +147,10 @@ pub unsafe extern "C" fn VM_StackTrace(
     loop {
         crate::src::qcommon::common::Com_Printf(
             b"%s\n\x00" as *const u8 as *const libc::c_char,
-            crate::src::qcommon::vm::VM_ValueToSymbol(vm, programCounter),
+            crate::src::qcommon::vm::VM_ValueToSymbol(
+                vm as *mut crate::vm_local_h::vm_s,
+                programCounter,
+            ),
         );
         programStack = *(&mut *(*vm)
             .dataBase

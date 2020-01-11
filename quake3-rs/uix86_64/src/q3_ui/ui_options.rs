@@ -334,7 +334,9 @@ pub unsafe extern "C" fn Options_MenuInit() {
     );
     SystemConfig_Cache();
     s_options.menu.wrapAround = crate::src::qcommon::q_shared::qtrue;
-    crate::src::ui::ui_syscalls::trap_GetClientState(&mut cstate);
+    crate::src::ui::ui_syscalls::trap_GetClientState(
+        &mut cstate as *mut _ as *mut crate::ui_public_h::uiClientState_t,
+    );
     if cstate.connState as libc::c_uint
         >= crate::src::qcommon::q_shared::CA_CONNECTED as libc::c_int as libc::c_uint
     {
@@ -429,35 +431,35 @@ pub unsafe extern "C" fn Options_MenuInit() {
     s_options.back.focuspic =
         b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_options.menu,
+        &mut s_options.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_options.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_options.menu,
+        &mut s_options.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_options.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_options.menu,
+        &mut s_options.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_options.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_options.menu,
+        &mut s_options.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_options.graphics as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_options.menu,
+        &mut s_options.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_options.display as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_options.menu,
+        &mut s_options.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_options.sound as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_options.menu,
+        &mut s_options.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_options.network as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_options.menu,
+        &mut s_options.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_options.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
 }
@@ -470,5 +472,7 @@ UI_SystemConfigMenu
 
 pub unsafe extern "C" fn UI_SystemConfigMenu() {
     Options_MenuInit();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_options.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_options.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

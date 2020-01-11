@@ -463,7 +463,9 @@ pub unsafe extern "C" fn RB_ShadowTessEnd() {
         i += 1
     }
     // draw the silhouette edges
-    crate::src::renderergl1::tr_backend::GL_Bind(crate::src::renderergl1::tr_main::tr.whiteImage);
+    crate::src::renderergl1::tr_backend::GL_Bind(
+        crate::src::renderergl1::tr_main::tr.whiteImage as *mut crate::tr_common_h::image_s,
+    );
     crate::src::renderergl1::tr_backend::GL_State(
         (0x2 as libc::c_int | 0x10 as libc::c_int) as libc::c_ulong,
     );
@@ -542,7 +544,9 @@ pub unsafe extern "C" fn RB_ShadowFinish() {
         0x3000 as libc::c_int as crate::stdlib::GLenum,
     );
     crate::src::renderergl1::tr_backend::GL_Cull(crate::tr_local_h::CT_TWO_SIDED as libc::c_int);
-    crate::src::renderergl1::tr_backend::GL_Bind(crate::src::renderergl1::tr_main::tr.whiteImage);
+    crate::src::renderergl1::tr_backend::GL_Bind(
+        crate::src::renderergl1::tr_main::tr.whiteImage as *mut crate::tr_common_h::image_s,
+    );
     crate::src::sdl::sdl_glimp::qglLoadIdentity.expect("non-null function pointer")();
     crate::src::sdl::sdl_glimp::qglColor3f.expect("non-null function pointer")(
         0.6f32, 0.6f32, 0.6f32,

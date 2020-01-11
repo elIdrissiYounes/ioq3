@@ -40,10 +40,10 @@ pub use crate::stdlib::fread;
 pub use crate::stdlib::pid_t;
 pub use crate::stdlib::setvbuf;
 pub use crate::stdlib::ssize_t;
-pub use crate::stdlib::timespec;
-pub use crate::stdlib::timeval;
 pub use crate::stdlib::FILE;
 pub use crate::stdlib::_IO_FILE;
+pub use ::libc::timespec;
+pub use ::libc::timeval;
 use c2rust_asm_casts::AsmCastTrait;
 
 pub use crate::be_aas_h::C2RustUnnamed_0;
@@ -74,11 +74,11 @@ pub use crate::stdlib::_ISupper;
 pub use crate::stdlib::_ISxdigit;
 pub use crate::stdlib::__ctype_b_loc;
 pub use crate::stdlib::__fd_mask;
-pub use crate::stdlib::dirent;
 pub use crate::stdlib::fd_set;
-pub use crate::stdlib::getpwuid;
-pub use crate::stdlib::passwd;
 pub use crate::stdlib::select;
+pub use ::libc::dirent;
+pub use ::libc::getpwuid;
+pub use ::libc::passwd;
 
 pub use crate::qcommon_h::dialogResult_t;
 pub use crate::qcommon_h::dialogType_t;
@@ -114,37 +114,37 @@ pub use crate::stdlib::DIR;
 use crate::src::sys::con_log::CON_LogRead;
 use crate::src::sys::sys_main::Sys_SigHandler;
 pub use crate::src::sys::sys_unix::sys_stat_h::stat;
-use crate::stdlib::__errno_location;
 pub use crate::stdlib::__sighandler_t;
 pub use crate::stdlib::__xstat;
-use crate::stdlib::exit;
-use crate::stdlib::getenv;
-pub use crate::stdlib::kill;
 use crate::stdlib::memset;
-pub use crate::stdlib::mkdir;
-pub use crate::stdlib::mkfifo;
-use crate::stdlib::setenv;
 pub use crate::stdlib::signal;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
-use crate::stdlib::strstr;
-use crate::stdlib::unsetenv;
+use ::libc::__errno_location;
+use ::libc::exit;
+use ::libc::getenv;
+pub use ::libc::kill;
+pub use ::libc::mkdir;
+pub use ::libc::mkfifo;
+use ::libc::setenv;
+use ::libc::strcmp;
+use ::libc::strstr;
+use ::libc::unsetenv;
 
 use crate::stdlib::__xpg_basename;
-use crate::stdlib::close;
 use crate::stdlib::dirname;
 use crate::stdlib::execvp;
-use crate::stdlib::fcntl;
 use crate::stdlib::fesetround;
-use crate::stdlib::fork;
 use crate::stdlib::getcwd;
-use crate::stdlib::getpid;
-use crate::stdlib::getuid;
-use crate::stdlib::isatty;
-use crate::stdlib::open;
-use crate::stdlib::usleep;
-use crate::stdlib::wait;
 use crate::stdlib::write;
+use ::libc::close;
+use ::libc::fcntl;
+use ::libc::fork;
+use ::libc::getpid;
+use ::libc::getuid;
+use ::libc::isatty;
+use ::libc::open;
+use ::libc::usleep;
+use ::libc::wait;
 
 pub type dialogCommandBuilder_t = Option<
     unsafe extern "C" fn(
@@ -12500,7 +12500,7 @@ Sys_DefaultHomePath
 pub unsafe extern "C" fn Sys_DefaultHomePath() -> *mut libc::c_char {
     let mut p: *mut libc::c_char = 0 as *mut libc::c_char;
     if *homePath.as_mut_ptr() == 0 && !crate::src::qcommon::common::com_homepath.is_null() {
-        p = crate::stdlib::getenv(b"HOME\x00" as *const u8 as *const libc::c_char);
+        p = ::libc::getenv(b"HOME\x00" as *const u8 as *const libc::c_char);
         if !p.is_null() {
             crate::src::qcommon::q_shared::Com_sprintf(
                 homePath.as_mut_ptr(),
@@ -12575,7 +12575,7 @@ pub static mut curtime: libc::c_int = 0;
 #[no_mangle]
 
 pub unsafe extern "C" fn Sys_Milliseconds() -> libc::c_int {
-    let mut tp: crate::stdlib::timeval = crate::stdlib::timeval {
+    let mut tp: ::libc::timeval = ::libc::timeval {
         tv_sec: 0,
         tv_usec: 0,
     };
@@ -12637,8 +12637,8 @@ Sys_GetCurrentUser
 #[no_mangle]
 
 pub unsafe extern "C" fn Sys_GetCurrentUser() -> *mut libc::c_char {
-    let mut p: *mut crate::stdlib::passwd = 0 as *mut crate::stdlib::passwd;
-    p = crate::stdlib::getpwuid(crate::stdlib::getuid());
+    let mut p: *mut ::libc::passwd = 0 as *mut ::libc::passwd;
+    p = ::libc::getpwuid(::libc::getuid()) as *mut ::libc::passwd;
     if p.is_null() {
         return b"player\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     }
@@ -12699,15 +12699,15 @@ pub unsafe extern "C" fn Sys_FOpen(
         st_size: 0,
         st_blksize: 0,
         st_blocks: 0,
-        st_atim: crate::stdlib::timespec {
+        st_atim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
-        st_mtim: crate::stdlib::timespec {
+        st_mtim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
-        st_ctim: crate::stdlib::timespec {
+        st_ctim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
@@ -12733,9 +12733,9 @@ pub unsafe extern "C" fn Sys_Mkdir(
     mut path: *const libc::c_char,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut result: libc::c_int =
-        crate::stdlib::mkdir(path, 0o750 as libc::c_int as crate::stdlib::__mode_t);
+        ::libc::mkdir(path, 0o750 as libc::c_int as crate::stdlib::__mode_t);
     if result != 0 as libc::c_int {
-        return (*crate::stdlib::__errno_location() == 17 as libc::c_int) as libc::c_int
+        return (*::libc::__errno_location() == 17 as libc::c_int) as libc::c_int
             as crate::src::qcommon::q_shared::qboolean;
     }
     return crate::src::qcommon::q_shared::qtrue;
@@ -12763,15 +12763,15 @@ pub unsafe extern "C" fn Sys_Mkfifo(mut ospath: *const libc::c_char) -> *mut cra
         st_size: 0,
         st_blksize: 0,
         st_blocks: 0,
-        st_atim: crate::stdlib::timespec {
+        st_atim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
-        st_mtim: crate::stdlib::timespec {
+        st_mtim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
-        st_ctim: crate::stdlib::timespec {
+        st_ctim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
@@ -12784,14 +12784,14 @@ pub unsafe extern "C" fn Sys_Mkfifo(mut ospath: *const libc::c_char) -> *mut cra
     {
         crate::src::qcommon::files::FS_Remove(ospath);
     }
-    result = crate::stdlib::mkfifo(ospath, 0o600 as libc::c_int as crate::stdlib::__mode_t);
+    result = ::libc::mkfifo(ospath, 0o600 as libc::c_int as crate::stdlib::__mode_t);
     if result != 0 as libc::c_int {
         return 0 as *mut crate::stdlib::FILE;
     }
     fifo = crate::stdlib::fopen(ospath, b"w+\x00" as *const u8 as *const libc::c_char);
     if !fifo.is_null() {
         fn_0 = crate::stdlib::fileno(fifo);
-        crate::stdlib::fcntl(fn_0, 4 as libc::c_int, 0o4000 as libc::c_int);
+        ::libc::fcntl(fn_0, 4 as libc::c_int, 0o4000 as libc::c_int);
     }
     return fifo;
 }
@@ -12833,7 +12833,7 @@ pub unsafe extern "C" fn Sys_ListFilteredFiles(
     let mut newsubdirs: [libc::c_char; 4096] = [0; 4096];
     let mut filename: [libc::c_char; 4096] = [0; 4096];
     let mut fdir: *mut crate::stdlib::DIR = 0 as *mut crate::stdlib::DIR;
-    let mut d: *mut crate::stdlib::dirent = 0 as *mut crate::stdlib::dirent;
+    let mut d: *mut ::libc::dirent = 0 as *mut ::libc::dirent;
     let mut st: crate::stdlib::stat = crate::stdlib::stat {
         st_dev: 0,
         st_ino: 0,
@@ -12846,15 +12846,15 @@ pub unsafe extern "C" fn Sys_ListFilteredFiles(
         st_size: 0,
         st_blksize: 0,
         st_blocks: 0,
-        st_atim: crate::stdlib::timespec {
+        st_atim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
-        st_mtim: crate::stdlib::timespec {
+        st_mtim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
-        st_ctim: crate::stdlib::timespec {
+        st_ctim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
@@ -12967,7 +12967,7 @@ pub unsafe extern "C" fn Sys_ListFiles(
     mut numfiles: *mut libc::c_int,
     mut wantsubs: crate::src::qcommon::q_shared::qboolean,
 ) -> *mut *mut libc::c_char {
-    let mut d: *mut crate::stdlib::dirent = 0 as *mut crate::stdlib::dirent;
+    let mut d: *mut ::libc::dirent = 0 as *mut ::libc::dirent;
     let mut fdir: *mut crate::stdlib::DIR = 0 as *mut crate::stdlib::DIR;
     let mut dironly: crate::src::qcommon::q_shared::qboolean = wantsubs;
     let mut search: [libc::c_char; 4096] = [0; 4096];
@@ -12987,15 +12987,15 @@ pub unsafe extern "C" fn Sys_ListFiles(
         st_size: 0,
         st_blksize: 0,
         st_blocks: 0,
-        st_atim: crate::stdlib::timespec {
+        st_atim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
-        st_mtim: crate::stdlib::timespec {
+        st_mtim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
-        st_ctim: crate::stdlib::timespec {
+        st_ctim: ::libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,
         },
@@ -13181,10 +13181,10 @@ pub unsafe extern "C" fn Sys_Sleep(mut msec: libc::c_int) {
                 &mut fdset,
                 0 as *mut crate::stdlib::fd_set,
                 0 as *mut crate::stdlib::fd_set,
-                0 as *mut crate::stdlib::timeval,
+                0 as *mut ::libc::timeval,
             );
         } else {
-            let mut timeout: crate::stdlib::timeval = crate::stdlib::timeval {
+            let mut timeout: ::libc::timeval = ::libc::timeval {
                 tv_sec: 0,
                 tv_usec: 0,
             };
@@ -13204,7 +13204,7 @@ pub unsafe extern "C" fn Sys_Sleep(mut msec: libc::c_int) {
         if msec < 0 as libc::c_int {
             msec = 10 as libc::c_int
         }
-        crate::stdlib::usleep((msec * 1000 as libc::c_int) as crate::stdlib::__useconds_t);
+        ::libc::usleep((msec * 1000 as libc::c_int) as crate::stdlib::__useconds_t);
     };
 }
 /*
@@ -13268,7 +13268,7 @@ pub unsafe extern "C" fn Sys_ErrorDialog(mut error: *const libc::c_char) {
     // We might be crashing because we maxed out the Quake MAX_FILE_HANDLES,
     // which will come through here, so we don't want to recurse forever by
     // calling FS_FOpenFileWrite()...use the Unix system APIs instead.
-    f = crate::stdlib::open(
+    f = ::libc::open(
         ospath,
         0o100 as libc::c_int | 0o1000 as libc::c_int | 0o1 as libc::c_int,
         0o640 as libc::c_int,
@@ -13304,7 +13304,7 @@ pub unsafe extern "C" fn Sys_ErrorDialog(mut error: *const libc::c_char) {
         );
         break;
     }
-    crate::stdlib::close(f);
+    ::libc::close(f);
 }
 
 static mut execBuffer: [libc::c_char; 1024] = [0; 1024];
@@ -13363,14 +13363,14 @@ Sys_Exec
 */
 
 unsafe extern "C" fn Sys_Exec() -> libc::c_int {
-    let mut pid: crate::stdlib::pid_t = crate::stdlib::fork();
+    let mut pid: crate::stdlib::pid_t = ::libc::fork();
     if pid < 0 as libc::c_int {
         return -(1 as libc::c_int);
     }
     if pid != 0 {
         // Parent
         let mut exitCode: libc::c_int = 0;
-        crate::stdlib::wait(&mut exitCode);
+        ::libc::wait(&mut exitCode);
         return (exitCode & 0xff00 as libc::c_int) >> 8 as libc::c_int;
     } else {
         // Child
@@ -13379,7 +13379,7 @@ unsafe extern "C" fn Sys_Exec() -> libc::c_int {
             execArgv.as_mut_ptr() as *const *mut libc::c_char,
         );
         // Failed to execute
-        crate::stdlib::exit(-(1 as libc::c_int));
+        ::libc::exit(-(1 as libc::c_int));
     };
 }
 /*
@@ -13508,7 +13508,7 @@ pub unsafe extern "C" fn Sys_Dialog(
     mut title: *const libc::c_char,
 ) -> crate::qcommon_h::dialogResult_t {
     let mut session: *const libc::c_char =
-        crate::stdlib::getenv(b"DESKTOP_SESSION\x00" as *const u8 as *const libc::c_char);
+        ::libc::getenv(b"DESKTOP_SESSION\x00" as *const u8 as *const libc::c_char);
     let mut tried: [crate::src::qcommon::q_shared::qboolean; 4] = [
         crate::src::qcommon::q_shared::qfalse,
         crate::src::qcommon::q_shared::qfalse,
@@ -13642,7 +13642,7 @@ Unix specific initialisation
 
 pub unsafe extern "C" fn Sys_PlatformInit() {
     let mut term: *const libc::c_char =
-        crate::stdlib::getenv(b"TERM\x00" as *const u8 as *const libc::c_char);
+        ::libc::getenv(b"TERM\x00" as *const u8 as *const libc::c_char);
     crate::stdlib::signal(
         1 as libc::c_int,
         ::std::mem::transmute::<
@@ -13689,12 +13689,11 @@ pub unsafe extern "C" fn Sys_PlatformInit() {
         )),
     );
     Sys_SetFloatEnv();
-    stdinIsATTY = (crate::stdlib::isatty(0 as libc::c_int) != 0
+    stdinIsATTY = (::libc::isatty(0 as libc::c_int) != 0
         && !(!term.is_null()
-            && (crate::stdlib::strcmp(term, b"raw\x00" as *const u8 as *const libc::c_char) == 0
-                || crate::stdlib::strcmp(term, b"dumb\x00" as *const u8 as *const libc::c_char)
-                    == 0))) as libc::c_int
-        as crate::src::qcommon::q_shared::qboolean;
+            && (::libc::strcmp(term, b"raw\x00" as *const u8 as *const libc::c_char) == 0
+                || ::libc::strcmp(term, b"dumb\x00" as *const u8 as *const libc::c_char) == 0)))
+        as libc::c_int as crate::src::qcommon::q_shared::qboolean;
 }
 /*
 ==============
@@ -13717,9 +13716,9 @@ set/unset environment variables (empty value removes it)
 
 pub unsafe extern "C" fn Sys_SetEnv(mut name: *const libc::c_char, mut value: *const libc::c_char) {
     if !value.is_null() && *value as libc::c_int != 0 {
-        crate::stdlib::setenv(name, value, 1 as libc::c_int);
+        ::libc::setenv(name, value, 1 as libc::c_int);
     } else {
-        crate::stdlib::unsetenv(name);
+        ::libc::unsetenv(name);
     };
 }
 /*
@@ -13730,7 +13729,7 @@ Sys_PID
 #[no_mangle]
 
 pub unsafe extern "C" fn Sys_PID() -> libc::c_int {
-    return crate::stdlib::getpid();
+    return ::libc::getpid();
 }
 /*
 ==============
@@ -13742,7 +13741,7 @@ Sys_PIDIsRunning
 pub unsafe extern "C" fn Sys_PIDIsRunning(
     mut pid: libc::c_int,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    return (crate::stdlib::kill(pid, 0 as libc::c_int) == 0 as libc::c_int) as libc::c_int
+    return (::libc::kill(pid, 0 as libc::c_int) == 0 as libc::c_int) as libc::c_int
         as crate::src::qcommon::q_shared::qboolean;
 }
 /*
@@ -13768,7 +13767,7 @@ pub unsafe extern "C" fn Sys_DllExtension(
         return crate::src::qcommon::q_shared::qtrue;
     }
     // Check for format of filename.so.1.2.3
-    p = crate::stdlib::strstr(name, b".so.\x00" as *const u8 as *const libc::c_char);
+    p = ::libc::strstr(name, b".so.\x00" as *const u8 as *const libc::c_char);
     if !p.is_null() {
         p = p
             .offset(crate::stdlib::strlen(b".so\x00" as *const u8 as *const libc::c_char) as isize);

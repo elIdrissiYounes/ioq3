@@ -20,7 +20,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -402,7 +402,6 @@ use crate::src::qcommon::cm_test::CM_PointContents;
 use crate::src::qcommon::cm_test::CM_TransformedPointContents;
 use crate::src::qcommon::cm_trace::CM_BoxTrace;
 use crate::src::qcommon::cm_trace::CM_TransformedBoxTrace;
-pub use crate::stdlib::abs;
 use crate::stdlib::atan2;
 use crate::stdlib::ceil;
 use crate::stdlib::cos;
@@ -411,11 +410,12 @@ use crate::stdlib::memcpy;
 use crate::stdlib::memset;
 use crate::stdlib::sin;
 use crate::stdlib::sqrt;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
 use crate::stdlib::strncpy;
-pub use crate::stdlib::strtol;
+pub use ::libc::abs;
+use ::libc::strcat;
+use ::libc::strcmp;
+pub use ::libc::strtol;
 extern "C" {
     /*
     ===========================================================================
@@ -674,7 +674,7 @@ pub unsafe extern "C" fn CL_ConfigstringModified() {
         .stringData
         .as_mut_ptr()
         .offset(crate::src::client::cl_main::cl.gameState.stringOffsets[index as usize] as isize);
-    if crate::stdlib::strcmp(old, s) == 0 {
+    if ::libc::strcmp(old, s) == 0 {
         return;
         // unchanged
     }
@@ -782,7 +782,7 @@ pub unsafe extern "C" fn CL_GetServerCommand(
         crate::src::qcommon::cmd::Cmd_TokenizeString(s);
         cmd = crate::src::qcommon::cmd::Cmd_Argv(0 as libc::c_int);
         argc = crate::src::qcommon::cmd::Cmd_Argc();
-        if crate::stdlib::strcmp(cmd, b"disconnect\x00" as *const u8 as *const libc::c_char) == 0 {
+        if ::libc::strcmp(cmd, b"disconnect\x00" as *const u8 as *const libc::c_char) == 0 {
             // https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=552
             // allow server to indicate why they were disconnected
             if argc >= 2 as libc::c_int {
@@ -798,7 +798,7 @@ pub unsafe extern "C" fn CL_GetServerCommand(
                 );
             }
         }
-        if crate::stdlib::strcmp(cmd, b"bcs0\x00" as *const u8 as *const libc::c_char) == 0 {
+        if ::libc::strcmp(cmd, b"bcs0\x00" as *const u8 as *const libc::c_char) == 0 {
             crate::src::qcommon::q_shared::Com_sprintf(
                 bigConfigString.as_mut_ptr(),
                 8192 as libc::c_int,
@@ -808,7 +808,7 @@ pub unsafe extern "C" fn CL_GetServerCommand(
             );
             return crate::src::qcommon::q_shared::qfalse;
         }
-        if crate::stdlib::strcmp(cmd, b"bcs1\x00" as *const u8 as *const libc::c_char) == 0 {
+        if ::libc::strcmp(cmd, b"bcs1\x00" as *const u8 as *const libc::c_char) == 0 {
             s = crate::src::qcommon::cmd::Cmd_Argv(2 as libc::c_int);
             if crate::stdlib::strlen(bigConfigString.as_mut_ptr())
                 .wrapping_add(crate::stdlib::strlen(s))
@@ -819,10 +819,10 @@ pub unsafe extern "C" fn CL_GetServerCommand(
                     b"bcs exceeded BIG_INFO_STRING\x00" as *const u8 as *const libc::c_char,
                 );
             }
-            crate::stdlib::strcat(bigConfigString.as_mut_ptr(), s);
+            ::libc::strcat(bigConfigString.as_mut_ptr(), s);
             return crate::src::qcommon::q_shared::qfalse;
         }
-        if !(crate::stdlib::strcmp(cmd, b"bcs2\x00" as *const u8 as *const libc::c_char) == 0) {
+        if !(::libc::strcmp(cmd, b"bcs2\x00" as *const u8 as *const libc::c_char) == 0) {
             break;
         }
         s = crate::src::qcommon::cmd::Cmd_Argv(2 as libc::c_int);
@@ -836,20 +836,20 @@ pub unsafe extern "C" fn CL_GetServerCommand(
                 b"bcs exceeded BIG_INFO_STRING\x00" as *const u8 as *const libc::c_char,
             );
         }
-        crate::stdlib::strcat(bigConfigString.as_mut_ptr(), s);
-        crate::stdlib::strcat(
+        ::libc::strcat(bigConfigString.as_mut_ptr(), s);
+        ::libc::strcat(
             bigConfigString.as_mut_ptr(),
             b"\"\x00" as *const u8 as *const libc::c_char,
         );
         s = bigConfigString.as_mut_ptr()
     }
-    if crate::stdlib::strcmp(cmd, b"cs\x00" as *const u8 as *const libc::c_char) == 0 {
+    if ::libc::strcmp(cmd, b"cs\x00" as *const u8 as *const libc::c_char) == 0 {
         CL_ConfigstringModified();
         // reparse the string, because CL_ConfigstringModified may have done another Cmd_TokenizeString()
         crate::src::qcommon::cmd::Cmd_TokenizeString(s);
         return crate::src::qcommon::q_shared::qtrue;
     }
-    if crate::stdlib::strcmp(cmd, b"map_restart\x00" as *const u8 as *const libc::c_char) == 0 {
+    if ::libc::strcmp(cmd, b"map_restart\x00" as *const u8 as *const libc::c_char) == 0 {
         // clear notify lines and outgoing commands before passing
         // the restart to the cgame
         crate::src::client::cl_console::Con_ClearNotify();
@@ -868,7 +868,7 @@ pub unsafe extern "C" fn CL_GetServerCommand(
     // point of levels for the menu system to use
     // we pass it along to the cgame to make appropriate adjustments,
     // but we also clear the console and notify lines here
-    if crate::stdlib::strcmp(
+    if ::libc::strcmp(
         cmd,
         b"clientLevelShot\x00" as *const u8 as *const libc::c_char,
     ) == 0
@@ -972,6 +972,7 @@ pub unsafe extern "C" fn CL_CgameSystemCalls(
         3 => {
             crate::src::qcommon::cvar::Cvar_Register(
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
+                    as *mut crate::src::qcommon::q_shared::vmCvar_t
                     as *mut crate::src::qcommon::q_shared::vmCvar_t,
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
                     as *const libc::c_char,
@@ -985,6 +986,7 @@ pub unsafe extern "C" fn CL_CgameSystemCalls(
             crate::src::qcommon::cvar::Cvar_Update(crate::src::qcommon::vm::VM_ArgPtr(
                 *args.offset(1 as libc::c_int as isize),
             )
+                as *mut crate::src::qcommon::q_shared::vmCvar_t
                 as *mut crate::src::qcommon::q_shared::vmCvar_t);
             return 0 as libc::c_int as crate::stdlib::intptr_t;
         }
@@ -1153,6 +1155,7 @@ pub unsafe extern "C" fn CL_CgameSystemCalls(
         25 => {
             crate::src::qcommon::cm_trace::CM_BoxTrace(
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
+                    as *mut crate::src::qcommon::q_shared::trace_t
                     as *mut crate::src::qcommon::q_shared::trace_t,
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
                     as *const crate::src::qcommon::q_shared::vec_t,
@@ -1172,6 +1175,7 @@ pub unsafe extern "C" fn CL_CgameSystemCalls(
         83 => {
             crate::src::qcommon::cm_trace::CM_BoxTrace(
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
+                    as *mut crate::src::qcommon::q_shared::trace_t
                     as *mut crate::src::qcommon::q_shared::trace_t,
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
                     as *const crate::src::qcommon::q_shared::vec_t,
@@ -1191,6 +1195,7 @@ pub unsafe extern "C" fn CL_CgameSystemCalls(
         26 => {
             crate::src::qcommon::cm_trace::CM_TransformedBoxTrace(
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
+                    as *mut crate::src::qcommon::q_shared::trace_t
                     as *mut crate::src::qcommon::q_shared::trace_t,
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
                     as *const crate::src::qcommon::q_shared::vec_t,
@@ -1214,6 +1219,7 @@ pub unsafe extern "C" fn CL_CgameSystemCalls(
         84 => {
             crate::src::qcommon::cm_trace::CM_TransformedBoxTrace(
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
+                    as *mut crate::src::qcommon::q_shared::trace_t
                     as *mut crate::src::qcommon::q_shared::trace_t,
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
                     as *const crate::src::qcommon::q_shared::vec_t,
@@ -1725,7 +1731,8 @@ pub unsafe extern "C" fn CL_CgameSystemCalls(
             return crate::src::qcommon::common::Com_RealTime(crate::src::qcommon::vm::VM_ArgPtr(
                 *args.offset(1 as libc::c_int as isize),
             )
-                as *mut crate::src::qcommon::q_shared::qtime_t)
+                as *mut crate::src::qcommon::q_shared::qtime_t
+                as *mut crate::src::qcommon::q_shared::qtime_s)
                 as crate::stdlib::intptr_t
         }
         71 => {
@@ -2297,7 +2304,7 @@ pub unsafe extern "C" fn CL_AdjustTimeDelta() {
     } // FIXME: is this a problem for cgame?
     newDelta =
         crate::src::client::cl_main::cl.snap.serverTime - crate::src::client::cl_main::cls.realtime;
-    deltaDelta = crate::stdlib::abs(newDelta - crate::src::client::cl_main::cl.serverTimeDelta);
+    deltaDelta = ::libc::abs(newDelta - crate::src::client::cl_main::cl.serverTimeDelta);
     if deltaDelta > 500 as libc::c_int {
         crate::src::client::cl_main::cl.serverTimeDelta = newDelta;
         crate::src::client::cl_main::cl.oldServerTime =

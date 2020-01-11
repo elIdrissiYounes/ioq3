@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -108,9 +108,9 @@ pub use crate::ui_local_h::AWARD_PERFECT;
 
 pub use crate::src::q3_ui::ui_splevel::stdlib_h::atoi;
 use crate::stdlib::memset;
-use crate::stdlib::strcpy;
-use crate::stdlib::strrchr;
-pub use crate::stdlib::strtol;
+use ::libc::strcpy;
+use ::libc::strrchr;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -503,7 +503,7 @@ unsafe extern "C" fn PlayerIcon(
         modelAndSkin,
         ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
     );
-    skin = crate::stdlib::strrchr(model.as_mut_ptr(), '/' as i32);
+    skin = ::libc::strrchr(model.as_mut_ptr(), '/' as i32);
     if !skin.is_null() {
         let fresh0 = skin;
         skin = skin.offset(1);
@@ -671,7 +671,7 @@ unsafe extern "C" fn UI_SPLevelMenu_SetMenuArena(
         levelMenuInfo.levelPicNames[n as usize].as_mut_ptr(),
     ) == 0
     {
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             levelMenuInfo.levelPicNames[n as usize].as_mut_ptr(),
             b"menu/art/unknownmap\x00" as *const u8 as *const libc::c_char,
         );
@@ -719,7 +719,8 @@ unsafe extern "C" fn UI_SPLevelMenu_SetMenuItems() {
             &mut *levelMenuInfo
                 .item_maps
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize),
+                .offset(0 as libc::c_int as isize) as *mut _
+                as *mut crate::ui_local_h::menubitmap_s,
         );
         levelMenuInfo.item_maps[0 as libc::c_int as usize]
             .generic
@@ -758,7 +759,8 @@ unsafe extern "C" fn UI_SPLevelMenu_SetMenuItems() {
             &mut *levelMenuInfo
                 .item_maps
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize),
+                .offset(0 as libc::c_int as isize) as *mut _
+                as *mut crate::ui_local_h::menubitmap_s,
         );
         levelMenuInfo.item_maps[0 as libc::c_int as usize]
             .generic
@@ -788,7 +790,8 @@ unsafe extern "C" fn UI_SPLevelMenu_SetMenuItems() {
             &mut *levelMenuInfo
                 .item_maps
                 .as_mut_ptr()
-                .offset(0 as libc::c_int as isize),
+                .offset(0 as libc::c_int as isize) as *mut _
+                as *mut crate::ui_local_h::menubitmap_s,
         );
         levelMenuInfo.item_maps[0 as libc::c_int as usize]
             .generic
@@ -1116,7 +1119,9 @@ unsafe extern "C" fn UI_SPLevelMenu_MenuDraw() {
         levelMenuInfo.item_player.shader = 0 as libc::c_int
     }
     // standard menu drawing
-    crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut levelMenuInfo.menu);
+    crate::src::q3_ui::ui_qmenu::Menu_Draw(
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     // draw player award levels
     y = 314 as libc::c_int + 26 as libc::c_int;
     i = 0 as libc::c_int;
@@ -1236,9 +1241,10 @@ unsafe extern "C" fn UI_SPLevelMenu_MenuDraw() {
             );
         }
         if n == selectedArena {
-            if crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(&mut levelMenuInfo.menu)
-                == &mut *levelMenuInfo.item_maps.as_mut_ptr().offset(n as isize)
-                    as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void
+            if crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(
+                &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+            ) == &mut *levelMenuInfo.item_maps.as_mut_ptr().offset(n as isize)
+                as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void
             {
                 crate::src::ui::ui_syscalls::trap_R_SetColor(color.as_mut_ptr());
             }
@@ -1250,9 +1256,10 @@ unsafe extern "C" fn UI_SPLevelMenu_MenuDraw() {
                 levelMenuInfo.levelSelectedPic,
             );
             crate::src::ui::ui_syscalls::trap_R_SetColor(0 as *const libc::c_float);
-        } else if crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(&mut levelMenuInfo.menu)
-            == &mut *levelMenuInfo.item_maps.as_mut_ptr().offset(n as isize)
-                as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void
+        } else if crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(
+            &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        ) == &mut *levelMenuInfo.item_maps.as_mut_ptr().offset(n as isize)
+            as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void
         {
             crate::src::ui::ui_syscalls::trap_R_SetColor(color.as_mut_ptr());
             crate::src::q3_ui::ui_atoms::UI_DrawHandlePic(
@@ -1740,16 +1747,16 @@ unsafe extern "C" fn UI_SPLevelMenu_Init() {
     levelMenuInfo.item_null.width = 640 as libc::c_int;
     levelMenuInfo.item_null.height = 480 as libc::c_int;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut levelMenuInfo.item_banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut levelMenuInfo.item_leftarrow as *mut crate::ui_local_h::menubitmap_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut *levelMenuInfo
             .item_maps
             .as_mut_ptr()
@@ -1757,7 +1764,7 @@ unsafe extern "C" fn UI_SPLevelMenu_Init() {
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut *levelMenuInfo
             .item_maps
             .as_mut_ptr()
@@ -1765,7 +1772,7 @@ unsafe extern "C" fn UI_SPLevelMenu_Init() {
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut *levelMenuInfo
             .item_maps
             .as_mut_ptr()
@@ -1773,7 +1780,7 @@ unsafe extern "C" fn UI_SPLevelMenu_Init() {
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut *levelMenuInfo
             .item_maps
             .as_mut_ptr()
@@ -1793,41 +1800,41 @@ unsafe extern "C" fn UI_SPLevelMenu_Init() {
         .generic
         .bottom += 18 as libc::c_int;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut levelMenuInfo.item_rightarrow as *mut crate::ui_local_h::menubitmap_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut levelMenuInfo.item_player as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     n = 0 as libc::c_int;
     while n < count {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut levelMenuInfo.menu,
+            &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut *levelMenuInfo.item_awards.as_mut_ptr().offset(n as isize)
                 as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
         );
         n += 1
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut levelMenuInfo.item_back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut levelMenuInfo.item_reset as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut levelMenuInfo.item_custom as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut levelMenuInfo.item_next as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut levelMenuInfo.item_null as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer(
@@ -1897,9 +1904,11 @@ pub unsafe extern "C" fn UI_SPLevelMenu() {
         currentGame = level % 4 as libc::c_int
     }
     UI_SPLevelMenu_Init();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut levelMenuInfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     crate::src::q3_ui::ui_qmenu::Menu_SetCursorToItem(
-        &mut levelMenuInfo.menu,
+        &mut levelMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut levelMenuInfo.item_next as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
 }

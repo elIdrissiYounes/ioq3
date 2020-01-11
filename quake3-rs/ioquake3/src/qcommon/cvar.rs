@@ -4,16 +4,16 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -76,15 +76,15 @@ pub use crate::src::qcommon::q_shared::ERR_FATAL;
 pub use crate::src::qcommon::q_shared::ERR_NEED_CD;
 pub use crate::src::qcommon::q_shared::ERR_SERVERDISCONNECT;
 use crate::stdlib::memset;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
+use ::libc::strchr;
+use ::libc::strcmp;
 
 pub use crate::src::qcommon::cvar::ctype_h::tolower;
 pub use crate::src::qcommon::cvar::stdlib_h::atoi;
 pub use crate::stdlib::__ctype_tolower_loc;
-pub use crate::stdlib::strtod;
-pub use crate::stdlib::strtol;
+pub use ::libc::strtod;
+pub use ::libc::strtol;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -205,13 +205,13 @@ unsafe extern "C" fn Cvar_ValidateString(
     if s.is_null() {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if !crate::stdlib::strchr(s, '\\' as i32).is_null() {
+    if !::libc::strchr(s, '\\' as i32).is_null() {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if !crate::stdlib::strchr(s, '\"' as i32).is_null() {
+    if !::libc::strchr(s, '\"' as i32).is_null() {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if !crate::stdlib::strchr(s, ';' as i32).is_null() {
+    if !::libc::strchr(s, ';' as i32).is_null() {
         return crate::src::qcommon::q_shared::qfalse;
     }
     return crate::src::qcommon::q_shared::qtrue;
@@ -589,7 +589,7 @@ pub unsafe extern "C" fn Cvar_Get(
             crate::src::qcommon::common::Z_Free((*var).resetString as *mut libc::c_void);
             (*var).resetString = crate::src::qcommon::common::CopyString(var_value)
         } else if *var_value.offset(0 as libc::c_int as isize) as libc::c_int != 0
-            && crate::stdlib::strcmp((*var).resetString, var_value) != 0
+            && ::libc::strcmp((*var).resetString, var_value) != 0
         {
             crate::src::qcommon::common::Com_DPrintf(
                 b"Warning: cvar \"%s\" given initial values: \"%s\" and \"%s\"\n\x00" as *const u8
@@ -749,15 +749,15 @@ pub unsafe extern "C" fn Cvar_Set2(
     }
     value = Cvar_Validate(var, value, crate::src::qcommon::q_shared::qtrue);
     if (*var).flags & 0x20 as libc::c_int != 0 && !(*var).latchedString.is_null() {
-        if crate::stdlib::strcmp(value, (*var).string) == 0 {
+        if ::libc::strcmp(value, (*var).string) == 0 {
             crate::src::qcommon::common::Z_Free((*var).latchedString as *mut libc::c_void);
             (*var).latchedString = 0 as *mut libc::c_char;
             return var;
         }
-        if crate::stdlib::strcmp(value, (*var).latchedString) == 0 {
+        if ::libc::strcmp(value, (*var).latchedString) == 0 {
             return var;
         }
-    } else if crate::stdlib::strcmp(value, (*var).string) == 0 {
+    } else if ::libc::strcmp(value, (*var).string) == 0 {
         return var;
     }
     // note what types of cvars have been modified (userinfo, archive, serverinfo, systeminfo)
@@ -786,11 +786,11 @@ pub unsafe extern "C" fn Cvar_Set2(
         }
         if (*var).flags & 0x20 as libc::c_int != 0 {
             if !(*var).latchedString.is_null() {
-                if crate::stdlib::strcmp(value, (*var).latchedString) == 0 as libc::c_int {
+                if ::libc::strcmp(value, (*var).latchedString) == 0 as libc::c_int {
                     return var;
                 }
                 crate::src::qcommon::common::Z_Free((*var).latchedString as *mut libc::c_void);
-            } else if crate::stdlib::strcmp(value, (*var).string) == 0 as libc::c_int {
+            } else if ::libc::strcmp(value, (*var).string) == 0 as libc::c_int {
                 return var;
             }
             crate::src::qcommon::common::Com_Printf(
@@ -806,7 +806,7 @@ pub unsafe extern "C" fn Cvar_Set2(
         crate::src::qcommon::common::Z_Free((*var).latchedString as *mut libc::c_void);
         (*var).latchedString = 0 as *mut libc::c_char
     }
-    if crate::stdlib::strcmp(value, (*var).string) == 0 {
+    if ::libc::strcmp(value, (*var).string) == 0 {
         return var;
     }
     (*var).modified = crate::src::qcommon::q_shared::qtrue;
@@ -987,7 +987,7 @@ pub unsafe extern "C" fn Cvar_SetCheatState() {
                 crate::src::qcommon::common::Z_Free((*var).latchedString as *mut libc::c_void);
                 (*var).latchedString = 0 as *mut libc::c_char
             }
-            if crate::stdlib::strcmp((*var).resetString, (*var).string) != 0 {
+            if ::libc::strcmp((*var).resetString, (*var).string) != 0 {
                 Cvar_Set((*var).name, (*var).resetString);
             }
         }
@@ -1100,8 +1100,7 @@ pub unsafe extern "C" fn Cvar_Toggle_f() {
     // behaviour is the same as no match (set to the first argument)
     i = 2 as libc::c_int;
     while (i + 1 as libc::c_int) < c {
-        if crate::stdlib::strcmp(curval, crate::src::qcommon::cmd::Cmd_Argv(i)) == 0 as libc::c_int
-        {
+        if ::libc::strcmp(curval, crate::src::qcommon::cmd::Cmd_Argv(i)) == 0 as libc::c_int {
             Cvar_Set2(
                 crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int),
                 crate::src::qcommon::cmd::Cmd_Argv(i + 1 as libc::c_int),
@@ -1434,7 +1433,7 @@ pub unsafe extern "C" fn Cvar_ListModified_f() {
             } else {
                 (*var).string
             };
-            if !(crate::stdlib::strcmp(value, (*var).resetString) == 0) {
+            if !(::libc::strcmp(value, (*var).resetString) == 0) {
                 totalModified += 1;
                 if !(!match_0.is_null()
                     && crate::src::qcommon::common::Com_Filter(

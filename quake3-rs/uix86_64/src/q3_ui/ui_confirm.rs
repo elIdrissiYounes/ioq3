@@ -408,7 +408,10 @@ unsafe extern "C" fn ConfirmMenu_Key(
         }
         _ => {}
     }
-    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(&mut s_confirm.menu, key);
+    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(
+        &mut s_confirm.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        key,
+    );
 }
 /*
 =================
@@ -439,7 +442,9 @@ unsafe extern "C" fn MessageMenu_Draw() {
         y += 18 as libc::c_int;
         i += 1
     }
-    crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut s_confirm.menu);
+    crate::src::q3_ui::ui_qmenu::Menu_Draw(
+        &mut s_confirm.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     if s_confirm.draw.is_some() {
         s_confirm.draw.expect("non-null function pointer")();
     };
@@ -472,7 +477,9 @@ unsafe extern "C" fn ConfirmMenu_Draw() {
         0 as libc::c_int | 0x2000 as libc::c_int,
         crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr(),
     );
-    crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut s_confirm.menu);
+    crate::src::q3_ui::ui_qmenu::Menu_Draw(
+        &mut s_confirm.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     if s_confirm.draw.is_some() {
         s_confirm.draw.expect("non-null function pointer")();
     };
@@ -546,7 +553,9 @@ pub unsafe extern "C" fn UI_ConfirmMenu_Style(
             as unsafe extern "C" fn(_: libc::c_int) -> crate::src::qcommon::q_shared::sfxHandle_t,
     );
     s_confirm.menu.wrapAround = crate::src::qcommon::q_shared::qtrue;
-    crate::src::ui::ui_syscalls::trap_GetClientState(&mut cstate);
+    crate::src::ui::ui_syscalls::trap_GetClientState(
+        &mut cstate as *mut _ as *mut crate::ui_public_h::uiClientState_t,
+    );
     if cstate.connState as libc::c_uint
         >= crate::src::qcommon::q_shared::CA_CONNECTED as libc::c_int as libc::c_uint
     {
@@ -577,16 +586,18 @@ pub unsafe extern "C" fn UI_ConfirmMenu_Style(
     s_confirm.no.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
     s_confirm.no.style = 0 as libc::c_int;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_confirm.menu,
+        &mut s_confirm.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_confirm.yes as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_confirm.menu,
+        &mut s_confirm.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_confirm.no as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_confirm.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_confirm.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     crate::src::q3_ui::ui_qmenu::Menu_SetCursorToItem(
-        &mut s_confirm.menu,
+        &mut s_confirm.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_confirm.no as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
 }
@@ -700,7 +711,9 @@ pub unsafe extern "C" fn UI_Message(mut lines: *mut *const libc::c_char) {
             as unsafe extern "C" fn(_: libc::c_int) -> crate::src::qcommon::q_shared::sfxHandle_t,
     );
     s_confirm.menu.wrapAround = crate::src::qcommon::q_shared::qtrue;
-    crate::src::ui::ui_syscalls::trap_GetClientState(&mut cstate);
+    crate::src::ui::ui_syscalls::trap_GetClientState(
+        &mut cstate as *mut _ as *mut crate::ui_public_h::uiClientState_t,
+    );
     if cstate.connState as libc::c_uint
         >= crate::src::qcommon::q_shared::CA_CONNECTED as libc::c_int as libc::c_uint
     {
@@ -720,12 +733,14 @@ pub unsafe extern "C" fn UI_Message(mut lines: *mut *const libc::c_char) {
     s_confirm.yes.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
     s_confirm.yes.style = 0 as libc::c_int;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_confirm.menu,
+        &mut s_confirm.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_confirm.yes as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_confirm.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_confirm.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     crate::src::q3_ui::ui_qmenu::Menu_SetCursorToItem(
-        &mut s_confirm.menu,
+        &mut s_confirm.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_confirm.yes as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
 }

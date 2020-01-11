@@ -11,12 +11,12 @@ pub struct mdct_lookup {
 use ::libc;
 
 use crate::stdlib::cos;
-use crate::stdlib::free;
 use crate::stdlib::log;
 use crate::stdlib::malloc;
 use crate::stdlib::memset;
 use crate::stdlib::rint;
 use crate::stdlib::sin;
+use ::libc::free;
 /* *******************************************************************
 *                                                                  *
 * THIS FILE IS PART OF THE OggVorbis SOFTWARE CODEC SOURCE CODE.   *
@@ -422,10 +422,10 @@ pub unsafe extern "C" fn mdct_clear(
 ) {
     if !l.is_null() {
         if !(*l).trig.is_null() {
-            crate::stdlib::free((*l).trig as *mut libc::c_void);
+            ::libc::free((*l).trig as *mut libc::c_void);
         }
         if !(*l).bitrev.is_null() {
-            crate::stdlib::free((*l).bitrev as *mut libc::c_void);
+            ::libc::free((*l).bitrev as *mut libc::c_void);
         }
         crate::stdlib::memset(
             l as *mut libc::c_void,

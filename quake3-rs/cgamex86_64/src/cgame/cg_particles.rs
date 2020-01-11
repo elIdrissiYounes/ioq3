@@ -38,16 +38,16 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -189,13 +189,11 @@ pub use crate::src::cgame::cg_syscalls::trap_R_RegisterShader;
 use crate::stdlib::cos;
 use crate::stdlib::floor;
 use crate::stdlib::memset;
-pub use crate::stdlib::rand;
 use crate::stdlib::sin;
 use crate::stdlib::sqrt;
-pub use crate::stdlib::strtod;
-pub use crate::stdlib::strtol;
-
-pub type cparticle_t = particle_s;
+pub use ::libc::rand;
+pub use ::libc::strtod;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -226,6 +224,8 @@ pub struct particle_s {
     pub roll: libc::c_int,
     pub accumroll: libc::c_int,
 }
+
+pub type cparticle_t = particle_s;
 
 pub const P_WEATHER_FLURRY: C2RustUnnamed_25 = 11;
 
@@ -503,7 +503,7 @@ pub unsafe extern "C" fn CG_AddParticleToScene(
                     (*p).org[2 as libc::c_int as usize] = *org.offset(2 as libc::c_int as isize);
                     (*p).org[2 as libc::c_int as usize] = ((*p).start as libc::c_double
                         + 2.0f64
-                            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                                 / 0x7fff as libc::c_int as libc::c_float)
                                 as libc::c_double
                                 - 0.5f64)
@@ -511,14 +511,14 @@ pub unsafe extern "C" fn CG_AddParticleToScene(
                         as crate::src::qcommon::q_shared::vec_t;
                     if (*p).type_0 == P_BUBBLE_TURBULENT as libc::c_int {
                         (*p).vel[0 as libc::c_int as usize] = (2.0f64
-                            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                                 / 0x7fff as libc::c_int as libc::c_float)
                                 as libc::c_double
                                 - 0.5f64)
                             * 4 as libc::c_int as libc::c_double)
                             as crate::src::qcommon::q_shared::vec_t;
                         (*p).vel[1 as libc::c_int as usize] = (2.0f64
-                            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                                 / 0x7fff as libc::c_int as libc::c_float)
                                 as libc::c_double
                                 - 0.5f64)
@@ -536,14 +536,14 @@ pub unsafe extern "C" fn CG_AddParticleToScene(
                 }
                 if (*p).type_0 == P_WEATHER_TURBULENT as libc::c_int {
                     (*p).vel[0 as libc::c_int as usize] = (2.0f64
-                        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                             / 0x7fff as libc::c_int as libc::c_float)
                             as libc::c_double
                             - 0.5f64)
                         * 16 as libc::c_int as libc::c_double)
                         as crate::src::qcommon::q_shared::vec_t;
                     (*p).vel[1 as libc::c_int as usize] = (2.0f64
-                        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                             / 0x7fff as libc::c_int as libc::c_float)
                             as libc::c_double
                             - 0.5f64)
@@ -1822,13 +1822,13 @@ pub unsafe extern "C" fn CG_AddParticleToScene(
         crate::src::cgame::cg_syscalls::trap_R_AddPolyToScene(
             (*p).pshader,
             3 as libc::c_int,
-            TRIverts.as_mut_ptr(),
+            TRIverts.as_mut_ptr() as *const crate::tr_types_h::polyVert_t,
         );
     } else {
         crate::src::cgame::cg_syscalls::trap_R_AddPolyToScene(
             (*p).pshader,
             4 as libc::c_int,
-            verts.as_mut_ptr(),
+            verts.as_mut_ptr() as *const crate::tr_types_h::polyVert_t,
         );
     };
 }
@@ -2051,7 +2051,7 @@ pub unsafe extern "C" fn CG_ParticleSnowFlurry(
     (*p).startfade =
         (crate::src::cgame::cg_main::cg.time + (*cent).currentState.time2) as libc::c_float;
     (*p).pshader = pshader;
-    if crate::stdlib::rand() % 100 as libc::c_int > 90 as libc::c_int {
+    if ::libc::rand() % 100 as libc::c_int > 90 as libc::c_int {
         (*p).height = 32 as libc::c_int as libc::c_float;
         (*p).width = 32 as libc::c_int as libc::c_float;
         (*p).alpha = 0.10f32
@@ -2079,7 +2079,7 @@ pub unsafe extern "C" fn CG_ParticleSnowFlurry(
         + (((*cent).currentState.angles[0 as libc::c_int as usize]
             * 32 as libc::c_int as libc::c_float) as libc::c_double
             + 2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float)
                     as libc::c_double
                     - 0.5f64)
@@ -2089,7 +2089,7 @@ pub unsafe extern "C" fn CG_ParticleSnowFlurry(
         + (((*cent).currentState.angles[1 as libc::c_int as usize]
             * 32 as libc::c_int as libc::c_float) as libc::c_double
             + 2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float)
                     as libc::c_double
                     - 0.5f64)
@@ -2098,13 +2098,13 @@ pub unsafe extern "C" fn CG_ParticleSnowFlurry(
     (*p).vel[2 as libc::c_int as usize] += (*cent).currentState.angles[2 as libc::c_int as usize];
     if turb as u64 != 0 {
         (*p).accel[0 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 16 as libc::c_int as libc::c_double)
             as crate::src::qcommon::q_shared::vec_t;
         (*p).accel[1 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 16 as libc::c_int as libc::c_double)
@@ -2157,21 +2157,21 @@ pub unsafe extern "C" fn CG_ParticleSnow(
     (*p).org[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
     (*p).org[0 as libc::c_int as usize] = ((*p).org[0 as libc::c_int as usize] as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * range as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     (*p).org[1 as libc::c_int as usize] = ((*p).org[1 as libc::c_int as usize] as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * range as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     (*p).org[2 as libc::c_int as usize] = ((*p).org[2 as libc::c_int as usize] as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * ((*p).start - (*p).end) as libc::c_double)
@@ -2184,13 +2184,13 @@ pub unsafe extern "C" fn CG_ParticleSnow(
     (*p).accel[0 as libc::c_int as usize] = (*p).accel[1 as libc::c_int as usize];
     if turb != 0 {
         (*p).vel[0 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 16 as libc::c_int as libc::c_double)
             as crate::src::qcommon::q_shared::vec_t;
         (*p).vel[1 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 16 as libc::c_int as libc::c_double)
@@ -2233,7 +2233,7 @@ pub unsafe extern "C" fn CG_ParticleBubble(
     (*p).pshader = pshader;
     randsize = (1 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 0.5f64) as libc::c_float;
@@ -2241,7 +2241,7 @@ pub unsafe extern "C" fn CG_ParticleBubble(
     (*p).width = randsize;
     (*p).vel[2 as libc::c_int as usize] = (50 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 10 as libc::c_int as libc::c_double)
@@ -2258,21 +2258,21 @@ pub unsafe extern "C" fn CG_ParticleBubble(
     (*p).org[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
     (*p).org[0 as libc::c_int as usize] = ((*p).org[0 as libc::c_int as usize] as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * range as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     (*p).org[1 as libc::c_int as usize] = ((*p).org[1 as libc::c_int as usize] as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * range as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     (*p).org[2 as libc::c_int as usize] = ((*p).org[2 as libc::c_int as usize] as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * ((*p).start - (*p).end) as libc::c_double)
@@ -2285,13 +2285,13 @@ pub unsafe extern "C" fn CG_ParticleBubble(
     (*p).accel[0 as libc::c_int as usize] = (*p).accel[1 as libc::c_int as usize];
     if turb != 0 {
         (*p).vel[0 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 4 as libc::c_int as libc::c_double)
             as crate::src::qcommon::q_shared::vec_t;
         (*p).vel[1 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 4 as libc::c_int as libc::c_double)
@@ -2355,7 +2355,7 @@ pub unsafe extern "C" fn CG_ParticleSmoke(
     }
     (*p).roll = (8 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 4 as libc::c_int as libc::c_double) as libc::c_int;
@@ -2455,7 +2455,7 @@ pub unsafe extern "C" fn CG_ParticleExplosion(
         (*p).roll = 0 as libc::c_int
     } else {
         (*p).roll = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 179 as libc::c_int as libc::c_double) as libc::c_int
@@ -2615,15 +2615,15 @@ pub unsafe extern "C" fn CG_ParticleImpactSmokePuff(
     (*p).alpha = 0.25f64 as libc::c_float;
     (*p).alphavel = 0 as libc::c_int as libc::c_float;
     (*p).roll = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 179 as libc::c_int as libc::c_double) as libc::c_int;
     (*p).pshader = pshader;
     (*p).endtime = (crate::src::cgame::cg_main::cg.time + 1000 as libc::c_int) as libc::c_float;
     (*p).startfade = (crate::src::cgame::cg_main::cg.time + 100 as libc::c_int) as libc::c_float;
-    (*p).width = (crate::stdlib::rand() % 4 as libc::c_int + 8 as libc::c_int) as libc::c_float;
-    (*p).height = (crate::stdlib::rand() % 4 as libc::c_int + 8 as libc::c_int) as libc::c_float;
+    (*p).width = (::libc::rand() % 4 as libc::c_int + 8 as libc::c_int) as libc::c_float;
+    (*p).height = (::libc::rand() % 4 as libc::c_int + 8 as libc::c_int) as libc::c_float;
     (*p).endheight = (*p).height * 2 as libc::c_int as libc::c_float;
     (*p).endwidth = (*p).width * 2 as libc::c_int as libc::c_float;
     (*p).endtime = (crate::src::cgame::cg_main::cg.time + 500 as libc::c_int) as libc::c_float;
@@ -2677,7 +2677,7 @@ pub unsafe extern "C" fn CG_Particle_Bleed(
     }
     (*p).width = 4 as libc::c_int as libc::c_float;
     (*p).height = 4 as libc::c_int as libc::c_float;
-    (*p).endheight = (4 as libc::c_int + crate::stdlib::rand() % 3 as libc::c_int) as libc::c_float;
+    (*p).endheight = (4 as libc::c_int + ::libc::rand() % 3 as libc::c_int) as libc::c_float;
     (*p).endwidth = (*p).endheight;
     (*p).type_0 = P_SMOKE as libc::c_int;
     (*p).org[0 as libc::c_int as usize] = *start.offset(0 as libc::c_int as isize);
@@ -2692,7 +2692,7 @@ pub unsafe extern "C" fn CG_Particle_Bleed(
     (*p).accel[1 as libc::c_int as usize] = (*p).accel[2 as libc::c_int as usize];
     (*p).accel[0 as libc::c_int as usize] = (*p).accel[1 as libc::c_int as usize];
     (*p).rotate = crate::src::qcommon::q_shared::qfalse;
-    (*p).roll = crate::stdlib::rand() % 179 as libc::c_int;
+    (*p).roll = ::libc::rand() % 179 as libc::c_int;
     (*p).color = 2 as libc::c_int;
     (*p).alpha = 0.75f64 as libc::c_float;
 }
@@ -2750,7 +2750,7 @@ pub unsafe extern "C" fn CG_Particle_OilParticle(
     (*p).accel[2 as libc::c_int as usize] =
         -(20 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
     (*p).rotate = crate::src::qcommon::q_shared::qfalse;
-    (*p).roll = crate::stdlib::rand() % 179 as libc::c_int;
+    (*p).roll = ::libc::rand() % 179 as libc::c_int;
     (*p).alpha = 0.75f64 as libc::c_float;
 }
 #[no_mangle]
@@ -2805,7 +2805,7 @@ pub unsafe extern "C" fn CG_Particle_OilSlick(
     (*p).org[2 as libc::c_int as usize] = ((*p).org[2 as libc::c_int as usize] as libc::c_double
         + (0.55f64
             + 2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float)
                     as libc::c_double
                     - 0.5f64)
@@ -2819,7 +2819,7 @@ pub unsafe extern "C" fn CG_Particle_OilSlick(
     (*p).accel[1 as libc::c_int as usize] = (*p).accel[2 as libc::c_int as usize];
     (*p).accel[0 as libc::c_int as usize] = (*p).accel[1 as libc::c_int as usize];
     (*p).rotate = crate::src::qcommon::q_shared::qfalse;
-    (*p).roll = crate::stdlib::rand() % 179 as libc::c_int;
+    (*p).roll = ::libc::rand() % 179 as libc::c_int;
     (*p).alpha = 0.75f64 as libc::c_float;
 }
 #[no_mangle]
@@ -2941,7 +2941,7 @@ pub unsafe extern "C" fn ValidBloodPool(
                     * (-0.5f64 * 2 as libc::c_int as libc::c_double))
                 as crate::src::qcommon::q_shared::vec_t;
             crate::src::cgame::cg_predict::CG_Trace(
-                &mut trace,
+                &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
                 this_pos.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                 0 as *const crate::src::qcommon::q_shared::vec_t,
                 0 as *const crate::src::qcommon::q_shared::vec_t,
@@ -3001,7 +3001,7 @@ pub unsafe extern "C" fn CG_BloodPool(
     (*p).roll = 0 as libc::c_int;
     (*p).pshader = pshader;
     rndSize = (0.4f64
-        + ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        + ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             * 0.6f64) as libc::c_float;
     (*p).width = 8 as libc::c_int as libc::c_float * rndSize;
@@ -3020,7 +3020,7 @@ pub unsafe extern "C" fn CG_BloodPool(
     (*p).accel[1 as libc::c_int as usize] = (*p).accel[2 as libc::c_int as usize];
     (*p).accel[0 as libc::c_int as usize] = (*p).accel[1 as libc::c_int as usize];
     (*p).rotate = crate::src::qcommon::q_shared::qfalse;
-    (*p).roll = crate::stdlib::rand() % 179 as libc::c_int;
+    (*p).roll = ::libc::rand() % 179 as libc::c_int;
     (*p).alpha = 0.75f64 as libc::c_float;
     (*p).color = 2 as libc::c_int;
 }
@@ -3084,7 +3084,7 @@ pub unsafe extern "C" fn CG_ParticleBloodCloud(
         (*p).endtime = ((crate::src::cgame::cg_main::cg.time + 350 as libc::c_int)
             as libc::c_double
             + 2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                     - 0.5f64)
                 * 100 as libc::c_int as libc::c_double) as libc::c_float;
@@ -3108,7 +3108,7 @@ pub unsafe extern "C" fn CG_ParticleBloodCloud(
         (*p).accel[1 as libc::c_int as usize] = (*p).accel[2 as libc::c_int as usize];
         (*p).accel[0 as libc::c_int as usize] = (*p).accel[1 as libc::c_int as usize];
         (*p).rotate = crate::src::qcommon::q_shared::qfalse;
-        (*p).roll = crate::stdlib::rand() % 179 as libc::c_int;
+        (*p).roll = ::libc::rand() % 179 as libc::c_int;
         (*p).color = 2 as libc::c_int;
         (*p).alpha = 0.75f64 as libc::c_float;
         i += 1
@@ -3150,14 +3150,14 @@ pub unsafe extern "C" fn CG_ParticleSparks(
     (*p).org[2 as libc::c_int as usize] = *org.offset(2 as libc::c_int as isize);
     (*p).org[0 as libc::c_int as usize] = ((*p).org[0 as libc::c_int as usize] as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * x as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     (*p).org[1 as libc::c_int as usize] = ((*p).org[1 as libc::c_int as usize] as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * y as libc::c_double)
@@ -3171,14 +3171,14 @@ pub unsafe extern "C" fn CG_ParticleSparks(
     (*p).accel[0 as libc::c_int as usize] = (*p).accel[1 as libc::c_int as usize];
     (*p).vel[0 as libc::c_int as usize] = ((*p).vel[0 as libc::c_int as usize] as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 4 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     (*p).vel[1 as libc::c_int as usize] = ((*p).vel[1 as libc::c_int as usize] as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 4 as libc::c_int as libc::c_double)
@@ -3186,7 +3186,7 @@ pub unsafe extern "C" fn CG_ParticleSparks(
     (*p).vel[2 as libc::c_int as usize] = ((*p).vel[2 as libc::c_int as usize] as libc::c_double
         + (20 as libc::c_int as libc::c_double
             + 2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float)
                     as libc::c_double
                     - 0.5f64)
@@ -3194,13 +3194,13 @@ pub unsafe extern "C" fn CG_ParticleSparks(
             * speed as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     (*p).accel[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 4 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     (*p).accel[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 4 as libc::c_int as libc::c_double)
@@ -3271,7 +3271,7 @@ pub unsafe extern "C" fn CG_ParticleDust(
             (*p).endtime =
                 ((crate::src::cgame::cg_main::cg.time + 4500 as libc::c_int) as libc::c_double
                     + 2.0f64
-                        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                             / 0x7fff as libc::c_int as libc::c_float)
                             as libc::c_double
                             - 0.5f64)
@@ -3280,7 +3280,7 @@ pub unsafe extern "C" fn CG_ParticleDust(
             (*p).endtime =
                 ((crate::src::cgame::cg_main::cg.time + 750 as libc::c_int) as libc::c_double
                     + 2.0f64
-                        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                             / 0x7fff as libc::c_int as libc::c_float)
                             as libc::c_double
                             - 0.5f64)
@@ -3303,30 +3303,30 @@ pub unsafe extern "C" fn CG_ParticleDust(
         (*p).org[1 as libc::c_int as usize] = point[1 as libc::c_int as usize];
         (*p).org[2 as libc::c_int as usize] = point[2 as libc::c_int as usize];
         (*p).vel[0 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 6 as libc::c_int as libc::c_double)
             as crate::src::qcommon::q_shared::vec_t;
         (*p).vel[1 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 6 as libc::c_int as libc::c_double)
             as crate::src::qcommon::q_shared::vec_t;
-        (*p).vel[2 as libc::c_int as usize] = (crate::stdlib::rand() & 0x7fff as libc::c_int)
+        (*p).vel[2 as libc::c_int as usize] = (::libc::rand() & 0x7fff as libc::c_int)
             as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float
             * 20 as libc::c_int as libc::c_float;
         // RF, add some gravity/randomness
         (*p).accel[0 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 3 as libc::c_int as libc::c_double)
             as crate::src::qcommon::q_shared::vec_t;
         (*p).accel[1 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 3 as libc::c_int as libc::c_double)
@@ -3338,7 +3338,7 @@ pub unsafe extern "C" fn CG_ParticleDust(
         (*p).accel[1 as libc::c_int as usize] = (*p).accel[2 as libc::c_int as usize];
         (*p).accel[0 as libc::c_int as usize] = (*p).accel[1 as libc::c_int as usize];
         (*p).rotate = crate::src::qcommon::q_shared::qfalse;
-        (*p).roll = crate::stdlib::rand() % 179 as libc::c_int;
+        (*p).roll = ::libc::rand() % 179 as libc::c_int;
         (*p).alpha = 0.75f64 as libc::c_float;
         i += 1
     }
@@ -3369,7 +3369,7 @@ pub unsafe extern "C" fn CG_ParticleMisc(
     (*p).time = crate::src::cgame::cg_main::cg.time as libc::c_float;
     (*p).alpha = 1.0f64 as libc::c_float;
     (*p).alphavel = 0 as libc::c_int as libc::c_float;
-    (*p).roll = crate::stdlib::rand() % 179 as libc::c_int;
+    (*p).roll = ::libc::rand() % 179 as libc::c_int;
     (*p).pshader = pshader;
     if duration > 0 as libc::c_int {
         (*p).endtime = (crate::src::cgame::cg_main::cg.time + duration) as libc::c_float

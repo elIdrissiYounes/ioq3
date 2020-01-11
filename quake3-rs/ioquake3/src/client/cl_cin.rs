@@ -148,13 +148,13 @@ use crate::src::client::snd_main::S_StopAllSounds;
 use crate::src::client::snd_main::S_Update;
 use crate::src::opus_1_2_1::src::opus_decoder::OpusDecoder;
 use crate::src::opus_1_2_1::src::opus_encoder::OpusEncoder;
-use crate::stdlib::abs;
 use crate::stdlib::memcpy;
 use crate::stdlib::memmove;
 use crate::stdlib::memset;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-use crate::stdlib::strstr;
+use ::libc::abs;
+use ::libc::strcmp;
+use ::libc::strcpy;
+use ::libc::strstr;
 extern "C" {
     #[no_mangle]
     pub static mut s_soundtime: libc::c_int;
@@ -3010,8 +3010,7 @@ pub unsafe extern "C" fn CIN_RunCinematic(
     }
     thisTime = CL_ScaledMilliseconds();
     if cinTable[currentHandle as usize].shader as libc::c_uint != 0
-        && crate::stdlib::abs(thisTime - cinTable[currentHandle as usize].lastTime)
-            > 100 as libc::c_int
+        && ::libc::abs(thisTime - cinTable[currentHandle as usize].lastTime) > 100 as libc::c_int
     {
         cinTable[currentHandle as usize].startTime +=
             thisTime - cinTable[currentHandle as usize].lastTime
@@ -3069,8 +3068,8 @@ pub unsafe extern "C" fn CIN_PlayCinematic(
     let mut RoQID: libc::c_ushort = 0;
     let mut name: [libc::c_char; 4096] = [0; 4096];
     let mut i: libc::c_int = 0;
-    if crate::stdlib::strstr(arg, b"/\x00" as *const u8 as *const libc::c_char).is_null()
-        && crate::stdlib::strstr(arg, b"\\\x00" as *const u8 as *const libc::c_char).is_null()
+    if ::libc::strstr(arg, b"/\x00" as *const u8 as *const libc::c_char).is_null()
+        && ::libc::strstr(arg, b"\\\x00" as *const u8 as *const libc::c_char).is_null()
     {
         crate::src::qcommon::q_shared::Com_sprintf(
             name.as_mut_ptr(),
@@ -3089,7 +3088,7 @@ pub unsafe extern "C" fn CIN_PlayCinematic(
     if systemBits & 1 as libc::c_int == 0 {
         i = 0 as libc::c_int;
         while i < 16 as libc::c_int {
-            if crate::stdlib::strcmp(
+            if ::libc::strcmp(
                 cinTable[i as usize].fileName.as_mut_ptr(),
                 name.as_mut_ptr(),
             ) == 0
@@ -3110,7 +3109,7 @@ pub unsafe extern "C" fn CIN_PlayCinematic(
     );
     currentHandle = CIN_HandleForVideo();
     cin.currentHandle = currentHandle;
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         cinTable[currentHandle as usize].fileName.as_mut_ptr(),
         name.as_mut_ptr(),
     );

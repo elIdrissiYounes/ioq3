@@ -525,9 +525,7 @@ pub use crate::sdl_icon_h::C2RustUnnamed_152;
 pub use crate::src::sdl::sdl_glimp::sdl_icon_h::CLIENT_WINDOW_ICON;
 use crate::stdlib::fabs;
 use crate::stdlib::memset;
-use crate::stdlib::sscanf;
 use crate::stdlib::strlen;
-use crate::stdlib::strstr;
 pub use crate::stdlib::GLbitfield;
 pub use crate::stdlib::GLboolean;
 pub use crate::stdlib::GLchar;
@@ -544,6 +542,8 @@ pub use crate::stdlib::GLubyte;
 pub use crate::stdlib::GLuint;
 pub use crate::stdlib::GLvoid;
 use crate::stdlib::SDL_GetError;
+use ::libc::sscanf;
+use ::libc::strstr;
 
 use crate::src::renderergl1::tr_init::displayAspect;
 use crate::src::renderergl1::tr_init::glConfig;
@@ -2422,7 +2422,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
     ) == 0 as libc::c_int
     {
         let mut profile: [libc::c_char; 6] = [0; 6];
-        crate::stdlib::sscanf(
+        ::libc::sscanf(
             version,
             b"OpenGL %5s %d.%d\x00" as *const u8 as *const libc::c_char,
             profile.as_mut_ptr(),
@@ -2439,7 +2439,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             qglesMinorVersion = 0 as libc::c_int
         }
     } else {
-        crate::stdlib::sscanf(
+        ::libc::sscanf(
             version,
             b"%d.%d\x00" as *const u8 as *const libc::c_char,
             &mut qglMajorVersion as *mut libc::c_int,
@@ -7448,12 +7448,12 @@ unsafe extern "C" fn GLimp_SetMode(
                                 renderer = 0 as *const libc::c_char
                             }
                             if renderer.is_null()
-                                || (!crate::stdlib::strstr(
+                                || (!::libc::strstr(
                                     renderer,
                                     b"Software Renderer\x00" as *const u8 as *const libc::c_char,
                                 )
                                 .is_null()
-                                    || !crate::stdlib::strstr(
+                                    || !::libc::strstr(
                                         renderer,
                                         b"Software Rasterizer\x00" as *const u8
                                             as *const libc::c_char,

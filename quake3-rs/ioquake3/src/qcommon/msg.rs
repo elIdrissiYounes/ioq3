@@ -333,7 +333,7 @@ pub unsafe extern "C" fn MSG_WriteBits(
             i = 0 as libc::c_int;
             while i < bits {
                 crate::src::qcommon::huffman::Huff_offsetTransmit(
-                    &mut msgHuff.compressor,
+                    &mut msgHuff.compressor as *mut _ as *mut crate::qcommon_h::huff_t,
                     value & 0xff as libc::c_int,
                     (*msg).data,
                     &mut (*msg).bit,
@@ -431,7 +431,7 @@ pub unsafe extern "C" fn MSG_ReadBits(
             i = 0 as libc::c_int;
             while i < bits {
                 crate::src::qcommon::huffman::Huff_offsetReceive(
-                    msgHuff.decompressor.tree,
+                    msgHuff.decompressor.tree as *mut crate::qcommon_h::nodetype,
                     &mut get,
                     (*msg).data,
                     &mut (*msg).bit,
@@ -2255,17 +2255,19 @@ pub unsafe extern "C" fn MSG_initHuffman() {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     msgInit = crate::src::qcommon::q_shared::qtrue;
-    crate::src::qcommon::huffman::Huff_Init(&mut msgHuff);
+    crate::src::qcommon::huffman::Huff_Init(
+        &mut msgHuff as *mut _ as *mut crate::qcommon_h::huffman_t,
+    );
     i = 0 as libc::c_int;
     while i < 256 as libc::c_int {
         j = 0 as libc::c_int;
         while j < msg_hData[i as usize] {
             crate::src::qcommon::huffman::Huff_addRef(
-                &mut msgHuff.compressor,
+                &mut msgHuff.compressor as *mut _ as *mut crate::qcommon_h::huff_t,
                 i as crate::src::qcommon::q_shared::byte,
             );
             crate::src::qcommon::huffman::Huff_addRef(
-                &mut msgHuff.decompressor,
+                &mut msgHuff.decompressor as *mut _ as *mut crate::qcommon_h::huff_t,
                 i as crate::src::qcommon::q_shared::byte,
             );
             j += 1

@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -92,7 +92,7 @@ use crate::src::botlib::be_interface::botimport;
 use crate::src::botlib::l_libvar::LibVarGetString;
 use crate::src::botlib::l_memory::FreeMemory;
 use crate::src::botlib::l_memory::GetClearedHunkMemory;
-pub use crate::stdlib::strtol;
+pub use ::libc::strtol;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.

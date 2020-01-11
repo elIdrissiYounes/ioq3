@@ -1172,7 +1172,7 @@ pub unsafe extern "C" fn UI_RegisterCvars() {
     cv = cvarTable.as_mut_ptr();
     while i < cvarTableSize {
         crate::src::ui::ui_syscalls::trap_Cvar_Register(
-            (*cv).vmCvar,
+            (*cv).vmCvar as *mut crate::src::qcommon::q_shared::vmCvar_t,
             (*cv).cvarName,
             (*cv).defaultString,
             (*cv).cvarFlags,
@@ -1239,7 +1239,9 @@ pub unsafe extern "C" fn UI_UpdateCvars() {
     cv = cvarTable.as_mut_ptr();
     while i < cvarTableSize {
         if !(*cv).vmCvar.is_null() {
-            crate::src::ui::ui_syscalls::trap_Cvar_Update((*cv).vmCvar);
+            crate::src::ui::ui_syscalls::trap_Cvar_Update(
+                (*cv).vmCvar as *mut crate::src::qcommon::q_shared::vmCvar_t,
+            );
         }
         i += 1;
         cv = cv.offset(1)

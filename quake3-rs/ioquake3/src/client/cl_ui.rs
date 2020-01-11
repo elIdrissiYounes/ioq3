@@ -642,13 +642,15 @@ unsafe extern "C" fn LAN_AddServer(
     if !servers.is_null() && *count < max {
         crate::src::qcommon::net_chan::NET_StringToAdr(
             address,
-            &mut adr,
+            &mut adr as *mut _ as *mut crate::qcommon_h::netadr_t,
             crate::qcommon_h::NA_UNSPEC,
         );
         i = 0 as libc::c_int;
         while i < *count {
-            if crate::src::qcommon::net_ip::NET_CompareAdr((*servers.offset(i as isize)).adr, adr)
-                as u64
+            if crate::src::qcommon::net_ip::NET_CompareAdr(
+                (*servers.offset(i as isize)).adr as crate::qcommon_h::netadr_t,
+                adr as crate::qcommon_h::netadr_t,
+            ) as u64
                 != 0
             {
                 break;
@@ -718,13 +720,15 @@ unsafe extern "C" fn LAN_RemoveServer(mut source: libc::c_int, mut addr: *const 
         };
         crate::src::qcommon::net_chan::NET_StringToAdr(
             addr,
-            &mut comp,
+            &mut comp as *mut _ as *mut crate::qcommon_h::netadr_t,
             crate::qcommon_h::NA_UNSPEC,
         );
         i = 0 as libc::c_int;
         while i < *count {
-            if crate::src::qcommon::net_ip::NET_CompareAdr(comp, (*servers.offset(i as isize)).adr)
-                as u64
+            if crate::src::qcommon::net_ip::NET_CompareAdr(
+                comp as crate::qcommon_h::netadr_t,
+                (*servers.offset(i as isize)).adr as crate::qcommon_h::netadr_t,
+            ) as u64
                 != 0
             {
                 let mut j: libc::c_int = i;
@@ -780,7 +784,8 @@ unsafe extern "C" fn LAN_GetServerAddressString(
                 crate::src::qcommon::q_shared::Q_strncpyz(
                     buf,
                     crate::src::qcommon::net_ip::NET_AdrToStringwPort(
-                        crate::src::client::cl_main::cls.localServers[n as usize].adr,
+                        crate::src::client::cl_main::cls.localServers[n as usize].adr
+                            as crate::qcommon_h::netadr_t,
                     ),
                     buflen,
                 );
@@ -792,7 +797,8 @@ unsafe extern "C" fn LAN_GetServerAddressString(
                 crate::src::qcommon::q_shared::Q_strncpyz(
                     buf,
                     crate::src::qcommon::net_ip::NET_AdrToStringwPort(
-                        crate::src::client::cl_main::cls.globalServers[n as usize].adr,
+                        crate::src::client::cl_main::cls.globalServers[n as usize].adr
+                            as crate::qcommon_h::netadr_t,
                     ),
                     buflen,
                 );
@@ -804,7 +810,8 @@ unsafe extern "C" fn LAN_GetServerAddressString(
                 crate::src::qcommon::q_shared::Q_strncpyz(
                     buf,
                     crate::src::qcommon::net_ip::NET_AdrToStringwPort(
-                        crate::src::client::cl_main::cls.favoriteServers[n as usize].adr,
+                        crate::src::client::cl_main::cls.favoriteServers[n as usize].adr
+                            as crate::qcommon_h::netadr_t,
                     ),
                     buflen,
                 );
@@ -936,7 +943,9 @@ unsafe extern "C" fn LAN_GetServerInfo(
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
             b"addr\x00" as *const u8 as *const libc::c_char,
-            crate::src::qcommon::net_ip::NET_AdrToStringwPort((*server).adr),
+            crate::src::qcommon::net_ip::NET_AdrToStringwPort(
+                (*server).adr as crate::qcommon_h::netadr_t,
+            ),
         );
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             info.as_mut_ptr(),
@@ -1516,6 +1525,7 @@ pub unsafe extern "C" fn CL_UISystemCalls(
         50 => {
             crate::src::qcommon::cvar::Cvar_Register(
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
+                    as *mut crate::src::qcommon::q_shared::vmCvar_t
                     as *mut crate::src::qcommon::q_shared::vmCvar_t,
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
                     as *const libc::c_char,
@@ -1529,6 +1539,7 @@ pub unsafe extern "C" fn CL_UISystemCalls(
             crate::src::qcommon::cvar::Cvar_Update(crate::src::qcommon::vm::VM_ArgPtr(
                 *args.offset(1 as libc::c_int as isize),
             )
+                as *mut crate::src::qcommon::q_shared::vmCvar_t
                 as *mut crate::src::qcommon::q_shared::vmCvar_t);
             return 0 as libc::c_int as crate::stdlib::intptr_t;
         }
@@ -1573,7 +1584,8 @@ pub unsafe extern "C" fn CL_UISystemCalls(
         }
         8 => {
             crate::src::qcommon::cvar::Cvar_Register(
-                0 as *mut crate::src::qcommon::q_shared::vmCvar_t,
+                0 as *mut crate::src::qcommon::q_shared::vmCvar_t
+                    as *mut crate::src::qcommon::q_shared::vmCvar_t,
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
                     as *const libc::c_char,
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
@@ -2190,7 +2202,8 @@ pub unsafe extern "C" fn CL_UISystemCalls(
             return crate::src::qcommon::common::Com_RealTime(crate::src::qcommon::vm::VM_ArgPtr(
                 *args.offset(1 as libc::c_int as isize),
             )
-                as *mut crate::src::qcommon::q_shared::qtime_t)
+                as *mut crate::src::qcommon::q_shared::qtime_t
+                as *mut crate::src::qcommon::q_shared::qtime_s)
                 as crate::stdlib::intptr_t
         }
         75 => {

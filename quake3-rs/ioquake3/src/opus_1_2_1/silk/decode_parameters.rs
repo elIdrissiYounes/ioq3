@@ -356,7 +356,7 @@ pub unsafe extern "C" fn silk_decode_parameters(
     crate::src::opus_1_2_1::silk::NLSF_decode::silk_NLSF_decode(
         pNLSF_Q15.as_mut_ptr(),
         (*psDec).indices.NLSFIndices.as_mut_ptr(),
-        (*psDec).psNLSF_CB,
+        (*psDec).psNLSF_CB as *const crate::structs_h::silk_NLSF_CB_struct,
     );
     /* Convert NLSF parameters to AR prediction filter coefficients */
     crate::src::opus_1_2_1::silk::NLSF2A::silk_NLSF2A(

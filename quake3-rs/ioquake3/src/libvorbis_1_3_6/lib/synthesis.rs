@@ -99,21 +99,28 @@ pub unsafe extern "C" fn vorbis_synthesis(
         return -(136 as libc::c_int);
     }
     /* first things first.  Make sure decode is ready */
-    crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_ripcord(vb);
+    crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_ripcord(
+        vb as *mut crate::codec_h::vorbis_block,
+    );
     crate::src::libogg_1_3_3::src::bitwise::oggpack_readinit(
-        opb,
+        opb as *mut crate::ogg_h::oggpack_buffer,
         (*op).packet,
         (*op).bytes as libc::c_int,
     );
     /* Check the packet type */
-    if crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 1 as libc::c_int)
-        != 0 as libc::c_int as libc::c_long
+    if crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        1 as libc::c_int,
+    ) != 0 as libc::c_int as libc::c_long
     {
         /* Oops.  This is not an audio data packet */
         return -(135 as libc::c_int);
     }
     /* read our mode and pre/post windowsize */
-    mode = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, (*b).modebits) as libc::c_int;
+    mode = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        (*b).modebits,
+    ) as libc::c_int;
     if mode == -(1 as libc::c_int) {
         return -(136 as libc::c_int);
     }
@@ -125,8 +132,14 @@ pub unsafe extern "C" fn vorbis_synthesis(
     if (*vb).W != 0 {
         /* this doesn;t get mapped through mode selection as it's used
         only for window selection */
-        (*vb).lW = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 1 as libc::c_int);
-        (*vb).nW = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 1 as libc::c_int);
+        (*vb).lW = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+            opb as *mut crate::ogg_h::oggpack_buffer,
+            1 as libc::c_int,
+        );
+        (*vb).nW = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+            opb as *mut crate::ogg_h::oggpack_buffer,
+            1 as libc::c_int,
+        );
         if (*vb).nW == -(1 as libc::c_int) as libc::c_long {
             return -(136 as libc::c_int);
         }
@@ -141,7 +154,7 @@ pub unsafe extern "C" fn vorbis_synthesis(
     /* alloc pcm passback storage */
     (*vb).pcmend = (*ci).blocksizes[(*vb).W as usize] as libc::c_int;
     (*vb).pcm = crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-        vb,
+        vb as *mut crate::codec_h::vorbis_block,
         (::std::mem::size_of::<*mut libc::c_float>() as libc::c_ulong)
             .wrapping_mul((*vi).channels as libc::c_ulong) as libc::c_long,
     ) as *mut *mut libc::c_float;
@@ -149,7 +162,7 @@ pub unsafe extern "C" fn vorbis_synthesis(
     while i < (*vi).channels {
         let ref mut fresh0 = *(*vb).pcm.offset(i as isize);
         *fresh0 = crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-            vb,
+            vb as *mut crate::codec_h::vorbis_block,
             ((*vb).pcmend as libc::c_ulong)
                 .wrapping_mul(::std::mem::size_of::<libc::c_float>() as libc::c_ulong)
                 as libc::c_long,
@@ -184,21 +197,28 @@ pub unsafe extern "C" fn vorbis_synthesis_trackonly(
     let mut opb: *mut crate::ogg_h::oggpack_buffer = &mut (*vb).opb;
     let mut mode: libc::c_int = 0;
     /* first things first.  Make sure decode is ready */
-    crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_ripcord(vb);
+    crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_ripcord(
+        vb as *mut crate::codec_h::vorbis_block,
+    );
     crate::src::libogg_1_3_3::src::bitwise::oggpack_readinit(
-        opb,
+        opb as *mut crate::ogg_h::oggpack_buffer,
         (*op).packet,
         (*op).bytes as libc::c_int,
     );
     /* Check the packet type */
-    if crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 1 as libc::c_int)
-        != 0 as libc::c_int as libc::c_long
+    if crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        1 as libc::c_int,
+    ) != 0 as libc::c_int as libc::c_long
     {
         /* Oops.  This is not an audio data packet */
         return -(135 as libc::c_int);
     }
     /* read our mode and pre/post windowsize */
-    mode = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, (*b).modebits) as libc::c_int;
+    mode = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        (*b).modebits,
+    ) as libc::c_int;
     if mode == -(1 as libc::c_int) {
         return -(136 as libc::c_int);
     }
@@ -208,8 +228,14 @@ pub unsafe extern "C" fn vorbis_synthesis_trackonly(
     }
     (*vb).W = (*(*ci).mode_param[mode as usize]).blockflag as libc::c_long;
     if (*vb).W != 0 {
-        (*vb).lW = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 1 as libc::c_int);
-        (*vb).nW = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 1 as libc::c_int);
+        (*vb).lW = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+            opb as *mut crate::ogg_h::oggpack_buffer,
+            1 as libc::c_int,
+        );
+        (*vb).nW = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+            opb as *mut crate::ogg_h::oggpack_buffer,
+            1 as libc::c_int,
+        );
         if (*vb).nW == -(1 as libc::c_int) as libc::c_long {
             return -(136 as libc::c_int);
         }
@@ -247,20 +273,22 @@ pub unsafe extern "C" fn vorbis_packet_blocksize(
         return -(129 as libc::c_int) as libc::c_long;
     }
     crate::src::libogg_1_3_3::src::bitwise::oggpack_readinit(
-        &mut opb,
+        &mut opb as *mut _ as *mut crate::ogg_h::oggpack_buffer,
         (*op).packet,
         (*op).bytes as libc::c_int,
     );
     /* Check the packet type */
-    if crate::src::libogg_1_3_3::src::bitwise::oggpack_read(&mut opb, 1 as libc::c_int)
-        != 0 as libc::c_int as libc::c_long
+    if crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        &mut opb as *mut _ as *mut crate::ogg_h::oggpack_buffer,
+        1 as libc::c_int,
+    ) != 0 as libc::c_int as libc::c_long
     {
         /* Oops.  This is not an audio data packet */
         return -(135 as libc::c_int) as libc::c_long;
     }
     /* read our mode and pre/post windowsize */
     mode = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-        &mut opb,
+        &mut opb as *mut _ as *mut crate::ogg_h::oggpack_buffer,
         crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog(
             ((*ci).modes - 1 as libc::c_int) as crate::config_types_h::ogg_uint32_t,
         ),

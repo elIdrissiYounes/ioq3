@@ -5,7 +5,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -18,7 +18,7 @@ pub use crate::stddef_h::size_t;
 pub use crate::stdlib::__compar_fn_t;
 pub use crate::stdlib::intptr_t;
 pub use crate::stdlib::qsort;
-pub use crate::stdlib::strtol;
+pub use ::libc::strtol;
 
 pub use crate::be_aas_h::C2RustUnnamed_0;
 pub use crate::bg_public_h::GT_1FCTF;
@@ -175,11 +175,11 @@ pub use crate::src::server::sv_main::SV_AddServerCommand;
 pub use crate::src::server::sv_main::SV_SendServerCommand;
 pub use crate::src::server::sv_world::SV_SectorList_f;
 use crate::stdlib::memmove;
-use crate::stdlib::strcat;
-use crate::stdlib::strchr;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 pub use crate::vm_local_h::vm_s;
+use ::libc::strcat;
+use ::libc::strchr;
+use ::libc::strcpy;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -376,11 +376,12 @@ unsafe extern "C" fn SV_Map_f() {
         return;
     }
     // force latched values to get set
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"g_gametype\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int | 0x2 as libc::c_int | 0x20 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     cmd = crate::src::qcommon::cmd::Cmd_Argv(0 as libc::c_int);
     if crate::src::qcommon::q_shared::Q_stricmpn(
         cmd,
@@ -595,7 +596,7 @@ unsafe extern "C" fn SV_MapRestart_f() {
             }
             // add the map_restart command
             crate::src::server::sv_main::SV_AddServerCommand(
-                client,
+                client as *mut crate::server_h::client_s,
                 b"map_restart\n\x00" as *const u8 as *const libc::c_char,
             );
             // connect the client again, without the firstTime flag
@@ -612,7 +613,10 @@ unsafe extern "C" fn SV_MapRestart_f() {
             if !denied.is_null() {
                 // this generally shouldn't happen, because the client
                 // was connected before the level change
-                crate::src::server::sv_client::SV_DropClient(client, denied);
+                crate::src::server::sv_client::SV_DropClient(
+                    client as *mut crate::server_h::client_s,
+                    denied,
+                );
                 crate::src::qcommon::common::Com_Printf(
                     b"SV_MapRestart_f(%d): dropped client %i - denied!\n\x00" as *const u8
                         as *const libc::c_char,
@@ -623,16 +627,18 @@ unsafe extern "C" fn SV_MapRestart_f() {
                 == crate::server_h::CS_ACTIVE as libc::c_int as libc::c_uint
             {
                 crate::src::server::sv_client::SV_ClientEnterWorld(
-                    client,
-                    &mut (*client).lastUsercmd,
+                    client as *mut crate::server_h::client_s,
+                    &mut (*client).lastUsercmd as *mut _
+                        as *mut crate::src::qcommon::q_shared::usercmd_s,
                 );
             } else {
                 // If we don't reset client->lastUsercmd and are restarting during map load,
                 // the client will hang because we'll use the last Usercmd from the previous map,
                 // which is wrong obviously.
                 crate::src::server::sv_client::SV_ClientEnterWorld(
-                    client,
-                    0 as *mut crate::src::qcommon::q_shared::usercmd_t,
+                    client as *mut crate::server_h::client_s,
+                    0 as *mut crate::src::qcommon::q_shared::usercmd_t
+                        as *mut crate::src::qcommon::q_shared::usercmd_s,
                 );
             }
         }
@@ -686,7 +692,7 @@ unsafe extern "C" fn SV_Kick_f() {
                         == crate::qcommon_h::NA_LOOPBACK as libc::c_int as libc::c_uint)
                     {
                         crate::src::server::sv_client::SV_DropClient(
-                            cl,
+                            cl as *mut crate::server_h::client_s,
                             b"was kicked\x00" as *const u8 as *const libc::c_char,
                         );
                         (*cl).lastPacketTime = crate::src::server::sv_main::svs.time
@@ -709,7 +715,7 @@ unsafe extern "C" fn SV_Kick_f() {
                         != crate::qcommon_h::NA_BOT as libc::c_int as libc::c_uint)
                     {
                         crate::src::server::sv_client::SV_DropClient(
-                            cl,
+                            cl as *mut crate::server_h::client_s,
                             b"was kicked\x00" as *const u8 as *const libc::c_char,
                         );
                         (*cl).lastPacketTime = crate::src::server::sv_main::svs.time
@@ -731,7 +737,7 @@ unsafe extern "C" fn SV_Kick_f() {
         return;
     }
     crate::src::server::sv_client::SV_DropClient(
-        cl,
+        cl as *mut crate::server_h::client_s,
         b"was kicked\x00" as *const u8 as *const libc::c_char,
     );
     (*cl).lastPacketTime = crate::src::server::sv_main::svs.time;
@@ -763,7 +769,7 @@ unsafe extern "C" fn SV_KickBots_f() {
                 != crate::qcommon_h::NA_BOT as libc::c_int as libc::c_uint)
             {
                 crate::src::server::sv_client::SV_DropClient(
-                    cl,
+                    cl as *mut crate::server_h::client_s,
                     b"was kicked\x00" as *const u8 as *const libc::c_char,
                 );
                 (*cl).lastPacketTime = crate::src::server::sv_main::svs.time
@@ -800,7 +806,7 @@ unsafe extern "C" fn SV_KickAll_f() {
                 == crate::qcommon_h::NA_LOOPBACK as libc::c_int as libc::c_uint)
             {
                 crate::src::server::sv_client::SV_DropClient(
-                    cl,
+                    cl as *mut crate::server_h::client_s,
                     b"was kicked\x00" as *const u8 as *const libc::c_char,
                 );
                 (*cl).lastPacketTime = crate::src::server::sv_main::svs.time
@@ -848,7 +854,7 @@ unsafe extern "C" fn SV_KickNum_f() {
         return;
     }
     crate::src::server::sv_client::SV_DropClient(
-        cl,
+        cl as *mut crate::server_h::client_s,
         b"was kicked\x00" as *const u8 as *const libc::c_char,
     );
     (*cl).lastPacketTime = crate::src::server::sv_main::svs.time;
@@ -902,7 +908,8 @@ unsafe extern "C" fn SV_Ban_f() {
         );
         if crate::src::qcommon::net_chan::NET_StringToAdr(
             b"authorize.quake3arena.com\x00" as *const u8 as *const libc::c_char,
-            &mut crate::src::server::sv_main::svs.authorizeAddress,
+            &mut crate::src::server::sv_main::svs.authorizeAddress as *mut _
+                as *mut crate::qcommon_h::netadr_t,
             crate::qcommon_h::NA_IP,
         ) == 0
         {
@@ -936,7 +943,7 @@ unsafe extern "C" fn SV_Ban_f() {
     {
         crate::src::qcommon::net_chan::NET_OutOfBandPrint(
             crate::qcommon_h::NS_SERVER,
-            crate::src::server::sv_main::svs.authorizeAddress,
+            crate::src::server::sv_main::svs.authorizeAddress as crate::qcommon_h::netadr_t,
             b"banUser %i.%i.%i.%i\x00" as *const u8 as *const libc::c_char,
             (*cl).netchan.remoteAddress.ip[0 as libc::c_int as usize] as libc::c_int,
             (*cl).netchan.remoteAddress.ip[1 as libc::c_int as usize] as libc::c_int,
@@ -996,7 +1003,8 @@ unsafe extern "C" fn SV_BanNum_f() {
         );
         if crate::src::qcommon::net_chan::NET_StringToAdr(
             b"authorize.quake3arena.com\x00" as *const u8 as *const libc::c_char,
-            &mut crate::src::server::sv_main::svs.authorizeAddress,
+            &mut crate::src::server::sv_main::svs.authorizeAddress as *mut _
+                as *mut crate::qcommon_h::netadr_t,
             crate::qcommon_h::NA_IP,
         ) == 0
         {
@@ -1030,7 +1038,7 @@ unsafe extern "C" fn SV_BanNum_f() {
     {
         crate::src::qcommon::net_chan::NET_OutOfBandPrint(
             crate::qcommon_h::NS_SERVER,
-            crate::src::server::sv_main::svs.authorizeAddress,
+            crate::src::server::sv_main::svs.authorizeAddress as crate::qcommon_h::netadr_t,
             b"banUser %i.%i.%i.%i\x00" as *const u8 as *const libc::c_char,
             (*cl).netchan.remoteAddress.ip[0 as libc::c_int as usize] as libc::c_int,
             (*cl).netchan.remoteAddress.ip[1 as libc::c_int as usize] as libc::c_int,
@@ -1118,7 +1126,7 @@ unsafe extern "C" fn SV_RehashBans_f() {
                 &mut (*crate::src::server::sv_main::serverBans
                     .as_mut_ptr()
                     .offset(index as isize))
-                .ip,
+                .ip as *mut _ as *mut crate::qcommon_h::netadr_t,
                 crate::qcommon_h::NA_UNSPEC,
             ) != 0
             {
@@ -1196,7 +1204,9 @@ unsafe extern "C" fn SV_WriteBans() {
                 ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong as libc::c_int,
                 b"%d %s %d\n\x00" as *const u8 as *const libc::c_char,
                 (*curban).isexception as libc::c_uint,
-                crate::src::qcommon::net_ip::NET_AdrToString((*curban).ip),
+                crate::src::qcommon::net_ip::NET_AdrToString(
+                    (*curban).ip as crate::qcommon_h::netadr_t,
+                ),
                 (*curban).subnet,
             );
             crate::src::qcommon::files::FS_Write(
@@ -1261,13 +1271,16 @@ unsafe extern "C" fn SV_ParseCIDRNotation(
     mut adrstr: *mut libc::c_char,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut suffix: *mut libc::c_char = 0 as *mut libc::c_char;
-    suffix = crate::stdlib::strchr(adrstr, '/' as i32);
+    suffix = ::libc::strchr(adrstr, '/' as i32);
     if !suffix.is_null() {
         *suffix = '\u{0}' as i32 as libc::c_char;
         suffix = suffix.offset(1)
     }
-    if crate::src::qcommon::net_chan::NET_StringToAdr(adrstr, dest, crate::qcommon_h::NA_UNSPEC)
-        == 0
+    if crate::src::qcommon::net_chan::NET_StringToAdr(
+        adrstr,
+        dest as *mut crate::qcommon_h::netadr_t,
+        crate::qcommon_h::NA_UNSPEC,
+    ) == 0
     {
         return crate::src::qcommon::q_shared::qtrue;
     }
@@ -1339,8 +1352,8 @@ unsafe extern "C" fn SV_AddBanToList(mut isexception: crate::src::qcommon::q_sha
         return;
     }
     banstring = crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int);
-    if !crate::stdlib::strchr(banstring, '.' as i32).is_null()
-        || !crate::stdlib::strchr(banstring, ':' as i32).is_null()
+    if !::libc::strchr(banstring, '.' as i32).is_null()
+        || !::libc::strchr(banstring, ':' as i32).is_null()
     {
         // This is an ip address, not a client num.
         if SV_ParseCIDRNotation(&mut ip, &mut mask, banstring) as u64 != 0 {
@@ -1399,15 +1412,15 @@ unsafe extern "C" fn SV_AddBanToList(mut isexception: crate::src::qcommon::q_sha
         if (*curban).subnet <= mask {
             if ((*curban).isexception as libc::c_uint != 0 || isexception as u64 == 0)
                 && crate::src::qcommon::net_ip::NET_CompareBaseAdrMask(
-                    (*curban).ip,
-                    ip,
+                    (*curban).ip as crate::qcommon_h::netadr_t,
+                    ip as crate::qcommon_h::netadr_t,
                     (*curban).subnet,
                 ) as libc::c_uint
                     != 0
             {
                 crate::src::qcommon::q_shared::Q_strncpyz(
                     addy2.as_mut_ptr(),
-                    crate::src::qcommon::net_ip::NET_AdrToString(ip),
+                    crate::src::qcommon::net_ip::NET_AdrToString(ip as crate::qcommon_h::netadr_t),
                     ::std::mem::size_of::<[libc::c_char; 48]>() as libc::c_ulong as libc::c_int,
                 );
                 crate::src::qcommon::common::Com_Printf(
@@ -1418,7 +1431,9 @@ unsafe extern "C" fn SV_AddBanToList(mut isexception: crate::src::qcommon::q_sha
                     } else {
                         b"Ban\x00" as *const u8 as *const libc::c_char
                     },
-                    crate::src::qcommon::net_ip::NET_AdrToString((*curban).ip),
+                    crate::src::qcommon::net_ip::NET_AdrToString(
+                        (*curban).ip as crate::qcommon_h::netadr_t,
+                    ),
                     (*curban).subnet,
                     if isexception as libc::c_uint != 0 {
                         b"exception\x00" as *const u8 as *const libc::c_char
@@ -1434,13 +1449,18 @@ unsafe extern "C" fn SV_AddBanToList(mut isexception: crate::src::qcommon::q_sha
         if (*curban).subnet >= mask {
             if (*curban).isexception as u64 == 0
                 && isexception as libc::c_uint != 0
-                && crate::src::qcommon::net_ip::NET_CompareBaseAdrMask((*curban).ip, ip, mask)
-                    as libc::c_uint
+                && crate::src::qcommon::net_ip::NET_CompareBaseAdrMask(
+                    (*curban).ip as crate::qcommon_h::netadr_t,
+                    ip as crate::qcommon_h::netadr_t,
+                    mask,
+                ) as libc::c_uint
                     != 0
             {
                 crate::src::qcommon::q_shared::Q_strncpyz(
                     addy2.as_mut_ptr(),
-                    crate::src::qcommon::net_ip::NET_AdrToString((*curban).ip),
+                    crate::src::qcommon::net_ip::NET_AdrToString(
+                        (*curban).ip as crate::qcommon_h::netadr_t,
+                    ),
                     ::std::mem::size_of::<[libc::c_char; 48]>() as libc::c_ulong as libc::c_int,
                 );
                 crate::src::qcommon::common::Com_Printf(
@@ -1451,7 +1471,7 @@ unsafe extern "C" fn SV_AddBanToList(mut isexception: crate::src::qcommon::q_sha
                     } else {
                         b"Ban\x00" as *const u8 as *const libc::c_char
                     },
-                    crate::src::qcommon::net_ip::NET_AdrToString(ip),
+                    crate::src::qcommon::net_ip::NET_AdrToString(ip as crate::qcommon_h::netadr_t),
                     mask,
                     if (*curban).isexception as libc::c_uint != 0 {
                         b"exception\x00" as *const u8 as *const libc::c_char
@@ -1474,8 +1494,11 @@ unsafe extern "C" fn SV_AddBanToList(mut isexception: crate::src::qcommon::q_sha
             .offset(index as isize) as *mut crate::server_h::serverBan_t;
         if (*curban).subnet > mask
             && ((*curban).isexception as u64 == 0 || isexception as libc::c_uint != 0)
-            && crate::src::qcommon::net_ip::NET_CompareBaseAdrMask((*curban).ip, ip, mask)
-                as libc::c_uint
+            && crate::src::qcommon::net_ip::NET_CompareBaseAdrMask(
+                (*curban).ip as crate::qcommon_h::netadr_t,
+                ip as crate::qcommon_h::netadr_t,
+                mask,
+            ) as libc::c_uint
                 != 0
         {
             SV_DelBanEntryFromList(index);
@@ -1501,7 +1524,7 @@ unsafe extern "C" fn SV_AddBanToList(mut isexception: crate::src::qcommon::q_sha
         } else {
             b"ban\x00" as *const u8 as *const libc::c_char
         },
-        crate::src::qcommon::net_ip::NET_AdrToString(ip),
+        crate::src::qcommon::net_ip::NET_AdrToString(ip as crate::qcommon_h::netadr_t),
         mask,
     );
 }
@@ -1541,8 +1564,8 @@ unsafe extern "C" fn SV_DelBanFromList(mut isexception: crate::src::qcommon::q_s
         return;
     }
     banstring = crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int);
-    if !crate::stdlib::strchr(banstring, '.' as i32).is_null()
-        || !crate::stdlib::strchr(banstring, ':' as i32).is_null()
+    if !::libc::strchr(banstring, '.' as i32).is_null()
+        || !::libc::strchr(banstring, ':' as i32).is_null()
     {
         let mut curban: *mut crate::server_h::serverBan_t = 0 as *mut crate::server_h::serverBan_t;
         if SV_ParseCIDRNotation(&mut ip, &mut mask, banstring) as u64 != 0 {
@@ -1559,8 +1582,11 @@ unsafe extern "C" fn SV_DelBanFromList(mut isexception: crate::src::qcommon::q_s
                 .offset(index as isize) as *mut crate::server_h::serverBan_t;
             if (*curban).isexception as libc::c_uint == isexception as libc::c_uint
                 && (*curban).subnet >= mask
-                && crate::src::qcommon::net_ip::NET_CompareBaseAdrMask((*curban).ip, ip, mask)
-                    as libc::c_uint
+                && crate::src::qcommon::net_ip::NET_CompareBaseAdrMask(
+                    (*curban).ip as crate::qcommon_h::netadr_t,
+                    ip as crate::qcommon_h::netadr_t,
+                    mask,
+                ) as libc::c_uint
                     != 0
             {
                 crate::src::qcommon::common::Com_Printf(
@@ -1570,7 +1596,9 @@ unsafe extern "C" fn SV_DelBanFromList(mut isexception: crate::src::qcommon::q_s
                     } else {
                         b"ban\x00" as *const u8 as *const libc::c_char
                     },
-                    crate::src::qcommon::net_ip::NET_AdrToString((*curban).ip),
+                    crate::src::qcommon::net_ip::NET_AdrToString(
+                        (*curban).ip as crate::qcommon_h::netadr_t,
+                    ),
                     (*curban).subnet,
                 );
                 SV_DelBanEntryFromList(index);
@@ -1601,7 +1629,8 @@ unsafe extern "C" fn SV_DelBanFromList(mut isexception: crate::src::qcommon::q_s
                             b"ban\x00" as *const u8 as *const libc::c_char
                         },
                         crate::src::qcommon::net_ip::NET_AdrToString(
-                            crate::src::server::sv_main::serverBans[index as usize].ip,
+                            crate::src::server::sv_main::serverBans[index as usize].ip
+                                as crate::qcommon_h::netadr_t,
                         ),
                         crate::src::server::sv_main::serverBans[index as usize].subnet,
                     );
@@ -1645,7 +1674,9 @@ unsafe extern "C" fn SV_ListBans_f() {
             crate::src::qcommon::common::Com_Printf(
                 b"Ban #%d: %s/%d\n\x00" as *const u8 as *const libc::c_char,
                 count,
-                crate::src::qcommon::net_ip::NET_AdrToString((*ban).ip),
+                crate::src::qcommon::net_ip::NET_AdrToString(
+                    (*ban).ip as crate::qcommon_h::netadr_t,
+                ),
                 (*ban).subnet,
             );
         }
@@ -1663,7 +1694,9 @@ unsafe extern "C" fn SV_ListBans_f() {
             crate::src::qcommon::common::Com_Printf(
                 b"Except #%d: %s/%d\n\x00" as *const u8 as *const libc::c_char,
                 count,
-                crate::src::qcommon::net_ip::NET_AdrToString((*ban).ip),
+                crate::src::qcommon::net_ip::NET_AdrToString(
+                    (*ban).ip as crate::qcommon_h::netadr_t,
+                ),
                 (*ban).subnet,
             );
         }
@@ -1768,7 +1801,8 @@ unsafe extern "C" fn SV_Status_f() {
                 b"%2i \x00" as *const u8 as *const libc::c_char,
                 i,
             );
-            ps = crate::src::server::sv_game::SV_GameClientNum(i);
+            ps = crate::src::server::sv_game::SV_GameClientNum(i)
+                as *mut crate::src::qcommon::q_shared::playerState_s;
             crate::src::qcommon::common::Com_Printf(
                 b"%5i \x00" as *const u8 as *const libc::c_char,
                 (*ps).persistant[0 as libc::c_int as usize],
@@ -1812,7 +1846,9 @@ unsafe extern "C" fn SV_Status_f() {
                 }
             }
             // TTimo adding a ^7 to reset the color
-            s = crate::src::qcommon::net_ip::NET_AdrToString((*cl).netchan.remoteAddress);
+            s = crate::src::qcommon::net_ip::NET_AdrToString(
+                (*cl).netchan.remoteAddress as crate::qcommon_h::netadr_t,
+            );
             crate::src::qcommon::common::Com_Printf(
                 b"^7%s\x00" as *const u8 as *const libc::c_char,
                 s,
@@ -1859,7 +1895,7 @@ unsafe extern "C" fn SV_ConSay_f() {
     if crate::src::qcommon::cmd::Cmd_Argc() < 2 as libc::c_int {
         return;
     }
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         text.as_mut_ptr(),
         b"console: \x00" as *const u8 as *const libc::c_char,
     );
@@ -1870,13 +1906,13 @@ unsafe extern "C" fn SV_ConSay_f() {
             crate::stdlib::strlen(p).wrapping_sub(1 as libc::c_int as libc::c_ulong) as isize,
         ) = 0 as libc::c_int as libc::c_char
     }
-    crate::stdlib::strcat(text.as_mut_ptr(), p);
+    ::libc::strcat(text.as_mut_ptr(), p);
     crate::src::qcommon::common::Com_Printf(
         b"%s\n\x00" as *const u8 as *const libc::c_char,
         text.as_mut_ptr(),
     );
     crate::src::server::sv_main::SV_SendServerCommand(
-        0 as *mut crate::server_h::client_t,
+        0 as *mut crate::server_h::client_t as *mut crate::server_h::client_s,
         b"chat \"%s\"\x00" as *const u8 as *const libc::c_char,
         text.as_mut_ptr(),
     );
@@ -1908,7 +1944,7 @@ unsafe extern "C" fn SV_ConTell_f() {
     if cl.is_null() {
         return;
     }
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         text.as_mut_ptr(),
         b"console_tell: \x00" as *const u8 as *const libc::c_char,
     );
@@ -1919,13 +1955,13 @@ unsafe extern "C" fn SV_ConTell_f() {
             crate::stdlib::strlen(p).wrapping_sub(1 as libc::c_int as libc::c_ulong) as isize,
         ) = 0 as libc::c_int as libc::c_char
     }
-    crate::stdlib::strcat(text.as_mut_ptr(), p);
+    ::libc::strcat(text.as_mut_ptr(), p);
     crate::src::qcommon::common::Com_Printf(
         b"%s\n\x00" as *const u8 as *const libc::c_char,
         text.as_mut_ptr(),
     );
     crate::src::server::sv_main::SV_SendServerCommand(
-        cl,
+        cl as *mut crate::server_h::client_s,
         b"chat \"%s\"\x00" as *const u8 as *const libc::c_char,
         text.as_mut_ptr(),
     );
@@ -1994,7 +2030,7 @@ unsafe extern "C" fn SV_ConSayto_f() {
         );
         return;
     }
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         text.as_mut_ptr(),
         b"console_sayto: \x00" as *const u8 as *const libc::c_char,
     );
@@ -2005,13 +2041,13 @@ unsafe extern "C" fn SV_ConSayto_f() {
             crate::stdlib::strlen(p).wrapping_sub(1 as libc::c_int as libc::c_ulong) as isize,
         ) = 0 as libc::c_int as libc::c_char
     }
-    crate::stdlib::strcat(text.as_mut_ptr(), p);
+    ::libc::strcat(text.as_mut_ptr(), p);
     crate::src::qcommon::common::Com_Printf(
         b"%s\n\x00" as *const u8 as *const libc::c_char,
         text.as_mut_ptr(),
     );
     crate::src::server::sv_main::SV_SendServerCommand(
-        saytocl,
+        saytocl as *mut crate::server_h::client_s,
         b"chat \"%s\"\x00" as *const u8 as *const libc::c_char,
         text.as_mut_ptr(),
     );

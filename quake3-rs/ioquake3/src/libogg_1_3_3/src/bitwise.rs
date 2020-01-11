@@ -2,11 +2,11 @@ use ::libc;
 
 pub use crate::ogg_h::oggpack_buffer;
 
-use crate::stdlib::free;
 use crate::stdlib::malloc;
 use crate::stdlib::memmove;
 use crate::stdlib::memset;
 use crate::stdlib::realloc;
+use ::libc::free;
 
 static mut mask: [libc::c_ulong; 33] = [
     0 as libc::c_int as libc::c_ulong,
@@ -439,7 +439,7 @@ pub unsafe extern "C" fn oggpackB_reset(mut b: *mut crate::ogg_h::oggpack_buffer
 
 pub unsafe extern "C" fn oggpack_writeclear(mut b: *mut crate::ogg_h::oggpack_buffer) {
     if !(*b).buffer.is_null() {
-        crate::stdlib::free((*b).buffer as *mut libc::c_void);
+        ::libc::free((*b).buffer as *mut libc::c_void);
     }
     crate::stdlib::memset(
         b as *mut libc::c_void,

@@ -33,28 +33,6 @@ pub mod scales_h {
     }
 }
 pub mod zlib_h {
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct gz_header_s {
-        pub text: libc::c_int,
-        pub time: crate::zconf_h::uLong,
-        pub xflags: libc::c_int,
-        pub os: libc::c_int,
-        pub extra: *mut crate::zconf_h::Bytef,
-        pub extra_len: crate::zconf_h::uInt,
-        pub extra_max: crate::zconf_h::uInt,
-        pub name: *mut crate::zconf_h::Bytef,
-        pub name_max: crate::zconf_h::uInt,
-        pub comment: *mut crate::zconf_h::Bytef,
-        pub comm_max: crate::zconf_h::uInt,
-        pub hcrc: libc::c_int,
-        pub done: libc::c_int,
-    }
-
-    pub type gz_header = crate::zlib_h::gz_header_s;
-
-    pub type gz_headerp = *mut crate::zlib_h::gz_header;
-
     pub type alloc_func = Option<
         unsafe extern "C" fn(
             _: crate::zconf_h::voidpf,
@@ -66,11 +44,7 @@ pub mod zlib_h {
     pub type free_func =
         Option<unsafe extern "C" fn(_: crate::zconf_h::voidpf, _: crate::zconf_h::voidpf) -> ()>;
 
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct internal_state {
-        pub dummy: libc::c_int,
-    }
+    pub type z_stream = crate::zlib_h::z_stream_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -91,66 +65,113 @@ pub mod zlib_h {
         pub reserved: crate::zconf_h::uLong,
     }
 
-    pub type z_stream = crate::zlib_h::z_stream_s;
-
     pub type z_streamp = *mut crate::zlib_h::z_stream;
+
+    pub type gz_header = crate::zlib_h::gz_header_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct gz_header_s {
+        pub text: libc::c_int,
+        pub time: crate::zconf_h::uLong,
+        pub xflags: libc::c_int,
+        pub os: libc::c_int,
+        pub extra: *mut crate::zconf_h::Bytef,
+        pub extra_len: crate::zconf_h::uInt,
+        pub extra_max: crate::zconf_h::uInt,
+        pub name: *mut crate::zconf_h::Bytef,
+        pub name_max: crate::zconf_h::uInt,
+        pub comment: *mut crate::zconf_h::Bytef,
+        pub comm_max: crate::zconf_h::uInt,
+        pub hcrc: libc::c_int,
+        pub done: libc::c_int,
+    }
+
+    pub type gz_headerp = *mut crate::zlib_h::gz_header;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct internal_state {
+        pub dummy: libc::c_int,
+    }
 }
 pub mod zconf_h {
-    pub type voidpf = *mut libc::c_void;
-
-    pub type uLongf = crate::zconf_h::uLong;
-
-    pub type voidp = *mut libc::c_void;
-
-    pub type uLong = libc::c_ulong;
+    pub type Byte = libc::c_uchar;
 
     pub type uInt = libc::c_uint;
 
-    pub type Byte = libc::c_uchar;
+    pub type uLong = libc::c_ulong;
 
     pub type Bytef = crate::zconf_h::Byte;
+
+    pub type uLongf = crate::zconf_h::uLong;
+
+    pub type voidpf = *mut libc::c_void;
+
+    pub type voidp = *mut libc::c_void;
 }
 pub mod cm_local_h {
-    pub type leafList_t = crate::cm_local_h::leafList_s;
-
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct leafList_s {
-        pub count: libc::c_int,
-        pub maxcount: libc::c_int,
-        pub overflowed: crate::src::qcommon::q_shared::qboolean,
-        pub list: *mut libc::c_int,
-        pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
-        pub lastLeaf: libc::c_int,
-        pub storeLeafs: Option<
-            unsafe extern "C" fn(_: *mut crate::cm_local_h::leafList_s, _: libc::c_int) -> (),
-        >,
+    pub struct cNode_t {
+        pub plane: *mut crate::src::qcommon::q_shared::cplane_t,
+        pub children: [libc::c_int; 2],
     }
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct sphere_t {
-        pub use_0: crate::src::qcommon::q_shared::qboolean,
-        pub radius: libc::c_float,
-        pub halfheight: libc::c_float,
-        pub offset: crate::src::qcommon::q_shared::vec3_t,
+    pub struct cLeaf_t {
+        pub cluster: libc::c_int,
+        pub area: libc::c_int,
+        pub firstLeafBrush: libc::c_int,
+        pub numLeafBrushes: libc::c_int,
+        pub firstLeafSurface: libc::c_int,
+        pub numLeafSurfaces: libc::c_int,
+    }
+
+    pub type cmodel_t = crate::cm_local_h::cmodel_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct cmodel_s {
+        pub mins: crate::src::qcommon::q_shared::vec3_t,
+        pub maxs: crate::src::qcommon::q_shared::vec3_t,
+        pub leaf: crate::cm_local_h::cLeaf_t,
     }
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct traceWork_t {
-        pub start: crate::src::qcommon::q_shared::vec3_t,
-        pub end: crate::src::qcommon::q_shared::vec3_t,
-        pub size: [crate::src::qcommon::q_shared::vec3_t; 2],
-        pub offsets: [crate::src::qcommon::q_shared::vec3_t; 8],
-        pub maxOffset: libc::c_float,
-        pub extents: crate::src::qcommon::q_shared::vec3_t,
-        pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
-        pub modelOrigin: crate::src::qcommon::q_shared::vec3_t,
+    pub struct cbrushside_t {
+        pub plane: *mut crate::src::qcommon::q_shared::cplane_t,
+        pub surfaceFlags: libc::c_int,
+        pub shaderNum: libc::c_int,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct cbrush_t {
+        pub shaderNum: libc::c_int,
         pub contents: libc::c_int,
-        pub isPoint: crate::src::qcommon::q_shared::qboolean,
-        pub trace: crate::src::qcommon::q_shared::trace_t,
-        pub sphere: crate::cm_local_h::sphere_t,
+        pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
+        pub numsides: libc::c_int,
+        pub sides: *mut crate::cm_local_h::cbrushside_t,
+        pub checkcount: libc::c_int,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct cPatch_t {
+        pub checkcount: libc::c_int,
+        pub surfaceFlags: libc::c_int,
+        pub contents: libc::c_int,
+        pub pc: *mut crate::src::qcommon::cm_patch::patchCollide_s,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct cArea_t {
+        pub floodnum: libc::c_int,
+        pub floodvalid: libc::c_int,
     }
 
     #[repr(C)]
@@ -192,68 +213,57 @@ pub mod cm_local_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct cPatch_t {
-        pub checkcount: libc::c_int,
-        pub surfaceFlags: libc::c_int,
-        pub contents: libc::c_int,
-        pub pc: *mut crate::src::qcommon::cm_patch::patchCollide_s,
+    pub struct sphere_t {
+        pub use_0: crate::src::qcommon::q_shared::qboolean,
+        pub radius: libc::c_float,
+        pub halfheight: libc::c_float,
+        pub offset: crate::src::qcommon::q_shared::vec3_t,
     }
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct cArea_t {
-        pub floodnum: libc::c_int,
-        pub floodvalid: libc::c_int,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct cbrush_t {
-        pub shaderNum: libc::c_int,
-        pub contents: libc::c_int,
+    pub struct traceWork_t {
+        pub start: crate::src::qcommon::q_shared::vec3_t,
+        pub end: crate::src::qcommon::q_shared::vec3_t,
+        pub size: [crate::src::qcommon::q_shared::vec3_t; 2],
+        pub offsets: [crate::src::qcommon::q_shared::vec3_t; 8],
+        pub maxOffset: libc::c_float,
+        pub extents: crate::src::qcommon::q_shared::vec3_t,
         pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
-        pub numsides: libc::c_int,
-        pub sides: *mut crate::cm_local_h::cbrushside_t,
-        pub checkcount: libc::c_int,
+        pub modelOrigin: crate::src::qcommon::q_shared::vec3_t,
+        pub contents: libc::c_int,
+        pub isPoint: crate::src::qcommon::q_shared::qboolean,
+        pub trace: crate::src::qcommon::q_shared::trace_t,
+        pub sphere: crate::cm_local_h::sphere_t,
     }
+
+    pub type leafList_t = crate::cm_local_h::leafList_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct cbrushside_t {
-        pub plane: *mut crate::src::qcommon::q_shared::cplane_t,
-        pub surfaceFlags: libc::c_int,
-        pub shaderNum: libc::c_int,
-    }
-
-    pub type cmodel_t = crate::cm_local_h::cmodel_s;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct cmodel_s {
-        pub mins: crate::src::qcommon::q_shared::vec3_t,
-        pub maxs: crate::src::qcommon::q_shared::vec3_t,
-        pub leaf: crate::cm_local_h::cLeaf_t,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct cLeaf_t {
-        pub cluster: libc::c_int,
-        pub area: libc::c_int,
-        pub firstLeafBrush: libc::c_int,
-        pub numLeafBrushes: libc::c_int,
-        pub firstLeafSurface: libc::c_int,
-        pub numLeafSurfaces: libc::c_int,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct cNode_t {
-        pub plane: *mut crate::src::qcommon::q_shared::cplane_t,
-        pub children: [libc::c_int; 2],
+    pub struct leafList_s {
+        pub count: libc::c_int,
+        pub maxcount: libc::c_int,
+        pub overflowed: crate::src::qcommon::q_shared::qboolean,
+        pub list: *mut libc::c_int,
+        pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
+        pub lastLeaf: libc::c_int,
+        pub storeLeafs: Option<
+            unsafe extern "C" fn(_: *mut crate::cm_local_h::leafList_s, _: libc::c_int) -> (),
+        >,
     }
 }
 pub mod opus_private_h {
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct OpusRepacketizer {
+        pub toc: libc::c_uchar,
+        pub nb_frames: libc::c_int,
+        pub frames: [*const libc::c_uchar; 48],
+        pub len: [crate::opus_types_h::opus_int16; 48],
+        pub framesize: libc::c_int,
+    }
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct ChannelLayout {
@@ -277,12 +287,9 @@ pub mod opus_private_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct OpusRepacketizer {
-        pub toc: libc::c_uchar,
-        pub nb_frames: libc::c_int,
-        pub frames: [*const libc::c_uchar; 48],
-        pub len: [crate::opus_types_h::opus_int16; 48],
-        pub framesize: libc::c_int,
+    pub struct foo {
+        pub c: libc::c_char,
+        pub u: crate::opus_private_h::C2RustUnnamed_98,
     }
 
     #[repr(C)]
@@ -292,26 +299,8 @@ pub mod opus_private_h {
         pub i: crate::opus_types_h::opus_int32,
         pub v: crate::arch_h::opus_val32,
     }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct foo {
-        pub c: libc::c_char,
-        pub u: crate::opus_private_h::C2RustUnnamed_98,
-    }
 }
 pub mod control_h {
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct silk_DecControlStruct {
-        pub nChannelsAPI: crate::opus_types_h::opus_int32,
-        pub nChannelsInternal: crate::opus_types_h::opus_int32,
-        pub API_sampleRate: crate::opus_types_h::opus_int32,
-        pub internalSampleRate: crate::opus_types_h::opus_int32,
-        pub payloadSize_ms: libc::c_int,
-        pub prevPitchLag: libc::c_int,
-    }
-
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct silk_EncControlStruct {
@@ -341,8 +330,36 @@ pub mod control_h {
         pub signalType: libc::c_int,
         pub offset: libc::c_int,
     }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct silk_DecControlStruct {
+        pub nChannelsAPI: crate::opus_types_h::opus_int32,
+        pub nChannelsInternal: crate::opus_types_h::opus_int32,
+        pub API_sampleRate: crate::opus_types_h::opus_int32,
+        pub internalSampleRate: crate::opus_types_h::opus_int32,
+        pub payloadSize_ms: libc::c_int,
+        pub prevPitchLag: libc::c_int,
+    }
 }
 pub mod structs_FLP_h {
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct silk_shape_state_FLP {
+        pub LastGainIndex: libc::c_schar,
+        pub HarmShapeGain_smth: libc::c_float,
+        pub Tilt_smth: libc::c_float,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct silk_encoder_state_FLP {
+        pub sCmn: crate::structs_h::silk_encoder_state,
+        pub sShape: crate::structs_FLP_h::silk_shape_state_FLP,
+        pub x_buf: [libc::c_float; 720],
+        pub LTPCorr: libc::c_float,
+    }
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct silk_encoder_control_FLP {
@@ -368,23 +385,6 @@ pub mod structs_FLP_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct silk_shape_state_FLP {
-        pub LastGainIndex: libc::c_schar,
-        pub HarmShapeGain_smth: libc::c_float,
-        pub Tilt_smth: libc::c_float,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct silk_encoder_state_FLP {
-        pub sCmn: crate::structs_h::silk_encoder_state,
-        pub sShape: crate::structs_FLP_h::silk_shape_state_FLP,
-        pub x_buf: [libc::c_float; 720],
-        pub LTPCorr: libc::c_float,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
     pub struct silk_encoder {
         pub state_Fxx: [crate::structs_FLP_h::silk_encoder_state_FLP; 2],
         pub sStereo: crate::structs_h::stereo_enc_state,
@@ -399,123 +399,6 @@ pub mod structs_FLP_h {
     }
 }
 pub mod structs_h {
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct silk_NLSF_CB_struct {
-        pub nVectors: crate::opus_types_h::opus_int16,
-        pub order: crate::opus_types_h::opus_int16,
-        pub quantStepSize_Q16: crate::opus_types_h::opus_int16,
-        pub invQuantStepSize_Q6: crate::opus_types_h::opus_int16,
-        pub CB1_NLSF_Q8: *const libc::c_uchar,
-        pub CB1_Wght_Q9: *const crate::opus_types_h::opus_int16,
-        pub CB1_iCDF: *const libc::c_uchar,
-        pub pred_Q8: *const libc::c_uchar,
-        pub ec_sel: *const libc::c_uchar,
-        pub ec_iCDF: *const libc::c_uchar,
-        pub ec_Rates_Q5: *const libc::c_uchar,
-        pub deltaMin_Q15: *const crate::opus_types_h::opus_int16,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct SideInfoIndices {
-        pub GainsIndices: [libc::c_schar; 4],
-        pub LTPIndex: [libc::c_schar; 4],
-        pub NLSFIndices: [libc::c_schar; 17],
-        pub lagIndex: crate::opus_types_h::opus_int16,
-        pub contourIndex: libc::c_schar,
-        pub signalType: libc::c_schar,
-        pub quantOffsetType: libc::c_schar,
-        pub NLSFInterpCoef_Q2: libc::c_schar,
-        pub PERIndex: libc::c_schar,
-        pub LTP_scaleIndex: libc::c_schar,
-        pub Seed: libc::c_schar,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct silk_PLC_struct {
-        pub pitchL_Q8: crate::opus_types_h::opus_int32,
-        pub LTPCoef_Q14: [crate::opus_types_h::opus_int16; 5],
-        pub prevLPC_Q12: [crate::opus_types_h::opus_int16; 16],
-        pub last_frame_lost: libc::c_int,
-        pub rand_seed: crate::opus_types_h::opus_int32,
-        pub randScale_Q14: crate::opus_types_h::opus_int16,
-        pub conc_energy: crate::opus_types_h::opus_int32,
-        pub conc_energy_shift: libc::c_int,
-        pub prevLTP_scale_Q14: crate::opus_types_h::opus_int16,
-        pub prevGain_Q16: [crate::opus_types_h::opus_int32; 2],
-        pub fs_kHz: libc::c_int,
-        pub nb_subfr: libc::c_int,
-        pub subfr_length: libc::c_int,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct silk_CNG_struct {
-        pub CNG_exc_buf_Q14: [crate::opus_types_h::opus_int32; 320],
-        pub CNG_smth_NLSF_Q15: [crate::opus_types_h::opus_int16; 16],
-        pub CNG_synth_state: [crate::opus_types_h::opus_int32; 16],
-        pub CNG_smth_Gain_Q16: crate::opus_types_h::opus_int32,
-        pub rand_seed: crate::opus_types_h::opus_int32,
-        pub fs_kHz: libc::c_int,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct silk_decoder_state {
-        pub prev_gain_Q16: crate::opus_types_h::opus_int32,
-        pub exc_Q14: [crate::opus_types_h::opus_int32; 320],
-        pub sLPC_Q14_buf: [crate::opus_types_h::opus_int32; 16],
-        pub outBuf: [crate::opus_types_h::opus_int16; 480],
-        pub lagPrev: libc::c_int,
-        pub LastGainIndex: libc::c_schar,
-        pub fs_kHz: libc::c_int,
-        pub fs_API_hz: crate::opus_types_h::opus_int32,
-        pub nb_subfr: libc::c_int,
-        pub frame_length: libc::c_int,
-        pub subfr_length: libc::c_int,
-        pub ltp_mem_length: libc::c_int,
-        pub LPC_order: libc::c_int,
-        pub prevNLSF_Q15: [crate::opus_types_h::opus_int16; 16],
-        pub first_frame_after_reset: libc::c_int,
-        pub pitch_lag_low_bits_iCDF: *const libc::c_uchar,
-        pub pitch_contour_iCDF: *const libc::c_uchar,
-        pub nFramesDecoded: libc::c_int,
-        pub nFramesPerPacket: libc::c_int,
-        pub ec_prevSignalType: libc::c_int,
-        pub ec_prevLagIndex: crate::opus_types_h::opus_int16,
-        pub VAD_flags: [libc::c_int; 3],
-        pub LBRR_flag: libc::c_int,
-        pub LBRR_flags: [libc::c_int; 3],
-        pub resampler_state: crate::resampler_structs_h::silk_resampler_state_struct,
-        pub psNLSF_CB: *const crate::structs_h::silk_NLSF_CB_struct,
-        pub indices: crate::structs_h::SideInfoIndices,
-        pub sCNG: crate::structs_h::silk_CNG_struct,
-        pub lossCnt: libc::c_int,
-        pub prevSignalType: libc::c_int,
-        pub arch: libc::c_int,
-        pub sPLC: crate::structs_h::silk_PLC_struct,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct silk_decoder_control {
-        pub pitchL: [libc::c_int; 4],
-        pub Gains_Q16: [crate::opus_types_h::opus_int32; 4],
-        pub PredCoef_Q12: [[crate::opus_types_h::opus_int16; 16]; 2],
-        pub LTPCoef_Q14: [crate::opus_types_h::opus_int16; 20],
-        pub LTP_scale_Q14: libc::c_int,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct stereo_dec_state {
-        pub pred_prev_Q13: [crate::opus_types_h::opus_int16; 2],
-        pub sMid: [crate::opus_types_h::opus_int16; 2],
-        pub sSide: [crate::opus_types_h::opus_int16; 2],
-    }
-
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct silk_nsq_state {
@@ -554,6 +437,61 @@ pub mod structs_h {
         pub In_LP_State: [crate::opus_types_h::opus_int32; 2],
         pub transition_frame_no: crate::opus_types_h::opus_int32,
         pub mode: libc::c_int,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct silk_NLSF_CB_struct {
+        pub nVectors: crate::opus_types_h::opus_int16,
+        pub order: crate::opus_types_h::opus_int16,
+        pub quantStepSize_Q16: crate::opus_types_h::opus_int16,
+        pub invQuantStepSize_Q6: crate::opus_types_h::opus_int16,
+        pub CB1_NLSF_Q8: *const libc::c_uchar,
+        pub CB1_Wght_Q9: *const crate::opus_types_h::opus_int16,
+        pub CB1_iCDF: *const libc::c_uchar,
+        pub pred_Q8: *const libc::c_uchar,
+        pub ec_sel: *const libc::c_uchar,
+        pub ec_iCDF: *const libc::c_uchar,
+        pub ec_Rates_Q5: *const libc::c_uchar,
+        pub deltaMin_Q15: *const crate::opus_types_h::opus_int16,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct stereo_enc_state {
+        pub pred_prev_Q13: [crate::opus_types_h::opus_int16; 2],
+        pub sMid: [crate::opus_types_h::opus_int16; 2],
+        pub sSide: [crate::opus_types_h::opus_int16; 2],
+        pub mid_side_amp_Q0: [crate::opus_types_h::opus_int32; 4],
+        pub smth_width_Q14: crate::opus_types_h::opus_int16,
+        pub width_prev_Q14: crate::opus_types_h::opus_int16,
+        pub silent_side_len: crate::opus_types_h::opus_int16,
+        pub predIx: [[[libc::c_schar; 3]; 2]; 3],
+        pub mid_only_flags: [libc::c_schar; 3],
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct stereo_dec_state {
+        pub pred_prev_Q13: [crate::opus_types_h::opus_int16; 2],
+        pub sMid: [crate::opus_types_h::opus_int16; 2],
+        pub sSide: [crate::opus_types_h::opus_int16; 2],
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct SideInfoIndices {
+        pub GainsIndices: [libc::c_schar; 4],
+        pub LTPIndex: [libc::c_schar; 4],
+        pub NLSFIndices: [libc::c_schar; 17],
+        pub lagIndex: crate::opus_types_h::opus_int16,
+        pub contourIndex: libc::c_schar,
+        pub signalType: libc::c_schar,
+        pub quantOffsetType: libc::c_schar,
+        pub NLSFInterpCoef_Q2: libc::c_schar,
+        pub PERIndex: libc::c_schar,
+        pub LTP_scaleIndex: libc::c_schar,
+        pub Seed: libc::c_schar,
     }
 
     #[repr(C)]
@@ -640,25 +578,82 @@ pub mod structs_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct stereo_enc_state {
-        pub pred_prev_Q13: [crate::opus_types_h::opus_int16; 2],
-        pub sMid: [crate::opus_types_h::opus_int16; 2],
-        pub sSide: [crate::opus_types_h::opus_int16; 2],
-        pub mid_side_amp_Q0: [crate::opus_types_h::opus_int32; 4],
-        pub smth_width_Q14: crate::opus_types_h::opus_int16,
-        pub width_prev_Q14: crate::opus_types_h::opus_int16,
-        pub silent_side_len: crate::opus_types_h::opus_int16,
-        pub predIx: [[[libc::c_schar; 3]; 2]; 3],
-        pub mid_only_flags: [libc::c_schar; 3],
+    pub struct silk_PLC_struct {
+        pub pitchL_Q8: crate::opus_types_h::opus_int32,
+        pub LTPCoef_Q14: [crate::opus_types_h::opus_int16; 5],
+        pub prevLPC_Q12: [crate::opus_types_h::opus_int16; 16],
+        pub last_frame_lost: libc::c_int,
+        pub rand_seed: crate::opus_types_h::opus_int32,
+        pub randScale_Q14: crate::opus_types_h::opus_int16,
+        pub conc_energy: crate::opus_types_h::opus_int32,
+        pub conc_energy_shift: libc::c_int,
+        pub prevLTP_scale_Q14: crate::opus_types_h::opus_int16,
+        pub prevGain_Q16: [crate::opus_types_h::opus_int32; 2],
+        pub fs_kHz: libc::c_int,
+        pub nb_subfr: libc::c_int,
+        pub subfr_length: libc::c_int,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct silk_CNG_struct {
+        pub CNG_exc_buf_Q14: [crate::opus_types_h::opus_int32; 320],
+        pub CNG_smth_NLSF_Q15: [crate::opus_types_h::opus_int16; 16],
+        pub CNG_synth_state: [crate::opus_types_h::opus_int32; 16],
+        pub CNG_smth_Gain_Q16: crate::opus_types_h::opus_int32,
+        pub rand_seed: crate::opus_types_h::opus_int32,
+        pub fs_kHz: libc::c_int,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct silk_decoder_state {
+        pub prev_gain_Q16: crate::opus_types_h::opus_int32,
+        pub exc_Q14: [crate::opus_types_h::opus_int32; 320],
+        pub sLPC_Q14_buf: [crate::opus_types_h::opus_int32; 16],
+        pub outBuf: [crate::opus_types_h::opus_int16; 480],
+        pub lagPrev: libc::c_int,
+        pub LastGainIndex: libc::c_schar,
+        pub fs_kHz: libc::c_int,
+        pub fs_API_hz: crate::opus_types_h::opus_int32,
+        pub nb_subfr: libc::c_int,
+        pub frame_length: libc::c_int,
+        pub subfr_length: libc::c_int,
+        pub ltp_mem_length: libc::c_int,
+        pub LPC_order: libc::c_int,
+        pub prevNLSF_Q15: [crate::opus_types_h::opus_int16; 16],
+        pub first_frame_after_reset: libc::c_int,
+        pub pitch_lag_low_bits_iCDF: *const libc::c_uchar,
+        pub pitch_contour_iCDF: *const libc::c_uchar,
+        pub nFramesDecoded: libc::c_int,
+        pub nFramesPerPacket: libc::c_int,
+        pub ec_prevSignalType: libc::c_int,
+        pub ec_prevLagIndex: crate::opus_types_h::opus_int16,
+        pub VAD_flags: [libc::c_int; 3],
+        pub LBRR_flag: libc::c_int,
+        pub LBRR_flags: [libc::c_int; 3],
+        pub resampler_state: crate::resampler_structs_h::silk_resampler_state_struct,
+        pub psNLSF_CB: *const crate::structs_h::silk_NLSF_CB_struct,
+        pub indices: crate::structs_h::SideInfoIndices,
+        pub sCNG: crate::structs_h::silk_CNG_struct,
+        pub lossCnt: libc::c_int,
+        pub prevSignalType: libc::c_int,
+        pub arch: libc::c_int,
+        pub sPLC: crate::structs_h::silk_PLC_struct,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct silk_decoder_control {
+        pub pitchL: [libc::c_int; 4],
+        pub Gains_Q16: [crate::opus_types_h::opus_int32; 4],
+        pub PredCoef_Q12: [[crate::opus_types_h::opus_int16; 16]; 2],
+        pub LTPCoef_Q14: [crate::opus_types_h::opus_int16; 20],
+        pub LTP_scale_Q14: libc::c_int,
     }
 }
 pub mod resampler_structs_h {
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub union C2RustUnnamed_64 {
-        pub i32_0: [crate::opus_types_h::opus_int32; 36],
-        pub i16_0: [crate::opus_types_h::opus_int16; 36],
-    }
+    pub type silk_resampler_state_struct = crate::resampler_structs_h::_silk_resampler_state_struct;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -677,16 +672,14 @@ pub mod resampler_structs_h {
         pub Coefs: *const crate::opus_types_h::opus_int16,
     }
 
-    pub type silk_resampler_state_struct = crate::resampler_structs_h::_silk_resampler_state_struct;
-}
-pub mod celt_h {
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct SILKInfo {
-        pub signalType: libc::c_int,
-        pub offset: libc::c_int,
+    pub union C2RustUnnamed_64 {
+        pub i32_0: [crate::opus_types_h::opus_int32; 36],
+        pub i16_0: [crate::opus_types_h::opus_int16; 36],
     }
-
+}
+pub mod celt_h {
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct AnalysisInfo {
@@ -701,24 +694,40 @@ pub mod celt_h {
         pub activity_probability: libc::c_float,
         pub leak_boost: [libc::c_uchar; 19],
     }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct SILKInfo {
+        pub signalType: libc::c_int,
+        pub offset: libc::c_int,
+    }
 }
 pub mod arch_h {
     pub type opus_val16 = libc::c_float;
 
     pub type opus_val32 = libc::c_float;
 
+    pub type opus_val64 = libc::c_float;
+
     pub type celt_sig = libc::c_float;
 
     pub type celt_norm = libc::c_float;
 
     pub type celt_ener = libc::c_float;
-
-    pub type opus_val64 = libc::c_float;
 }
 pub mod os_h {
     pub type vorbis_fpu_control = crate::config_types_h::ogg_int16_t;
 }
 pub mod highlevel_h {
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct highlevel_byblocktype {
+        pub tone_mask_setting: libc::c_double,
+        pub tone_peaklimit_setting: libc::c_double,
+        pub noise_bias_setting: libc::c_double,
+        pub noise_compand_setting: libc::c_double,
+    }
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct highlevel_encode_setup {
@@ -746,19 +755,8 @@ pub mod highlevel_h {
         pub trigger_setting: libc::c_double,
         pub block: [crate::highlevel_h::highlevel_byblocktype; 4],
     }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct highlevel_byblocktype {
-        pub tone_mask_setting: libc::c_double,
-        pub tone_peaklimit_setting: libc::c_double,
-        pub noise_bias_setting: libc::c_double,
-        pub noise_compand_setting: libc::c_double,
-    }
 }
 pub mod codec_internal_h {
-    pub type vorbis_info_mapping = ();
-
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct vorbis_block_internal {
@@ -767,6 +765,27 @@ pub mod codec_internal_h {
         pub blocktype: libc::c_int,
         pub packetblob: [*mut crate::ogg_h::oggpack_buffer; 15],
     }
+
+    pub type vorbis_look_floor = ();
+
+    pub type vorbis_look_residue = ();
+
+    pub type vorbis_look_transform = ();
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct vorbis_info_mode {
+        pub blockflag: libc::c_int,
+        pub windowtype: libc::c_int,
+        pub transformtype: libc::c_int,
+        pub mapping: libc::c_int,
+    }
+
+    pub type vorbis_info_floor = ();
+
+    pub type vorbis_info_residue = ();
+
+    pub type vorbis_info_mapping = ();
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -786,12 +805,6 @@ pub mod codec_internal_h {
         pub bms: crate::src::libvorbis_1_3_6::lib::bitrate::bitrate_manager_state,
         pub sample_count: crate::config_types_h::ogg_int64_t,
     }
-
-    pub type vorbis_look_residue = ();
-
-    pub type vorbis_look_floor = ();
-
-    pub type vorbis_look_transform = ();
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -819,19 +832,6 @@ pub mod codec_internal_h {
         pub halfrate_flag: libc::c_int,
     }
 
-    pub type vorbis_info_residue = ();
-
-    pub type vorbis_info_floor = ();
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct vorbis_info_mode {
-        pub blockflag: libc::c_int,
-        pub windowtype: libc::c_int,
-        pub transformtype: libc::c_int,
-        pub mapping: libc::c_int,
-    }
-
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct vorbis_look_floor1 {
@@ -852,13 +852,9 @@ pub mod codec_internal_h {
 pub mod backends_h {
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct vorbis_func_mapping {
+    pub struct vorbis_func_floor {
         pub pack: Option<
-            unsafe extern "C" fn(
-                _: *mut crate::codec_h::vorbis_info,
-                _: *mut libc::c_void,
-                _: *mut crate::ogg_h::oggpack_buffer,
-            ) -> (),
+            unsafe extern "C" fn(_: *mut libc::c_void, _: *mut crate::ogg_h::oggpack_buffer) -> (),
         >,
         pub unpack: Option<
             unsafe extern "C" fn(
@@ -866,13 +862,26 @@ pub mod backends_h {
                 _: *mut crate::ogg_h::oggpack_buffer,
             ) -> *mut libc::c_void,
         >,
+        pub look: Option<
+            unsafe extern "C" fn(
+                _: *mut crate::codec_h::vorbis_dsp_state,
+                _: *mut libc::c_void,
+            ) -> *mut libc::c_void,
+        >,
         pub free_info: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
-        pub forward:
-            Option<unsafe extern "C" fn(_: *mut crate::codec_h::vorbis_block) -> libc::c_int>,
-        pub inverse: Option<
+        pub free_look: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
+        pub inverse1: Option<
             unsafe extern "C" fn(
                 _: *mut crate::codec_h::vorbis_block,
                 _: *mut libc::c_void,
+            ) -> *mut libc::c_void,
+        >,
+        pub inverse2: Option<
+            unsafe extern "C" fn(
+                _: *mut crate::codec_h::vorbis_block,
+                _: *mut libc::c_void,
+                _: *mut libc::c_void,
+                _: *mut libc::c_float,
             ) -> libc::c_int,
         >,
     }
@@ -908,18 +917,6 @@ pub mod backends_h {
         pub twofitweight: libc::c_float,
         pub twofitatten: libc::c_float,
         pub n: libc::c_int,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct vorbis_info_mapping0 {
-        pub submaps: libc::c_int,
-        pub chmuxlist: [libc::c_int; 256],
-        pub floorsubmap: [libc::c_int; 16],
-        pub residuesubmap: [libc::c_int; 16],
-        pub coupling_steps: libc::c_int,
-        pub coupling_mag: [libc::c_int; 256],
-        pub coupling_ang: [libc::c_int; 256],
     }
 
     #[repr(C)]
@@ -976,42 +973,6 @@ pub mod backends_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct vorbis_func_floor {
-        pub pack: Option<
-            unsafe extern "C" fn(_: *mut libc::c_void, _: *mut crate::ogg_h::oggpack_buffer) -> (),
-        >,
-        pub unpack: Option<
-            unsafe extern "C" fn(
-                _: *mut crate::codec_h::vorbis_info,
-                _: *mut crate::ogg_h::oggpack_buffer,
-            ) -> *mut libc::c_void,
-        >,
-        pub look: Option<
-            unsafe extern "C" fn(
-                _: *mut crate::codec_h::vorbis_dsp_state,
-                _: *mut libc::c_void,
-            ) -> *mut libc::c_void,
-        >,
-        pub free_info: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
-        pub free_look: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
-        pub inverse1: Option<
-            unsafe extern "C" fn(
-                _: *mut crate::codec_h::vorbis_block,
-                _: *mut libc::c_void,
-            ) -> *mut libc::c_void,
-        >,
-        pub inverse2: Option<
-            unsafe extern "C" fn(
-                _: *mut crate::codec_h::vorbis_block,
-                _: *mut libc::c_void,
-                _: *mut libc::c_void,
-                _: *mut libc::c_float,
-            ) -> libc::c_int,
-        >,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
     pub struct vorbis_info_residue0 {
         pub begin: libc::c_long,
         pub end: libc::c_long,
@@ -1024,8 +985,63 @@ pub mod backends_h {
         pub classmetric1: [libc::c_int; 64],
         pub classmetric2: [libc::c_int; 64],
     }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct vorbis_func_mapping {
+        pub pack: Option<
+            unsafe extern "C" fn(
+                _: *mut crate::codec_h::vorbis_info,
+                _: *mut libc::c_void,
+                _: *mut crate::ogg_h::oggpack_buffer,
+            ) -> (),
+        >,
+        pub unpack: Option<
+            unsafe extern "C" fn(
+                _: *mut crate::codec_h::vorbis_info,
+                _: *mut crate::ogg_h::oggpack_buffer,
+            ) -> *mut libc::c_void,
+        >,
+        pub free_info: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
+        pub forward:
+            Option<unsafe extern "C" fn(_: *mut crate::codec_h::vorbis_block) -> libc::c_int>,
+        pub inverse: Option<
+            unsafe extern "C" fn(
+                _: *mut crate::codec_h::vorbis_block,
+                _: *mut libc::c_void,
+            ) -> libc::c_int,
+        >,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct vorbis_info_mapping0 {
+        pub submaps: libc::c_int,
+        pub chmuxlist: [libc::c_int; 256],
+        pub floorsubmap: [libc::c_int; 16],
+        pub residuesubmap: [libc::c_int; 16],
+        pub coupling_steps: libc::c_int,
+        pub coupling_mag: [libc::c_int; 256],
+        pub coupling_ang: [libc::c_int; 256],
+    }
 }
 pub mod internal_h {
+    pub type op_sample = libc::c_float;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct OggOpusLink {
+        pub offset: libc::c_longlong,
+        pub data_offset: libc::c_longlong,
+        pub end_offset: libc::c_longlong,
+        pub pcm_file_offset: crate::config_types_h::ogg_int64_t,
+        pub pcm_end: crate::config_types_h::ogg_int64_t,
+        pub pcm_start: crate::config_types_h::ogg_int64_t,
+        pub serialno: crate::config_types_h::ogg_uint32_t,
+        pub head: crate::src::opusfile_0_9::src::opusfile::OpusHead,
+        pub tags: crate::src::opusfile_0_9::src::opusfile::OpusTags,
+    }
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct OggOpusFile {
@@ -1071,22 +1087,6 @@ pub mod internal_h {
         pub dither_disabled: libc::c_int,
         pub state_channel_count: libc::c_int,
     }
-
-    pub type op_sample = libc::c_float;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct OggOpusLink {
-        pub offset: libc::c_longlong,
-        pub data_offset: libc::c_longlong,
-        pub end_offset: libc::c_longlong,
-        pub pcm_file_offset: crate::config_types_h::ogg_int64_t,
-        pub pcm_end: crate::config_types_h::ogg_int64_t,
-        pub pcm_start: crate::config_types_h::ogg_int64_t,
-        pub serialno: crate::config_types_h::ogg_uint32_t,
-        pub head: crate::src::opusfile_0_9::src::opusfile::OpusHead,
-        pub tags: crate::src::opusfile_0_9::src::opusfile::OpusTags,
-    }
 }
 pub mod codec_h {
     #[repr(C)]
@@ -1100,15 +1100,6 @@ pub mod codec_h {
         pub bitrate_lower: libc::c_long,
         pub bitrate_window: libc::c_long,
         pub codec_setup: *mut libc::c_void,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct vorbis_comment {
-        pub user_comments: *mut *mut libc::c_char,
-        pub comment_lengths: *mut libc::c_int,
-        pub comments: libc::c_int,
-        pub vendor: *mut libc::c_char,
     }
 
     #[repr(C)]
@@ -1168,6 +1159,15 @@ pub mod codec_h {
         pub ptr: *mut libc::c_void,
         pub next: *mut crate::codec_h::alloc_chain,
     }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct vorbis_comment {
+        pub user_comments: *mut *mut libc::c_char,
+        pub comment_lengths: *mut libc::c_int,
+        pub comments: libc::c_int,
+        pub vendor: *mut libc::c_char,
+    }
 }
 pub mod ogg_h {
     #[repr(C)]
@@ -1179,34 +1179,21 @@ pub mod ogg_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
+    pub struct oggpack_buffer {
+        pub endbyte: libc::c_long,
+        pub endbit: libc::c_int,
+        pub buffer: *mut libc::c_uchar,
+        pub ptr: *mut libc::c_uchar,
+        pub storage: libc::c_long,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
     pub struct ogg_page {
         pub header: *mut libc::c_uchar,
         pub header_len: libc::c_long,
         pub body: *mut libc::c_uchar,
         pub body_len: libc::c_long,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct ogg_packet {
-        pub packet: *mut libc::c_uchar,
-        pub bytes: libc::c_long,
-        pub b_o_s: libc::c_long,
-        pub e_o_s: libc::c_long,
-        pub granulepos: crate::config_types_h::ogg_int64_t,
-        pub packetno: crate::config_types_h::ogg_int64_t,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct ogg_sync_state {
-        pub data: *mut libc::c_uchar,
-        pub storage: libc::c_int,
-        pub fill: libc::c_int,
-        pub returned: libc::c_int,
-        pub unsynced: libc::c_int,
-        pub headerbytes: libc::c_int,
-        pub bodybytes: libc::c_int,
     }
 
     #[repr(C)]
@@ -1234,18 +1221,31 @@ pub mod ogg_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct oggpack_buffer {
-        pub endbyte: libc::c_long,
-        pub endbit: libc::c_int,
-        pub buffer: *mut libc::c_uchar,
-        pub ptr: *mut libc::c_uchar,
-        pub storage: libc::c_long,
+    pub struct ogg_packet {
+        pub packet: *mut libc::c_uchar,
+        pub bytes: libc::c_long,
+        pub b_o_s: libc::c_long,
+        pub e_o_s: libc::c_long,
+        pub granulepos: crate::config_types_h::ogg_int64_t,
+        pub packetno: crate::config_types_h::ogg_int64_t,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct ogg_sync_state {
+        pub data: *mut libc::c_uchar,
+        pub storage: libc::c_int,
+        pub fill: libc::c_int,
+        pub returned: libc::c_int,
+        pub unsynced: libc::c_int,
+        pub headerbytes: libc::c_int,
+        pub bodybytes: libc::c_int,
     }
 }
 pub mod config_types_h {
-    pub type ogg_int32_t = crate::stdlib::int32_t;
-
     pub type ogg_int16_t = crate::stdlib::int16_t;
+
+    pub type ogg_int32_t = crate::stdlib::int32_t;
 
     pub type ogg_uint32_t = crate::stdlib::uint32_t;
 
@@ -1640,68 +1640,15 @@ pub mod curlbuild_h {
     pub type curl_off_t = libc::c_long;
 }
 pub mod opus_types_h {
-    pub type opus_int32 = crate::stdlib::int32_t;
-
     pub type opus_int16 = crate::stdlib::int16_t;
 
-    pub type opus_uint32 = crate::stdlib::uint32_t;
-
     pub type opus_uint16 = crate::stdlib::uint16_t;
+
+    pub type opus_int32 = crate::stdlib::int32_t;
+
+    pub type opus_uint32 = crate::stdlib::uint32_t;
 }
 pub mod client_h {
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct serverInfo_t {
-        pub adr: crate::qcommon_h::netadr_t,
-        pub hostName: [libc::c_char; 32],
-        pub mapName: [libc::c_char; 32],
-        pub game: [libc::c_char; 32],
-        pub netType: libc::c_int,
-        pub gameType: libc::c_int,
-        pub clients: libc::c_int,
-        pub maxClients: libc::c_int,
-        pub minPing: libc::c_int,
-        pub maxPing: libc::c_int,
-        pub ping: libc::c_int,
-        pub visible: crate::src::qcommon::q_shared::qboolean,
-        pub punkbuster: libc::c_int,
-        pub g_humanplayers: libc::c_int,
-        pub g_needpass: libc::c_int,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct clientStatic_t {
-        pub cddialog: crate::src::qcommon::q_shared::qboolean,
-        pub rendererStarted: crate::src::qcommon::q_shared::qboolean,
-        pub soundStarted: crate::src::qcommon::q_shared::qboolean,
-        pub soundRegistered: crate::src::qcommon::q_shared::qboolean,
-        pub uiStarted: crate::src::qcommon::q_shared::qboolean,
-        pub cgameStarted: crate::src::qcommon::q_shared::qboolean,
-        pub framecount: libc::c_int,
-        pub frametime: libc::c_int,
-        pub realtime: libc::c_int,
-        pub realFrametime: libc::c_int,
-        pub numlocalservers: libc::c_int,
-        pub localServers: [crate::client_h::serverInfo_t; 128],
-        pub numglobalservers: libc::c_int,
-        pub globalServers: [crate::client_h::serverInfo_t; 4096],
-        pub numGlobalServerAddresses: libc::c_int,
-        pub globalServerAddresses: [crate::qcommon_h::netadr_t; 4096],
-        pub numfavoriteservers: libc::c_int,
-        pub favoriteServers: [crate::client_h::serverInfo_t; 128],
-        pub pingUpdateSource: libc::c_int,
-        pub updateServer: crate::qcommon_h::netadr_t,
-        pub updateChallenge: [libc::c_char; 1024],
-        pub updateInfoString: [libc::c_char; 1024],
-        pub authorizeServer: crate::qcommon_h::netadr_t,
-        pub rconAddress: crate::qcommon_h::netadr_t,
-        pub glconfig: crate::tr_types_h::glconfig_t,
-        pub charSetShader: crate::src::qcommon::q_shared::qhandle_t,
-        pub whiteShader: crate::src::qcommon::q_shared::qhandle_t,
-        pub consoleShader: crate::src::qcommon::q_shared::qhandle_t,
-    }
-
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct clSnapshot_t {
@@ -1834,21 +1781,74 @@ pub mod client_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
+    pub struct ping_t {
+        pub adr: crate::qcommon_h::netadr_t,
+        pub start: libc::c_int,
+        pub time: libc::c_int,
+        pub info: [libc::c_char; 1024],
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct serverInfo_t {
+        pub adr: crate::qcommon_h::netadr_t,
+        pub hostName: [libc::c_char; 32],
+        pub mapName: [libc::c_char; 32],
+        pub game: [libc::c_char; 32],
+        pub netType: libc::c_int,
+        pub gameType: libc::c_int,
+        pub clients: libc::c_int,
+        pub maxClients: libc::c_int,
+        pub minPing: libc::c_int,
+        pub maxPing: libc::c_int,
+        pub ping: libc::c_int,
+        pub visible: crate::src::qcommon::q_shared::qboolean,
+        pub punkbuster: libc::c_int,
+        pub g_humanplayers: libc::c_int,
+        pub g_needpass: libc::c_int,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct clientStatic_t {
+        pub cddialog: crate::src::qcommon::q_shared::qboolean,
+        pub rendererStarted: crate::src::qcommon::q_shared::qboolean,
+        pub soundStarted: crate::src::qcommon::q_shared::qboolean,
+        pub soundRegistered: crate::src::qcommon::q_shared::qboolean,
+        pub uiStarted: crate::src::qcommon::q_shared::qboolean,
+        pub cgameStarted: crate::src::qcommon::q_shared::qboolean,
+        pub framecount: libc::c_int,
+        pub frametime: libc::c_int,
+        pub realtime: libc::c_int,
+        pub realFrametime: libc::c_int,
+        pub numlocalservers: libc::c_int,
+        pub localServers: [crate::client_h::serverInfo_t; 128],
+        pub numglobalservers: libc::c_int,
+        pub globalServers: [crate::client_h::serverInfo_t; 4096],
+        pub numGlobalServerAddresses: libc::c_int,
+        pub globalServerAddresses: [crate::qcommon_h::netadr_t; 4096],
+        pub numfavoriteservers: libc::c_int,
+        pub favoriteServers: [crate::client_h::serverInfo_t; 128],
+        pub pingUpdateSource: libc::c_int,
+        pub updateServer: crate::qcommon_h::netadr_t,
+        pub updateChallenge: [libc::c_char; 1024],
+        pub updateInfoString: [libc::c_char; 1024],
+        pub authorizeServer: crate::qcommon_h::netadr_t,
+        pub rconAddress: crate::qcommon_h::netadr_t,
+        pub glconfig: crate::tr_types_h::glconfig_t,
+        pub charSetShader: crate::src::qcommon::q_shared::qhandle_t,
+        pub whiteShader: crate::src::qcommon::q_shared::qhandle_t,
+        pub consoleShader: crate::src::qcommon::q_shared::qhandle_t,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
     pub struct kbutton_t {
         pub down: [libc::c_int; 2],
         pub downtime: libc::c_uint,
         pub msec: libc::c_uint,
         pub active: crate::src::qcommon::q_shared::qboolean,
         pub wasPressed: crate::src::qcommon::q_shared::qboolean,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct ping_t {
-        pub adr: crate::qcommon_h::netadr_t,
-        pub start: libc::c_int,
-        pub time: libc::c_int,
-        pub info: [libc::c_char; 1024],
     }
 }
 pub mod tr_public_h {
@@ -2163,9 +2163,9 @@ pub mod tr_public_h {
 pub mod stddef_h {
     pub type ptrdiff_t = libc::c_long;
 
-    pub type wchar_t = libc::c_int;
-
     pub type size_t = libc::c_ulong;
+
+    pub type wchar_t = libc::c_int;
 }
 pub mod stdarg_h {
     pub type va_list = crate::internal::__builtin_va_list;
@@ -2183,26 +2183,7 @@ pub mod internal {
     }
 }
 pub mod aasfile_h {
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct aas_lump_t {
-        pub fileofs: libc::c_int,
-        pub filelen: libc::c_int,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct aas_header_s {
-        pub ident: libc::c_int,
-        pub version: libc::c_int,
-        pub bspchecksum: libc::c_int,
-        pub lumps: [crate::aasfile_h::aas_lump_t; 14],
-    }
-    //child nodes of this node, or areas as leaves when negative
-    //when a child is zero it's a solid leaf
-    //aas file header
-
-    pub type aas_header_t = crate::aasfile_h::aas_header_s;
+    pub type aas_bbox_t = crate::aasfile_h::aas_bbox_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -2212,16 +2193,10 @@ pub mod aasfile_h {
         pub mins: crate::src::qcommon::q_shared::vec3_t,
         pub maxs: crate::src::qcommon::q_shared::vec3_t,
     }
-    //bot can stand on the ground
-    //area contains one or more ladder faces
-    //area contains a liquid
-    //area is disabled for routing when set
-    //area ontop of a bridge
-    //aas file header lumps
-    //========== bounding box =========
-    //bounding box
+    //============ settings ===========
+    //reachability to another area
 
-    pub type aas_bbox_t = crate::aasfile_h::aas_bbox_s;
+    pub type aas_reachability_t = crate::aasfile_h::aas_reachability_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -2233,22 +2208,6 @@ pub mod aasfile_h {
         pub end: crate::src::qcommon::q_shared::vec3_t,
         pub traveltype: libc::c_int,
         pub traveltime: libc::c_ushort,
-    }
-    //============ settings ===========
-    //reachability to another area
-
-    pub type aas_reachability_t = crate::aasfile_h::aas_reachability_s;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct aas_areasettings_s {
-        pub contents: libc::c_int,
-        pub areaflags: libc::c_int,
-        pub presencetype: libc::c_int,
-        pub cluster: libc::c_int,
-        pub clusterareanum: libc::c_int,
-        pub numreachableareas: libc::c_int,
-        pub firstreachablearea: libc::c_int,
     }
     //number of the reachable area
     //number of the face towards the other area
@@ -2263,11 +2222,14 @@ pub mod aasfile_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct aas_portal_s {
-        pub areanum: libc::c_int,
-        pub frontcluster: libc::c_int,
-        pub backcluster: libc::c_int,
-        pub clusterareanum: [libc::c_int; 2],
+    pub struct aas_areasettings_s {
+        pub contents: libc::c_int,
+        pub areaflags: libc::c_int,
+        pub presencetype: libc::c_int,
+        pub cluster: libc::c_int,
+        pub clusterareanum: libc::c_int,
+        pub numreachableareas: libc::c_int,
+        pub firstreachablearea: libc::c_int,
     }
     //could also add all kind of statistic fields
     //contents of the area
@@ -2280,6 +2242,15 @@ pub mod aasfile_h {
     //cluster portal
 
     pub type aas_portal_t = crate::aasfile_h::aas_portal_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct aas_portal_s {
+        pub areanum: libc::c_int,
+        pub frontcluster: libc::c_int,
+        pub backcluster: libc::c_int,
+        pub clusterareanum: [libc::c_int; 2],
+    }
     //area that is the actual portal
     //cluster at front of portal
     //cluster at back of portal
@@ -2287,6 +2258,9 @@ pub mod aasfile_h {
     //cluster portal index
 
     pub type aas_portalindex_t = libc::c_int;
+    //cluster
+
+    pub type aas_cluster_t = crate::aasfile_h::aas_cluster_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -2296,9 +2270,6 @@ pub mod aasfile_h {
         pub numportals: libc::c_int,
         pub firstportal: libc::c_int,
     }
-    //cluster
-
-    pub type aas_cluster_t = crate::aasfile_h::aas_cluster_s;
     //number of areas in the cluster
     //number of areas with reachabilities
     //number of cluster portals
@@ -2306,6 +2277,9 @@ pub mod aasfile_h {
     //============ 3d definition ============
 
     pub type aas_vertex_t = crate::src::qcommon::q_shared::vec3_t;
+    //just a plane in the third dimension
+
+    pub type aas_plane_t = crate::aasfile_h::aas_plane_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -2314,24 +2288,24 @@ pub mod aasfile_h {
         pub dist: libc::c_float,
         pub type_0: libc::c_int,
     }
-    //just a plane in the third dimension
+    //normal vector of the plane
+    //distance of the plane (normal vector * distance = point in plane)
+    //edge
 
-    pub type aas_plane_t = crate::aasfile_h::aas_plane_s;
+    pub type aas_edge_t = crate::aasfile_h::aas_edge_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct aas_edge_s {
         pub v: [libc::c_int; 2],
     }
-    //normal vector of the plane
-    //distance of the plane (normal vector * distance = point in plane)
-    //edge
-
-    pub type aas_edge_t = crate::aasfile_h::aas_edge_s;
     //numbers of the vertexes of this edge
     //edge index, negative if vertexes are reversed
 
     pub type aas_edgeindex_t = libc::c_int;
+    //a face bounds an area, often it will also separate two areas
+
+    pub type aas_face_t = crate::aasfile_h::aas_face_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -2343,9 +2317,6 @@ pub mod aasfile_h {
         pub frontarea: libc::c_int,
         pub backarea: libc::c_int,
     }
-    //a face bounds an area, often it will also separate two areas
-
-    pub type aas_face_t = crate::aasfile_h::aas_face_s;
     //number of the plane this face is in
     //face flags (no use to create face settings for just this field)
     //number of edges in the boundary of the face
@@ -2355,6 +2326,9 @@ pub mod aasfile_h {
     //face index, stores a negative index if backside of face
 
     pub type aas_faceindex_t = libc::c_int;
+    //area with a boundary of faces
+
+    pub type aas_area_t = crate::aasfile_h::aas_area_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -2366,16 +2340,6 @@ pub mod aasfile_h {
         pub maxs: crate::src::qcommon::q_shared::vec3_t,
         pub center: crate::src::qcommon::q_shared::vec3_t,
     }
-    //area with a boundary of faces
-
-    pub type aas_area_t = crate::aasfile_h::aas_area_s;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct aas_node_s {
-        pub planenum: libc::c_int,
-        pub children: [libc::c_int; 2],
-    }
     //number of this area
     //3d definition
     //number of faces used for the boundary of the area
@@ -2386,8 +2350,52 @@ pub mod aasfile_h {
     //nodes of the bsp tree
 
     pub type aas_node_t = crate::aasfile_h::aas_node_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct aas_node_s {
+        pub planenum: libc::c_int,
+        pub children: [libc::c_int; 2],
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct aas_lump_t {
+        pub fileofs: libc::c_int,
+        pub filelen: libc::c_int,
+    }
+    //child nodes of this node, or areas as leaves when negative
+    //when a child is zero it's a solid leaf
+    //aas file header
+
+    pub type aas_header_t = crate::aasfile_h::aas_header_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct aas_header_s {
+        pub ident: libc::c_int,
+        pub version: libc::c_int,
+        pub bspchecksum: libc::c_int,
+        pub lumps: [crate::aasfile_h::aas_lump_t; 14],
+    }
 }
 pub mod be_aas_def_h {
+    pub type aas_link_t = crate::be_aas_def_h::aas_link_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct aas_link_s {
+        pub entnum: libc::c_int,
+        pub areanum: libc::c_int,
+        pub next_ent: *mut crate::be_aas_def_h::aas_link_s,
+        pub prev_ent: *mut crate::be_aas_def_h::aas_link_s,
+        pub next_area: *mut crate::be_aas_def_h::aas_link_s,
+        pub prev_area: *mut crate::be_aas_def_h::aas_link_s,
+    }
+    //structure to link entities to leaves and leaves to entities
+
+    pub type bsp_link_t = crate::be_aas_def_h::bsp_link_s;
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct bsp_link_s {
@@ -2398,9 +2406,30 @@ pub mod be_aas_def_h {
         pub next_leaf: *mut crate::be_aas_def_h::bsp_link_s,
         pub prev_leaf: *mut crate::be_aas_def_h::bsp_link_s,
     }
-    //structure to link entities to leaves and leaves to entities
 
-    pub type bsp_link_t = crate::be_aas_def_h::bsp_link_s;
+    pub type bsp_entdata_t = crate::be_aas_def_h::bsp_entdata_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct bsp_entdata_s {
+        pub origin: crate::src::qcommon::q_shared::vec3_t,
+        pub angles: crate::src::qcommon::q_shared::vec3_t,
+        pub absmins: crate::src::qcommon::q_shared::vec3_t,
+        pub absmaxs: crate::src::qcommon::q_shared::vec3_t,
+        pub solid: libc::c_int,
+        pub modelnum: libc::c_int,
+    }
+    //entity
+
+    pub type aas_entity_t = crate::be_aas_def_h::aas_entity_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct aas_entity_s {
+        pub i: crate::be_aas_h::aas_entityinfo_t,
+        pub areas: *mut crate::be_aas_def_h::aas_link_t,
+        pub leaves: *mut crate::be_aas_def_h::bsp_link_t,
+    }
 
     pub type aas_settings_t = crate::be_aas_def_h::aas_settings_s;
 
@@ -2445,61 +2474,12 @@ pub mod be_aas_def_h {
         pub rs_maxfallheight: libc::c_float,
         pub rs_maxjumpfallheight: libc::c_float,
     }
+    //entity info
+    //links into the AAS areas
+    //links into the BSP leaves
+    //routing cache
 
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct aas_link_s {
-        pub entnum: libc::c_int,
-        pub areanum: libc::c_int,
-        pub next_ent: *mut crate::be_aas_def_h::aas_link_s,
-        pub prev_ent: *mut crate::be_aas_def_h::aas_link_s,
-        pub next_area: *mut crate::be_aas_def_h::aas_link_s,
-        pub prev_area: *mut crate::be_aas_def_h::aas_link_s,
-    }
-    /*
-    ===========================================================================
-    Copyright (C) 1999-2005 Id Software, Inc.
-
-    This file is part of Quake III Arena source code.
-
-    Quake III Arena source code is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public License as
-    published by the Free Software Foundation; either version 2 of the License,
-    or (at your option) any later version.
-
-    Quake III Arena source code is distributed in the hope that it will be
-    useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Quake III Arena source code; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-    ===========================================================================
-    */
-    /* ****************************************************************************
-     * name:		be_aas_def.h
-     *
-     * desc:		AAS
-     *
-     * $Archive: /source/code/botlib/be_aas_def.h $
-     *
-     *****************************************************************************/
-    //debugging on
-    //structure to link entities to areas and areas to entities
-
-    pub type aas_link_t = crate::be_aas_def_h::aas_link_s;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct aas_entity_s {
-        pub i: crate::be_aas_h::aas_entityinfo_t,
-        pub areas: *mut crate::be_aas_def_h::aas_link_t,
-        pub leaves: *mut crate::be_aas_def_h::bsp_link_t,
-    }
-    //entity
-
-    pub type aas_entity_t = crate::be_aas_def_h::aas_entity_s;
+    pub type aas_routingcache_t = crate::be_aas_def_h::aas_routingcache_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -2519,25 +2499,6 @@ pub mod be_aas_def_h {
         pub reachabilities: *mut libc::c_uchar,
         pub traveltimes: [libc::c_ushort; 1],
     }
-    //entity info
-    //links into the AAS areas
-    //links into the BSP leaves
-    //routing cache
-
-    pub type aas_routingcache_t = crate::be_aas_def_h::aas_routingcache_s;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct aas_routingupdate_s {
-        pub cluster: libc::c_int,
-        pub areanum: libc::c_int,
-        pub start: crate::src::qcommon::q_shared::vec3_t,
-        pub tmptraveltime: libc::c_ushort,
-        pub areatraveltimes: *mut libc::c_ushort,
-        pub inlist: crate::src::qcommon::q_shared::qboolean,
-        pub next: *mut crate::be_aas_def_h::aas_routingupdate_s,
-        pub prev: *mut crate::be_aas_def_h::aas_routingupdate_s,
-    }
     //portal or area cache
     //last time accessed or updated
     //size of the routing cache
@@ -2554,10 +2515,15 @@ pub mod be_aas_def_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct aas_reversedlink_s {
-        pub linknum: libc::c_int,
+    pub struct aas_routingupdate_s {
+        pub cluster: libc::c_int,
         pub areanum: libc::c_int,
-        pub next: *mut crate::be_aas_def_h::aas_reversedlink_s,
+        pub start: crate::src::qcommon::q_shared::vec3_t,
+        pub tmptraveltime: libc::c_ushort,
+        pub areatraveltimes: *mut libc::c_ushort,
+        pub inlist: crate::src::qcommon::q_shared::qboolean,
+        pub next: *mut crate::be_aas_def_h::aas_routingupdate_s,
+        pub prev: *mut crate::be_aas_def_h::aas_routingupdate_s,
     }
     //area number of the update
     //start point the area was entered
@@ -2570,9 +2536,10 @@ pub mod be_aas_def_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct aas_reversedreachability_s {
-        pub numlinks: libc::c_int,
-        pub first: *mut crate::be_aas_def_h::aas_reversedlink_t,
+    pub struct aas_reversedlink_s {
+        pub linknum: libc::c_int,
+        pub areanum: libc::c_int,
+        pub next: *mut crate::be_aas_def_h::aas_reversedlink_s,
     }
     //the aas_areareachability_t
     //reachable from this area
@@ -2583,13 +2550,22 @@ pub mod be_aas_def_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct aas_reachabilityareas_s {
-        pub firstarea: libc::c_int,
-        pub numareas: libc::c_int,
+    pub struct aas_reversedreachability_s {
+        pub numlinks: libc::c_int,
+        pub first: *mut crate::be_aas_def_h::aas_reversedlink_t,
     }
     //areas a reachability goes through
 
     pub type aas_reachabilityareas_t = crate::be_aas_def_h::aas_reachabilityareas_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct aas_reachabilityareas_s {
+        pub firstarea: libc::c_int,
+        pub numareas: libc::c_int,
+    }
+
+    pub type aas_t = crate::be_aas_def_h::aas_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -2654,23 +2630,10 @@ pub mod be_aas_def_h {
         pub reachabilityareaindex: *mut libc::c_int,
         pub reachabilityareas: *mut crate::be_aas_def_h::aas_reachabilityareas_t,
     }
-
-    pub type aas_t = crate::be_aas_def_h::aas_s;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct bsp_entdata_s {
-        pub origin: crate::src::qcommon::q_shared::vec3_t,
-        pub angles: crate::src::qcommon::q_shared::vec3_t,
-        pub absmins: crate::src::qcommon::q_shared::vec3_t,
-        pub absmaxs: crate::src::qcommon::q_shared::vec3_t,
-        pub solid: libc::c_int,
-        pub modelnum: libc::c_int,
-    }
-
-    pub type bsp_entdata_t = crate::be_aas_def_h::bsp_entdata_s;
 }
 pub mod botlib_h {
+    pub type bot_input_t = crate::botlib_h::bot_input_s;
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct bot_input_s {
@@ -2681,8 +2644,9 @@ pub mod botlib_h {
         pub actionflags: libc::c_int,
         pub weapon: libc::c_int,
     }
+    //bsp_trace_t hit surface
 
-    pub type bot_input_t = crate::botlib_h::bot_input_s;
+    pub type bsp_surface_t = crate::botlib_h::bsp_surface_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -2691,9 +2655,10 @@ pub mod botlib_h {
         pub flags: libc::c_int,
         pub value: libc::c_int,
     }
-    //bsp_trace_t hit surface
+    //remove the bsp_trace_s structure definition l8r on
+    //a trace is returned when a box is swept through the world
 
-    pub type bsp_surface_t = crate::botlib_h::bsp_surface_s;
+    pub type bsp_trace_t = crate::botlib_h::bsp_trace_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -2709,10 +2674,56 @@ pub mod botlib_h {
         pub contents: libc::c_int,
         pub ent: libc::c_int,
     }
-    //remove the bsp_trace_s structure definition l8r on
-    //a trace is returned when a box is swept through the world
+    // if true, plane is not valid
+    // if true, the initial point was in a solid area
+    // time completed, 1.0 = didn't hit anything
+    // final position
+    // surface normal at impact
+    // expanded plane distance
+    // number of the brush side hit
+    // the hit point surface
+    // contents on other side of surface hit
+    // number of entity hit
+    // BSPTRACE
+    //entity state
 
-    pub type bsp_trace_t = crate::botlib_h::bsp_trace_s;
+    pub type bot_entitystate_t = crate::botlib_h::bot_entitystate_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct bot_entitystate_s {
+        pub type_0: libc::c_int,
+        pub flags: libc::c_int,
+        pub origin: crate::src::qcommon::q_shared::vec3_t,
+        pub angles: crate::src::qcommon::q_shared::vec3_t,
+        pub old_origin: crate::src::qcommon::q_shared::vec3_t,
+        pub mins: crate::src::qcommon::q_shared::vec3_t,
+        pub maxs: crate::src::qcommon::q_shared::vec3_t,
+        pub groundent: libc::c_int,
+        pub solid: libc::c_int,
+        pub modelindex: libc::c_int,
+        pub modelindex2: libc::c_int,
+        pub frame: libc::c_int,
+        pub event: libc::c_int,
+        pub eventParm: libc::c_int,
+        pub powerups: libc::c_int,
+        pub weapon: libc::c_int,
+        pub legsAnim: libc::c_int,
+        pub torsoAnim: libc::c_int,
+    }
+    // if true, plane is not valid
+    // if true, the initial point was in a solid area
+    // time completed, 1.0 = didn't hit anything
+    // final position
+    // surface normal at impact
+    // expanded plane distance
+    // number of the brush side hit
+    // the hit point surface
+    // contents on other side of surface hit
+    // number of entity hit
+    //bot AI library exported functions
+
+    pub type botlib_import_t = crate::botlib_h::botlib_import_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -2814,56 +2825,8 @@ pub mod botlib_h {
         >,
         pub DebugPolygonDelete: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
     }
-    // if true, plane is not valid
-    // if true, the initial point was in a solid area
-    // time completed, 1.0 = didn't hit anything
-    // final position
-    // surface normal at impact
-    // expanded plane distance
-    // number of the brush side hit
-    // the hit point surface
-    // contents on other side of surface hit
-    // number of entity hit
-    //bot AI library exported functions
 
-    pub type botlib_import_t = crate::botlib_h::botlib_import_s;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct bot_entitystate_s {
-        pub type_0: libc::c_int,
-        pub flags: libc::c_int,
-        pub origin: crate::src::qcommon::q_shared::vec3_t,
-        pub angles: crate::src::qcommon::q_shared::vec3_t,
-        pub old_origin: crate::src::qcommon::q_shared::vec3_t,
-        pub mins: crate::src::qcommon::q_shared::vec3_t,
-        pub maxs: crate::src::qcommon::q_shared::vec3_t,
-        pub groundent: libc::c_int,
-        pub solid: libc::c_int,
-        pub modelindex: libc::c_int,
-        pub modelindex2: libc::c_int,
-        pub frame: libc::c_int,
-        pub event: libc::c_int,
-        pub eventParm: libc::c_int,
-        pub powerups: libc::c_int,
-        pub weapon: libc::c_int,
-        pub legsAnim: libc::c_int,
-        pub torsoAnim: libc::c_int,
-    }
-    // if true, plane is not valid
-    // if true, the initial point was in a solid area
-    // time completed, 1.0 = didn't hit anything
-    // final position
-    // surface normal at impact
-    // expanded plane distance
-    // number of the brush side hit
-    // the hit point surface
-    // contents on other side of surface hit
-    // number of entity hit
-    // BSPTRACE
-    //entity state
-
-    pub type bot_entitystate_t = crate::botlib_h::bot_entitystate_s;
+    pub type aas_export_t = crate::botlib_h::aas_export_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -3002,7 +2965,7 @@ pub mod botlib_h {
         >,
     }
 
-    pub type aas_export_t = crate::botlib_h::aas_export_s;
+    pub type ea_export_t = crate::botlib_h::ea_export_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -3050,7 +3013,7 @@ pub mod botlib_h {
         pub EA_ResetInput: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
     }
 
-    pub type ea_export_t = crate::botlib_h::ea_export_s;
+    pub type ai_export_t = crate::botlib_h::ai_export_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -3356,7 +3319,7 @@ pub mod botlib_h {
         >,
     }
 
-    pub type ai_export_t = crate::botlib_h::ai_export_s;
+    pub type botlib_export_t = crate::botlib_h::botlib_export_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -3410,10 +3373,26 @@ pub mod botlib_h {
             ) -> libc::c_int,
         >,
     }
-
-    pub type botlib_export_t = crate::botlib_h::botlib_export_s;
 }
 pub mod server_h {
+    pub use crate::src::server::sv_world::worldSector_s;
+
+    pub type voipServerPacket_t = crate::server_h::voipServerPacket_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct voipServerPacket_s {
+        pub generation: libc::c_int,
+        pub sequence: libc::c_int,
+        pub frames: libc::c_int,
+        pub len: libc::c_int,
+        pub sender: libc::c_int,
+        pub flags: libc::c_int,
+        pub data: [crate::src::qcommon::q_shared::byte; 4000],
+    }
+
+    pub type svEntity_t = crate::server_h::svEntity_s;
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct svEntity_s {
@@ -3428,9 +3407,13 @@ pub mod server_h {
         pub snapshotCounter: libc::c_int,
     }
 
-    pub type svEntity_t = crate::server_h::svEntity_s;
-
     pub type serverState_t = libc::c_uint;
+
+    pub const SS_DEAD: crate::server_h::serverState_t = 0;
+
+    pub const SS_LOADING: crate::server_h::serverState_t = 1;
+
+    pub const SS_GAME: crate::server_h::serverState_t = 2;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -3458,41 +3441,6 @@ pub mod server_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct serverBan_t {
-        pub ip: crate::qcommon_h::netadr_t,
-        pub subnet: libc::c_int,
-        pub isexception: crate::src::qcommon::q_shared::qboolean,
-    }
-
-    pub const SS_GAME: crate::server_h::serverState_t = 2;
-
-    pub const SS_LOADING: crate::server_h::serverState_t = 1;
-
-    pub const SS_DEAD: crate::server_h::serverState_t = 0;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub union C2RustUnnamed_164 {
-        pub _4: [crate::src::qcommon::q_shared::byte; 4],
-        pub _6: [crate::src::qcommon::q_shared::byte; 16],
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct voipServerPacket_s {
-        pub generation: libc::c_int,
-        pub sequence: libc::c_int,
-        pub frames: libc::c_int,
-        pub len: libc::c_int,
-        pub sender: libc::c_int,
-        pub flags: libc::c_int,
-        pub data: [crate::src::qcommon::q_shared::byte; 4000],
-    }
-
-    pub type voipServerPacket_t = crate::server_h::voipServerPacket_s;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
     pub struct clientSnapshot_t {
         pub areabytes: libc::c_int,
         pub areabits: [crate::src::qcommon::q_shared::byte; 32],
@@ -3506,6 +3454,18 @@ pub mod server_h {
 
     pub type clientState_t = libc::c_uint;
 
+    pub const CS_FREE: crate::server_h::clientState_t = 0;
+
+    pub const CS_ZOMBIE: crate::server_h::clientState_t = 1;
+
+    pub const CS_CONNECTED: crate::server_h::clientState_t = 2;
+
+    pub const CS_PRIMED: crate::server_h::clientState_t = 3;
+
+    pub const CS_ACTIVE: crate::server_h::clientState_t = 4;
+
+    pub type netchan_buffer_t = crate::server_h::netchan_buffer_s;
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct netchan_buffer_s {
@@ -3515,7 +3475,7 @@ pub mod server_h {
         pub next: *mut crate::server_h::netchan_buffer_s,
     }
 
-    pub type netchan_buffer_t = crate::server_h::netchan_buffer_s;
+    pub type client_t = crate::server_h::client_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -3573,8 +3533,6 @@ pub mod server_h {
         pub compat: crate::src::qcommon::q_shared::qboolean,
     }
 
-    pub type client_t = crate::server_h::client_s;
-
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct challenge_t {
@@ -3605,7 +3563,15 @@ pub mod server_h {
         pub masterResolveTime: [libc::c_int; 5],
     }
 
-    pub use crate::src::server::sv_world::worldSector_s;
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct serverBan_t {
+        pub ip: crate::qcommon_h::netadr_t,
+        pub subnet: libc::c_int,
+        pub isexception: crate::src::qcommon::q_shared::qboolean,
+    }
+
+    pub type leakyBucket_t = crate::server_h::leakyBucket_s;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -3619,17 +3585,12 @@ pub mod server_h {
         pub next: *mut crate::server_h::leakyBucket_t,
     }
 
-    pub type leakyBucket_t = crate::server_h::leakyBucket_s;
-
-    pub const CS_ACTIVE: crate::server_h::clientState_t = 4;
-
-    pub const CS_PRIMED: crate::server_h::clientState_t = 3;
-
-    pub const CS_CONNECTED: crate::server_h::clientState_t = 2;
-
-    pub const CS_ZOMBIE: crate::server_h::clientState_t = 1;
-
-    pub const CS_FREE: crate::server_h::clientState_t = 0;
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub union C2RustUnnamed_164 {
+        pub _4: [crate::src::qcommon::q_shared::byte; 4],
+        pub _6: [crate::src::qcommon::q_shared::byte; 16],
+    }
 }
 pub mod g_public_h {
     #[repr(C)]
@@ -3658,514 +3619,525 @@ pub mod g_public_h {
         pub r: crate::g_public_h::entityShared_t,
     }
 
-    pub const BOTAI_START_FRAME: crate::be_aas_h::C2RustUnnamed_0 = 10;
-
-    pub const GAME_CONSOLE_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 9;
-
-    pub const GAME_RUN_FRAME: crate::be_aas_h::C2RustUnnamed_0 = 8;
-
-    pub const GAME_CLIENT_THINK: crate::be_aas_h::C2RustUnnamed_0 = 7;
-
-    pub const GAME_CLIENT_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 6;
-
-    pub const GAME_CLIENT_DISCONNECT: crate::be_aas_h::C2RustUnnamed_0 = 5;
-
-    pub const GAME_CLIENT_USERINFO_CHANGED: crate::be_aas_h::C2RustUnnamed_0 = 4;
-
-    pub const GAME_CLIENT_BEGIN: crate::be_aas_h::C2RustUnnamed_0 = 3;
-
-    pub const GAME_CLIENT_CONNECT: crate::be_aas_h::C2RustUnnamed_0 = 2;
-
-    pub const GAME_SHUTDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1;
-
-    pub const GAME_INIT: crate::be_aas_h::C2RustUnnamed_0 = 0;
-
-    pub const BOTLIB_PC_SOURCE_FILE_AND_LINE: crate::be_aas_h::C2RustUnnamed_0 = 581;
-
-    pub const BOTLIB_PC_READ_TOKEN: crate::be_aas_h::C2RustUnnamed_0 = 580;
-
-    pub const BOTLIB_PC_FREE_SOURCE: crate::be_aas_h::C2RustUnnamed_0 = 579;
-
-    pub const BOTLIB_PC_LOAD_SOURCE: crate::be_aas_h::C2RustUnnamed_0 = 578;
-
-    pub const BOTLIB_AAS_POINT_REACHABILITY_AREA_INDEX: crate::be_aas_h::C2RustUnnamed_0 = 577;
-
-    pub const BOTLIB_AAS_PREDICT_ROUTE: crate::be_aas_h::C2RustUnnamed_0 = 576;
-
-    pub const BOTLIB_AAS_ALTERNATIVE_ROUTE_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 575;
-
-    pub const BOTLIB_AI_ADD_AVOID_SPOT: crate::be_aas_h::C2RustUnnamed_0 = 574;
-
-    pub const BOTLIB_AI_SET_AVOID_GOAL_TIME: crate::be_aas_h::C2RustUnnamed_0 = 573;
-
-    pub const BOTLIB_AI_PREDICT_VISIBLE_POSITION: crate::be_aas_h::C2RustUnnamed_0 = 572;
-
-    pub const BOTLIB_AI_REMOVE_FROM_AVOID_GOALS: crate::be_aas_h::C2RustUnnamed_0 = 571;
-
-    pub const BOTLIB_AI_GET_CHAT_MESSAGE: crate::be_aas_h::C2RustUnnamed_0 = 570;
-
-    pub const BOTLIB_AI_NUM_INITIAL_CHATS: crate::be_aas_h::C2RustUnnamed_0 = 569;
-
-    pub const BOTLIB_AI_GET_MAP_LOCATION_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 568;
-
-    pub const BOTLIB_AI_GET_NEXT_CAMP_SPOT_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 567;
-
-    pub const BOTLIB_AI_MUTATE_GOAL_FUZZY_LOGIC: crate::be_aas_h::C2RustUnnamed_0 = 566;
-
-    pub const BOTLIB_AI_INTERBREED_GOAL_FUZZY_LOGIC: crate::be_aas_h::C2RustUnnamed_0 = 565;
-
-    pub const BOTLIB_AI_GENETIC_PARENTS_AND_CHILD_SELECTION: crate::be_aas_h::C2RustUnnamed_0 = 564;
-
-    pub const BOTLIB_AI_RESET_WEAPON_STATE: crate::be_aas_h::C2RustUnnamed_0 = 563;
-
-    pub const BOTLIB_AI_FREE_WEAPON_STATE: crate::be_aas_h::C2RustUnnamed_0 = 562;
-
-    pub const BOTLIB_AI_ALLOC_WEAPON_STATE: crate::be_aas_h::C2RustUnnamed_0 = 561;
-
-    pub const BOTLIB_AI_LOAD_WEAPON_WEIGHTS: crate::be_aas_h::C2RustUnnamed_0 = 560;
-
-    pub const BOTLIB_AI_GET_WEAPON_INFO: crate::be_aas_h::C2RustUnnamed_0 = 559;
-
-    pub const BOTLIB_AI_CHOOSE_BEST_FIGHT_WEAPON: crate::be_aas_h::C2RustUnnamed_0 = 558;
-
-    pub const BOTLIB_AI_INIT_MOVE_STATE: crate::be_aas_h::C2RustUnnamed_0 = 557;
-
-    pub const BOTLIB_AI_FREE_MOVE_STATE: crate::be_aas_h::C2RustUnnamed_0 = 556;
-
-    pub const BOTLIB_AI_ALLOC_MOVE_STATE: crate::be_aas_h::C2RustUnnamed_0 = 555;
-
-    pub const BOTLIB_AI_MOVEMENT_VIEW_TARGET: crate::be_aas_h::C2RustUnnamed_0 = 554;
-
-    pub const BOTLIB_AI_REACHABILITY_AREA: crate::be_aas_h::C2RustUnnamed_0 = 553;
-
-    pub const BOTLIB_AI_RESET_LAST_AVOID_REACH: crate::be_aas_h::C2RustUnnamed_0 = 552;
-
-    pub const BOTLIB_AI_RESET_AVOID_REACH: crate::be_aas_h::C2RustUnnamed_0 = 551;
-
-    pub const BOTLIB_AI_MOVE_IN_DIRECTION: crate::be_aas_h::C2RustUnnamed_0 = 550;
-
-    pub const BOTLIB_AI_MOVE_TO_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 549;
-
-    pub const BOTLIB_AI_RESET_MOVE_STATE: crate::be_aas_h::C2RustUnnamed_0 = 548;
-
-    pub const BOTLIB_AI_FREE_GOAL_STATE: crate::be_aas_h::C2RustUnnamed_0 = 547;
-
-    pub const BOTLIB_AI_ALLOC_GOAL_STATE: crate::be_aas_h::C2RustUnnamed_0 = 546;
-
-    pub const BOTLIB_AI_SAVE_GOAL_FUZZY_LOGIC: crate::be_aas_h::C2RustUnnamed_0 = 545;
-
-    pub const BOTLIB_AI_FREE_ITEM_WEIGHTS: crate::be_aas_h::C2RustUnnamed_0 = 544;
-
-    pub const BOTLIB_AI_LOAD_ITEM_WEIGHTS: crate::be_aas_h::C2RustUnnamed_0 = 543;
-
-    pub const BOTLIB_AI_UPDATE_ENTITY_ITEMS: crate::be_aas_h::C2RustUnnamed_0 = 542;
-
-    pub const BOTLIB_AI_INIT_LEVEL_ITEMS: crate::be_aas_h::C2RustUnnamed_0 = 541;
-
-    pub const BOTLIB_AI_AVOID_GOAL_TIME: crate::be_aas_h::C2RustUnnamed_0 = 540;
-
-    pub const BOTLIB_AI_GET_LEVEL_ITEM_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 539;
-
-    pub const BOTLIB_AI_ITEM_GOAL_IN_VIS_BUT_NOT_VISIBLE: crate::be_aas_h::C2RustUnnamed_0 = 538;
-
-    pub const BOTLIB_AI_TOUCHING_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 537;
-
-    pub const BOTLIB_AI_CHOOSE_NBG_ITEM: crate::be_aas_h::C2RustUnnamed_0 = 536;
-
-    pub const BOTLIB_AI_CHOOSE_LTG_ITEM: crate::be_aas_h::C2RustUnnamed_0 = 535;
-
-    pub const BOTLIB_AI_GET_SECOND_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 534;
-
-    pub const BOTLIB_AI_GET_TOP_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 533;
-
-    pub const BOTLIB_AI_GOAL_NAME: crate::be_aas_h::C2RustUnnamed_0 = 532;
-
-    pub const BOTLIB_AI_DUMP_GOAL_STACK: crate::be_aas_h::C2RustUnnamed_0 = 531;
-
-    pub const BOTLIB_AI_DUMP_AVOID_GOALS: crate::be_aas_h::C2RustUnnamed_0 = 530;
-
-    pub const BOTLIB_AI_EMPTY_GOAL_STACK: crate::be_aas_h::C2RustUnnamed_0 = 529;
-
-    pub const BOTLIB_AI_POP_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 528;
-
-    pub const BOTLIB_AI_PUSH_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 527;
-
-    pub const BOTLIB_AI_RESET_AVOID_GOALS: crate::be_aas_h::C2RustUnnamed_0 = 526;
-
-    pub const BOTLIB_AI_RESET_GOAL_STATE: crate::be_aas_h::C2RustUnnamed_0 = 525;
-
-    pub const BOTLIB_AI_SET_CHAT_NAME: crate::be_aas_h::C2RustUnnamed_0 = 524;
-
-    pub const BOTLIB_AI_SET_CHAT_GENDER: crate::be_aas_h::C2RustUnnamed_0 = 523;
-
-    pub const BOTLIB_AI_LOAD_CHAT_FILE: crate::be_aas_h::C2RustUnnamed_0 = 522;
-
-    pub const BOTLIB_AI_REPLACE_SYNONYMS: crate::be_aas_h::C2RustUnnamed_0 = 521;
-
-    pub const BOTLIB_AI_UNIFY_WHITE_SPACES: crate::be_aas_h::C2RustUnnamed_0 = 520;
-
-    pub const BOTLIB_AI_MATCH_VARIABLE: crate::be_aas_h::C2RustUnnamed_0 = 519;
-
-    pub const BOTLIB_AI_FIND_MATCH: crate::be_aas_h::C2RustUnnamed_0 = 518;
-
-    pub const BOTLIB_AI_STRING_CONTAINS: crate::be_aas_h::C2RustUnnamed_0 = 517;
-
-    pub const BOTLIB_AI_ENTER_CHAT: crate::be_aas_h::C2RustUnnamed_0 = 516;
-
-    pub const BOTLIB_AI_CHAT_LENGTH: crate::be_aas_h::C2RustUnnamed_0 = 515;
-
-    pub const BOTLIB_AI_REPLY_CHAT: crate::be_aas_h::C2RustUnnamed_0 = 514;
-
-    pub const BOTLIB_AI_INITIAL_CHAT: crate::be_aas_h::C2RustUnnamed_0 = 513;
-
-    pub const BOTLIB_AI_NUM_CONSOLE_MESSAGE: crate::be_aas_h::C2RustUnnamed_0 = 512;
-
-    pub const BOTLIB_AI_NEXT_CONSOLE_MESSAGE: crate::be_aas_h::C2RustUnnamed_0 = 511;
-
-    pub const BOTLIB_AI_REMOVE_CONSOLE_MESSAGE: crate::be_aas_h::C2RustUnnamed_0 = 510;
-
-    pub const BOTLIB_AI_QUEUE_CONSOLE_MESSAGE: crate::be_aas_h::C2RustUnnamed_0 = 509;
-
-    pub const BOTLIB_AI_FREE_CHAT_STATE: crate::be_aas_h::C2RustUnnamed_0 = 508;
-
-    pub const BOTLIB_AI_ALLOC_CHAT_STATE: crate::be_aas_h::C2RustUnnamed_0 = 507;
-
-    pub const BOTLIB_AI_CHARACTERISTIC_STRING: crate::be_aas_h::C2RustUnnamed_0 = 506;
-
-    pub const BOTLIB_AI_CHARACTERISTIC_BINTEGER: crate::be_aas_h::C2RustUnnamed_0 = 505;
-
-    pub const BOTLIB_AI_CHARACTERISTIC_INTEGER: crate::be_aas_h::C2RustUnnamed_0 = 504;
-
-    pub const BOTLIB_AI_CHARACTERISTIC_BFLOAT: crate::be_aas_h::C2RustUnnamed_0 = 503;
-
-    pub const BOTLIB_AI_CHARACTERISTIC_FLOAT: crate::be_aas_h::C2RustUnnamed_0 = 502;
-
-    pub const BOTLIB_AI_FREE_CHARACTER: crate::be_aas_h::C2RustUnnamed_0 = 501;
-
-    pub const BOTLIB_AI_LOAD_CHARACTER: crate::be_aas_h::C2RustUnnamed_0 = 500;
-
-    pub const BOTLIB_EA_RESET_INPUT: crate::be_aas_h::C2RustUnnamed_0 = 423;
-
-    pub const BOTLIB_EA_GET_INPUT: crate::be_aas_h::C2RustUnnamed_0 = 422;
-
-    pub const BOTLIB_EA_END_REGULAR: crate::be_aas_h::C2RustUnnamed_0 = 421;
-
-    pub const BOTLIB_EA_VIEW: crate::be_aas_h::C2RustUnnamed_0 = 420;
-
-    pub const BOTLIB_EA_MOVE: crate::be_aas_h::C2RustUnnamed_0 = 419;
-
-    pub const BOTLIB_EA_DELAYED_JUMP: crate::be_aas_h::C2RustUnnamed_0 = 418;
-
-    pub const BOTLIB_EA_JUMP: crate::be_aas_h::C2RustUnnamed_0 = 417;
-
-    pub const BOTLIB_EA_SELECT_WEAPON: crate::be_aas_h::C2RustUnnamed_0 = 416;
-
-    pub const BOTLIB_EA_MOVE_RIGHT: crate::be_aas_h::C2RustUnnamed_0 = 415;
-
-    pub const BOTLIB_EA_MOVE_LEFT: crate::be_aas_h::C2RustUnnamed_0 = 414;
-
-    pub const BOTLIB_EA_MOVE_BACK: crate::be_aas_h::C2RustUnnamed_0 = 413;
-
-    pub const BOTLIB_EA_MOVE_FORWARD: crate::be_aas_h::C2RustUnnamed_0 = 412;
-
-    pub const BOTLIB_EA_MOVE_DOWN: crate::be_aas_h::C2RustUnnamed_0 = 411;
-
-    pub const BOTLIB_EA_MOVE_UP: crate::be_aas_h::C2RustUnnamed_0 = 410;
-
-    pub const BOTLIB_EA_CROUCH: crate::be_aas_h::C2RustUnnamed_0 = 409;
-
-    pub const BOTLIB_EA_RESPAWN: crate::be_aas_h::C2RustUnnamed_0 = 408;
-
-    pub const BOTLIB_EA_USE: crate::be_aas_h::C2RustUnnamed_0 = 407;
-
-    pub const BOTLIB_EA_ATTACK: crate::be_aas_h::C2RustUnnamed_0 = 406;
-
-    pub const BOTLIB_EA_TALK: crate::be_aas_h::C2RustUnnamed_0 = 405;
-
-    pub const BOTLIB_EA_GESTURE: crate::be_aas_h::C2RustUnnamed_0 = 404;
-
-    pub const BOTLIB_EA_ACTION: crate::be_aas_h::C2RustUnnamed_0 = 403;
-
-    pub const BOTLIB_EA_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 402;
-
-    pub const BOTLIB_EA_SAY_TEAM: crate::be_aas_h::C2RustUnnamed_0 = 401;
-
-    pub const BOTLIB_EA_SAY: crate::be_aas_h::C2RustUnnamed_0 = 400;
-
-    pub const BOTLIB_AAS_PREDICT_CLIENT_MOVEMENT: crate::be_aas_h::C2RustUnnamed_0 = 318;
-
-    pub const BOTLIB_AAS_SWIMMING: crate::be_aas_h::C2RustUnnamed_0 = 317;
-
-    pub const BOTLIB_AAS_AREA_TRAVEL_TIME_TO_GOAL_AREA: crate::be_aas_h::C2RustUnnamed_0 = 316;
-
-    pub const BOTLIB_AAS_AREA_REACHABILITY: crate::be_aas_h::C2RustUnnamed_0 = 315;
-
-    pub const BOTLIB_AAS_INT_FOR_BSP_EPAIR_KEY: crate::be_aas_h::C2RustUnnamed_0 = 314;
-
-    pub const BOTLIB_AAS_FLOAT_FOR_BSP_EPAIR_KEY: crate::be_aas_h::C2RustUnnamed_0 = 313;
-
-    pub const BOTLIB_AAS_VECTOR_FOR_BSP_EPAIR_KEY: crate::be_aas_h::C2RustUnnamed_0 = 312;
-
-    pub const BOTLIB_AAS_VALUE_FOR_BSP_EPAIR_KEY: crate::be_aas_h::C2RustUnnamed_0 = 311;
-
-    pub const BOTLIB_AAS_NEXT_BSP_ENTITY: crate::be_aas_h::C2RustUnnamed_0 = 310;
-
-    pub const BOTLIB_AAS_POINT_CONTENTS: crate::be_aas_h::C2RustUnnamed_0 = 309;
-
-    pub const BOTLIB_AAS_TRACE_AREAS: crate::be_aas_h::C2RustUnnamed_0 = 308;
-
-    pub const BOTLIB_AAS_POINT_AREA_NUM: crate::be_aas_h::C2RustUnnamed_0 = 307;
-
-    pub const BOTLIB_AAS_TIME: crate::be_aas_h::C2RustUnnamed_0 = 306;
-
-    pub const BOTLIB_AAS_PRESENCE_TYPE_BOUNDING_BOX: crate::be_aas_h::C2RustUnnamed_0 = 305;
-
-    pub const BOTLIB_AAS_INITIALIZED: crate::be_aas_h::C2RustUnnamed_0 = 304;
-
-    pub const BOTLIB_AAS_ENTITY_INFO: crate::be_aas_h::C2RustUnnamed_0 = 303;
-
-    pub const BOTLIB_AAS_AREA_INFO: crate::be_aas_h::C2RustUnnamed_0 = 302;
-
-    pub const BOTLIB_AAS_BBOX_AREAS: crate::be_aas_h::C2RustUnnamed_0 = 301;
-
-    pub const BOTLIB_AAS_ENABLE_ROUTING_AREA: crate::be_aas_h::C2RustUnnamed_0 = 300;
-
-    pub const BOTLIB_USER_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 211;
-
-    pub const BOTLIB_GET_CONSOLE_MESSAGE: crate::be_aas_h::C2RustUnnamed_0 = 210;
-
-    pub const BOTLIB_GET_SNAPSHOT_ENTITY: crate::be_aas_h::C2RustUnnamed_0 = 209;
-
-    pub const BOTLIB_TEST: crate::be_aas_h::C2RustUnnamed_0 = 208;
-
-    pub const BOTLIB_UPDATENTITY: crate::be_aas_h::C2RustUnnamed_0 = 207;
-
-    pub const BOTLIB_LOAD_MAP: crate::be_aas_h::C2RustUnnamed_0 = 206;
-
-    pub const BOTLIB_START_FRAME: crate::be_aas_h::C2RustUnnamed_0 = 205;
-
-    pub const BOTLIB_PC_ADD_GLOBAL_DEFINE: crate::be_aas_h::C2RustUnnamed_0 = 204;
-
-    pub const BOTLIB_LIBVAR_GET: crate::be_aas_h::C2RustUnnamed_0 = 203;
-
-    pub const BOTLIB_LIBVAR_SET: crate::be_aas_h::C2RustUnnamed_0 = 202;
-
-    pub const BOTLIB_SHUTDOWN: crate::be_aas_h::C2RustUnnamed_0 = 201;
-
-    pub const BOTLIB_SETUP: crate::be_aas_h::C2RustUnnamed_0 = 200;
-
-    pub const G_FS_SEEK: crate::be_aas_h::C2RustUnnamed_0 = 45;
-
-    pub const G_ENTITY_CONTACTCAPSULE: crate::be_aas_h::C2RustUnnamed_0 = 44;
-
-    pub const G_TRACECAPSULE: crate::be_aas_h::C2RustUnnamed_0 = 43;
-
-    pub const G_SNAPVECTOR: crate::be_aas_h::C2RustUnnamed_0 = 42;
-
-    pub const G_REAL_TIME: crate::be_aas_h::C2RustUnnamed_0 = 41;
-
-    pub const G_DEBUG_POLYGON_DELETE: crate::be_aas_h::C2RustUnnamed_0 = 40;
-
-    pub const G_DEBUG_POLYGON_CREATE: crate::be_aas_h::C2RustUnnamed_0 = 39;
-
-    pub const G_FS_GETFILELIST: crate::be_aas_h::C2RustUnnamed_0 = 38;
-
-    pub const G_GET_ENTITY_TOKEN: crate::be_aas_h::C2RustUnnamed_0 = 37;
-
-    pub const G_GET_USERCMD: crate::be_aas_h::C2RustUnnamed_0 = 36;
-
-    pub const G_BOT_FREE_CLIENT: crate::be_aas_h::C2RustUnnamed_0 = 35;
-
-    pub const G_BOT_ALLOCATE_CLIENT: crate::be_aas_h::C2RustUnnamed_0 = 34;
-
-    pub const G_ENTITY_CONTACT: crate::be_aas_h::C2RustUnnamed_0 = 33;
-
-    pub const G_ENTITIES_IN_BOX: crate::be_aas_h::C2RustUnnamed_0 = 32;
-
-    pub const G_UNLINKENTITY: crate::be_aas_h::C2RustUnnamed_0 = 31;
-
-    pub const G_LINKENTITY: crate::be_aas_h::C2RustUnnamed_0 = 30;
-
-    pub const G_AREAS_CONNECTED: crate::be_aas_h::C2RustUnnamed_0 = 29;
-
-    pub const G_ADJUST_AREA_PORTAL_STATE: crate::be_aas_h::C2RustUnnamed_0 = 28;
-
-    pub const G_IN_PVS_IGNORE_PORTALS: crate::be_aas_h::C2RustUnnamed_0 = 27;
-
-    pub const G_IN_PVS: crate::be_aas_h::C2RustUnnamed_0 = 26;
-
-    pub const G_POINT_CONTENTS: crate::be_aas_h::C2RustUnnamed_0 = 25;
-
-    pub const G_TRACE: crate::be_aas_h::C2RustUnnamed_0 = 24;
-
-    pub const G_SET_BRUSH_MODEL: crate::be_aas_h::C2RustUnnamed_0 = 23;
-
-    pub const G_GET_SERVERINFO: crate::be_aas_h::C2RustUnnamed_0 = 22;
-
-    pub const G_SET_USERINFO: crate::be_aas_h::C2RustUnnamed_0 = 21;
-
-    pub const G_GET_USERINFO: crate::be_aas_h::C2RustUnnamed_0 = 20;
-
-    pub const G_GET_CONFIGSTRING: crate::be_aas_h::C2RustUnnamed_0 = 19;
-
-    pub const G_SET_CONFIGSTRING: crate::be_aas_h::C2RustUnnamed_0 = 18;
-
-    pub const G_SEND_SERVER_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 17;
-
-    pub const G_DROP_CLIENT: crate::be_aas_h::C2RustUnnamed_0 = 16;
-
-    pub const G_LOCATE_GAME_DATA: crate::be_aas_h::C2RustUnnamed_0 = 15;
-
-    pub const G_SEND_CONSOLE_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 14;
-
-    pub const G_FS_FCLOSE_FILE: crate::be_aas_h::C2RustUnnamed_0 = 13;
-
-    pub const G_FS_WRITE: crate::be_aas_h::C2RustUnnamed_0 = 12;
-
-    pub const G_FS_READ: crate::be_aas_h::C2RustUnnamed_0 = 11;
-
-    pub const G_FS_FOPEN_FILE: crate::be_aas_h::C2RustUnnamed_0 = 10;
-
-    pub const G_ARGV: crate::be_aas_h::C2RustUnnamed_0 = 9;
-
-    pub const G_ARGC: crate::be_aas_h::C2RustUnnamed_0 = 8;
-
-    pub const G_CVAR_VARIABLE_STRING_BUFFER: crate::be_aas_h::C2RustUnnamed_0 = 7;
-
-    pub const G_CVAR_VARIABLE_INTEGER_VALUE: crate::be_aas_h::C2RustUnnamed_0 = 6;
-
-    pub const G_CVAR_SET: crate::be_aas_h::C2RustUnnamed_0 = 5;
-
-    pub const G_CVAR_UPDATE: crate::be_aas_h::C2RustUnnamed_0 = 4;
-
-    pub const G_CVAR_REGISTER: crate::be_aas_h::C2RustUnnamed_0 = 3;
-
-    pub const G_MILLISECONDS: crate::be_aas_h::C2RustUnnamed_0 = 2;
+    pub const G_PRINT: crate::be_aas_h::C2RustUnnamed_0 = 0;
 
     pub const G_ERROR: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
-    pub const G_PRINT: crate::be_aas_h::C2RustUnnamed_0 = 0;
+    pub const G_MILLISECONDS: crate::be_aas_h::C2RustUnnamed_0 = 2;
+
+    pub const G_CVAR_REGISTER: crate::be_aas_h::C2RustUnnamed_0 = 3;
+
+    pub const G_CVAR_UPDATE: crate::be_aas_h::C2RustUnnamed_0 = 4;
+
+    pub const G_CVAR_SET: crate::be_aas_h::C2RustUnnamed_0 = 5;
+
+    pub const G_CVAR_VARIABLE_INTEGER_VALUE: crate::be_aas_h::C2RustUnnamed_0 = 6;
+
+    pub const G_CVAR_VARIABLE_STRING_BUFFER: crate::be_aas_h::C2RustUnnamed_0 = 7;
+
+    pub const G_ARGC: crate::be_aas_h::C2RustUnnamed_0 = 8;
+
+    pub const G_ARGV: crate::be_aas_h::C2RustUnnamed_0 = 9;
+
+    pub const G_FS_FOPEN_FILE: crate::be_aas_h::C2RustUnnamed_0 = 10;
+
+    pub const G_FS_READ: crate::be_aas_h::C2RustUnnamed_0 = 11;
+
+    pub const G_FS_WRITE: crate::be_aas_h::C2RustUnnamed_0 = 12;
+
+    pub const G_FS_FCLOSE_FILE: crate::be_aas_h::C2RustUnnamed_0 = 13;
+
+    pub const G_SEND_CONSOLE_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 14;
+
+    pub const G_LOCATE_GAME_DATA: crate::be_aas_h::C2RustUnnamed_0 = 15;
+
+    pub const G_DROP_CLIENT: crate::be_aas_h::C2RustUnnamed_0 = 16;
+
+    pub const G_SEND_SERVER_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 17;
+
+    pub const G_SET_CONFIGSTRING: crate::be_aas_h::C2RustUnnamed_0 = 18;
+
+    pub const G_GET_CONFIGSTRING: crate::be_aas_h::C2RustUnnamed_0 = 19;
+
+    pub const G_GET_USERINFO: crate::be_aas_h::C2RustUnnamed_0 = 20;
+
+    pub const G_SET_USERINFO: crate::be_aas_h::C2RustUnnamed_0 = 21;
+
+    pub const G_GET_SERVERINFO: crate::be_aas_h::C2RustUnnamed_0 = 22;
+
+    pub const G_SET_BRUSH_MODEL: crate::be_aas_h::C2RustUnnamed_0 = 23;
+
+    pub const G_TRACE: crate::be_aas_h::C2RustUnnamed_0 = 24;
+
+    pub const G_POINT_CONTENTS: crate::be_aas_h::C2RustUnnamed_0 = 25;
+
+    pub const G_IN_PVS: crate::be_aas_h::C2RustUnnamed_0 = 26;
+
+    pub const G_IN_PVS_IGNORE_PORTALS: crate::be_aas_h::C2RustUnnamed_0 = 27;
+
+    pub const G_ADJUST_AREA_PORTAL_STATE: crate::be_aas_h::C2RustUnnamed_0 = 28;
+
+    pub const G_AREAS_CONNECTED: crate::be_aas_h::C2RustUnnamed_0 = 29;
+
+    pub const G_LINKENTITY: crate::be_aas_h::C2RustUnnamed_0 = 30;
+
+    pub const G_UNLINKENTITY: crate::be_aas_h::C2RustUnnamed_0 = 31;
+
+    pub const G_ENTITIES_IN_BOX: crate::be_aas_h::C2RustUnnamed_0 = 32;
+
+    pub const G_ENTITY_CONTACT: crate::be_aas_h::C2RustUnnamed_0 = 33;
+
+    pub const G_BOT_ALLOCATE_CLIENT: crate::be_aas_h::C2RustUnnamed_0 = 34;
+
+    pub const G_BOT_FREE_CLIENT: crate::be_aas_h::C2RustUnnamed_0 = 35;
+
+    pub const G_GET_USERCMD: crate::be_aas_h::C2RustUnnamed_0 = 36;
+
+    pub const G_GET_ENTITY_TOKEN: crate::be_aas_h::C2RustUnnamed_0 = 37;
+
+    pub const G_FS_GETFILELIST: crate::be_aas_h::C2RustUnnamed_0 = 38;
+
+    pub const G_DEBUG_POLYGON_CREATE: crate::be_aas_h::C2RustUnnamed_0 = 39;
+
+    pub const G_DEBUG_POLYGON_DELETE: crate::be_aas_h::C2RustUnnamed_0 = 40;
+
+    pub const G_REAL_TIME: crate::be_aas_h::C2RustUnnamed_0 = 41;
+
+    pub const G_SNAPVECTOR: crate::be_aas_h::C2RustUnnamed_0 = 42;
+
+    pub const G_TRACECAPSULE: crate::be_aas_h::C2RustUnnamed_0 = 43;
+
+    pub const G_ENTITY_CONTACTCAPSULE: crate::be_aas_h::C2RustUnnamed_0 = 44;
+
+    pub const G_FS_SEEK: crate::be_aas_h::C2RustUnnamed_0 = 45;
+
+    pub const BOTLIB_SETUP: crate::be_aas_h::C2RustUnnamed_0 = 200;
+
+    pub const BOTLIB_SHUTDOWN: crate::be_aas_h::C2RustUnnamed_0 = 201;
+
+    pub const BOTLIB_LIBVAR_SET: crate::be_aas_h::C2RustUnnamed_0 = 202;
+
+    pub const BOTLIB_LIBVAR_GET: crate::be_aas_h::C2RustUnnamed_0 = 203;
+
+    pub const BOTLIB_PC_ADD_GLOBAL_DEFINE: crate::be_aas_h::C2RustUnnamed_0 = 204;
+
+    pub const BOTLIB_START_FRAME: crate::be_aas_h::C2RustUnnamed_0 = 205;
+
+    pub const BOTLIB_LOAD_MAP: crate::be_aas_h::C2RustUnnamed_0 = 206;
+
+    pub const BOTLIB_UPDATENTITY: crate::be_aas_h::C2RustUnnamed_0 = 207;
+
+    pub const BOTLIB_TEST: crate::be_aas_h::C2RustUnnamed_0 = 208;
+
+    pub const BOTLIB_GET_SNAPSHOT_ENTITY: crate::be_aas_h::C2RustUnnamed_0 = 209;
+
+    pub const BOTLIB_GET_CONSOLE_MESSAGE: crate::be_aas_h::C2RustUnnamed_0 = 210;
+
+    pub const BOTLIB_USER_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 211;
+
+    pub const BOTLIB_AAS_ENABLE_ROUTING_AREA: crate::be_aas_h::C2RustUnnamed_0 = 300;
+
+    pub const BOTLIB_AAS_BBOX_AREAS: crate::be_aas_h::C2RustUnnamed_0 = 301;
+
+    pub const BOTLIB_AAS_AREA_INFO: crate::be_aas_h::C2RustUnnamed_0 = 302;
+
+    pub const BOTLIB_AAS_ENTITY_INFO: crate::be_aas_h::C2RustUnnamed_0 = 303;
+
+    pub const BOTLIB_AAS_INITIALIZED: crate::be_aas_h::C2RustUnnamed_0 = 304;
+
+    pub const BOTLIB_AAS_PRESENCE_TYPE_BOUNDING_BOX: crate::be_aas_h::C2RustUnnamed_0 = 305;
+
+    pub const BOTLIB_AAS_TIME: crate::be_aas_h::C2RustUnnamed_0 = 306;
+
+    pub const BOTLIB_AAS_POINT_AREA_NUM: crate::be_aas_h::C2RustUnnamed_0 = 307;
+
+    pub const BOTLIB_AAS_TRACE_AREAS: crate::be_aas_h::C2RustUnnamed_0 = 308;
+
+    pub const BOTLIB_AAS_POINT_CONTENTS: crate::be_aas_h::C2RustUnnamed_0 = 309;
+
+    pub const BOTLIB_AAS_NEXT_BSP_ENTITY: crate::be_aas_h::C2RustUnnamed_0 = 310;
+
+    pub const BOTLIB_AAS_VALUE_FOR_BSP_EPAIR_KEY: crate::be_aas_h::C2RustUnnamed_0 = 311;
+
+    pub const BOTLIB_AAS_VECTOR_FOR_BSP_EPAIR_KEY: crate::be_aas_h::C2RustUnnamed_0 = 312;
+
+    pub const BOTLIB_AAS_FLOAT_FOR_BSP_EPAIR_KEY: crate::be_aas_h::C2RustUnnamed_0 = 313;
+
+    pub const BOTLIB_AAS_INT_FOR_BSP_EPAIR_KEY: crate::be_aas_h::C2RustUnnamed_0 = 314;
+
+    pub const BOTLIB_AAS_AREA_REACHABILITY: crate::be_aas_h::C2RustUnnamed_0 = 315;
+
+    pub const BOTLIB_AAS_AREA_TRAVEL_TIME_TO_GOAL_AREA: crate::be_aas_h::C2RustUnnamed_0 = 316;
+
+    pub const BOTLIB_AAS_SWIMMING: crate::be_aas_h::C2RustUnnamed_0 = 317;
+
+    pub const BOTLIB_AAS_PREDICT_CLIENT_MOVEMENT: crate::be_aas_h::C2RustUnnamed_0 = 318;
+
+    pub const BOTLIB_EA_SAY: crate::be_aas_h::C2RustUnnamed_0 = 400;
+
+    pub const BOTLIB_EA_SAY_TEAM: crate::be_aas_h::C2RustUnnamed_0 = 401;
+
+    pub const BOTLIB_EA_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 402;
+
+    pub const BOTLIB_EA_ACTION: crate::be_aas_h::C2RustUnnamed_0 = 403;
+
+    pub const BOTLIB_EA_GESTURE: crate::be_aas_h::C2RustUnnamed_0 = 404;
+
+    pub const BOTLIB_EA_TALK: crate::be_aas_h::C2RustUnnamed_0 = 405;
+
+    pub const BOTLIB_EA_ATTACK: crate::be_aas_h::C2RustUnnamed_0 = 406;
+
+    pub const BOTLIB_EA_USE: crate::be_aas_h::C2RustUnnamed_0 = 407;
+
+    pub const BOTLIB_EA_RESPAWN: crate::be_aas_h::C2RustUnnamed_0 = 408;
+
+    pub const BOTLIB_EA_CROUCH: crate::be_aas_h::C2RustUnnamed_0 = 409;
+
+    pub const BOTLIB_EA_MOVE_UP: crate::be_aas_h::C2RustUnnamed_0 = 410;
+
+    pub const BOTLIB_EA_MOVE_DOWN: crate::be_aas_h::C2RustUnnamed_0 = 411;
+
+    pub const BOTLIB_EA_MOVE_FORWARD: crate::be_aas_h::C2RustUnnamed_0 = 412;
+
+    pub const BOTLIB_EA_MOVE_BACK: crate::be_aas_h::C2RustUnnamed_0 = 413;
+
+    pub const BOTLIB_EA_MOVE_LEFT: crate::be_aas_h::C2RustUnnamed_0 = 414;
+
+    pub const BOTLIB_EA_MOVE_RIGHT: crate::be_aas_h::C2RustUnnamed_0 = 415;
+
+    pub const BOTLIB_EA_SELECT_WEAPON: crate::be_aas_h::C2RustUnnamed_0 = 416;
+
+    pub const BOTLIB_EA_JUMP: crate::be_aas_h::C2RustUnnamed_0 = 417;
+
+    pub const BOTLIB_EA_DELAYED_JUMP: crate::be_aas_h::C2RustUnnamed_0 = 418;
+
+    pub const BOTLIB_EA_MOVE: crate::be_aas_h::C2RustUnnamed_0 = 419;
+
+    pub const BOTLIB_EA_VIEW: crate::be_aas_h::C2RustUnnamed_0 = 420;
+
+    pub const BOTLIB_EA_END_REGULAR: crate::be_aas_h::C2RustUnnamed_0 = 421;
+
+    pub const BOTLIB_EA_GET_INPUT: crate::be_aas_h::C2RustUnnamed_0 = 422;
+
+    pub const BOTLIB_EA_RESET_INPUT: crate::be_aas_h::C2RustUnnamed_0 = 423;
+
+    pub const BOTLIB_AI_LOAD_CHARACTER: crate::be_aas_h::C2RustUnnamed_0 = 500;
+
+    pub const BOTLIB_AI_FREE_CHARACTER: crate::be_aas_h::C2RustUnnamed_0 = 501;
+
+    pub const BOTLIB_AI_CHARACTERISTIC_FLOAT: crate::be_aas_h::C2RustUnnamed_0 = 502;
+
+    pub const BOTLIB_AI_CHARACTERISTIC_BFLOAT: crate::be_aas_h::C2RustUnnamed_0 = 503;
+
+    pub const BOTLIB_AI_CHARACTERISTIC_INTEGER: crate::be_aas_h::C2RustUnnamed_0 = 504;
+
+    pub const BOTLIB_AI_CHARACTERISTIC_BINTEGER: crate::be_aas_h::C2RustUnnamed_0 = 505;
+
+    pub const BOTLIB_AI_CHARACTERISTIC_STRING: crate::be_aas_h::C2RustUnnamed_0 = 506;
+
+    pub const BOTLIB_AI_ALLOC_CHAT_STATE: crate::be_aas_h::C2RustUnnamed_0 = 507;
+
+    pub const BOTLIB_AI_FREE_CHAT_STATE: crate::be_aas_h::C2RustUnnamed_0 = 508;
+
+    pub const BOTLIB_AI_QUEUE_CONSOLE_MESSAGE: crate::be_aas_h::C2RustUnnamed_0 = 509;
+
+    pub const BOTLIB_AI_REMOVE_CONSOLE_MESSAGE: crate::be_aas_h::C2RustUnnamed_0 = 510;
+
+    pub const BOTLIB_AI_NEXT_CONSOLE_MESSAGE: crate::be_aas_h::C2RustUnnamed_0 = 511;
+
+    pub const BOTLIB_AI_NUM_CONSOLE_MESSAGE: crate::be_aas_h::C2RustUnnamed_0 = 512;
+
+    pub const BOTLIB_AI_INITIAL_CHAT: crate::be_aas_h::C2RustUnnamed_0 = 513;
+
+    pub const BOTLIB_AI_REPLY_CHAT: crate::be_aas_h::C2RustUnnamed_0 = 514;
+
+    pub const BOTLIB_AI_CHAT_LENGTH: crate::be_aas_h::C2RustUnnamed_0 = 515;
+
+    pub const BOTLIB_AI_ENTER_CHAT: crate::be_aas_h::C2RustUnnamed_0 = 516;
+
+    pub const BOTLIB_AI_STRING_CONTAINS: crate::be_aas_h::C2RustUnnamed_0 = 517;
+
+    pub const BOTLIB_AI_FIND_MATCH: crate::be_aas_h::C2RustUnnamed_0 = 518;
+
+    pub const BOTLIB_AI_MATCH_VARIABLE: crate::be_aas_h::C2RustUnnamed_0 = 519;
+
+    pub const BOTLIB_AI_UNIFY_WHITE_SPACES: crate::be_aas_h::C2RustUnnamed_0 = 520;
+
+    pub const BOTLIB_AI_REPLACE_SYNONYMS: crate::be_aas_h::C2RustUnnamed_0 = 521;
+
+    pub const BOTLIB_AI_LOAD_CHAT_FILE: crate::be_aas_h::C2RustUnnamed_0 = 522;
+
+    pub const BOTLIB_AI_SET_CHAT_GENDER: crate::be_aas_h::C2RustUnnamed_0 = 523;
+
+    pub const BOTLIB_AI_SET_CHAT_NAME: crate::be_aas_h::C2RustUnnamed_0 = 524;
+
+    pub const BOTLIB_AI_RESET_GOAL_STATE: crate::be_aas_h::C2RustUnnamed_0 = 525;
+
+    pub const BOTLIB_AI_RESET_AVOID_GOALS: crate::be_aas_h::C2RustUnnamed_0 = 526;
+
+    pub const BOTLIB_AI_PUSH_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 527;
+
+    pub const BOTLIB_AI_POP_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 528;
+
+    pub const BOTLIB_AI_EMPTY_GOAL_STACK: crate::be_aas_h::C2RustUnnamed_0 = 529;
+
+    pub const BOTLIB_AI_DUMP_AVOID_GOALS: crate::be_aas_h::C2RustUnnamed_0 = 530;
+
+    pub const BOTLIB_AI_DUMP_GOAL_STACK: crate::be_aas_h::C2RustUnnamed_0 = 531;
+
+    pub const BOTLIB_AI_GOAL_NAME: crate::be_aas_h::C2RustUnnamed_0 = 532;
+
+    pub const BOTLIB_AI_GET_TOP_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 533;
+
+    pub const BOTLIB_AI_GET_SECOND_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 534;
+
+    pub const BOTLIB_AI_CHOOSE_LTG_ITEM: crate::be_aas_h::C2RustUnnamed_0 = 535;
+
+    pub const BOTLIB_AI_CHOOSE_NBG_ITEM: crate::be_aas_h::C2RustUnnamed_0 = 536;
+
+    pub const BOTLIB_AI_TOUCHING_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 537;
+
+    pub const BOTLIB_AI_ITEM_GOAL_IN_VIS_BUT_NOT_VISIBLE: crate::be_aas_h::C2RustUnnamed_0 = 538;
+
+    pub const BOTLIB_AI_GET_LEVEL_ITEM_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 539;
+
+    pub const BOTLIB_AI_AVOID_GOAL_TIME: crate::be_aas_h::C2RustUnnamed_0 = 540;
+
+    pub const BOTLIB_AI_INIT_LEVEL_ITEMS: crate::be_aas_h::C2RustUnnamed_0 = 541;
+
+    pub const BOTLIB_AI_UPDATE_ENTITY_ITEMS: crate::be_aas_h::C2RustUnnamed_0 = 542;
+
+    pub const BOTLIB_AI_LOAD_ITEM_WEIGHTS: crate::be_aas_h::C2RustUnnamed_0 = 543;
+
+    pub const BOTLIB_AI_FREE_ITEM_WEIGHTS: crate::be_aas_h::C2RustUnnamed_0 = 544;
+
+    pub const BOTLIB_AI_SAVE_GOAL_FUZZY_LOGIC: crate::be_aas_h::C2RustUnnamed_0 = 545;
+
+    pub const BOTLIB_AI_ALLOC_GOAL_STATE: crate::be_aas_h::C2RustUnnamed_0 = 546;
+
+    pub const BOTLIB_AI_FREE_GOAL_STATE: crate::be_aas_h::C2RustUnnamed_0 = 547;
+
+    pub const BOTLIB_AI_RESET_MOVE_STATE: crate::be_aas_h::C2RustUnnamed_0 = 548;
+
+    pub const BOTLIB_AI_MOVE_TO_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 549;
+
+    pub const BOTLIB_AI_MOVE_IN_DIRECTION: crate::be_aas_h::C2RustUnnamed_0 = 550;
+
+    pub const BOTLIB_AI_RESET_AVOID_REACH: crate::be_aas_h::C2RustUnnamed_0 = 551;
+
+    pub const BOTLIB_AI_RESET_LAST_AVOID_REACH: crate::be_aas_h::C2RustUnnamed_0 = 552;
+
+    pub const BOTLIB_AI_REACHABILITY_AREA: crate::be_aas_h::C2RustUnnamed_0 = 553;
+
+    pub const BOTLIB_AI_MOVEMENT_VIEW_TARGET: crate::be_aas_h::C2RustUnnamed_0 = 554;
+
+    pub const BOTLIB_AI_ALLOC_MOVE_STATE: crate::be_aas_h::C2RustUnnamed_0 = 555;
+
+    pub const BOTLIB_AI_FREE_MOVE_STATE: crate::be_aas_h::C2RustUnnamed_0 = 556;
+
+    pub const BOTLIB_AI_INIT_MOVE_STATE: crate::be_aas_h::C2RustUnnamed_0 = 557;
+
+    pub const BOTLIB_AI_CHOOSE_BEST_FIGHT_WEAPON: crate::be_aas_h::C2RustUnnamed_0 = 558;
+
+    pub const BOTLIB_AI_GET_WEAPON_INFO: crate::be_aas_h::C2RustUnnamed_0 = 559;
+
+    pub const BOTLIB_AI_LOAD_WEAPON_WEIGHTS: crate::be_aas_h::C2RustUnnamed_0 = 560;
+
+    pub const BOTLIB_AI_ALLOC_WEAPON_STATE: crate::be_aas_h::C2RustUnnamed_0 = 561;
+
+    pub const BOTLIB_AI_FREE_WEAPON_STATE: crate::be_aas_h::C2RustUnnamed_0 = 562;
+
+    pub const BOTLIB_AI_RESET_WEAPON_STATE: crate::be_aas_h::C2RustUnnamed_0 = 563;
+
+    pub const BOTLIB_AI_GENETIC_PARENTS_AND_CHILD_SELECTION: crate::be_aas_h::C2RustUnnamed_0 = 564;
+
+    pub const BOTLIB_AI_INTERBREED_GOAL_FUZZY_LOGIC: crate::be_aas_h::C2RustUnnamed_0 = 565;
+
+    pub const BOTLIB_AI_MUTATE_GOAL_FUZZY_LOGIC: crate::be_aas_h::C2RustUnnamed_0 = 566;
+
+    pub const BOTLIB_AI_GET_NEXT_CAMP_SPOT_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 567;
+
+    pub const BOTLIB_AI_GET_MAP_LOCATION_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 568;
+
+    pub const BOTLIB_AI_NUM_INITIAL_CHATS: crate::be_aas_h::C2RustUnnamed_0 = 569;
+
+    pub const BOTLIB_AI_GET_CHAT_MESSAGE: crate::be_aas_h::C2RustUnnamed_0 = 570;
+
+    pub const BOTLIB_AI_REMOVE_FROM_AVOID_GOALS: crate::be_aas_h::C2RustUnnamed_0 = 571;
+
+    pub const BOTLIB_AI_PREDICT_VISIBLE_POSITION: crate::be_aas_h::C2RustUnnamed_0 = 572;
+
+    pub const BOTLIB_AI_SET_AVOID_GOAL_TIME: crate::be_aas_h::C2RustUnnamed_0 = 573;
+
+    pub const BOTLIB_AI_ADD_AVOID_SPOT: crate::be_aas_h::C2RustUnnamed_0 = 574;
+
+    pub const BOTLIB_AAS_ALTERNATIVE_ROUTE_GOAL: crate::be_aas_h::C2RustUnnamed_0 = 575;
+
+    pub const BOTLIB_AAS_PREDICT_ROUTE: crate::be_aas_h::C2RustUnnamed_0 = 576;
+
+    pub const BOTLIB_AAS_POINT_REACHABILITY_AREA_INDEX: crate::be_aas_h::C2RustUnnamed_0 = 577;
+
+    pub const BOTLIB_PC_LOAD_SOURCE: crate::be_aas_h::C2RustUnnamed_0 = 578;
+
+    pub const BOTLIB_PC_FREE_SOURCE: crate::be_aas_h::C2RustUnnamed_0 = 579;
+
+    pub const BOTLIB_PC_READ_TOKEN: crate::be_aas_h::C2RustUnnamed_0 = 580;
+
+    pub const BOTLIB_PC_SOURCE_FILE_AND_LINE: crate::be_aas_h::C2RustUnnamed_0 = 581;
+
+    pub const GAME_INIT: crate::be_aas_h::C2RustUnnamed_0 = 0;
+
+    pub const GAME_SHUTDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1;
+
+    pub const GAME_CLIENT_CONNECT: crate::be_aas_h::C2RustUnnamed_0 = 2;
+
+    pub const GAME_CLIENT_BEGIN: crate::be_aas_h::C2RustUnnamed_0 = 3;
+
+    pub const GAME_CLIENT_USERINFO_CHANGED: crate::be_aas_h::C2RustUnnamed_0 = 4;
+
+    pub const GAME_CLIENT_DISCONNECT: crate::be_aas_h::C2RustUnnamed_0 = 5;
+
+    pub const GAME_CLIENT_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 6;
+
+    pub const GAME_CLIENT_THINK: crate::be_aas_h::C2RustUnnamed_0 = 7;
+
+    pub const GAME_RUN_FRAME: crate::be_aas_h::C2RustUnnamed_0 = 8;
+
+    pub const GAME_CONSOLE_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 9;
+
+    pub const BOTAI_START_FRAME: crate::be_aas_h::C2RustUnnamed_0 = 10;
 }
 pub mod vm_local_h {
-    pub const OP_CVFI: crate::be_aas_h::C2RustUnnamed_0 = 59;
-
-    pub const OP_CVIF: crate::be_aas_h::C2RustUnnamed_0 = 58;
-
-    pub const OP_MULF: crate::be_aas_h::C2RustUnnamed_0 = 57;
-
-    pub const OP_DIVF: crate::be_aas_h::C2RustUnnamed_0 = 56;
-
-    pub const OP_SUBF: crate::be_aas_h::C2RustUnnamed_0 = 55;
-
-    pub const OP_ADDF: crate::be_aas_h::C2RustUnnamed_0 = 54;
-
-    pub const OP_NEGF: crate::be_aas_h::C2RustUnnamed_0 = 53;
-
-    pub const OP_RSHU: crate::be_aas_h::C2RustUnnamed_0 = 52;
-
-    pub const OP_RSHI: crate::be_aas_h::C2RustUnnamed_0 = 51;
-
-    pub const OP_LSH: crate::be_aas_h::C2RustUnnamed_0 = 50;
-
-    pub const OP_BCOM: crate::be_aas_h::C2RustUnnamed_0 = 49;
-
-    pub const OP_BXOR: crate::be_aas_h::C2RustUnnamed_0 = 48;
-
-    pub const OP_BOR: crate::be_aas_h::C2RustUnnamed_0 = 47;
-
-    pub const OP_BAND: crate::be_aas_h::C2RustUnnamed_0 = 46;
-
-    pub const OP_MULU: crate::be_aas_h::C2RustUnnamed_0 = 45;
-
-    pub const OP_MULI: crate::be_aas_h::C2RustUnnamed_0 = 44;
-
-    pub const OP_MODU: crate::be_aas_h::C2RustUnnamed_0 = 43;
-
-    pub const OP_MODI: crate::be_aas_h::C2RustUnnamed_0 = 42;
-
-    pub const OP_DIVU: crate::be_aas_h::C2RustUnnamed_0 = 41;
-
-    pub const OP_DIVI: crate::be_aas_h::C2RustUnnamed_0 = 40;
-
-    pub const OP_SUB: crate::be_aas_h::C2RustUnnamed_0 = 39;
-
-    pub const OP_ADD: crate::be_aas_h::C2RustUnnamed_0 = 38;
-
-    pub const OP_NEGI: crate::be_aas_h::C2RustUnnamed_0 = 37;
-
-    pub const OP_SEX16: crate::be_aas_h::C2RustUnnamed_0 = 36;
-
-    pub const OP_SEX8: crate::be_aas_h::C2RustUnnamed_0 = 35;
-
-    pub const OP_BLOCK_COPY: crate::be_aas_h::C2RustUnnamed_0 = 34;
-
-    pub const OP_ARG: crate::be_aas_h::C2RustUnnamed_0 = 33;
-
-    pub const OP_STORE4: crate::be_aas_h::C2RustUnnamed_0 = 32;
-
-    pub const OP_STORE2: crate::be_aas_h::C2RustUnnamed_0 = 31;
-
-    pub const OP_STORE1: crate::be_aas_h::C2RustUnnamed_0 = 30;
-
-    pub const OP_LOAD4: crate::be_aas_h::C2RustUnnamed_0 = 29;
-
-    pub const OP_LOAD2: crate::be_aas_h::C2RustUnnamed_0 = 28;
-
-    pub const OP_LOAD1: crate::be_aas_h::C2RustUnnamed_0 = 27;
-
-    pub const OP_GEF: crate::be_aas_h::C2RustUnnamed_0 = 26;
-
-    pub const OP_GTF: crate::be_aas_h::C2RustUnnamed_0 = 25;
-
-    pub const OP_LEF: crate::be_aas_h::C2RustUnnamed_0 = 24;
-
-    pub const OP_LTF: crate::be_aas_h::C2RustUnnamed_0 = 23;
-
-    pub const OP_NEF: crate::be_aas_h::C2RustUnnamed_0 = 22;
-
-    pub const OP_EQF: crate::be_aas_h::C2RustUnnamed_0 = 21;
-
-    pub const OP_GEU: crate::be_aas_h::C2RustUnnamed_0 = 20;
-
-    pub const OP_GTU: crate::be_aas_h::C2RustUnnamed_0 = 19;
-
-    pub const OP_LEU: crate::be_aas_h::C2RustUnnamed_0 = 18;
-
-    pub const OP_LTU: crate::be_aas_h::C2RustUnnamed_0 = 17;
-
-    pub const OP_GEI: crate::be_aas_h::C2RustUnnamed_0 = 16;
-
-    pub const OP_GTI: crate::be_aas_h::C2RustUnnamed_0 = 15;
-
-    pub const OP_LEI: crate::be_aas_h::C2RustUnnamed_0 = 14;
-
-    pub const OP_LTI: crate::be_aas_h::C2RustUnnamed_0 = 13;
-
-    pub const OP_NE: crate::be_aas_h::C2RustUnnamed_0 = 12;
-
-    pub const OP_EQ: crate::be_aas_h::C2RustUnnamed_0 = 11;
-
-    pub const OP_JUMP: crate::be_aas_h::C2RustUnnamed_0 = 10;
-
-    pub const OP_LOCAL: crate::be_aas_h::C2RustUnnamed_0 = 9;
-
-    pub const OP_CONST: crate::be_aas_h::C2RustUnnamed_0 = 8;
-
-    pub const OP_POP: crate::be_aas_h::C2RustUnnamed_0 = 7;
-
-    pub const OP_PUSH: crate::be_aas_h::C2RustUnnamed_0 = 6;
-
-    pub const OP_CALL: crate::be_aas_h::C2RustUnnamed_0 = 5;
-
-    pub const OP_LEAVE: crate::be_aas_h::C2RustUnnamed_0 = 4;
-
-    pub const OP_ENTER: crate::be_aas_h::C2RustUnnamed_0 = 3;
-
-    pub const OP_BREAK: crate::be_aas_h::C2RustUnnamed_0 = 2;
+    pub const OP_UNDEF: crate::be_aas_h::C2RustUnnamed_0 = 0;
 
     pub const OP_IGNORE: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
-    pub const OP_UNDEF: crate::be_aas_h::C2RustUnnamed_0 = 0;
+    pub const OP_BREAK: crate::be_aas_h::C2RustUnnamed_0 = 2;
+
+    pub const OP_ENTER: crate::be_aas_h::C2RustUnnamed_0 = 3;
+
+    pub const OP_LEAVE: crate::be_aas_h::C2RustUnnamed_0 = 4;
+
+    pub const OP_CALL: crate::be_aas_h::C2RustUnnamed_0 = 5;
+
+    pub const OP_PUSH: crate::be_aas_h::C2RustUnnamed_0 = 6;
+
+    pub const OP_POP: crate::be_aas_h::C2RustUnnamed_0 = 7;
+
+    pub const OP_CONST: crate::be_aas_h::C2RustUnnamed_0 = 8;
+
+    pub const OP_LOCAL: crate::be_aas_h::C2RustUnnamed_0 = 9;
+
+    pub const OP_JUMP: crate::be_aas_h::C2RustUnnamed_0 = 10;
+
+    pub const OP_EQ: crate::be_aas_h::C2RustUnnamed_0 = 11;
+
+    pub const OP_NE: crate::be_aas_h::C2RustUnnamed_0 = 12;
+
+    pub const OP_LTI: crate::be_aas_h::C2RustUnnamed_0 = 13;
+
+    pub const OP_LEI: crate::be_aas_h::C2RustUnnamed_0 = 14;
+
+    pub const OP_GTI: crate::be_aas_h::C2RustUnnamed_0 = 15;
+
+    pub const OP_GEI: crate::be_aas_h::C2RustUnnamed_0 = 16;
+
+    pub const OP_LTU: crate::be_aas_h::C2RustUnnamed_0 = 17;
+
+    pub const OP_LEU: crate::be_aas_h::C2RustUnnamed_0 = 18;
+
+    pub const OP_GTU: crate::be_aas_h::C2RustUnnamed_0 = 19;
+
+    pub const OP_GEU: crate::be_aas_h::C2RustUnnamed_0 = 20;
+
+    pub const OP_EQF: crate::be_aas_h::C2RustUnnamed_0 = 21;
+
+    pub const OP_NEF: crate::be_aas_h::C2RustUnnamed_0 = 22;
+
+    pub const OP_LTF: crate::be_aas_h::C2RustUnnamed_0 = 23;
+
+    pub const OP_LEF: crate::be_aas_h::C2RustUnnamed_0 = 24;
+
+    pub const OP_GTF: crate::be_aas_h::C2RustUnnamed_0 = 25;
+
+    pub const OP_GEF: crate::be_aas_h::C2RustUnnamed_0 = 26;
+
+    pub const OP_LOAD1: crate::be_aas_h::C2RustUnnamed_0 = 27;
+
+    pub const OP_LOAD2: crate::be_aas_h::C2RustUnnamed_0 = 28;
+
+    pub const OP_LOAD4: crate::be_aas_h::C2RustUnnamed_0 = 29;
+
+    pub const OP_STORE1: crate::be_aas_h::C2RustUnnamed_0 = 30;
+
+    pub const OP_STORE2: crate::be_aas_h::C2RustUnnamed_0 = 31;
+
+    pub const OP_STORE4: crate::be_aas_h::C2RustUnnamed_0 = 32;
+
+    pub const OP_ARG: crate::be_aas_h::C2RustUnnamed_0 = 33;
+
+    pub const OP_BLOCK_COPY: crate::be_aas_h::C2RustUnnamed_0 = 34;
+
+    pub const OP_SEX8: crate::be_aas_h::C2RustUnnamed_0 = 35;
+
+    pub const OP_SEX16: crate::be_aas_h::C2RustUnnamed_0 = 36;
+
+    pub const OP_NEGI: crate::be_aas_h::C2RustUnnamed_0 = 37;
+
+    pub const OP_ADD: crate::be_aas_h::C2RustUnnamed_0 = 38;
+
+    pub const OP_SUB: crate::be_aas_h::C2RustUnnamed_0 = 39;
+
+    pub const OP_DIVI: crate::be_aas_h::C2RustUnnamed_0 = 40;
+
+    pub const OP_DIVU: crate::be_aas_h::C2RustUnnamed_0 = 41;
+
+    pub const OP_MODI: crate::be_aas_h::C2RustUnnamed_0 = 42;
+
+    pub const OP_MODU: crate::be_aas_h::C2RustUnnamed_0 = 43;
+
+    pub const OP_MULI: crate::be_aas_h::C2RustUnnamed_0 = 44;
+
+    pub const OP_MULU: crate::be_aas_h::C2RustUnnamed_0 = 45;
+
+    pub const OP_BAND: crate::be_aas_h::C2RustUnnamed_0 = 46;
+
+    pub const OP_BOR: crate::be_aas_h::C2RustUnnamed_0 = 47;
+
+    pub const OP_BXOR: crate::be_aas_h::C2RustUnnamed_0 = 48;
+
+    pub const OP_BCOM: crate::be_aas_h::C2RustUnnamed_0 = 49;
+
+    pub const OP_LSH: crate::be_aas_h::C2RustUnnamed_0 = 50;
+
+    pub const OP_RSHI: crate::be_aas_h::C2RustUnnamed_0 = 51;
+
+    pub const OP_RSHU: crate::be_aas_h::C2RustUnnamed_0 = 52;
+
+    pub const OP_NEGF: crate::be_aas_h::C2RustUnnamed_0 = 53;
+
+    pub const OP_ADDF: crate::be_aas_h::C2RustUnnamed_0 = 54;
+
+    pub const OP_SUBF: crate::be_aas_h::C2RustUnnamed_0 = 55;
+
+    pub const OP_DIVF: crate::be_aas_h::C2RustUnnamed_0 = 56;
+
+    pub const OP_MULF: crate::be_aas_h::C2RustUnnamed_0 = 57;
+
+    pub const OP_CVIF: crate::be_aas_h::C2RustUnnamed_0 = 58;
+
+    pub const OP_CVFI: crate::be_aas_h::C2RustUnnamed_0 = 59;
+
+    pub type vmSymbol_t = crate::vm_local_h::vmSymbol_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct vmSymbol_s {
+        pub next: *mut crate::vm_local_h::vmSymbol_s,
+        pub symValue: libc::c_int,
+        pub profileCount: libc::c_int,
+        pub symName: [libc::c_char; 1],
+    }
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -4199,19 +4171,22 @@ pub mod vm_local_h {
         pub jumpTableTargets: *mut crate::src::qcommon::q_shared::byte,
         pub numJumpTableTargets: libc::c_int,
     }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct vmSymbol_s {
-        pub next: *mut crate::vm_local_h::vmSymbol_s,
-        pub symValue: libc::c_int,
-        pub profileCount: libc::c_int,
-        pub symName: [libc::c_char; 1],
-    }
-
-    pub type vmSymbol_t = crate::vm_local_h::vmSymbol_s;
 }
 pub mod qfiles_h {
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct vmHeader_t {
+        pub vmMagic: libc::c_int,
+        pub instructionCount: libc::c_int,
+        pub codeOffset: libc::c_int,
+        pub codeLength: libc::c_int,
+        pub dataOffset: libc::c_int,
+        pub dataLength: libc::c_int,
+        pub litLength: libc::c_int,
+        pub bssLength: libc::c_int,
+        pub jtrgLength: libc::c_int,
+    }
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct lump_t {
@@ -4300,6 +4275,16 @@ pub mod qfiles_h {
         pub color: [crate::src::qcommon::q_shared::byte; 4],
     }
 
+    pub const MST_BAD: crate::be_aas_h::C2RustUnnamed_0 = 0;
+
+    pub const MST_PLANAR: crate::be_aas_h::C2RustUnnamed_0 = 1;
+
+    pub const MST_PATCH: crate::be_aas_h::C2RustUnnamed_0 = 2;
+
+    pub const MST_TRIANGLE_SOUP: crate::be_aas_h::C2RustUnnamed_0 = 3;
+
+    pub const MST_FLARE: crate::be_aas_h::C2RustUnnamed_0 = 4;
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct dsurface_t {
@@ -4320,30 +4305,6 @@ pub mod qfiles_h {
         pub patchWidth: libc::c_int,
         pub patchHeight: libc::c_int,
     }
-
-    pub const MST_FLARE: crate::be_aas_h::C2RustUnnamed_0 = 4;
-
-    pub const MST_TRIANGLE_SOUP: crate::be_aas_h::C2RustUnnamed_0 = 3;
-
-    pub const MST_PATCH: crate::be_aas_h::C2RustUnnamed_0 = 2;
-
-    pub const MST_PLANAR: crate::be_aas_h::C2RustUnnamed_0 = 1;
-
-    pub const MST_BAD: crate::be_aas_h::C2RustUnnamed_0 = 0;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct vmHeader_t {
-        pub vmMagic: libc::c_int,
-        pub instructionCount: libc::c_int,
-        pub codeOffset: libc::c_int,
-        pub codeLength: libc::c_int,
-        pub dataOffset: libc::c_int,
-        pub dataLength: libc::c_int,
-        pub litLength: libc::c_int,
-        pub bssLength: libc::c_int,
-        pub jtrgLength: libc::c_int,
-    }
 }
 pub mod xmmintrin_h {
     #[cfg(target_arch = "x86_64")]
@@ -4356,19 +4317,64 @@ pub mod xmmintrin_h {
     pub use std::arch::x86_64::_mm_set_ss;
 }
 pub mod emmintrin_h {
-    #[repr(C, packed)]
-    #[derive(Copy, Clone)]
-    pub struct __mm_load_sd_struct {
-        pub __u: libc::c_double,
-    }
     #[cfg(target_arch = "x86_64")]
     pub use std::arch::x86_64::__m128d;
     #[cfg(target_arch = "x86_64")]
     pub use std::arch::x86_64::_mm_cvtsd_si32;
     #[cfg(target_arch = "x86_64")]
     pub use std::arch::x86_64::_mm_load_sd;
+
+    #[repr(C, packed)]
+    #[derive(Copy, Clone)]
+    pub struct __mm_load_sd_struct {
+        pub __u: libc::c_double,
+    }
 }
 pub mod snd_local_h {
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct portable_samplepair_t {
+        pub left: libc::c_int,
+        pub right: libc::c_int,
+    }
+
+    pub type adpcm_state_t = crate::snd_local_h::adpcm_state;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct adpcm_state {
+        pub sample: libc::c_short,
+        pub index: libc::c_char,
+    }
+
+    pub type sndBuffer = crate::snd_local_h::sndBuffer_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct sndBuffer_s {
+        pub sndChunk: [libc::c_short; 1024],
+        pub next: *mut crate::snd_local_h::sndBuffer_s,
+        pub size: libc::c_int,
+        pub adpcm: crate::snd_local_h::adpcm_state_t,
+    }
+
+    pub type sfx_t = crate::snd_local_h::sfx_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct sfx_s {
+        pub soundData: *mut crate::snd_local_h::sndBuffer,
+        pub defaultSound: crate::src::qcommon::q_shared::qboolean,
+        pub inMemory: crate::src::qcommon::q_shared::qboolean,
+        pub soundCompressed: crate::src::qcommon::q_shared::qboolean,
+        pub soundCompressionMethod: libc::c_int,
+        pub soundLength: libc::c_int,
+        pub soundChannels: libc::c_int,
+        pub soundName: [libc::c_char; 64],
+        pub lastTimeUsed: libc::c_int,
+        pub next: *mut crate::snd_local_h::sfx_s,
+    }
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct dma_t {
@@ -4382,19 +4388,22 @@ pub mod snd_local_h {
         pub buffer: *mut crate::src::qcommon::q_shared::byte,
     }
 
-    pub type alSrcPriority_t = libc::c_uint;
+    pub type loopSound_t = crate::snd_local_h::loopSound_s;
 
-    pub type srcHandle_t = libc::c_int;
-
-    pub const SRCPRI_STREAM: crate::snd_local_h::alSrcPriority_t = 4;
-
-    pub const SRCPRI_LOCAL: crate::snd_local_h::alSrcPriority_t = 3;
-
-    pub const SRCPRI_ONESHOT: crate::snd_local_h::alSrcPriority_t = 2;
-
-    pub const SRCPRI_ENTITY: crate::snd_local_h::alSrcPriority_t = 1;
-
-    pub const SRCPRI_AMBIENT: crate::snd_local_h::alSrcPriority_t = 0;
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct loopSound_s {
+        pub origin: crate::src::qcommon::q_shared::vec3_t,
+        pub velocity: crate::src::qcommon::q_shared::vec3_t,
+        pub sfx: *mut crate::snd_local_h::sfx_t,
+        pub mergeFrame: libc::c_int,
+        pub active: crate::src::qcommon::q_shared::qboolean,
+        pub kill: crate::src::qcommon::q_shared::qboolean,
+        pub doppler: crate::src::qcommon::q_shared::qboolean,
+        pub dopplerScale: libc::c_float,
+        pub oldDopplerScale: libc::c_float,
+        pub framenum: libc::c_int,
+    }
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -4417,26 +4426,13 @@ pub mod snd_local_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct portable_samplepair_t {
-        pub left: libc::c_int,
-        pub right: libc::c_int,
-    }
-
-    pub type loopSound_t = crate::snd_local_h::loopSound_s;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct loopSound_s {
-        pub origin: crate::src::qcommon::q_shared::vec3_t,
-        pub velocity: crate::src::qcommon::q_shared::vec3_t,
-        pub sfx: *mut crate::snd_local_h::sfx_t,
-        pub mergeFrame: libc::c_int,
-        pub active: crate::src::qcommon::q_shared::qboolean,
-        pub kill: crate::src::qcommon::q_shared::qboolean,
-        pub doppler: crate::src::qcommon::q_shared::qboolean,
-        pub dopplerScale: libc::c_float,
-        pub oldDopplerScale: libc::c_float,
-        pub framenum: libc::c_int,
+    pub struct wavinfo_t {
+        pub format: libc::c_int,
+        pub rate: libc::c_int,
+        pub width: libc::c_int,
+        pub channels: libc::c_int,
+        pub samples: libc::c_int,
+        pub dataofs: libc::c_int,
     }
 
     #[repr(C)]
@@ -4527,67 +4523,52 @@ pub mod snd_local_h {
         pub MasterGain: Option<unsafe extern "C" fn(_: libc::c_float) -> ()>,
     }
 
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct adpcm_state {
-        pub sample: libc::c_short,
-        pub index: libc::c_char,
-    }
+    pub type alSrcPriority_t = libc::c_uint;
 
-    pub type adpcm_state_t = crate::snd_local_h::adpcm_state;
+    pub const SRCPRI_AMBIENT: crate::snd_local_h::alSrcPriority_t = 0;
 
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct sndBuffer_s {
-        pub sndChunk: [libc::c_short; 1024],
-        pub next: *mut crate::snd_local_h::sndBuffer_s,
-        pub size: libc::c_int,
-        pub adpcm: crate::snd_local_h::adpcm_state_t,
-    }
+    pub const SRCPRI_ENTITY: crate::snd_local_h::alSrcPriority_t = 1;
 
-    pub type sndBuffer = crate::snd_local_h::sndBuffer_s;
+    pub const SRCPRI_ONESHOT: crate::snd_local_h::alSrcPriority_t = 2;
 
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct sfx_s {
-        pub soundData: *mut crate::snd_local_h::sndBuffer,
-        pub defaultSound: crate::src::qcommon::q_shared::qboolean,
-        pub inMemory: crate::src::qcommon::q_shared::qboolean,
-        pub soundCompressed: crate::src::qcommon::q_shared::qboolean,
-        pub soundCompressionMethod: libc::c_int,
-        pub soundLength: libc::c_int,
-        pub soundChannels: libc::c_int,
-        pub soundName: [libc::c_char; 64],
-        pub lastTimeUsed: libc::c_int,
-        pub next: *mut crate::snd_local_h::sfx_s,
-    }
+    pub const SRCPRI_LOCAL: crate::snd_local_h::alSrcPriority_t = 3;
 
-    pub type sfx_t = crate::snd_local_h::sfx_s;
+    pub const SRCPRI_STREAM: crate::snd_local_h::alSrcPriority_t = 4;
 
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct wavinfo_t {
-        pub format: libc::c_int,
-        pub rate: libc::c_int,
-        pub width: libc::c_int,
-        pub channels: libc::c_int,
-        pub samples: libc::c_int,
-        pub dataofs: libc::c_int,
-    }
+    pub type srcHandle_t = libc::c_int;
 }
 pub mod multi_h {
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub union C2RustUnnamed_20 {
-        pub whatever: *mut libc::c_void,
-        pub result: crate::curl_h::CURLcode,
-    }
-
     pub type CURLM = ();
 
     pub type CURLMcode = libc::c_int;
 
+    pub const CURLM_CALL_MULTI_PERFORM: crate::multi_h::CURLMcode = -1;
+
+    pub const CURLM_OK: crate::multi_h::CURLMcode = 0;
+
+    pub const CURLM_BAD_HANDLE: crate::multi_h::CURLMcode = 1;
+
+    pub const CURLM_BAD_EASY_HANDLE: crate::multi_h::CURLMcode = 2;
+
+    pub const CURLM_OUT_OF_MEMORY: crate::multi_h::CURLMcode = 3;
+
+    pub const CURLM_INTERNAL_ERROR: crate::multi_h::CURLMcode = 4;
+
+    pub const CURLM_BAD_SOCKET: crate::multi_h::CURLMcode = 5;
+
+    pub const CURLM_UNKNOWN_OPTION: crate::multi_h::CURLMcode = 6;
+
+    pub const CURLM_ADDED_ALREADY: crate::multi_h::CURLMcode = 7;
+
+    pub const CURLM_LAST: crate::multi_h::CURLMcode = 8;
+
     pub type CURLMSG = libc::c_uint;
+
+    pub const CURLMSG_NONE: crate::multi_h::CURLMSG = 0;
+
+    pub const CURLMSG_DONE: crate::multi_h::CURLMSG = 1;
+
+    pub const CURLMSG_LAST: crate::multi_h::CURLMSG = 2;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -4597,1350 +4578,1331 @@ pub mod multi_h {
         pub data: crate::multi_h::C2RustUnnamed_20,
     }
 
-    pub const CURLM_LAST: crate::multi_h::CURLMcode = 8;
-
-    pub const CURLM_ADDED_ALREADY: crate::multi_h::CURLMcode = 7;
-
-    pub const CURLM_UNKNOWN_OPTION: crate::multi_h::CURLMcode = 6;
-
-    pub const CURLM_BAD_SOCKET: crate::multi_h::CURLMcode = 5;
-
-    pub const CURLM_INTERNAL_ERROR: crate::multi_h::CURLMcode = 4;
-
-    pub const CURLM_OUT_OF_MEMORY: crate::multi_h::CURLMcode = 3;
-
-    pub const CURLM_BAD_EASY_HANDLE: crate::multi_h::CURLMcode = 2;
-
-    pub const CURLM_BAD_HANDLE: crate::multi_h::CURLMcode = 1;
-
-    pub const CURLM_OK: crate::multi_h::CURLMcode = 0;
-
-    pub const CURLM_CALL_MULTI_PERFORM: crate::multi_h::CURLMcode = -1;
-
-    pub const CURLMSG_LAST: crate::multi_h::CURLMSG = 2;
-
-    pub const CURLMSG_DONE: crate::multi_h::CURLMSG = 1;
-
-    pub const CURLMSG_NONE: crate::multi_h::CURLMSG = 0;
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub union C2RustUnnamed_20 {
+        pub whatever: *mut libc::c_void,
+        pub result: crate::curl_h::CURLcode,
+    }
 }
 pub mod curl_h {
     pub type CURL = ();
 
     pub type CURLcode = libc::c_uint;
 
-    pub type CURLoption = libc::c_uint;
-
-    pub type CURLINFO = libc::c_uint;
-
-    pub const CURL_LAST: crate::curl_h::CURLcode = 93;
-
-    pub const CURLE_HTTP2_STREAM: crate::curl_h::CURLcode = 92;
-
-    pub const CURLE_SSL_INVALIDCERTSTATUS: crate::curl_h::CURLcode = 91;
-
-    pub const CURLE_SSL_PINNEDPUBKEYNOTMATCH: crate::curl_h::CURLcode = 90;
-
-    pub const CURLE_NO_CONNECTION_AVAILABLE: crate::curl_h::CURLcode = 89;
-
-    pub const CURLE_CHUNK_FAILED: crate::curl_h::CURLcode = 88;
-
-    pub const CURLE_FTP_BAD_FILE_LIST: crate::curl_h::CURLcode = 87;
-
-    pub const CURLE_RTSP_SESSION_ERROR: crate::curl_h::CURLcode = 86;
-
-    pub const CURLE_RTSP_CSEQ_ERROR: crate::curl_h::CURLcode = 85;
-
-    pub const CURLE_FTP_PRET_FAILED: crate::curl_h::CURLcode = 84;
-
-    pub const CURLE_SSL_ISSUER_ERROR: crate::curl_h::CURLcode = 83;
-
-    pub const CURLE_SSL_CRL_BADFILE: crate::curl_h::CURLcode = 82;
-
-    pub const CURLE_AGAIN: crate::curl_h::CURLcode = 81;
-
-    pub const CURLE_SSL_SHUTDOWN_FAILED: crate::curl_h::CURLcode = 80;
-
-    pub const CURLE_SSH: crate::curl_h::CURLcode = 79;
-
-    pub const CURLE_REMOTE_FILE_NOT_FOUND: crate::curl_h::CURLcode = 78;
-
-    pub const CURLE_SSL_CACERT_BADFILE: crate::curl_h::CURLcode = 77;
-
-    pub const CURLE_CONV_REQD: crate::curl_h::CURLcode = 76;
-
-    pub const CURLE_CONV_FAILED: crate::curl_h::CURLcode = 75;
-
-    pub const CURLE_TFTP_NOSUCHUSER: crate::curl_h::CURLcode = 74;
-
-    pub const CURLE_REMOTE_FILE_EXISTS: crate::curl_h::CURLcode = 73;
-
-    pub const CURLE_TFTP_UNKNOWNID: crate::curl_h::CURLcode = 72;
-
-    pub const CURLE_TFTP_ILLEGAL: crate::curl_h::CURLcode = 71;
-
-    pub const CURLE_REMOTE_DISK_FULL: crate::curl_h::CURLcode = 70;
-
-    pub const CURLE_TFTP_PERM: crate::curl_h::CURLcode = 69;
-
-    pub const CURLE_TFTP_NOTFOUND: crate::curl_h::CURLcode = 68;
-
-    pub const CURLE_LOGIN_DENIED: crate::curl_h::CURLcode = 67;
-
-    pub const CURLE_SSL_ENGINE_INITFAILED: crate::curl_h::CURLcode = 66;
-
-    pub const CURLE_SEND_FAIL_REWIND: crate::curl_h::CURLcode = 65;
-
-    pub const CURLE_USE_SSL_FAILED: crate::curl_h::CURLcode = 64;
-
-    pub const CURLE_FILESIZE_EXCEEDED: crate::curl_h::CURLcode = 63;
-
-    pub const CURLE_LDAP_INVALID_URL: crate::curl_h::CURLcode = 62;
-
-    pub const CURLE_BAD_CONTENT_ENCODING: crate::curl_h::CURLcode = 61;
-
-    pub const CURLE_SSL_CACERT: crate::curl_h::CURLcode = 60;
-
-    pub const CURLE_SSL_CIPHER: crate::curl_h::CURLcode = 59;
-
-    pub const CURLE_SSL_CERTPROBLEM: crate::curl_h::CURLcode = 58;
-
-    pub const CURLE_OBSOLETE57: crate::curl_h::CURLcode = 57;
-
-    pub const CURLE_RECV_ERROR: crate::curl_h::CURLcode = 56;
-
-    pub const CURLE_SEND_ERROR: crate::curl_h::CURLcode = 55;
-
-    pub const CURLE_SSL_ENGINE_SETFAILED: crate::curl_h::CURLcode = 54;
-
-    pub const CURLE_SSL_ENGINE_NOTFOUND: crate::curl_h::CURLcode = 53;
-
-    pub const CURLE_GOT_NOTHING: crate::curl_h::CURLcode = 52;
-
-    pub const CURLE_PEER_FAILED_VERIFICATION: crate::curl_h::CURLcode = 51;
-
-    pub const CURLE_OBSOLETE50: crate::curl_h::CURLcode = 50;
-
-    pub const CURLE_TELNET_OPTION_SYNTAX: crate::curl_h::CURLcode = 49;
-
-    pub const CURLE_UNKNOWN_OPTION: crate::curl_h::CURLcode = 48;
-
-    pub const CURLE_TOO_MANY_REDIRECTS: crate::curl_h::CURLcode = 47;
-
-    pub const CURLE_OBSOLETE46: crate::curl_h::CURLcode = 46;
-
-    pub const CURLE_INTERFACE_FAILED: crate::curl_h::CURLcode = 45;
-
-    pub const CURLE_OBSOLETE44: crate::curl_h::CURLcode = 44;
-
-    pub const CURLE_BAD_FUNCTION_ARGUMENT: crate::curl_h::CURLcode = 43;
-
-    pub const CURLE_ABORTED_BY_CALLBACK: crate::curl_h::CURLcode = 42;
-
-    pub const CURLE_FUNCTION_NOT_FOUND: crate::curl_h::CURLcode = 41;
-
-    pub const CURLE_OBSOLETE40: crate::curl_h::CURLcode = 40;
-
-    pub const CURLE_LDAP_SEARCH_FAILED: crate::curl_h::CURLcode = 39;
-
-    pub const CURLE_LDAP_CANNOT_BIND: crate::curl_h::CURLcode = 38;
-
-    pub const CURLE_FILE_COULDNT_READ_FILE: crate::curl_h::CURLcode = 37;
-
-    pub const CURLE_BAD_DOWNLOAD_RESUME: crate::curl_h::CURLcode = 36;
-
-    pub const CURLE_SSL_CONNECT_ERROR: crate::curl_h::CURLcode = 35;
-
-    pub const CURLE_HTTP_POST_ERROR: crate::curl_h::CURLcode = 34;
-
-    pub const CURLE_RANGE_ERROR: crate::curl_h::CURLcode = 33;
-
-    pub const CURLE_OBSOLETE32: crate::curl_h::CURLcode = 32;
-
-    pub const CURLE_FTP_COULDNT_USE_REST: crate::curl_h::CURLcode = 31;
-
-    pub const CURLE_FTP_PORT_FAILED: crate::curl_h::CURLcode = 30;
-
-    pub const CURLE_OBSOLETE29: crate::curl_h::CURLcode = 29;
-
-    pub const CURLE_OPERATION_TIMEDOUT: crate::curl_h::CURLcode = 28;
-
-    pub const CURLE_OUT_OF_MEMORY: crate::curl_h::CURLcode = 27;
-
-    pub const CURLE_READ_ERROR: crate::curl_h::CURLcode = 26;
-
-    pub const CURLE_UPLOAD_FAILED: crate::curl_h::CURLcode = 25;
-
-    pub const CURLE_OBSOLETE24: crate::curl_h::CURLcode = 24;
-
-    pub const CURLE_WRITE_ERROR: crate::curl_h::CURLcode = 23;
-
-    pub const CURLE_HTTP_RETURNED_ERROR: crate::curl_h::CURLcode = 22;
-
-    pub const CURLE_QUOTE_ERROR: crate::curl_h::CURLcode = 21;
-
-    pub const CURLE_OBSOLETE20: crate::curl_h::CURLcode = 20;
-
-    pub const CURLE_FTP_COULDNT_RETR_FILE: crate::curl_h::CURLcode = 19;
-
-    pub const CURLE_PARTIAL_FILE: crate::curl_h::CURLcode = 18;
-
-    pub const CURLE_FTP_COULDNT_SET_TYPE: crate::curl_h::CURLcode = 17;
-
-    pub const CURLE_HTTP2: crate::curl_h::CURLcode = 16;
-
-    pub const CURLE_FTP_CANT_GET_HOST: crate::curl_h::CURLcode = 15;
-
-    pub const CURLE_FTP_WEIRD_227_FORMAT: crate::curl_h::CURLcode = 14;
-
-    pub const CURLE_FTP_WEIRD_PASV_REPLY: crate::curl_h::CURLcode = 13;
-
-    pub const CURLE_FTP_ACCEPT_TIMEOUT: crate::curl_h::CURLcode = 12;
-
-    pub const CURLE_FTP_WEIRD_PASS_REPLY: crate::curl_h::CURLcode = 11;
-
-    pub const CURLE_FTP_ACCEPT_FAILED: crate::curl_h::CURLcode = 10;
-
-    pub const CURLE_REMOTE_ACCESS_DENIED: crate::curl_h::CURLcode = 9;
-
-    pub const CURLE_WEIRD_SERVER_REPLY: crate::curl_h::CURLcode = 8;
-
-    pub const CURLE_COULDNT_CONNECT: crate::curl_h::CURLcode = 7;
-
-    pub const CURLE_COULDNT_RESOLVE_HOST: crate::curl_h::CURLcode = 6;
-
-    pub const CURLE_COULDNT_RESOLVE_PROXY: crate::curl_h::CURLcode = 5;
-
-    pub const CURLE_NOT_BUILT_IN: crate::curl_h::CURLcode = 4;
-
-    pub const CURLE_URL_MALFORMAT: crate::curl_h::CURLcode = 3;
-
-    pub const CURLE_FAILED_INIT: crate::curl_h::CURLcode = 2;
+    pub const CURLE_OK: crate::curl_h::CURLcode = 0;
 
     pub const CURLE_UNSUPPORTED_PROTOCOL: crate::curl_h::CURLcode = 1;
 
-    pub const CURLE_OK: crate::curl_h::CURLcode = 0;
+    pub const CURLE_FAILED_INIT: crate::curl_h::CURLcode = 2;
 
-    pub const CURLOPT_LASTENTRY: crate::curl_h::CURLoption = 266;
+    pub const CURLE_URL_MALFORMAT: crate::curl_h::CURLcode = 3;
 
-    pub const CURLOPT_SUPPRESS_CONNECT_HEADERS: crate::curl_h::CURLoption = 265;
+    pub const CURLE_NOT_BUILT_IN: crate::curl_h::CURLcode = 4;
 
-    pub const CURLOPT_ABSTRACT_UNIX_SOCKET: crate::curl_h::CURLoption = 10264;
+    pub const CURLE_COULDNT_RESOLVE_PROXY: crate::curl_h::CURLcode = 5;
 
-    pub const CURLOPT_PROXY_PINNEDPUBLICKEY: crate::curl_h::CURLoption = 10263;
+    pub const CURLE_COULDNT_RESOLVE_HOST: crate::curl_h::CURLcode = 6;
 
-    pub const CURLOPT_PRE_PROXY: crate::curl_h::CURLoption = 10262;
+    pub const CURLE_COULDNT_CONNECT: crate::curl_h::CURLcode = 7;
 
-    pub const CURLOPT_PROXY_SSL_OPTIONS: crate::curl_h::CURLoption = 261;
+    pub const CURLE_WEIRD_SERVER_REPLY: crate::curl_h::CURLcode = 8;
 
-    pub const CURLOPT_PROXY_CRLFILE: crate::curl_h::CURLoption = 10260;
+    pub const CURLE_REMOTE_ACCESS_DENIED: crate::curl_h::CURLcode = 9;
 
-    pub const CURLOPT_PROXY_SSL_CIPHER_LIST: crate::curl_h::CURLoption = 10259;
+    pub const CURLE_FTP_ACCEPT_FAILED: crate::curl_h::CURLcode = 10;
 
-    pub const CURLOPT_PROXY_KEYPASSWD: crate::curl_h::CURLoption = 10258;
+    pub const CURLE_FTP_WEIRD_PASS_REPLY: crate::curl_h::CURLcode = 11;
 
-    pub const CURLOPT_PROXY_SSLKEYTYPE: crate::curl_h::CURLoption = 10257;
+    pub const CURLE_FTP_ACCEPT_TIMEOUT: crate::curl_h::CURLcode = 12;
 
-    pub const CURLOPT_PROXY_SSLKEY: crate::curl_h::CURLoption = 10256;
+    pub const CURLE_FTP_WEIRD_PASV_REPLY: crate::curl_h::CURLcode = 13;
 
-    pub const CURLOPT_PROXY_SSLCERTTYPE: crate::curl_h::CURLoption = 10255;
+    pub const CURLE_FTP_WEIRD_227_FORMAT: crate::curl_h::CURLcode = 14;
 
-    pub const CURLOPT_PROXY_SSLCERT: crate::curl_h::CURLoption = 10254;
+    pub const CURLE_FTP_CANT_GET_HOST: crate::curl_h::CURLcode = 15;
 
-    pub const CURLOPT_PROXY_TLSAUTH_TYPE: crate::curl_h::CURLoption = 10253;
+    pub const CURLE_HTTP2: crate::curl_h::CURLcode = 16;
 
-    pub const CURLOPT_PROXY_TLSAUTH_PASSWORD: crate::curl_h::CURLoption = 10252;
+    pub const CURLE_FTP_COULDNT_SET_TYPE: crate::curl_h::CURLcode = 17;
 
-    pub const CURLOPT_PROXY_TLSAUTH_USERNAME: crate::curl_h::CURLoption = 10251;
+    pub const CURLE_PARTIAL_FILE: crate::curl_h::CURLcode = 18;
 
-    pub const CURLOPT_PROXY_SSLVERSION: crate::curl_h::CURLoption = 250;
+    pub const CURLE_FTP_COULDNT_RETR_FILE: crate::curl_h::CURLcode = 19;
 
-    pub const CURLOPT_PROXY_SSL_VERIFYHOST: crate::curl_h::CURLoption = 249;
+    pub const CURLE_OBSOLETE20: crate::curl_h::CURLcode = 20;
 
-    pub const CURLOPT_PROXY_SSL_VERIFYPEER: crate::curl_h::CURLoption = 248;
+    pub const CURLE_QUOTE_ERROR: crate::curl_h::CURLcode = 21;
 
-    pub const CURLOPT_PROXY_CAPATH: crate::curl_h::CURLoption = 10247;
+    pub const CURLE_HTTP_RETURNED_ERROR: crate::curl_h::CURLcode = 22;
 
-    pub const CURLOPT_PROXY_CAINFO: crate::curl_h::CURLoption = 10246;
+    pub const CURLE_WRITE_ERROR: crate::curl_h::CURLcode = 23;
 
-    pub const CURLOPT_KEEP_SENDING_ON_ERROR: crate::curl_h::CURLoption = 245;
+    pub const CURLE_OBSOLETE24: crate::curl_h::CURLcode = 24;
 
-    pub const CURLOPT_TCP_FASTOPEN: crate::curl_h::CURLoption = 244;
+    pub const CURLE_UPLOAD_FAILED: crate::curl_h::CURLcode = 25;
 
-    pub const CURLOPT_CONNECT_TO: crate::curl_h::CURLoption = 10243;
+    pub const CURLE_READ_ERROR: crate::curl_h::CURLcode = 26;
 
-    pub const CURLOPT_TFTP_NO_OPTIONS: crate::curl_h::CURLoption = 242;
+    pub const CURLE_OUT_OF_MEMORY: crate::curl_h::CURLcode = 27;
 
-    pub const CURLOPT_STREAM_DEPENDS_E: crate::curl_h::CURLoption = 10241;
+    pub const CURLE_OPERATION_TIMEDOUT: crate::curl_h::CURLcode = 28;
 
-    pub const CURLOPT_STREAM_DEPENDS: crate::curl_h::CURLoption = 10240;
+    pub const CURLE_OBSOLETE29: crate::curl_h::CURLcode = 29;
 
-    pub const CURLOPT_STREAM_WEIGHT: crate::curl_h::CURLoption = 239;
+    pub const CURLE_FTP_PORT_FAILED: crate::curl_h::CURLcode = 30;
 
-    pub const CURLOPT_DEFAULT_PROTOCOL: crate::curl_h::CURLoption = 10238;
+    pub const CURLE_FTP_COULDNT_USE_REST: crate::curl_h::CURLcode = 31;
 
-    pub const CURLOPT_PIPEWAIT: crate::curl_h::CURLoption = 237;
+    pub const CURLE_OBSOLETE32: crate::curl_h::CURLcode = 32;
 
-    pub const CURLOPT_SERVICE_NAME: crate::curl_h::CURLoption = 10236;
+    pub const CURLE_RANGE_ERROR: crate::curl_h::CURLcode = 33;
 
-    pub const CURLOPT_PROXY_SERVICE_NAME: crate::curl_h::CURLoption = 10235;
+    pub const CURLE_HTTP_POST_ERROR: crate::curl_h::CURLcode = 34;
 
-    pub const CURLOPT_PATH_AS_IS: crate::curl_h::CURLoption = 234;
+    pub const CURLE_SSL_CONNECT_ERROR: crate::curl_h::CURLcode = 35;
 
-    pub const CURLOPT_SSL_FALSESTART: crate::curl_h::CURLoption = 233;
+    pub const CURLE_BAD_DOWNLOAD_RESUME: crate::curl_h::CURLcode = 36;
 
-    pub const CURLOPT_SSL_VERIFYSTATUS: crate::curl_h::CURLoption = 232;
+    pub const CURLE_FILE_COULDNT_READ_FILE: crate::curl_h::CURLcode = 37;
 
-    pub const CURLOPT_UNIX_SOCKET_PATH: crate::curl_h::CURLoption = 10231;
+    pub const CURLE_LDAP_CANNOT_BIND: crate::curl_h::CURLcode = 38;
 
-    pub const CURLOPT_PINNEDPUBLICKEY: crate::curl_h::CURLoption = 10230;
+    pub const CURLE_LDAP_SEARCH_FAILED: crate::curl_h::CURLcode = 39;
 
-    pub const CURLOPT_HEADEROPT: crate::curl_h::CURLoption = 229;
+    pub const CURLE_OBSOLETE40: crate::curl_h::CURLcode = 40;
 
-    pub const CURLOPT_PROXYHEADER: crate::curl_h::CURLoption = 10228;
+    pub const CURLE_FUNCTION_NOT_FOUND: crate::curl_h::CURLcode = 41;
 
-    pub const CURLOPT_EXPECT_100_TIMEOUT_MS: crate::curl_h::CURLoption = 227;
+    pub const CURLE_ABORTED_BY_CALLBACK: crate::curl_h::CURLcode = 42;
 
-    pub const CURLOPT_SSL_ENABLE_ALPN: crate::curl_h::CURLoption = 226;
+    pub const CURLE_BAD_FUNCTION_ARGUMENT: crate::curl_h::CURLcode = 43;
 
-    pub const CURLOPT_SSL_ENABLE_NPN: crate::curl_h::CURLoption = 225;
+    pub const CURLE_OBSOLETE44: crate::curl_h::CURLcode = 44;
 
-    pub const CURLOPT_LOGIN_OPTIONS: crate::curl_h::CURLoption = 10224;
+    pub const CURLE_INTERFACE_FAILED: crate::curl_h::CURLcode = 45;
 
-    pub const CURLOPT_DNS_LOCAL_IP6: crate::curl_h::CURLoption = 10223;
+    pub const CURLE_OBSOLETE46: crate::curl_h::CURLcode = 46;
 
-    pub const CURLOPT_DNS_LOCAL_IP4: crate::curl_h::CURLoption = 10222;
+    pub const CURLE_TOO_MANY_REDIRECTS: crate::curl_h::CURLcode = 47;
 
-    pub const CURLOPT_DNS_INTERFACE: crate::curl_h::CURLoption = 10221;
+    pub const CURLE_UNKNOWN_OPTION: crate::curl_h::CURLcode = 48;
 
-    pub const CURLOPT_XOAUTH2_BEARER: crate::curl_h::CURLoption = 10220;
+    pub const CURLE_TELNET_OPTION_SYNTAX: crate::curl_h::CURLcode = 49;
 
-    pub const CURLOPT_XFERINFOFUNCTION: crate::curl_h::CURLoption = 20219;
+    pub const CURLE_OBSOLETE50: crate::curl_h::CURLcode = 50;
 
-    pub const CURLOPT_SASL_IR: crate::curl_h::CURLoption = 218;
+    pub const CURLE_PEER_FAILED_VERIFICATION: crate::curl_h::CURLcode = 51;
 
-    pub const CURLOPT_MAIL_AUTH: crate::curl_h::CURLoption = 10217;
+    pub const CURLE_GOT_NOTHING: crate::curl_h::CURLcode = 52;
 
-    pub const CURLOPT_SSL_OPTIONS: crate::curl_h::CURLoption = 216;
+    pub const CURLE_SSL_ENGINE_NOTFOUND: crate::curl_h::CURLcode = 53;
 
-    pub const CURLOPT_TCP_KEEPINTVL: crate::curl_h::CURLoption = 215;
+    pub const CURLE_SSL_ENGINE_SETFAILED: crate::curl_h::CURLcode = 54;
 
-    pub const CURLOPT_TCP_KEEPIDLE: crate::curl_h::CURLoption = 214;
+    pub const CURLE_SEND_ERROR: crate::curl_h::CURLcode = 55;
 
-    pub const CURLOPT_TCP_KEEPALIVE: crate::curl_h::CURLoption = 213;
+    pub const CURLE_RECV_ERROR: crate::curl_h::CURLcode = 56;
 
-    pub const CURLOPT_ACCEPTTIMEOUT_MS: crate::curl_h::CURLoption = 212;
+    pub const CURLE_OBSOLETE57: crate::curl_h::CURLcode = 57;
 
-    pub const CURLOPT_DNS_SERVERS: crate::curl_h::CURLoption = 10211;
+    pub const CURLE_SSL_CERTPROBLEM: crate::curl_h::CURLcode = 58;
 
-    pub const CURLOPT_GSSAPI_DELEGATION: crate::curl_h::CURLoption = 210;
+    pub const CURLE_SSL_CIPHER: crate::curl_h::CURLcode = 59;
 
-    pub const CURLOPT_CLOSESOCKETDATA: crate::curl_h::CURLoption = 10209;
+    pub const CURLE_SSL_CACERT: crate::curl_h::CURLcode = 60;
 
-    pub const CURLOPT_CLOSESOCKETFUNCTION: crate::curl_h::CURLoption = 20208;
+    pub const CURLE_BAD_CONTENT_ENCODING: crate::curl_h::CURLcode = 61;
 
-    pub const CURLOPT_TRANSFER_ENCODING: crate::curl_h::CURLoption = 207;
+    pub const CURLE_LDAP_INVALID_URL: crate::curl_h::CURLcode = 62;
 
-    pub const CURLOPT_TLSAUTH_TYPE: crate::curl_h::CURLoption = 10206;
+    pub const CURLE_FILESIZE_EXCEEDED: crate::curl_h::CURLcode = 63;
 
-    pub const CURLOPT_TLSAUTH_PASSWORD: crate::curl_h::CURLoption = 10205;
+    pub const CURLE_USE_SSL_FAILED: crate::curl_h::CURLcode = 64;
 
-    pub const CURLOPT_TLSAUTH_USERNAME: crate::curl_h::CURLoption = 10204;
+    pub const CURLE_SEND_FAIL_REWIND: crate::curl_h::CURLcode = 65;
 
-    pub const CURLOPT_RESOLVE: crate::curl_h::CURLoption = 10203;
+    pub const CURLE_SSL_ENGINE_INITFAILED: crate::curl_h::CURLcode = 66;
 
-    pub const CURLOPT_FNMATCH_DATA: crate::curl_h::CURLoption = 10202;
+    pub const CURLE_LOGIN_DENIED: crate::curl_h::CURLcode = 67;
 
-    pub const CURLOPT_CHUNK_DATA: crate::curl_h::CURLoption = 10201;
+    pub const CURLE_TFTP_NOTFOUND: crate::curl_h::CURLcode = 68;
 
-    pub const CURLOPT_FNMATCH_FUNCTION: crate::curl_h::CURLoption = 20200;
+    pub const CURLE_TFTP_PERM: crate::curl_h::CURLcode = 69;
 
-    pub const CURLOPT_CHUNK_END_FUNCTION: crate::curl_h::CURLoption = 20199;
+    pub const CURLE_REMOTE_DISK_FULL: crate::curl_h::CURLcode = 70;
 
-    pub const CURLOPT_CHUNK_BGN_FUNCTION: crate::curl_h::CURLoption = 20198;
+    pub const CURLE_TFTP_ILLEGAL: crate::curl_h::CURLcode = 71;
 
-    pub const CURLOPT_WILDCARDMATCH: crate::curl_h::CURLoption = 197;
+    pub const CURLE_TFTP_UNKNOWNID: crate::curl_h::CURLcode = 72;
 
-    pub const CURLOPT_INTERLEAVEFUNCTION: crate::curl_h::CURLoption = 20196;
+    pub const CURLE_REMOTE_FILE_EXISTS: crate::curl_h::CURLcode = 73;
 
-    pub const CURLOPT_INTERLEAVEDATA: crate::curl_h::CURLoption = 10195;
+    pub const CURLE_TFTP_NOSUCHUSER: crate::curl_h::CURLcode = 74;
 
-    pub const CURLOPT_RTSP_SERVER_CSEQ: crate::curl_h::CURLoption = 194;
+    pub const CURLE_CONV_FAILED: crate::curl_h::CURLcode = 75;
 
-    pub const CURLOPT_RTSP_CLIENT_CSEQ: crate::curl_h::CURLoption = 193;
+    pub const CURLE_CONV_REQD: crate::curl_h::CURLcode = 76;
 
-    pub const CURLOPT_RTSP_TRANSPORT: crate::curl_h::CURLoption = 10192;
+    pub const CURLE_SSL_CACERT_BADFILE: crate::curl_h::CURLcode = 77;
 
-    pub const CURLOPT_RTSP_STREAM_URI: crate::curl_h::CURLoption = 10191;
+    pub const CURLE_REMOTE_FILE_NOT_FOUND: crate::curl_h::CURLcode = 78;
 
-    pub const CURLOPT_RTSP_SESSION_ID: crate::curl_h::CURLoption = 10190;
+    pub const CURLE_SSH: crate::curl_h::CURLcode = 79;
 
-    pub const CURLOPT_RTSP_REQUEST: crate::curl_h::CURLoption = 189;
+    pub const CURLE_SSL_SHUTDOWN_FAILED: crate::curl_h::CURLcode = 80;
 
-    pub const CURLOPT_FTP_USE_PRET: crate::curl_h::CURLoption = 188;
+    pub const CURLE_AGAIN: crate::curl_h::CURLcode = 81;
 
-    pub const CURLOPT_MAIL_RCPT: crate::curl_h::CURLoption = 10187;
+    pub const CURLE_SSL_CRL_BADFILE: crate::curl_h::CURLcode = 82;
 
-    pub const CURLOPT_MAIL_FROM: crate::curl_h::CURLoption = 10186;
+    pub const CURLE_SSL_ISSUER_ERROR: crate::curl_h::CURLcode = 83;
 
-    pub const CURLOPT_SSH_KEYDATA: crate::curl_h::CURLoption = 10185;
+    pub const CURLE_FTP_PRET_FAILED: crate::curl_h::CURLcode = 84;
 
-    pub const CURLOPT_SSH_KEYFUNCTION: crate::curl_h::CURLoption = 20184;
+    pub const CURLE_RTSP_CSEQ_ERROR: crate::curl_h::CURLcode = 85;
 
-    pub const CURLOPT_SSH_KNOWNHOSTS: crate::curl_h::CURLoption = 10183;
+    pub const CURLE_RTSP_SESSION_ERROR: crate::curl_h::CURLcode = 86;
 
-    pub const CURLOPT_REDIR_PROTOCOLS: crate::curl_h::CURLoption = 182;
+    pub const CURLE_FTP_BAD_FILE_LIST: crate::curl_h::CURLcode = 87;
 
-    pub const CURLOPT_PROTOCOLS: crate::curl_h::CURLoption = 181;
+    pub const CURLE_CHUNK_FAILED: crate::curl_h::CURLcode = 88;
 
-    pub const CURLOPT_SOCKS5_GSSAPI_NEC: crate::curl_h::CURLoption = 180;
+    pub const CURLE_NO_CONNECTION_AVAILABLE: crate::curl_h::CURLcode = 89;
 
-    pub const CURLOPT_SOCKS5_GSSAPI_SERVICE: crate::curl_h::CURLoption = 10179;
+    pub const CURLE_SSL_PINNEDPUBKEYNOTMATCH: crate::curl_h::CURLcode = 90;
 
-    pub const CURLOPT_TFTP_BLKSIZE: crate::curl_h::CURLoption = 178;
+    pub const CURLE_SSL_INVALIDCERTSTATUS: crate::curl_h::CURLcode = 91;
 
-    pub const CURLOPT_NOPROXY: crate::curl_h::CURLoption = 10177;
+    pub const CURLE_HTTP2_STREAM: crate::curl_h::CURLcode = 92;
 
-    pub const CURLOPT_PROXYPASSWORD: crate::curl_h::CURLoption = 10176;
+    pub const CURL_LAST: crate::curl_h::CURLcode = 93;
 
-    pub const CURLOPT_PROXYUSERNAME: crate::curl_h::CURLoption = 10175;
-
-    pub const CURLOPT_PASSWORD: crate::curl_h::CURLoption = 10174;
-
-    pub const CURLOPT_USERNAME: crate::curl_h::CURLoption = 10173;
-
-    pub const CURLOPT_CERTINFO: crate::curl_h::CURLoption = 172;
-
-    pub const CURLOPT_ADDRESS_SCOPE: crate::curl_h::CURLoption = 171;
-
-    pub const CURLOPT_ISSUERCERT: crate::curl_h::CURLoption = 10170;
-
-    pub const CURLOPT_CRLFILE: crate::curl_h::CURLoption = 10169;
-
-    pub const CURLOPT_SEEKDATA: crate::curl_h::CURLoption = 10168;
-
-    pub const CURLOPT_SEEKFUNCTION: crate::curl_h::CURLoption = 20167;
-
-    pub const CURLOPT_PROXY_TRANSFER_MODE: crate::curl_h::CURLoption = 166;
-
-    pub const CURLOPT_COPYPOSTFIELDS: crate::curl_h::CURLoption = 10165;
-
-    pub const CURLOPT_OPENSOCKETDATA: crate::curl_h::CURLoption = 10164;
-
-    pub const CURLOPT_OPENSOCKETFUNCTION: crate::curl_h::CURLoption = 20163;
-
-    pub const CURLOPT_SSH_HOST_PUBLIC_KEY_MD5: crate::curl_h::CURLoption = 10162;
-
-    pub const CURLOPT_POSTREDIR: crate::curl_h::CURLoption = 161;
-
-    pub const CURLOPT_NEW_DIRECTORY_PERMS: crate::curl_h::CURLoption = 160;
-
-    pub const CURLOPT_NEW_FILE_PERMS: crate::curl_h::CURLoption = 159;
-
-    pub const CURLOPT_HTTP_CONTENT_DECODING: crate::curl_h::CURLoption = 158;
-
-    pub const CURLOPT_HTTP_TRANSFER_DECODING: crate::curl_h::CURLoption = 157;
-
-    pub const CURLOPT_CONNECTTIMEOUT_MS: crate::curl_h::CURLoption = 156;
-
-    pub const CURLOPT_TIMEOUT_MS: crate::curl_h::CURLoption = 155;
-
-    pub const CURLOPT_FTP_SSL_CCC: crate::curl_h::CURLoption = 154;
-
-    pub const CURLOPT_SSH_PRIVATE_KEYFILE: crate::curl_h::CURLoption = 10153;
-
-    pub const CURLOPT_SSH_PUBLIC_KEYFILE: crate::curl_h::CURLoption = 10152;
-
-    pub const CURLOPT_SSH_AUTH_TYPES: crate::curl_h::CURLoption = 151;
-
-    pub const CURLOPT_SSL_SESSIONID_CACHE: crate::curl_h::CURLoption = 150;
-
-    pub const CURLOPT_SOCKOPTDATA: crate::curl_h::CURLoption = 10149;
-
-    pub const CURLOPT_SOCKOPTFUNCTION: crate::curl_h::CURLoption = 20148;
-
-    pub const CURLOPT_FTP_ALTERNATIVE_TO_USER: crate::curl_h::CURLoption = 10147;
-
-    pub const CURLOPT_MAX_RECV_SPEED_LARGE: crate::curl_h::CURLoption = 30146;
-
-    pub const CURLOPT_MAX_SEND_SPEED_LARGE: crate::curl_h::CURLoption = 30145;
-
-    pub const CURLOPT_CONV_FROM_UTF8_FUNCTION: crate::curl_h::CURLoption = 20144;
-
-    pub const CURLOPT_CONV_TO_NETWORK_FUNCTION: crate::curl_h::CURLoption = 20143;
-
-    pub const CURLOPT_CONV_FROM_NETWORK_FUNCTION: crate::curl_h::CURLoption = 20142;
-
-    pub const CURLOPT_CONNECT_ONLY: crate::curl_h::CURLoption = 141;
-
-    pub const CURLOPT_LOCALPORTRANGE: crate::curl_h::CURLoption = 140;
-
-    pub const CURLOPT_LOCALPORT: crate::curl_h::CURLoption = 139;
-
-    pub const CURLOPT_FTP_FILEMETHOD: crate::curl_h::CURLoption = 138;
-
-    pub const CURLOPT_FTP_SKIP_PASV_IP: crate::curl_h::CURLoption = 137;
-
-    pub const CURLOPT_IGNORE_CONTENT_LENGTH: crate::curl_h::CURLoption = 136;
-
-    pub const CURLOPT_COOKIELIST: crate::curl_h::CURLoption = 10135;
-
-    pub const CURLOPT_FTP_ACCOUNT: crate::curl_h::CURLoption = 10134;
-
-    pub const CURLOPT_IOCTLDATA: crate::curl_h::CURLoption = 10131;
-
-    pub const CURLOPT_IOCTLFUNCTION: crate::curl_h::CURLoption = 20130;
-
-    pub const CURLOPT_FTPSSLAUTH: crate::curl_h::CURLoption = 129;
-
-    pub const CURLOPT_TCP_NODELAY: crate::curl_h::CURLoption = 121;
-
-    pub const CURLOPT_POSTFIELDSIZE_LARGE: crate::curl_h::CURLoption = 30120;
-
-    pub const CURLOPT_USE_SSL: crate::curl_h::CURLoption = 119;
-
-    pub const CURLOPT_NETRC_FILE: crate::curl_h::CURLoption = 10118;
-
-    pub const CURLOPT_MAXFILESIZE_LARGE: crate::curl_h::CURLoption = 30117;
-
-    pub const CURLOPT_RESUME_FROM_LARGE: crate::curl_h::CURLoption = 30116;
-
-    pub const CURLOPT_INFILESIZE_LARGE: crate::curl_h::CURLoption = 30115;
-
-    pub const CURLOPT_MAXFILESIZE: crate::curl_h::CURLoption = 114;
-
-    pub const CURLOPT_IPRESOLVE: crate::curl_h::CURLoption = 113;
-
-    pub const CURLOPT_FTP_RESPONSE_TIMEOUT: crate::curl_h::CURLoption = 112;
-
-    pub const CURLOPT_PROXYAUTH: crate::curl_h::CURLoption = 111;
-
-    pub const CURLOPT_FTP_CREATE_MISSING_DIRS: crate::curl_h::CURLoption = 110;
-
-    pub const CURLOPT_SSL_CTX_DATA: crate::curl_h::CURLoption = 10109;
-
-    pub const CURLOPT_SSL_CTX_FUNCTION: crate::curl_h::CURLoption = 20108;
-
-    pub const CURLOPT_HTTPAUTH: crate::curl_h::CURLoption = 107;
-
-    pub const CURLOPT_FTP_USE_EPRT: crate::curl_h::CURLoption = 106;
-
-    pub const CURLOPT_UNRESTRICTED_AUTH: crate::curl_h::CURLoption = 105;
-
-    pub const CURLOPT_HTTP200ALIASES: crate::curl_h::CURLoption = 10104;
-
-    pub const CURLOPT_PRIVATE: crate::curl_h::CURLoption = 10103;
-
-    pub const CURLOPT_ACCEPT_ENCODING: crate::curl_h::CURLoption = 10102;
-
-    pub const CURLOPT_PROXYTYPE: crate::curl_h::CURLoption = 101;
-
-    pub const CURLOPT_SHARE: crate::curl_h::CURLoption = 10100;
-
-    pub const CURLOPT_NOSIGNAL: crate::curl_h::CURLoption = 99;
-
-    pub const CURLOPT_BUFFERSIZE: crate::curl_h::CURLoption = 98;
-
-    pub const CURLOPT_CAPATH: crate::curl_h::CURLoption = 10097;
-
-    pub const CURLOPT_COOKIESESSION: crate::curl_h::CURLoption = 96;
-
-    pub const CURLOPT_DEBUGDATA: crate::curl_h::CURLoption = 10095;
-
-    pub const CURLOPT_DEBUGFUNCTION: crate::curl_h::CURLoption = 20094;
-
-    pub const CURLOPT_PREQUOTE: crate::curl_h::CURLoption = 10093;
-
-    pub const CURLOPT_DNS_CACHE_TIMEOUT: crate::curl_h::CURLoption = 92;
-
-    pub const CURLOPT_DNS_USE_GLOBAL_CACHE: crate::curl_h::CURLoption = 91;
-
-    pub const CURLOPT_SSLENGINE_DEFAULT: crate::curl_h::CURLoption = 90;
-
-    pub const CURLOPT_SSLENGINE: crate::curl_h::CURLoption = 10089;
-
-    pub const CURLOPT_SSLKEYTYPE: crate::curl_h::CURLoption = 10088;
-
-    pub const CURLOPT_SSLKEY: crate::curl_h::CURLoption = 10087;
-
-    pub const CURLOPT_SSLCERTTYPE: crate::curl_h::CURLoption = 10086;
-
-    pub const CURLOPT_FTP_USE_EPSV: crate::curl_h::CURLoption = 85;
-
-    pub const CURLOPT_HTTP_VERSION: crate::curl_h::CURLoption = 84;
-
-    pub const CURLOPT_SSL_CIPHER_LIST: crate::curl_h::CURLoption = 10083;
-
-    pub const CURLOPT_COOKIEJAR: crate::curl_h::CURLoption = 10082;
-
-    pub const CURLOPT_SSL_VERIFYHOST: crate::curl_h::CURLoption = 81;
-
-    pub const CURLOPT_HTTPGET: crate::curl_h::CURLoption = 80;
-
-    pub const CURLOPT_HEADERFUNCTION: crate::curl_h::CURLoption = 20079;
-
-    pub const CURLOPT_CONNECTTIMEOUT: crate::curl_h::CURLoption = 78;
-
-    pub const CURLOPT_EGDSOCKET: crate::curl_h::CURLoption = 10077;
-
-    pub const CURLOPT_RANDOM_FILE: crate::curl_h::CURLoption = 10076;
-
-    pub const CURLOPT_FORBID_REUSE: crate::curl_h::CURLoption = 75;
-
-    pub const CURLOPT_FRESH_CONNECT: crate::curl_h::CURLoption = 74;
-
-    pub const CURLOPT_OBSOLETE72: crate::curl_h::CURLoption = 72;
-
-    pub const CURLOPT_MAXCONNECTS: crate::curl_h::CURLoption = 71;
-
-    pub const CURLOPT_TELNETOPTIONS: crate::curl_h::CURLoption = 10070;
-
-    pub const CURLOPT_FILETIME: crate::curl_h::CURLoption = 69;
-
-    pub const CURLOPT_MAXREDIRS: crate::curl_h::CURLoption = 68;
-
-    pub const CURLOPT_CAINFO: crate::curl_h::CURLoption = 10065;
-
-    pub const CURLOPT_SSL_VERIFYPEER: crate::curl_h::CURLoption = 64;
-
-    pub const CURLOPT_KRBLEVEL: crate::curl_h::CURLoption = 10063;
-
-    pub const CURLOPT_INTERFACE: crate::curl_h::CURLoption = 10062;
-
-    pub const CURLOPT_HTTPPROXYTUNNEL: crate::curl_h::CURLoption = 61;
-
-    pub const CURLOPT_POSTFIELDSIZE: crate::curl_h::CURLoption = 60;
-
-    pub const CURLOPT_PROXYPORT: crate::curl_h::CURLoption = 59;
-
-    pub const CURLOPT_AUTOREFERER: crate::curl_h::CURLoption = 58;
-
-    pub const CURLOPT_PROGRESSDATA: crate::curl_h::CURLoption = 10057;
-
-    pub const CURLOPT_PROGRESSFUNCTION: crate::curl_h::CURLoption = 20056;
-
-    pub const CURLOPT_PUT: crate::curl_h::CURLoption = 54;
-
-    pub const CURLOPT_TRANSFERTEXT: crate::curl_h::CURLoption = 53;
-
-    pub const CURLOPT_FOLLOWLOCATION: crate::curl_h::CURLoption = 52;
-
-    pub const CURLOPT_NETRC: crate::curl_h::CURLoption = 51;
-
-    pub const CURLOPT_APPEND: crate::curl_h::CURLoption = 50;
-
-    pub const CURLOPT_DIRLISTONLY: crate::curl_h::CURLoption = 48;
-
-    pub const CURLOPT_POST: crate::curl_h::CURLoption = 47;
-
-    pub const CURLOPT_UPLOAD: crate::curl_h::CURLoption = 46;
-
-    pub const CURLOPT_FAILONERROR: crate::curl_h::CURLoption = 45;
-
-    pub const CURLOPT_NOBODY: crate::curl_h::CURLoption = 44;
-
-    pub const CURLOPT_NOPROGRESS: crate::curl_h::CURLoption = 43;
-
-    pub const CURLOPT_HEADER: crate::curl_h::CURLoption = 42;
-
-    pub const CURLOPT_VERBOSE: crate::curl_h::CURLoption = 41;
-
-    pub const CURLOPT_OBSOLETE40: crate::curl_h::CURLoption = 10040;
-
-    pub const CURLOPT_POSTQUOTE: crate::curl_h::CURLoption = 10039;
-
-    pub const CURLOPT_STDERR: crate::curl_h::CURLoption = 10037;
-
-    pub const CURLOPT_CUSTOMREQUEST: crate::curl_h::CURLoption = 10036;
-
-    pub const CURLOPT_TIMEVALUE: crate::curl_h::CURLoption = 34;
-
-    pub const CURLOPT_TIMECONDITION: crate::curl_h::CURLoption = 33;
-
-    pub const CURLOPT_SSLVERSION: crate::curl_h::CURLoption = 32;
-
-    pub const CURLOPT_COOKIEFILE: crate::curl_h::CURLoption = 10031;
-
-    pub const CURLOPT_HEADERDATA: crate::curl_h::CURLoption = 10029;
-
-    pub const CURLOPT_QUOTE: crate::curl_h::CURLoption = 10028;
-
-    pub const CURLOPT_CRLF: crate::curl_h::CURLoption = 27;
-
-    pub const CURLOPT_KEYPASSWD: crate::curl_h::CURLoption = 10026;
-
-    pub const CURLOPT_SSLCERT: crate::curl_h::CURLoption = 10025;
-
-    pub const CURLOPT_HTTPPOST: crate::curl_h::CURLoption = 10024;
-
-    pub const CURLOPT_HTTPHEADER: crate::curl_h::CURLoption = 10023;
-
-    pub const CURLOPT_COOKIE: crate::curl_h::CURLoption = 10022;
-
-    pub const CURLOPT_RESUME_FROM: crate::curl_h::CURLoption = 21;
-
-    pub const CURLOPT_LOW_SPEED_TIME: crate::curl_h::CURLoption = 20;
-
-    pub const CURLOPT_LOW_SPEED_LIMIT: crate::curl_h::CURLoption = 19;
-
-    pub const CURLOPT_USERAGENT: crate::curl_h::CURLoption = 10018;
-
-    pub const CURLOPT_FTPPORT: crate::curl_h::CURLoption = 10017;
-
-    pub const CURLOPT_REFERER: crate::curl_h::CURLoption = 10016;
-
-    pub const CURLOPT_POSTFIELDS: crate::curl_h::CURLoption = 10015;
-
-    pub const CURLOPT_INFILESIZE: crate::curl_h::CURLoption = 14;
-
-    pub const CURLOPT_TIMEOUT: crate::curl_h::CURLoption = 13;
-
-    pub const CURLOPT_READFUNCTION: crate::curl_h::CURLoption = 20012;
-
-    pub const CURLOPT_WRITEFUNCTION: crate::curl_h::CURLoption = 20011;
-
-    pub const CURLOPT_ERRORBUFFER: crate::curl_h::CURLoption = 10010;
-
-    pub const CURLOPT_READDATA: crate::curl_h::CURLoption = 10009;
-
-    pub const CURLOPT_RANGE: crate::curl_h::CURLoption = 10007;
-
-    pub const CURLOPT_PROXYUSERPWD: crate::curl_h::CURLoption = 10006;
-
-    pub const CURLOPT_USERPWD: crate::curl_h::CURLoption = 10005;
-
-    pub const CURLOPT_PROXY: crate::curl_h::CURLoption = 10004;
-
-    pub const CURLOPT_PORT: crate::curl_h::CURLoption = 3;
-
-    pub const CURLOPT_URL: crate::curl_h::CURLoption = 10002;
+    pub type CURLoption = libc::c_uint;
 
     pub const CURLOPT_WRITEDATA: crate::curl_h::CURLoption = 10001;
 
-    pub const CURLINFO_LASTONE: crate::curl_h::CURLINFO = 49;
+    pub const CURLOPT_URL: crate::curl_h::CURLoption = 10002;
 
-    pub const CURLINFO_SCHEME: crate::curl_h::CURLINFO = 1048625;
+    pub const CURLOPT_PORT: crate::curl_h::CURLoption = 3;
 
-    pub const CURLINFO_PROTOCOL: crate::curl_h::CURLINFO = 2097200;
+    pub const CURLOPT_PROXY: crate::curl_h::CURLoption = 10004;
 
-    pub const CURLINFO_PROXY_SSL_VERIFYRESULT: crate::curl_h::CURLINFO = 2097199;
+    pub const CURLOPT_USERPWD: crate::curl_h::CURLoption = 10005;
 
-    pub const CURLINFO_HTTP_VERSION: crate::curl_h::CURLINFO = 2097198;
+    pub const CURLOPT_PROXYUSERPWD: crate::curl_h::CURLoption = 10006;
 
-    pub const CURLINFO_TLS_SSL_PTR: crate::curl_h::CURLINFO = 4194349;
+    pub const CURLOPT_RANGE: crate::curl_h::CURLoption = 10007;
 
-    pub const CURLINFO_ACTIVESOCKET: crate::curl_h::CURLINFO = 5242924;
+    pub const CURLOPT_READDATA: crate::curl_h::CURLoption = 10009;
 
-    pub const CURLINFO_TLS_SESSION: crate::curl_h::CURLINFO = 4194347;
+    pub const CURLOPT_ERRORBUFFER: crate::curl_h::CURLoption = 10010;
 
-    pub const CURLINFO_LOCAL_PORT: crate::curl_h::CURLINFO = 2097194;
+    pub const CURLOPT_WRITEFUNCTION: crate::curl_h::CURLoption = 20011;
 
-    pub const CURLINFO_LOCAL_IP: crate::curl_h::CURLINFO = 1048617;
+    pub const CURLOPT_READFUNCTION: crate::curl_h::CURLoption = 20012;
 
-    pub const CURLINFO_PRIMARY_PORT: crate::curl_h::CURLINFO = 2097192;
+    pub const CURLOPT_TIMEOUT: crate::curl_h::CURLoption = 13;
 
-    pub const CURLINFO_RTSP_CSEQ_RECV: crate::curl_h::CURLINFO = 2097191;
+    pub const CURLOPT_INFILESIZE: crate::curl_h::CURLoption = 14;
 
-    pub const CURLINFO_RTSP_SERVER_CSEQ: crate::curl_h::CURLINFO = 2097190;
+    pub const CURLOPT_POSTFIELDS: crate::curl_h::CURLoption = 10015;
 
-    pub const CURLINFO_RTSP_CLIENT_CSEQ: crate::curl_h::CURLINFO = 2097189;
+    pub const CURLOPT_REFERER: crate::curl_h::CURLoption = 10016;
 
-    pub const CURLINFO_RTSP_SESSION_ID: crate::curl_h::CURLINFO = 1048612;
+    pub const CURLOPT_FTPPORT: crate::curl_h::CURLoption = 10017;
 
-    pub const CURLINFO_CONDITION_UNMET: crate::curl_h::CURLINFO = 2097187;
+    pub const CURLOPT_USERAGENT: crate::curl_h::CURLoption = 10018;
 
-    pub const CURLINFO_CERTINFO: crate::curl_h::CURLINFO = 4194338;
+    pub const CURLOPT_LOW_SPEED_LIMIT: crate::curl_h::CURLoption = 19;
 
-    pub const CURLINFO_APPCONNECT_TIME: crate::curl_h::CURLINFO = 3145761;
+    pub const CURLOPT_LOW_SPEED_TIME: crate::curl_h::CURLoption = 20;
 
-    pub const CURLINFO_PRIMARY_IP: crate::curl_h::CURLINFO = 1048608;
+    pub const CURLOPT_RESUME_FROM: crate::curl_h::CURLoption = 21;
 
-    pub const CURLINFO_REDIRECT_URL: crate::curl_h::CURLINFO = 1048607;
+    pub const CURLOPT_COOKIE: crate::curl_h::CURLoption = 10022;
 
-    pub const CURLINFO_FTP_ENTRY_PATH: crate::curl_h::CURLINFO = 1048606;
+    pub const CURLOPT_HTTPHEADER: crate::curl_h::CURLoption = 10023;
 
-    pub const CURLINFO_LASTSOCKET: crate::curl_h::CURLINFO = 2097181;
+    pub const CURLOPT_HTTPPOST: crate::curl_h::CURLoption = 10024;
 
-    pub const CURLINFO_COOKIELIST: crate::curl_h::CURLINFO = 4194332;
+    pub const CURLOPT_SSLCERT: crate::curl_h::CURLoption = 10025;
 
-    pub const CURLINFO_SSL_ENGINES: crate::curl_h::CURLINFO = 4194331;
+    pub const CURLOPT_KEYPASSWD: crate::curl_h::CURLoption = 10026;
 
-    pub const CURLINFO_NUM_CONNECTS: crate::curl_h::CURLINFO = 2097178;
+    pub const CURLOPT_CRLF: crate::curl_h::CURLoption = 27;
 
-    pub const CURLINFO_OS_ERRNO: crate::curl_h::CURLINFO = 2097177;
+    pub const CURLOPT_QUOTE: crate::curl_h::CURLoption = 10028;
 
-    pub const CURLINFO_PROXYAUTH_AVAIL: crate::curl_h::CURLINFO = 2097176;
+    pub const CURLOPT_HEADERDATA: crate::curl_h::CURLoption = 10029;
 
-    pub const CURLINFO_HTTPAUTH_AVAIL: crate::curl_h::CURLINFO = 2097175;
+    pub const CURLOPT_COOKIEFILE: crate::curl_h::CURLoption = 10031;
 
-    pub const CURLINFO_HTTP_CONNECTCODE: crate::curl_h::CURLINFO = 2097174;
+    pub const CURLOPT_SSLVERSION: crate::curl_h::CURLoption = 32;
 
-    pub const CURLINFO_PRIVATE: crate::curl_h::CURLINFO = 1048597;
+    pub const CURLOPT_TIMECONDITION: crate::curl_h::CURLoption = 33;
 
-    pub const CURLINFO_REDIRECT_COUNT: crate::curl_h::CURLINFO = 2097172;
+    pub const CURLOPT_TIMEVALUE: crate::curl_h::CURLoption = 34;
 
-    pub const CURLINFO_REDIRECT_TIME: crate::curl_h::CURLINFO = 3145747;
+    pub const CURLOPT_CUSTOMREQUEST: crate::curl_h::CURLoption = 10036;
 
-    pub const CURLINFO_CONTENT_TYPE: crate::curl_h::CURLINFO = 1048594;
+    pub const CURLOPT_STDERR: crate::curl_h::CURLoption = 10037;
 
-    pub const CURLINFO_STARTTRANSFER_TIME: crate::curl_h::CURLINFO = 3145745;
+    pub const CURLOPT_POSTQUOTE: crate::curl_h::CURLoption = 10039;
 
-    pub const CURLINFO_CONTENT_LENGTH_UPLOAD: crate::curl_h::CURLINFO = 3145744;
+    pub const CURLOPT_OBSOLETE40: crate::curl_h::CURLoption = 10040;
 
-    pub const CURLINFO_CONTENT_LENGTH_DOWNLOAD: crate::curl_h::CURLINFO = 3145743;
+    pub const CURLOPT_VERBOSE: crate::curl_h::CURLoption = 41;
 
-    pub const CURLINFO_FILETIME: crate::curl_h::CURLINFO = 2097166;
+    pub const CURLOPT_HEADER: crate::curl_h::CURLoption = 42;
 
-    pub const CURLINFO_SSL_VERIFYRESULT: crate::curl_h::CURLINFO = 2097165;
+    pub const CURLOPT_NOPROGRESS: crate::curl_h::CURLoption = 43;
 
-    pub const CURLINFO_REQUEST_SIZE: crate::curl_h::CURLINFO = 2097164;
+    pub const CURLOPT_NOBODY: crate::curl_h::CURLoption = 44;
 
-    pub const CURLINFO_HEADER_SIZE: crate::curl_h::CURLINFO = 2097163;
+    pub const CURLOPT_FAILONERROR: crate::curl_h::CURLoption = 45;
 
-    pub const CURLINFO_SPEED_UPLOAD: crate::curl_h::CURLINFO = 3145738;
+    pub const CURLOPT_UPLOAD: crate::curl_h::CURLoption = 46;
 
-    pub const CURLINFO_SPEED_DOWNLOAD: crate::curl_h::CURLINFO = 3145737;
+    pub const CURLOPT_POST: crate::curl_h::CURLoption = 47;
 
-    pub const CURLINFO_SIZE_DOWNLOAD: crate::curl_h::CURLINFO = 3145736;
+    pub const CURLOPT_DIRLISTONLY: crate::curl_h::CURLoption = 48;
 
-    pub const CURLINFO_SIZE_UPLOAD: crate::curl_h::CURLINFO = 3145735;
+    pub const CURLOPT_APPEND: crate::curl_h::CURLoption = 50;
 
-    pub const CURLINFO_PRETRANSFER_TIME: crate::curl_h::CURLINFO = 3145734;
+    pub const CURLOPT_NETRC: crate::curl_h::CURLoption = 51;
 
-    pub const CURLINFO_CONNECT_TIME: crate::curl_h::CURLINFO = 3145733;
+    pub const CURLOPT_FOLLOWLOCATION: crate::curl_h::CURLoption = 52;
 
-    pub const CURLINFO_NAMELOOKUP_TIME: crate::curl_h::CURLINFO = 3145732;
+    pub const CURLOPT_TRANSFERTEXT: crate::curl_h::CURLoption = 53;
 
-    pub const CURLINFO_TOTAL_TIME: crate::curl_h::CURLINFO = 3145731;
+    pub const CURLOPT_PUT: crate::curl_h::CURLoption = 54;
 
-    pub const CURLINFO_RESPONSE_CODE: crate::curl_h::CURLINFO = 2097154;
+    pub const CURLOPT_PROGRESSFUNCTION: crate::curl_h::CURLoption = 20056;
+
+    pub const CURLOPT_PROGRESSDATA: crate::curl_h::CURLoption = 10057;
+
+    pub const CURLOPT_AUTOREFERER: crate::curl_h::CURLoption = 58;
+
+    pub const CURLOPT_PROXYPORT: crate::curl_h::CURLoption = 59;
+
+    pub const CURLOPT_POSTFIELDSIZE: crate::curl_h::CURLoption = 60;
+
+    pub const CURLOPT_HTTPPROXYTUNNEL: crate::curl_h::CURLoption = 61;
+
+    pub const CURLOPT_INTERFACE: crate::curl_h::CURLoption = 10062;
+
+    pub const CURLOPT_KRBLEVEL: crate::curl_h::CURLoption = 10063;
+
+    pub const CURLOPT_SSL_VERIFYPEER: crate::curl_h::CURLoption = 64;
+
+    pub const CURLOPT_CAINFO: crate::curl_h::CURLoption = 10065;
+
+    pub const CURLOPT_MAXREDIRS: crate::curl_h::CURLoption = 68;
+
+    pub const CURLOPT_FILETIME: crate::curl_h::CURLoption = 69;
+
+    pub const CURLOPT_TELNETOPTIONS: crate::curl_h::CURLoption = 10070;
+
+    pub const CURLOPT_MAXCONNECTS: crate::curl_h::CURLoption = 71;
+
+    pub const CURLOPT_OBSOLETE72: crate::curl_h::CURLoption = 72;
+
+    pub const CURLOPT_FRESH_CONNECT: crate::curl_h::CURLoption = 74;
+
+    pub const CURLOPT_FORBID_REUSE: crate::curl_h::CURLoption = 75;
+
+    pub const CURLOPT_RANDOM_FILE: crate::curl_h::CURLoption = 10076;
+
+    pub const CURLOPT_EGDSOCKET: crate::curl_h::CURLoption = 10077;
+
+    pub const CURLOPT_CONNECTTIMEOUT: crate::curl_h::CURLoption = 78;
+
+    pub const CURLOPT_HEADERFUNCTION: crate::curl_h::CURLoption = 20079;
+
+    pub const CURLOPT_HTTPGET: crate::curl_h::CURLoption = 80;
+
+    pub const CURLOPT_SSL_VERIFYHOST: crate::curl_h::CURLoption = 81;
+
+    pub const CURLOPT_COOKIEJAR: crate::curl_h::CURLoption = 10082;
+
+    pub const CURLOPT_SSL_CIPHER_LIST: crate::curl_h::CURLoption = 10083;
+
+    pub const CURLOPT_HTTP_VERSION: crate::curl_h::CURLoption = 84;
+
+    pub const CURLOPT_FTP_USE_EPSV: crate::curl_h::CURLoption = 85;
+
+    pub const CURLOPT_SSLCERTTYPE: crate::curl_h::CURLoption = 10086;
+
+    pub const CURLOPT_SSLKEY: crate::curl_h::CURLoption = 10087;
+
+    pub const CURLOPT_SSLKEYTYPE: crate::curl_h::CURLoption = 10088;
+
+    pub const CURLOPT_SSLENGINE: crate::curl_h::CURLoption = 10089;
+
+    pub const CURLOPT_SSLENGINE_DEFAULT: crate::curl_h::CURLoption = 90;
+
+    pub const CURLOPT_DNS_USE_GLOBAL_CACHE: crate::curl_h::CURLoption = 91;
+
+    pub const CURLOPT_DNS_CACHE_TIMEOUT: crate::curl_h::CURLoption = 92;
+
+    pub const CURLOPT_PREQUOTE: crate::curl_h::CURLoption = 10093;
+
+    pub const CURLOPT_DEBUGFUNCTION: crate::curl_h::CURLoption = 20094;
+
+    pub const CURLOPT_DEBUGDATA: crate::curl_h::CURLoption = 10095;
+
+    pub const CURLOPT_COOKIESESSION: crate::curl_h::CURLoption = 96;
+
+    pub const CURLOPT_CAPATH: crate::curl_h::CURLoption = 10097;
+
+    pub const CURLOPT_BUFFERSIZE: crate::curl_h::CURLoption = 98;
+
+    pub const CURLOPT_NOSIGNAL: crate::curl_h::CURLoption = 99;
+
+    pub const CURLOPT_SHARE: crate::curl_h::CURLoption = 10100;
+
+    pub const CURLOPT_PROXYTYPE: crate::curl_h::CURLoption = 101;
+
+    pub const CURLOPT_ACCEPT_ENCODING: crate::curl_h::CURLoption = 10102;
+
+    pub const CURLOPT_PRIVATE: crate::curl_h::CURLoption = 10103;
+
+    pub const CURLOPT_HTTP200ALIASES: crate::curl_h::CURLoption = 10104;
+
+    pub const CURLOPT_UNRESTRICTED_AUTH: crate::curl_h::CURLoption = 105;
+
+    pub const CURLOPT_FTP_USE_EPRT: crate::curl_h::CURLoption = 106;
+
+    pub const CURLOPT_HTTPAUTH: crate::curl_h::CURLoption = 107;
+
+    pub const CURLOPT_SSL_CTX_FUNCTION: crate::curl_h::CURLoption = 20108;
+
+    pub const CURLOPT_SSL_CTX_DATA: crate::curl_h::CURLoption = 10109;
+
+    pub const CURLOPT_FTP_CREATE_MISSING_DIRS: crate::curl_h::CURLoption = 110;
+
+    pub const CURLOPT_PROXYAUTH: crate::curl_h::CURLoption = 111;
+
+    pub const CURLOPT_FTP_RESPONSE_TIMEOUT: crate::curl_h::CURLoption = 112;
+
+    pub const CURLOPT_IPRESOLVE: crate::curl_h::CURLoption = 113;
+
+    pub const CURLOPT_MAXFILESIZE: crate::curl_h::CURLoption = 114;
+
+    pub const CURLOPT_INFILESIZE_LARGE: crate::curl_h::CURLoption = 30115;
+
+    pub const CURLOPT_RESUME_FROM_LARGE: crate::curl_h::CURLoption = 30116;
+
+    pub const CURLOPT_MAXFILESIZE_LARGE: crate::curl_h::CURLoption = 30117;
+
+    pub const CURLOPT_NETRC_FILE: crate::curl_h::CURLoption = 10118;
+
+    pub const CURLOPT_USE_SSL: crate::curl_h::CURLoption = 119;
+
+    pub const CURLOPT_POSTFIELDSIZE_LARGE: crate::curl_h::CURLoption = 30120;
+
+    pub const CURLOPT_TCP_NODELAY: crate::curl_h::CURLoption = 121;
+
+    pub const CURLOPT_FTPSSLAUTH: crate::curl_h::CURLoption = 129;
+
+    pub const CURLOPT_IOCTLFUNCTION: crate::curl_h::CURLoption = 20130;
+
+    pub const CURLOPT_IOCTLDATA: crate::curl_h::CURLoption = 10131;
+
+    pub const CURLOPT_FTP_ACCOUNT: crate::curl_h::CURLoption = 10134;
+
+    pub const CURLOPT_COOKIELIST: crate::curl_h::CURLoption = 10135;
+
+    pub const CURLOPT_IGNORE_CONTENT_LENGTH: crate::curl_h::CURLoption = 136;
+
+    pub const CURLOPT_FTP_SKIP_PASV_IP: crate::curl_h::CURLoption = 137;
+
+    pub const CURLOPT_FTP_FILEMETHOD: crate::curl_h::CURLoption = 138;
+
+    pub const CURLOPT_LOCALPORT: crate::curl_h::CURLoption = 139;
+
+    pub const CURLOPT_LOCALPORTRANGE: crate::curl_h::CURLoption = 140;
+
+    pub const CURLOPT_CONNECT_ONLY: crate::curl_h::CURLoption = 141;
+
+    pub const CURLOPT_CONV_FROM_NETWORK_FUNCTION: crate::curl_h::CURLoption = 20142;
+
+    pub const CURLOPT_CONV_TO_NETWORK_FUNCTION: crate::curl_h::CURLoption = 20143;
+
+    pub const CURLOPT_CONV_FROM_UTF8_FUNCTION: crate::curl_h::CURLoption = 20144;
+
+    pub const CURLOPT_MAX_SEND_SPEED_LARGE: crate::curl_h::CURLoption = 30145;
+
+    pub const CURLOPT_MAX_RECV_SPEED_LARGE: crate::curl_h::CURLoption = 30146;
+
+    pub const CURLOPT_FTP_ALTERNATIVE_TO_USER: crate::curl_h::CURLoption = 10147;
+
+    pub const CURLOPT_SOCKOPTFUNCTION: crate::curl_h::CURLoption = 20148;
+
+    pub const CURLOPT_SOCKOPTDATA: crate::curl_h::CURLoption = 10149;
+
+    pub const CURLOPT_SSL_SESSIONID_CACHE: crate::curl_h::CURLoption = 150;
+
+    pub const CURLOPT_SSH_AUTH_TYPES: crate::curl_h::CURLoption = 151;
+
+    pub const CURLOPT_SSH_PUBLIC_KEYFILE: crate::curl_h::CURLoption = 10152;
+
+    pub const CURLOPT_SSH_PRIVATE_KEYFILE: crate::curl_h::CURLoption = 10153;
+
+    pub const CURLOPT_FTP_SSL_CCC: crate::curl_h::CURLoption = 154;
+
+    pub const CURLOPT_TIMEOUT_MS: crate::curl_h::CURLoption = 155;
+
+    pub const CURLOPT_CONNECTTIMEOUT_MS: crate::curl_h::CURLoption = 156;
+
+    pub const CURLOPT_HTTP_TRANSFER_DECODING: crate::curl_h::CURLoption = 157;
+
+    pub const CURLOPT_HTTP_CONTENT_DECODING: crate::curl_h::CURLoption = 158;
+
+    pub const CURLOPT_NEW_FILE_PERMS: crate::curl_h::CURLoption = 159;
+
+    pub const CURLOPT_NEW_DIRECTORY_PERMS: crate::curl_h::CURLoption = 160;
+
+    pub const CURLOPT_POSTREDIR: crate::curl_h::CURLoption = 161;
+
+    pub const CURLOPT_SSH_HOST_PUBLIC_KEY_MD5: crate::curl_h::CURLoption = 10162;
+
+    pub const CURLOPT_OPENSOCKETFUNCTION: crate::curl_h::CURLoption = 20163;
+
+    pub const CURLOPT_OPENSOCKETDATA: crate::curl_h::CURLoption = 10164;
+
+    pub const CURLOPT_COPYPOSTFIELDS: crate::curl_h::CURLoption = 10165;
+
+    pub const CURLOPT_PROXY_TRANSFER_MODE: crate::curl_h::CURLoption = 166;
+
+    pub const CURLOPT_SEEKFUNCTION: crate::curl_h::CURLoption = 20167;
+
+    pub const CURLOPT_SEEKDATA: crate::curl_h::CURLoption = 10168;
+
+    pub const CURLOPT_CRLFILE: crate::curl_h::CURLoption = 10169;
+
+    pub const CURLOPT_ISSUERCERT: crate::curl_h::CURLoption = 10170;
+
+    pub const CURLOPT_ADDRESS_SCOPE: crate::curl_h::CURLoption = 171;
+
+    pub const CURLOPT_CERTINFO: crate::curl_h::CURLoption = 172;
+
+    pub const CURLOPT_USERNAME: crate::curl_h::CURLoption = 10173;
+
+    pub const CURLOPT_PASSWORD: crate::curl_h::CURLoption = 10174;
+
+    pub const CURLOPT_PROXYUSERNAME: crate::curl_h::CURLoption = 10175;
+
+    pub const CURLOPT_PROXYPASSWORD: crate::curl_h::CURLoption = 10176;
+
+    pub const CURLOPT_NOPROXY: crate::curl_h::CURLoption = 10177;
+
+    pub const CURLOPT_TFTP_BLKSIZE: crate::curl_h::CURLoption = 178;
+
+    pub const CURLOPT_SOCKS5_GSSAPI_SERVICE: crate::curl_h::CURLoption = 10179;
+
+    pub const CURLOPT_SOCKS5_GSSAPI_NEC: crate::curl_h::CURLoption = 180;
+
+    pub const CURLOPT_PROTOCOLS: crate::curl_h::CURLoption = 181;
+
+    pub const CURLOPT_REDIR_PROTOCOLS: crate::curl_h::CURLoption = 182;
+
+    pub const CURLOPT_SSH_KNOWNHOSTS: crate::curl_h::CURLoption = 10183;
+
+    pub const CURLOPT_SSH_KEYFUNCTION: crate::curl_h::CURLoption = 20184;
+
+    pub const CURLOPT_SSH_KEYDATA: crate::curl_h::CURLoption = 10185;
+
+    pub const CURLOPT_MAIL_FROM: crate::curl_h::CURLoption = 10186;
+
+    pub const CURLOPT_MAIL_RCPT: crate::curl_h::CURLoption = 10187;
+
+    pub const CURLOPT_FTP_USE_PRET: crate::curl_h::CURLoption = 188;
+
+    pub const CURLOPT_RTSP_REQUEST: crate::curl_h::CURLoption = 189;
+
+    pub const CURLOPT_RTSP_SESSION_ID: crate::curl_h::CURLoption = 10190;
+
+    pub const CURLOPT_RTSP_STREAM_URI: crate::curl_h::CURLoption = 10191;
+
+    pub const CURLOPT_RTSP_TRANSPORT: crate::curl_h::CURLoption = 10192;
+
+    pub const CURLOPT_RTSP_CLIENT_CSEQ: crate::curl_h::CURLoption = 193;
+
+    pub const CURLOPT_RTSP_SERVER_CSEQ: crate::curl_h::CURLoption = 194;
+
+    pub const CURLOPT_INTERLEAVEDATA: crate::curl_h::CURLoption = 10195;
+
+    pub const CURLOPT_INTERLEAVEFUNCTION: crate::curl_h::CURLoption = 20196;
+
+    pub const CURLOPT_WILDCARDMATCH: crate::curl_h::CURLoption = 197;
+
+    pub const CURLOPT_CHUNK_BGN_FUNCTION: crate::curl_h::CURLoption = 20198;
+
+    pub const CURLOPT_CHUNK_END_FUNCTION: crate::curl_h::CURLoption = 20199;
+
+    pub const CURLOPT_FNMATCH_FUNCTION: crate::curl_h::CURLoption = 20200;
+
+    pub const CURLOPT_CHUNK_DATA: crate::curl_h::CURLoption = 10201;
+
+    pub const CURLOPT_FNMATCH_DATA: crate::curl_h::CURLoption = 10202;
+
+    pub const CURLOPT_RESOLVE: crate::curl_h::CURLoption = 10203;
+
+    pub const CURLOPT_TLSAUTH_USERNAME: crate::curl_h::CURLoption = 10204;
+
+    pub const CURLOPT_TLSAUTH_PASSWORD: crate::curl_h::CURLoption = 10205;
+
+    pub const CURLOPT_TLSAUTH_TYPE: crate::curl_h::CURLoption = 10206;
+
+    pub const CURLOPT_TRANSFER_ENCODING: crate::curl_h::CURLoption = 207;
+
+    pub const CURLOPT_CLOSESOCKETFUNCTION: crate::curl_h::CURLoption = 20208;
+
+    pub const CURLOPT_CLOSESOCKETDATA: crate::curl_h::CURLoption = 10209;
+
+    pub const CURLOPT_GSSAPI_DELEGATION: crate::curl_h::CURLoption = 210;
+
+    pub const CURLOPT_DNS_SERVERS: crate::curl_h::CURLoption = 10211;
+
+    pub const CURLOPT_ACCEPTTIMEOUT_MS: crate::curl_h::CURLoption = 212;
+
+    pub const CURLOPT_TCP_KEEPALIVE: crate::curl_h::CURLoption = 213;
+
+    pub const CURLOPT_TCP_KEEPIDLE: crate::curl_h::CURLoption = 214;
+
+    pub const CURLOPT_TCP_KEEPINTVL: crate::curl_h::CURLoption = 215;
+
+    pub const CURLOPT_SSL_OPTIONS: crate::curl_h::CURLoption = 216;
+
+    pub const CURLOPT_MAIL_AUTH: crate::curl_h::CURLoption = 10217;
+
+    pub const CURLOPT_SASL_IR: crate::curl_h::CURLoption = 218;
+
+    pub const CURLOPT_XFERINFOFUNCTION: crate::curl_h::CURLoption = 20219;
+
+    pub const CURLOPT_XOAUTH2_BEARER: crate::curl_h::CURLoption = 10220;
+
+    pub const CURLOPT_DNS_INTERFACE: crate::curl_h::CURLoption = 10221;
+
+    pub const CURLOPT_DNS_LOCAL_IP4: crate::curl_h::CURLoption = 10222;
+
+    pub const CURLOPT_DNS_LOCAL_IP6: crate::curl_h::CURLoption = 10223;
+
+    pub const CURLOPT_LOGIN_OPTIONS: crate::curl_h::CURLoption = 10224;
+
+    pub const CURLOPT_SSL_ENABLE_NPN: crate::curl_h::CURLoption = 225;
+
+    pub const CURLOPT_SSL_ENABLE_ALPN: crate::curl_h::CURLoption = 226;
+
+    pub const CURLOPT_EXPECT_100_TIMEOUT_MS: crate::curl_h::CURLoption = 227;
+
+    pub const CURLOPT_PROXYHEADER: crate::curl_h::CURLoption = 10228;
+
+    pub const CURLOPT_HEADEROPT: crate::curl_h::CURLoption = 229;
+
+    pub const CURLOPT_PINNEDPUBLICKEY: crate::curl_h::CURLoption = 10230;
+
+    pub const CURLOPT_UNIX_SOCKET_PATH: crate::curl_h::CURLoption = 10231;
+
+    pub const CURLOPT_SSL_VERIFYSTATUS: crate::curl_h::CURLoption = 232;
+
+    pub const CURLOPT_SSL_FALSESTART: crate::curl_h::CURLoption = 233;
+
+    pub const CURLOPT_PATH_AS_IS: crate::curl_h::CURLoption = 234;
+
+    pub const CURLOPT_PROXY_SERVICE_NAME: crate::curl_h::CURLoption = 10235;
+
+    pub const CURLOPT_SERVICE_NAME: crate::curl_h::CURLoption = 10236;
+
+    pub const CURLOPT_PIPEWAIT: crate::curl_h::CURLoption = 237;
+
+    pub const CURLOPT_DEFAULT_PROTOCOL: crate::curl_h::CURLoption = 10238;
+
+    pub const CURLOPT_STREAM_WEIGHT: crate::curl_h::CURLoption = 239;
+
+    pub const CURLOPT_STREAM_DEPENDS: crate::curl_h::CURLoption = 10240;
+
+    pub const CURLOPT_STREAM_DEPENDS_E: crate::curl_h::CURLoption = 10241;
+
+    pub const CURLOPT_TFTP_NO_OPTIONS: crate::curl_h::CURLoption = 242;
+
+    pub const CURLOPT_CONNECT_TO: crate::curl_h::CURLoption = 10243;
+
+    pub const CURLOPT_TCP_FASTOPEN: crate::curl_h::CURLoption = 244;
+
+    pub const CURLOPT_KEEP_SENDING_ON_ERROR: crate::curl_h::CURLoption = 245;
+
+    pub const CURLOPT_PROXY_CAINFO: crate::curl_h::CURLoption = 10246;
+
+    pub const CURLOPT_PROXY_CAPATH: crate::curl_h::CURLoption = 10247;
+
+    pub const CURLOPT_PROXY_SSL_VERIFYPEER: crate::curl_h::CURLoption = 248;
+
+    pub const CURLOPT_PROXY_SSL_VERIFYHOST: crate::curl_h::CURLoption = 249;
+
+    pub const CURLOPT_PROXY_SSLVERSION: crate::curl_h::CURLoption = 250;
+
+    pub const CURLOPT_PROXY_TLSAUTH_USERNAME: crate::curl_h::CURLoption = 10251;
+
+    pub const CURLOPT_PROXY_TLSAUTH_PASSWORD: crate::curl_h::CURLoption = 10252;
+
+    pub const CURLOPT_PROXY_TLSAUTH_TYPE: crate::curl_h::CURLoption = 10253;
+
+    pub const CURLOPT_PROXY_SSLCERT: crate::curl_h::CURLoption = 10254;
+
+    pub const CURLOPT_PROXY_SSLCERTTYPE: crate::curl_h::CURLoption = 10255;
+
+    pub const CURLOPT_PROXY_SSLKEY: crate::curl_h::CURLoption = 10256;
+
+    pub const CURLOPT_PROXY_SSLKEYTYPE: crate::curl_h::CURLoption = 10257;
+
+    pub const CURLOPT_PROXY_KEYPASSWD: crate::curl_h::CURLoption = 10258;
+
+    pub const CURLOPT_PROXY_SSL_CIPHER_LIST: crate::curl_h::CURLoption = 10259;
+
+    pub const CURLOPT_PROXY_CRLFILE: crate::curl_h::CURLoption = 10260;
+
+    pub const CURLOPT_PROXY_SSL_OPTIONS: crate::curl_h::CURLoption = 261;
+
+    pub const CURLOPT_PRE_PROXY: crate::curl_h::CURLoption = 10262;
+
+    pub const CURLOPT_PROXY_PINNEDPUBLICKEY: crate::curl_h::CURLoption = 10263;
+
+    pub const CURLOPT_ABSTRACT_UNIX_SOCKET: crate::curl_h::CURLoption = 10264;
+
+    pub const CURLOPT_SUPPRESS_CONNECT_HEADERS: crate::curl_h::CURLoption = 265;
+
+    pub const CURLOPT_LASTENTRY: crate::curl_h::CURLoption = 266;
+
+    pub type CURLINFO = libc::c_uint;
+
+    pub const CURLINFO_NONE: crate::curl_h::CURLINFO = 0;
 
     pub const CURLINFO_EFFECTIVE_URL: crate::curl_h::CURLINFO = 1048577;
 
-    pub const CURLINFO_NONE: crate::curl_h::CURLINFO = 0;
+    pub const CURLINFO_RESPONSE_CODE: crate::curl_h::CURLINFO = 2097154;
+
+    pub const CURLINFO_TOTAL_TIME: crate::curl_h::CURLINFO = 3145731;
+
+    pub const CURLINFO_NAMELOOKUP_TIME: crate::curl_h::CURLINFO = 3145732;
+
+    pub const CURLINFO_CONNECT_TIME: crate::curl_h::CURLINFO = 3145733;
+
+    pub const CURLINFO_PRETRANSFER_TIME: crate::curl_h::CURLINFO = 3145734;
+
+    pub const CURLINFO_SIZE_UPLOAD: crate::curl_h::CURLINFO = 3145735;
+
+    pub const CURLINFO_SIZE_DOWNLOAD: crate::curl_h::CURLINFO = 3145736;
+
+    pub const CURLINFO_SPEED_DOWNLOAD: crate::curl_h::CURLINFO = 3145737;
+
+    pub const CURLINFO_SPEED_UPLOAD: crate::curl_h::CURLINFO = 3145738;
+
+    pub const CURLINFO_HEADER_SIZE: crate::curl_h::CURLINFO = 2097163;
+
+    pub const CURLINFO_REQUEST_SIZE: crate::curl_h::CURLINFO = 2097164;
+
+    pub const CURLINFO_SSL_VERIFYRESULT: crate::curl_h::CURLINFO = 2097165;
+
+    pub const CURLINFO_FILETIME: crate::curl_h::CURLINFO = 2097166;
+
+    pub const CURLINFO_CONTENT_LENGTH_DOWNLOAD: crate::curl_h::CURLINFO = 3145743;
+
+    pub const CURLINFO_CONTENT_LENGTH_UPLOAD: crate::curl_h::CURLINFO = 3145744;
+
+    pub const CURLINFO_STARTTRANSFER_TIME: crate::curl_h::CURLINFO = 3145745;
+
+    pub const CURLINFO_CONTENT_TYPE: crate::curl_h::CURLINFO = 1048594;
+
+    pub const CURLINFO_REDIRECT_TIME: crate::curl_h::CURLINFO = 3145747;
+
+    pub const CURLINFO_REDIRECT_COUNT: crate::curl_h::CURLINFO = 2097172;
+
+    pub const CURLINFO_PRIVATE: crate::curl_h::CURLINFO = 1048597;
+
+    pub const CURLINFO_HTTP_CONNECTCODE: crate::curl_h::CURLINFO = 2097174;
+
+    pub const CURLINFO_HTTPAUTH_AVAIL: crate::curl_h::CURLINFO = 2097175;
+
+    pub const CURLINFO_PROXYAUTH_AVAIL: crate::curl_h::CURLINFO = 2097176;
+
+    pub const CURLINFO_OS_ERRNO: crate::curl_h::CURLINFO = 2097177;
+
+    pub const CURLINFO_NUM_CONNECTS: crate::curl_h::CURLINFO = 2097178;
+
+    pub const CURLINFO_SSL_ENGINES: crate::curl_h::CURLINFO = 4194331;
+
+    pub const CURLINFO_COOKIELIST: crate::curl_h::CURLINFO = 4194332;
+
+    pub const CURLINFO_LASTSOCKET: crate::curl_h::CURLINFO = 2097181;
+
+    pub const CURLINFO_FTP_ENTRY_PATH: crate::curl_h::CURLINFO = 1048606;
+
+    pub const CURLINFO_REDIRECT_URL: crate::curl_h::CURLINFO = 1048607;
+
+    pub const CURLINFO_PRIMARY_IP: crate::curl_h::CURLINFO = 1048608;
+
+    pub const CURLINFO_APPCONNECT_TIME: crate::curl_h::CURLINFO = 3145761;
+
+    pub const CURLINFO_CERTINFO: crate::curl_h::CURLINFO = 4194338;
+
+    pub const CURLINFO_CONDITION_UNMET: crate::curl_h::CURLINFO = 2097187;
+
+    pub const CURLINFO_RTSP_SESSION_ID: crate::curl_h::CURLINFO = 1048612;
+
+    pub const CURLINFO_RTSP_CLIENT_CSEQ: crate::curl_h::CURLINFO = 2097189;
+
+    pub const CURLINFO_RTSP_SERVER_CSEQ: crate::curl_h::CURLINFO = 2097190;
+
+    pub const CURLINFO_RTSP_CSEQ_RECV: crate::curl_h::CURLINFO = 2097191;
+
+    pub const CURLINFO_PRIMARY_PORT: crate::curl_h::CURLINFO = 2097192;
+
+    pub const CURLINFO_LOCAL_IP: crate::curl_h::CURLINFO = 1048617;
+
+    pub const CURLINFO_LOCAL_PORT: crate::curl_h::CURLINFO = 2097194;
+
+    pub const CURLINFO_TLS_SESSION: crate::curl_h::CURLINFO = 4194347;
+
+    pub const CURLINFO_ACTIVESOCKET: crate::curl_h::CURLINFO = 5242924;
+
+    pub const CURLINFO_TLS_SSL_PTR: crate::curl_h::CURLINFO = 4194349;
+
+    pub const CURLINFO_HTTP_VERSION: crate::curl_h::CURLINFO = 2097198;
+
+    pub const CURLINFO_PROXY_SSL_VERIFYRESULT: crate::curl_h::CURLINFO = 2097199;
+
+    pub const CURLINFO_PROTOCOL: crate::curl_h::CURLINFO = 2097200;
+
+    pub const CURLINFO_SCHEME: crate::curl_h::CURLINFO = 1048625;
+
+    pub const CURLINFO_LASTONE: crate::curl_h::CURLINFO = 49;
 }
 pub mod bg_public_h {
-    pub const PM_SPINTERMISSION: crate::be_aas_h::C2RustUnnamed_0 = 6;
-
-    pub const PM_INTERMISSION: crate::be_aas_h::C2RustUnnamed_0 = 5;
-
-    pub const PM_FREEZE: crate::be_aas_h::C2RustUnnamed_0 = 4;
-
-    pub const PM_DEAD: crate::be_aas_h::C2RustUnnamed_0 = 3;
-
-    pub const PM_SPECTATOR: crate::be_aas_h::C2RustUnnamed_0 = 2;
-
-    pub const PM_NOCLIP: crate::be_aas_h::C2RustUnnamed_0 = 1;
-
-    pub const PM_NORMAL: crate::be_aas_h::C2RustUnnamed_0 = 0;
-
-    pub const GT_MAX_GAME_TYPE: crate::be_aas_h::C2RustUnnamed_0 = 8;
-
-    pub const GT_HARVESTER: crate::be_aas_h::C2RustUnnamed_0 = 7;
-
-    pub const GT_OBELISK: crate::be_aas_h::C2RustUnnamed_0 = 6;
-
-    pub const GT_1FCTF: crate::be_aas_h::C2RustUnnamed_0 = 5;
-
-    pub const GT_CTF: crate::be_aas_h::C2RustUnnamed_0 = 4;
-
-    pub const GT_TEAM: crate::be_aas_h::C2RustUnnamed_0 = 3;
-
-    pub const GT_SINGLE_PLAYER: crate::be_aas_h::C2RustUnnamed_0 = 2;
+    pub const GT_FFA: crate::be_aas_h::C2RustUnnamed_0 = 0;
 
     pub const GT_TOURNAMENT: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
-    pub const GT_FFA: crate::be_aas_h::C2RustUnnamed_0 = 0;
+    pub const GT_SINGLE_PLAYER: crate::be_aas_h::C2RustUnnamed_0 = 2;
+
+    pub const GT_TEAM: crate::be_aas_h::C2RustUnnamed_0 = 3;
+
+    pub const GT_CTF: crate::be_aas_h::C2RustUnnamed_0 = 4;
+
+    pub const GT_1FCTF: crate::be_aas_h::C2RustUnnamed_0 = 5;
+
+    pub const GT_OBELISK: crate::be_aas_h::C2RustUnnamed_0 = 6;
+
+    pub const GT_HARVESTER: crate::be_aas_h::C2RustUnnamed_0 = 7;
+
+    pub const GT_MAX_GAME_TYPE: crate::be_aas_h::C2RustUnnamed_0 = 8;
+
+    pub const PM_NORMAL: crate::be_aas_h::C2RustUnnamed_0 = 0;
+
+    pub const PM_NOCLIP: crate::be_aas_h::C2RustUnnamed_0 = 1;
+
+    pub const PM_SPECTATOR: crate::be_aas_h::C2RustUnnamed_0 = 2;
+
+    pub const PM_DEAD: crate::be_aas_h::C2RustUnnamed_0 = 3;
+
+    pub const PM_FREEZE: crate::be_aas_h::C2RustUnnamed_0 = 4;
+
+    pub const PM_INTERMISSION: crate::be_aas_h::C2RustUnnamed_0 = 5;
+
+    pub const PM_SPINTERMISSION: crate::be_aas_h::C2RustUnnamed_0 = 6;
 }
 pub mod keycodes_h {
-    pub const MAX_KEYS: crate::be_aas_h::C2RustUnnamed_0 = 366;
-
-    pub const K_CONSOLE: crate::be_aas_h::C2RustUnnamed_0 = 365;
-
-    pub const K_PAD0_RIGHTTRIGGER: crate::be_aas_h::C2RustUnnamed_0 = 364;
-
-    pub const K_PAD0_LEFTTRIGGER: crate::be_aas_h::C2RustUnnamed_0 = 363;
-
-    pub const K_PAD0_RIGHTSTICK_DOWN: crate::be_aas_h::C2RustUnnamed_0 = 362;
-
-    pub const K_PAD0_RIGHTSTICK_UP: crate::be_aas_h::C2RustUnnamed_0 = 361;
-
-    pub const K_PAD0_RIGHTSTICK_RIGHT: crate::be_aas_h::C2RustUnnamed_0 = 360;
-
-    pub const K_PAD0_RIGHTSTICK_LEFT: crate::be_aas_h::C2RustUnnamed_0 = 359;
-
-    pub const K_PAD0_LEFTSTICK_DOWN: crate::be_aas_h::C2RustUnnamed_0 = 358;
-
-    pub const K_PAD0_LEFTSTICK_UP: crate::be_aas_h::C2RustUnnamed_0 = 357;
-
-    pub const K_PAD0_LEFTSTICK_RIGHT: crate::be_aas_h::C2RustUnnamed_0 = 356;
-
-    pub const K_PAD0_LEFTSTICK_LEFT: crate::be_aas_h::C2RustUnnamed_0 = 355;
-
-    pub const K_PAD0_DPAD_RIGHT: crate::be_aas_h::C2RustUnnamed_0 = 354;
-
-    pub const K_PAD0_DPAD_LEFT: crate::be_aas_h::C2RustUnnamed_0 = 353;
-
-    pub const K_PAD0_DPAD_DOWN: crate::be_aas_h::C2RustUnnamed_0 = 352;
-
-    pub const K_PAD0_DPAD_UP: crate::be_aas_h::C2RustUnnamed_0 = 351;
-
-    pub const K_PAD0_RIGHTSHOULDER: crate::be_aas_h::C2RustUnnamed_0 = 350;
-
-    pub const K_PAD0_LEFTSHOULDER: crate::be_aas_h::C2RustUnnamed_0 = 349;
-
-    pub const K_PAD0_RIGHTSTICK_CLICK: crate::be_aas_h::C2RustUnnamed_0 = 348;
-
-    pub const K_PAD0_LEFTSTICK_CLICK: crate::be_aas_h::C2RustUnnamed_0 = 347;
-
-    pub const K_PAD0_START: crate::be_aas_h::C2RustUnnamed_0 = 346;
-
-    pub const K_PAD0_GUIDE: crate::be_aas_h::C2RustUnnamed_0 = 345;
-
-    pub const K_PAD0_BACK: crate::be_aas_h::C2RustUnnamed_0 = 344;
-
-    pub const K_PAD0_Y: crate::be_aas_h::C2RustUnnamed_0 = 343;
-
-    pub const K_PAD0_X: crate::be_aas_h::C2RustUnnamed_0 = 342;
-
-    pub const K_PAD0_B: crate::be_aas_h::C2RustUnnamed_0 = 341;
-
-    pub const K_PAD0_A: crate::be_aas_h::C2RustUnnamed_0 = 340;
-
-    pub const K_UNDO: crate::be_aas_h::C2RustUnnamed_0 = 339;
-
-    pub const K_EURO: crate::be_aas_h::C2RustUnnamed_0 = 338;
-
-    pub const K_MENU: crate::be_aas_h::C2RustUnnamed_0 = 337;
-
-    pub const K_BREAK: crate::be_aas_h::C2RustUnnamed_0 = 336;
-
-    pub const K_SCROLLOCK: crate::be_aas_h::C2RustUnnamed_0 = 335;
-
-    pub const K_SYSREQ: crate::be_aas_h::C2RustUnnamed_0 = 334;
-
-    pub const K_PRINT: crate::be_aas_h::C2RustUnnamed_0 = 333;
-
-    pub const K_HELP: crate::be_aas_h::C2RustUnnamed_0 = 332;
-
-    pub const K_MODE: crate::be_aas_h::C2RustUnnamed_0 = 331;
-
-    pub const K_COMPOSE: crate::be_aas_h::C2RustUnnamed_0 = 330;
-
-    pub const K_SUPER: crate::be_aas_h::C2RustUnnamed_0 = 329;
-
-    pub const K_WORLD_95: crate::be_aas_h::C2RustUnnamed_0 = 328;
-
-    pub const K_WORLD_94: crate::be_aas_h::C2RustUnnamed_0 = 327;
-
-    pub const K_WORLD_93: crate::be_aas_h::C2RustUnnamed_0 = 326;
-
-    pub const K_WORLD_92: crate::be_aas_h::C2RustUnnamed_0 = 325;
-
-    pub const K_WORLD_91: crate::be_aas_h::C2RustUnnamed_0 = 324;
-
-    pub const K_WORLD_90: crate::be_aas_h::C2RustUnnamed_0 = 323;
-
-    pub const K_WORLD_89: crate::be_aas_h::C2RustUnnamed_0 = 322;
-
-    pub const K_WORLD_88: crate::be_aas_h::C2RustUnnamed_0 = 321;
-
-    pub const K_WORLD_87: crate::be_aas_h::C2RustUnnamed_0 = 320;
-
-    pub const K_WORLD_86: crate::be_aas_h::C2RustUnnamed_0 = 319;
-
-    pub const K_WORLD_85: crate::be_aas_h::C2RustUnnamed_0 = 318;
-
-    pub const K_WORLD_84: crate::be_aas_h::C2RustUnnamed_0 = 317;
-
-    pub const K_WORLD_83: crate::be_aas_h::C2RustUnnamed_0 = 316;
-
-    pub const K_WORLD_82: crate::be_aas_h::C2RustUnnamed_0 = 315;
-
-    pub const K_WORLD_81: crate::be_aas_h::C2RustUnnamed_0 = 314;
-
-    pub const K_WORLD_80: crate::be_aas_h::C2RustUnnamed_0 = 313;
-
-    pub const K_WORLD_79: crate::be_aas_h::C2RustUnnamed_0 = 312;
-
-    pub const K_WORLD_78: crate::be_aas_h::C2RustUnnamed_0 = 311;
-
-    pub const K_WORLD_77: crate::be_aas_h::C2RustUnnamed_0 = 310;
-
-    pub const K_WORLD_76: crate::be_aas_h::C2RustUnnamed_0 = 309;
-
-    pub const K_WORLD_75: crate::be_aas_h::C2RustUnnamed_0 = 308;
-
-    pub const K_WORLD_74: crate::be_aas_h::C2RustUnnamed_0 = 307;
-
-    pub const K_WORLD_73: crate::be_aas_h::C2RustUnnamed_0 = 306;
-
-    pub const K_WORLD_72: crate::be_aas_h::C2RustUnnamed_0 = 305;
-
-    pub const K_WORLD_71: crate::be_aas_h::C2RustUnnamed_0 = 304;
-
-    pub const K_WORLD_70: crate::be_aas_h::C2RustUnnamed_0 = 303;
-
-    pub const K_WORLD_69: crate::be_aas_h::C2RustUnnamed_0 = 302;
-
-    pub const K_WORLD_68: crate::be_aas_h::C2RustUnnamed_0 = 301;
-
-    pub const K_WORLD_67: crate::be_aas_h::C2RustUnnamed_0 = 300;
-
-    pub const K_WORLD_66: crate::be_aas_h::C2RustUnnamed_0 = 299;
-
-    pub const K_WORLD_65: crate::be_aas_h::C2RustUnnamed_0 = 298;
-
-    pub const K_WORLD_64: crate::be_aas_h::C2RustUnnamed_0 = 297;
-
-    pub const K_WORLD_63: crate::be_aas_h::C2RustUnnamed_0 = 296;
-
-    pub const K_WORLD_62: crate::be_aas_h::C2RustUnnamed_0 = 295;
-
-    pub const K_WORLD_61: crate::be_aas_h::C2RustUnnamed_0 = 294;
-
-    pub const K_WORLD_60: crate::be_aas_h::C2RustUnnamed_0 = 293;
-
-    pub const K_WORLD_59: crate::be_aas_h::C2RustUnnamed_0 = 292;
-
-    pub const K_WORLD_58: crate::be_aas_h::C2RustUnnamed_0 = 291;
-
-    pub const K_WORLD_57: crate::be_aas_h::C2RustUnnamed_0 = 290;
-
-    pub const K_WORLD_56: crate::be_aas_h::C2RustUnnamed_0 = 289;
-
-    pub const K_WORLD_55: crate::be_aas_h::C2RustUnnamed_0 = 288;
-
-    pub const K_WORLD_54: crate::be_aas_h::C2RustUnnamed_0 = 287;
-
-    pub const K_WORLD_53: crate::be_aas_h::C2RustUnnamed_0 = 286;
-
-    pub const K_WORLD_52: crate::be_aas_h::C2RustUnnamed_0 = 285;
-
-    pub const K_WORLD_51: crate::be_aas_h::C2RustUnnamed_0 = 284;
-
-    pub const K_WORLD_50: crate::be_aas_h::C2RustUnnamed_0 = 283;
-
-    pub const K_WORLD_49: crate::be_aas_h::C2RustUnnamed_0 = 282;
-
-    pub const K_WORLD_48: crate::be_aas_h::C2RustUnnamed_0 = 281;
-
-    pub const K_WORLD_47: crate::be_aas_h::C2RustUnnamed_0 = 280;
-
-    pub const K_WORLD_46: crate::be_aas_h::C2RustUnnamed_0 = 279;
-
-    pub const K_WORLD_45: crate::be_aas_h::C2RustUnnamed_0 = 278;
-
-    pub const K_WORLD_44: crate::be_aas_h::C2RustUnnamed_0 = 277;
-
-    pub const K_WORLD_43: crate::be_aas_h::C2RustUnnamed_0 = 276;
-
-    pub const K_WORLD_42: crate::be_aas_h::C2RustUnnamed_0 = 275;
-
-    pub const K_WORLD_41: crate::be_aas_h::C2RustUnnamed_0 = 274;
-
-    pub const K_WORLD_40: crate::be_aas_h::C2RustUnnamed_0 = 273;
-
-    pub const K_WORLD_39: crate::be_aas_h::C2RustUnnamed_0 = 272;
-
-    pub const K_WORLD_38: crate::be_aas_h::C2RustUnnamed_0 = 271;
-
-    pub const K_WORLD_37: crate::be_aas_h::C2RustUnnamed_0 = 270;
-
-    pub const K_WORLD_36: crate::be_aas_h::C2RustUnnamed_0 = 269;
-
-    pub const K_WORLD_35: crate::be_aas_h::C2RustUnnamed_0 = 268;
-
-    pub const K_WORLD_34: crate::be_aas_h::C2RustUnnamed_0 = 267;
-
-    pub const K_WORLD_33: crate::be_aas_h::C2RustUnnamed_0 = 266;
-
-    pub const K_WORLD_32: crate::be_aas_h::C2RustUnnamed_0 = 265;
-
-    pub const K_WORLD_31: crate::be_aas_h::C2RustUnnamed_0 = 264;
-
-    pub const K_WORLD_30: crate::be_aas_h::C2RustUnnamed_0 = 263;
-
-    pub const K_WORLD_29: crate::be_aas_h::C2RustUnnamed_0 = 262;
-
-    pub const K_WORLD_28: crate::be_aas_h::C2RustUnnamed_0 = 261;
-
-    pub const K_WORLD_27: crate::be_aas_h::C2RustUnnamed_0 = 260;
-
-    pub const K_WORLD_26: crate::be_aas_h::C2RustUnnamed_0 = 259;
-
-    pub const K_WORLD_25: crate::be_aas_h::C2RustUnnamed_0 = 258;
-
-    pub const K_WORLD_24: crate::be_aas_h::C2RustUnnamed_0 = 257;
-
-    pub const K_WORLD_23: crate::be_aas_h::C2RustUnnamed_0 = 256;
-
-    pub const K_WORLD_22: crate::be_aas_h::C2RustUnnamed_0 = 255;
-
-    pub const K_WORLD_21: crate::be_aas_h::C2RustUnnamed_0 = 254;
-
-    pub const K_WORLD_20: crate::be_aas_h::C2RustUnnamed_0 = 253;
-
-    pub const K_WORLD_19: crate::be_aas_h::C2RustUnnamed_0 = 252;
-
-    pub const K_WORLD_18: crate::be_aas_h::C2RustUnnamed_0 = 251;
-
-    pub const K_WORLD_17: crate::be_aas_h::C2RustUnnamed_0 = 250;
-
-    pub const K_WORLD_16: crate::be_aas_h::C2RustUnnamed_0 = 249;
-
-    pub const K_WORLD_15: crate::be_aas_h::C2RustUnnamed_0 = 248;
-
-    pub const K_WORLD_14: crate::be_aas_h::C2RustUnnamed_0 = 247;
-
-    pub const K_WORLD_13: crate::be_aas_h::C2RustUnnamed_0 = 246;
-
-    pub const K_WORLD_12: crate::be_aas_h::C2RustUnnamed_0 = 245;
-
-    pub const K_WORLD_11: crate::be_aas_h::C2RustUnnamed_0 = 244;
-
-    pub const K_WORLD_10: crate::be_aas_h::C2RustUnnamed_0 = 243;
-
-    pub const K_WORLD_9: crate::be_aas_h::C2RustUnnamed_0 = 242;
-
-    pub const K_WORLD_8: crate::be_aas_h::C2RustUnnamed_0 = 241;
-
-    pub const K_WORLD_7: crate::be_aas_h::C2RustUnnamed_0 = 240;
-
-    pub const K_WORLD_6: crate::be_aas_h::C2RustUnnamed_0 = 239;
-
-    pub const K_WORLD_5: crate::be_aas_h::C2RustUnnamed_0 = 238;
-
-    pub const K_WORLD_4: crate::be_aas_h::C2RustUnnamed_0 = 237;
-
-    pub const K_WORLD_3: crate::be_aas_h::C2RustUnnamed_0 = 236;
-
-    pub const K_WORLD_2: crate::be_aas_h::C2RustUnnamed_0 = 235;
-
-    pub const K_WORLD_1: crate::be_aas_h::C2RustUnnamed_0 = 234;
-
-    pub const K_WORLD_0: crate::be_aas_h::C2RustUnnamed_0 = 233;
-
-    pub const K_AUX16: crate::be_aas_h::C2RustUnnamed_0 = 232;
-
-    pub const K_AUX15: crate::be_aas_h::C2RustUnnamed_0 = 231;
-
-    pub const K_AUX14: crate::be_aas_h::C2RustUnnamed_0 = 230;
-
-    pub const K_AUX13: crate::be_aas_h::C2RustUnnamed_0 = 229;
-
-    pub const K_AUX12: crate::be_aas_h::C2RustUnnamed_0 = 228;
-
-    pub const K_AUX11: crate::be_aas_h::C2RustUnnamed_0 = 227;
-
-    pub const K_AUX10: crate::be_aas_h::C2RustUnnamed_0 = 226;
-
-    pub const K_AUX9: crate::be_aas_h::C2RustUnnamed_0 = 225;
-
-    pub const K_AUX8: crate::be_aas_h::C2RustUnnamed_0 = 224;
-
-    pub const K_AUX7: crate::be_aas_h::C2RustUnnamed_0 = 223;
-
-    pub const K_AUX6: crate::be_aas_h::C2RustUnnamed_0 = 222;
-
-    pub const K_AUX5: crate::be_aas_h::C2RustUnnamed_0 = 221;
-
-    pub const K_AUX4: crate::be_aas_h::C2RustUnnamed_0 = 220;
-
-    pub const K_AUX3: crate::be_aas_h::C2RustUnnamed_0 = 219;
-
-    pub const K_AUX2: crate::be_aas_h::C2RustUnnamed_0 = 218;
-
-    pub const K_AUX1: crate::be_aas_h::C2RustUnnamed_0 = 217;
-
-    pub const K_JOY32: crate::be_aas_h::C2RustUnnamed_0 = 216;
-
-    pub const K_JOY31: crate::be_aas_h::C2RustUnnamed_0 = 215;
-
-    pub const K_JOY30: crate::be_aas_h::C2RustUnnamed_0 = 214;
-
-    pub const K_JOY29: crate::be_aas_h::C2RustUnnamed_0 = 213;
-
-    pub const K_JOY28: crate::be_aas_h::C2RustUnnamed_0 = 212;
-
-    pub const K_JOY27: crate::be_aas_h::C2RustUnnamed_0 = 211;
-
-    pub const K_JOY26: crate::be_aas_h::C2RustUnnamed_0 = 210;
-
-    pub const K_JOY25: crate::be_aas_h::C2RustUnnamed_0 = 209;
-
-    pub const K_JOY24: crate::be_aas_h::C2RustUnnamed_0 = 208;
-
-    pub const K_JOY23: crate::be_aas_h::C2RustUnnamed_0 = 207;
-
-    pub const K_JOY22: crate::be_aas_h::C2RustUnnamed_0 = 206;
-
-    pub const K_JOY21: crate::be_aas_h::C2RustUnnamed_0 = 205;
-
-    pub const K_JOY20: crate::be_aas_h::C2RustUnnamed_0 = 204;
-
-    pub const K_JOY19: crate::be_aas_h::C2RustUnnamed_0 = 203;
-
-    pub const K_JOY18: crate::be_aas_h::C2RustUnnamed_0 = 202;
-
-    pub const K_JOY17: crate::be_aas_h::C2RustUnnamed_0 = 201;
-
-    pub const K_JOY16: crate::be_aas_h::C2RustUnnamed_0 = 200;
-
-    pub const K_JOY15: crate::be_aas_h::C2RustUnnamed_0 = 199;
-
-    pub const K_JOY14: crate::be_aas_h::C2RustUnnamed_0 = 198;
-
-    pub const K_JOY13: crate::be_aas_h::C2RustUnnamed_0 = 197;
-
-    pub const K_JOY12: crate::be_aas_h::C2RustUnnamed_0 = 196;
-
-    pub const K_JOY11: crate::be_aas_h::C2RustUnnamed_0 = 195;
-
-    pub const K_JOY10: crate::be_aas_h::C2RustUnnamed_0 = 194;
-
-    pub const K_JOY9: crate::be_aas_h::C2RustUnnamed_0 = 193;
-
-    pub const K_JOY8: crate::be_aas_h::C2RustUnnamed_0 = 192;
-
-    pub const K_JOY7: crate::be_aas_h::C2RustUnnamed_0 = 191;
-
-    pub const K_JOY6: crate::be_aas_h::C2RustUnnamed_0 = 190;
-
-    pub const K_JOY5: crate::be_aas_h::C2RustUnnamed_0 = 189;
-
-    pub const K_JOY4: crate::be_aas_h::C2RustUnnamed_0 = 188;
-
-    pub const K_JOY3: crate::be_aas_h::C2RustUnnamed_0 = 187;
-
-    pub const K_JOY2: crate::be_aas_h::C2RustUnnamed_0 = 186;
-
-    pub const K_JOY1: crate::be_aas_h::C2RustUnnamed_0 = 185;
-
-    pub const K_MWHEELUP: crate::be_aas_h::C2RustUnnamed_0 = 184;
-
-    pub const K_MWHEELDOWN: crate::be_aas_h::C2RustUnnamed_0 = 183;
-
-    pub const K_MOUSE5: crate::be_aas_h::C2RustUnnamed_0 = 182;
-
-    pub const K_MOUSE4: crate::be_aas_h::C2RustUnnamed_0 = 181;
-
-    pub const K_MOUSE3: crate::be_aas_h::C2RustUnnamed_0 = 180;
-
-    pub const K_MOUSE2: crate::be_aas_h::C2RustUnnamed_0 = 179;
-
-    pub const K_MOUSE1: crate::be_aas_h::C2RustUnnamed_0 = 178;
-
-    pub const K_KP_EQUALS: crate::be_aas_h::C2RustUnnamed_0 = 177;
-
-    pub const K_KP_STAR: crate::be_aas_h::C2RustUnnamed_0 = 176;
-
-    pub const K_KP_NUMLOCK: crate::be_aas_h::C2RustUnnamed_0 = 175;
-
-    pub const K_KP_PLUS: crate::be_aas_h::C2RustUnnamed_0 = 174;
-
-    pub const K_KP_MINUS: crate::be_aas_h::C2RustUnnamed_0 = 173;
-
-    pub const K_KP_SLASH: crate::be_aas_h::C2RustUnnamed_0 = 172;
-
-    pub const K_KP_DEL: crate::be_aas_h::C2RustUnnamed_0 = 171;
-
-    pub const K_KP_INS: crate::be_aas_h::C2RustUnnamed_0 = 170;
-
-    pub const K_KP_ENTER: crate::be_aas_h::C2RustUnnamed_0 = 169;
-
-    pub const K_KP_PGDN: crate::be_aas_h::C2RustUnnamed_0 = 168;
-
-    pub const K_KP_DOWNARROW: crate::be_aas_h::C2RustUnnamed_0 = 167;
-
-    pub const K_KP_END: crate::be_aas_h::C2RustUnnamed_0 = 166;
-
-    pub const K_KP_RIGHTARROW: crate::be_aas_h::C2RustUnnamed_0 = 165;
-
-    pub const K_KP_5: crate::be_aas_h::C2RustUnnamed_0 = 164;
-
-    pub const K_KP_LEFTARROW: crate::be_aas_h::C2RustUnnamed_0 = 163;
-
-    pub const K_KP_PGUP: crate::be_aas_h::C2RustUnnamed_0 = 162;
-
-    pub const K_KP_UPARROW: crate::be_aas_h::C2RustUnnamed_0 = 161;
-
-    pub const K_KP_HOME: crate::be_aas_h::C2RustUnnamed_0 = 160;
-
-    pub const K_F15: crate::be_aas_h::C2RustUnnamed_0 = 159;
-
-    pub const K_F14: crate::be_aas_h::C2RustUnnamed_0 = 158;
-
-    pub const K_F13: crate::be_aas_h::C2RustUnnamed_0 = 157;
-
-    pub const K_F12: crate::be_aas_h::C2RustUnnamed_0 = 156;
-
-    pub const K_F11: crate::be_aas_h::C2RustUnnamed_0 = 155;
-
-    pub const K_F10: crate::be_aas_h::C2RustUnnamed_0 = 154;
-
-    pub const K_F9: crate::be_aas_h::C2RustUnnamed_0 = 153;
-
-    pub const K_F8: crate::be_aas_h::C2RustUnnamed_0 = 152;
-
-    pub const K_F7: crate::be_aas_h::C2RustUnnamed_0 = 151;
-
-    pub const K_F6: crate::be_aas_h::C2RustUnnamed_0 = 150;
-
-    pub const K_F5: crate::be_aas_h::C2RustUnnamed_0 = 149;
-
-    pub const K_F4: crate::be_aas_h::C2RustUnnamed_0 = 148;
-
-    pub const K_F3: crate::be_aas_h::C2RustUnnamed_0 = 147;
-
-    pub const K_F2: crate::be_aas_h::C2RustUnnamed_0 = 146;
-
-    pub const K_F1: crate::be_aas_h::C2RustUnnamed_0 = 145;
-
-    pub const K_END: crate::be_aas_h::C2RustUnnamed_0 = 144;
-
-    pub const K_HOME: crate::be_aas_h::C2RustUnnamed_0 = 143;
-
-    pub const K_PGUP: crate::be_aas_h::C2RustUnnamed_0 = 142;
-
-    pub const K_PGDN: crate::be_aas_h::C2RustUnnamed_0 = 141;
-
-    pub const K_DEL: crate::be_aas_h::C2RustUnnamed_0 = 140;
-
-    pub const K_INS: crate::be_aas_h::C2RustUnnamed_0 = 139;
-
-    pub const K_SHIFT: crate::be_aas_h::C2RustUnnamed_0 = 138;
-
-    pub const K_CTRL: crate::be_aas_h::C2RustUnnamed_0 = 137;
-
-    pub const K_ALT: crate::be_aas_h::C2RustUnnamed_0 = 136;
-
-    pub const K_RIGHTARROW: crate::be_aas_h::C2RustUnnamed_0 = 135;
-
-    pub const K_LEFTARROW: crate::be_aas_h::C2RustUnnamed_0 = 134;
-
-    pub const K_DOWNARROW: crate::be_aas_h::C2RustUnnamed_0 = 133;
-
-    pub const K_UPARROW: crate::be_aas_h::C2RustUnnamed_0 = 132;
-
-    pub const K_PAUSE: crate::be_aas_h::C2RustUnnamed_0 = 131;
-
-    pub const K_POWER: crate::be_aas_h::C2RustUnnamed_0 = 130;
-
-    pub const K_CAPSLOCK: crate::be_aas_h::C2RustUnnamed_0 = 129;
-
-    pub const K_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 128;
-
-    pub const K_BACKSPACE: crate::be_aas_h::C2RustUnnamed_0 = 127;
-
-    pub const K_SPACE: crate::be_aas_h::C2RustUnnamed_0 = 32;
-
-    pub const K_ESCAPE: crate::be_aas_h::C2RustUnnamed_0 = 27;
-
-    pub const K_ENTER: crate::be_aas_h::C2RustUnnamed_0 = 13;
+    pub type keyNum_t = libc::c_uint;
 
     pub const K_TAB: crate::be_aas_h::C2RustUnnamed_0 = 9;
 
-    pub type keyNum_t = libc::c_uint;
+    pub const K_ENTER: crate::be_aas_h::C2RustUnnamed_0 = 13;
+
+    pub const K_ESCAPE: crate::be_aas_h::C2RustUnnamed_0 = 27;
+
+    pub const K_SPACE: crate::be_aas_h::C2RustUnnamed_0 = 32;
+
+    pub const K_BACKSPACE: crate::be_aas_h::C2RustUnnamed_0 = 127;
+
+    pub const K_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 128;
+
+    pub const K_CAPSLOCK: crate::be_aas_h::C2RustUnnamed_0 = 129;
+
+    pub const K_POWER: crate::be_aas_h::C2RustUnnamed_0 = 130;
+
+    pub const K_PAUSE: crate::be_aas_h::C2RustUnnamed_0 = 131;
+
+    pub const K_UPARROW: crate::be_aas_h::C2RustUnnamed_0 = 132;
+
+    pub const K_DOWNARROW: crate::be_aas_h::C2RustUnnamed_0 = 133;
+
+    pub const K_LEFTARROW: crate::be_aas_h::C2RustUnnamed_0 = 134;
+
+    pub const K_RIGHTARROW: crate::be_aas_h::C2RustUnnamed_0 = 135;
+
+    pub const K_ALT: crate::be_aas_h::C2RustUnnamed_0 = 136;
+
+    pub const K_CTRL: crate::be_aas_h::C2RustUnnamed_0 = 137;
+
+    pub const K_SHIFT: crate::be_aas_h::C2RustUnnamed_0 = 138;
+
+    pub const K_INS: crate::be_aas_h::C2RustUnnamed_0 = 139;
+
+    pub const K_DEL: crate::be_aas_h::C2RustUnnamed_0 = 140;
+
+    pub const K_PGDN: crate::be_aas_h::C2RustUnnamed_0 = 141;
+
+    pub const K_PGUP: crate::be_aas_h::C2RustUnnamed_0 = 142;
+
+    pub const K_HOME: crate::be_aas_h::C2RustUnnamed_0 = 143;
+
+    pub const K_END: crate::be_aas_h::C2RustUnnamed_0 = 144;
+
+    pub const K_F1: crate::be_aas_h::C2RustUnnamed_0 = 145;
+
+    pub const K_F2: crate::be_aas_h::C2RustUnnamed_0 = 146;
+
+    pub const K_F3: crate::be_aas_h::C2RustUnnamed_0 = 147;
+
+    pub const K_F4: crate::be_aas_h::C2RustUnnamed_0 = 148;
+
+    pub const K_F5: crate::be_aas_h::C2RustUnnamed_0 = 149;
+
+    pub const K_F6: crate::be_aas_h::C2RustUnnamed_0 = 150;
+
+    pub const K_F7: crate::be_aas_h::C2RustUnnamed_0 = 151;
+
+    pub const K_F8: crate::be_aas_h::C2RustUnnamed_0 = 152;
+
+    pub const K_F9: crate::be_aas_h::C2RustUnnamed_0 = 153;
+
+    pub const K_F10: crate::be_aas_h::C2RustUnnamed_0 = 154;
+
+    pub const K_F11: crate::be_aas_h::C2RustUnnamed_0 = 155;
+
+    pub const K_F12: crate::be_aas_h::C2RustUnnamed_0 = 156;
+
+    pub const K_F13: crate::be_aas_h::C2RustUnnamed_0 = 157;
+
+    pub const K_F14: crate::be_aas_h::C2RustUnnamed_0 = 158;
+
+    pub const K_F15: crate::be_aas_h::C2RustUnnamed_0 = 159;
+
+    pub const K_KP_HOME: crate::be_aas_h::C2RustUnnamed_0 = 160;
+
+    pub const K_KP_UPARROW: crate::be_aas_h::C2RustUnnamed_0 = 161;
+
+    pub const K_KP_PGUP: crate::be_aas_h::C2RustUnnamed_0 = 162;
+
+    pub const K_KP_LEFTARROW: crate::be_aas_h::C2RustUnnamed_0 = 163;
+
+    pub const K_KP_5: crate::be_aas_h::C2RustUnnamed_0 = 164;
+
+    pub const K_KP_RIGHTARROW: crate::be_aas_h::C2RustUnnamed_0 = 165;
+
+    pub const K_KP_END: crate::be_aas_h::C2RustUnnamed_0 = 166;
+
+    pub const K_KP_DOWNARROW: crate::be_aas_h::C2RustUnnamed_0 = 167;
+
+    pub const K_KP_PGDN: crate::be_aas_h::C2RustUnnamed_0 = 168;
+
+    pub const K_KP_ENTER: crate::be_aas_h::C2RustUnnamed_0 = 169;
+
+    pub const K_KP_INS: crate::be_aas_h::C2RustUnnamed_0 = 170;
+
+    pub const K_KP_DEL: crate::be_aas_h::C2RustUnnamed_0 = 171;
+
+    pub const K_KP_SLASH: crate::be_aas_h::C2RustUnnamed_0 = 172;
+
+    pub const K_KP_MINUS: crate::be_aas_h::C2RustUnnamed_0 = 173;
+
+    pub const K_KP_PLUS: crate::be_aas_h::C2RustUnnamed_0 = 174;
+
+    pub const K_KP_NUMLOCK: crate::be_aas_h::C2RustUnnamed_0 = 175;
+
+    pub const K_KP_STAR: crate::be_aas_h::C2RustUnnamed_0 = 176;
+
+    pub const K_KP_EQUALS: crate::be_aas_h::C2RustUnnamed_0 = 177;
+
+    pub const K_MOUSE1: crate::be_aas_h::C2RustUnnamed_0 = 178;
+
+    pub const K_MOUSE2: crate::be_aas_h::C2RustUnnamed_0 = 179;
+
+    pub const K_MOUSE3: crate::be_aas_h::C2RustUnnamed_0 = 180;
+
+    pub const K_MOUSE4: crate::be_aas_h::C2RustUnnamed_0 = 181;
+
+    pub const K_MOUSE5: crate::be_aas_h::C2RustUnnamed_0 = 182;
+
+    pub const K_MWHEELDOWN: crate::be_aas_h::C2RustUnnamed_0 = 183;
+
+    pub const K_MWHEELUP: crate::be_aas_h::C2RustUnnamed_0 = 184;
+
+    pub const K_JOY1: crate::be_aas_h::C2RustUnnamed_0 = 185;
+
+    pub const K_JOY2: crate::be_aas_h::C2RustUnnamed_0 = 186;
+
+    pub const K_JOY3: crate::be_aas_h::C2RustUnnamed_0 = 187;
+
+    pub const K_JOY4: crate::be_aas_h::C2RustUnnamed_0 = 188;
+
+    pub const K_JOY5: crate::be_aas_h::C2RustUnnamed_0 = 189;
+
+    pub const K_JOY6: crate::be_aas_h::C2RustUnnamed_0 = 190;
+
+    pub const K_JOY7: crate::be_aas_h::C2RustUnnamed_0 = 191;
+
+    pub const K_JOY8: crate::be_aas_h::C2RustUnnamed_0 = 192;
+
+    pub const K_JOY9: crate::be_aas_h::C2RustUnnamed_0 = 193;
+
+    pub const K_JOY10: crate::be_aas_h::C2RustUnnamed_0 = 194;
+
+    pub const K_JOY11: crate::be_aas_h::C2RustUnnamed_0 = 195;
+
+    pub const K_JOY12: crate::be_aas_h::C2RustUnnamed_0 = 196;
+
+    pub const K_JOY13: crate::be_aas_h::C2RustUnnamed_0 = 197;
+
+    pub const K_JOY14: crate::be_aas_h::C2RustUnnamed_0 = 198;
+
+    pub const K_JOY15: crate::be_aas_h::C2RustUnnamed_0 = 199;
+
+    pub const K_JOY16: crate::be_aas_h::C2RustUnnamed_0 = 200;
+
+    pub const K_JOY17: crate::be_aas_h::C2RustUnnamed_0 = 201;
+
+    pub const K_JOY18: crate::be_aas_h::C2RustUnnamed_0 = 202;
+
+    pub const K_JOY19: crate::be_aas_h::C2RustUnnamed_0 = 203;
+
+    pub const K_JOY20: crate::be_aas_h::C2RustUnnamed_0 = 204;
+
+    pub const K_JOY21: crate::be_aas_h::C2RustUnnamed_0 = 205;
+
+    pub const K_JOY22: crate::be_aas_h::C2RustUnnamed_0 = 206;
+
+    pub const K_JOY23: crate::be_aas_h::C2RustUnnamed_0 = 207;
+
+    pub const K_JOY24: crate::be_aas_h::C2RustUnnamed_0 = 208;
+
+    pub const K_JOY25: crate::be_aas_h::C2RustUnnamed_0 = 209;
+
+    pub const K_JOY26: crate::be_aas_h::C2RustUnnamed_0 = 210;
+
+    pub const K_JOY27: crate::be_aas_h::C2RustUnnamed_0 = 211;
+
+    pub const K_JOY28: crate::be_aas_h::C2RustUnnamed_0 = 212;
+
+    pub const K_JOY29: crate::be_aas_h::C2RustUnnamed_0 = 213;
+
+    pub const K_JOY30: crate::be_aas_h::C2RustUnnamed_0 = 214;
+
+    pub const K_JOY31: crate::be_aas_h::C2RustUnnamed_0 = 215;
+
+    pub const K_JOY32: crate::be_aas_h::C2RustUnnamed_0 = 216;
+
+    pub const K_AUX1: crate::be_aas_h::C2RustUnnamed_0 = 217;
+
+    pub const K_AUX2: crate::be_aas_h::C2RustUnnamed_0 = 218;
+
+    pub const K_AUX3: crate::be_aas_h::C2RustUnnamed_0 = 219;
+
+    pub const K_AUX4: crate::be_aas_h::C2RustUnnamed_0 = 220;
+
+    pub const K_AUX5: crate::be_aas_h::C2RustUnnamed_0 = 221;
+
+    pub const K_AUX6: crate::be_aas_h::C2RustUnnamed_0 = 222;
+
+    pub const K_AUX7: crate::be_aas_h::C2RustUnnamed_0 = 223;
+
+    pub const K_AUX8: crate::be_aas_h::C2RustUnnamed_0 = 224;
+
+    pub const K_AUX9: crate::be_aas_h::C2RustUnnamed_0 = 225;
+
+    pub const K_AUX10: crate::be_aas_h::C2RustUnnamed_0 = 226;
+
+    pub const K_AUX11: crate::be_aas_h::C2RustUnnamed_0 = 227;
+
+    pub const K_AUX12: crate::be_aas_h::C2RustUnnamed_0 = 228;
+
+    pub const K_AUX13: crate::be_aas_h::C2RustUnnamed_0 = 229;
+
+    pub const K_AUX14: crate::be_aas_h::C2RustUnnamed_0 = 230;
+
+    pub const K_AUX15: crate::be_aas_h::C2RustUnnamed_0 = 231;
+
+    pub const K_AUX16: crate::be_aas_h::C2RustUnnamed_0 = 232;
+
+    pub const K_WORLD_0: crate::be_aas_h::C2RustUnnamed_0 = 233;
+
+    pub const K_WORLD_1: crate::be_aas_h::C2RustUnnamed_0 = 234;
+
+    pub const K_WORLD_2: crate::be_aas_h::C2RustUnnamed_0 = 235;
+
+    pub const K_WORLD_3: crate::be_aas_h::C2RustUnnamed_0 = 236;
+
+    pub const K_WORLD_4: crate::be_aas_h::C2RustUnnamed_0 = 237;
+
+    pub const K_WORLD_5: crate::be_aas_h::C2RustUnnamed_0 = 238;
+
+    pub const K_WORLD_6: crate::be_aas_h::C2RustUnnamed_0 = 239;
+
+    pub const K_WORLD_7: crate::be_aas_h::C2RustUnnamed_0 = 240;
+
+    pub const K_WORLD_8: crate::be_aas_h::C2RustUnnamed_0 = 241;
+
+    pub const K_WORLD_9: crate::be_aas_h::C2RustUnnamed_0 = 242;
+
+    pub const K_WORLD_10: crate::be_aas_h::C2RustUnnamed_0 = 243;
+
+    pub const K_WORLD_11: crate::be_aas_h::C2RustUnnamed_0 = 244;
+
+    pub const K_WORLD_12: crate::be_aas_h::C2RustUnnamed_0 = 245;
+
+    pub const K_WORLD_13: crate::be_aas_h::C2RustUnnamed_0 = 246;
+
+    pub const K_WORLD_14: crate::be_aas_h::C2RustUnnamed_0 = 247;
+
+    pub const K_WORLD_15: crate::be_aas_h::C2RustUnnamed_0 = 248;
+
+    pub const K_WORLD_16: crate::be_aas_h::C2RustUnnamed_0 = 249;
+
+    pub const K_WORLD_17: crate::be_aas_h::C2RustUnnamed_0 = 250;
+
+    pub const K_WORLD_18: crate::be_aas_h::C2RustUnnamed_0 = 251;
+
+    pub const K_WORLD_19: crate::be_aas_h::C2RustUnnamed_0 = 252;
+
+    pub const K_WORLD_20: crate::be_aas_h::C2RustUnnamed_0 = 253;
+
+    pub const K_WORLD_21: crate::be_aas_h::C2RustUnnamed_0 = 254;
+
+    pub const K_WORLD_22: crate::be_aas_h::C2RustUnnamed_0 = 255;
+
+    pub const K_WORLD_23: crate::be_aas_h::C2RustUnnamed_0 = 256;
+
+    pub const K_WORLD_24: crate::be_aas_h::C2RustUnnamed_0 = 257;
+
+    pub const K_WORLD_25: crate::be_aas_h::C2RustUnnamed_0 = 258;
+
+    pub const K_WORLD_26: crate::be_aas_h::C2RustUnnamed_0 = 259;
+
+    pub const K_WORLD_27: crate::be_aas_h::C2RustUnnamed_0 = 260;
+
+    pub const K_WORLD_28: crate::be_aas_h::C2RustUnnamed_0 = 261;
+
+    pub const K_WORLD_29: crate::be_aas_h::C2RustUnnamed_0 = 262;
+
+    pub const K_WORLD_30: crate::be_aas_h::C2RustUnnamed_0 = 263;
+
+    pub const K_WORLD_31: crate::be_aas_h::C2RustUnnamed_0 = 264;
+
+    pub const K_WORLD_32: crate::be_aas_h::C2RustUnnamed_0 = 265;
+
+    pub const K_WORLD_33: crate::be_aas_h::C2RustUnnamed_0 = 266;
+
+    pub const K_WORLD_34: crate::be_aas_h::C2RustUnnamed_0 = 267;
+
+    pub const K_WORLD_35: crate::be_aas_h::C2RustUnnamed_0 = 268;
+
+    pub const K_WORLD_36: crate::be_aas_h::C2RustUnnamed_0 = 269;
+
+    pub const K_WORLD_37: crate::be_aas_h::C2RustUnnamed_0 = 270;
+
+    pub const K_WORLD_38: crate::be_aas_h::C2RustUnnamed_0 = 271;
+
+    pub const K_WORLD_39: crate::be_aas_h::C2RustUnnamed_0 = 272;
+
+    pub const K_WORLD_40: crate::be_aas_h::C2RustUnnamed_0 = 273;
+
+    pub const K_WORLD_41: crate::be_aas_h::C2RustUnnamed_0 = 274;
+
+    pub const K_WORLD_42: crate::be_aas_h::C2RustUnnamed_0 = 275;
+
+    pub const K_WORLD_43: crate::be_aas_h::C2RustUnnamed_0 = 276;
+
+    pub const K_WORLD_44: crate::be_aas_h::C2RustUnnamed_0 = 277;
+
+    pub const K_WORLD_45: crate::be_aas_h::C2RustUnnamed_0 = 278;
+
+    pub const K_WORLD_46: crate::be_aas_h::C2RustUnnamed_0 = 279;
+
+    pub const K_WORLD_47: crate::be_aas_h::C2RustUnnamed_0 = 280;
+
+    pub const K_WORLD_48: crate::be_aas_h::C2RustUnnamed_0 = 281;
+
+    pub const K_WORLD_49: crate::be_aas_h::C2RustUnnamed_0 = 282;
+
+    pub const K_WORLD_50: crate::be_aas_h::C2RustUnnamed_0 = 283;
+
+    pub const K_WORLD_51: crate::be_aas_h::C2RustUnnamed_0 = 284;
+
+    pub const K_WORLD_52: crate::be_aas_h::C2RustUnnamed_0 = 285;
+
+    pub const K_WORLD_53: crate::be_aas_h::C2RustUnnamed_0 = 286;
+
+    pub const K_WORLD_54: crate::be_aas_h::C2RustUnnamed_0 = 287;
+
+    pub const K_WORLD_55: crate::be_aas_h::C2RustUnnamed_0 = 288;
+
+    pub const K_WORLD_56: crate::be_aas_h::C2RustUnnamed_0 = 289;
+
+    pub const K_WORLD_57: crate::be_aas_h::C2RustUnnamed_0 = 290;
+
+    pub const K_WORLD_58: crate::be_aas_h::C2RustUnnamed_0 = 291;
+
+    pub const K_WORLD_59: crate::be_aas_h::C2RustUnnamed_0 = 292;
+
+    pub const K_WORLD_60: crate::be_aas_h::C2RustUnnamed_0 = 293;
+
+    pub const K_WORLD_61: crate::be_aas_h::C2RustUnnamed_0 = 294;
+
+    pub const K_WORLD_62: crate::be_aas_h::C2RustUnnamed_0 = 295;
+
+    pub const K_WORLD_63: crate::be_aas_h::C2RustUnnamed_0 = 296;
+
+    pub const K_WORLD_64: crate::be_aas_h::C2RustUnnamed_0 = 297;
+
+    pub const K_WORLD_65: crate::be_aas_h::C2RustUnnamed_0 = 298;
+
+    pub const K_WORLD_66: crate::be_aas_h::C2RustUnnamed_0 = 299;
+
+    pub const K_WORLD_67: crate::be_aas_h::C2RustUnnamed_0 = 300;
+
+    pub const K_WORLD_68: crate::be_aas_h::C2RustUnnamed_0 = 301;
+
+    pub const K_WORLD_69: crate::be_aas_h::C2RustUnnamed_0 = 302;
+
+    pub const K_WORLD_70: crate::be_aas_h::C2RustUnnamed_0 = 303;
+
+    pub const K_WORLD_71: crate::be_aas_h::C2RustUnnamed_0 = 304;
+
+    pub const K_WORLD_72: crate::be_aas_h::C2RustUnnamed_0 = 305;
+
+    pub const K_WORLD_73: crate::be_aas_h::C2RustUnnamed_0 = 306;
+
+    pub const K_WORLD_74: crate::be_aas_h::C2RustUnnamed_0 = 307;
+
+    pub const K_WORLD_75: crate::be_aas_h::C2RustUnnamed_0 = 308;
+
+    pub const K_WORLD_76: crate::be_aas_h::C2RustUnnamed_0 = 309;
+
+    pub const K_WORLD_77: crate::be_aas_h::C2RustUnnamed_0 = 310;
+
+    pub const K_WORLD_78: crate::be_aas_h::C2RustUnnamed_0 = 311;
+
+    pub const K_WORLD_79: crate::be_aas_h::C2RustUnnamed_0 = 312;
+
+    pub const K_WORLD_80: crate::be_aas_h::C2RustUnnamed_0 = 313;
+
+    pub const K_WORLD_81: crate::be_aas_h::C2RustUnnamed_0 = 314;
+
+    pub const K_WORLD_82: crate::be_aas_h::C2RustUnnamed_0 = 315;
+
+    pub const K_WORLD_83: crate::be_aas_h::C2RustUnnamed_0 = 316;
+
+    pub const K_WORLD_84: crate::be_aas_h::C2RustUnnamed_0 = 317;
+
+    pub const K_WORLD_85: crate::be_aas_h::C2RustUnnamed_0 = 318;
+
+    pub const K_WORLD_86: crate::be_aas_h::C2RustUnnamed_0 = 319;
+
+    pub const K_WORLD_87: crate::be_aas_h::C2RustUnnamed_0 = 320;
+
+    pub const K_WORLD_88: crate::be_aas_h::C2RustUnnamed_0 = 321;
+
+    pub const K_WORLD_89: crate::be_aas_h::C2RustUnnamed_0 = 322;
+
+    pub const K_WORLD_90: crate::be_aas_h::C2RustUnnamed_0 = 323;
+
+    pub const K_WORLD_91: crate::be_aas_h::C2RustUnnamed_0 = 324;
+
+    pub const K_WORLD_92: crate::be_aas_h::C2RustUnnamed_0 = 325;
+
+    pub const K_WORLD_93: crate::be_aas_h::C2RustUnnamed_0 = 326;
+
+    pub const K_WORLD_94: crate::be_aas_h::C2RustUnnamed_0 = 327;
+
+    pub const K_WORLD_95: crate::be_aas_h::C2RustUnnamed_0 = 328;
+
+    pub const K_SUPER: crate::be_aas_h::C2RustUnnamed_0 = 329;
+
+    pub const K_COMPOSE: crate::be_aas_h::C2RustUnnamed_0 = 330;
+
+    pub const K_MODE: crate::be_aas_h::C2RustUnnamed_0 = 331;
+
+    pub const K_HELP: crate::be_aas_h::C2RustUnnamed_0 = 332;
+
+    pub const K_PRINT: crate::be_aas_h::C2RustUnnamed_0 = 333;
+
+    pub const K_SYSREQ: crate::be_aas_h::C2RustUnnamed_0 = 334;
+
+    pub const K_SCROLLOCK: crate::be_aas_h::C2RustUnnamed_0 = 335;
+
+    pub const K_BREAK: crate::be_aas_h::C2RustUnnamed_0 = 336;
+
+    pub const K_MENU: crate::be_aas_h::C2RustUnnamed_0 = 337;
+
+    pub const K_EURO: crate::be_aas_h::C2RustUnnamed_0 = 338;
+
+    pub const K_UNDO: crate::be_aas_h::C2RustUnnamed_0 = 339;
+
+    pub const K_PAD0_A: crate::be_aas_h::C2RustUnnamed_0 = 340;
+
+    pub const K_PAD0_B: crate::be_aas_h::C2RustUnnamed_0 = 341;
+
+    pub const K_PAD0_X: crate::be_aas_h::C2RustUnnamed_0 = 342;
+
+    pub const K_PAD0_Y: crate::be_aas_h::C2RustUnnamed_0 = 343;
+
+    pub const K_PAD0_BACK: crate::be_aas_h::C2RustUnnamed_0 = 344;
+
+    pub const K_PAD0_GUIDE: crate::be_aas_h::C2RustUnnamed_0 = 345;
+
+    pub const K_PAD0_START: crate::be_aas_h::C2RustUnnamed_0 = 346;
+
+    pub const K_PAD0_LEFTSTICK_CLICK: crate::be_aas_h::C2RustUnnamed_0 = 347;
+
+    pub const K_PAD0_RIGHTSTICK_CLICK: crate::be_aas_h::C2RustUnnamed_0 = 348;
+
+    pub const K_PAD0_LEFTSHOULDER: crate::be_aas_h::C2RustUnnamed_0 = 349;
+
+    pub const K_PAD0_RIGHTSHOULDER: crate::be_aas_h::C2RustUnnamed_0 = 350;
+
+    pub const K_PAD0_DPAD_UP: crate::be_aas_h::C2RustUnnamed_0 = 351;
+
+    pub const K_PAD0_DPAD_DOWN: crate::be_aas_h::C2RustUnnamed_0 = 352;
+
+    pub const K_PAD0_DPAD_LEFT: crate::be_aas_h::C2RustUnnamed_0 = 353;
+
+    pub const K_PAD0_DPAD_RIGHT: crate::be_aas_h::C2RustUnnamed_0 = 354;
+
+    pub const K_PAD0_LEFTSTICK_LEFT: crate::be_aas_h::C2RustUnnamed_0 = 355;
+
+    pub const K_PAD0_LEFTSTICK_RIGHT: crate::be_aas_h::C2RustUnnamed_0 = 356;
+
+    pub const K_PAD0_LEFTSTICK_UP: crate::be_aas_h::C2RustUnnamed_0 = 357;
+
+    pub const K_PAD0_LEFTSTICK_DOWN: crate::be_aas_h::C2RustUnnamed_0 = 358;
+
+    pub const K_PAD0_RIGHTSTICK_LEFT: crate::be_aas_h::C2RustUnnamed_0 = 359;
+
+    pub const K_PAD0_RIGHTSTICK_RIGHT: crate::be_aas_h::C2RustUnnamed_0 = 360;
+
+    pub const K_PAD0_RIGHTSTICK_UP: crate::be_aas_h::C2RustUnnamed_0 = 361;
+
+    pub const K_PAD0_RIGHTSTICK_DOWN: crate::be_aas_h::C2RustUnnamed_0 = 362;
+
+    pub const K_PAD0_LEFTTRIGGER: crate::be_aas_h::C2RustUnnamed_0 = 363;
+
+    pub const K_PAD0_RIGHTTRIGGER: crate::be_aas_h::C2RustUnnamed_0 = 364;
+
+    pub const K_CONSOLE: crate::be_aas_h::C2RustUnnamed_0 = 365;
+
+    pub const MAX_KEYS: crate::be_aas_h::C2RustUnnamed_0 = 366;
 }
 pub mod ui_public_h {
     #[repr(C)]
@@ -5954,245 +5916,237 @@ pub mod ui_public_h {
         pub messageString: [libc::c_char; 1024],
     }
 
-    pub const UI_CEIL: crate::be_aas_h::C2RustUnnamed_0 = 108;
-
-    pub const UI_FLOOR: crate::be_aas_h::C2RustUnnamed_0 = 107;
-
-    pub const UI_SQRT: crate::be_aas_h::C2RustUnnamed_0 = 106;
-
-    pub const UI_ATAN2: crate::be_aas_h::C2RustUnnamed_0 = 105;
-
-    pub const UI_COS: crate::be_aas_h::C2RustUnnamed_0 = 104;
-
-    pub const UI_SIN: crate::be_aas_h::C2RustUnnamed_0 = 103;
-
-    pub const UI_STRNCPY: crate::be_aas_h::C2RustUnnamed_0 = 102;
-
-    pub const UI_MEMCPY: crate::be_aas_h::C2RustUnnamed_0 = 101;
-
-    pub const UI_MEMSET: crate::be_aas_h::C2RustUnnamed_0 = 100;
-
-    pub const UI_SET_PBCLSTATUS: crate::be_aas_h::C2RustUnnamed_0 = 87;
-
-    pub const UI_FS_SEEK: crate::be_aas_h::C2RustUnnamed_0 = 86;
-
-    pub const UI_LAN_COMPARESERVERS: crate::be_aas_h::C2RustUnnamed_0 = 85;
-
-    pub const UI_LAN_SERVERISVISIBLE: crate::be_aas_h::C2RustUnnamed_0 = 84;
-
-    pub const UI_LAN_GETSERVERPING: crate::be_aas_h::C2RustUnnamed_0 = 83;
-
-    pub const UI_LAN_SERVERSTATUS: crate::be_aas_h::C2RustUnnamed_0 = 82;
-
-    pub const UI_VERIFY_CDKEY: crate::be_aas_h::C2RustUnnamed_0 = 81;
-
-    pub const UI_R_REMAP_SHADER: crate::be_aas_h::C2RustUnnamed_0 = 80;
-
-    pub const UI_CIN_SETEXTENTS: crate::be_aas_h::C2RustUnnamed_0 = 79;
-
-    pub const UI_CIN_DRAWCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 78;
-
-    pub const UI_CIN_RUNCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 77;
-
-    pub const UI_CIN_STOPCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 76;
-
-    pub const UI_CIN_PLAYCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 75;
-
-    pub const UI_LAN_REMOVESERVER: crate::be_aas_h::C2RustUnnamed_0 = 74;
-
-    pub const UI_LAN_ADDSERVER: crate::be_aas_h::C2RustUnnamed_0 = 73;
-
-    pub const UI_LAN_SAVECACHEDSERVERS: crate::be_aas_h::C2RustUnnamed_0 = 72;
-
-    pub const UI_LAN_LOADCACHEDSERVERS: crate::be_aas_h::C2RustUnnamed_0 = 71;
-
-    pub const UI_LAN_RESETPINGS: crate::be_aas_h::C2RustUnnamed_0 = 70;
-
-    pub const UI_LAN_UPDATEVISIBLEPINGS: crate::be_aas_h::C2RustUnnamed_0 = 69;
-
-    pub const UI_LAN_MARKSERVERVISIBLE: crate::be_aas_h::C2RustUnnamed_0 = 68;
-
-    pub const UI_LAN_GETSERVERINFO: crate::be_aas_h::C2RustUnnamed_0 = 67;
-
-    pub const UI_LAN_GETSERVERADDRESSSTRING: crate::be_aas_h::C2RustUnnamed_0 = 66;
-
-    pub const UI_LAN_GETSERVERCOUNT: crate::be_aas_h::C2RustUnnamed_0 = 65;
-
-    pub const UI_REAL_TIME: crate::be_aas_h::C2RustUnnamed_0 = 64;
-
-    pub const UI_S_STARTBACKGROUNDTRACK: crate::be_aas_h::C2RustUnnamed_0 = 63;
-
-    pub const UI_S_STOPBACKGROUNDTRACK: crate::be_aas_h::C2RustUnnamed_0 = 62;
-
-    pub const UI_PC_SOURCE_FILE_AND_LINE: crate::be_aas_h::C2RustUnnamed_0 = 61;
-
-    pub const UI_PC_READ_TOKEN: crate::be_aas_h::C2RustUnnamed_0 = 60;
-
-    pub const UI_PC_FREE_SOURCE: crate::be_aas_h::C2RustUnnamed_0 = 59;
-
-    pub const UI_PC_LOAD_SOURCE: crate::be_aas_h::C2RustUnnamed_0 = 58;
-
-    pub const UI_PC_ADD_GLOBAL_DEFINE: crate::be_aas_h::C2RustUnnamed_0 = 57;
-
-    pub const UI_R_MODELBOUNDS: crate::be_aas_h::C2RustUnnamed_0 = 56;
-
-    pub const UI_R_REGISTERFONT: crate::be_aas_h::C2RustUnnamed_0 = 55;
-
-    pub const UI_SET_CDKEY: crate::be_aas_h::C2RustUnnamed_0 = 54;
-
-    pub const UI_GET_CDKEY: crate::be_aas_h::C2RustUnnamed_0 = 53;
-
-    pub const UI_MEMORY_REMAINING: crate::be_aas_h::C2RustUnnamed_0 = 52;
-
-    pub const UI_CVAR_UPDATE: crate::be_aas_h::C2RustUnnamed_0 = 51;
-
-    pub const UI_CVAR_REGISTER: crate::be_aas_h::C2RustUnnamed_0 = 50;
-
-    pub const UI_LAN_GETPINGINFO: crate::be_aas_h::C2RustUnnamed_0 = 49;
-
-    pub const UI_LAN_GETPING: crate::be_aas_h::C2RustUnnamed_0 = 48;
-
-    pub const UI_LAN_CLEARPING: crate::be_aas_h::C2RustUnnamed_0 = 47;
-
-    pub const UI_LAN_GETPINGQUEUECOUNT: crate::be_aas_h::C2RustUnnamed_0 = 46;
-
-    pub const UI_GETCONFIGSTRING: crate::be_aas_h::C2RustUnnamed_0 = 45;
-
-    pub const UI_GETCLIENTSTATE: crate::be_aas_h::C2RustUnnamed_0 = 44;
-
-    pub const UI_GETGLCONFIG: crate::be_aas_h::C2RustUnnamed_0 = 43;
-
-    pub const UI_GETCLIPBOARDDATA: crate::be_aas_h::C2RustUnnamed_0 = 42;
-
-    pub const UI_KEY_SETCATCHER: crate::be_aas_h::C2RustUnnamed_0 = 41;
-
-    pub const UI_KEY_GETCATCHER: crate::be_aas_h::C2RustUnnamed_0 = 40;
-
-    pub const UI_KEY_CLEARSTATES: crate::be_aas_h::C2RustUnnamed_0 = 39;
-
-    pub const UI_KEY_SETOVERSTRIKEMODE: crate::be_aas_h::C2RustUnnamed_0 = 38;
-
-    pub const UI_KEY_GETOVERSTRIKEMODE: crate::be_aas_h::C2RustUnnamed_0 = 37;
-
-    pub const UI_KEY_ISDOWN: crate::be_aas_h::C2RustUnnamed_0 = 36;
-
-    pub const UI_KEY_SETBINDING: crate::be_aas_h::C2RustUnnamed_0 = 35;
-
-    pub const UI_KEY_GETBINDINGBUF: crate::be_aas_h::C2RustUnnamed_0 = 34;
-
-    pub const UI_KEY_KEYNUMTOSTRINGBUF: crate::be_aas_h::C2RustUnnamed_0 = 33;
-
-    pub const UI_S_STARTLOCALSOUND: crate::be_aas_h::C2RustUnnamed_0 = 32;
-
-    pub const UI_S_REGISTERSOUND: crate::be_aas_h::C2RustUnnamed_0 = 31;
-
-    pub const UI_CM_LOADMODEL: crate::be_aas_h::C2RustUnnamed_0 = 30;
-
-    pub const UI_CM_LERPTAG: crate::be_aas_h::C2RustUnnamed_0 = 29;
-
-    pub const UI_UPDATESCREEN: crate::be_aas_h::C2RustUnnamed_0 = 28;
-
-    pub const UI_R_DRAWSTRETCHPIC: crate::be_aas_h::C2RustUnnamed_0 = 27;
-
-    pub const UI_R_SETCOLOR: crate::be_aas_h::C2RustUnnamed_0 = 26;
-
-    pub const UI_R_RENDERSCENE: crate::be_aas_h::C2RustUnnamed_0 = 25;
-
-    pub const UI_R_ADDLIGHTTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 24;
-
-    pub const UI_R_ADDPOLYTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 23;
-
-    pub const UI_R_ADDREFENTITYTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 22;
-
-    pub const UI_R_CLEARSCENE: crate::be_aas_h::C2RustUnnamed_0 = 21;
-
-    pub const UI_R_REGISTERSHADERNOMIP: crate::be_aas_h::C2RustUnnamed_0 = 20;
-
-    pub const UI_R_REGISTERSKIN: crate::be_aas_h::C2RustUnnamed_0 = 19;
-
-    pub const UI_R_REGISTERMODEL: crate::be_aas_h::C2RustUnnamed_0 = 18;
-
-    pub const UI_FS_GETFILELIST: crate::be_aas_h::C2RustUnnamed_0 = 17;
-
-    pub const UI_FS_FCLOSEFILE: crate::be_aas_h::C2RustUnnamed_0 = 16;
-
-    pub const UI_FS_WRITE: crate::be_aas_h::C2RustUnnamed_0 = 15;
-
-    pub const UI_FS_READ: crate::be_aas_h::C2RustUnnamed_0 = 14;
-
-    pub const UI_FS_FOPENFILE: crate::be_aas_h::C2RustUnnamed_0 = 13;
-
-    pub const UI_CMD_EXECUTETEXT: crate::be_aas_h::C2RustUnnamed_0 = 12;
-
-    pub const UI_ARGV: crate::be_aas_h::C2RustUnnamed_0 = 11;
-
-    pub const UI_ARGC: crate::be_aas_h::C2RustUnnamed_0 = 10;
-
-    pub const UI_CVAR_INFOSTRINGBUFFER: crate::be_aas_h::C2RustUnnamed_0 = 9;
-
-    pub const UI_CVAR_CREATE: crate::be_aas_h::C2RustUnnamed_0 = 8;
-
-    pub const UI_CVAR_RESET: crate::be_aas_h::C2RustUnnamed_0 = 7;
-
-    pub const UI_CVAR_SETVALUE: crate::be_aas_h::C2RustUnnamed_0 = 6;
-
-    pub const UI_CVAR_VARIABLESTRINGBUFFER: crate::be_aas_h::C2RustUnnamed_0 = 5;
-
-    pub const UI_CVAR_VARIABLEVALUE: crate::be_aas_h::C2RustUnnamed_0 = 4;
-
-    pub const UI_CVAR_SET: crate::be_aas_h::C2RustUnnamed_0 = 3;
-
-    pub const UI_MILLISECONDS: crate::be_aas_h::C2RustUnnamed_0 = 2;
+    pub const UI_ERROR: crate::be_aas_h::C2RustUnnamed_0 = 0;
 
     pub const UI_PRINT: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
-    pub const UI_ERROR: crate::be_aas_h::C2RustUnnamed_0 = 0;
+    pub const UI_MILLISECONDS: crate::be_aas_h::C2RustUnnamed_0 = 2;
 
-    pub const UIMENU_POSTGAME: crate::be_aas_h::C2RustUnnamed_0 = 6;
+    pub const UI_CVAR_SET: crate::be_aas_h::C2RustUnnamed_0 = 3;
 
-    pub const UIMENU_TEAM: crate::be_aas_h::C2RustUnnamed_0 = 5;
+    pub const UI_CVAR_VARIABLEVALUE: crate::be_aas_h::C2RustUnnamed_0 = 4;
 
-    pub const UIMENU_BAD_CD_KEY: crate::be_aas_h::C2RustUnnamed_0 = 4;
+    pub const UI_CVAR_VARIABLESTRINGBUFFER: crate::be_aas_h::C2RustUnnamed_0 = 5;
 
-    pub const UIMENU_NEED_CD: crate::be_aas_h::C2RustUnnamed_0 = 3;
+    pub const UI_CVAR_SETVALUE: crate::be_aas_h::C2RustUnnamed_0 = 6;
 
-    pub const UIMENU_INGAME: crate::be_aas_h::C2RustUnnamed_0 = 2;
+    pub const UI_CVAR_RESET: crate::be_aas_h::C2RustUnnamed_0 = 7;
 
-    pub const UIMENU_MAIN: crate::be_aas_h::C2RustUnnamed_0 = 1;
+    pub const UI_CVAR_CREATE: crate::be_aas_h::C2RustUnnamed_0 = 8;
+
+    pub const UI_CVAR_INFOSTRINGBUFFER: crate::be_aas_h::C2RustUnnamed_0 = 9;
+
+    pub const UI_ARGC: crate::be_aas_h::C2RustUnnamed_0 = 10;
+
+    pub const UI_ARGV: crate::be_aas_h::C2RustUnnamed_0 = 11;
+
+    pub const UI_CMD_EXECUTETEXT: crate::be_aas_h::C2RustUnnamed_0 = 12;
+
+    pub const UI_FS_FOPENFILE: crate::be_aas_h::C2RustUnnamed_0 = 13;
+
+    pub const UI_FS_READ: crate::be_aas_h::C2RustUnnamed_0 = 14;
+
+    pub const UI_FS_WRITE: crate::be_aas_h::C2RustUnnamed_0 = 15;
+
+    pub const UI_FS_FCLOSEFILE: crate::be_aas_h::C2RustUnnamed_0 = 16;
+
+    pub const UI_FS_GETFILELIST: crate::be_aas_h::C2RustUnnamed_0 = 17;
+
+    pub const UI_R_REGISTERMODEL: crate::be_aas_h::C2RustUnnamed_0 = 18;
+
+    pub const UI_R_REGISTERSKIN: crate::be_aas_h::C2RustUnnamed_0 = 19;
+
+    pub const UI_R_REGISTERSHADERNOMIP: crate::be_aas_h::C2RustUnnamed_0 = 20;
+
+    pub const UI_R_CLEARSCENE: crate::be_aas_h::C2RustUnnamed_0 = 21;
+
+    pub const UI_R_ADDREFENTITYTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 22;
+
+    pub const UI_R_ADDPOLYTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 23;
+
+    pub const UI_R_ADDLIGHTTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 24;
+
+    pub const UI_R_RENDERSCENE: crate::be_aas_h::C2RustUnnamed_0 = 25;
+
+    pub const UI_R_SETCOLOR: crate::be_aas_h::C2RustUnnamed_0 = 26;
+
+    pub const UI_R_DRAWSTRETCHPIC: crate::be_aas_h::C2RustUnnamed_0 = 27;
+
+    pub const UI_UPDATESCREEN: crate::be_aas_h::C2RustUnnamed_0 = 28;
+
+    pub const UI_CM_LERPTAG: crate::be_aas_h::C2RustUnnamed_0 = 29;
+
+    pub const UI_CM_LOADMODEL: crate::be_aas_h::C2RustUnnamed_0 = 30;
+
+    pub const UI_S_REGISTERSOUND: crate::be_aas_h::C2RustUnnamed_0 = 31;
+
+    pub const UI_S_STARTLOCALSOUND: crate::be_aas_h::C2RustUnnamed_0 = 32;
+
+    pub const UI_KEY_KEYNUMTOSTRINGBUF: crate::be_aas_h::C2RustUnnamed_0 = 33;
+
+    pub const UI_KEY_GETBINDINGBUF: crate::be_aas_h::C2RustUnnamed_0 = 34;
+
+    pub const UI_KEY_SETBINDING: crate::be_aas_h::C2RustUnnamed_0 = 35;
+
+    pub const UI_KEY_ISDOWN: crate::be_aas_h::C2RustUnnamed_0 = 36;
+
+    pub const UI_KEY_GETOVERSTRIKEMODE: crate::be_aas_h::C2RustUnnamed_0 = 37;
+
+    pub const UI_KEY_SETOVERSTRIKEMODE: crate::be_aas_h::C2RustUnnamed_0 = 38;
+
+    pub const UI_KEY_CLEARSTATES: crate::be_aas_h::C2RustUnnamed_0 = 39;
+
+    pub const UI_KEY_GETCATCHER: crate::be_aas_h::C2RustUnnamed_0 = 40;
+
+    pub const UI_KEY_SETCATCHER: crate::be_aas_h::C2RustUnnamed_0 = 41;
+
+    pub const UI_GETCLIPBOARDDATA: crate::be_aas_h::C2RustUnnamed_0 = 42;
+
+    pub const UI_GETGLCONFIG: crate::be_aas_h::C2RustUnnamed_0 = 43;
+
+    pub const UI_GETCLIENTSTATE: crate::be_aas_h::C2RustUnnamed_0 = 44;
+
+    pub const UI_GETCONFIGSTRING: crate::be_aas_h::C2RustUnnamed_0 = 45;
+
+    pub const UI_LAN_GETPINGQUEUECOUNT: crate::be_aas_h::C2RustUnnamed_0 = 46;
+
+    pub const UI_LAN_CLEARPING: crate::be_aas_h::C2RustUnnamed_0 = 47;
+
+    pub const UI_LAN_GETPING: crate::be_aas_h::C2RustUnnamed_0 = 48;
+
+    pub const UI_LAN_GETPINGINFO: crate::be_aas_h::C2RustUnnamed_0 = 49;
+
+    pub const UI_CVAR_REGISTER: crate::be_aas_h::C2RustUnnamed_0 = 50;
+
+    pub const UI_CVAR_UPDATE: crate::be_aas_h::C2RustUnnamed_0 = 51;
+
+    pub const UI_MEMORY_REMAINING: crate::be_aas_h::C2RustUnnamed_0 = 52;
+
+    pub const UI_GET_CDKEY: crate::be_aas_h::C2RustUnnamed_0 = 53;
+
+    pub const UI_SET_CDKEY: crate::be_aas_h::C2RustUnnamed_0 = 54;
+
+    pub const UI_R_REGISTERFONT: crate::be_aas_h::C2RustUnnamed_0 = 55;
+
+    pub const UI_R_MODELBOUNDS: crate::be_aas_h::C2RustUnnamed_0 = 56;
+
+    pub const UI_PC_ADD_GLOBAL_DEFINE: crate::be_aas_h::C2RustUnnamed_0 = 57;
+
+    pub const UI_PC_LOAD_SOURCE: crate::be_aas_h::C2RustUnnamed_0 = 58;
+
+    pub const UI_PC_FREE_SOURCE: crate::be_aas_h::C2RustUnnamed_0 = 59;
+
+    pub const UI_PC_READ_TOKEN: crate::be_aas_h::C2RustUnnamed_0 = 60;
+
+    pub const UI_PC_SOURCE_FILE_AND_LINE: crate::be_aas_h::C2RustUnnamed_0 = 61;
+
+    pub const UI_S_STOPBACKGROUNDTRACK: crate::be_aas_h::C2RustUnnamed_0 = 62;
+
+    pub const UI_S_STARTBACKGROUNDTRACK: crate::be_aas_h::C2RustUnnamed_0 = 63;
+
+    pub const UI_REAL_TIME: crate::be_aas_h::C2RustUnnamed_0 = 64;
+
+    pub const UI_LAN_GETSERVERCOUNT: crate::be_aas_h::C2RustUnnamed_0 = 65;
+
+    pub const UI_LAN_GETSERVERADDRESSSTRING: crate::be_aas_h::C2RustUnnamed_0 = 66;
+
+    pub const UI_LAN_GETSERVERINFO: crate::be_aas_h::C2RustUnnamed_0 = 67;
+
+    pub const UI_LAN_MARKSERVERVISIBLE: crate::be_aas_h::C2RustUnnamed_0 = 68;
+
+    pub const UI_LAN_UPDATEVISIBLEPINGS: crate::be_aas_h::C2RustUnnamed_0 = 69;
+
+    pub const UI_LAN_RESETPINGS: crate::be_aas_h::C2RustUnnamed_0 = 70;
+
+    pub const UI_LAN_LOADCACHEDSERVERS: crate::be_aas_h::C2RustUnnamed_0 = 71;
+
+    pub const UI_LAN_SAVECACHEDSERVERS: crate::be_aas_h::C2RustUnnamed_0 = 72;
+
+    pub const UI_LAN_ADDSERVER: crate::be_aas_h::C2RustUnnamed_0 = 73;
+
+    pub const UI_LAN_REMOVESERVER: crate::be_aas_h::C2RustUnnamed_0 = 74;
+
+    pub const UI_CIN_PLAYCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 75;
+
+    pub const UI_CIN_STOPCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 76;
+
+    pub const UI_CIN_RUNCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 77;
+
+    pub const UI_CIN_DRAWCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 78;
+
+    pub const UI_CIN_SETEXTENTS: crate::be_aas_h::C2RustUnnamed_0 = 79;
+
+    pub const UI_R_REMAP_SHADER: crate::be_aas_h::C2RustUnnamed_0 = 80;
+
+    pub const UI_VERIFY_CDKEY: crate::be_aas_h::C2RustUnnamed_0 = 81;
+
+    pub const UI_LAN_SERVERSTATUS: crate::be_aas_h::C2RustUnnamed_0 = 82;
+
+    pub const UI_LAN_GETSERVERPING: crate::be_aas_h::C2RustUnnamed_0 = 83;
+
+    pub const UI_LAN_SERVERISVISIBLE: crate::be_aas_h::C2RustUnnamed_0 = 84;
+
+    pub const UI_LAN_COMPARESERVERS: crate::be_aas_h::C2RustUnnamed_0 = 85;
+
+    pub const UI_FS_SEEK: crate::be_aas_h::C2RustUnnamed_0 = 86;
+
+    pub const UI_SET_PBCLSTATUS: crate::be_aas_h::C2RustUnnamed_0 = 87;
+
+    pub const UI_MEMSET: crate::be_aas_h::C2RustUnnamed_0 = 100;
+
+    pub const UI_MEMCPY: crate::be_aas_h::C2RustUnnamed_0 = 101;
+
+    pub const UI_STRNCPY: crate::be_aas_h::C2RustUnnamed_0 = 102;
+
+    pub const UI_SIN: crate::be_aas_h::C2RustUnnamed_0 = 103;
+
+    pub const UI_COS: crate::be_aas_h::C2RustUnnamed_0 = 104;
+
+    pub const UI_ATAN2: crate::be_aas_h::C2RustUnnamed_0 = 105;
+
+    pub const UI_SQRT: crate::be_aas_h::C2RustUnnamed_0 = 106;
+
+    pub const UI_FLOOR: crate::be_aas_h::C2RustUnnamed_0 = 107;
+
+    pub const UI_CEIL: crate::be_aas_h::C2RustUnnamed_0 = 108;
 
     pub const UIMENU_NONE: crate::be_aas_h::C2RustUnnamed_0 = 0;
 
-    pub const UI_HASUNIQUECDKEY: crate::be_aas_h::C2RustUnnamed_0 = 10;
+    pub const UIMENU_MAIN: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
-    pub const UI_DRAW_CONNECT_SCREEN: crate::be_aas_h::C2RustUnnamed_0 = 9;
+    pub const UIMENU_INGAME: crate::be_aas_h::C2RustUnnamed_0 = 2;
 
-    pub const UI_CONSOLE_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 8;
+    pub const UIMENU_NEED_CD: crate::be_aas_h::C2RustUnnamed_0 = 3;
 
-    pub const UI_SET_ACTIVE_MENU: crate::be_aas_h::C2RustUnnamed_0 = 7;
+    pub const UIMENU_BAD_CD_KEY: crate::be_aas_h::C2RustUnnamed_0 = 4;
 
-    pub const UI_IS_FULLSCREEN: crate::be_aas_h::C2RustUnnamed_0 = 6;
+    pub const UIMENU_TEAM: crate::be_aas_h::C2RustUnnamed_0 = 5;
 
-    pub const UI_REFRESH: crate::be_aas_h::C2RustUnnamed_0 = 5;
+    pub const UIMENU_POSTGAME: crate::be_aas_h::C2RustUnnamed_0 = 6;
 
-    pub const UI_MOUSE_EVENT: crate::be_aas_h::C2RustUnnamed_0 = 4;
-
-    pub const UI_KEY_EVENT: crate::be_aas_h::C2RustUnnamed_0 = 3;
-
-    pub const UI_SHUTDOWN: crate::be_aas_h::C2RustUnnamed_0 = 2;
+    pub const UI_GETAPIVERSION: crate::be_aas_h::C2RustUnnamed_0 = 0;
 
     pub const UI_INIT: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
-    pub const UI_GETAPIVERSION: crate::be_aas_h::C2RustUnnamed_0 = 0;
+    pub const UI_SHUTDOWN: crate::be_aas_h::C2RustUnnamed_0 = 2;
+
+    pub const UI_KEY_EVENT: crate::be_aas_h::C2RustUnnamed_0 = 3;
+
+    pub const UI_MOUSE_EVENT: crate::be_aas_h::C2RustUnnamed_0 = 4;
+
+    pub const UI_REFRESH: crate::be_aas_h::C2RustUnnamed_0 = 5;
+
+    pub const UI_IS_FULLSCREEN: crate::be_aas_h::C2RustUnnamed_0 = 6;
+
+    pub const UI_SET_ACTIVE_MENU: crate::be_aas_h::C2RustUnnamed_0 = 7;
+
+    pub const UI_CONSOLE_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 8;
+
+    pub const UI_DRAW_CONNECT_SCREEN: crate::be_aas_h::C2RustUnnamed_0 = 9;
+
+    pub const UI_HASUNIQUECDKEY: crate::be_aas_h::C2RustUnnamed_0 = 10;
 }
 pub mod cg_public_h {
-    pub const CGAME_EVENT_NONE: crate::be_aas_h::C2RustUnnamed_0 = 0;
-
-    pub const CGAME_EVENT_EDITHUD: crate::be_aas_h::C2RustUnnamed_0 = 3;
-
-    pub const CGAME_EVENT_SCOREBOARD: crate::be_aas_h::C2RustUnnamed_0 = 2;
-
-    pub const CGAME_EVENT_TEAMMENU: crate::be_aas_h::C2RustUnnamed_0 = 1;
-
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct snapshot_t {
@@ -6207,227 +6161,235 @@ pub mod cg_public_h {
         pub serverCommandSequence: libc::c_int,
     }
 
-    pub const CG_CONSOLE_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 2;
+    pub const CGAME_EVENT_NONE: crate::be_aas_h::C2RustUnnamed_0 = 0;
 
-    pub const CG_ACOS: crate::be_aas_h::C2RustUnnamed_0 = 111;
+    pub const CGAME_EVENT_TEAMMENU: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
-    pub const CG_TESTPRINTFLOAT: crate::be_aas_h::C2RustUnnamed_0 = 110;
+    pub const CGAME_EVENT_SCOREBOARD: crate::be_aas_h::C2RustUnnamed_0 = 2;
 
-    pub const CG_TESTPRINTINT: crate::be_aas_h::C2RustUnnamed_0 = 109;
-
-    pub const CG_CEIL: crate::be_aas_h::C2RustUnnamed_0 = 108;
-
-    pub const CG_FLOOR: crate::be_aas_h::C2RustUnnamed_0 = 107;
-
-    pub const CG_SQRT: crate::be_aas_h::C2RustUnnamed_0 = 106;
-
-    pub const CG_ATAN2: crate::be_aas_h::C2RustUnnamed_0 = 105;
-
-    pub const CG_COS: crate::be_aas_h::C2RustUnnamed_0 = 104;
-
-    pub const CG_SIN: crate::be_aas_h::C2RustUnnamed_0 = 103;
-
-    pub const CG_STRNCPY: crate::be_aas_h::C2RustUnnamed_0 = 102;
-
-    pub const CG_MEMCPY: crate::be_aas_h::C2RustUnnamed_0 = 101;
-
-    pub const CG_MEMSET: crate::be_aas_h::C2RustUnnamed_0 = 100;
-
-    pub const CG_FS_SEEK: crate::be_aas_h::C2RustUnnamed_0 = 89;
-
-    pub const CG_R_INPVS: crate::be_aas_h::C2RustUnnamed_0 = 88;
-
-    pub const CG_R_ADDPOLYSTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 87;
-
-    pub const CG_GET_ENTITY_TOKEN: crate::be_aas_h::C2RustUnnamed_0 = 86;
-
-    pub const CG_R_ADDADDITIVELIGHTTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 85;
-
-    pub const CG_CM_TRANSFORMEDCAPSULETRACE: crate::be_aas_h::C2RustUnnamed_0 = 84;
-
-    pub const CG_CM_CAPSULETRACE: crate::be_aas_h::C2RustUnnamed_0 = 83;
-
-    pub const CG_CM_TEMPCAPSULEMODEL: crate::be_aas_h::C2RustUnnamed_0 = 82;
-
-    pub const CG_S_STOPLOOPINGSOUND: crate::be_aas_h::C2RustUnnamed_0 = 81;
-
-    pub const CG_S_ADDREALLOOPINGSOUND: crate::be_aas_h::C2RustUnnamed_0 = 80;
-
-    pub const CG_R_REMAP_SHADER: crate::be_aas_h::C2RustUnnamed_0 = 79;
-
-    pub const CG_CIN_SETEXTENTS: crate::be_aas_h::C2RustUnnamed_0 = 78;
-
-    pub const CG_CIN_DRAWCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 77;
-
-    pub const CG_CIN_RUNCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 76;
-
-    pub const CG_CIN_STOPCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 75;
-
-    pub const CG_CIN_PLAYCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 74;
-
-    pub const CG_R_LIGHTFORPOINT: crate::be_aas_h::C2RustUnnamed_0 = 73;
-
-    pub const CG_REMOVECOMMAND: crate::be_aas_h::C2RustUnnamed_0 = 72;
-
-    pub const CG_SNAPVECTOR: crate::be_aas_h::C2RustUnnamed_0 = 71;
-
-    pub const CG_REAL_TIME: crate::be_aas_h::C2RustUnnamed_0 = 70;
-
-    pub const CG_S_STOPBACKGROUNDTRACK: crate::be_aas_h::C2RustUnnamed_0 = 69;
-
-    pub const CG_PC_SOURCE_FILE_AND_LINE: crate::be_aas_h::C2RustUnnamed_0 = 68;
-
-    pub const CG_PC_READ_TOKEN: crate::be_aas_h::C2RustUnnamed_0 = 67;
-
-    pub const CG_PC_FREE_SOURCE: crate::be_aas_h::C2RustUnnamed_0 = 66;
-
-    pub const CG_PC_LOAD_SOURCE: crate::be_aas_h::C2RustUnnamed_0 = 65;
-
-    pub const CG_PC_ADD_GLOBAL_DEFINE: crate::be_aas_h::C2RustUnnamed_0 = 64;
-
-    pub const CG_KEY_GETKEY: crate::be_aas_h::C2RustUnnamed_0 = 63;
-
-    pub const CG_KEY_SETCATCHER: crate::be_aas_h::C2RustUnnamed_0 = 62;
-
-    pub const CG_KEY_GETCATCHER: crate::be_aas_h::C2RustUnnamed_0 = 61;
-
-    pub const CG_KEY_ISDOWN: crate::be_aas_h::C2RustUnnamed_0 = 60;
-
-    pub const CG_R_REGISTERFONT: crate::be_aas_h::C2RustUnnamed_0 = 59;
-
-    pub const CG_MEMORY_REMAINING: crate::be_aas_h::C2RustUnnamed_0 = 58;
-
-    pub const CG_R_REGISTERSHADERNOMIP: crate::be_aas_h::C2RustUnnamed_0 = 57;
-
-    pub const CG_SETUSERCMDVALUE: crate::be_aas_h::C2RustUnnamed_0 = 56;
-
-    pub const CG_GETUSERCMD: crate::be_aas_h::C2RustUnnamed_0 = 55;
-
-    pub const CG_GETCURRENTCMDNUMBER: crate::be_aas_h::C2RustUnnamed_0 = 54;
-
-    pub const CG_GETSERVERCOMMAND: crate::be_aas_h::C2RustUnnamed_0 = 53;
-
-    pub const CG_GETSNAPSHOT: crate::be_aas_h::C2RustUnnamed_0 = 52;
-
-    pub const CG_GETCURRENTSNAPSHOTNUMBER: crate::be_aas_h::C2RustUnnamed_0 = 51;
-
-    pub const CG_GETGAMESTATE: crate::be_aas_h::C2RustUnnamed_0 = 50;
-
-    pub const CG_GETGLCONFIG: crate::be_aas_h::C2RustUnnamed_0 = 49;
-
-    pub const CG_R_LERPTAG: crate::be_aas_h::C2RustUnnamed_0 = 48;
-
-    pub const CG_R_MODELBOUNDS: crate::be_aas_h::C2RustUnnamed_0 = 47;
-
-    pub const CG_R_DRAWSTRETCHPIC: crate::be_aas_h::C2RustUnnamed_0 = 46;
-
-    pub const CG_R_SETCOLOR: crate::be_aas_h::C2RustUnnamed_0 = 45;
-
-    pub const CG_R_RENDERSCENE: crate::be_aas_h::C2RustUnnamed_0 = 44;
-
-    pub const CG_R_ADDLIGHTTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 43;
-
-    pub const CG_R_ADDPOLYTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 42;
-
-    pub const CG_R_ADDREFENTITYTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 41;
-
-    pub const CG_R_CLEARSCENE: crate::be_aas_h::C2RustUnnamed_0 = 40;
-
-    pub const CG_R_REGISTERSHADER: crate::be_aas_h::C2RustUnnamed_0 = 39;
-
-    pub const CG_R_REGISTERSKIN: crate::be_aas_h::C2RustUnnamed_0 = 38;
-
-    pub const CG_R_REGISTERMODEL: crate::be_aas_h::C2RustUnnamed_0 = 37;
-
-    pub const CG_R_LOADWORLDMAP: crate::be_aas_h::C2RustUnnamed_0 = 36;
-
-    pub const CG_S_STARTBACKGROUNDTRACK: crate::be_aas_h::C2RustUnnamed_0 = 35;
-
-    pub const CG_S_REGISTERSOUND: crate::be_aas_h::C2RustUnnamed_0 = 34;
-
-    pub const CG_S_RESPATIALIZE: crate::be_aas_h::C2RustUnnamed_0 = 33;
-
-    pub const CG_S_UPDATEENTITYPOSITION: crate::be_aas_h::C2RustUnnamed_0 = 32;
-
-    pub const CG_S_ADDLOOPINGSOUND: crate::be_aas_h::C2RustUnnamed_0 = 31;
-
-    pub const CG_S_CLEARLOOPINGSOUNDS: crate::be_aas_h::C2RustUnnamed_0 = 30;
-
-    pub const CG_S_STARTLOCALSOUND: crate::be_aas_h::C2RustUnnamed_0 = 29;
-
-    pub const CG_S_STARTSOUND: crate::be_aas_h::C2RustUnnamed_0 = 28;
-
-    pub const CG_CM_MARKFRAGMENTS: crate::be_aas_h::C2RustUnnamed_0 = 27;
-
-    pub const CG_CM_TRANSFORMEDBOXTRACE: crate::be_aas_h::C2RustUnnamed_0 = 26;
-
-    pub const CG_CM_BOXTRACE: crate::be_aas_h::C2RustUnnamed_0 = 25;
-
-    pub const CG_CM_TRANSFORMEDPOINTCONTENTS: crate::be_aas_h::C2RustUnnamed_0 = 24;
-
-    pub const CG_CM_POINTCONTENTS: crate::be_aas_h::C2RustUnnamed_0 = 23;
-
-    pub const CG_CM_TEMPBOXMODEL: crate::be_aas_h::C2RustUnnamed_0 = 22;
-
-    pub const CG_CM_LOADMODEL: crate::be_aas_h::C2RustUnnamed_0 = 21;
-
-    pub const CG_CM_INLINEMODEL: crate::be_aas_h::C2RustUnnamed_0 = 20;
-
-    pub const CG_CM_NUMINLINEMODELS: crate::be_aas_h::C2RustUnnamed_0 = 19;
-
-    pub const CG_CM_LOADMAP: crate::be_aas_h::C2RustUnnamed_0 = 18;
-
-    pub const CG_UPDATESCREEN: crate::be_aas_h::C2RustUnnamed_0 = 17;
-
-    pub const CG_SENDCLIENTCOMMAND: crate::be_aas_h::C2RustUnnamed_0 = 16;
-
-    pub const CG_ADDCOMMAND: crate::be_aas_h::C2RustUnnamed_0 = 15;
-
-    pub const CG_SENDCONSOLECOMMAND: crate::be_aas_h::C2RustUnnamed_0 = 14;
-
-    pub const CG_FS_FCLOSEFILE: crate::be_aas_h::C2RustUnnamed_0 = 13;
-
-    pub const CG_FS_WRITE: crate::be_aas_h::C2RustUnnamed_0 = 12;
-
-    pub const CG_FS_READ: crate::be_aas_h::C2RustUnnamed_0 = 11;
-
-    pub const CG_FS_FOPENFILE: crate::be_aas_h::C2RustUnnamed_0 = 10;
-
-    pub const CG_ARGS: crate::be_aas_h::C2RustUnnamed_0 = 9;
-
-    pub const CG_ARGV: crate::be_aas_h::C2RustUnnamed_0 = 8;
-
-    pub const CG_ARGC: crate::be_aas_h::C2RustUnnamed_0 = 7;
-
-    pub const CG_CVAR_VARIABLESTRINGBUFFER: crate::be_aas_h::C2RustUnnamed_0 = 6;
-
-    pub const CG_CVAR_SET: crate::be_aas_h::C2RustUnnamed_0 = 5;
-
-    pub const CG_CVAR_UPDATE: crate::be_aas_h::C2RustUnnamed_0 = 4;
-
-    pub const CG_CVAR_REGISTER: crate::be_aas_h::C2RustUnnamed_0 = 3;
-
-    pub const CG_MILLISECONDS: crate::be_aas_h::C2RustUnnamed_0 = 2;
-
-    pub const CG_ERROR: crate::be_aas_h::C2RustUnnamed_0 = 1;
+    pub const CGAME_EVENT_EDITHUD: crate::be_aas_h::C2RustUnnamed_0 = 3;
 
     pub const CG_PRINT: crate::be_aas_h::C2RustUnnamed_0 = 0;
 
-    pub const CG_EVENT_HANDLING: crate::be_aas_h::C2RustUnnamed_0 = 8;
+    pub const CG_ERROR: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
-    pub const CG_MOUSE_EVENT: crate::be_aas_h::C2RustUnnamed_0 = 7;
+    pub const CG_MILLISECONDS: crate::be_aas_h::C2RustUnnamed_0 = 2;
 
-    pub const CG_KEY_EVENT: crate::be_aas_h::C2RustUnnamed_0 = 6;
+    pub const CG_CVAR_REGISTER: crate::be_aas_h::C2RustUnnamed_0 = 3;
 
-    pub const CG_LAST_ATTACKER: crate::be_aas_h::C2RustUnnamed_0 = 5;
+    pub const CG_CVAR_UPDATE: crate::be_aas_h::C2RustUnnamed_0 = 4;
 
-    pub const CG_CROSSHAIR_PLAYER: crate::be_aas_h::C2RustUnnamed_0 = 4;
+    pub const CG_CVAR_SET: crate::be_aas_h::C2RustUnnamed_0 = 5;
 
-    pub const CG_DRAW_ACTIVE_FRAME: crate::be_aas_h::C2RustUnnamed_0 = 3;
+    pub const CG_CVAR_VARIABLESTRINGBUFFER: crate::be_aas_h::C2RustUnnamed_0 = 6;
+
+    pub const CG_ARGC: crate::be_aas_h::C2RustUnnamed_0 = 7;
+
+    pub const CG_ARGV: crate::be_aas_h::C2RustUnnamed_0 = 8;
+
+    pub const CG_ARGS: crate::be_aas_h::C2RustUnnamed_0 = 9;
+
+    pub const CG_FS_FOPENFILE: crate::be_aas_h::C2RustUnnamed_0 = 10;
+
+    pub const CG_FS_READ: crate::be_aas_h::C2RustUnnamed_0 = 11;
+
+    pub const CG_FS_WRITE: crate::be_aas_h::C2RustUnnamed_0 = 12;
+
+    pub const CG_FS_FCLOSEFILE: crate::be_aas_h::C2RustUnnamed_0 = 13;
+
+    pub const CG_SENDCONSOLECOMMAND: crate::be_aas_h::C2RustUnnamed_0 = 14;
+
+    pub const CG_ADDCOMMAND: crate::be_aas_h::C2RustUnnamed_0 = 15;
+
+    pub const CG_SENDCLIENTCOMMAND: crate::be_aas_h::C2RustUnnamed_0 = 16;
+
+    pub const CG_UPDATESCREEN: crate::be_aas_h::C2RustUnnamed_0 = 17;
+
+    pub const CG_CM_LOADMAP: crate::be_aas_h::C2RustUnnamed_0 = 18;
+
+    pub const CG_CM_NUMINLINEMODELS: crate::be_aas_h::C2RustUnnamed_0 = 19;
+
+    pub const CG_CM_INLINEMODEL: crate::be_aas_h::C2RustUnnamed_0 = 20;
+
+    pub const CG_CM_LOADMODEL: crate::be_aas_h::C2RustUnnamed_0 = 21;
+
+    pub const CG_CM_TEMPBOXMODEL: crate::be_aas_h::C2RustUnnamed_0 = 22;
+
+    pub const CG_CM_POINTCONTENTS: crate::be_aas_h::C2RustUnnamed_0 = 23;
+
+    pub const CG_CM_TRANSFORMEDPOINTCONTENTS: crate::be_aas_h::C2RustUnnamed_0 = 24;
+
+    pub const CG_CM_BOXTRACE: crate::be_aas_h::C2RustUnnamed_0 = 25;
+
+    pub const CG_CM_TRANSFORMEDBOXTRACE: crate::be_aas_h::C2RustUnnamed_0 = 26;
+
+    pub const CG_CM_MARKFRAGMENTS: crate::be_aas_h::C2RustUnnamed_0 = 27;
+
+    pub const CG_S_STARTSOUND: crate::be_aas_h::C2RustUnnamed_0 = 28;
+
+    pub const CG_S_STARTLOCALSOUND: crate::be_aas_h::C2RustUnnamed_0 = 29;
+
+    pub const CG_S_CLEARLOOPINGSOUNDS: crate::be_aas_h::C2RustUnnamed_0 = 30;
+
+    pub const CG_S_ADDLOOPINGSOUND: crate::be_aas_h::C2RustUnnamed_0 = 31;
+
+    pub const CG_S_UPDATEENTITYPOSITION: crate::be_aas_h::C2RustUnnamed_0 = 32;
+
+    pub const CG_S_RESPATIALIZE: crate::be_aas_h::C2RustUnnamed_0 = 33;
+
+    pub const CG_S_REGISTERSOUND: crate::be_aas_h::C2RustUnnamed_0 = 34;
+
+    pub const CG_S_STARTBACKGROUNDTRACK: crate::be_aas_h::C2RustUnnamed_0 = 35;
+
+    pub const CG_R_LOADWORLDMAP: crate::be_aas_h::C2RustUnnamed_0 = 36;
+
+    pub const CG_R_REGISTERMODEL: crate::be_aas_h::C2RustUnnamed_0 = 37;
+
+    pub const CG_R_REGISTERSKIN: crate::be_aas_h::C2RustUnnamed_0 = 38;
+
+    pub const CG_R_REGISTERSHADER: crate::be_aas_h::C2RustUnnamed_0 = 39;
+
+    pub const CG_R_CLEARSCENE: crate::be_aas_h::C2RustUnnamed_0 = 40;
+
+    pub const CG_R_ADDREFENTITYTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 41;
+
+    pub const CG_R_ADDPOLYTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 42;
+
+    pub const CG_R_ADDLIGHTTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 43;
+
+    pub const CG_R_RENDERSCENE: crate::be_aas_h::C2RustUnnamed_0 = 44;
+
+    pub const CG_R_SETCOLOR: crate::be_aas_h::C2RustUnnamed_0 = 45;
+
+    pub const CG_R_DRAWSTRETCHPIC: crate::be_aas_h::C2RustUnnamed_0 = 46;
+
+    pub const CG_R_MODELBOUNDS: crate::be_aas_h::C2RustUnnamed_0 = 47;
+
+    pub const CG_R_LERPTAG: crate::be_aas_h::C2RustUnnamed_0 = 48;
+
+    pub const CG_GETGLCONFIG: crate::be_aas_h::C2RustUnnamed_0 = 49;
+
+    pub const CG_GETGAMESTATE: crate::be_aas_h::C2RustUnnamed_0 = 50;
+
+    pub const CG_GETCURRENTSNAPSHOTNUMBER: crate::be_aas_h::C2RustUnnamed_0 = 51;
+
+    pub const CG_GETSNAPSHOT: crate::be_aas_h::C2RustUnnamed_0 = 52;
+
+    pub const CG_GETSERVERCOMMAND: crate::be_aas_h::C2RustUnnamed_0 = 53;
+
+    pub const CG_GETCURRENTCMDNUMBER: crate::be_aas_h::C2RustUnnamed_0 = 54;
+
+    pub const CG_GETUSERCMD: crate::be_aas_h::C2RustUnnamed_0 = 55;
+
+    pub const CG_SETUSERCMDVALUE: crate::be_aas_h::C2RustUnnamed_0 = 56;
+
+    pub const CG_R_REGISTERSHADERNOMIP: crate::be_aas_h::C2RustUnnamed_0 = 57;
+
+    pub const CG_MEMORY_REMAINING: crate::be_aas_h::C2RustUnnamed_0 = 58;
+
+    pub const CG_R_REGISTERFONT: crate::be_aas_h::C2RustUnnamed_0 = 59;
+
+    pub const CG_KEY_ISDOWN: crate::be_aas_h::C2RustUnnamed_0 = 60;
+
+    pub const CG_KEY_GETCATCHER: crate::be_aas_h::C2RustUnnamed_0 = 61;
+
+    pub const CG_KEY_SETCATCHER: crate::be_aas_h::C2RustUnnamed_0 = 62;
+
+    pub const CG_KEY_GETKEY: crate::be_aas_h::C2RustUnnamed_0 = 63;
+
+    pub const CG_PC_ADD_GLOBAL_DEFINE: crate::be_aas_h::C2RustUnnamed_0 = 64;
+
+    pub const CG_PC_LOAD_SOURCE: crate::be_aas_h::C2RustUnnamed_0 = 65;
+
+    pub const CG_PC_FREE_SOURCE: crate::be_aas_h::C2RustUnnamed_0 = 66;
+
+    pub const CG_PC_READ_TOKEN: crate::be_aas_h::C2RustUnnamed_0 = 67;
+
+    pub const CG_PC_SOURCE_FILE_AND_LINE: crate::be_aas_h::C2RustUnnamed_0 = 68;
+
+    pub const CG_S_STOPBACKGROUNDTRACK: crate::be_aas_h::C2RustUnnamed_0 = 69;
+
+    pub const CG_REAL_TIME: crate::be_aas_h::C2RustUnnamed_0 = 70;
+
+    pub const CG_SNAPVECTOR: crate::be_aas_h::C2RustUnnamed_0 = 71;
+
+    pub const CG_REMOVECOMMAND: crate::be_aas_h::C2RustUnnamed_0 = 72;
+
+    pub const CG_R_LIGHTFORPOINT: crate::be_aas_h::C2RustUnnamed_0 = 73;
+
+    pub const CG_CIN_PLAYCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 74;
+
+    pub const CG_CIN_STOPCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 75;
+
+    pub const CG_CIN_RUNCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 76;
+
+    pub const CG_CIN_DRAWCINEMATIC: crate::be_aas_h::C2RustUnnamed_0 = 77;
+
+    pub const CG_CIN_SETEXTENTS: crate::be_aas_h::C2RustUnnamed_0 = 78;
+
+    pub const CG_R_REMAP_SHADER: crate::be_aas_h::C2RustUnnamed_0 = 79;
+
+    pub const CG_S_ADDREALLOOPINGSOUND: crate::be_aas_h::C2RustUnnamed_0 = 80;
+
+    pub const CG_S_STOPLOOPINGSOUND: crate::be_aas_h::C2RustUnnamed_0 = 81;
+
+    pub const CG_CM_TEMPCAPSULEMODEL: crate::be_aas_h::C2RustUnnamed_0 = 82;
+
+    pub const CG_CM_CAPSULETRACE: crate::be_aas_h::C2RustUnnamed_0 = 83;
+
+    pub const CG_CM_TRANSFORMEDCAPSULETRACE: crate::be_aas_h::C2RustUnnamed_0 = 84;
+
+    pub const CG_R_ADDADDITIVELIGHTTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 85;
+
+    pub const CG_GET_ENTITY_TOKEN: crate::be_aas_h::C2RustUnnamed_0 = 86;
+
+    pub const CG_R_ADDPOLYSTOSCENE: crate::be_aas_h::C2RustUnnamed_0 = 87;
+
+    pub const CG_R_INPVS: crate::be_aas_h::C2RustUnnamed_0 = 88;
+
+    pub const CG_FS_SEEK: crate::be_aas_h::C2RustUnnamed_0 = 89;
+
+    pub const CG_MEMSET: crate::be_aas_h::C2RustUnnamed_0 = 100;
+
+    pub const CG_MEMCPY: crate::be_aas_h::C2RustUnnamed_0 = 101;
+
+    pub const CG_STRNCPY: crate::be_aas_h::C2RustUnnamed_0 = 102;
+
+    pub const CG_SIN: crate::be_aas_h::C2RustUnnamed_0 = 103;
+
+    pub const CG_COS: crate::be_aas_h::C2RustUnnamed_0 = 104;
+
+    pub const CG_ATAN2: crate::be_aas_h::C2RustUnnamed_0 = 105;
+
+    pub const CG_SQRT: crate::be_aas_h::C2RustUnnamed_0 = 106;
+
+    pub const CG_FLOOR: crate::be_aas_h::C2RustUnnamed_0 = 107;
+
+    pub const CG_CEIL: crate::be_aas_h::C2RustUnnamed_0 = 108;
+
+    pub const CG_TESTPRINTINT: crate::be_aas_h::C2RustUnnamed_0 = 109;
+
+    pub const CG_TESTPRINTFLOAT: crate::be_aas_h::C2RustUnnamed_0 = 110;
+
+    pub const CG_ACOS: crate::be_aas_h::C2RustUnnamed_0 = 111;
+
+    pub const CG_INIT: crate::be_aas_h::C2RustUnnamed_0 = 0;
 
     pub const CG_SHUTDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
-    pub const CG_INIT: crate::be_aas_h::C2RustUnnamed_0 = 0;
+    pub const CG_CONSOLE_COMMAND: crate::be_aas_h::C2RustUnnamed_0 = 2;
+
+    pub const CG_DRAW_ACTIVE_FRAME: crate::be_aas_h::C2RustUnnamed_0 = 3;
+
+    pub const CG_CROSSHAIR_PLAYER: crate::be_aas_h::C2RustUnnamed_0 = 4;
+
+    pub const CG_LAST_ATTACKER: crate::be_aas_h::C2RustUnnamed_0 = 5;
+
+    pub const CG_KEY_EVENT: crate::be_aas_h::C2RustUnnamed_0 = 6;
+
+    pub const CG_MOUSE_EVENT: crate::be_aas_h::C2RustUnnamed_0 = 7;
+
+    pub const CG_EVENT_HANDLING: crate::be_aas_h::C2RustUnnamed_0 = 8;
 }
 pub mod tr_types_h {
     #[repr(C)]
@@ -6439,6 +6401,24 @@ pub mod tr_types_h {
     }
 
     pub type refEntityType_t = libc::c_uint;
+
+    pub const RT_MODEL: crate::tr_types_h::refEntityType_t = 0;
+
+    pub const RT_POLY: crate::tr_types_h::refEntityType_t = 1;
+
+    pub const RT_SPRITE: crate::tr_types_h::refEntityType_t = 2;
+
+    pub const RT_BEAM: crate::tr_types_h::refEntityType_t = 3;
+
+    pub const RT_RAIL_CORE: crate::tr_types_h::refEntityType_t = 4;
+
+    pub const RT_RAIL_RINGS: crate::tr_types_h::refEntityType_t = 5;
+
+    pub const RT_LIGHTNING: crate::tr_types_h::refEntityType_t = 6;
+
+    pub const RT_PORTALSURFACE: crate::tr_types_h::refEntityType_t = 7;
+
+    pub const RT_MAX_REF_ENTITY_TYPE: crate::tr_types_h::refEntityType_t = 8;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -6484,11 +6464,39 @@ pub mod tr_types_h {
 
     pub type stereoFrame_t = libc::c_uint;
 
+    pub const STEREO_CENTER: crate::tr_types_h::stereoFrame_t = 0;
+
+    pub const STEREO_LEFT: crate::tr_types_h::stereoFrame_t = 1;
+
+    pub const STEREO_RIGHT: crate::tr_types_h::stereoFrame_t = 2;
+
     pub type textureCompression_t = libc::c_uint;
+
+    pub const TC_NONE: crate::tr_types_h::textureCompression_t = 0;
+
+    pub const TC_S3TC: crate::tr_types_h::textureCompression_t = 1;
+
+    pub const TC_S3TC_ARB: crate::tr_types_h::textureCompression_t = 2;
 
     pub type glDriverType_t = libc::c_uint;
 
+    pub const GLDRV_ICD: crate::tr_types_h::glDriverType_t = 0;
+
+    pub const GLDRV_STANDALONE: crate::tr_types_h::glDriverType_t = 1;
+
+    pub const GLDRV_VOODOO: crate::tr_types_h::glDriverType_t = 2;
+
     pub type glHardwareType_t = libc::c_uint;
+
+    pub const GLHW_GENERIC: crate::tr_types_h::glHardwareType_t = 0;
+
+    pub const GLHW_3DFX_2D3D: crate::tr_types_h::glHardwareType_t = 1;
+
+    pub const GLHW_RIVA128: crate::tr_types_h::glHardwareType_t = 2;
+
+    pub const GLHW_RAGEPRO: crate::tr_types_h::glHardwareType_t = 3;
+
+    pub const GLHW_PERMEDIA2: crate::tr_types_h::glHardwareType_t = 4;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -6515,55 +6523,44 @@ pub mod tr_types_h {
         pub stereoEnabled: crate::src::qcommon::q_shared::qboolean,
         pub smpActive: crate::src::qcommon::q_shared::qboolean,
     }
-
-    pub const RT_MAX_REF_ENTITY_TYPE: crate::tr_types_h::refEntityType_t = 8;
-
-    pub const RT_PORTALSURFACE: crate::tr_types_h::refEntityType_t = 7;
-
-    pub const RT_LIGHTNING: crate::tr_types_h::refEntityType_t = 6;
-
-    pub const RT_RAIL_RINGS: crate::tr_types_h::refEntityType_t = 5;
-
-    pub const RT_RAIL_CORE: crate::tr_types_h::refEntityType_t = 4;
-
-    pub const RT_BEAM: crate::tr_types_h::refEntityType_t = 3;
-
-    pub const RT_SPRITE: crate::tr_types_h::refEntityType_t = 2;
-
-    pub const RT_POLY: crate::tr_types_h::refEntityType_t = 1;
-
-    pub const RT_MODEL: crate::tr_types_h::refEntityType_t = 0;
-
-    pub const STEREO_RIGHT: crate::tr_types_h::stereoFrame_t = 2;
-
-    pub const STEREO_LEFT: crate::tr_types_h::stereoFrame_t = 1;
-
-    pub const STEREO_CENTER: crate::tr_types_h::stereoFrame_t = 0;
-
-    pub const TC_S3TC_ARB: crate::tr_types_h::textureCompression_t = 2;
-
-    pub const TC_S3TC: crate::tr_types_h::textureCompression_t = 1;
-
-    pub const TC_NONE: crate::tr_types_h::textureCompression_t = 0;
-
-    pub const GLDRV_VOODOO: crate::tr_types_h::glDriverType_t = 2;
-
-    pub const GLDRV_STANDALONE: crate::tr_types_h::glDriverType_t = 1;
-
-    pub const GLDRV_ICD: crate::tr_types_h::glDriverType_t = 0;
-
-    pub const GLHW_PERMEDIA2: crate::tr_types_h::glHardwareType_t = 4;
-
-    pub const GLHW_RAGEPRO: crate::tr_types_h::glHardwareType_t = 3;
-
-    pub const GLHW_RIVA128: crate::tr_types_h::glHardwareType_t = 2;
-
-    pub const GLHW_3DFX_2D3D: crate::tr_types_h::glHardwareType_t = 1;
-
-    pub const GLHW_GENERIC: crate::tr_types_h::glHardwareType_t = 0;
 }
 pub mod qcommon_h {
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct msg_t {
+        pub allowoverflow: crate::src::qcommon::q_shared::qboolean,
+        pub overflowed: crate::src::qcommon::q_shared::qboolean,
+        pub oob: crate::src::qcommon::q_shared::qboolean,
+        pub data: *mut crate::src::qcommon::q_shared::byte,
+        pub maxsize: libc::c_int,
+        pub cursize: libc::c_int,
+        pub readcount: libc::c_int,
+        pub bit: libc::c_int,
+    }
+
     pub type netadrtype_t = libc::c_uint;
+
+    pub const NA_BAD: crate::qcommon_h::netadrtype_t = 0;
+
+    pub const NA_BOT: crate::qcommon_h::netadrtype_t = 1;
+
+    pub const NA_LOOPBACK: crate::qcommon_h::netadrtype_t = 2;
+
+    pub const NA_BROADCAST: crate::qcommon_h::netadrtype_t = 3;
+
+    pub const NA_IP: crate::qcommon_h::netadrtype_t = 4;
+
+    pub const NA_IP6: crate::qcommon_h::netadrtype_t = 5;
+
+    pub const NA_MULTICAST6: crate::qcommon_h::netadrtype_t = 6;
+
+    pub const NA_UNSPEC: crate::qcommon_h::netadrtype_t = 7;
+
+    pub type netsrc_t = libc::c_uint;
+
+    pub const NS_CLIENT: crate::qcommon_h::netsrc_t = 0;
+
+    pub const NS_SERVER: crate::qcommon_h::netsrc_t = 1;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -6574,24 +6571,6 @@ pub mod qcommon_h {
         pub port: libc::c_ushort,
         pub scope_id: libc::c_ulong,
     }
-
-    pub const NA_UNSPEC: crate::qcommon_h::netadrtype_t = 7;
-
-    pub const NA_MULTICAST6: crate::qcommon_h::netadrtype_t = 6;
-
-    pub const NA_IP6: crate::qcommon_h::netadrtype_t = 5;
-
-    pub const NA_IP: crate::qcommon_h::netadrtype_t = 4;
-
-    pub const NA_BROADCAST: crate::qcommon_h::netadrtype_t = 3;
-
-    pub const NA_LOOPBACK: crate::qcommon_h::netadrtype_t = 2;
-
-    pub const NA_BOT: crate::qcommon_h::netadrtype_t = 1;
-
-    pub const NA_BAD: crate::qcommon_h::netadrtype_t = 0;
-
-    pub type netsrc_t = libc::c_uint;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -6615,9 +6594,85 @@ pub mod qcommon_h {
         pub compat: crate::src::qcommon::q_shared::qboolean,
     }
 
+    pub type svc_ops_e = libc::c_uint;
+
+    pub const svc_bad: crate::qcommon_h::svc_ops_e = 0;
+
+    pub const svc_nop: crate::qcommon_h::svc_ops_e = 1;
+
+    pub const svc_gamestate: crate::qcommon_h::svc_ops_e = 2;
+
+    pub const svc_configstring: crate::qcommon_h::svc_ops_e = 3;
+
+    pub const svc_baseline: crate::qcommon_h::svc_ops_e = 4;
+
+    pub const svc_serverCommand: crate::qcommon_h::svc_ops_e = 5;
+
+    pub const svc_download: crate::qcommon_h::svc_ops_e = 6;
+
+    pub const svc_snapshot: crate::qcommon_h::svc_ops_e = 7;
+
+    pub const svc_EOF: crate::qcommon_h::svc_ops_e = 8;
+
+    pub const svc_voipSpeex: crate::qcommon_h::svc_ops_e = 9;
+
+    pub const svc_voipOpus: crate::qcommon_h::svc_ops_e = 10;
+
+    pub type clc_ops_e = libc::c_uint;
+
+    pub const clc_bad: crate::qcommon_h::clc_ops_e = 0;
+
+    pub const clc_nop: crate::qcommon_h::clc_ops_e = 1;
+
+    pub const clc_move: crate::qcommon_h::clc_ops_e = 2;
+
+    pub const clc_moveNoDelta: crate::qcommon_h::clc_ops_e = 3;
+
+    pub const clc_clientCommand: crate::qcommon_h::clc_ops_e = 4;
+
+    pub const clc_EOF: crate::qcommon_h::clc_ops_e = 5;
+
+    pub const clc_voipSpeex: crate::qcommon_h::clc_ops_e = 6;
+
+    pub const clc_voipOpus: crate::qcommon_h::clc_ops_e = 7;
+
     pub type vm_t = crate::vm_local_h::vm_s;
 
     pub type vmInterpret_t = libc::c_uint;
+
+    pub const VMI_NATIVE: crate::qcommon_h::vmInterpret_t = 0;
+
+    pub const VMI_BYTECODE: crate::qcommon_h::vmInterpret_t = 1;
+
+    pub const VMI_COMPILED: crate::qcommon_h::vmInterpret_t = 2;
+
+    pub const TRAP_MEMSET: crate::be_aas_h::C2RustUnnamed_0 = 100;
+
+    pub const TRAP_MEMCPY: crate::be_aas_h::C2RustUnnamed_0 = 101;
+
+    pub const TRAP_STRNCPY: crate::be_aas_h::C2RustUnnamed_0 = 102;
+
+    pub const TRAP_SIN: crate::be_aas_h::C2RustUnnamed_0 = 103;
+
+    pub const TRAP_COS: crate::be_aas_h::C2RustUnnamed_0 = 104;
+
+    pub const TRAP_ATAN2: crate::be_aas_h::C2RustUnnamed_0 = 105;
+
+    pub const TRAP_SQRT: crate::be_aas_h::C2RustUnnamed_0 = 106;
+
+    pub const TRAP_MATRIXMULTIPLY: crate::be_aas_h::C2RustUnnamed_0 = 107;
+
+    pub const TRAP_ANGLEVECTORS: crate::be_aas_h::C2RustUnnamed_0 = 108;
+
+    pub const TRAP_PERPENDICULARVECTOR: crate::be_aas_h::C2RustUnnamed_0 = 109;
+
+    pub const TRAP_FLOOR: crate::be_aas_h::C2RustUnnamed_0 = 110;
+
+    pub const TRAP_CEIL: crate::be_aas_h::C2RustUnnamed_0 = 111;
+
+    pub const TRAP_TESTPRINTINT: crate::be_aas_h::C2RustUnnamed_0 = 112;
+
+    pub const TRAP_TESTPRINTFLOAT: crate::be_aas_h::C2RustUnnamed_0 = 113;
 
     pub type xcommand_t = Option<unsafe extern "C" fn() -> ()>;
 
@@ -6633,114 +6688,37 @@ pub mod qcommon_h {
         pub buffer: [libc::c_char; 256],
     }
 
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct msg_t {
-        pub allowoverflow: crate::src::qcommon::q_shared::qboolean,
-        pub overflowed: crate::src::qcommon::q_shared::qboolean,
-        pub oob: crate::src::qcommon::q_shared::qboolean,
-        pub data: *mut crate::src::qcommon::q_shared::byte,
-        pub maxsize: libc::c_int,
-        pub cursize: libc::c_int,
-        pub readcount: libc::c_int,
-        pub bit: libc::c_int,
-    }
-
-    pub type svc_ops_e = libc::c_uint;
-
-    pub type clc_ops_e = libc::c_uint;
-
-    pub const NS_SERVER: crate::qcommon_h::netsrc_t = 1;
-
-    pub const NS_CLIENT: crate::qcommon_h::netsrc_t = 0;
-
-    pub const VMI_COMPILED: crate::qcommon_h::vmInterpret_t = 2;
-
-    pub const VMI_BYTECODE: crate::qcommon_h::vmInterpret_t = 1;
-
-    pub const VMI_NATIVE: crate::qcommon_h::vmInterpret_t = 0;
-
-    pub const svc_voipOpus: crate::qcommon_h::svc_ops_e = 10;
-
-    pub const svc_voipSpeex: crate::qcommon_h::svc_ops_e = 9;
-
-    pub const svc_EOF: crate::qcommon_h::svc_ops_e = 8;
-
-    pub const svc_snapshot: crate::qcommon_h::svc_ops_e = 7;
-
-    pub const svc_download: crate::qcommon_h::svc_ops_e = 6;
-
-    pub const svc_serverCommand: crate::qcommon_h::svc_ops_e = 5;
-
-    pub const svc_baseline: crate::qcommon_h::svc_ops_e = 4;
-
-    pub const svc_configstring: crate::qcommon_h::svc_ops_e = 3;
-
-    pub const svc_gamestate: crate::qcommon_h::svc_ops_e = 2;
-
-    pub const svc_nop: crate::qcommon_h::svc_ops_e = 1;
-
-    pub const svc_bad: crate::qcommon_h::svc_ops_e = 0;
-
-    pub const clc_voipOpus: crate::qcommon_h::clc_ops_e = 7;
-
-    pub const clc_voipSpeex: crate::qcommon_h::clc_ops_e = 6;
-
-    pub const clc_EOF: crate::qcommon_h::clc_ops_e = 5;
-
-    pub const clc_clientCommand: crate::qcommon_h::clc_ops_e = 4;
-
-    pub const clc_moveNoDelta: crate::qcommon_h::clc_ops_e = 3;
-
-    pub const clc_move: crate::qcommon_h::clc_ops_e = 2;
-
-    pub const clc_nop: crate::qcommon_h::clc_ops_e = 1;
-
-    pub const clc_bad: crate::qcommon_h::clc_ops_e = 0;
-
-    pub const TAG_STATIC: crate::be_aas_h::C2RustUnnamed_0 = 5;
-
-    pub const TAG_SMALL: crate::be_aas_h::C2RustUnnamed_0 = 4;
-
-    pub const TAG_RENDERER: crate::be_aas_h::C2RustUnnamed_0 = 3;
-
-    pub const TAG_BOTLIB: crate::be_aas_h::C2RustUnnamed_0 = 2;
-
-    pub const TAG_GENERAL: crate::be_aas_h::C2RustUnnamed_0 = 1;
-
-    pub const TAG_FREE: crate::be_aas_h::C2RustUnnamed_0 = 0;
-
-    pub const TRAP_TESTPRINTFLOAT: crate::be_aas_h::C2RustUnnamed_0 = 113;
-
-    pub const TRAP_TESTPRINTINT: crate::be_aas_h::C2RustUnnamed_0 = 112;
-
-    pub const TRAP_CEIL: crate::be_aas_h::C2RustUnnamed_0 = 111;
-
-    pub const TRAP_FLOOR: crate::be_aas_h::C2RustUnnamed_0 = 110;
-
-    pub const TRAP_PERPENDICULARVECTOR: crate::be_aas_h::C2RustUnnamed_0 = 109;
-
-    pub const TRAP_ANGLEVECTORS: crate::be_aas_h::C2RustUnnamed_0 = 108;
-
-    pub const TRAP_MATRIXMULTIPLY: crate::be_aas_h::C2RustUnnamed_0 = 107;
-
-    pub const TRAP_SQRT: crate::be_aas_h::C2RustUnnamed_0 = 106;
-
-    pub const TRAP_ATAN2: crate::be_aas_h::C2RustUnnamed_0 = 105;
-
-    pub const TRAP_COS: crate::be_aas_h::C2RustUnnamed_0 = 104;
-
-    pub const TRAP_SIN: crate::be_aas_h::C2RustUnnamed_0 = 103;
-
-    pub const TRAP_STRNCPY: crate::be_aas_h::C2RustUnnamed_0 = 102;
-
-    pub const TRAP_MEMCPY: crate::be_aas_h::C2RustUnnamed_0 = 101;
-
-    pub const TRAP_MEMSET: crate::be_aas_h::C2RustUnnamed_0 = 100;
-
     pub type cpuFeatures_t = libc::c_uint;
 
+    pub const CF_RDTSC: crate::qcommon_h::cpuFeatures_t = 1;
+
+    pub const CF_MMX: crate::qcommon_h::cpuFeatures_t = 2;
+
+    pub const CF_MMX_EXT: crate::qcommon_h::cpuFeatures_t = 4;
+
+    pub const CF_3DNOW: crate::qcommon_h::cpuFeatures_t = 8;
+
+    pub const CF_3DNOW_EXT: crate::qcommon_h::cpuFeatures_t = 16;
+
+    pub const CF_SSE: crate::qcommon_h::cpuFeatures_t = 32;
+
+    pub const CF_SSE2: crate::qcommon_h::cpuFeatures_t = 64;
+
+    pub const CF_ALTIVEC: crate::qcommon_h::cpuFeatures_t = 128;
+
     pub type sysEventType_t = libc::c_uint;
+
+    pub const SE_NONE: crate::qcommon_h::sysEventType_t = 0;
+
+    pub const SE_KEY: crate::qcommon_h::sysEventType_t = 1;
+
+    pub const SE_CHAR: crate::qcommon_h::sysEventType_t = 2;
+
+    pub const SE_MOUSE: crate::qcommon_h::sysEventType_t = 3;
+
+    pub const SE_JOYSTICK_AXIS: crate::qcommon_h::sysEventType_t = 4;
+
+    pub const SE_CONSOLE: crate::qcommon_h::sysEventType_t = 5;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -6753,33 +6731,41 @@ pub mod qcommon_h {
         pub evPtr: *mut libc::c_void,
     }
 
-    pub const CF_ALTIVEC: crate::qcommon_h::cpuFeatures_t = 128;
+    pub const TAG_FREE: crate::be_aas_h::C2RustUnnamed_0 = 0;
 
-    pub const CF_SSE2: crate::qcommon_h::cpuFeatures_t = 64;
+    pub const TAG_GENERAL: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
-    pub const CF_SSE: crate::qcommon_h::cpuFeatures_t = 32;
+    pub const TAG_BOTLIB: crate::be_aas_h::C2RustUnnamed_0 = 2;
 
-    pub const CF_3DNOW_EXT: crate::qcommon_h::cpuFeatures_t = 16;
+    pub const TAG_RENDERER: crate::be_aas_h::C2RustUnnamed_0 = 3;
 
-    pub const CF_3DNOW: crate::qcommon_h::cpuFeatures_t = 8;
+    pub const TAG_SMALL: crate::be_aas_h::C2RustUnnamed_0 = 4;
 
-    pub const CF_MMX_EXT: crate::qcommon_h::cpuFeatures_t = 4;
+    pub const TAG_STATIC: crate::be_aas_h::C2RustUnnamed_0 = 5;
 
-    pub const CF_MMX: crate::qcommon_h::cpuFeatures_t = 2;
+    pub type dialogResult_t = libc::c_uint;
 
-    pub const CF_RDTSC: crate::qcommon_h::cpuFeatures_t = 1;
+    pub const DR_YES: crate::qcommon_h::dialogResult_t = 0;
 
-    pub const SE_CONSOLE: crate::qcommon_h::sysEventType_t = 5;
+    pub const DR_NO: crate::qcommon_h::dialogResult_t = 1;
 
-    pub const SE_JOYSTICK_AXIS: crate::qcommon_h::sysEventType_t = 4;
+    pub const DR_OK: crate::qcommon_h::dialogResult_t = 0;
 
-    pub const SE_MOUSE: crate::qcommon_h::sysEventType_t = 3;
+    pub const DR_CANCEL: crate::qcommon_h::dialogResult_t = 1;
 
-    pub const SE_CHAR: crate::qcommon_h::sysEventType_t = 2;
+    pub type dialogType_t = libc::c_uint;
 
-    pub const SE_KEY: crate::qcommon_h::sysEventType_t = 1;
+    pub const DT_INFO: crate::qcommon_h::dialogType_t = 0;
 
-    pub const SE_NONE: crate::qcommon_h::sysEventType_t = 0;
+    pub const DT_WARNING: crate::qcommon_h::dialogType_t = 1;
+
+    pub const DT_ERROR: crate::qcommon_h::dialogType_t = 2;
+
+    pub const DT_YES_NO: crate::qcommon_h::dialogType_t = 3;
+
+    pub const DT_OK_CANCEL: crate::qcommon_h::dialogType_t = 4;
+
+    pub type node_t = crate::qcommon_h::nodetype;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -6793,8 +6779,6 @@ pub mod qcommon_h {
         pub weight: libc::c_int,
         pub symbol: libc::c_int,
     }
-
-    pub type node_t = crate::qcommon_h::nodetype;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -6816,43 +6800,17 @@ pub mod qcommon_h {
         pub compressor: crate::qcommon_h::huff_t,
         pub decompressor: crate::qcommon_h::huff_t,
     }
-
-    pub type dialogResult_t = libc::c_uint;
-
-    pub type dialogType_t = libc::c_uint;
-
-    pub const DR_CANCEL: crate::qcommon_h::dialogResult_t = 1;
-
-    pub const DR_OK: crate::qcommon_h::dialogResult_t = 0;
-
-    pub const DR_NO: crate::qcommon_h::dialogResult_t = 1;
-
-    pub const DR_YES: crate::qcommon_h::dialogResult_t = 0;
-
-    pub const DT_OK_CANCEL: crate::qcommon_h::dialogType_t = 4;
-
-    pub const DT_YES_NO: crate::qcommon_h::dialogType_t = 3;
-
-    pub const DT_ERROR: crate::qcommon_h::dialogType_t = 2;
-
-    pub const DT_WARNING: crate::qcommon_h::dialogType_t = 1;
-
-    pub const DT_INFO: crate::qcommon_h::dialogType_t = 0;
 }
 pub mod be_aas_h {
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct aas_clientmove_s {
-        pub endpos: crate::src::qcommon::q_shared::vec3_t,
-        pub endarea: libc::c_int,
-        pub velocity: crate::src::qcommon::q_shared::vec3_t,
-        pub trace: crate::be_aas_h::aas_trace_t,
-        pub presencetype: libc::c_int,
-        pub stopevent: libc::c_int,
-        pub endcontents: libc::c_int,
-        pub time: libc::c_float,
-        pub frames: libc::c_int,
-    }
+    pub type C2RustUnnamed_0 = libc::c_uint;
+
+    pub const SOLID_NOT: crate::be_aas_h::C2RustUnnamed_0 = 0;
+
+    pub const SOLID_TRIGGER: crate::be_aas_h::C2RustUnnamed_0 = 1;
+
+    pub const SOLID_BBOX: crate::be_aas_h::C2RustUnnamed_0 = 2;
+
+    pub const SOLID_BSP: crate::be_aas_h::C2RustUnnamed_0 = 3;
     //a trace is returned when a box is swept through the AAS world
 
     pub type aas_trace_t = crate::be_aas_h::aas_trace_s;
@@ -6867,84 +6825,6 @@ pub mod be_aas_h {
         pub lastarea: libc::c_int,
         pub area: libc::c_int,
         pub planenum: libc::c_int,
-    }
-    // true if updated this frame
-    // entity type
-    // entity flags
-    // local time
-    // time between last and current update
-    // number of the entity
-    // origin of the entity
-    // angles of the model
-    // for lerping
-    // last visible origin
-    // bounding box minimums
-    // bounding box maximums
-    // ground entity
-    // solid type
-    // model used
-    // weapons, CTF flags, etc
-    // model frame number
-    // impulse events -- muzzle flashes, footsteps, etc
-    // even parameter
-    // bit flags
-    // determines weapon and flash model, etc
-    // mask off ANIM_TOGGLEBIT
-    // mask off ANIM_TOGGLEBIT
-    // a ground face in the area is hit
-    // hit the specified bounding box
-    // touching a cluster portal
-
-    pub type aas_clientmove_t = crate::be_aas_h::aas_clientmove_s;
-
-    pub type C2RustUnnamed_0 = libc::c_uint;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct aas_altroutegoal_s {
-        pub origin: crate::src::qcommon::q_shared::vec3_t,
-        pub areanum: libc::c_int,
-        pub starttraveltime: libc::c_ushort,
-        pub goaltraveltime: libc::c_ushort,
-        pub extratraveltime: libc::c_ushort,
-    }
-
-    pub type aas_altroutegoal_t = crate::be_aas_h::aas_altroutegoal_s;
-
-    pub const SOLID_BSP: crate::be_aas_h::C2RustUnnamed_0 = 3;
-
-    pub const SOLID_BBOX: crate::be_aas_h::C2RustUnnamed_0 = 2;
-
-    pub const SOLID_TRIGGER: crate::be_aas_h::C2RustUnnamed_0 = 1;
-
-    pub const SOLID_NOT: crate::be_aas_h::C2RustUnnamed_0 = 0;
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct aas_entityinfo_s {
-        pub valid: libc::c_int,
-        pub type_0: libc::c_int,
-        pub flags: libc::c_int,
-        pub ltime: libc::c_float,
-        pub update_time: libc::c_float,
-        pub number: libc::c_int,
-        pub origin: crate::src::qcommon::q_shared::vec3_t,
-        pub angles: crate::src::qcommon::q_shared::vec3_t,
-        pub old_origin: crate::src::qcommon::q_shared::vec3_t,
-        pub lastvisorigin: crate::src::qcommon::q_shared::vec3_t,
-        pub mins: crate::src::qcommon::q_shared::vec3_t,
-        pub maxs: crate::src::qcommon::q_shared::vec3_t,
-        pub groundent: libc::c_int,
-        pub solid: libc::c_int,
-        pub modelindex: libc::c_int,
-        pub modelindex2: libc::c_int,
-        pub frame: libc::c_int,
-        pub event: libc::c_int,
-        pub eventParm: libc::c_int,
-        pub powerups: libc::c_int,
-        pub weapon: libc::c_int,
-        pub legsAnim: libc::c_int,
-        pub torsoAnim: libc::c_int,
     }
     /* Defined in botlib.h
 
@@ -6978,6 +6858,36 @@ pub mod be_aas_h {
 
     #[repr(C)]
     #[derive(Copy, Clone)]
+    pub struct aas_entityinfo_s {
+        pub valid: libc::c_int,
+        pub type_0: libc::c_int,
+        pub flags: libc::c_int,
+        pub ltime: libc::c_float,
+        pub update_time: libc::c_float,
+        pub number: libc::c_int,
+        pub origin: crate::src::qcommon::q_shared::vec3_t,
+        pub angles: crate::src::qcommon::q_shared::vec3_t,
+        pub old_origin: crate::src::qcommon::q_shared::vec3_t,
+        pub lastvisorigin: crate::src::qcommon::q_shared::vec3_t,
+        pub mins: crate::src::qcommon::q_shared::vec3_t,
+        pub maxs: crate::src::qcommon::q_shared::vec3_t,
+        pub groundent: libc::c_int,
+        pub solid: libc::c_int,
+        pub modelindex: libc::c_int,
+        pub modelindex2: libc::c_int,
+        pub frame: libc::c_int,
+        pub event: libc::c_int,
+        pub eventParm: libc::c_int,
+        pub powerups: libc::c_int,
+        pub weapon: libc::c_int,
+        pub legsAnim: libc::c_int,
+        pub torsoAnim: libc::c_int,
+    }
+
+    pub type aas_areainfo_t = crate::be_aas_h::aas_areainfo_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
     pub struct aas_areainfo_s {
         pub contents: libc::c_int,
         pub flags: libc::c_int,
@@ -6987,8 +6897,60 @@ pub mod be_aas_h {
         pub maxs: crate::src::qcommon::q_shared::vec3_t,
         pub center: crate::src::qcommon::q_shared::vec3_t,
     }
+    // true if updated this frame
+    // entity type
+    // entity flags
+    // local time
+    // time between last and current update
+    // number of the entity
+    // origin of the entity
+    // angles of the model
+    // for lerping
+    // last visible origin
+    // bounding box minimums
+    // bounding box maximums
+    // ground entity
+    // solid type
+    // model used
+    // weapons, CTF flags, etc
+    // model frame number
+    // impulse events -- muzzle flashes, footsteps, etc
+    // even parameter
+    // bit flags
+    // determines weapon and flash model, etc
+    // mask off ANIM_TOGGLEBIT
+    // mask off ANIM_TOGGLEBIT
+    // a ground face in the area is hit
+    // hit the specified bounding box
+    // touching a cluster portal
 
-    pub type aas_areainfo_t = crate::be_aas_h::aas_areainfo_s;
+    pub type aas_clientmove_t = crate::be_aas_h::aas_clientmove_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct aas_clientmove_s {
+        pub endpos: crate::src::qcommon::q_shared::vec3_t,
+        pub endarea: libc::c_int,
+        pub velocity: crate::src::qcommon::q_shared::vec3_t,
+        pub trace: crate::be_aas_h::aas_trace_t,
+        pub presencetype: libc::c_int,
+        pub stopevent: libc::c_int,
+        pub endcontents: libc::c_int,
+        pub time: libc::c_float,
+        pub frames: libc::c_int,
+    }
+
+    pub type aas_altroutegoal_t = crate::be_aas_h::aas_altroutegoal_s;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct aas_altroutegoal_s {
+        pub origin: crate::src::qcommon::q_shared::vec3_t,
+        pub areanum: libc::c_int,
+        pub starttraveltime: libc::c_ushort,
+        pub goaltraveltime: libc::c_ushort,
+        pub extratraveltime: libc::c_ushort,
+    }
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -7110,13 +7072,13 @@ pub mod stdlib {
         #[no_mangle]
         pub fn SDL_GameControllerClose(gamecontroller: *mut crate::stdlib::SDL_GameController);
         #[no_mangle]
-        pub fn SDL_WasInit(flags: crate::stdlib::Uint32) -> crate::stdlib::Uint32;
+        pub fn SDL_Init(flags: crate::stdlib::Uint32) -> libc::c_int;
 
         #[no_mangle]
         pub fn SDL_QuitSubSystem(flags: crate::stdlib::Uint32);
 
         #[no_mangle]
-        pub fn SDL_Init(flags: crate::stdlib::Uint32) -> libc::c_int;
+        pub fn SDL_WasInit(flags: crate::stdlib::Uint32) -> crate::stdlib::Uint32;
 
         #[no_mangle]
         pub fn SDL_Quit();
@@ -7189,6 +7151,9 @@ pub mod stdlib {
         #[no_mangle]
         pub fn SDL_StopTextInput();
         #[no_mangle]
+        pub fn SDL_LoadObject(sofile: *const libc::c_char) -> *mut libc::c_void;
+
+        #[no_mangle]
         pub fn SDL_LoadFunction(
             handle: *mut libc::c_void,
             name: *const libc::c_char,
@@ -7196,9 +7161,6 @@ pub mod stdlib {
 
         #[no_mangle]
         pub fn SDL_UnloadObject(handle: *mut libc::c_void);
-
-        #[no_mangle]
-        pub fn SDL_LoadObject(sofile: *const libc::c_char) -> *mut libc::c_void;
         #[no_mangle]
         pub fn SDL_WarpMouseInWindow(
             window: *mut crate::stdlib::SDL_Window,
@@ -7212,14 +7174,14 @@ pub mod stdlib {
         #[no_mangle]
         pub fn SDL_ShowCursor(toggle: libc::c_int) -> libc::c_int;
         #[no_mangle]
+        pub fn SDL_free(mem: *mut libc::c_void);
+
+        #[no_mangle]
         pub fn SDL_memset(
             dst: *mut libc::c_void,
             c: libc::c_int,
             len: crate::stddef_h::size_t,
         ) -> *mut libc::c_void;
-
-        #[no_mangle]
-        pub fn SDL_free(mem: *mut libc::c_void);
         #[no_mangle]
         pub fn SDL_GetVersion(ver: *mut crate::stdlib::SDL_version);
         pub type SDL_Window;
@@ -7241,16 +7203,7 @@ pub mod stdlib {
         #[no_mangle]
         pub fn __ctype_toupper_loc() -> *mut *const crate::stdlib::__int32_t;
         #[no_mangle]
-        pub fn __errno_location() -> *mut libc::c_int;
-        #[no_mangle]
-        pub fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn open(__file: *const libc::c_char, __oflag: libc::c_int, _: ...) -> libc::c_int;
-        #[no_mangle]
         pub fn fesetround(__rounding_direction: libc::c_int) -> libc::c_int;
-        #[no_mangle]
-        pub fn if_nametoindex(__ifname: *const libc::c_char) -> libc::c_uint;
         #[no_mangle]
         pub fn getifaddrs(__ifap: *mut *mut crate::stdlib::ifaddrs) -> libc::c_int;
 
@@ -7261,54 +7214,28 @@ pub mod stdlib {
         pub type __dirstream;
 
         #[no_mangle]
-        pub fn readdir(__dirp: *mut crate::stdlib::DIR) -> *mut crate::stdlib::dirent;
-
-        #[no_mangle]
         pub fn opendir(__name: *const libc::c_char) -> *mut crate::stdlib::DIR;
 
         #[no_mangle]
         pub fn closedir(__dirp: *mut crate::stdlib::DIR) -> libc::c_int;
+
+        #[no_mangle]
+        pub fn readdir(__dirp: *mut crate::stdlib::DIR) -> *mut ::libc::dirent;
         #[no_mangle]
         pub fn _setjmp(_: *mut crate::stdlib::__jmp_buf_tag) -> libc::c_int;
 
         #[no_mangle]
         pub fn longjmp(_: *mut crate::stdlib::__jmp_buf_tag, _: libc::c_int) -> !;
         #[no_mangle]
-        pub fn tcsetattr(
-            __fd: libc::c_int,
-            __optional_actions: libc::c_int,
-            __termios_p: *const crate::stdlib::termios,
-        ) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn tcgetattr(
-            __fd: libc::c_int,
-            __termios_p: *mut crate::stdlib::termios,
-        ) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn tcflush(__fd: libc::c_int, __queue_selector: libc::c_int) -> libc::c_int;
-        #[no_mangle]
-        pub fn ioctl(__fd: libc::c_int, __request: libc::c_ulong, _: ...) -> libc::c_int;
-        #[no_mangle]
         pub fn dirname(__path: *mut libc::c_char) -> *mut libc::c_char;
 
         #[no_mangle]
         pub fn __xpg_basename(__path: *mut libc::c_char) -> *mut libc::c_char;
         #[no_mangle]
-        pub fn rint(_: libc::c_double) -> libc::c_double;
+        pub fn acos(_: libc::c_double) -> libc::c_double;
 
         #[no_mangle]
         pub fn atan(_: libc::c_double) -> libc::c_double;
-
-        #[no_mangle]
-        pub fn ldexp(_: libc::c_double, _: libc::c_int) -> libc::c_double;
-
-        #[no_mangle]
-        pub fn pow(_: libc::c_double, _: libc::c_double) -> libc::c_double;
-
-        #[no_mangle]
-        pub fn ceil(_: libc::c_double) -> libc::c_double;
 
         #[no_mangle]
         pub fn atan2(_: libc::c_double, _: libc::c_double) -> libc::c_double;
@@ -7320,37 +7247,46 @@ pub mod stdlib {
         pub fn sin(_: libc::c_double) -> libc::c_double;
 
         #[no_mangle]
-        pub fn floor(_: libc::c_double) -> libc::c_double;
-
-        #[no_mangle]
-        pub fn powf(_: libc::c_float, _: libc::c_float) -> libc::c_float;
-
-        #[no_mangle]
-        pub fn fmodf(_: libc::c_float, _: libc::c_float) -> libc::c_float;
-
-        #[no_mangle]
-        pub fn fabsf(_: libc::c_float) -> libc::c_float;
-
-        #[no_mangle]
-        pub fn sqrt(_: libc::c_double) -> libc::c_double;
-
-        #[no_mangle]
         pub fn tan(_: libc::c_double) -> libc::c_double;
-
-        #[no_mangle]
-        pub fn fabs(_: libc::c_double) -> libc::c_double;
-
-        #[no_mangle]
-        pub fn log10(_: libc::c_double) -> libc::c_double;
-
-        #[no_mangle]
-        pub fn acos(_: libc::c_double) -> libc::c_double;
 
         #[no_mangle]
         pub fn exp(_: libc::c_double) -> libc::c_double;
 
         #[no_mangle]
+        pub fn ldexp(_: libc::c_double, _: libc::c_int) -> libc::c_double;
+
+        #[no_mangle]
         pub fn log(_: libc::c_double) -> libc::c_double;
+
+        #[no_mangle]
+        pub fn log10(_: libc::c_double) -> libc::c_double;
+
+        #[no_mangle]
+        pub fn powf(_: libc::c_float, _: libc::c_float) -> libc::c_float;
+
+        #[no_mangle]
+        pub fn pow(_: libc::c_double, _: libc::c_double) -> libc::c_double;
+
+        #[no_mangle]
+        pub fn sqrt(_: libc::c_double) -> libc::c_double;
+
+        #[no_mangle]
+        pub fn ceil(_: libc::c_double) -> libc::c_double;
+
+        #[no_mangle]
+        pub fn fabsf(_: libc::c_float) -> libc::c_float;
+
+        #[no_mangle]
+        pub fn fabs(_: libc::c_double) -> libc::c_double;
+
+        #[no_mangle]
+        pub fn floor(_: libc::c_double) -> libc::c_double;
+
+        #[no_mangle]
+        pub fn fmodf(_: libc::c_float, _: libc::c_float) -> libc::c_float;
+
+        #[no_mangle]
+        pub fn rint(_: libc::c_double) -> libc::c_double;
         #[no_mangle]
         pub fn mmap(
             __addr: *mut libc::c_void,
@@ -7365,71 +7301,99 @@ pub mod stdlib {
         pub fn munmap(__addr: *mut libc::c_void, __len: crate::stddef_h::size_t) -> libc::c_int;
 
         #[no_mangle]
-        pub fn shm_open(
-            __name: *const libc::c_char,
-            __oflag: libc::c_int,
-            __mode: crate::stdlib::mode_t,
-        ) -> libc::c_int;
-
-        #[no_mangle]
         pub fn mprotect(
             __addr: *mut libc::c_void,
             __len: crate::stddef_h::size_t,
             __prot: libc::c_int,
         ) -> libc::c_int;
         #[no_mangle]
-        pub fn gethostbyname(__name: *const libc::c_char) -> *mut crate::stdlib::hostent;
-
-        #[no_mangle]
-        pub fn getaddrinfo(
-            __name: *const libc::c_char,
-            __service: *const libc::c_char,
-            __req: *const crate::stdlib::addrinfo,
-            __pai: *mut *mut crate::stdlib::addrinfo,
-        ) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn gai_strerror(__ecode: libc::c_int) -> *const libc::c_char;
-
-        #[no_mangle]
-        pub fn freeaddrinfo(__ai: *mut crate::stdlib::addrinfo);
-
-        #[no_mangle]
-        pub fn getnameinfo(
-            __sa: *const crate::stdlib::sockaddr,
-            __salen: crate::stdlib::socklen_t,
-            __host: *mut libc::c_char,
-            __hostlen: crate::stdlib::socklen_t,
-            __serv: *mut libc::c_char,
-            __servlen: crate::stdlib::socklen_t,
-            __flags: libc::c_int,
-        ) -> libc::c_int;
-        #[no_mangle]
-        pub fn getpwuid(__uid: crate::stdlib::__uid_t) -> *mut crate::stdlib::passwd;
+        pub fn gethostbyname(__name: *const libc::c_char) -> *mut ::libc::hostent;
         #[no_mangle]
         pub fn select(
             __nfds: libc::c_int,
             __readfds: *mut crate::stdlib::fd_set,
             __writefds: *mut crate::stdlib::fd_set,
             __exceptfds: *mut crate::stdlib::fd_set,
-            __timeout: *mut crate::stdlib::timeval,
+            __timeout: *mut ::libc::timeval,
         ) -> libc::c_int;
-        #[no_mangle]
-        pub fn kill(__pid: crate::stdlib::__pid_t, __sig: libc::c_int) -> libc::c_int;
-
         #[no_mangle]
         pub fn signal(
             __sig: libc::c_int,
             __handler: crate::stdlib::__sighandler_t,
         ) -> crate::stdlib::__sighandler_t;
         #[no_mangle]
-        pub fn umask(__mask: crate::stdlib::__mode_t) -> crate::stdlib::__mode_t;
+        pub static mut stdout: *mut crate::stdlib::FILE;
+
         #[no_mangle]
-        pub fn ferror(__stream: *mut crate::stdlib::FILE) -> libc::c_int;
+        pub static mut stderr: *mut crate::stdlib::FILE;
+
+        #[no_mangle]
+        pub fn fclose(__stream: *mut crate::stdlib::FILE) -> libc::c_int;
+
+        #[no_mangle]
+        pub fn fflush(__stream: *mut crate::stdlib::FILE) -> libc::c_int;
+
+        #[no_mangle]
+        pub fn fopen(_: *const libc::c_char, _: *const libc::c_char) -> *mut crate::stdlib::FILE;
+
+        #[no_mangle]
+        pub fn freopen(
+            __filename: *const libc::c_char,
+            __modes: *const libc::c_char,
+            __stream: *mut crate::stdlib::FILE,
+        ) -> *mut crate::stdlib::FILE;
+
+        #[no_mangle]
+        pub fn fdopen(__fd: libc::c_int, __modes: *const libc::c_char) -> *mut crate::stdlib::FILE;
+
+        #[no_mangle]
+        pub fn setvbuf(
+            __stream: *mut crate::stdlib::FILE,
+            __buf: *mut libc::c_char,
+            __modes: libc::c_int,
+            __n: crate::stddef_h::size_t,
+        ) -> libc::c_int;
+
+        #[no_mangle]
+        pub fn fprintf(_: *mut crate::stdlib::FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
+
+        #[no_mangle]
+        pub fn vfprintf(
+            _: *mut crate::stdlib::FILE,
+            _: *const libc::c_char,
+            _: ::std::ffi::VaList,
+        ) -> libc::c_int;
+
+        #[no_mangle]
+        pub fn snprintf(
+            _: *mut libc::c_char,
+            _: libc::c_ulong,
+            _: *const libc::c_char,
+            _: ...
+        ) -> libc::c_int;
+
+        #[no_mangle]
+        pub fn vsnprintf(
+            _: *mut libc::c_char,
+            _: libc::c_ulong,
+            _: *const libc::c_char,
+            _: ::std::ffi::VaList,
+        ) -> libc::c_int;
+
+        #[no_mangle]
+        pub fn fputs(__s: *const libc::c_char, __stream: *mut crate::stdlib::FILE) -> libc::c_int;
 
         #[no_mangle]
         pub fn fread(
             _: *mut libc::c_void,
+            _: libc::c_ulong,
+            _: libc::c_ulong,
+            _: *mut crate::stdlib::FILE,
+        ) -> libc::c_ulong;
+
+        #[no_mangle]
+        pub fn fwrite(
+            _: *const libc::c_void,
             _: libc::c_ulong,
             _: libc::c_ulong,
             _: *mut crate::stdlib::FILE,
@@ -7446,16 +7410,6 @@ pub mod stdlib {
         pub fn ftell(__stream: *mut crate::stdlib::FILE) -> libc::c_long;
 
         #[no_mangle]
-        pub fn freopen(
-            __filename: *const libc::c_char,
-            __modes: *const libc::c_char,
-            __stream: *mut crate::stdlib::FILE,
-        ) -> *mut crate::stdlib::FILE;
-
-        #[no_mangle]
-        pub fn fdopen(__fd: libc::c_int, __modes: *const libc::c_char) -> *mut crate::stdlib::FILE;
-
-        #[no_mangle]
         pub fn fseeko(
             __stream: *mut crate::stdlib::FILE,
             __off: crate::stdlib::__off64_t,
@@ -7469,100 +7423,18 @@ pub mod stdlib {
         pub fn feof(__stream: *mut crate::stdlib::FILE) -> libc::c_int;
 
         #[no_mangle]
-        pub fn fputs(__s: *const libc::c_char, __stream: *mut crate::stdlib::FILE) -> libc::c_int;
+        pub fn ferror(__stream: *mut crate::stdlib::FILE) -> libc::c_int;
 
         #[no_mangle]
         pub fn fileno(__stream: *mut crate::stdlib::FILE) -> libc::c_int;
-
         #[no_mangle]
-        pub static mut stderr: *mut crate::stdlib::FILE;
-
-        #[no_mangle]
-        pub fn printf(_: *const libc::c_char, _: ...) -> libc::c_int;
-
-        #[no_mangle]
-        pub static mut stdout: *mut crate::stdlib::FILE;
-
-        #[no_mangle]
-        pub fn sscanf(_: *const libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn vsnprintf(
-            _: *mut libc::c_char,
-            _: libc::c_ulong,
-            _: *const libc::c_char,
-            _: ::std::ffi::VaList,
-        ) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn fprintf(_: *mut crate::stdlib::FILE, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn sprintf(_: *mut libc::c_char, _: *const libc::c_char, _: ...) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn remove(__filename: *const libc::c_char) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn rename(__old: *const libc::c_char, __new: *const libc::c_char) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn setvbuf(
-            __stream: *mut crate::stdlib::FILE,
-            __buf: *mut libc::c_char,
-            __modes: libc::c_int,
-            __n: crate::stddef_h::size_t,
-        ) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn fwrite(
-            _: *const libc::c_void,
-            _: libc::c_ulong,
-            _: libc::c_ulong,
-            _: *mut crate::stdlib::FILE,
-        ) -> libc::c_ulong;
-
-        #[no_mangle]
-        pub fn fclose(__stream: *mut crate::stdlib::FILE) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn fflush(__stream: *mut crate::stdlib::FILE) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn fopen(_: *const libc::c_char, _: *const libc::c_char) -> *mut crate::stdlib::FILE;
-
-        #[no_mangle]
-        pub fn vfprintf(
-            _: *mut crate::stdlib::FILE,
-            _: *const libc::c_char,
-            _: ::std::ffi::VaList,
-        ) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn snprintf(
-            _: *mut libc::c_char,
-            _: libc::c_ulong,
-            _: *const libc::c_char,
-            _: ...
-        ) -> libc::c_int;
-        #[no_mangle]
-        pub fn exit(_: libc::c_int) -> !;
+        pub fn malloc(_: libc::c_ulong) -> *mut libc::c_void;
 
         #[no_mangle]
         pub fn calloc(_: libc::c_ulong, _: libc::c_ulong) -> *mut libc::c_void;
 
         #[no_mangle]
         pub fn realloc(_: *mut libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
-
-        #[no_mangle]
-        pub fn setenv(
-            __name: *const libc::c_char,
-            __value: *const libc::c_char,
-            __replace: libc::c_int,
-        ) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn unsetenv(__name: *const libc::c_char) -> libc::c_int;
 
         #[no_mangle]
         pub fn qsort(
@@ -7573,56 +7445,27 @@ pub mod stdlib {
         );
 
         #[no_mangle]
-        pub fn srand(__seed: libc::c_uint);
-
-        #[no_mangle]
-        pub fn getenv(__name: *const libc::c_char) -> *mut libc::c_char;
-
-        #[no_mangle]
-        pub fn strtod(_: *const libc::c_char, _: *mut *mut libc::c_char) -> libc::c_double;
-
-        #[no_mangle]
-        pub fn strtol(
-            _: *const libc::c_char,
-            _: *mut *mut libc::c_char,
-            _: libc::c_int,
-        ) -> libc::c_long;
-
-        #[no_mangle]
-        pub fn abs(_: libc::c_int) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn rand() -> libc::c_int;
-
-        #[no_mangle]
-        pub fn malloc(_: libc::c_ulong) -> *mut libc::c_void;
-
-        #[no_mangle]
         pub fn mbstowcs(
             __pwcs: *mut crate::stddef_h::wchar_t,
             __s: *const libc::c_char,
             __n: crate::stddef_h::size_t,
         ) -> crate::stddef_h::size_t;
+        #[no_mangle]
+        pub fn memcpy(
+            _: *mut libc::c_void,
+            _: *const libc::c_void,
+            _: libc::c_ulong,
+        ) -> *mut libc::c_void;
 
         #[no_mangle]
-        pub fn free(__ptr: *mut libc::c_void);
+        pub fn memmove(
+            _: *mut libc::c_void,
+            _: *const libc::c_void,
+            _: libc::c_ulong,
+        ) -> *mut libc::c_void;
 
         #[no_mangle]
-        pub fn labs(_: libc::c_long) -> libc::c_long;
-        #[no_mangle]
-        pub fn strspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
-
-        #[no_mangle]
-        pub fn strchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
-
-        #[no_mangle]
-        pub fn strerror(_: libc::c_int) -> *mut libc::c_char;
-
-        #[no_mangle]
-        pub fn strrchr(_: *const libc::c_char, _: libc::c_int) -> *mut libc::c_char;
-
-        #[no_mangle]
-        pub fn strpbrk(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+        pub fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
         #[no_mangle]
         pub fn memcmp(
@@ -7639,22 +7482,6 @@ pub mod stdlib {
         ) -> *mut libc::c_void;
 
         #[no_mangle]
-        pub fn strtok(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
-        #[no_mangle]
-        pub fn memcpy(
-            _: *mut libc::c_void,
-            _: *const libc::c_void,
-            _: libc::c_ulong,
-        ) -> *mut libc::c_void;
-
-        #[no_mangle]
-        pub fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
-        #[no_mangle]
-        pub fn strcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
-        #[no_mangle]
         pub fn strncpy(
             _: *mut libc::c_char,
             _: *const libc::c_char,
@@ -7662,23 +7489,11 @@ pub mod stdlib {
         ) -> *mut libc::c_char;
 
         #[no_mangle]
-        pub fn strcmp(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn strlen(_: *const libc::c_char) -> libc::c_ulong;
-
-        #[no_mangle]
-        pub fn memmove(
-            _: *mut libc::c_void,
-            _: *const libc::c_void,
+        pub fn strncat(
+            _: *mut libc::c_char,
+            _: *const libc::c_char,
             _: libc::c_ulong,
-        ) -> *mut libc::c_void;
-
-        #[no_mangle]
-        pub fn strcat(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
-        #[no_mangle]
-        pub fn strstr(_: *const libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
+        ) -> *mut libc::c_char;
 
         #[no_mangle]
         pub fn strncmp(
@@ -7688,24 +7503,21 @@ pub mod stdlib {
         ) -> libc::c_int;
 
         #[no_mangle]
-        pub fn strncat(
-            _: *mut libc::c_char,
-            _: *const libc::c_char,
-            _: libc::c_ulong,
-        ) -> *mut libc::c_char;
-        pub type _IO_wide_data;
+        pub fn strspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
+
+        #[no_mangle]
+        pub fn strlen(_: *const libc::c_char) -> libc::c_ulong;
+        pub type _IO_marker;
 
         pub type _IO_codecvt;
 
-        pub type _IO_marker;
+        pub type _IO_wide_data;
         #[no_mangle]
-        pub fn recvfrom(
+        pub fn send(
             __fd: libc::c_int,
-            __buf: *mut libc::c_void,
+            __buf: *const libc::c_void,
             __n: crate::stddef_h::size_t,
             __flags: libc::c_int,
-            __addr: *mut crate::stdlib::sockaddr,
-            __addr_len: *mut crate::stdlib::socklen_t,
         ) -> crate::stdlib::ssize_t;
 
         #[no_mangle]
@@ -7717,90 +7529,44 @@ pub mod stdlib {
         ) -> crate::stdlib::ssize_t;
 
         #[no_mangle]
-        pub fn send(
-            __fd: libc::c_int,
-            __buf: *const libc::c_void,
-            __n: crate::stddef_h::size_t,
-            __flags: libc::c_int,
-        ) -> crate::stdlib::ssize_t;
-
-        #[no_mangle]
-        pub fn connect(
-            __fd: libc::c_int,
-            __addr: *const crate::stdlib::sockaddr,
-            __len: crate::stdlib::socklen_t,
-        ) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn socket(
-            __domain: libc::c_int,
-            __type: libc::c_int,
-            __protocol: libc::c_int,
-        ) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn bind(
-            __fd: libc::c_int,
-            __addr: *const crate::stdlib::sockaddr,
-            __len: crate::stdlib::socklen_t,
-        ) -> libc::c_int;
-
-        #[no_mangle]
         pub fn sendto(
             __fd: libc::c_int,
             __buf: *const libc::c_void,
             __n: crate::stddef_h::size_t,
             __flags: libc::c_int,
-            __addr: *const crate::stdlib::sockaddr,
+            __addr: *const ::libc::sockaddr,
             __addr_len: crate::stdlib::socklen_t,
         ) -> crate::stdlib::ssize_t;
 
         #[no_mangle]
-        pub fn setsockopt(
+        pub fn recvfrom(
             __fd: libc::c_int,
-            __level: libc::c_int,
-            __optname: libc::c_int,
-            __optval: *const libc::c_void,
-            __optlen: crate::stdlib::socklen_t,
-        ) -> libc::c_int;
+            __buf: *mut libc::c_void,
+            __n: crate::stddef_h::size_t,
+            __flags: libc::c_int,
+            __addr: *mut ::libc::sockaddr,
+            __addr_len: *mut crate::stdlib::socklen_t,
+        ) -> crate::stdlib::ssize_t;
         #[no_mangle]
         pub fn __xstat(
             __ver: libc::c_int,
             __filename: *const libc::c_char,
             __stat_buf: *mut crate::stdlib::stat,
         ) -> libc::c_int;
-
         #[no_mangle]
-        pub fn mkfifo(__path: *const libc::c_char, __mode: crate::stdlib::__mode_t) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn mkdir(__path: *const libc::c_char, __mode: crate::stdlib::__mode_t) -> libc::c_int;
-        #[no_mangle]
-        pub fn localtime(__timer: *const crate::stdlib::time_t) -> *mut crate::stdlib::tm;
-
-        #[no_mangle]
-        pub fn asctime(__tp: *const crate::stdlib::tm) -> *mut libc::c_char;
+        pub fn gettimeofday(
+            __tv: *mut ::libc::timeval,
+            __tz: crate::stdlib::__timezone_ptr_t,
+        ) -> libc::c_int;
 
         #[no_mangle]
         pub fn clock() -> crate::stdlib::clock_t;
 
         #[no_mangle]
-        pub fn gettimeofday(
-            __tv: *mut crate::stdlib::timeval,
-            __tz: crate::stdlib::__timezone_ptr_t,
-        ) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn time(__timer: *mut crate::stdlib::time_t) -> crate::stdlib::time_t;
+        pub fn asctime(__tp: *const ::libc::tm) -> *mut libc::c_char;
 
         #[no_mangle]
         pub fn ctime(__timer: *const crate::stdlib::time_t) -> *mut libc::c_char;
-        #[no_mangle]
-        pub fn close(__fd: libc::c_int) -> libc::c_int;
-
-        #[no_mangle]
-        pub fn getuid() -> crate::stdlib::__uid_t;
-
         #[no_mangle]
         pub fn read(
             __fd: libc::c_int,
@@ -7816,9 +7582,6 @@ pub mod stdlib {
         ) -> crate::stdlib::ssize_t;
 
         #[no_mangle]
-        pub fn usleep(__useconds: crate::stdlib::__useconds_t) -> libc::c_int;
-
-        #[no_mangle]
         pub fn getcwd(
             __buf: *mut libc::c_char,
             __size: crate::stddef_h::size_t,
@@ -7827,17 +7590,6 @@ pub mod stdlib {
         #[no_mangle]
         pub fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char)
             -> libc::c_int;
-
-        #[no_mangle]
-        pub fn getpid() -> crate::stdlib::__pid_t;
-
-        #[no_mangle]
-        pub fn fork() -> crate::stdlib::__pid_t;
-
-        #[no_mangle]
-        pub fn isatty(__fd: libc::c_int) -> libc::c_int;
-        #[no_mangle]
-        pub fn wait(__stat_loc: *mut libc::c_int) -> crate::stdlib::__pid_t;
     }
     pub type FILE = crate::stdlib::_IO_FILE;
     pub type SDL_AudioFormat = crate::stdlib::Uint16;
@@ -7865,6 +7617,108 @@ pub mod stdlib {
     }
 
     pub type SDL_AudioDeviceID = crate::stdlib::Uint32;
+    pub const SDL_FIRSTEVENT: crate::be_aas_h::C2RustUnnamed_0 = 0;
+
+    pub const SDL_QUIT: crate::be_aas_h::C2RustUnnamed_0 = 256;
+
+    pub const SDL_APP_TERMINATING: crate::be_aas_h::C2RustUnnamed_0 = 257;
+
+    pub const SDL_APP_LOWMEMORY: crate::be_aas_h::C2RustUnnamed_0 = 258;
+
+    pub const SDL_APP_WILLENTERBACKGROUND: crate::be_aas_h::C2RustUnnamed_0 = 259;
+
+    pub const SDL_APP_DIDENTERBACKGROUND: crate::be_aas_h::C2RustUnnamed_0 = 260;
+
+    pub const SDL_APP_WILLENTERFOREGROUND: crate::be_aas_h::C2RustUnnamed_0 = 261;
+
+    pub const SDL_APP_DIDENTERFOREGROUND: crate::be_aas_h::C2RustUnnamed_0 = 262;
+
+    pub const SDL_DISPLAYEVENT: crate::be_aas_h::C2RustUnnamed_0 = 336;
+
+    pub const SDL_WINDOWEVENT: crate::be_aas_h::C2RustUnnamed_0 = 512;
+
+    pub const SDL_SYSWMEVENT: crate::be_aas_h::C2RustUnnamed_0 = 513;
+
+    pub const SDL_KEYDOWN: crate::be_aas_h::C2RustUnnamed_0 = 768;
+
+    pub const SDL_KEYUP: crate::be_aas_h::C2RustUnnamed_0 = 769;
+
+    pub const SDL_TEXTEDITING: crate::be_aas_h::C2RustUnnamed_0 = 770;
+
+    pub const SDL_TEXTINPUT: crate::be_aas_h::C2RustUnnamed_0 = 771;
+
+    pub const SDL_KEYMAPCHANGED: crate::be_aas_h::C2RustUnnamed_0 = 772;
+
+    pub const SDL_MOUSEMOTION: crate::be_aas_h::C2RustUnnamed_0 = 1024;
+
+    pub const SDL_MOUSEBUTTONDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1025;
+
+    pub const SDL_MOUSEBUTTONUP: crate::be_aas_h::C2RustUnnamed_0 = 1026;
+
+    pub const SDL_MOUSEWHEEL: crate::be_aas_h::C2RustUnnamed_0 = 1027;
+
+    pub const SDL_JOYAXISMOTION: crate::be_aas_h::C2RustUnnamed_0 = 1536;
+
+    pub const SDL_JOYBALLMOTION: crate::be_aas_h::C2RustUnnamed_0 = 1537;
+
+    pub const SDL_JOYHATMOTION: crate::be_aas_h::C2RustUnnamed_0 = 1538;
+
+    pub const SDL_JOYBUTTONDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1539;
+
+    pub const SDL_JOYBUTTONUP: crate::be_aas_h::C2RustUnnamed_0 = 1540;
+
+    pub const SDL_JOYDEVICEADDED: crate::be_aas_h::C2RustUnnamed_0 = 1541;
+
+    pub const SDL_JOYDEVICEREMOVED: crate::be_aas_h::C2RustUnnamed_0 = 1542;
+
+    pub const SDL_CONTROLLERAXISMOTION: crate::be_aas_h::C2RustUnnamed_0 = 1616;
+
+    pub const SDL_CONTROLLERBUTTONDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1617;
+
+    pub const SDL_CONTROLLERBUTTONUP: crate::be_aas_h::C2RustUnnamed_0 = 1618;
+
+    pub const SDL_CONTROLLERDEVICEADDED: crate::be_aas_h::C2RustUnnamed_0 = 1619;
+
+    pub const SDL_CONTROLLERDEVICEREMOVED: crate::be_aas_h::C2RustUnnamed_0 = 1620;
+
+    pub const SDL_CONTROLLERDEVICEREMAPPED: crate::be_aas_h::C2RustUnnamed_0 = 1621;
+
+    pub const SDL_FINGERDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1792;
+
+    pub const SDL_FINGERUP: crate::be_aas_h::C2RustUnnamed_0 = 1793;
+
+    pub const SDL_FINGERMOTION: crate::be_aas_h::C2RustUnnamed_0 = 1794;
+
+    pub const SDL_DOLLARGESTURE: crate::be_aas_h::C2RustUnnamed_0 = 2048;
+
+    pub const SDL_DOLLARRECORD: crate::be_aas_h::C2RustUnnamed_0 = 2049;
+
+    pub const SDL_MULTIGESTURE: crate::be_aas_h::C2RustUnnamed_0 = 2050;
+
+    pub const SDL_CLIPBOARDUPDATE: crate::be_aas_h::C2RustUnnamed_0 = 2304;
+
+    pub const SDL_DROPFILE: crate::be_aas_h::C2RustUnnamed_0 = 4096;
+
+    pub const SDL_DROPTEXT: crate::be_aas_h::C2RustUnnamed_0 = 4097;
+
+    pub const SDL_DROPBEGIN: crate::be_aas_h::C2RustUnnamed_0 = 4098;
+
+    pub const SDL_DROPCOMPLETE: crate::be_aas_h::C2RustUnnamed_0 = 4099;
+
+    pub const SDL_AUDIODEVICEADDED: crate::be_aas_h::C2RustUnnamed_0 = 4352;
+
+    pub const SDL_AUDIODEVICEREMOVED: crate::be_aas_h::C2RustUnnamed_0 = 4353;
+
+    pub const SDL_SENSORUPDATE: crate::be_aas_h::C2RustUnnamed_0 = 4608;
+
+    pub const SDL_RENDER_TARGETS_RESET: crate::be_aas_h::C2RustUnnamed_0 = 8192;
+
+    pub const SDL_RENDER_DEVICE_RESET: crate::be_aas_h::C2RustUnnamed_0 = 8193;
+
+    pub const SDL_USEREVENT: crate::be_aas_h::C2RustUnnamed_0 = 32768;
+
+    pub const SDL_LASTEVENT: crate::be_aas_h::C2RustUnnamed_0 = 65535;
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct SDL_CommonEvent {
@@ -8199,168 +8053,66 @@ pub mod stdlib {
 
     pub type SDL_eventaction = libc::c_uint;
 
-    pub const SDL_LASTEVENT: crate::be_aas_h::C2RustUnnamed_0 = 65535;
-
-    pub const SDL_USEREVENT: crate::be_aas_h::C2RustUnnamed_0 = 32768;
-
-    pub const SDL_RENDER_DEVICE_RESET: crate::be_aas_h::C2RustUnnamed_0 = 8193;
-
-    pub const SDL_RENDER_TARGETS_RESET: crate::be_aas_h::C2RustUnnamed_0 = 8192;
-
-    pub const SDL_SENSORUPDATE: crate::be_aas_h::C2RustUnnamed_0 = 4608;
-
-    pub const SDL_AUDIODEVICEREMOVED: crate::be_aas_h::C2RustUnnamed_0 = 4353;
-
-    pub const SDL_AUDIODEVICEADDED: crate::be_aas_h::C2RustUnnamed_0 = 4352;
-
-    pub const SDL_DROPCOMPLETE: crate::be_aas_h::C2RustUnnamed_0 = 4099;
-
-    pub const SDL_DROPBEGIN: crate::be_aas_h::C2RustUnnamed_0 = 4098;
-
-    pub const SDL_DROPTEXT: crate::be_aas_h::C2RustUnnamed_0 = 4097;
-
-    pub const SDL_DROPFILE: crate::be_aas_h::C2RustUnnamed_0 = 4096;
-
-    pub const SDL_CLIPBOARDUPDATE: crate::be_aas_h::C2RustUnnamed_0 = 2304;
-
-    pub const SDL_MULTIGESTURE: crate::be_aas_h::C2RustUnnamed_0 = 2050;
-
-    pub const SDL_DOLLARRECORD: crate::be_aas_h::C2RustUnnamed_0 = 2049;
-
-    pub const SDL_DOLLARGESTURE: crate::be_aas_h::C2RustUnnamed_0 = 2048;
-
-    pub const SDL_FINGERMOTION: crate::be_aas_h::C2RustUnnamed_0 = 1794;
-
-    pub const SDL_FINGERUP: crate::be_aas_h::C2RustUnnamed_0 = 1793;
-
-    pub const SDL_FINGERDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1792;
-
-    pub const SDL_CONTROLLERDEVICEREMAPPED: crate::be_aas_h::C2RustUnnamed_0 = 1621;
-
-    pub const SDL_CONTROLLERDEVICEREMOVED: crate::be_aas_h::C2RustUnnamed_0 = 1620;
-
-    pub const SDL_CONTROLLERDEVICEADDED: crate::be_aas_h::C2RustUnnamed_0 = 1619;
-
-    pub const SDL_CONTROLLERBUTTONUP: crate::be_aas_h::C2RustUnnamed_0 = 1618;
-
-    pub const SDL_CONTROLLERBUTTONDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1617;
-
-    pub const SDL_CONTROLLERAXISMOTION: crate::be_aas_h::C2RustUnnamed_0 = 1616;
-
-    pub const SDL_JOYDEVICEREMOVED: crate::be_aas_h::C2RustUnnamed_0 = 1542;
-
-    pub const SDL_JOYDEVICEADDED: crate::be_aas_h::C2RustUnnamed_0 = 1541;
-
-    pub const SDL_JOYBUTTONUP: crate::be_aas_h::C2RustUnnamed_0 = 1540;
-
-    pub const SDL_JOYBUTTONDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1539;
-
-    pub const SDL_JOYHATMOTION: crate::be_aas_h::C2RustUnnamed_0 = 1538;
-
-    pub const SDL_JOYBALLMOTION: crate::be_aas_h::C2RustUnnamed_0 = 1537;
-
-    pub const SDL_JOYAXISMOTION: crate::be_aas_h::C2RustUnnamed_0 = 1536;
-
-    pub const SDL_MOUSEWHEEL: crate::be_aas_h::C2RustUnnamed_0 = 1027;
-
-    pub const SDL_MOUSEBUTTONUP: crate::be_aas_h::C2RustUnnamed_0 = 1026;
-
-    pub const SDL_MOUSEBUTTONDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1025;
-
-    pub const SDL_MOUSEMOTION: crate::be_aas_h::C2RustUnnamed_0 = 1024;
-
-    pub const SDL_KEYMAPCHANGED: crate::be_aas_h::C2RustUnnamed_0 = 772;
-
-    pub const SDL_TEXTINPUT: crate::be_aas_h::C2RustUnnamed_0 = 771;
-
-    pub const SDL_TEXTEDITING: crate::be_aas_h::C2RustUnnamed_0 = 770;
-
-    pub const SDL_KEYUP: crate::be_aas_h::C2RustUnnamed_0 = 769;
-
-    pub const SDL_KEYDOWN: crate::be_aas_h::C2RustUnnamed_0 = 768;
-
-    pub const SDL_SYSWMEVENT: crate::be_aas_h::C2RustUnnamed_0 = 513;
-
-    pub const SDL_WINDOWEVENT: crate::be_aas_h::C2RustUnnamed_0 = 512;
-
-    pub const SDL_DISPLAYEVENT: crate::be_aas_h::C2RustUnnamed_0 = 336;
-
-    pub const SDL_APP_DIDENTERFOREGROUND: crate::be_aas_h::C2RustUnnamed_0 = 262;
-
-    pub const SDL_APP_WILLENTERFOREGROUND: crate::be_aas_h::C2RustUnnamed_0 = 261;
-
-    pub const SDL_APP_DIDENTERBACKGROUND: crate::be_aas_h::C2RustUnnamed_0 = 260;
-
-    pub const SDL_APP_WILLENTERBACKGROUND: crate::be_aas_h::C2RustUnnamed_0 = 259;
-
-    pub const SDL_APP_LOWMEMORY: crate::be_aas_h::C2RustUnnamed_0 = 258;
-
-    pub const SDL_APP_TERMINATING: crate::be_aas_h::C2RustUnnamed_0 = 257;
-
-    pub const SDL_QUIT: crate::be_aas_h::C2RustUnnamed_0 = 256;
-
-    pub const SDL_FIRSTEVENT: crate::be_aas_h::C2RustUnnamed_0 = 0;
-
-    pub const SDL_GETEVENT: crate::stdlib::SDL_eventaction = 2;
+    pub const SDL_ADDEVENT: crate::stdlib::SDL_eventaction = 0;
 
     pub const SDL_PEEKEVENT: crate::stdlib::SDL_eventaction = 1;
 
-    pub const SDL_ADDEVENT: crate::stdlib::SDL_eventaction = 0;
+    pub const SDL_GETEVENT: crate::stdlib::SDL_eventaction = 2;
     pub type SDL_GameController = crate::stdlib::_SDL_GameController;
 
     pub type SDL_GameControllerAxis = libc::c_int;
 
-    pub type SDL_GameControllerButton = libc::c_int;
-
-    pub const SDL_CONTROLLER_AXIS_MAX: crate::stdlib::SDL_GameControllerAxis = 6;
-
-    pub const SDL_CONTROLLER_AXIS_TRIGGERRIGHT: crate::stdlib::SDL_GameControllerAxis = 5;
-
-    pub const SDL_CONTROLLER_AXIS_TRIGGERLEFT: crate::stdlib::SDL_GameControllerAxis = 4;
-
-    pub const SDL_CONTROLLER_AXIS_RIGHTY: crate::stdlib::SDL_GameControllerAxis = 3;
-
-    pub const SDL_CONTROLLER_AXIS_RIGHTX: crate::stdlib::SDL_GameControllerAxis = 2;
-
-    pub const SDL_CONTROLLER_AXIS_LEFTY: crate::stdlib::SDL_GameControllerAxis = 1;
+    pub const SDL_CONTROLLER_AXIS_INVALID: crate::stdlib::SDL_GameControllerAxis = -1;
 
     pub const SDL_CONTROLLER_AXIS_LEFTX: crate::stdlib::SDL_GameControllerAxis = 0;
 
-    pub const SDL_CONTROLLER_AXIS_INVALID: crate::stdlib::SDL_GameControllerAxis = -1;
+    pub const SDL_CONTROLLER_AXIS_LEFTY: crate::stdlib::SDL_GameControllerAxis = 1;
 
-    pub const SDL_CONTROLLER_BUTTON_MAX: crate::stdlib::SDL_GameControllerButton = 15;
+    pub const SDL_CONTROLLER_AXIS_RIGHTX: crate::stdlib::SDL_GameControllerAxis = 2;
 
-    pub const SDL_CONTROLLER_BUTTON_DPAD_RIGHT: crate::stdlib::SDL_GameControllerButton = 14;
+    pub const SDL_CONTROLLER_AXIS_RIGHTY: crate::stdlib::SDL_GameControllerAxis = 3;
 
-    pub const SDL_CONTROLLER_BUTTON_DPAD_LEFT: crate::stdlib::SDL_GameControllerButton = 13;
+    pub const SDL_CONTROLLER_AXIS_TRIGGERLEFT: crate::stdlib::SDL_GameControllerAxis = 4;
 
-    pub const SDL_CONTROLLER_BUTTON_DPAD_DOWN: crate::stdlib::SDL_GameControllerButton = 12;
+    pub const SDL_CONTROLLER_AXIS_TRIGGERRIGHT: crate::stdlib::SDL_GameControllerAxis = 5;
 
-    pub const SDL_CONTROLLER_BUTTON_DPAD_UP: crate::stdlib::SDL_GameControllerButton = 11;
+    pub const SDL_CONTROLLER_AXIS_MAX: crate::stdlib::SDL_GameControllerAxis = 6;
 
-    pub const SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: crate::stdlib::SDL_GameControllerButton = 10;
+    pub type SDL_GameControllerButton = libc::c_int;
 
-    pub const SDL_CONTROLLER_BUTTON_LEFTSHOULDER: crate::stdlib::SDL_GameControllerButton = 9;
-
-    pub const SDL_CONTROLLER_BUTTON_RIGHTSTICK: crate::stdlib::SDL_GameControllerButton = 8;
-
-    pub const SDL_CONTROLLER_BUTTON_LEFTSTICK: crate::stdlib::SDL_GameControllerButton = 7;
-
-    pub const SDL_CONTROLLER_BUTTON_START: crate::stdlib::SDL_GameControllerButton = 6;
-
-    pub const SDL_CONTROLLER_BUTTON_GUIDE: crate::stdlib::SDL_GameControllerButton = 5;
-
-    pub const SDL_CONTROLLER_BUTTON_BACK: crate::stdlib::SDL_GameControllerButton = 4;
-
-    pub const SDL_CONTROLLER_BUTTON_Y: crate::stdlib::SDL_GameControllerButton = 3;
-
-    pub const SDL_CONTROLLER_BUTTON_X: crate::stdlib::SDL_GameControllerButton = 2;
-
-    pub const SDL_CONTROLLER_BUTTON_B: crate::stdlib::SDL_GameControllerButton = 1;
+    pub const SDL_CONTROLLER_BUTTON_INVALID: crate::stdlib::SDL_GameControllerButton = -1;
 
     pub const SDL_CONTROLLER_BUTTON_A: crate::stdlib::SDL_GameControllerButton = 0;
 
-    pub const SDL_CONTROLLER_BUTTON_INVALID: crate::stdlib::SDL_GameControllerButton = -1;
+    pub const SDL_CONTROLLER_BUTTON_B: crate::stdlib::SDL_GameControllerButton = 1;
+
+    pub const SDL_CONTROLLER_BUTTON_X: crate::stdlib::SDL_GameControllerButton = 2;
+
+    pub const SDL_CONTROLLER_BUTTON_Y: crate::stdlib::SDL_GameControllerButton = 3;
+
+    pub const SDL_CONTROLLER_BUTTON_BACK: crate::stdlib::SDL_GameControllerButton = 4;
+
+    pub const SDL_CONTROLLER_BUTTON_GUIDE: crate::stdlib::SDL_GameControllerButton = 5;
+
+    pub const SDL_CONTROLLER_BUTTON_START: crate::stdlib::SDL_GameControllerButton = 6;
+
+    pub const SDL_CONTROLLER_BUTTON_LEFTSTICK: crate::stdlib::SDL_GameControllerButton = 7;
+
+    pub const SDL_CONTROLLER_BUTTON_RIGHTSTICK: crate::stdlib::SDL_GameControllerButton = 8;
+
+    pub const SDL_CONTROLLER_BUTTON_LEFTSHOULDER: crate::stdlib::SDL_GameControllerButton = 9;
+
+    pub const SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: crate::stdlib::SDL_GameControllerButton = 10;
+
+    pub const SDL_CONTROLLER_BUTTON_DPAD_UP: crate::stdlib::SDL_GameControllerButton = 11;
+
+    pub const SDL_CONTROLLER_BUTTON_DPAD_DOWN: crate::stdlib::SDL_GameControllerButton = 12;
+
+    pub const SDL_CONTROLLER_BUTTON_DPAD_LEFT: crate::stdlib::SDL_GameControllerButton = 13;
+
+    pub const SDL_CONTROLLER_BUTTON_DPAD_RIGHT: crate::stdlib::SDL_GameControllerButton = 14;
+
+    pub const SDL_CONTROLLER_BUTTON_MAX: crate::stdlib::SDL_GameControllerButton = 15;
     pub type SDL_GestureID = crate::stdlib::Sint64;
     pub type SDL_Joystick = crate::stdlib::_SDL_Joystick;
 
@@ -8375,1001 +8127,1005 @@ pub mod stdlib {
     }
     pub type SDL_Keycode = crate::stdlib::Sint32;
 
-    pub const SDLK_AUDIOFASTFORWARD: crate::be_aas_h::C2RustUnnamed_0 = 1073742110;
-
-    pub const SDLK_AUDIOREWIND: crate::be_aas_h::C2RustUnnamed_0 = 1073742109;
-
-    pub const SDLK_APP2: crate::be_aas_h::C2RustUnnamed_0 = 1073742108;
-
-    pub const SDLK_APP1: crate::be_aas_h::C2RustUnnamed_0 = 1073742107;
-
-    pub const SDLK_SLEEP: crate::be_aas_h::C2RustUnnamed_0 = 1073742106;
-
-    pub const SDLK_EJECT: crate::be_aas_h::C2RustUnnamed_0 = 1073742105;
-
-    pub const SDLK_KBDILLUMUP: crate::be_aas_h::C2RustUnnamed_0 = 1073742104;
-
-    pub const SDLK_KBDILLUMDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1073742103;
-
-    pub const SDLK_KBDILLUMTOGGLE: crate::be_aas_h::C2RustUnnamed_0 = 1073742102;
-
-    pub const SDLK_DISPLAYSWITCH: crate::be_aas_h::C2RustUnnamed_0 = 1073742101;
-
-    pub const SDLK_BRIGHTNESSUP: crate::be_aas_h::C2RustUnnamed_0 = 1073742100;
-
-    pub const SDLK_BRIGHTNESSDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1073742099;
-
-    pub const SDLK_AC_BOOKMARKS: crate::be_aas_h::C2RustUnnamed_0 = 1073742098;
-
-    pub const SDLK_AC_REFRESH: crate::be_aas_h::C2RustUnnamed_0 = 1073742097;
-
-    pub const SDLK_AC_STOP: crate::be_aas_h::C2RustUnnamed_0 = 1073742096;
-
-    pub const SDLK_AC_FORWARD: crate::be_aas_h::C2RustUnnamed_0 = 1073742095;
-
-    pub const SDLK_AC_BACK: crate::be_aas_h::C2RustUnnamed_0 = 1073742094;
-
-    pub const SDLK_AC_HOME: crate::be_aas_h::C2RustUnnamed_0 = 1073742093;
-
-    pub const SDLK_AC_SEARCH: crate::be_aas_h::C2RustUnnamed_0 = 1073742092;
-
-    pub const SDLK_COMPUTER: crate::be_aas_h::C2RustUnnamed_0 = 1073742091;
-
-    pub const SDLK_CALCULATOR: crate::be_aas_h::C2RustUnnamed_0 = 1073742090;
-
-    pub const SDLK_MAIL: crate::be_aas_h::C2RustUnnamed_0 = 1073742089;
-
-    pub const SDLK_WWW: crate::be_aas_h::C2RustUnnamed_0 = 1073742088;
-
-    pub const SDLK_MEDIASELECT: crate::be_aas_h::C2RustUnnamed_0 = 1073742087;
-
-    pub const SDLK_AUDIOMUTE: crate::be_aas_h::C2RustUnnamed_0 = 1073742086;
-
-    pub const SDLK_AUDIOPLAY: crate::be_aas_h::C2RustUnnamed_0 = 1073742085;
-
-    pub const SDLK_AUDIOSTOP: crate::be_aas_h::C2RustUnnamed_0 = 1073742084;
-
-    pub const SDLK_AUDIOPREV: crate::be_aas_h::C2RustUnnamed_0 = 1073742083;
-
-    pub const SDLK_AUDIONEXT: crate::be_aas_h::C2RustUnnamed_0 = 1073742082;
-
-    pub const SDLK_MODE: crate::be_aas_h::C2RustUnnamed_0 = 1073742081;
-
-    pub const SDLK_RGUI: crate::be_aas_h::C2RustUnnamed_0 = 1073742055;
-
-    pub const SDLK_RALT: crate::be_aas_h::C2RustUnnamed_0 = 1073742054;
-
-    pub const SDLK_RSHIFT: crate::be_aas_h::C2RustUnnamed_0 = 1073742053;
-
-    pub const SDLK_RCTRL: crate::be_aas_h::C2RustUnnamed_0 = 1073742052;
-
-    pub const SDLK_LGUI: crate::be_aas_h::C2RustUnnamed_0 = 1073742051;
-
-    pub const SDLK_LALT: crate::be_aas_h::C2RustUnnamed_0 = 1073742050;
-
-    pub const SDLK_LSHIFT: crate::be_aas_h::C2RustUnnamed_0 = 1073742049;
-
-    pub const SDLK_LCTRL: crate::be_aas_h::C2RustUnnamed_0 = 1073742048;
-
-    pub const SDLK_KP_HEXADECIMAL: crate::be_aas_h::C2RustUnnamed_0 = 1073742045;
-
-    pub const SDLK_KP_DECIMAL: crate::be_aas_h::C2RustUnnamed_0 = 1073742044;
-
-    pub const SDLK_KP_OCTAL: crate::be_aas_h::C2RustUnnamed_0 = 1073742043;
-
-    pub const SDLK_KP_BINARY: crate::be_aas_h::C2RustUnnamed_0 = 1073742042;
-
-    pub const SDLK_KP_CLEARENTRY: crate::be_aas_h::C2RustUnnamed_0 = 1073742041;
-
-    pub const SDLK_KP_CLEAR: crate::be_aas_h::C2RustUnnamed_0 = 1073742040;
-
-    pub const SDLK_KP_PLUSMINUS: crate::be_aas_h::C2RustUnnamed_0 = 1073742039;
-
-    pub const SDLK_KP_MEMDIVIDE: crate::be_aas_h::C2RustUnnamed_0 = 1073742038;
-
-    pub const SDLK_KP_MEMMULTIPLY: crate::be_aas_h::C2RustUnnamed_0 = 1073742037;
-
-    pub const SDLK_KP_MEMSUBTRACT: crate::be_aas_h::C2RustUnnamed_0 = 1073742036;
-
-    pub const SDLK_KP_MEMADD: crate::be_aas_h::C2RustUnnamed_0 = 1073742035;
-
-    pub const SDLK_KP_MEMCLEAR: crate::be_aas_h::C2RustUnnamed_0 = 1073742034;
-
-    pub const SDLK_KP_MEMRECALL: crate::be_aas_h::C2RustUnnamed_0 = 1073742033;
-
-    pub const SDLK_KP_MEMSTORE: crate::be_aas_h::C2RustUnnamed_0 = 1073742032;
-
-    pub const SDLK_KP_EXCLAM: crate::be_aas_h::C2RustUnnamed_0 = 1073742031;
-
-    pub const SDLK_KP_AT: crate::be_aas_h::C2RustUnnamed_0 = 1073742030;
-
-    pub const SDLK_KP_SPACE: crate::be_aas_h::C2RustUnnamed_0 = 1073742029;
-
-    pub const SDLK_KP_HASH: crate::be_aas_h::C2RustUnnamed_0 = 1073742028;
-
-    pub const SDLK_KP_COLON: crate::be_aas_h::C2RustUnnamed_0 = 1073742027;
-
-    pub const SDLK_KP_DBLVERTICALBAR: crate::be_aas_h::C2RustUnnamed_0 = 1073742026;
-
-    pub const SDLK_KP_VERTICALBAR: crate::be_aas_h::C2RustUnnamed_0 = 1073742025;
-
-    pub const SDLK_KP_DBLAMPERSAND: crate::be_aas_h::C2RustUnnamed_0 = 1073742024;
-
-    pub const SDLK_KP_AMPERSAND: crate::be_aas_h::C2RustUnnamed_0 = 1073742023;
-
-    pub const SDLK_KP_GREATER: crate::be_aas_h::C2RustUnnamed_0 = 1073742022;
-
-    pub const SDLK_KP_LESS: crate::be_aas_h::C2RustUnnamed_0 = 1073742021;
-
-    pub const SDLK_KP_PERCENT: crate::be_aas_h::C2RustUnnamed_0 = 1073742020;
-
-    pub const SDLK_KP_POWER: crate::be_aas_h::C2RustUnnamed_0 = 1073742019;
-
-    pub const SDLK_KP_XOR: crate::be_aas_h::C2RustUnnamed_0 = 1073742018;
-
-    pub const SDLK_KP_F: crate::be_aas_h::C2RustUnnamed_0 = 1073742017;
-
-    pub const SDLK_KP_E: crate::be_aas_h::C2RustUnnamed_0 = 1073742016;
-
-    pub const SDLK_KP_D: crate::be_aas_h::C2RustUnnamed_0 = 1073742015;
-
-    pub const SDLK_KP_C: crate::be_aas_h::C2RustUnnamed_0 = 1073742014;
-
-    pub const SDLK_KP_B: crate::be_aas_h::C2RustUnnamed_0 = 1073742013;
-
-    pub const SDLK_KP_A: crate::be_aas_h::C2RustUnnamed_0 = 1073742012;
-
-    pub const SDLK_KP_BACKSPACE: crate::be_aas_h::C2RustUnnamed_0 = 1073742011;
-
-    pub const SDLK_KP_TAB: crate::be_aas_h::C2RustUnnamed_0 = 1073742010;
-
-    pub const SDLK_KP_RIGHTBRACE: crate::be_aas_h::C2RustUnnamed_0 = 1073742009;
-
-    pub const SDLK_KP_LEFTBRACE: crate::be_aas_h::C2RustUnnamed_0 = 1073742008;
-
-    pub const SDLK_KP_RIGHTPAREN: crate::be_aas_h::C2RustUnnamed_0 = 1073742007;
-
-    pub const SDLK_KP_LEFTPAREN: crate::be_aas_h::C2RustUnnamed_0 = 1073742006;
-
-    pub const SDLK_CURRENCYSUBUNIT: crate::be_aas_h::C2RustUnnamed_0 = 1073742005;
-
-    pub const SDLK_CURRENCYUNIT: crate::be_aas_h::C2RustUnnamed_0 = 1073742004;
-
-    pub const SDLK_DECIMALSEPARATOR: crate::be_aas_h::C2RustUnnamed_0 = 1073742003;
-
-    pub const SDLK_THOUSANDSSEPARATOR: crate::be_aas_h::C2RustUnnamed_0 = 1073742002;
-
-    pub const SDLK_KP_000: crate::be_aas_h::C2RustUnnamed_0 = 1073742001;
-
-    pub const SDLK_KP_00: crate::be_aas_h::C2RustUnnamed_0 = 1073742000;
-
-    pub const SDLK_EXSEL: crate::be_aas_h::C2RustUnnamed_0 = 1073741988;
-
-    pub const SDLK_CRSEL: crate::be_aas_h::C2RustUnnamed_0 = 1073741987;
-
-    pub const SDLK_CLEARAGAIN: crate::be_aas_h::C2RustUnnamed_0 = 1073741986;
-
-    pub const SDLK_OPER: crate::be_aas_h::C2RustUnnamed_0 = 1073741985;
-
-    pub const SDLK_OUT: crate::be_aas_h::C2RustUnnamed_0 = 1073741984;
-
-    pub const SDLK_SEPARATOR: crate::be_aas_h::C2RustUnnamed_0 = 1073741983;
-
-    pub const SDLK_RETURN2: crate::be_aas_h::C2RustUnnamed_0 = 1073741982;
-
-    pub const SDLK_PRIOR: crate::be_aas_h::C2RustUnnamed_0 = 1073741981;
-
-    pub const SDLK_CLEAR: crate::be_aas_h::C2RustUnnamed_0 = 1073741980;
-
-    pub const SDLK_CANCEL: crate::be_aas_h::C2RustUnnamed_0 = 1073741979;
-
-    pub const SDLK_SYSREQ: crate::be_aas_h::C2RustUnnamed_0 = 1073741978;
-
-    pub const SDLK_ALTERASE: crate::be_aas_h::C2RustUnnamed_0 = 1073741977;
-
-    pub const SDLK_KP_EQUALSAS400: crate::be_aas_h::C2RustUnnamed_0 = 1073741958;
-
-    pub const SDLK_KP_COMMA: crate::be_aas_h::C2RustUnnamed_0 = 1073741957;
-
-    pub const SDLK_VOLUMEDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1073741953;
-
-    pub const SDLK_VOLUMEUP: crate::be_aas_h::C2RustUnnamed_0 = 1073741952;
-
-    pub const SDLK_MUTE: crate::be_aas_h::C2RustUnnamed_0 = 1073741951;
-
-    pub const SDLK_FIND: crate::be_aas_h::C2RustUnnamed_0 = 1073741950;
-
-    pub const SDLK_PASTE: crate::be_aas_h::C2RustUnnamed_0 = 1073741949;
-
-    pub const SDLK_COPY: crate::be_aas_h::C2RustUnnamed_0 = 1073741948;
-
-    pub const SDLK_CUT: crate::be_aas_h::C2RustUnnamed_0 = 1073741947;
-
-    pub const SDLK_UNDO: crate::be_aas_h::C2RustUnnamed_0 = 1073741946;
-
-    pub const SDLK_AGAIN: crate::be_aas_h::C2RustUnnamed_0 = 1073741945;
-
-    pub const SDLK_STOP: crate::be_aas_h::C2RustUnnamed_0 = 1073741944;
-
-    pub const SDLK_SELECT: crate::be_aas_h::C2RustUnnamed_0 = 1073741943;
-
-    pub const SDLK_MENU: crate::be_aas_h::C2RustUnnamed_0 = 1073741942;
-
-    pub const SDLK_HELP: crate::be_aas_h::C2RustUnnamed_0 = 1073741941;
-
-    pub const SDLK_EXECUTE: crate::be_aas_h::C2RustUnnamed_0 = 1073741940;
-
-    pub const SDLK_F24: crate::be_aas_h::C2RustUnnamed_0 = 1073741939;
-
-    pub const SDLK_F23: crate::be_aas_h::C2RustUnnamed_0 = 1073741938;
-
-    pub const SDLK_F22: crate::be_aas_h::C2RustUnnamed_0 = 1073741937;
-
-    pub const SDLK_F21: crate::be_aas_h::C2RustUnnamed_0 = 1073741936;
-
-    pub const SDLK_F20: crate::be_aas_h::C2RustUnnamed_0 = 1073741935;
-
-    pub const SDLK_F19: crate::be_aas_h::C2RustUnnamed_0 = 1073741934;
-
-    pub const SDLK_F18: crate::be_aas_h::C2RustUnnamed_0 = 1073741933;
-
-    pub const SDLK_F17: crate::be_aas_h::C2RustUnnamed_0 = 1073741932;
-
-    pub const SDLK_F16: crate::be_aas_h::C2RustUnnamed_0 = 1073741931;
-
-    pub const SDLK_F15: crate::be_aas_h::C2RustUnnamed_0 = 1073741930;
-
-    pub const SDLK_F14: crate::be_aas_h::C2RustUnnamed_0 = 1073741929;
-
-    pub const SDLK_F13: crate::be_aas_h::C2RustUnnamed_0 = 1073741928;
-
-    pub const SDLK_KP_EQUALS: crate::be_aas_h::C2RustUnnamed_0 = 1073741927;
-
-    pub const SDLK_POWER: crate::be_aas_h::C2RustUnnamed_0 = 1073741926;
-
-    pub const SDLK_APPLICATION: crate::be_aas_h::C2RustUnnamed_0 = 1073741925;
-
-    pub const SDLK_KP_PERIOD: crate::be_aas_h::C2RustUnnamed_0 = 1073741923;
-
-    pub const SDLK_KP_0: crate::be_aas_h::C2RustUnnamed_0 = 1073741922;
-
-    pub const SDLK_KP_9: crate::be_aas_h::C2RustUnnamed_0 = 1073741921;
-
-    pub const SDLK_KP_8: crate::be_aas_h::C2RustUnnamed_0 = 1073741920;
-
-    pub const SDLK_KP_7: crate::be_aas_h::C2RustUnnamed_0 = 1073741919;
-
-    pub const SDLK_KP_6: crate::be_aas_h::C2RustUnnamed_0 = 1073741918;
-
-    pub const SDLK_KP_5: crate::be_aas_h::C2RustUnnamed_0 = 1073741917;
-
-    pub const SDLK_KP_4: crate::be_aas_h::C2RustUnnamed_0 = 1073741916;
-
-    pub const SDLK_KP_3: crate::be_aas_h::C2RustUnnamed_0 = 1073741915;
-
-    pub const SDLK_KP_2: crate::be_aas_h::C2RustUnnamed_0 = 1073741914;
-
-    pub const SDLK_KP_1: crate::be_aas_h::C2RustUnnamed_0 = 1073741913;
-
-    pub const SDLK_KP_ENTER: crate::be_aas_h::C2RustUnnamed_0 = 1073741912;
-
-    pub const SDLK_KP_PLUS: crate::be_aas_h::C2RustUnnamed_0 = 1073741911;
-
-    pub const SDLK_KP_MINUS: crate::be_aas_h::C2RustUnnamed_0 = 1073741910;
-
-    pub const SDLK_KP_MULTIPLY: crate::be_aas_h::C2RustUnnamed_0 = 1073741909;
-
-    pub const SDLK_KP_DIVIDE: crate::be_aas_h::C2RustUnnamed_0 = 1073741908;
-
-    pub const SDLK_NUMLOCKCLEAR: crate::be_aas_h::C2RustUnnamed_0 = 1073741907;
-
-    pub const SDLK_UP: crate::be_aas_h::C2RustUnnamed_0 = 1073741906;
-
-    pub const SDLK_DOWN: crate::be_aas_h::C2RustUnnamed_0 = 1073741905;
-
-    pub const SDLK_LEFT: crate::be_aas_h::C2RustUnnamed_0 = 1073741904;
-
-    pub const SDLK_RIGHT: crate::be_aas_h::C2RustUnnamed_0 = 1073741903;
-
-    pub const SDLK_PAGEDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1073741902;
-
-    pub const SDLK_END: crate::be_aas_h::C2RustUnnamed_0 = 1073741901;
-
-    pub const SDLK_DELETE: crate::be_aas_h::C2RustUnnamed_0 = 127;
-
-    pub const SDLK_PAGEUP: crate::be_aas_h::C2RustUnnamed_0 = 1073741899;
-
-    pub const SDLK_HOME: crate::be_aas_h::C2RustUnnamed_0 = 1073741898;
-
-    pub const SDLK_INSERT: crate::be_aas_h::C2RustUnnamed_0 = 1073741897;
-
-    pub const SDLK_PAUSE: crate::be_aas_h::C2RustUnnamed_0 = 1073741896;
-
-    pub const SDLK_SCROLLLOCK: crate::be_aas_h::C2RustUnnamed_0 = 1073741895;
-
-    pub const SDLK_PRINTSCREEN: crate::be_aas_h::C2RustUnnamed_0 = 1073741894;
-
-    pub const SDLK_F12: crate::be_aas_h::C2RustUnnamed_0 = 1073741893;
-
-    pub const SDLK_F11: crate::be_aas_h::C2RustUnnamed_0 = 1073741892;
-
-    pub const SDLK_F10: crate::be_aas_h::C2RustUnnamed_0 = 1073741891;
-
-    pub const SDLK_F9: crate::be_aas_h::C2RustUnnamed_0 = 1073741890;
-
-    pub const SDLK_F8: crate::be_aas_h::C2RustUnnamed_0 = 1073741889;
-
-    pub const SDLK_F7: crate::be_aas_h::C2RustUnnamed_0 = 1073741888;
-
-    pub const SDLK_F6: crate::be_aas_h::C2RustUnnamed_0 = 1073741887;
-
-    pub const SDLK_F5: crate::be_aas_h::C2RustUnnamed_0 = 1073741886;
-
-    pub const SDLK_F4: crate::be_aas_h::C2RustUnnamed_0 = 1073741885;
-
-    pub const SDLK_F3: crate::be_aas_h::C2RustUnnamed_0 = 1073741884;
-
-    pub const SDLK_F2: crate::be_aas_h::C2RustUnnamed_0 = 1073741883;
-
-    pub const SDLK_F1: crate::be_aas_h::C2RustUnnamed_0 = 1073741882;
-
-    pub const SDLK_CAPSLOCK: crate::be_aas_h::C2RustUnnamed_0 = 1073741881;
-
-    pub const SDLK_z: crate::be_aas_h::C2RustUnnamed_0 = 122;
-
-    pub const SDLK_y: crate::be_aas_h::C2RustUnnamed_0 = 121;
-
-    pub const SDLK_x: crate::be_aas_h::C2RustUnnamed_0 = 120;
-
-    pub const SDLK_w: crate::be_aas_h::C2RustUnnamed_0 = 119;
-
-    pub const SDLK_v: crate::be_aas_h::C2RustUnnamed_0 = 118;
-
-    pub const SDLK_u: crate::be_aas_h::C2RustUnnamed_0 = 117;
-
-    pub const SDLK_t: crate::be_aas_h::C2RustUnnamed_0 = 116;
-
-    pub const SDLK_s: crate::be_aas_h::C2RustUnnamed_0 = 115;
-
-    pub const SDLK_r: crate::be_aas_h::C2RustUnnamed_0 = 114;
-
-    pub const SDLK_q: crate::be_aas_h::C2RustUnnamed_0 = 113;
-
-    pub const SDLK_p: crate::be_aas_h::C2RustUnnamed_0 = 112;
-
-    pub const SDLK_o: crate::be_aas_h::C2RustUnnamed_0 = 111;
-
-    pub const SDLK_n: crate::be_aas_h::C2RustUnnamed_0 = 110;
-
-    pub const SDLK_m: crate::be_aas_h::C2RustUnnamed_0 = 109;
-
-    pub const SDLK_l: crate::be_aas_h::C2RustUnnamed_0 = 108;
-
-    pub const SDLK_k: crate::be_aas_h::C2RustUnnamed_0 = 107;
-
-    pub const SDLK_j: crate::be_aas_h::C2RustUnnamed_0 = 106;
-
-    pub const SDLK_i: crate::be_aas_h::C2RustUnnamed_0 = 105;
-
-    pub const SDLK_h: crate::be_aas_h::C2RustUnnamed_0 = 104;
-
-    pub const SDLK_g: crate::be_aas_h::C2RustUnnamed_0 = 103;
-
-    pub const SDLK_f: crate::be_aas_h::C2RustUnnamed_0 = 102;
-
-    pub const SDLK_e: crate::be_aas_h::C2RustUnnamed_0 = 101;
-
-    pub const SDLK_d: crate::be_aas_h::C2RustUnnamed_0 = 100;
-
-    pub const SDLK_c: crate::be_aas_h::C2RustUnnamed_0 = 99;
-
-    pub const SDLK_b: crate::be_aas_h::C2RustUnnamed_0 = 98;
-
-    pub const SDLK_a: crate::be_aas_h::C2RustUnnamed_0 = 97;
-
-    pub const SDLK_BACKQUOTE: crate::be_aas_h::C2RustUnnamed_0 = 96;
-
-    pub const SDLK_UNDERSCORE: crate::be_aas_h::C2RustUnnamed_0 = 95;
-
-    pub const SDLK_CARET: crate::be_aas_h::C2RustUnnamed_0 = 94;
-
-    pub const SDLK_RIGHTBRACKET: crate::be_aas_h::C2RustUnnamed_0 = 93;
-
-    pub const SDLK_BACKSLASH: crate::be_aas_h::C2RustUnnamed_0 = 92;
-
-    pub const SDLK_LEFTBRACKET: crate::be_aas_h::C2RustUnnamed_0 = 91;
-
-    pub const SDLK_AT: crate::be_aas_h::C2RustUnnamed_0 = 64;
-
-    pub const SDLK_QUESTION: crate::be_aas_h::C2RustUnnamed_0 = 63;
-
-    pub const SDLK_GREATER: crate::be_aas_h::C2RustUnnamed_0 = 62;
-
-    pub const SDLK_EQUALS: crate::be_aas_h::C2RustUnnamed_0 = 61;
-
-    pub const SDLK_LESS: crate::be_aas_h::C2RustUnnamed_0 = 60;
-
-    pub const SDLK_SEMICOLON: crate::be_aas_h::C2RustUnnamed_0 = 59;
-
-    pub const SDLK_COLON: crate::be_aas_h::C2RustUnnamed_0 = 58;
-
-    pub const SDLK_9: crate::be_aas_h::C2RustUnnamed_0 = 57;
-
-    pub const SDLK_8: crate::be_aas_h::C2RustUnnamed_0 = 56;
-
-    pub const SDLK_7: crate::be_aas_h::C2RustUnnamed_0 = 55;
-
-    pub const SDLK_6: crate::be_aas_h::C2RustUnnamed_0 = 54;
-
-    pub const SDLK_5: crate::be_aas_h::C2RustUnnamed_0 = 53;
-
-    pub const SDLK_4: crate::be_aas_h::C2RustUnnamed_0 = 52;
-
-    pub const SDLK_3: crate::be_aas_h::C2RustUnnamed_0 = 51;
-
-    pub const SDLK_2: crate::be_aas_h::C2RustUnnamed_0 = 50;
-
-    pub const SDLK_1: crate::be_aas_h::C2RustUnnamed_0 = 49;
-
-    pub const SDLK_0: crate::be_aas_h::C2RustUnnamed_0 = 48;
-
-    pub const SDLK_SLASH: crate::be_aas_h::C2RustUnnamed_0 = 47;
-
-    pub const SDLK_PERIOD: crate::be_aas_h::C2RustUnnamed_0 = 46;
-
-    pub const SDLK_MINUS: crate::be_aas_h::C2RustUnnamed_0 = 45;
-
-    pub const SDLK_COMMA: crate::be_aas_h::C2RustUnnamed_0 = 44;
-
-    pub const SDLK_PLUS: crate::be_aas_h::C2RustUnnamed_0 = 43;
-
-    pub const SDLK_ASTERISK: crate::be_aas_h::C2RustUnnamed_0 = 42;
-
-    pub const SDLK_RIGHTPAREN: crate::be_aas_h::C2RustUnnamed_0 = 41;
-
-    pub const SDLK_LEFTPAREN: crate::be_aas_h::C2RustUnnamed_0 = 40;
-
-    pub const SDLK_QUOTE: crate::be_aas_h::C2RustUnnamed_0 = 39;
-
-    pub const SDLK_AMPERSAND: crate::be_aas_h::C2RustUnnamed_0 = 38;
-
-    pub const SDLK_DOLLAR: crate::be_aas_h::C2RustUnnamed_0 = 36;
-
-    pub const SDLK_PERCENT: crate::be_aas_h::C2RustUnnamed_0 = 37;
-
-    pub const SDLK_HASH: crate::be_aas_h::C2RustUnnamed_0 = 35;
-
-    pub const SDLK_QUOTEDBL: crate::be_aas_h::C2RustUnnamed_0 = 34;
-
-    pub const SDLK_EXCLAIM: crate::be_aas_h::C2RustUnnamed_0 = 33;
-
-    pub const SDLK_SPACE: crate::be_aas_h::C2RustUnnamed_0 = 32;
-
-    pub const SDLK_TAB: crate::be_aas_h::C2RustUnnamed_0 = 9;
-
-    pub const SDLK_BACKSPACE: crate::be_aas_h::C2RustUnnamed_0 = 8;
-
-    pub const SDLK_ESCAPE: crate::be_aas_h::C2RustUnnamed_0 = 27;
+    pub const SDLK_UNKNOWN: crate::be_aas_h::C2RustUnnamed_0 = 0;
 
     pub const SDLK_RETURN: crate::be_aas_h::C2RustUnnamed_0 = 13;
 
-    pub const SDLK_UNKNOWN: crate::be_aas_h::C2RustUnnamed_0 = 0;
+    pub const SDLK_ESCAPE: crate::be_aas_h::C2RustUnnamed_0 = 27;
 
-    pub const KMOD_RESERVED: crate::be_aas_h::C2RustUnnamed_0 = 32768;
+    pub const SDLK_BACKSPACE: crate::be_aas_h::C2RustUnnamed_0 = 8;
 
-    pub const KMOD_MODE: crate::be_aas_h::C2RustUnnamed_0 = 16384;
+    pub const SDLK_TAB: crate::be_aas_h::C2RustUnnamed_0 = 9;
 
-    pub const KMOD_CAPS: crate::be_aas_h::C2RustUnnamed_0 = 8192;
+    pub const SDLK_SPACE: crate::be_aas_h::C2RustUnnamed_0 = 32;
 
-    pub const KMOD_NUM: crate::be_aas_h::C2RustUnnamed_0 = 4096;
+    pub const SDLK_EXCLAIM: crate::be_aas_h::C2RustUnnamed_0 = 33;
 
-    pub const KMOD_RGUI: crate::be_aas_h::C2RustUnnamed_0 = 2048;
+    pub const SDLK_QUOTEDBL: crate::be_aas_h::C2RustUnnamed_0 = 34;
 
-    pub const KMOD_LGUI: crate::be_aas_h::C2RustUnnamed_0 = 1024;
+    pub const SDLK_HASH: crate::be_aas_h::C2RustUnnamed_0 = 35;
 
-    pub const KMOD_RALT: crate::be_aas_h::C2RustUnnamed_0 = 512;
+    pub const SDLK_PERCENT: crate::be_aas_h::C2RustUnnamed_0 = 37;
 
-    pub const KMOD_LALT: crate::be_aas_h::C2RustUnnamed_0 = 256;
+    pub const SDLK_DOLLAR: crate::be_aas_h::C2RustUnnamed_0 = 36;
 
-    pub const KMOD_RCTRL: crate::be_aas_h::C2RustUnnamed_0 = 128;
+    pub const SDLK_AMPERSAND: crate::be_aas_h::C2RustUnnamed_0 = 38;
 
-    pub const KMOD_LCTRL: crate::be_aas_h::C2RustUnnamed_0 = 64;
+    pub const SDLK_QUOTE: crate::be_aas_h::C2RustUnnamed_0 = 39;
 
-    pub const KMOD_RSHIFT: crate::be_aas_h::C2RustUnnamed_0 = 2;
+    pub const SDLK_LEFTPAREN: crate::be_aas_h::C2RustUnnamed_0 = 40;
+
+    pub const SDLK_RIGHTPAREN: crate::be_aas_h::C2RustUnnamed_0 = 41;
+
+    pub const SDLK_ASTERISK: crate::be_aas_h::C2RustUnnamed_0 = 42;
+
+    pub const SDLK_PLUS: crate::be_aas_h::C2RustUnnamed_0 = 43;
+
+    pub const SDLK_COMMA: crate::be_aas_h::C2RustUnnamed_0 = 44;
+
+    pub const SDLK_MINUS: crate::be_aas_h::C2RustUnnamed_0 = 45;
+
+    pub const SDLK_PERIOD: crate::be_aas_h::C2RustUnnamed_0 = 46;
+
+    pub const SDLK_SLASH: crate::be_aas_h::C2RustUnnamed_0 = 47;
+
+    pub const SDLK_0: crate::be_aas_h::C2RustUnnamed_0 = 48;
+
+    pub const SDLK_1: crate::be_aas_h::C2RustUnnamed_0 = 49;
+
+    pub const SDLK_2: crate::be_aas_h::C2RustUnnamed_0 = 50;
+
+    pub const SDLK_3: crate::be_aas_h::C2RustUnnamed_0 = 51;
+
+    pub const SDLK_4: crate::be_aas_h::C2RustUnnamed_0 = 52;
+
+    pub const SDLK_5: crate::be_aas_h::C2RustUnnamed_0 = 53;
+
+    pub const SDLK_6: crate::be_aas_h::C2RustUnnamed_0 = 54;
+
+    pub const SDLK_7: crate::be_aas_h::C2RustUnnamed_0 = 55;
+
+    pub const SDLK_8: crate::be_aas_h::C2RustUnnamed_0 = 56;
+
+    pub const SDLK_9: crate::be_aas_h::C2RustUnnamed_0 = 57;
+
+    pub const SDLK_COLON: crate::be_aas_h::C2RustUnnamed_0 = 58;
+
+    pub const SDLK_SEMICOLON: crate::be_aas_h::C2RustUnnamed_0 = 59;
+
+    pub const SDLK_LESS: crate::be_aas_h::C2RustUnnamed_0 = 60;
+
+    pub const SDLK_EQUALS: crate::be_aas_h::C2RustUnnamed_0 = 61;
+
+    pub const SDLK_GREATER: crate::be_aas_h::C2RustUnnamed_0 = 62;
+
+    pub const SDLK_QUESTION: crate::be_aas_h::C2RustUnnamed_0 = 63;
+
+    pub const SDLK_AT: crate::be_aas_h::C2RustUnnamed_0 = 64;
+
+    pub const SDLK_LEFTBRACKET: crate::be_aas_h::C2RustUnnamed_0 = 91;
+
+    pub const SDLK_BACKSLASH: crate::be_aas_h::C2RustUnnamed_0 = 92;
+
+    pub const SDLK_RIGHTBRACKET: crate::be_aas_h::C2RustUnnamed_0 = 93;
+
+    pub const SDLK_CARET: crate::be_aas_h::C2RustUnnamed_0 = 94;
+
+    pub const SDLK_UNDERSCORE: crate::be_aas_h::C2RustUnnamed_0 = 95;
+
+    pub const SDLK_BACKQUOTE: crate::be_aas_h::C2RustUnnamed_0 = 96;
+
+    pub const SDLK_a: crate::be_aas_h::C2RustUnnamed_0 = 97;
+
+    pub const SDLK_b: crate::be_aas_h::C2RustUnnamed_0 = 98;
+
+    pub const SDLK_c: crate::be_aas_h::C2RustUnnamed_0 = 99;
+
+    pub const SDLK_d: crate::be_aas_h::C2RustUnnamed_0 = 100;
+
+    pub const SDLK_e: crate::be_aas_h::C2RustUnnamed_0 = 101;
+
+    pub const SDLK_f: crate::be_aas_h::C2RustUnnamed_0 = 102;
+
+    pub const SDLK_g: crate::be_aas_h::C2RustUnnamed_0 = 103;
+
+    pub const SDLK_h: crate::be_aas_h::C2RustUnnamed_0 = 104;
+
+    pub const SDLK_i: crate::be_aas_h::C2RustUnnamed_0 = 105;
+
+    pub const SDLK_j: crate::be_aas_h::C2RustUnnamed_0 = 106;
+
+    pub const SDLK_k: crate::be_aas_h::C2RustUnnamed_0 = 107;
+
+    pub const SDLK_l: crate::be_aas_h::C2RustUnnamed_0 = 108;
+
+    pub const SDLK_m: crate::be_aas_h::C2RustUnnamed_0 = 109;
+
+    pub const SDLK_n: crate::be_aas_h::C2RustUnnamed_0 = 110;
+
+    pub const SDLK_o: crate::be_aas_h::C2RustUnnamed_0 = 111;
+
+    pub const SDLK_p: crate::be_aas_h::C2RustUnnamed_0 = 112;
+
+    pub const SDLK_q: crate::be_aas_h::C2RustUnnamed_0 = 113;
+
+    pub const SDLK_r: crate::be_aas_h::C2RustUnnamed_0 = 114;
+
+    pub const SDLK_s: crate::be_aas_h::C2RustUnnamed_0 = 115;
+
+    pub const SDLK_t: crate::be_aas_h::C2RustUnnamed_0 = 116;
+
+    pub const SDLK_u: crate::be_aas_h::C2RustUnnamed_0 = 117;
+
+    pub const SDLK_v: crate::be_aas_h::C2RustUnnamed_0 = 118;
+
+    pub const SDLK_w: crate::be_aas_h::C2RustUnnamed_0 = 119;
+
+    pub const SDLK_x: crate::be_aas_h::C2RustUnnamed_0 = 120;
+
+    pub const SDLK_y: crate::be_aas_h::C2RustUnnamed_0 = 121;
+
+    pub const SDLK_z: crate::be_aas_h::C2RustUnnamed_0 = 122;
+
+    pub const SDLK_CAPSLOCK: crate::be_aas_h::C2RustUnnamed_0 = 1073741881;
+
+    pub const SDLK_F1: crate::be_aas_h::C2RustUnnamed_0 = 1073741882;
+
+    pub const SDLK_F2: crate::be_aas_h::C2RustUnnamed_0 = 1073741883;
+
+    pub const SDLK_F3: crate::be_aas_h::C2RustUnnamed_0 = 1073741884;
+
+    pub const SDLK_F4: crate::be_aas_h::C2RustUnnamed_0 = 1073741885;
+
+    pub const SDLK_F5: crate::be_aas_h::C2RustUnnamed_0 = 1073741886;
+
+    pub const SDLK_F6: crate::be_aas_h::C2RustUnnamed_0 = 1073741887;
+
+    pub const SDLK_F7: crate::be_aas_h::C2RustUnnamed_0 = 1073741888;
+
+    pub const SDLK_F8: crate::be_aas_h::C2RustUnnamed_0 = 1073741889;
+
+    pub const SDLK_F9: crate::be_aas_h::C2RustUnnamed_0 = 1073741890;
+
+    pub const SDLK_F10: crate::be_aas_h::C2RustUnnamed_0 = 1073741891;
+
+    pub const SDLK_F11: crate::be_aas_h::C2RustUnnamed_0 = 1073741892;
+
+    pub const SDLK_F12: crate::be_aas_h::C2RustUnnamed_0 = 1073741893;
+
+    pub const SDLK_PRINTSCREEN: crate::be_aas_h::C2RustUnnamed_0 = 1073741894;
+
+    pub const SDLK_SCROLLLOCK: crate::be_aas_h::C2RustUnnamed_0 = 1073741895;
+
+    pub const SDLK_PAUSE: crate::be_aas_h::C2RustUnnamed_0 = 1073741896;
+
+    pub const SDLK_INSERT: crate::be_aas_h::C2RustUnnamed_0 = 1073741897;
+
+    pub const SDLK_HOME: crate::be_aas_h::C2RustUnnamed_0 = 1073741898;
+
+    pub const SDLK_PAGEUP: crate::be_aas_h::C2RustUnnamed_0 = 1073741899;
+
+    pub const SDLK_DELETE: crate::be_aas_h::C2RustUnnamed_0 = 127;
+
+    pub const SDLK_END: crate::be_aas_h::C2RustUnnamed_0 = 1073741901;
+
+    pub const SDLK_PAGEDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1073741902;
+
+    pub const SDLK_RIGHT: crate::be_aas_h::C2RustUnnamed_0 = 1073741903;
+
+    pub const SDLK_LEFT: crate::be_aas_h::C2RustUnnamed_0 = 1073741904;
+
+    pub const SDLK_DOWN: crate::be_aas_h::C2RustUnnamed_0 = 1073741905;
+
+    pub const SDLK_UP: crate::be_aas_h::C2RustUnnamed_0 = 1073741906;
+
+    pub const SDLK_NUMLOCKCLEAR: crate::be_aas_h::C2RustUnnamed_0 = 1073741907;
+
+    pub const SDLK_KP_DIVIDE: crate::be_aas_h::C2RustUnnamed_0 = 1073741908;
+
+    pub const SDLK_KP_MULTIPLY: crate::be_aas_h::C2RustUnnamed_0 = 1073741909;
+
+    pub const SDLK_KP_MINUS: crate::be_aas_h::C2RustUnnamed_0 = 1073741910;
+
+    pub const SDLK_KP_PLUS: crate::be_aas_h::C2RustUnnamed_0 = 1073741911;
+
+    pub const SDLK_KP_ENTER: crate::be_aas_h::C2RustUnnamed_0 = 1073741912;
+
+    pub const SDLK_KP_1: crate::be_aas_h::C2RustUnnamed_0 = 1073741913;
+
+    pub const SDLK_KP_2: crate::be_aas_h::C2RustUnnamed_0 = 1073741914;
+
+    pub const SDLK_KP_3: crate::be_aas_h::C2RustUnnamed_0 = 1073741915;
+
+    pub const SDLK_KP_4: crate::be_aas_h::C2RustUnnamed_0 = 1073741916;
+
+    pub const SDLK_KP_5: crate::be_aas_h::C2RustUnnamed_0 = 1073741917;
+
+    pub const SDLK_KP_6: crate::be_aas_h::C2RustUnnamed_0 = 1073741918;
+
+    pub const SDLK_KP_7: crate::be_aas_h::C2RustUnnamed_0 = 1073741919;
+
+    pub const SDLK_KP_8: crate::be_aas_h::C2RustUnnamed_0 = 1073741920;
+
+    pub const SDLK_KP_9: crate::be_aas_h::C2RustUnnamed_0 = 1073741921;
+
+    pub const SDLK_KP_0: crate::be_aas_h::C2RustUnnamed_0 = 1073741922;
+
+    pub const SDLK_KP_PERIOD: crate::be_aas_h::C2RustUnnamed_0 = 1073741923;
+
+    pub const SDLK_APPLICATION: crate::be_aas_h::C2RustUnnamed_0 = 1073741925;
+
+    pub const SDLK_POWER: crate::be_aas_h::C2RustUnnamed_0 = 1073741926;
+
+    pub const SDLK_KP_EQUALS: crate::be_aas_h::C2RustUnnamed_0 = 1073741927;
+
+    pub const SDLK_F13: crate::be_aas_h::C2RustUnnamed_0 = 1073741928;
+
+    pub const SDLK_F14: crate::be_aas_h::C2RustUnnamed_0 = 1073741929;
+
+    pub const SDLK_F15: crate::be_aas_h::C2RustUnnamed_0 = 1073741930;
+
+    pub const SDLK_F16: crate::be_aas_h::C2RustUnnamed_0 = 1073741931;
+
+    pub const SDLK_F17: crate::be_aas_h::C2RustUnnamed_0 = 1073741932;
+
+    pub const SDLK_F18: crate::be_aas_h::C2RustUnnamed_0 = 1073741933;
+
+    pub const SDLK_F19: crate::be_aas_h::C2RustUnnamed_0 = 1073741934;
+
+    pub const SDLK_F20: crate::be_aas_h::C2RustUnnamed_0 = 1073741935;
+
+    pub const SDLK_F21: crate::be_aas_h::C2RustUnnamed_0 = 1073741936;
+
+    pub const SDLK_F22: crate::be_aas_h::C2RustUnnamed_0 = 1073741937;
+
+    pub const SDLK_F23: crate::be_aas_h::C2RustUnnamed_0 = 1073741938;
+
+    pub const SDLK_F24: crate::be_aas_h::C2RustUnnamed_0 = 1073741939;
+
+    pub const SDLK_EXECUTE: crate::be_aas_h::C2RustUnnamed_0 = 1073741940;
+
+    pub const SDLK_HELP: crate::be_aas_h::C2RustUnnamed_0 = 1073741941;
+
+    pub const SDLK_MENU: crate::be_aas_h::C2RustUnnamed_0 = 1073741942;
+
+    pub const SDLK_SELECT: crate::be_aas_h::C2RustUnnamed_0 = 1073741943;
+
+    pub const SDLK_STOP: crate::be_aas_h::C2RustUnnamed_0 = 1073741944;
+
+    pub const SDLK_AGAIN: crate::be_aas_h::C2RustUnnamed_0 = 1073741945;
+
+    pub const SDLK_UNDO: crate::be_aas_h::C2RustUnnamed_0 = 1073741946;
+
+    pub const SDLK_CUT: crate::be_aas_h::C2RustUnnamed_0 = 1073741947;
+
+    pub const SDLK_COPY: crate::be_aas_h::C2RustUnnamed_0 = 1073741948;
+
+    pub const SDLK_PASTE: crate::be_aas_h::C2RustUnnamed_0 = 1073741949;
+
+    pub const SDLK_FIND: crate::be_aas_h::C2RustUnnamed_0 = 1073741950;
+
+    pub const SDLK_MUTE: crate::be_aas_h::C2RustUnnamed_0 = 1073741951;
+
+    pub const SDLK_VOLUMEUP: crate::be_aas_h::C2RustUnnamed_0 = 1073741952;
+
+    pub const SDLK_VOLUMEDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1073741953;
+
+    pub const SDLK_KP_COMMA: crate::be_aas_h::C2RustUnnamed_0 = 1073741957;
+
+    pub const SDLK_KP_EQUALSAS400: crate::be_aas_h::C2RustUnnamed_0 = 1073741958;
+
+    pub const SDLK_ALTERASE: crate::be_aas_h::C2RustUnnamed_0 = 1073741977;
+
+    pub const SDLK_SYSREQ: crate::be_aas_h::C2RustUnnamed_0 = 1073741978;
+
+    pub const SDLK_CANCEL: crate::be_aas_h::C2RustUnnamed_0 = 1073741979;
+
+    pub const SDLK_CLEAR: crate::be_aas_h::C2RustUnnamed_0 = 1073741980;
+
+    pub const SDLK_PRIOR: crate::be_aas_h::C2RustUnnamed_0 = 1073741981;
+
+    pub const SDLK_RETURN2: crate::be_aas_h::C2RustUnnamed_0 = 1073741982;
+
+    pub const SDLK_SEPARATOR: crate::be_aas_h::C2RustUnnamed_0 = 1073741983;
+
+    pub const SDLK_OUT: crate::be_aas_h::C2RustUnnamed_0 = 1073741984;
+
+    pub const SDLK_OPER: crate::be_aas_h::C2RustUnnamed_0 = 1073741985;
+
+    pub const SDLK_CLEARAGAIN: crate::be_aas_h::C2RustUnnamed_0 = 1073741986;
+
+    pub const SDLK_CRSEL: crate::be_aas_h::C2RustUnnamed_0 = 1073741987;
+
+    pub const SDLK_EXSEL: crate::be_aas_h::C2RustUnnamed_0 = 1073741988;
+
+    pub const SDLK_KP_00: crate::be_aas_h::C2RustUnnamed_0 = 1073742000;
+
+    pub const SDLK_KP_000: crate::be_aas_h::C2RustUnnamed_0 = 1073742001;
+
+    pub const SDLK_THOUSANDSSEPARATOR: crate::be_aas_h::C2RustUnnamed_0 = 1073742002;
+
+    pub const SDLK_DECIMALSEPARATOR: crate::be_aas_h::C2RustUnnamed_0 = 1073742003;
+
+    pub const SDLK_CURRENCYUNIT: crate::be_aas_h::C2RustUnnamed_0 = 1073742004;
+
+    pub const SDLK_CURRENCYSUBUNIT: crate::be_aas_h::C2RustUnnamed_0 = 1073742005;
+
+    pub const SDLK_KP_LEFTPAREN: crate::be_aas_h::C2RustUnnamed_0 = 1073742006;
+
+    pub const SDLK_KP_RIGHTPAREN: crate::be_aas_h::C2RustUnnamed_0 = 1073742007;
+
+    pub const SDLK_KP_LEFTBRACE: crate::be_aas_h::C2RustUnnamed_0 = 1073742008;
+
+    pub const SDLK_KP_RIGHTBRACE: crate::be_aas_h::C2RustUnnamed_0 = 1073742009;
+
+    pub const SDLK_KP_TAB: crate::be_aas_h::C2RustUnnamed_0 = 1073742010;
+
+    pub const SDLK_KP_BACKSPACE: crate::be_aas_h::C2RustUnnamed_0 = 1073742011;
+
+    pub const SDLK_KP_A: crate::be_aas_h::C2RustUnnamed_0 = 1073742012;
+
+    pub const SDLK_KP_B: crate::be_aas_h::C2RustUnnamed_0 = 1073742013;
+
+    pub const SDLK_KP_C: crate::be_aas_h::C2RustUnnamed_0 = 1073742014;
+
+    pub const SDLK_KP_D: crate::be_aas_h::C2RustUnnamed_0 = 1073742015;
+
+    pub const SDLK_KP_E: crate::be_aas_h::C2RustUnnamed_0 = 1073742016;
+
+    pub const SDLK_KP_F: crate::be_aas_h::C2RustUnnamed_0 = 1073742017;
+
+    pub const SDLK_KP_XOR: crate::be_aas_h::C2RustUnnamed_0 = 1073742018;
+
+    pub const SDLK_KP_POWER: crate::be_aas_h::C2RustUnnamed_0 = 1073742019;
+
+    pub const SDLK_KP_PERCENT: crate::be_aas_h::C2RustUnnamed_0 = 1073742020;
+
+    pub const SDLK_KP_LESS: crate::be_aas_h::C2RustUnnamed_0 = 1073742021;
+
+    pub const SDLK_KP_GREATER: crate::be_aas_h::C2RustUnnamed_0 = 1073742022;
+
+    pub const SDLK_KP_AMPERSAND: crate::be_aas_h::C2RustUnnamed_0 = 1073742023;
+
+    pub const SDLK_KP_DBLAMPERSAND: crate::be_aas_h::C2RustUnnamed_0 = 1073742024;
+
+    pub const SDLK_KP_VERTICALBAR: crate::be_aas_h::C2RustUnnamed_0 = 1073742025;
+
+    pub const SDLK_KP_DBLVERTICALBAR: crate::be_aas_h::C2RustUnnamed_0 = 1073742026;
+
+    pub const SDLK_KP_COLON: crate::be_aas_h::C2RustUnnamed_0 = 1073742027;
+
+    pub const SDLK_KP_HASH: crate::be_aas_h::C2RustUnnamed_0 = 1073742028;
+
+    pub const SDLK_KP_SPACE: crate::be_aas_h::C2RustUnnamed_0 = 1073742029;
+
+    pub const SDLK_KP_AT: crate::be_aas_h::C2RustUnnamed_0 = 1073742030;
+
+    pub const SDLK_KP_EXCLAM: crate::be_aas_h::C2RustUnnamed_0 = 1073742031;
+
+    pub const SDLK_KP_MEMSTORE: crate::be_aas_h::C2RustUnnamed_0 = 1073742032;
+
+    pub const SDLK_KP_MEMRECALL: crate::be_aas_h::C2RustUnnamed_0 = 1073742033;
+
+    pub const SDLK_KP_MEMCLEAR: crate::be_aas_h::C2RustUnnamed_0 = 1073742034;
+
+    pub const SDLK_KP_MEMADD: crate::be_aas_h::C2RustUnnamed_0 = 1073742035;
+
+    pub const SDLK_KP_MEMSUBTRACT: crate::be_aas_h::C2RustUnnamed_0 = 1073742036;
+
+    pub const SDLK_KP_MEMMULTIPLY: crate::be_aas_h::C2RustUnnamed_0 = 1073742037;
+
+    pub const SDLK_KP_MEMDIVIDE: crate::be_aas_h::C2RustUnnamed_0 = 1073742038;
+
+    pub const SDLK_KP_PLUSMINUS: crate::be_aas_h::C2RustUnnamed_0 = 1073742039;
+
+    pub const SDLK_KP_CLEAR: crate::be_aas_h::C2RustUnnamed_0 = 1073742040;
+
+    pub const SDLK_KP_CLEARENTRY: crate::be_aas_h::C2RustUnnamed_0 = 1073742041;
+
+    pub const SDLK_KP_BINARY: crate::be_aas_h::C2RustUnnamed_0 = 1073742042;
+
+    pub const SDLK_KP_OCTAL: crate::be_aas_h::C2RustUnnamed_0 = 1073742043;
+
+    pub const SDLK_KP_DECIMAL: crate::be_aas_h::C2RustUnnamed_0 = 1073742044;
+
+    pub const SDLK_KP_HEXADECIMAL: crate::be_aas_h::C2RustUnnamed_0 = 1073742045;
+
+    pub const SDLK_LCTRL: crate::be_aas_h::C2RustUnnamed_0 = 1073742048;
+
+    pub const SDLK_LSHIFT: crate::be_aas_h::C2RustUnnamed_0 = 1073742049;
+
+    pub const SDLK_LALT: crate::be_aas_h::C2RustUnnamed_0 = 1073742050;
+
+    pub const SDLK_LGUI: crate::be_aas_h::C2RustUnnamed_0 = 1073742051;
+
+    pub const SDLK_RCTRL: crate::be_aas_h::C2RustUnnamed_0 = 1073742052;
+
+    pub const SDLK_RSHIFT: crate::be_aas_h::C2RustUnnamed_0 = 1073742053;
+
+    pub const SDLK_RALT: crate::be_aas_h::C2RustUnnamed_0 = 1073742054;
+
+    pub const SDLK_RGUI: crate::be_aas_h::C2RustUnnamed_0 = 1073742055;
+
+    pub const SDLK_MODE: crate::be_aas_h::C2RustUnnamed_0 = 1073742081;
+
+    pub const SDLK_AUDIONEXT: crate::be_aas_h::C2RustUnnamed_0 = 1073742082;
+
+    pub const SDLK_AUDIOPREV: crate::be_aas_h::C2RustUnnamed_0 = 1073742083;
+
+    pub const SDLK_AUDIOSTOP: crate::be_aas_h::C2RustUnnamed_0 = 1073742084;
+
+    pub const SDLK_AUDIOPLAY: crate::be_aas_h::C2RustUnnamed_0 = 1073742085;
+
+    pub const SDLK_AUDIOMUTE: crate::be_aas_h::C2RustUnnamed_0 = 1073742086;
+
+    pub const SDLK_MEDIASELECT: crate::be_aas_h::C2RustUnnamed_0 = 1073742087;
+
+    pub const SDLK_WWW: crate::be_aas_h::C2RustUnnamed_0 = 1073742088;
+
+    pub const SDLK_MAIL: crate::be_aas_h::C2RustUnnamed_0 = 1073742089;
+
+    pub const SDLK_CALCULATOR: crate::be_aas_h::C2RustUnnamed_0 = 1073742090;
+
+    pub const SDLK_COMPUTER: crate::be_aas_h::C2RustUnnamed_0 = 1073742091;
+
+    pub const SDLK_AC_SEARCH: crate::be_aas_h::C2RustUnnamed_0 = 1073742092;
+
+    pub const SDLK_AC_HOME: crate::be_aas_h::C2RustUnnamed_0 = 1073742093;
+
+    pub const SDLK_AC_BACK: crate::be_aas_h::C2RustUnnamed_0 = 1073742094;
+
+    pub const SDLK_AC_FORWARD: crate::be_aas_h::C2RustUnnamed_0 = 1073742095;
+
+    pub const SDLK_AC_STOP: crate::be_aas_h::C2RustUnnamed_0 = 1073742096;
+
+    pub const SDLK_AC_REFRESH: crate::be_aas_h::C2RustUnnamed_0 = 1073742097;
+
+    pub const SDLK_AC_BOOKMARKS: crate::be_aas_h::C2RustUnnamed_0 = 1073742098;
+
+    pub const SDLK_BRIGHTNESSDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1073742099;
+
+    pub const SDLK_BRIGHTNESSUP: crate::be_aas_h::C2RustUnnamed_0 = 1073742100;
+
+    pub const SDLK_DISPLAYSWITCH: crate::be_aas_h::C2RustUnnamed_0 = 1073742101;
+
+    pub const SDLK_KBDILLUMTOGGLE: crate::be_aas_h::C2RustUnnamed_0 = 1073742102;
+
+    pub const SDLK_KBDILLUMDOWN: crate::be_aas_h::C2RustUnnamed_0 = 1073742103;
+
+    pub const SDLK_KBDILLUMUP: crate::be_aas_h::C2RustUnnamed_0 = 1073742104;
+
+    pub const SDLK_EJECT: crate::be_aas_h::C2RustUnnamed_0 = 1073742105;
+
+    pub const SDLK_SLEEP: crate::be_aas_h::C2RustUnnamed_0 = 1073742106;
+
+    pub const SDLK_APP1: crate::be_aas_h::C2RustUnnamed_0 = 1073742107;
+
+    pub const SDLK_APP2: crate::be_aas_h::C2RustUnnamed_0 = 1073742108;
+
+    pub const SDLK_AUDIOREWIND: crate::be_aas_h::C2RustUnnamed_0 = 1073742109;
+
+    pub const SDLK_AUDIOFASTFORWARD: crate::be_aas_h::C2RustUnnamed_0 = 1073742110;
+
+    pub const KMOD_NONE: crate::be_aas_h::C2RustUnnamed_0 = 0;
 
     pub const KMOD_LSHIFT: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
-    pub const KMOD_NONE: crate::be_aas_h::C2RustUnnamed_0 = 0;
+    pub const KMOD_RSHIFT: crate::be_aas_h::C2RustUnnamed_0 = 2;
+
+    pub const KMOD_LCTRL: crate::be_aas_h::C2RustUnnamed_0 = 64;
+
+    pub const KMOD_RCTRL: crate::be_aas_h::C2RustUnnamed_0 = 128;
+
+    pub const KMOD_LALT: crate::be_aas_h::C2RustUnnamed_0 = 256;
+
+    pub const KMOD_RALT: crate::be_aas_h::C2RustUnnamed_0 = 512;
+
+    pub const KMOD_LGUI: crate::be_aas_h::C2RustUnnamed_0 = 1024;
+
+    pub const KMOD_RGUI: crate::be_aas_h::C2RustUnnamed_0 = 2048;
+
+    pub const KMOD_NUM: crate::be_aas_h::C2RustUnnamed_0 = 4096;
+
+    pub const KMOD_CAPS: crate::be_aas_h::C2RustUnnamed_0 = 8192;
+
+    pub const KMOD_MODE: crate::be_aas_h::C2RustUnnamed_0 = 16384;
+
+    pub const KMOD_RESERVED: crate::be_aas_h::C2RustUnnamed_0 = 32768;
     pub type SDL_Scancode = libc::c_uint;
 
-    pub const SDL_NUM_SCANCODES: crate::stdlib::SDL_Scancode = 512;
-
-    pub const SDL_SCANCODE_AUDIOFASTFORWARD: crate::stdlib::SDL_Scancode = 286;
-
-    pub const SDL_SCANCODE_AUDIOREWIND: crate::stdlib::SDL_Scancode = 285;
-
-    pub const SDL_SCANCODE_APP2: crate::stdlib::SDL_Scancode = 284;
-
-    pub const SDL_SCANCODE_APP1: crate::stdlib::SDL_Scancode = 283;
-
-    pub const SDL_SCANCODE_SLEEP: crate::stdlib::SDL_Scancode = 282;
-
-    pub const SDL_SCANCODE_EJECT: crate::stdlib::SDL_Scancode = 281;
-
-    pub const SDL_SCANCODE_KBDILLUMUP: crate::stdlib::SDL_Scancode = 280;
-
-    pub const SDL_SCANCODE_KBDILLUMDOWN: crate::stdlib::SDL_Scancode = 279;
-
-    pub const SDL_SCANCODE_KBDILLUMTOGGLE: crate::stdlib::SDL_Scancode = 278;
-
-    pub const SDL_SCANCODE_DISPLAYSWITCH: crate::stdlib::SDL_Scancode = 277;
-
-    pub const SDL_SCANCODE_BRIGHTNESSUP: crate::stdlib::SDL_Scancode = 276;
-
-    pub const SDL_SCANCODE_BRIGHTNESSDOWN: crate::stdlib::SDL_Scancode = 275;
-
-    pub const SDL_SCANCODE_AC_BOOKMARKS: crate::stdlib::SDL_Scancode = 274;
-
-    pub const SDL_SCANCODE_AC_REFRESH: crate::stdlib::SDL_Scancode = 273;
-
-    pub const SDL_SCANCODE_AC_STOP: crate::stdlib::SDL_Scancode = 272;
-
-    pub const SDL_SCANCODE_AC_FORWARD: crate::stdlib::SDL_Scancode = 271;
-
-    pub const SDL_SCANCODE_AC_BACK: crate::stdlib::SDL_Scancode = 270;
-
-    pub const SDL_SCANCODE_AC_HOME: crate::stdlib::SDL_Scancode = 269;
-
-    pub const SDL_SCANCODE_AC_SEARCH: crate::stdlib::SDL_Scancode = 268;
-
-    pub const SDL_SCANCODE_COMPUTER: crate::stdlib::SDL_Scancode = 267;
-
-    pub const SDL_SCANCODE_CALCULATOR: crate::stdlib::SDL_Scancode = 266;
-
-    pub const SDL_SCANCODE_MAIL: crate::stdlib::SDL_Scancode = 265;
-
-    pub const SDL_SCANCODE_WWW: crate::stdlib::SDL_Scancode = 264;
-
-    pub const SDL_SCANCODE_MEDIASELECT: crate::stdlib::SDL_Scancode = 263;
-
-    pub const SDL_SCANCODE_AUDIOMUTE: crate::stdlib::SDL_Scancode = 262;
-
-    pub const SDL_SCANCODE_AUDIOPLAY: crate::stdlib::SDL_Scancode = 261;
-
-    pub const SDL_SCANCODE_AUDIOSTOP: crate::stdlib::SDL_Scancode = 260;
-
-    pub const SDL_SCANCODE_AUDIOPREV: crate::stdlib::SDL_Scancode = 259;
-
-    pub const SDL_SCANCODE_AUDIONEXT: crate::stdlib::SDL_Scancode = 258;
-
-    pub const SDL_SCANCODE_MODE: crate::stdlib::SDL_Scancode = 257;
-
-    pub const SDL_SCANCODE_RGUI: crate::stdlib::SDL_Scancode = 231;
-
-    pub const SDL_SCANCODE_RALT: crate::stdlib::SDL_Scancode = 230;
-
-    pub const SDL_SCANCODE_RSHIFT: crate::stdlib::SDL_Scancode = 229;
-
-    pub const SDL_SCANCODE_RCTRL: crate::stdlib::SDL_Scancode = 228;
-
-    pub const SDL_SCANCODE_LGUI: crate::stdlib::SDL_Scancode = 227;
-
-    pub const SDL_SCANCODE_LALT: crate::stdlib::SDL_Scancode = 226;
-
-    pub const SDL_SCANCODE_LSHIFT: crate::stdlib::SDL_Scancode = 225;
-
-    pub const SDL_SCANCODE_LCTRL: crate::stdlib::SDL_Scancode = 224;
-
-    pub const SDL_SCANCODE_KP_HEXADECIMAL: crate::stdlib::SDL_Scancode = 221;
-
-    pub const SDL_SCANCODE_KP_DECIMAL: crate::stdlib::SDL_Scancode = 220;
-
-    pub const SDL_SCANCODE_KP_OCTAL: crate::stdlib::SDL_Scancode = 219;
-
-    pub const SDL_SCANCODE_KP_BINARY: crate::stdlib::SDL_Scancode = 218;
-
-    pub const SDL_SCANCODE_KP_CLEARENTRY: crate::stdlib::SDL_Scancode = 217;
-
-    pub const SDL_SCANCODE_KP_CLEAR: crate::stdlib::SDL_Scancode = 216;
-
-    pub const SDL_SCANCODE_KP_PLUSMINUS: crate::stdlib::SDL_Scancode = 215;
-
-    pub const SDL_SCANCODE_KP_MEMDIVIDE: crate::stdlib::SDL_Scancode = 214;
-
-    pub const SDL_SCANCODE_KP_MEMMULTIPLY: crate::stdlib::SDL_Scancode = 213;
-
-    pub const SDL_SCANCODE_KP_MEMSUBTRACT: crate::stdlib::SDL_Scancode = 212;
-
-    pub const SDL_SCANCODE_KP_MEMADD: crate::stdlib::SDL_Scancode = 211;
-
-    pub const SDL_SCANCODE_KP_MEMCLEAR: crate::stdlib::SDL_Scancode = 210;
-
-    pub const SDL_SCANCODE_KP_MEMRECALL: crate::stdlib::SDL_Scancode = 209;
-
-    pub const SDL_SCANCODE_KP_MEMSTORE: crate::stdlib::SDL_Scancode = 208;
-
-    pub const SDL_SCANCODE_KP_EXCLAM: crate::stdlib::SDL_Scancode = 207;
-
-    pub const SDL_SCANCODE_KP_AT: crate::stdlib::SDL_Scancode = 206;
-
-    pub const SDL_SCANCODE_KP_SPACE: crate::stdlib::SDL_Scancode = 205;
-
-    pub const SDL_SCANCODE_KP_HASH: crate::stdlib::SDL_Scancode = 204;
-
-    pub const SDL_SCANCODE_KP_COLON: crate::stdlib::SDL_Scancode = 203;
-
-    pub const SDL_SCANCODE_KP_DBLVERTICALBAR: crate::stdlib::SDL_Scancode = 202;
-
-    pub const SDL_SCANCODE_KP_VERTICALBAR: crate::stdlib::SDL_Scancode = 201;
-
-    pub const SDL_SCANCODE_KP_DBLAMPERSAND: crate::stdlib::SDL_Scancode = 200;
-
-    pub const SDL_SCANCODE_KP_AMPERSAND: crate::stdlib::SDL_Scancode = 199;
-
-    pub const SDL_SCANCODE_KP_GREATER: crate::stdlib::SDL_Scancode = 198;
-
-    pub const SDL_SCANCODE_KP_LESS: crate::stdlib::SDL_Scancode = 197;
-
-    pub const SDL_SCANCODE_KP_PERCENT: crate::stdlib::SDL_Scancode = 196;
-
-    pub const SDL_SCANCODE_KP_POWER: crate::stdlib::SDL_Scancode = 195;
-
-    pub const SDL_SCANCODE_KP_XOR: crate::stdlib::SDL_Scancode = 194;
-
-    pub const SDL_SCANCODE_KP_F: crate::stdlib::SDL_Scancode = 193;
-
-    pub const SDL_SCANCODE_KP_E: crate::stdlib::SDL_Scancode = 192;
-
-    pub const SDL_SCANCODE_KP_D: crate::stdlib::SDL_Scancode = 191;
-
-    pub const SDL_SCANCODE_KP_C: crate::stdlib::SDL_Scancode = 190;
-
-    pub const SDL_SCANCODE_KP_B: crate::stdlib::SDL_Scancode = 189;
-
-    pub const SDL_SCANCODE_KP_A: crate::stdlib::SDL_Scancode = 188;
-
-    pub const SDL_SCANCODE_KP_BACKSPACE: crate::stdlib::SDL_Scancode = 187;
-
-    pub const SDL_SCANCODE_KP_TAB: crate::stdlib::SDL_Scancode = 186;
-
-    pub const SDL_SCANCODE_KP_RIGHTBRACE: crate::stdlib::SDL_Scancode = 185;
-
-    pub const SDL_SCANCODE_KP_LEFTBRACE: crate::stdlib::SDL_Scancode = 184;
-
-    pub const SDL_SCANCODE_KP_RIGHTPAREN: crate::stdlib::SDL_Scancode = 183;
-
-    pub const SDL_SCANCODE_KP_LEFTPAREN: crate::stdlib::SDL_Scancode = 182;
-
-    pub const SDL_SCANCODE_CURRENCYSUBUNIT: crate::stdlib::SDL_Scancode = 181;
-
-    pub const SDL_SCANCODE_CURRENCYUNIT: crate::stdlib::SDL_Scancode = 180;
-
-    pub const SDL_SCANCODE_DECIMALSEPARATOR: crate::stdlib::SDL_Scancode = 179;
-
-    pub const SDL_SCANCODE_THOUSANDSSEPARATOR: crate::stdlib::SDL_Scancode = 178;
-
-    pub const SDL_SCANCODE_KP_000: crate::stdlib::SDL_Scancode = 177;
-
-    pub const SDL_SCANCODE_KP_00: crate::stdlib::SDL_Scancode = 176;
-
-    pub const SDL_SCANCODE_EXSEL: crate::stdlib::SDL_Scancode = 164;
-
-    pub const SDL_SCANCODE_CRSEL: crate::stdlib::SDL_Scancode = 163;
-
-    pub const SDL_SCANCODE_CLEARAGAIN: crate::stdlib::SDL_Scancode = 162;
-
-    pub const SDL_SCANCODE_OPER: crate::stdlib::SDL_Scancode = 161;
-
-    pub const SDL_SCANCODE_OUT: crate::stdlib::SDL_Scancode = 160;
-
-    pub const SDL_SCANCODE_SEPARATOR: crate::stdlib::SDL_Scancode = 159;
-
-    pub const SDL_SCANCODE_RETURN2: crate::stdlib::SDL_Scancode = 158;
-
-    pub const SDL_SCANCODE_PRIOR: crate::stdlib::SDL_Scancode = 157;
-
-    pub const SDL_SCANCODE_CLEAR: crate::stdlib::SDL_Scancode = 156;
-
-    pub const SDL_SCANCODE_CANCEL: crate::stdlib::SDL_Scancode = 155;
-
-    pub const SDL_SCANCODE_SYSREQ: crate::stdlib::SDL_Scancode = 154;
-
-    pub const SDL_SCANCODE_ALTERASE: crate::stdlib::SDL_Scancode = 153;
-
-    pub const SDL_SCANCODE_LANG9: crate::stdlib::SDL_Scancode = 152;
-
-    pub const SDL_SCANCODE_LANG8: crate::stdlib::SDL_Scancode = 151;
-
-    pub const SDL_SCANCODE_LANG7: crate::stdlib::SDL_Scancode = 150;
-
-    pub const SDL_SCANCODE_LANG6: crate::stdlib::SDL_Scancode = 149;
-
-    pub const SDL_SCANCODE_LANG5: crate::stdlib::SDL_Scancode = 148;
-
-    pub const SDL_SCANCODE_LANG4: crate::stdlib::SDL_Scancode = 147;
-
-    pub const SDL_SCANCODE_LANG3: crate::stdlib::SDL_Scancode = 146;
-
-    pub const SDL_SCANCODE_LANG2: crate::stdlib::SDL_Scancode = 145;
-
-    pub const SDL_SCANCODE_LANG1: crate::stdlib::SDL_Scancode = 144;
-
-    pub const SDL_SCANCODE_INTERNATIONAL9: crate::stdlib::SDL_Scancode = 143;
-
-    pub const SDL_SCANCODE_INTERNATIONAL8: crate::stdlib::SDL_Scancode = 142;
-
-    pub const SDL_SCANCODE_INTERNATIONAL7: crate::stdlib::SDL_Scancode = 141;
-
-    pub const SDL_SCANCODE_INTERNATIONAL6: crate::stdlib::SDL_Scancode = 140;
-
-    pub const SDL_SCANCODE_INTERNATIONAL5: crate::stdlib::SDL_Scancode = 139;
-
-    pub const SDL_SCANCODE_INTERNATIONAL4: crate::stdlib::SDL_Scancode = 138;
-
-    pub const SDL_SCANCODE_INTERNATIONAL3: crate::stdlib::SDL_Scancode = 137;
-
-    pub const SDL_SCANCODE_INTERNATIONAL2: crate::stdlib::SDL_Scancode = 136;
-
-    pub const SDL_SCANCODE_INTERNATIONAL1: crate::stdlib::SDL_Scancode = 135;
-
-    pub const SDL_SCANCODE_KP_EQUALSAS400: crate::stdlib::SDL_Scancode = 134;
-
-    pub const SDL_SCANCODE_KP_COMMA: crate::stdlib::SDL_Scancode = 133;
-
-    pub const SDL_SCANCODE_VOLUMEDOWN: crate::stdlib::SDL_Scancode = 129;
-
-    pub const SDL_SCANCODE_VOLUMEUP: crate::stdlib::SDL_Scancode = 128;
-
-    pub const SDL_SCANCODE_MUTE: crate::stdlib::SDL_Scancode = 127;
-
-    pub const SDL_SCANCODE_FIND: crate::stdlib::SDL_Scancode = 126;
-
-    pub const SDL_SCANCODE_PASTE: crate::stdlib::SDL_Scancode = 125;
-
-    pub const SDL_SCANCODE_COPY: crate::stdlib::SDL_Scancode = 124;
-
-    pub const SDL_SCANCODE_CUT: crate::stdlib::SDL_Scancode = 123;
-
-    pub const SDL_SCANCODE_UNDO: crate::stdlib::SDL_Scancode = 122;
-
-    pub const SDL_SCANCODE_AGAIN: crate::stdlib::SDL_Scancode = 121;
-
-    pub const SDL_SCANCODE_STOP: crate::stdlib::SDL_Scancode = 120;
-
-    pub const SDL_SCANCODE_SELECT: crate::stdlib::SDL_Scancode = 119;
-
-    pub const SDL_SCANCODE_MENU: crate::stdlib::SDL_Scancode = 118;
-
-    pub const SDL_SCANCODE_HELP: crate::stdlib::SDL_Scancode = 117;
-
-    pub const SDL_SCANCODE_EXECUTE: crate::stdlib::SDL_Scancode = 116;
-
-    pub const SDL_SCANCODE_F24: crate::stdlib::SDL_Scancode = 115;
-
-    pub const SDL_SCANCODE_F23: crate::stdlib::SDL_Scancode = 114;
-
-    pub const SDL_SCANCODE_F22: crate::stdlib::SDL_Scancode = 113;
-
-    pub const SDL_SCANCODE_F21: crate::stdlib::SDL_Scancode = 112;
-
-    pub const SDL_SCANCODE_F20: crate::stdlib::SDL_Scancode = 111;
-
-    pub const SDL_SCANCODE_F19: crate::stdlib::SDL_Scancode = 110;
-
-    pub const SDL_SCANCODE_F18: crate::stdlib::SDL_Scancode = 109;
-
-    pub const SDL_SCANCODE_F17: crate::stdlib::SDL_Scancode = 108;
-
-    pub const SDL_SCANCODE_F16: crate::stdlib::SDL_Scancode = 107;
-
-    pub const SDL_SCANCODE_F15: crate::stdlib::SDL_Scancode = 106;
-
-    pub const SDL_SCANCODE_F14: crate::stdlib::SDL_Scancode = 105;
-
-    pub const SDL_SCANCODE_F13: crate::stdlib::SDL_Scancode = 104;
-
-    pub const SDL_SCANCODE_KP_EQUALS: crate::stdlib::SDL_Scancode = 103;
-
-    pub const SDL_SCANCODE_POWER: crate::stdlib::SDL_Scancode = 102;
-
-    pub const SDL_SCANCODE_APPLICATION: crate::stdlib::SDL_Scancode = 101;
-
-    pub const SDL_SCANCODE_NONUSBACKSLASH: crate::stdlib::SDL_Scancode = 100;
-
-    pub const SDL_SCANCODE_KP_PERIOD: crate::stdlib::SDL_Scancode = 99;
-
-    pub const SDL_SCANCODE_KP_0: crate::stdlib::SDL_Scancode = 98;
-
-    pub const SDL_SCANCODE_KP_9: crate::stdlib::SDL_Scancode = 97;
-
-    pub const SDL_SCANCODE_KP_8: crate::stdlib::SDL_Scancode = 96;
-
-    pub const SDL_SCANCODE_KP_7: crate::stdlib::SDL_Scancode = 95;
-
-    pub const SDL_SCANCODE_KP_6: crate::stdlib::SDL_Scancode = 94;
-
-    pub const SDL_SCANCODE_KP_5: crate::stdlib::SDL_Scancode = 93;
-
-    pub const SDL_SCANCODE_KP_4: crate::stdlib::SDL_Scancode = 92;
-
-    pub const SDL_SCANCODE_KP_3: crate::stdlib::SDL_Scancode = 91;
-
-    pub const SDL_SCANCODE_KP_2: crate::stdlib::SDL_Scancode = 90;
-
-    pub const SDL_SCANCODE_KP_1: crate::stdlib::SDL_Scancode = 89;
-
-    pub const SDL_SCANCODE_KP_ENTER: crate::stdlib::SDL_Scancode = 88;
-
-    pub const SDL_SCANCODE_KP_PLUS: crate::stdlib::SDL_Scancode = 87;
-
-    pub const SDL_SCANCODE_KP_MINUS: crate::stdlib::SDL_Scancode = 86;
-
-    pub const SDL_SCANCODE_KP_MULTIPLY: crate::stdlib::SDL_Scancode = 85;
-
-    pub const SDL_SCANCODE_KP_DIVIDE: crate::stdlib::SDL_Scancode = 84;
-
-    pub const SDL_SCANCODE_NUMLOCKCLEAR: crate::stdlib::SDL_Scancode = 83;
-
-    pub const SDL_SCANCODE_UP: crate::stdlib::SDL_Scancode = 82;
-
-    pub const SDL_SCANCODE_DOWN: crate::stdlib::SDL_Scancode = 81;
-
-    pub const SDL_SCANCODE_LEFT: crate::stdlib::SDL_Scancode = 80;
-
-    pub const SDL_SCANCODE_RIGHT: crate::stdlib::SDL_Scancode = 79;
-
-    pub const SDL_SCANCODE_PAGEDOWN: crate::stdlib::SDL_Scancode = 78;
-
-    pub const SDL_SCANCODE_END: crate::stdlib::SDL_Scancode = 77;
-
-    pub const SDL_SCANCODE_DELETE: crate::stdlib::SDL_Scancode = 76;
-
-    pub const SDL_SCANCODE_PAGEUP: crate::stdlib::SDL_Scancode = 75;
-
-    pub const SDL_SCANCODE_HOME: crate::stdlib::SDL_Scancode = 74;
-
-    pub const SDL_SCANCODE_INSERT: crate::stdlib::SDL_Scancode = 73;
-
-    pub const SDL_SCANCODE_PAUSE: crate::stdlib::SDL_Scancode = 72;
-
-    pub const SDL_SCANCODE_SCROLLLOCK: crate::stdlib::SDL_Scancode = 71;
-
-    pub const SDL_SCANCODE_PRINTSCREEN: crate::stdlib::SDL_Scancode = 70;
-
-    pub const SDL_SCANCODE_F12: crate::stdlib::SDL_Scancode = 69;
-
-    pub const SDL_SCANCODE_F11: crate::stdlib::SDL_Scancode = 68;
-
-    pub const SDL_SCANCODE_F10: crate::stdlib::SDL_Scancode = 67;
-
-    pub const SDL_SCANCODE_F9: crate::stdlib::SDL_Scancode = 66;
-
-    pub const SDL_SCANCODE_F8: crate::stdlib::SDL_Scancode = 65;
-
-    pub const SDL_SCANCODE_F7: crate::stdlib::SDL_Scancode = 64;
-
-    pub const SDL_SCANCODE_F6: crate::stdlib::SDL_Scancode = 63;
-
-    pub const SDL_SCANCODE_F5: crate::stdlib::SDL_Scancode = 62;
-
-    pub const SDL_SCANCODE_F4: crate::stdlib::SDL_Scancode = 61;
-
-    pub const SDL_SCANCODE_F3: crate::stdlib::SDL_Scancode = 60;
-
-    pub const SDL_SCANCODE_F2: crate::stdlib::SDL_Scancode = 59;
-
-    pub const SDL_SCANCODE_F1: crate::stdlib::SDL_Scancode = 58;
-
-    pub const SDL_SCANCODE_CAPSLOCK: crate::stdlib::SDL_Scancode = 57;
-
-    pub const SDL_SCANCODE_SLASH: crate::stdlib::SDL_Scancode = 56;
-
-    pub const SDL_SCANCODE_PERIOD: crate::stdlib::SDL_Scancode = 55;
-
-    pub const SDL_SCANCODE_COMMA: crate::stdlib::SDL_Scancode = 54;
-
-    pub const SDL_SCANCODE_GRAVE: crate::stdlib::SDL_Scancode = 53;
-
-    pub const SDL_SCANCODE_APOSTROPHE: crate::stdlib::SDL_Scancode = 52;
-
-    pub const SDL_SCANCODE_SEMICOLON: crate::stdlib::SDL_Scancode = 51;
-
-    pub const SDL_SCANCODE_NONUSHASH: crate::stdlib::SDL_Scancode = 50;
-
-    pub const SDL_SCANCODE_BACKSLASH: crate::stdlib::SDL_Scancode = 49;
-
-    pub const SDL_SCANCODE_RIGHTBRACKET: crate::stdlib::SDL_Scancode = 48;
-
-    pub const SDL_SCANCODE_LEFTBRACKET: crate::stdlib::SDL_Scancode = 47;
-
-    pub const SDL_SCANCODE_EQUALS: crate::stdlib::SDL_Scancode = 46;
-
-    pub const SDL_SCANCODE_MINUS: crate::stdlib::SDL_Scancode = 45;
-
-    pub const SDL_SCANCODE_SPACE: crate::stdlib::SDL_Scancode = 44;
-
-    pub const SDL_SCANCODE_TAB: crate::stdlib::SDL_Scancode = 43;
-
-    pub const SDL_SCANCODE_BACKSPACE: crate::stdlib::SDL_Scancode = 42;
-
-    pub const SDL_SCANCODE_ESCAPE: crate::stdlib::SDL_Scancode = 41;
-
-    pub const SDL_SCANCODE_RETURN: crate::stdlib::SDL_Scancode = 40;
-
-    pub const SDL_SCANCODE_0: crate::stdlib::SDL_Scancode = 39;
-
-    pub const SDL_SCANCODE_9: crate::stdlib::SDL_Scancode = 38;
-
-    pub const SDL_SCANCODE_8: crate::stdlib::SDL_Scancode = 37;
-
-    pub const SDL_SCANCODE_7: crate::stdlib::SDL_Scancode = 36;
-
-    pub const SDL_SCANCODE_6: crate::stdlib::SDL_Scancode = 35;
-
-    pub const SDL_SCANCODE_5: crate::stdlib::SDL_Scancode = 34;
-
-    pub const SDL_SCANCODE_4: crate::stdlib::SDL_Scancode = 33;
-
-    pub const SDL_SCANCODE_3: crate::stdlib::SDL_Scancode = 32;
-
-    pub const SDL_SCANCODE_2: crate::stdlib::SDL_Scancode = 31;
-
-    pub const SDL_SCANCODE_1: crate::stdlib::SDL_Scancode = 30;
-
-    pub const SDL_SCANCODE_Z: crate::stdlib::SDL_Scancode = 29;
-
-    pub const SDL_SCANCODE_Y: crate::stdlib::SDL_Scancode = 28;
-
-    pub const SDL_SCANCODE_X: crate::stdlib::SDL_Scancode = 27;
-
-    pub const SDL_SCANCODE_W: crate::stdlib::SDL_Scancode = 26;
-
-    pub const SDL_SCANCODE_V: crate::stdlib::SDL_Scancode = 25;
-
-    pub const SDL_SCANCODE_U: crate::stdlib::SDL_Scancode = 24;
-
-    pub const SDL_SCANCODE_T: crate::stdlib::SDL_Scancode = 23;
-
-    pub const SDL_SCANCODE_S: crate::stdlib::SDL_Scancode = 22;
-
-    pub const SDL_SCANCODE_R: crate::stdlib::SDL_Scancode = 21;
-
-    pub const SDL_SCANCODE_Q: crate::stdlib::SDL_Scancode = 20;
-
-    pub const SDL_SCANCODE_P: crate::stdlib::SDL_Scancode = 19;
-
-    pub const SDL_SCANCODE_O: crate::stdlib::SDL_Scancode = 18;
-
-    pub const SDL_SCANCODE_N: crate::stdlib::SDL_Scancode = 17;
-
-    pub const SDL_SCANCODE_M: crate::stdlib::SDL_Scancode = 16;
-
-    pub const SDL_SCANCODE_L: crate::stdlib::SDL_Scancode = 15;
-
-    pub const SDL_SCANCODE_K: crate::stdlib::SDL_Scancode = 14;
-
-    pub const SDL_SCANCODE_J: crate::stdlib::SDL_Scancode = 13;
-
-    pub const SDL_SCANCODE_I: crate::stdlib::SDL_Scancode = 12;
-
-    pub const SDL_SCANCODE_H: crate::stdlib::SDL_Scancode = 11;
-
-    pub const SDL_SCANCODE_G: crate::stdlib::SDL_Scancode = 10;
-
-    pub const SDL_SCANCODE_F: crate::stdlib::SDL_Scancode = 9;
-
-    pub const SDL_SCANCODE_E: crate::stdlib::SDL_Scancode = 8;
-
-    pub const SDL_SCANCODE_D: crate::stdlib::SDL_Scancode = 7;
-
-    pub const SDL_SCANCODE_C: crate::stdlib::SDL_Scancode = 6;
-
-    pub const SDL_SCANCODE_B: crate::stdlib::SDL_Scancode = 5;
+    pub const SDL_SCANCODE_UNKNOWN: crate::stdlib::SDL_Scancode = 0;
 
     pub const SDL_SCANCODE_A: crate::stdlib::SDL_Scancode = 4;
 
-    pub const SDL_SCANCODE_UNKNOWN: crate::stdlib::SDL_Scancode = 0;
+    pub const SDL_SCANCODE_B: crate::stdlib::SDL_Scancode = 5;
+
+    pub const SDL_SCANCODE_C: crate::stdlib::SDL_Scancode = 6;
+
+    pub const SDL_SCANCODE_D: crate::stdlib::SDL_Scancode = 7;
+
+    pub const SDL_SCANCODE_E: crate::stdlib::SDL_Scancode = 8;
+
+    pub const SDL_SCANCODE_F: crate::stdlib::SDL_Scancode = 9;
+
+    pub const SDL_SCANCODE_G: crate::stdlib::SDL_Scancode = 10;
+
+    pub const SDL_SCANCODE_H: crate::stdlib::SDL_Scancode = 11;
+
+    pub const SDL_SCANCODE_I: crate::stdlib::SDL_Scancode = 12;
+
+    pub const SDL_SCANCODE_J: crate::stdlib::SDL_Scancode = 13;
+
+    pub const SDL_SCANCODE_K: crate::stdlib::SDL_Scancode = 14;
+
+    pub const SDL_SCANCODE_L: crate::stdlib::SDL_Scancode = 15;
+
+    pub const SDL_SCANCODE_M: crate::stdlib::SDL_Scancode = 16;
+
+    pub const SDL_SCANCODE_N: crate::stdlib::SDL_Scancode = 17;
+
+    pub const SDL_SCANCODE_O: crate::stdlib::SDL_Scancode = 18;
+
+    pub const SDL_SCANCODE_P: crate::stdlib::SDL_Scancode = 19;
+
+    pub const SDL_SCANCODE_Q: crate::stdlib::SDL_Scancode = 20;
+
+    pub const SDL_SCANCODE_R: crate::stdlib::SDL_Scancode = 21;
+
+    pub const SDL_SCANCODE_S: crate::stdlib::SDL_Scancode = 22;
+
+    pub const SDL_SCANCODE_T: crate::stdlib::SDL_Scancode = 23;
+
+    pub const SDL_SCANCODE_U: crate::stdlib::SDL_Scancode = 24;
+
+    pub const SDL_SCANCODE_V: crate::stdlib::SDL_Scancode = 25;
+
+    pub const SDL_SCANCODE_W: crate::stdlib::SDL_Scancode = 26;
+
+    pub const SDL_SCANCODE_X: crate::stdlib::SDL_Scancode = 27;
+
+    pub const SDL_SCANCODE_Y: crate::stdlib::SDL_Scancode = 28;
+
+    pub const SDL_SCANCODE_Z: crate::stdlib::SDL_Scancode = 29;
+
+    pub const SDL_SCANCODE_1: crate::stdlib::SDL_Scancode = 30;
+
+    pub const SDL_SCANCODE_2: crate::stdlib::SDL_Scancode = 31;
+
+    pub const SDL_SCANCODE_3: crate::stdlib::SDL_Scancode = 32;
+
+    pub const SDL_SCANCODE_4: crate::stdlib::SDL_Scancode = 33;
+
+    pub const SDL_SCANCODE_5: crate::stdlib::SDL_Scancode = 34;
+
+    pub const SDL_SCANCODE_6: crate::stdlib::SDL_Scancode = 35;
+
+    pub const SDL_SCANCODE_7: crate::stdlib::SDL_Scancode = 36;
+
+    pub const SDL_SCANCODE_8: crate::stdlib::SDL_Scancode = 37;
+
+    pub const SDL_SCANCODE_9: crate::stdlib::SDL_Scancode = 38;
+
+    pub const SDL_SCANCODE_0: crate::stdlib::SDL_Scancode = 39;
+
+    pub const SDL_SCANCODE_RETURN: crate::stdlib::SDL_Scancode = 40;
+
+    pub const SDL_SCANCODE_ESCAPE: crate::stdlib::SDL_Scancode = 41;
+
+    pub const SDL_SCANCODE_BACKSPACE: crate::stdlib::SDL_Scancode = 42;
+
+    pub const SDL_SCANCODE_TAB: crate::stdlib::SDL_Scancode = 43;
+
+    pub const SDL_SCANCODE_SPACE: crate::stdlib::SDL_Scancode = 44;
+
+    pub const SDL_SCANCODE_MINUS: crate::stdlib::SDL_Scancode = 45;
+
+    pub const SDL_SCANCODE_EQUALS: crate::stdlib::SDL_Scancode = 46;
+
+    pub const SDL_SCANCODE_LEFTBRACKET: crate::stdlib::SDL_Scancode = 47;
+
+    pub const SDL_SCANCODE_RIGHTBRACKET: crate::stdlib::SDL_Scancode = 48;
+
+    pub const SDL_SCANCODE_BACKSLASH: crate::stdlib::SDL_Scancode = 49;
+
+    pub const SDL_SCANCODE_NONUSHASH: crate::stdlib::SDL_Scancode = 50;
+
+    pub const SDL_SCANCODE_SEMICOLON: crate::stdlib::SDL_Scancode = 51;
+
+    pub const SDL_SCANCODE_APOSTROPHE: crate::stdlib::SDL_Scancode = 52;
+
+    pub const SDL_SCANCODE_GRAVE: crate::stdlib::SDL_Scancode = 53;
+
+    pub const SDL_SCANCODE_COMMA: crate::stdlib::SDL_Scancode = 54;
+
+    pub const SDL_SCANCODE_PERIOD: crate::stdlib::SDL_Scancode = 55;
+
+    pub const SDL_SCANCODE_SLASH: crate::stdlib::SDL_Scancode = 56;
+
+    pub const SDL_SCANCODE_CAPSLOCK: crate::stdlib::SDL_Scancode = 57;
+
+    pub const SDL_SCANCODE_F1: crate::stdlib::SDL_Scancode = 58;
+
+    pub const SDL_SCANCODE_F2: crate::stdlib::SDL_Scancode = 59;
+
+    pub const SDL_SCANCODE_F3: crate::stdlib::SDL_Scancode = 60;
+
+    pub const SDL_SCANCODE_F4: crate::stdlib::SDL_Scancode = 61;
+
+    pub const SDL_SCANCODE_F5: crate::stdlib::SDL_Scancode = 62;
+
+    pub const SDL_SCANCODE_F6: crate::stdlib::SDL_Scancode = 63;
+
+    pub const SDL_SCANCODE_F7: crate::stdlib::SDL_Scancode = 64;
+
+    pub const SDL_SCANCODE_F8: crate::stdlib::SDL_Scancode = 65;
+
+    pub const SDL_SCANCODE_F9: crate::stdlib::SDL_Scancode = 66;
+
+    pub const SDL_SCANCODE_F10: crate::stdlib::SDL_Scancode = 67;
+
+    pub const SDL_SCANCODE_F11: crate::stdlib::SDL_Scancode = 68;
+
+    pub const SDL_SCANCODE_F12: crate::stdlib::SDL_Scancode = 69;
+
+    pub const SDL_SCANCODE_PRINTSCREEN: crate::stdlib::SDL_Scancode = 70;
+
+    pub const SDL_SCANCODE_SCROLLLOCK: crate::stdlib::SDL_Scancode = 71;
+
+    pub const SDL_SCANCODE_PAUSE: crate::stdlib::SDL_Scancode = 72;
+
+    pub const SDL_SCANCODE_INSERT: crate::stdlib::SDL_Scancode = 73;
+
+    pub const SDL_SCANCODE_HOME: crate::stdlib::SDL_Scancode = 74;
+
+    pub const SDL_SCANCODE_PAGEUP: crate::stdlib::SDL_Scancode = 75;
+
+    pub const SDL_SCANCODE_DELETE: crate::stdlib::SDL_Scancode = 76;
+
+    pub const SDL_SCANCODE_END: crate::stdlib::SDL_Scancode = 77;
+
+    pub const SDL_SCANCODE_PAGEDOWN: crate::stdlib::SDL_Scancode = 78;
+
+    pub const SDL_SCANCODE_RIGHT: crate::stdlib::SDL_Scancode = 79;
+
+    pub const SDL_SCANCODE_LEFT: crate::stdlib::SDL_Scancode = 80;
+
+    pub const SDL_SCANCODE_DOWN: crate::stdlib::SDL_Scancode = 81;
+
+    pub const SDL_SCANCODE_UP: crate::stdlib::SDL_Scancode = 82;
+
+    pub const SDL_SCANCODE_NUMLOCKCLEAR: crate::stdlib::SDL_Scancode = 83;
+
+    pub const SDL_SCANCODE_KP_DIVIDE: crate::stdlib::SDL_Scancode = 84;
+
+    pub const SDL_SCANCODE_KP_MULTIPLY: crate::stdlib::SDL_Scancode = 85;
+
+    pub const SDL_SCANCODE_KP_MINUS: crate::stdlib::SDL_Scancode = 86;
+
+    pub const SDL_SCANCODE_KP_PLUS: crate::stdlib::SDL_Scancode = 87;
+
+    pub const SDL_SCANCODE_KP_ENTER: crate::stdlib::SDL_Scancode = 88;
+
+    pub const SDL_SCANCODE_KP_1: crate::stdlib::SDL_Scancode = 89;
+
+    pub const SDL_SCANCODE_KP_2: crate::stdlib::SDL_Scancode = 90;
+
+    pub const SDL_SCANCODE_KP_3: crate::stdlib::SDL_Scancode = 91;
+
+    pub const SDL_SCANCODE_KP_4: crate::stdlib::SDL_Scancode = 92;
+
+    pub const SDL_SCANCODE_KP_5: crate::stdlib::SDL_Scancode = 93;
+
+    pub const SDL_SCANCODE_KP_6: crate::stdlib::SDL_Scancode = 94;
+
+    pub const SDL_SCANCODE_KP_7: crate::stdlib::SDL_Scancode = 95;
+
+    pub const SDL_SCANCODE_KP_8: crate::stdlib::SDL_Scancode = 96;
+
+    pub const SDL_SCANCODE_KP_9: crate::stdlib::SDL_Scancode = 97;
+
+    pub const SDL_SCANCODE_KP_0: crate::stdlib::SDL_Scancode = 98;
+
+    pub const SDL_SCANCODE_KP_PERIOD: crate::stdlib::SDL_Scancode = 99;
+
+    pub const SDL_SCANCODE_NONUSBACKSLASH: crate::stdlib::SDL_Scancode = 100;
+
+    pub const SDL_SCANCODE_APPLICATION: crate::stdlib::SDL_Scancode = 101;
+
+    pub const SDL_SCANCODE_POWER: crate::stdlib::SDL_Scancode = 102;
+
+    pub const SDL_SCANCODE_KP_EQUALS: crate::stdlib::SDL_Scancode = 103;
+
+    pub const SDL_SCANCODE_F13: crate::stdlib::SDL_Scancode = 104;
+
+    pub const SDL_SCANCODE_F14: crate::stdlib::SDL_Scancode = 105;
+
+    pub const SDL_SCANCODE_F15: crate::stdlib::SDL_Scancode = 106;
+
+    pub const SDL_SCANCODE_F16: crate::stdlib::SDL_Scancode = 107;
+
+    pub const SDL_SCANCODE_F17: crate::stdlib::SDL_Scancode = 108;
+
+    pub const SDL_SCANCODE_F18: crate::stdlib::SDL_Scancode = 109;
+
+    pub const SDL_SCANCODE_F19: crate::stdlib::SDL_Scancode = 110;
+
+    pub const SDL_SCANCODE_F20: crate::stdlib::SDL_Scancode = 111;
+
+    pub const SDL_SCANCODE_F21: crate::stdlib::SDL_Scancode = 112;
+
+    pub const SDL_SCANCODE_F22: crate::stdlib::SDL_Scancode = 113;
+
+    pub const SDL_SCANCODE_F23: crate::stdlib::SDL_Scancode = 114;
+
+    pub const SDL_SCANCODE_F24: crate::stdlib::SDL_Scancode = 115;
+
+    pub const SDL_SCANCODE_EXECUTE: crate::stdlib::SDL_Scancode = 116;
+
+    pub const SDL_SCANCODE_HELP: crate::stdlib::SDL_Scancode = 117;
+
+    pub const SDL_SCANCODE_MENU: crate::stdlib::SDL_Scancode = 118;
+
+    pub const SDL_SCANCODE_SELECT: crate::stdlib::SDL_Scancode = 119;
+
+    pub const SDL_SCANCODE_STOP: crate::stdlib::SDL_Scancode = 120;
+
+    pub const SDL_SCANCODE_AGAIN: crate::stdlib::SDL_Scancode = 121;
+
+    pub const SDL_SCANCODE_UNDO: crate::stdlib::SDL_Scancode = 122;
+
+    pub const SDL_SCANCODE_CUT: crate::stdlib::SDL_Scancode = 123;
+
+    pub const SDL_SCANCODE_COPY: crate::stdlib::SDL_Scancode = 124;
+
+    pub const SDL_SCANCODE_PASTE: crate::stdlib::SDL_Scancode = 125;
+
+    pub const SDL_SCANCODE_FIND: crate::stdlib::SDL_Scancode = 126;
+
+    pub const SDL_SCANCODE_MUTE: crate::stdlib::SDL_Scancode = 127;
+
+    pub const SDL_SCANCODE_VOLUMEUP: crate::stdlib::SDL_Scancode = 128;
+
+    pub const SDL_SCANCODE_VOLUMEDOWN: crate::stdlib::SDL_Scancode = 129;
+
+    pub const SDL_SCANCODE_KP_COMMA: crate::stdlib::SDL_Scancode = 133;
+
+    pub const SDL_SCANCODE_KP_EQUALSAS400: crate::stdlib::SDL_Scancode = 134;
+
+    pub const SDL_SCANCODE_INTERNATIONAL1: crate::stdlib::SDL_Scancode = 135;
+
+    pub const SDL_SCANCODE_INTERNATIONAL2: crate::stdlib::SDL_Scancode = 136;
+
+    pub const SDL_SCANCODE_INTERNATIONAL3: crate::stdlib::SDL_Scancode = 137;
+
+    pub const SDL_SCANCODE_INTERNATIONAL4: crate::stdlib::SDL_Scancode = 138;
+
+    pub const SDL_SCANCODE_INTERNATIONAL5: crate::stdlib::SDL_Scancode = 139;
+
+    pub const SDL_SCANCODE_INTERNATIONAL6: crate::stdlib::SDL_Scancode = 140;
+
+    pub const SDL_SCANCODE_INTERNATIONAL7: crate::stdlib::SDL_Scancode = 141;
+
+    pub const SDL_SCANCODE_INTERNATIONAL8: crate::stdlib::SDL_Scancode = 142;
+
+    pub const SDL_SCANCODE_INTERNATIONAL9: crate::stdlib::SDL_Scancode = 143;
+
+    pub const SDL_SCANCODE_LANG1: crate::stdlib::SDL_Scancode = 144;
+
+    pub const SDL_SCANCODE_LANG2: crate::stdlib::SDL_Scancode = 145;
+
+    pub const SDL_SCANCODE_LANG3: crate::stdlib::SDL_Scancode = 146;
+
+    pub const SDL_SCANCODE_LANG4: crate::stdlib::SDL_Scancode = 147;
+
+    pub const SDL_SCANCODE_LANG5: crate::stdlib::SDL_Scancode = 148;
+
+    pub const SDL_SCANCODE_LANG6: crate::stdlib::SDL_Scancode = 149;
+
+    pub const SDL_SCANCODE_LANG7: crate::stdlib::SDL_Scancode = 150;
+
+    pub const SDL_SCANCODE_LANG8: crate::stdlib::SDL_Scancode = 151;
+
+    pub const SDL_SCANCODE_LANG9: crate::stdlib::SDL_Scancode = 152;
+
+    pub const SDL_SCANCODE_ALTERASE: crate::stdlib::SDL_Scancode = 153;
+
+    pub const SDL_SCANCODE_SYSREQ: crate::stdlib::SDL_Scancode = 154;
+
+    pub const SDL_SCANCODE_CANCEL: crate::stdlib::SDL_Scancode = 155;
+
+    pub const SDL_SCANCODE_CLEAR: crate::stdlib::SDL_Scancode = 156;
+
+    pub const SDL_SCANCODE_PRIOR: crate::stdlib::SDL_Scancode = 157;
+
+    pub const SDL_SCANCODE_RETURN2: crate::stdlib::SDL_Scancode = 158;
+
+    pub const SDL_SCANCODE_SEPARATOR: crate::stdlib::SDL_Scancode = 159;
+
+    pub const SDL_SCANCODE_OUT: crate::stdlib::SDL_Scancode = 160;
+
+    pub const SDL_SCANCODE_OPER: crate::stdlib::SDL_Scancode = 161;
+
+    pub const SDL_SCANCODE_CLEARAGAIN: crate::stdlib::SDL_Scancode = 162;
+
+    pub const SDL_SCANCODE_CRSEL: crate::stdlib::SDL_Scancode = 163;
+
+    pub const SDL_SCANCODE_EXSEL: crate::stdlib::SDL_Scancode = 164;
+
+    pub const SDL_SCANCODE_KP_00: crate::stdlib::SDL_Scancode = 176;
+
+    pub const SDL_SCANCODE_KP_000: crate::stdlib::SDL_Scancode = 177;
+
+    pub const SDL_SCANCODE_THOUSANDSSEPARATOR: crate::stdlib::SDL_Scancode = 178;
+
+    pub const SDL_SCANCODE_DECIMALSEPARATOR: crate::stdlib::SDL_Scancode = 179;
+
+    pub const SDL_SCANCODE_CURRENCYUNIT: crate::stdlib::SDL_Scancode = 180;
+
+    pub const SDL_SCANCODE_CURRENCYSUBUNIT: crate::stdlib::SDL_Scancode = 181;
+
+    pub const SDL_SCANCODE_KP_LEFTPAREN: crate::stdlib::SDL_Scancode = 182;
+
+    pub const SDL_SCANCODE_KP_RIGHTPAREN: crate::stdlib::SDL_Scancode = 183;
+
+    pub const SDL_SCANCODE_KP_LEFTBRACE: crate::stdlib::SDL_Scancode = 184;
+
+    pub const SDL_SCANCODE_KP_RIGHTBRACE: crate::stdlib::SDL_Scancode = 185;
+
+    pub const SDL_SCANCODE_KP_TAB: crate::stdlib::SDL_Scancode = 186;
+
+    pub const SDL_SCANCODE_KP_BACKSPACE: crate::stdlib::SDL_Scancode = 187;
+
+    pub const SDL_SCANCODE_KP_A: crate::stdlib::SDL_Scancode = 188;
+
+    pub const SDL_SCANCODE_KP_B: crate::stdlib::SDL_Scancode = 189;
+
+    pub const SDL_SCANCODE_KP_C: crate::stdlib::SDL_Scancode = 190;
+
+    pub const SDL_SCANCODE_KP_D: crate::stdlib::SDL_Scancode = 191;
+
+    pub const SDL_SCANCODE_KP_E: crate::stdlib::SDL_Scancode = 192;
+
+    pub const SDL_SCANCODE_KP_F: crate::stdlib::SDL_Scancode = 193;
+
+    pub const SDL_SCANCODE_KP_XOR: crate::stdlib::SDL_Scancode = 194;
+
+    pub const SDL_SCANCODE_KP_POWER: crate::stdlib::SDL_Scancode = 195;
+
+    pub const SDL_SCANCODE_KP_PERCENT: crate::stdlib::SDL_Scancode = 196;
+
+    pub const SDL_SCANCODE_KP_LESS: crate::stdlib::SDL_Scancode = 197;
+
+    pub const SDL_SCANCODE_KP_GREATER: crate::stdlib::SDL_Scancode = 198;
+
+    pub const SDL_SCANCODE_KP_AMPERSAND: crate::stdlib::SDL_Scancode = 199;
+
+    pub const SDL_SCANCODE_KP_DBLAMPERSAND: crate::stdlib::SDL_Scancode = 200;
+
+    pub const SDL_SCANCODE_KP_VERTICALBAR: crate::stdlib::SDL_Scancode = 201;
+
+    pub const SDL_SCANCODE_KP_DBLVERTICALBAR: crate::stdlib::SDL_Scancode = 202;
+
+    pub const SDL_SCANCODE_KP_COLON: crate::stdlib::SDL_Scancode = 203;
+
+    pub const SDL_SCANCODE_KP_HASH: crate::stdlib::SDL_Scancode = 204;
+
+    pub const SDL_SCANCODE_KP_SPACE: crate::stdlib::SDL_Scancode = 205;
+
+    pub const SDL_SCANCODE_KP_AT: crate::stdlib::SDL_Scancode = 206;
+
+    pub const SDL_SCANCODE_KP_EXCLAM: crate::stdlib::SDL_Scancode = 207;
+
+    pub const SDL_SCANCODE_KP_MEMSTORE: crate::stdlib::SDL_Scancode = 208;
+
+    pub const SDL_SCANCODE_KP_MEMRECALL: crate::stdlib::SDL_Scancode = 209;
+
+    pub const SDL_SCANCODE_KP_MEMCLEAR: crate::stdlib::SDL_Scancode = 210;
+
+    pub const SDL_SCANCODE_KP_MEMADD: crate::stdlib::SDL_Scancode = 211;
+
+    pub const SDL_SCANCODE_KP_MEMSUBTRACT: crate::stdlib::SDL_Scancode = 212;
+
+    pub const SDL_SCANCODE_KP_MEMMULTIPLY: crate::stdlib::SDL_Scancode = 213;
+
+    pub const SDL_SCANCODE_KP_MEMDIVIDE: crate::stdlib::SDL_Scancode = 214;
+
+    pub const SDL_SCANCODE_KP_PLUSMINUS: crate::stdlib::SDL_Scancode = 215;
+
+    pub const SDL_SCANCODE_KP_CLEAR: crate::stdlib::SDL_Scancode = 216;
+
+    pub const SDL_SCANCODE_KP_CLEARENTRY: crate::stdlib::SDL_Scancode = 217;
+
+    pub const SDL_SCANCODE_KP_BINARY: crate::stdlib::SDL_Scancode = 218;
+
+    pub const SDL_SCANCODE_KP_OCTAL: crate::stdlib::SDL_Scancode = 219;
+
+    pub const SDL_SCANCODE_KP_DECIMAL: crate::stdlib::SDL_Scancode = 220;
+
+    pub const SDL_SCANCODE_KP_HEXADECIMAL: crate::stdlib::SDL_Scancode = 221;
+
+    pub const SDL_SCANCODE_LCTRL: crate::stdlib::SDL_Scancode = 224;
+
+    pub const SDL_SCANCODE_LSHIFT: crate::stdlib::SDL_Scancode = 225;
+
+    pub const SDL_SCANCODE_LALT: crate::stdlib::SDL_Scancode = 226;
+
+    pub const SDL_SCANCODE_LGUI: crate::stdlib::SDL_Scancode = 227;
+
+    pub const SDL_SCANCODE_RCTRL: crate::stdlib::SDL_Scancode = 228;
+
+    pub const SDL_SCANCODE_RSHIFT: crate::stdlib::SDL_Scancode = 229;
+
+    pub const SDL_SCANCODE_RALT: crate::stdlib::SDL_Scancode = 230;
+
+    pub const SDL_SCANCODE_RGUI: crate::stdlib::SDL_Scancode = 231;
+
+    pub const SDL_SCANCODE_MODE: crate::stdlib::SDL_Scancode = 257;
+
+    pub const SDL_SCANCODE_AUDIONEXT: crate::stdlib::SDL_Scancode = 258;
+
+    pub const SDL_SCANCODE_AUDIOPREV: crate::stdlib::SDL_Scancode = 259;
+
+    pub const SDL_SCANCODE_AUDIOSTOP: crate::stdlib::SDL_Scancode = 260;
+
+    pub const SDL_SCANCODE_AUDIOPLAY: crate::stdlib::SDL_Scancode = 261;
+
+    pub const SDL_SCANCODE_AUDIOMUTE: crate::stdlib::SDL_Scancode = 262;
+
+    pub const SDL_SCANCODE_MEDIASELECT: crate::stdlib::SDL_Scancode = 263;
+
+    pub const SDL_SCANCODE_WWW: crate::stdlib::SDL_Scancode = 264;
+
+    pub const SDL_SCANCODE_MAIL: crate::stdlib::SDL_Scancode = 265;
+
+    pub const SDL_SCANCODE_CALCULATOR: crate::stdlib::SDL_Scancode = 266;
+
+    pub const SDL_SCANCODE_COMPUTER: crate::stdlib::SDL_Scancode = 267;
+
+    pub const SDL_SCANCODE_AC_SEARCH: crate::stdlib::SDL_Scancode = 268;
+
+    pub const SDL_SCANCODE_AC_HOME: crate::stdlib::SDL_Scancode = 269;
+
+    pub const SDL_SCANCODE_AC_BACK: crate::stdlib::SDL_Scancode = 270;
+
+    pub const SDL_SCANCODE_AC_FORWARD: crate::stdlib::SDL_Scancode = 271;
+
+    pub const SDL_SCANCODE_AC_STOP: crate::stdlib::SDL_Scancode = 272;
+
+    pub const SDL_SCANCODE_AC_REFRESH: crate::stdlib::SDL_Scancode = 273;
+
+    pub const SDL_SCANCODE_AC_BOOKMARKS: crate::stdlib::SDL_Scancode = 274;
+
+    pub const SDL_SCANCODE_BRIGHTNESSDOWN: crate::stdlib::SDL_Scancode = 275;
+
+    pub const SDL_SCANCODE_BRIGHTNESSUP: crate::stdlib::SDL_Scancode = 276;
+
+    pub const SDL_SCANCODE_DISPLAYSWITCH: crate::stdlib::SDL_Scancode = 277;
+
+    pub const SDL_SCANCODE_KBDILLUMTOGGLE: crate::stdlib::SDL_Scancode = 278;
+
+    pub const SDL_SCANCODE_KBDILLUMDOWN: crate::stdlib::SDL_Scancode = 279;
+
+    pub const SDL_SCANCODE_KBDILLUMUP: crate::stdlib::SDL_Scancode = 280;
+
+    pub const SDL_SCANCODE_EJECT: crate::stdlib::SDL_Scancode = 281;
+
+    pub const SDL_SCANCODE_SLEEP: crate::stdlib::SDL_Scancode = 282;
+
+    pub const SDL_SCANCODE_APP1: crate::stdlib::SDL_Scancode = 283;
+
+    pub const SDL_SCANCODE_APP2: crate::stdlib::SDL_Scancode = 284;
+
+    pub const SDL_SCANCODE_AUDIOREWIND: crate::stdlib::SDL_Scancode = 285;
+
+    pub const SDL_SCANCODE_AUDIOFASTFORWARD: crate::stdlib::SDL_Scancode = 286;
+
+    pub const SDL_NUM_SCANCODES: crate::stdlib::SDL_Scancode = 512;
     pub type SDL_bool = libc::c_uint;
+
+    pub const SDL_FALSE: crate::stdlib::SDL_bool = 0;
+
+    pub const SDL_TRUE: crate::stdlib::SDL_bool = 1;
 
     pub type Uint8 = crate::stdlib::uint8_t;
 
@@ -9382,10 +9138,6 @@ pub mod stdlib {
     pub type Uint32 = crate::stdlib::uint32_t;
 
     pub type Sint64 = crate::stdlib::int64_t;
-
-    pub const SDL_TRUE: crate::stdlib::SDL_bool = 1;
-
-    pub const SDL_FALSE: crate::stdlib::SDL_bool = 0;
     pub type SDL_TouchID = crate::stdlib::Sint64;
 
     pub type SDL_FingerID = crate::stdlib::Sint64;
@@ -9396,93 +9148,93 @@ pub mod stdlib {
         pub minor: crate::stdlib::Uint8,
         pub patch: crate::stdlib::Uint8,
     }
-    pub const SDL_WINDOW_VULKAN: crate::be_aas_h::C2RustUnnamed_0 = 268435456;
-
-    pub const SDL_WINDOW_POPUP_MENU: crate::be_aas_h::C2RustUnnamed_0 = 524288;
-
-    pub const SDL_WINDOW_TOOLTIP: crate::be_aas_h::C2RustUnnamed_0 = 262144;
-
-    pub const SDL_WINDOW_UTILITY: crate::be_aas_h::C2RustUnnamed_0 = 131072;
-
-    pub const SDL_WINDOW_SKIP_TASKBAR: crate::be_aas_h::C2RustUnnamed_0 = 65536;
-
-    pub const SDL_WINDOW_ALWAYS_ON_TOP: crate::be_aas_h::C2RustUnnamed_0 = 32768;
-
-    pub const SDL_WINDOW_MOUSE_CAPTURE: crate::be_aas_h::C2RustUnnamed_0 = 16384;
-
-    pub const SDL_WINDOW_ALLOW_HIGHDPI: crate::be_aas_h::C2RustUnnamed_0 = 8192;
-
-    pub const SDL_WINDOW_FOREIGN: crate::be_aas_h::C2RustUnnamed_0 = 2048;
-
-    pub const SDL_WINDOW_FULLSCREEN_DESKTOP: crate::be_aas_h::C2RustUnnamed_0 = 4097;
-
-    pub const SDL_WINDOW_MOUSE_FOCUS: crate::be_aas_h::C2RustUnnamed_0 = 1024;
-
-    pub const SDL_WINDOW_INPUT_FOCUS: crate::be_aas_h::C2RustUnnamed_0 = 512;
-
-    pub const SDL_WINDOW_INPUT_GRABBED: crate::be_aas_h::C2RustUnnamed_0 = 256;
-
-    pub const SDL_WINDOW_MAXIMIZED: crate::be_aas_h::C2RustUnnamed_0 = 128;
-
-    pub const SDL_WINDOW_MINIMIZED: crate::be_aas_h::C2RustUnnamed_0 = 64;
-
-    pub const SDL_WINDOW_RESIZABLE: crate::be_aas_h::C2RustUnnamed_0 = 32;
-
-    pub const SDL_WINDOW_BORDERLESS: crate::be_aas_h::C2RustUnnamed_0 = 16;
-
-    pub const SDL_WINDOW_HIDDEN: crate::be_aas_h::C2RustUnnamed_0 = 8;
-
-    pub const SDL_WINDOW_SHOWN: crate::be_aas_h::C2RustUnnamed_0 = 4;
+    pub const SDL_WINDOW_FULLSCREEN: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
     pub const SDL_WINDOW_OPENGL: crate::be_aas_h::C2RustUnnamed_0 = 2;
 
-    pub const SDL_WINDOW_FULLSCREEN: crate::be_aas_h::C2RustUnnamed_0 = 1;
+    pub const SDL_WINDOW_SHOWN: crate::be_aas_h::C2RustUnnamed_0 = 4;
 
-    pub const SDL_WINDOWEVENT_HIT_TEST: crate::be_aas_h::C2RustUnnamed_0 = 16;
+    pub const SDL_WINDOW_HIDDEN: crate::be_aas_h::C2RustUnnamed_0 = 8;
 
-    pub const SDL_WINDOWEVENT_TAKE_FOCUS: crate::be_aas_h::C2RustUnnamed_0 = 15;
+    pub const SDL_WINDOW_BORDERLESS: crate::be_aas_h::C2RustUnnamed_0 = 16;
 
-    pub const SDL_WINDOWEVENT_CLOSE: crate::be_aas_h::C2RustUnnamed_0 = 14;
+    pub const SDL_WINDOW_RESIZABLE: crate::be_aas_h::C2RustUnnamed_0 = 32;
 
-    pub const SDL_WINDOWEVENT_FOCUS_LOST: crate::be_aas_h::C2RustUnnamed_0 = 13;
+    pub const SDL_WINDOW_MINIMIZED: crate::be_aas_h::C2RustUnnamed_0 = 64;
 
-    pub const SDL_WINDOWEVENT_FOCUS_GAINED: crate::be_aas_h::C2RustUnnamed_0 = 12;
+    pub const SDL_WINDOW_MAXIMIZED: crate::be_aas_h::C2RustUnnamed_0 = 128;
 
-    pub const SDL_WINDOWEVENT_LEAVE: crate::be_aas_h::C2RustUnnamed_0 = 11;
+    pub const SDL_WINDOW_INPUT_GRABBED: crate::be_aas_h::C2RustUnnamed_0 = 256;
 
-    pub const SDL_WINDOWEVENT_ENTER: crate::be_aas_h::C2RustUnnamed_0 = 10;
+    pub const SDL_WINDOW_INPUT_FOCUS: crate::be_aas_h::C2RustUnnamed_0 = 512;
 
-    pub const SDL_WINDOWEVENT_RESTORED: crate::be_aas_h::C2RustUnnamed_0 = 9;
+    pub const SDL_WINDOW_MOUSE_FOCUS: crate::be_aas_h::C2RustUnnamed_0 = 1024;
 
-    pub const SDL_WINDOWEVENT_MAXIMIZED: crate::be_aas_h::C2RustUnnamed_0 = 8;
+    pub const SDL_WINDOW_FULLSCREEN_DESKTOP: crate::be_aas_h::C2RustUnnamed_0 = 4097;
 
-    pub const SDL_WINDOWEVENT_MINIMIZED: crate::be_aas_h::C2RustUnnamed_0 = 7;
+    pub const SDL_WINDOW_FOREIGN: crate::be_aas_h::C2RustUnnamed_0 = 2048;
 
-    pub const SDL_WINDOWEVENT_SIZE_CHANGED: crate::be_aas_h::C2RustUnnamed_0 = 6;
+    pub const SDL_WINDOW_ALLOW_HIGHDPI: crate::be_aas_h::C2RustUnnamed_0 = 8192;
 
-    pub const SDL_WINDOWEVENT_RESIZED: crate::be_aas_h::C2RustUnnamed_0 = 5;
+    pub const SDL_WINDOW_MOUSE_CAPTURE: crate::be_aas_h::C2RustUnnamed_0 = 16384;
 
-    pub const SDL_WINDOWEVENT_MOVED: crate::be_aas_h::C2RustUnnamed_0 = 4;
+    pub const SDL_WINDOW_ALWAYS_ON_TOP: crate::be_aas_h::C2RustUnnamed_0 = 32768;
 
-    pub const SDL_WINDOWEVENT_EXPOSED: crate::be_aas_h::C2RustUnnamed_0 = 3;
+    pub const SDL_WINDOW_SKIP_TASKBAR: crate::be_aas_h::C2RustUnnamed_0 = 65536;
 
-    pub const SDL_WINDOWEVENT_HIDDEN: crate::be_aas_h::C2RustUnnamed_0 = 2;
+    pub const SDL_WINDOW_UTILITY: crate::be_aas_h::C2RustUnnamed_0 = 131072;
+
+    pub const SDL_WINDOW_TOOLTIP: crate::be_aas_h::C2RustUnnamed_0 = 262144;
+
+    pub const SDL_WINDOW_POPUP_MENU: crate::be_aas_h::C2RustUnnamed_0 = 524288;
+
+    pub const SDL_WINDOW_VULKAN: crate::be_aas_h::C2RustUnnamed_0 = 268435456;
+
+    pub const SDL_WINDOWEVENT_NONE: crate::be_aas_h::C2RustUnnamed_0 = 0;
 
     pub const SDL_WINDOWEVENT_SHOWN: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
-    pub const SDL_WINDOWEVENT_NONE: crate::be_aas_h::C2RustUnnamed_0 = 0;
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub union C2RustUnnamed_18 {
-        pub __wch: libc::c_uint,
-        pub __wchb: [libc::c_char; 4],
-    }
+    pub const SDL_WINDOWEVENT_HIDDEN: crate::be_aas_h::C2RustUnnamed_0 = 2;
 
+    pub const SDL_WINDOWEVENT_EXPOSED: crate::be_aas_h::C2RustUnnamed_0 = 3;
+
+    pub const SDL_WINDOWEVENT_MOVED: crate::be_aas_h::C2RustUnnamed_0 = 4;
+
+    pub const SDL_WINDOWEVENT_RESIZED: crate::be_aas_h::C2RustUnnamed_0 = 5;
+
+    pub const SDL_WINDOWEVENT_SIZE_CHANGED: crate::be_aas_h::C2RustUnnamed_0 = 6;
+
+    pub const SDL_WINDOWEVENT_MINIMIZED: crate::be_aas_h::C2RustUnnamed_0 = 7;
+
+    pub const SDL_WINDOWEVENT_MAXIMIZED: crate::be_aas_h::C2RustUnnamed_0 = 8;
+
+    pub const SDL_WINDOWEVENT_RESTORED: crate::be_aas_h::C2RustUnnamed_0 = 9;
+
+    pub const SDL_WINDOWEVENT_ENTER: crate::be_aas_h::C2RustUnnamed_0 = 10;
+
+    pub const SDL_WINDOWEVENT_LEAVE: crate::be_aas_h::C2RustUnnamed_0 = 11;
+
+    pub const SDL_WINDOWEVENT_FOCUS_GAINED: crate::be_aas_h::C2RustUnnamed_0 = 12;
+
+    pub const SDL_WINDOWEVENT_FOCUS_LOST: crate::be_aas_h::C2RustUnnamed_0 = 13;
+
+    pub const SDL_WINDOWEVENT_CLOSE: crate::be_aas_h::C2RustUnnamed_0 = 14;
+
+    pub const SDL_WINDOWEVENT_TAKE_FOCUS: crate::be_aas_h::C2RustUnnamed_0 = 15;
+
+    pub const SDL_WINDOWEVENT_HIT_TEST: crate::be_aas_h::C2RustUnnamed_0 = 16;
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct __mbstate_t {
         pub __count: libc::c_int,
         pub __value: crate::stdlib::C2RustUnnamed_18,
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub union C2RustUnnamed_18 {
+        pub __wch: libc::c_uint,
+        pub __wchb: [libc::c_char; 4],
     }
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -9490,106 +9242,146 @@ pub mod stdlib {
         pub __val: [libc::c_ulong; 16],
     }
     pub type clock_t = crate::stdlib::__clock_t;
-    pub const _ISalnum: crate::be_aas_h::C2RustUnnamed_0 = 8;
-
-    pub const _ISpunct: crate::be_aas_h::C2RustUnnamed_0 = 4;
-
-    pub const _IScntrl: crate::be_aas_h::C2RustUnnamed_0 = 2;
-
-    pub const _ISblank: crate::be_aas_h::C2RustUnnamed_0 = 1;
-
-    pub const _ISgraph: crate::be_aas_h::C2RustUnnamed_0 = 32768;
-
-    pub const _ISprint: crate::be_aas_h::C2RustUnnamed_0 = 16384;
-
-    pub const _ISspace: crate::be_aas_h::C2RustUnnamed_0 = 8192;
-
-    pub const _ISxdigit: crate::be_aas_h::C2RustUnnamed_0 = 4096;
-
-    pub const _ISdigit: crate::be_aas_h::C2RustUnnamed_0 = 2048;
-
-    pub const _ISalpha: crate::be_aas_h::C2RustUnnamed_0 = 1024;
+    pub const _ISupper: crate::be_aas_h::C2RustUnnamed_0 = 256;
 
     pub const _ISlower: crate::be_aas_h::C2RustUnnamed_0 = 512;
 
-    pub const _ISupper: crate::be_aas_h::C2RustUnnamed_0 = 256;
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct dirent {
-        pub d_ino: crate::stdlib::__ino_t,
-        pub d_off: crate::stdlib::__off_t,
-        pub d_reclen: libc::c_ushort,
-        pub d_type: libc::c_uchar,
-        pub d_name: [libc::c_char; 256],
-    }
+    pub const _ISalpha: crate::be_aas_h::C2RustUnnamed_0 = 1024;
+
+    pub const _ISdigit: crate::be_aas_h::C2RustUnnamed_0 = 2048;
+
+    pub const _ISxdigit: crate::be_aas_h::C2RustUnnamed_0 = 4096;
+
+    pub const _ISspace: crate::be_aas_h::C2RustUnnamed_0 = 8192;
+
+    pub const _ISprint: crate::be_aas_h::C2RustUnnamed_0 = 16384;
+
+    pub const _ISgraph: crate::be_aas_h::C2RustUnnamed_0 = 32768;
+
+    pub const _ISblank: crate::be_aas_h::C2RustUnnamed_0 = 1;
+
+    pub const _IScntrl: crate::be_aas_h::C2RustUnnamed_0 = 2;
+
+    pub const _ISpunct: crate::be_aas_h::C2RustUnnamed_0 = 4;
+
+    pub const _ISalnum: crate::be_aas_h::C2RustUnnamed_0 = 8;
     pub const IFF_UP: crate::be_aas_h::C2RustUnnamed_0 = 1;
 
-    pub const IFF_DYNAMIC: crate::be_aas_h::C2RustUnnamed_0 = 32768;
-
-    pub const IFF_AUTOMEDIA: crate::be_aas_h::C2RustUnnamed_0 = 16384;
-
-    pub const IFF_PORTSEL: crate::be_aas_h::C2RustUnnamed_0 = 8192;
-
-    pub const IFF_MULTICAST: crate::be_aas_h::C2RustUnnamed_0 = 4096;
-
-    pub const IFF_SLAVE: crate::be_aas_h::C2RustUnnamed_0 = 2048;
-
-    pub const IFF_MASTER: crate::be_aas_h::C2RustUnnamed_0 = 1024;
-
-    pub const IFF_ALLMULTI: crate::be_aas_h::C2RustUnnamed_0 = 512;
-
-    pub const IFF_PROMISC: crate::be_aas_h::C2RustUnnamed_0 = 256;
-
-    pub const IFF_NOARP: crate::be_aas_h::C2RustUnnamed_0 = 128;
-
-    pub const IFF_RUNNING: crate::be_aas_h::C2RustUnnamed_0 = 64;
-
-    pub const IFF_NOTRAILERS: crate::be_aas_h::C2RustUnnamed_0 = 32;
-
-    pub const IFF_POINTOPOINT: crate::be_aas_h::C2RustUnnamed_0 = 16;
-
-    pub const IFF_LOOPBACK: crate::be_aas_h::C2RustUnnamed_0 = 8;
+    pub const IFF_BROADCAST: crate::be_aas_h::C2RustUnnamed_0 = 2;
 
     pub const IFF_DEBUG: crate::be_aas_h::C2RustUnnamed_0 = 4;
 
-    pub const IFF_BROADCAST: crate::be_aas_h::C2RustUnnamed_0 = 2;
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub union C2RustUnnamed_131 {
-        pub ifu_broadaddr: *mut crate::stdlib::sockaddr,
-        pub ifu_dstaddr: *mut crate::stdlib::sockaddr,
-    }
+    pub const IFF_LOOPBACK: crate::be_aas_h::C2RustUnnamed_0 = 8;
 
+    pub const IFF_POINTOPOINT: crate::be_aas_h::C2RustUnnamed_0 = 16;
+
+    pub const IFF_NOTRAILERS: crate::be_aas_h::C2RustUnnamed_0 = 32;
+
+    pub const IFF_RUNNING: crate::be_aas_h::C2RustUnnamed_0 = 64;
+
+    pub const IFF_NOARP: crate::be_aas_h::C2RustUnnamed_0 = 128;
+
+    pub const IFF_PROMISC: crate::be_aas_h::C2RustUnnamed_0 = 256;
+
+    pub const IFF_ALLMULTI: crate::be_aas_h::C2RustUnnamed_0 = 512;
+
+    pub const IFF_MASTER: crate::be_aas_h::C2RustUnnamed_0 = 1024;
+
+    pub const IFF_SLAVE: crate::be_aas_h::C2RustUnnamed_0 = 2048;
+
+    pub const IFF_MULTICAST: crate::be_aas_h::C2RustUnnamed_0 = 4096;
+
+    pub const IFF_PORTSEL: crate::be_aas_h::C2RustUnnamed_0 = 8192;
+
+    pub const IFF_AUTOMEDIA: crate::be_aas_h::C2RustUnnamed_0 = 16384;
+
+    pub const IFF_DYNAMIC: crate::be_aas_h::C2RustUnnamed_0 = 32768;
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct ifaddrs {
         pub ifa_next: *mut crate::stdlib::ifaddrs,
         pub ifa_name: *mut libc::c_char,
         pub ifa_flags: libc::c_uint,
-        pub ifa_addr: *mut crate::stdlib::sockaddr,
-        pub ifa_netmask: *mut crate::stdlib::sockaddr,
+        pub ifa_addr: *mut ::libc::sockaddr,
+        pub ifa_netmask: *mut ::libc::sockaddr,
         pub ifa_ifu: crate::stdlib::C2RustUnnamed_131,
         pub ifa_data: *mut libc::c_void,
     }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub union C2RustUnnamed_131 {
+        pub ifu_broadaddr: *mut ::libc::sockaddr,
+        pub ifu_dstaddr: *mut ::libc::sockaddr,
+    }
+    pub type in_addr_t = crate::stdlib::uint32_t;
+
+    pub const IPPROTO_IP: crate::be_aas_h::C2RustUnnamed_0 = 0;
+
+    pub const IPPROTO_ICMP: crate::be_aas_h::C2RustUnnamed_0 = 1;
+
+    pub const IPPROTO_IGMP: crate::be_aas_h::C2RustUnnamed_0 = 2;
+
+    pub const IPPROTO_IPIP: crate::be_aas_h::C2RustUnnamed_0 = 4;
+
+    pub const IPPROTO_TCP: crate::be_aas_h::C2RustUnnamed_0 = 6;
+
+    pub const IPPROTO_EGP: crate::be_aas_h::C2RustUnnamed_0 = 8;
+
+    pub const IPPROTO_PUP: crate::be_aas_h::C2RustUnnamed_0 = 12;
+
+    pub const IPPROTO_UDP: crate::be_aas_h::C2RustUnnamed_0 = 17;
+
+    pub const IPPROTO_IDP: crate::be_aas_h::C2RustUnnamed_0 = 22;
+
+    pub const IPPROTO_TP: crate::be_aas_h::C2RustUnnamed_0 = 29;
+
+    pub const IPPROTO_DCCP: crate::be_aas_h::C2RustUnnamed_0 = 33;
+
+    pub const IPPROTO_IPV6: crate::be_aas_h::C2RustUnnamed_0 = 41;
+
+    pub const IPPROTO_RSVP: crate::be_aas_h::C2RustUnnamed_0 = 46;
+
+    pub const IPPROTO_GRE: crate::be_aas_h::C2RustUnnamed_0 = 47;
+
+    pub const IPPROTO_ESP: crate::be_aas_h::C2RustUnnamed_0 = 50;
+
+    pub const IPPROTO_AH: crate::be_aas_h::C2RustUnnamed_0 = 51;
+
+    pub const IPPROTO_MTP: crate::be_aas_h::C2RustUnnamed_0 = 92;
+
+    pub const IPPROTO_BEETPH: crate::be_aas_h::C2RustUnnamed_0 = 94;
+
+    pub const IPPROTO_ENCAP: crate::be_aas_h::C2RustUnnamed_0 = 98;
+
+    pub const IPPROTO_PIM: crate::be_aas_h::C2RustUnnamed_0 = 103;
+
+    pub const IPPROTO_COMP: crate::be_aas_h::C2RustUnnamed_0 = 108;
+
+    pub const IPPROTO_SCTP: crate::be_aas_h::C2RustUnnamed_0 = 132;
+
+    pub const IPPROTO_UDPLITE: crate::be_aas_h::C2RustUnnamed_0 = 136;
+
+    pub const IPPROTO_MPLS: crate::be_aas_h::C2RustUnnamed_0 = 137;
+
+    pub const IPPROTO_RAW: crate::be_aas_h::C2RustUnnamed_0 = 255;
+
+    pub const IPPROTO_MAX: crate::be_aas_h::C2RustUnnamed_0 = 256;
+
+    pub type in_port_t = crate::stdlib::uint16_t;
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct in6_addr {
+        pub __in6_u: crate::stdlib::C2RustUnnamed_129,
+    }
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub union C2RustUnnamed_129 {
         pub __u6_addr8: [crate::stdlib::uint8_t; 16],
         pub __u6_addr16: [crate::stdlib::uint16_t; 8],
         pub __u6_addr32: [crate::stdlib::uint32_t; 4],
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct ipv6_mreq {
-        pub ipv6mr_multiaddr: crate::stdlib::in6_addr,
-        pub ipv6mr_interface: libc::c_uint,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct in6_addr {
-        pub __in6_u: crate::stdlib::C2RustUnnamed_129,
     }
 
     #[repr(C)]
@@ -9602,76 +9394,12 @@ pub mod stdlib {
         pub sin6_scope_id: crate::stdlib::uint32_t,
     }
 
-    pub type in_port_t = crate::stdlib::uint16_t;
-
     #[repr(C)]
     #[derive(Copy, Clone)]
-    pub struct sockaddr_in {
-        pub sin_family: crate::stdlib::sa_family_t,
-        pub sin_port: crate::stdlib::in_port_t,
-        pub sin_addr: crate::stdlib::in_addr,
-        pub sin_zero: [libc::c_uchar; 8],
+    pub struct ipv6_mreq {
+        pub ipv6mr_multiaddr: crate::stdlib::in6_addr,
+        pub ipv6mr_interface: libc::c_uint,
     }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct in_addr {
-        pub s_addr: crate::stdlib::in_addr_t,
-    }
-
-    pub type in_addr_t = crate::stdlib::uint32_t;
-
-    pub const IPPROTO_TCP: crate::be_aas_h::C2RustUnnamed_0 = 6;
-
-    pub const IPPROTO_UDP: crate::be_aas_h::C2RustUnnamed_0 = 17;
-
-    pub const IPPROTO_IPV6: crate::be_aas_h::C2RustUnnamed_0 = 41;
-
-    pub const IPPROTO_MAX: crate::be_aas_h::C2RustUnnamed_0 = 256;
-
-    pub const IPPROTO_RAW: crate::be_aas_h::C2RustUnnamed_0 = 255;
-
-    pub const IPPROTO_MPLS: crate::be_aas_h::C2RustUnnamed_0 = 137;
-
-    pub const IPPROTO_UDPLITE: crate::be_aas_h::C2RustUnnamed_0 = 136;
-
-    pub const IPPROTO_SCTP: crate::be_aas_h::C2RustUnnamed_0 = 132;
-
-    pub const IPPROTO_COMP: crate::be_aas_h::C2RustUnnamed_0 = 108;
-
-    pub const IPPROTO_PIM: crate::be_aas_h::C2RustUnnamed_0 = 103;
-
-    pub const IPPROTO_ENCAP: crate::be_aas_h::C2RustUnnamed_0 = 98;
-
-    pub const IPPROTO_BEETPH: crate::be_aas_h::C2RustUnnamed_0 = 94;
-
-    pub const IPPROTO_MTP: crate::be_aas_h::C2RustUnnamed_0 = 92;
-
-    pub const IPPROTO_AH: crate::be_aas_h::C2RustUnnamed_0 = 51;
-
-    pub const IPPROTO_ESP: crate::be_aas_h::C2RustUnnamed_0 = 50;
-
-    pub const IPPROTO_GRE: crate::be_aas_h::C2RustUnnamed_0 = 47;
-
-    pub const IPPROTO_RSVP: crate::be_aas_h::C2RustUnnamed_0 = 46;
-
-    pub const IPPROTO_DCCP: crate::be_aas_h::C2RustUnnamed_0 = 33;
-
-    pub const IPPROTO_TP: crate::be_aas_h::C2RustUnnamed_0 = 29;
-
-    pub const IPPROTO_IDP: crate::be_aas_h::C2RustUnnamed_0 = 22;
-
-    pub const IPPROTO_PUP: crate::be_aas_h::C2RustUnnamed_0 = 12;
-
-    pub const IPPROTO_EGP: crate::be_aas_h::C2RustUnnamed_0 = 8;
-
-    pub const IPPROTO_IPIP: crate::be_aas_h::C2RustUnnamed_0 = 4;
-
-    pub const IPPROTO_IGMP: crate::be_aas_h::C2RustUnnamed_0 = 2;
-
-    pub const IPPROTO_ICMP: crate::be_aas_h::C2RustUnnamed_0 = 1;
-
-    pub const IPPROTO_IP: crate::be_aas_h::C2RustUnnamed_0 = 0;
     pub type DIR = crate::stdlib::__dirstream;
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -9684,39 +9412,6 @@ pub mod stdlib {
     pub type jmp_buf = [crate::stdlib::__jmp_buf_tag; 1];
     pub type mbstate_t = crate::stdlib::__mbstate_t;
     pub type mode_t = crate::stdlib::__mode_t;
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct addrinfo {
-        pub ai_flags: libc::c_int,
-        pub ai_family: libc::c_int,
-        pub ai_socktype: libc::c_int,
-        pub ai_protocol: libc::c_int,
-        pub ai_addrlen: crate::stdlib::socklen_t,
-        pub ai_addr: *mut crate::stdlib::sockaddr,
-        pub ai_canonname: *mut libc::c_char,
-        pub ai_next: *mut crate::stdlib::addrinfo,
-    }
-
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct hostent {
-        pub h_name: *mut libc::c_char,
-        pub h_aliases: *mut *mut libc::c_char,
-        pub h_addrtype: libc::c_int,
-        pub h_length: libc::c_int,
-        pub h_addr_list: *mut *mut libc::c_char,
-    }
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct passwd {
-        pub pw_name: *mut libc::c_char,
-        pub pw_passwd: *mut libc::c_char,
-        pub pw_uid: crate::stdlib::__uid_t,
-        pub pw_gid: crate::stdlib::__gid_t,
-        pub pw_gecos: *mut libc::c_char,
-        pub pw_dir: *mut libc::c_char,
-        pub pw_shell: *mut libc::c_char,
-    }
     pub type __fd_mask = libc::c_long;
 
     #[repr(C)]
@@ -9727,13 +9422,6 @@ pub mod stdlib {
     pub type __jmp_buf = [libc::c_long; 8];
     pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
     pub type sa_family_t = libc::c_ushort;
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct sockaddr {
-        pub sa_family: crate::stdlib::sa_family_t,
-        pub sa_data: [libc::c_char; 14],
-    }
-
     pub type socklen_t = crate::stdlib::__socklen_t;
 
     #[repr(C)]
@@ -9745,23 +9433,23 @@ pub mod stdlib {
     }
     pub type __socket_type = libc::c_uint;
 
-    pub const SOCK_DGRAM: crate::stdlib::__socket_type = 2;
-
     pub const SOCK_STREAM: crate::stdlib::__socket_type = 1;
 
-    pub const SOCK_NONBLOCK: crate::stdlib::__socket_type = 2048;
+    pub const SOCK_DGRAM: crate::stdlib::__socket_type = 2;
 
-    pub const SOCK_CLOEXEC: crate::stdlib::__socket_type = 524288;
-
-    pub const SOCK_PACKET: crate::stdlib::__socket_type = 10;
-
-    pub const SOCK_DCCP: crate::stdlib::__socket_type = 6;
-
-    pub const SOCK_SEQPACKET: crate::stdlib::__socket_type = 5;
+    pub const SOCK_RAW: crate::stdlib::__socket_type = 3;
 
     pub const SOCK_RDM: crate::stdlib::__socket_type = 4;
 
-    pub const SOCK_RAW: crate::stdlib::__socket_type = 3;
+    pub const SOCK_SEQPACKET: crate::stdlib::__socket_type = 5;
+
+    pub const SOCK_DCCP: crate::stdlib::__socket_type = 6;
+
+    pub const SOCK_PACKET: crate::stdlib::__socket_type = 10;
+
+    pub const SOCK_CLOEXEC: crate::stdlib::__socket_type = 524288;
+
+    pub const SOCK_NONBLOCK: crate::stdlib::__socket_type = 2048;
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct stat {
@@ -9776,15 +9464,15 @@ pub mod stdlib {
         pub st_size: crate::stdlib::__off_t,
         pub st_blksize: crate::stdlib::__blksize_t,
         pub st_blocks: crate::stdlib::__blkcnt_t,
-        pub st_atim: crate::stdlib::timespec,
-        pub st_mtim: crate::stdlib::timespec,
-        pub st_ctim: crate::stdlib::timespec,
+        pub st_atim: ::libc::timespec,
+        pub st_mtim: ::libc::timespec,
+        pub st_ctim: ::libc::timespec,
         pub __glibc_reserved: [crate::stdlib::__syscall_slong_t; 3],
     }
     pub type intptr_t = libc::c_long;
-    pub type int32_t = crate::stdlib::__int32_t;
-
     pub type int16_t = crate::stdlib::__int16_t;
+
+    pub type int32_t = crate::stdlib::__int32_t;
 
     pub type int64_t = crate::stdlib::__int64_t;
     pub type uint8_t = crate::stdlib::__uint8_t;
@@ -9795,6 +9483,8 @@ pub mod stdlib {
     pub type ssize_t = crate::stdlib::__ssize_t;
     pub type __compar_fn_t =
         Option<unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int>;
+    pub type _IO_lock_t = ();
+
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct _IO_FILE {
@@ -9828,55 +9518,14 @@ pub mod stdlib {
         pub _mode: libc::c_int,
         pub _unused2: [libc::c_char; 20],
     }
-
-    pub type _IO_lock_t = ();
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct timespec {
-        pub tv_sec: crate::stdlib::__time_t,
-        pub tv_nsec: crate::stdlib::__syscall_slong_t,
-    }
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct timeval {
-        pub tv_sec: crate::stdlib::__time_t,
-        pub tv_usec: crate::stdlib::__suseconds_t,
-    }
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct tm {
-        pub tm_sec: libc::c_int,
-        pub tm_min: libc::c_int,
-        pub tm_hour: libc::c_int,
-        pub tm_mday: libc::c_int,
-        pub tm_mon: libc::c_int,
-        pub tm_year: libc::c_int,
-        pub tm_wday: libc::c_int,
-        pub tm_yday: libc::c_int,
-        pub tm_isdst: libc::c_int,
-        pub tm_gmtoff: libc::c_long,
-        pub tm_zone: *const libc::c_char,
-    }
     pub type off_t = crate::stdlib::__off64_t;
 
     pub type pid_t = crate::stdlib::__pid_t;
-    pub type tcflag_t = libc::c_uint;
-
     pub type cc_t = libc::c_uchar;
 
     pub type speed_t = libc::c_uint;
-    #[repr(C)]
-    #[derive(Copy, Clone)]
-    pub struct termios {
-        pub c_iflag: crate::stdlib::tcflag_t,
-        pub c_oflag: crate::stdlib::tcflag_t,
-        pub c_cflag: crate::stdlib::tcflag_t,
-        pub c_lflag: crate::stdlib::tcflag_t,
-        pub c_line: crate::stdlib::cc_t,
-        pub c_cc: [crate::stdlib::cc_t; 32],
-        pub c_ispeed: crate::stdlib::speed_t,
-        pub c_ospeed: crate::stdlib::speed_t,
-    }
+
+    pub type tcflag_t = libc::c_uint;
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct timezone {
@@ -9886,53 +9535,53 @@ pub mod stdlib {
 
     pub type __timezone_ptr_t = *mut crate::stdlib::timezone;
     pub type time_t = crate::stdlib::__time_t;
-    pub type __ssize_t = libc::c_long;
-
-    pub type __socklen_t = libc::c_uint;
-
-    pub type __dev_t = libc::c_ulong;
-
-    pub type __gid_t = libc::c_uint;
-
-    pub type __ino_t = libc::c_ulong;
-
-    pub type __nlink_t = libc::c_ulong;
-
-    pub type __blksize_t = libc::c_long;
-
-    pub type __blkcnt_t = libc::c_long;
-
-    pub type __syscall_slong_t = libc::c_long;
-
-    pub type __pid_t = libc::c_int;
-
-    pub type __useconds_t = libc::c_uint;
-
     pub type __uint8_t = libc::c_uchar;
 
     pub type __int16_t = libc::c_short;
 
     pub type __uint16_t = libc::c_ushort;
 
+    pub type __int32_t = libc::c_int;
+
     pub type __uint32_t = libc::c_uint;
-
-    pub type __uid_t = libc::c_uint;
-
-    pub type __mode_t = libc::c_uint;
-
-    pub type __suseconds_t = libc::c_long;
 
     pub type __int64_t = libc::c_long;
 
-    pub type __int32_t = libc::c_int;
+    pub type __dev_t = libc::c_ulong;
+
+    pub type __uid_t = libc::c_uint;
+
+    pub type __gid_t = libc::c_uint;
+
+    pub type __ino_t = libc::c_ulong;
+
+    pub type __mode_t = libc::c_uint;
+
+    pub type __nlink_t = libc::c_ulong;
 
     pub type __off_t = libc::c_long;
 
     pub type __off64_t = libc::c_long;
 
+    pub type __pid_t = libc::c_int;
+
     pub type __clock_t = libc::c_long;
 
     pub type __time_t = libc::c_long;
+
+    pub type __useconds_t = libc::c_uint;
+
+    pub type __suseconds_t = libc::c_long;
+
+    pub type __blksize_t = libc::c_long;
+
+    pub type __blkcnt_t = libc::c_long;
+
+    pub type __ssize_t = libc::c_long;
+
+    pub type __syscall_slong_t = libc::c_long;
+
+    pub type __socklen_t = libc::c_uint;
 }
 #[macro_use]
 extern crate c2rust_asm_casts;

@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -37,12 +37,12 @@ pub use crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText;
 pub use crate::src::ui::ui_syscalls::trap_GetConfigString;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 use crate::stdlib::memset;
-pub use crate::stdlib::strtol;
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
 pub use crate::ui_local_h::menucommon_s;
 pub use crate::ui_local_h::menuframework_s;
 pub use crate::ui_local_h::menutext_s;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -607,41 +607,41 @@ unsafe extern "C" fn UI_RemoveBotsMenu_Init() {
     removeBotsMenuInfo.back.focuspic =
         b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut removeBotsMenuInfo.menu,
+        &mut removeBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut removeBotsMenuInfo.background as *mut crate::ui_local_h::menubitmap_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut removeBotsMenuInfo.menu,
+        &mut removeBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut removeBotsMenuInfo.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut removeBotsMenuInfo.menu,
+        &mut removeBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut removeBotsMenuInfo.arrows as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut removeBotsMenuInfo.menu,
+        &mut removeBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut removeBotsMenuInfo.up as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut removeBotsMenuInfo.menu,
+        &mut removeBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut removeBotsMenuInfo.down as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     n = 0 as libc::c_int;
     while n < count {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut removeBotsMenuInfo.menu,
+            &mut removeBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut *removeBotsMenuInfo.bots.as_mut_ptr().offset(n as isize)
                 as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
         );
         n += 1
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut removeBotsMenuInfo.menu,
+        &mut removeBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut removeBotsMenuInfo.delete as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut removeBotsMenuInfo.menu,
+        &mut removeBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut removeBotsMenuInfo.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     removeBotsMenuInfo.baseBotNum = 0 as libc::c_int;
@@ -801,5 +801,7 @@ UI_RemoveBotsMenu
 
 pub unsafe extern "C" fn UI_RemoveBotsMenu() {
     UI_RemoveBotsMenu_Init();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut removeBotsMenuInfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut removeBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

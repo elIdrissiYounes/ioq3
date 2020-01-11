@@ -136,8 +136,8 @@ use crate::src::client::snd_main::S_StopAllSounds;
 use crate::src::opus_1_2_1::src::opus_decoder::OpusDecoder;
 use crate::src::opus_1_2_1::src::opus_encoder::OpusEncoder;
 use crate::stdlib::memcpy;
-use crate::stdlib::sprintf;
 use crate::stdlib::strlen;
+use ::libc::sprintf;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -649,7 +649,7 @@ pub unsafe extern "C" fn SCR_DrawDemoRecording() {
         return;
     }
     pos = crate::src::qcommon::files::FS_FTell(crate::src::client::cl_main::clc.demofile);
-    crate::stdlib::sprintf(
+    ::libc::sprintf(
         string.as_mut_ptr(),
         b"RECORDING %s: %ik\x00" as *const u8 as *const libc::c_char,
         crate::src::client::cl_main::clc.demoName.as_mut_ptr(),
@@ -721,7 +721,7 @@ pub unsafe extern "C" fn SCR_DrawVoipMeter() {
         buffer[fresh0 as usize] = ' ' as i32 as libc::c_char
     }
     buffer[i as usize] = '\u{0}' as i32 as libc::c_char;
-    crate::stdlib::sprintf(
+    ::libc::sprintf(
         string.as_mut_ptr(),
         b"VoIP: [%s]\x00" as *const u8 as *const libc::c_char,
         buffer.as_mut_ptr(),
@@ -1202,27 +1202,27 @@ pub unsafe extern "C" fn SCR_Init() {
         b"timegraph\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     cl_debuggraph = crate::src::qcommon::cvar::Cvar_Get(
         b"debuggraph\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     cl_graphheight = crate::src::qcommon::cvar::Cvar_Get(
         b"graphheight\x00" as *const u8 as *const libc::c_char,
         b"32\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     cl_graphscale = crate::src::qcommon::cvar::Cvar_Get(
         b"graphscale\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     cl_graphshift = crate::src::qcommon::cvar::Cvar_Get(
         b"graphshift\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     scr_initialized = crate::src::qcommon::q_shared::qtrue;
 }
 //=======================================================

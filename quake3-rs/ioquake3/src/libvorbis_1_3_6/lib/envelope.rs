@@ -1,25 +1,6 @@
 // =============== BEGIN envelope_h ================
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct envelope_lookup {
-    pub ch: libc::c_int,
-    pub winlength: libc::c_int,
-    pub searchstep: libc::c_int,
-    pub minenergy: libc::c_float,
-    pub mdct: crate::src::libvorbis_1_3_6::lib::mdct::mdct_lookup,
-    pub mdct_win: *mut libc::c_float,
-    pub band: [crate::src::libvorbis_1_3_6::lib::envelope::envelope_band; 7],
-    pub filter: *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_filter_state,
-    pub stretch: libc::c_int,
-    pub mark: *mut libc::c_int,
-    pub storage: libc::c_long,
-    pub current: libc::c_long,
-    pub curmark: libc::c_long,
-    pub cursor: libc::c_long,
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
 pub struct envelope_filter_state {
     pub ampbuf: [libc::c_float; 17],
     pub ampptr: libc::c_int,
@@ -36,6 +17,25 @@ pub struct envelope_band {
     pub end: libc::c_int,
     pub window: *mut libc::c_float,
     pub total: libc::c_float,
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct envelope_lookup {
+    pub ch: libc::c_int,
+    pub winlength: libc::c_int,
+    pub searchstep: libc::c_int,
+    pub minenergy: libc::c_float,
+    pub mdct: crate::src::libvorbis_1_3_6::lib::mdct::mdct_lookup,
+    pub mdct_win: *mut libc::c_float,
+    pub band: [crate::src::libvorbis_1_3_6::lib::envelope::envelope_band; 7],
+    pub filter: *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_filter_state,
+    pub stretch: libc::c_int,
+    pub mark: *mut libc::c_int,
+    pub storage: libc::c_long,
+    pub current: libc::c_long,
+    pub curmark: libc::c_long,
+    pub cursor: libc::c_long,
 }
 use ::libc;
 
@@ -103,12 +103,12 @@ pub use crate::src::libvorbis_1_3_6::lib::smallft::drft_lookup;
 pub use crate::scales_h::C2RustUnnamed_58;
 pub use crate::src::libvorbis_1_3_6::lib::envelope::scales_h::todB;
 use crate::stdlib::calloc;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
 use crate::stdlib::memmove;
 use crate::stdlib::memset;
 use crate::stdlib::realloc;
 use crate::stdlib::sin;
+use ::libc::free;
 /* *******************************************************************
 *                                                                  *
 * THIS FILE IS PART OF THE OggVorbis SOFTWARE CODEC SOURCE CODE.   *
@@ -148,7 +148,10 @@ pub unsafe extern "C" fn _ve_envelope_init(
         n as libc::c_ulong,
         ::std::mem::size_of::<libc::c_float>() as libc::c_ulong,
     ) as *mut libc::c_float;
-    crate::src::libvorbis_1_3_6::lib::mdct::mdct_init(&mut (*e).mdct, n);
+    crate::src::libvorbis_1_3_6::lib::mdct::mdct_init(
+        &mut (*e).mdct as *mut _ as *mut crate::src::libvorbis_1_3_6::lib::mdct::mdct_lookup,
+        n,
+    );
     i = 0 as libc::c_int;
     while i < n {
         *(*e).mdct_win.offset(i as isize) = crate::stdlib::sin(
@@ -207,15 +210,17 @@ pub unsafe extern "C" fn _ve_envelope_clear(
     mut e: *mut crate::src::libvorbis_1_3_6::lib::envelope::envelope_lookup,
 ) {
     let mut i: libc::c_int = 0;
-    crate::src::libvorbis_1_3_6::lib::mdct::mdct_clear(&mut (*e).mdct);
+    crate::src::libvorbis_1_3_6::lib::mdct::mdct_clear(
+        &mut (*e).mdct as *mut _ as *mut crate::src::libvorbis_1_3_6::lib::mdct::mdct_lookup,
+    );
     i = 0 as libc::c_int;
     while i < 7 as libc::c_int {
-        crate::stdlib::free((*e).band[i as usize].window as *mut libc::c_void);
+        ::libc::free((*e).band[i as usize].window as *mut libc::c_void);
         i += 1
     }
-    crate::stdlib::free((*e).mdct_win as *mut libc::c_void);
-    crate::stdlib::free((*e).filter as *mut libc::c_void);
-    crate::stdlib::free((*e).mark as *mut libc::c_void);
+    ::libc::free((*e).mdct_win as *mut libc::c_void);
+    ::libc::free((*e).filter as *mut libc::c_void);
+    ::libc::free((*e).mark as *mut libc::c_void);
     crate::stdlib::memset(
         e as *mut libc::c_void,
         0 as libc::c_int,
@@ -271,7 +276,11 @@ unsafe extern "C" fn _ve_amp(
         *vec.offset(i as isize) = *data.offset(i as isize) * *(*ve).mdct_win.offset(i as isize);
         i += 1
     }
-    crate::src::libvorbis_1_3_6::lib::mdct::mdct_forward(&mut (*ve).mdct, vec, vec);
+    crate::src::libvorbis_1_3_6::lib::mdct::mdct_forward(
+        &mut (*ve).mdct as *mut _ as *mut crate::src::libvorbis_1_3_6::lib::mdct::mdct_lookup,
+        vec,
+        vec,
+    );
     /*_analysis_output_always("mdct",seq2,vec,n/2,0,1,0); */
     /* near-DC spreading function; this has nothing to do with
     psychoacoustics, just sidelobe leakage and window size */

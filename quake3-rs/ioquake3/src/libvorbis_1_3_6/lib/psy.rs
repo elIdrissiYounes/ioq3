@@ -1,33 +1,6 @@
 // =============== BEGIN psy_h ================
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct vorbis_look_psy {
-    pub n: libc::c_int,
-    pub vi: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy,
-    pub tonecurves: *mut *mut *mut libc::c_float,
-    pub noiseoffset: *mut *mut libc::c_float,
-    pub ath: *mut libc::c_float,
-    pub octave: *mut libc::c_long,
-    pub bark: *mut libc::c_long,
-    pub firstoc: libc::c_long,
-    pub shiftoc: libc::c_long,
-    pub eighth_octave_lines: libc::c_int,
-    pub total_octave_lines: libc::c_int,
-    pub rate: libc::c_long,
-    pub m_val: libc::c_float,
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct vorbis_look_psy_global {
-    pub ampmax: libc::c_float,
-    pub channels: libc::c_int,
-    pub gi: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global,
-    pub coupling_pointlimit: [[libc::c_int; 3]; 2],
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
 pub struct vorbis_info_psy {
     pub blockflag: libc::c_int,
     pub ath_adjatt: libc::c_float,
@@ -67,6 +40,33 @@ pub struct vorbis_info_psy_global {
     pub coupling_prepointamp: [libc::c_int; 15],
     pub coupling_postpointamp: [libc::c_int; 15],
     pub sliding_lowpass: [[libc::c_int; 15]; 2],
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct vorbis_look_psy_global {
+    pub ampmax: libc::c_float,
+    pub channels: libc::c_int,
+    pub gi: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global,
+    pub coupling_pointlimit: [[libc::c_int; 3]; 2],
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct vorbis_look_psy {
+    pub n: libc::c_int,
+    pub vi: *mut crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy,
+    pub tonecurves: *mut *mut *mut libc::c_float,
+    pub noiseoffset: *mut *mut libc::c_float,
+    pub ath: *mut libc::c_float,
+    pub octave: *mut libc::c_long,
+    pub bark: *mut libc::c_long,
+    pub firstoc: libc::c_long,
+    pub shiftoc: libc::c_long,
+    pub eighth_octave_lines: libc::c_int,
+    pub total_octave_lines: libc::c_int,
+    pub rate: libc::c_long,
+    pub m_val: libc::c_float,
 }
 use ::libc;
 
@@ -6163,13 +6163,13 @@ pub use crate::stddef_h::size_t;
 pub use crate::stdlib::__compar_fn_t;
 pub use crate::stdlib::__int64_t;
 pub use crate::stdlib::__uint32_t;
-pub use crate::stdlib::abs;
 pub use crate::stdlib::calloc;
-pub use crate::stdlib::free;
 pub use crate::stdlib::int64_t;
 pub use crate::stdlib::malloc;
 pub use crate::stdlib::qsort;
 pub use crate::stdlib::uint32_t;
+pub use ::libc::abs;
+pub use ::libc::free;
 
 pub use crate::backends_h::vorbis_info_mapping0;
 pub use crate::codec_h::vorbis_dsp_state;
@@ -6242,7 +6242,7 @@ pub unsafe extern "C" fn _vp_global_free(
             ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_look_psy_global>()
                 as libc::c_ulong,
         );
-        crate::stdlib::free(look as *mut libc::c_void);
+        ::libc::free(look as *mut libc::c_void);
     };
 }
 #[no_mangle]
@@ -6257,7 +6257,7 @@ pub unsafe extern "C" fn _vi_gpsy_free(
             ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global>()
                 as libc::c_ulong,
         );
-        crate::stdlib::free(i as *mut libc::c_void);
+        ::libc::free(i as *mut libc::c_void);
     };
 }
 #[no_mangle]
@@ -6272,7 +6272,7 @@ pub unsafe extern "C" fn _vi_psy_free(
             ::std::mem::size_of::<crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy>()
                 as libc::c_ulong,
         );
-        crate::stdlib::free(i as *mut libc::c_void);
+        ::libc::free(i as *mut libc::c_void);
     };
 }
 
@@ -6392,8 +6392,7 @@ unsafe extern "C" fn setup_tone_curves(
             k = 0 as libc::c_int;
             while k < 56 as libc::c_int {
                 let mut adj: libc::c_float = center_boost
-                    + crate::stdlib::abs(16 as libc::c_int - k) as libc::c_float
-                        * center_decay_rate;
+                    + ::libc::abs(16 as libc::c_int - k) as libc::c_float * center_decay_rate;
                 if (adj as libc::c_double) < 0.0f64
                     && center_boost > 0 as libc::c_int as libc::c_float
                 {
@@ -6923,35 +6922,35 @@ pub unsafe extern "C" fn _vp_psy_clear(
     let mut j: libc::c_int = 0;
     if !p.is_null() {
         if !(*p).ath.is_null() {
-            crate::stdlib::free((*p).ath as *mut libc::c_void);
+            ::libc::free((*p).ath as *mut libc::c_void);
         }
         if !(*p).octave.is_null() {
-            crate::stdlib::free((*p).octave as *mut libc::c_void);
+            ::libc::free((*p).octave as *mut libc::c_void);
         }
         if !(*p).bark.is_null() {
-            crate::stdlib::free((*p).bark as *mut libc::c_void);
+            ::libc::free((*p).bark as *mut libc::c_void);
         }
         if !(*p).tonecurves.is_null() {
             i = 0 as libc::c_int;
             while i < 17 as libc::c_int {
                 j = 0 as libc::c_int;
                 while j < 8 as libc::c_int {
-                    crate::stdlib::free(*(*(*p).tonecurves.offset(i as isize)).offset(j as isize)
+                    ::libc::free(*(*(*p).tonecurves.offset(i as isize)).offset(j as isize)
                         as *mut libc::c_void);
                     j += 1
                 }
-                crate::stdlib::free(*(*p).tonecurves.offset(i as isize) as *mut libc::c_void);
+                ::libc::free(*(*p).tonecurves.offset(i as isize) as *mut libc::c_void);
                 i += 1
             }
-            crate::stdlib::free((*p).tonecurves as *mut libc::c_void);
+            ::libc::free((*p).tonecurves as *mut libc::c_void);
         }
         if !(*p).noiseoffset.is_null() {
             i = 0 as libc::c_int;
             while i < 3 as libc::c_int {
-                crate::stdlib::free(*(*p).noiseoffset.offset(i as isize) as *mut libc::c_void);
+                ::libc::free(*(*p).noiseoffset.offset(i as isize) as *mut libc::c_void);
                 i += 1
             }
-            crate::stdlib::free((*p).noiseoffset as *mut libc::c_void);
+            ::libc::free((*p).noiseoffset as *mut libc::c_void);
         }
         crate::stdlib::memset(
             p as *mut libc::c_void,
@@ -8296,7 +8295,7 @@ pub unsafe extern "C" fn _vp_couple_quantize_normalize(
                             /* couple iM/iA */
                             let mut A: libc::c_int = *iM.offset(j as isize);
                             let mut B: libc::c_int = *iA.offset(j as isize);
-                            if crate::stdlib::abs(A) > crate::stdlib::abs(B) {
+                            if ::libc::abs(A) > ::libc::abs(B) {
                                 *iA.offset(j as isize) = if A > 0 as libc::c_int {
                                     (A) - B
                                 } else {
@@ -8312,7 +8311,7 @@ pub unsafe extern "C" fn _vp_couple_quantize_normalize(
                             }
                             /* collapse two equivalent tuples to one */
                             if *iA.offset(j as isize)
-                                >= crate::stdlib::abs(*iM.offset(j as isize)) * 2 as libc::c_int
+                                >= ::libc::abs(*iM.offset(j as isize)) * 2 as libc::c_int
                             {
                                 *iA.offset(j as isize) = -*iA.offset(j as isize);
                                 *iM.offset(j as isize) = -*iM.offset(j as isize)

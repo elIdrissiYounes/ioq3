@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -86,13 +86,13 @@ pub use crate::src::ui::ui_syscalls::trap_GetClientState;
 pub use crate::src::ui::ui_syscalls::trap_GetConfigString;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 use crate::stdlib::memset;
-pub use crate::stdlib::strtol;
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
 pub use crate::ui_local_h::menucommon_s;
 pub use crate::ui_local_h::menuframework_s;
 pub use crate::ui_local_h::menutext_s;
 pub use crate::ui_local_h::uiStatic_t;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -588,7 +588,9 @@ pub unsafe extern "C" fn InGame_MenuInit() {
     {
         s_ingame.teamorders.generic.flags |= 0x2000 as libc::c_int as libc::c_uint
     } else {
-        crate::src::ui::ui_syscalls::trap_GetClientState(&mut cs);
+        crate::src::ui::ui_syscalls::trap_GetClientState(
+            &mut cs as *mut _ as *mut crate::ui_public_h::uiClientState_t,
+        );
         crate::src::ui::ui_syscalls::trap_GetConfigString(
             32 as libc::c_int + 256 as libc::c_int + 256 as libc::c_int + cs.clientNum,
             info.as_mut_ptr(),
@@ -686,47 +688,47 @@ pub unsafe extern "C" fn InGame_MenuInit() {
     s_ingame.quit.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
     s_ingame.quit.style = 0x1 as libc::c_int | 0x10 as libc::c_int;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_ingame.menu,
+        &mut s_ingame.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_ingame.frame as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_ingame.menu,
+        &mut s_ingame.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_ingame.team as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_ingame.menu,
+        &mut s_ingame.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_ingame.addbots as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_ingame.menu,
+        &mut s_ingame.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_ingame.removebots as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_ingame.menu,
+        &mut s_ingame.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_ingame.teamorders as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_ingame.menu,
+        &mut s_ingame.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_ingame.setup as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_ingame.menu,
+        &mut s_ingame.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_ingame.server as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_ingame.menu,
+        &mut s_ingame.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_ingame.restart as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_ingame.menu,
+        &mut s_ingame.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_ingame.resume as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_ingame.menu,
+        &mut s_ingame.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_ingame.leave as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_ingame.menu,
+        &mut s_ingame.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_ingame.quit as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
 }
@@ -806,5 +808,7 @@ pub unsafe extern "C" fn UI_InGameMenu() {
     crate::src::q3_ui::ui_atoms::uis.cursorx = 319 as libc::c_int;
     crate::src::q3_ui::ui_atoms::uis.cursory = 80 as libc::c_int;
     InGame_MenuInit();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_ingame.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_ingame.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

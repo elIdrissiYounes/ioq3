@@ -1,7 +1,7 @@
 use ::libc;
 
 use crate::stdlib::floor;
-use crate::stdlib::rand;
+use ::libc::rand;
 
 static mut s_noise_table: [libc::c_float; 256] = [0.; 256];
 
@@ -29,13 +29,13 @@ pub unsafe extern "C" fn R_NoiseInit() {
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i < 256 as libc::c_int {
-        s_noise_table[i as usize] = ((crate::stdlib::rand() as libc::c_float
+        s_noise_table[i as usize] = ((::libc::rand() as libc::c_float
             / 2147483647 as libc::c_int as libc::c_float)
             as libc::c_double
             * 2.0f64
             - 1.0f64) as libc::c_float;
         s_noise_perm[i as usize] =
-            (crate::stdlib::rand() as libc::c_float / 2147483647 as libc::c_int as libc::c_float
+            (::libc::rand() as libc::c_float / 2147483647 as libc::c_int as libc::c_float
                 * 255 as libc::c_int as libc::c_float) as libc::c_uchar as libc::c_int;
         i += 1
     }

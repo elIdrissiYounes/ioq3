@@ -1,12 +1,9 @@
 // =============== BEGIN cm_patch_h ================
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct patchCollide_s {
-    pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
-    pub numPlanes: libc::c_int,
-    pub planes: *mut crate::src::qcommon::cm_patch::patchPlane_t,
-    pub numFacets: libc::c_int,
-    pub facets: *mut crate::src::qcommon::cm_patch::facet_t,
+pub struct patchPlane_t {
+    pub plane: [libc::c_float; 4],
+    pub signbits: libc::c_int,
 }
 
 #[repr(C)]
@@ -19,14 +16,17 @@ pub struct facet_t {
     pub borderNoAdjust: [crate::src::qcommon::q_shared::qboolean; 26],
 }
 
+pub type patchCollide_t = crate::src::qcommon::cm_patch::patchCollide_s;
+
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct patchPlane_t {
-    pub plane: [libc::c_float; 4],
-    pub signbits: libc::c_int,
+pub struct patchCollide_s {
+    pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
+    pub numPlanes: libc::c_int,
+    pub planes: *mut crate::src::qcommon::cm_patch::patchPlane_t,
+    pub numFacets: libc::c_int,
+    pub facets: *mut crate::src::qcommon::cm_patch::facet_t,
 }
-
-pub type patchCollide_t = crate::src::qcommon::cm_patch::patchCollide_s;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -1481,11 +1481,13 @@ unsafe extern "C" fn CM_ValidateFacet(
     w = crate::src::qcommon::cm_polylib::BaseWindingForPlane(
         plane.as_mut_ptr(),
         plane[3 as libc::c_int as usize],
-    );
+    ) as *mut crate::src::qcommon::cm_polylib::winding_t;
     j = 0 as libc::c_int;
     while j < (*facet).numBorders && !w.is_null() {
         if (*facet).borderPlanes[j as usize] == -(1 as libc::c_int) {
-            crate::src::qcommon::cm_polylib::FreeWinding(w);
+            crate::src::qcommon::cm_polylib::FreeWinding(
+                w as *mut crate::src::qcommon::cm_polylib::winding_t,
+            );
             return crate::src::qcommon::q_shared::qfalse;
         }
         plane[0 as libc::c_int as usize] =
@@ -1509,7 +1511,7 @@ unsafe extern "C" fn CM_ValidateFacet(
             plane[3 as libc::c_int as usize] = -plane[3 as libc::c_int as usize]
         }
         crate::src::qcommon::cm_polylib::ChopWindingInPlace(
-            &mut w,
+            &mut w as *mut _ as *mut *mut crate::src::qcommon::cm_polylib::winding_t,
             plane.as_mut_ptr(),
             plane[3 as libc::c_int as usize],
             0.1f32,
@@ -1522,11 +1524,13 @@ unsafe extern "C" fn CM_ValidateFacet(
     }
     // see if the facet is unreasonably large
     crate::src::qcommon::cm_polylib::WindingBounds(
-        w,
+        w as *mut crate::src::qcommon::cm_polylib::winding_t,
         bounds[0 as libc::c_int as usize].as_mut_ptr(),
         bounds[1 as libc::c_int as usize].as_mut_ptr(),
     );
-    crate::src::qcommon::cm_polylib::FreeWinding(w);
+    crate::src::qcommon::cm_polylib::FreeWinding(
+        w as *mut crate::src::qcommon::cm_polylib::winding_t,
+    );
     j = 0 as libc::c_int;
     while j < 3 as libc::c_int {
         if bounds[1 as libc::c_int as usize][j as usize]
@@ -1585,7 +1589,7 @@ pub unsafe extern "C" fn CM_AddFacetBevels(mut facet: *mut crate::src::qcommon::
     w = crate::src::qcommon::cm_polylib::BaseWindingForPlane(
         plane.as_mut_ptr(),
         plane[3 as libc::c_int as usize],
-    );
+    ) as *mut crate::src::qcommon::cm_polylib::winding_t;
     j = 0 as libc::c_int;
     while j < (*facet).numBorders && !w.is_null() {
         if !((*facet).borderPlanes[j as usize] == (*facet).surfacePlane) {
@@ -1610,7 +1614,7 @@ pub unsafe extern "C" fn CM_AddFacetBevels(mut facet: *mut crate::src::qcommon::
                 plane[3 as libc::c_int as usize] = -plane[3 as libc::c_int as usize]
             }
             crate::src::qcommon::cm_polylib::ChopWindingInPlace(
-                &mut w,
+                &mut w as *mut _ as *mut *mut crate::src::qcommon::cm_polylib::winding_t,
                 plane.as_mut_ptr(),
                 plane[3 as libc::c_int as usize],
                 0.1f32,
@@ -1621,7 +1625,11 @@ pub unsafe extern "C" fn CM_AddFacetBevels(mut facet: *mut crate::src::qcommon::
     if w.is_null() {
         return;
     }
-    crate::src::qcommon::cm_polylib::WindingBounds(w, mins.as_mut_ptr(), maxs.as_mut_ptr());
+    crate::src::qcommon::cm_polylib::WindingBounds(
+        w as *mut crate::src::qcommon::cm_polylib::winding_t,
+        mins.as_mut_ptr(),
+        maxs.as_mut_ptr(),
+    );
     // add the axial planes
     axis = 0 as libc::c_int;
     while axis < 3 as libc::c_int {
@@ -1819,7 +1827,8 @@ pub unsafe extern "C" fn CM_AddFacetBevels(mut facet: *mut crate::src::qcommon::
                                             (*facet).borderInward[(*facet).numBorders as usize] =
                                                 flipped;
                                             //
-                                            w2 = crate::src::qcommon::cm_polylib::CopyWinding(w); //end if
+                                            w2 =  crate::src::qcommon::cm_polylib::CopyWinding(w as *mut crate::src::qcommon::cm_polylib::winding_t)
+    as *mut crate::src::qcommon::cm_polylib::winding_t; //end if
                                             newplane[0 as libc::c_int as usize] = planes[(*facet)
                                                 .borderPlanes
                                                 [(*facet).numBorders as usize]
@@ -1856,19 +1865,20 @@ pub unsafe extern "C" fn CM_AddFacetBevels(mut facet: *mut crate::src::qcommon::
                                                 newplane[3 as libc::c_int as usize] =
                                                     -newplane[3 as libc::c_int as usize]
                                             }
-                                            crate::src::qcommon::cm_polylib::ChopWindingInPlace(
-                                                &mut w2,
-                                                newplane.as_mut_ptr(),
-                                                newplane[3 as libc::c_int as usize],
-                                                0.1f32,
-                                            );
+                                            crate::src::qcommon::cm_polylib::ChopWindingInPlace(&mut w2 as *mut _ as *mut *mut crate::src::qcommon::cm_polylib::winding_t,
+                                                               newplane.as_mut_ptr(),
+                                                               newplane[3 as
+                                                                            libc::c_int
+                                                                            as
+                                                                            usize],
+                                                               0.1f32);
                                             if w2.is_null() {
                                                 crate::src::qcommon::common::Com_DPrintf(b"WARNING: CM_AddFacetBevels... invalid bevel\n\x00"
                                                                 as *const u8
                                                                 as
                                                                 *const libc::c_char);
                                             } else {
-                                                crate::src::qcommon::cm_polylib::FreeWinding(w2);
+                                                crate::src::qcommon::cm_polylib::FreeWinding(w2 as *mut crate::src::qcommon::cm_polylib::winding_t);
                                                 //
                                                 (*facet).numBorders += 1
                                             }
@@ -1887,7 +1897,9 @@ pub unsafe extern "C" fn CM_AddFacetBevels(mut facet: *mut crate::src::qcommon::
         }
         j += 1
     }
-    crate::src::qcommon::cm_polylib::FreeWinding(w);
+    crate::src::qcommon::cm_polylib::FreeWinding(
+        w as *mut crate::src::qcommon::cm_polylib::winding_t,
+    );
     //add opposite plane
     if (*facet).numBorders >= 4 as libc::c_int + 6 as libc::c_int + 16 as libc::c_int {
         crate::src::qcommon::common::Com_Printf(
@@ -2415,6 +2427,7 @@ pub unsafe extern "C" fn CM_TracePointThroughPatchCollide(
                                 b"1\x00" as *const u8 as *const libc::c_char,
                                 0 as libc::c_int,
                             )
+                                as *mut crate::src::qcommon::q_shared::cvar_s
                         }
                         if (*cv).integer != 0 {
                             debugPatchCollide = pc;
@@ -2774,6 +2787,7 @@ pub unsafe extern "C" fn CM_TraceThroughPatchCollide(
                                     b"1\x00" as *const u8 as *const libc::c_char,
                                     0 as libc::c_int,
                                 )
+                                    as *mut crate::src::qcommon::q_shared::cvar_s
                             }
                             if !cv.is_null() && (*cv).integer != 0 {
                                 debugPatchCollide = pc;
@@ -3078,7 +3092,7 @@ pub unsafe extern "C" fn CM_DrawDebugSurface(
             b"r_debugSurface\x00" as *const u8 as *const libc::c_char,
             b"0\x00" as *const u8 as *const libc::c_char,
             0 as libc::c_int,
-        )
+        ) as *mut crate::src::qcommon::q_shared::cvar_s
     }
     if (*cv2).integer != 1 as libc::c_int {
         BotDrawDebugPolygons(drawPoly, (*cv2).integer);
@@ -3092,7 +3106,7 @@ pub unsafe extern "C" fn CM_DrawDebugSurface(
             b"cm_debugSize\x00" as *const u8 as *const libc::c_char,
             b"2\x00" as *const u8 as *const libc::c_char,
             0 as libc::c_int,
-        )
+        ) as *mut crate::src::qcommon::q_shared::cvar_s
     }
     pc = debugPatchCollide;
     i = 0 as libc::c_int;
@@ -3155,7 +3169,7 @@ pub unsafe extern "C" fn CM_DrawDebugSurface(
             w = crate::src::qcommon::cm_polylib::BaseWindingForPlane(
                 plane.as_mut_ptr(),
                 plane[3 as libc::c_int as usize],
-            );
+            ) as *mut crate::src::qcommon::cm_polylib::winding_t;
             j = 0 as libc::c_int;
             while j < (*facet).numBorders + 1 as libc::c_int && !w.is_null() {
                 //
@@ -3213,7 +3227,7 @@ pub unsafe extern "C" fn CM_DrawDebugSurface(
                                 as libc::c_double,
                         )) as libc::c_float;
                     crate::src::qcommon::cm_polylib::ChopWindingInPlace(
-                        &mut w,
+                        &mut w as *mut _ as *mut *mut crate::src::qcommon::cm_polylib::winding_t,
                         plane.as_mut_ptr(),
                         plane[3 as libc::c_int as usize],
                         0.1f32,
@@ -3236,7 +3250,9 @@ pub unsafe extern "C" fn CM_DrawDebugSurface(
                         (*(*w).p.as_mut_ptr().offset(0 as libc::c_int as isize)).as_mut_ptr(),
                     );
                 }
-                crate::src::qcommon::cm_polylib::FreeWinding(w);
+                crate::src::qcommon::cm_polylib::FreeWinding(
+                    w as *mut crate::src::qcommon::cm_polylib::winding_t,
+                );
             } else {
                 crate::src::qcommon::common::Com_Printf(
                     b"winding chopped away by border planes\n\x00" as *const u8

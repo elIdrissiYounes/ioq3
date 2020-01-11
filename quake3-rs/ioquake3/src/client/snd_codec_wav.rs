@@ -351,13 +351,18 @@ pub unsafe extern "C" fn S_WAV_CodecOpenStream(
     let mut rv: *mut crate::src::client::snd_codec::snd_stream_t =
         0 as *mut crate::src::client::snd_codec::snd_stream_t;
     // Open
-    rv = crate::src::client::snd_codec::S_CodecUtilOpen(filename, &mut wav_codec);
+    rv = crate::src::client::snd_codec::S_CodecUtilOpen(
+        filename,
+        &mut wav_codec as *mut _ as *mut crate::src::client::snd_codec::snd_codec_s,
+    ) as *mut crate::src::client::snd_codec::snd_stream_s;
     if rv.is_null() {
         return 0 as *mut crate::src::client::snd_codec::snd_stream_t;
     }
     // Read the RIFF header
     if S_ReadRIFFHeader((*rv).file, &mut (*rv).info) as u64 == 0 {
-        crate::src::client::snd_codec::S_CodecUtilClose(&mut rv);
+        crate::src::client::snd_codec::S_CodecUtilClose(
+            &mut rv as *mut _ as *mut *mut crate::src::client::snd_codec::snd_stream_s,
+        );
         return 0 as *mut crate::src::client::snd_codec::snd_stream_t;
     }
     return rv;
@@ -372,7 +377,9 @@ S_WAV_CodecCloseStream
 pub unsafe extern "C" fn S_WAV_CodecCloseStream(
     mut stream: *mut crate::src::client::snd_codec::snd_stream_t,
 ) {
-    crate::src::client::snd_codec::S_CodecUtilClose(&mut stream);
+    crate::src::client::snd_codec::S_CodecUtilClose(
+        &mut stream as *mut _ as *mut *mut crate::src::client::snd_codec::snd_stream_s,
+    );
 }
 /*
 =================

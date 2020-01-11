@@ -1,4 +1,6 @@
 // =============== BEGIN l_struct_h ================
+pub type fielddef_t = crate::src::botlib::l_struct::fielddef_s;
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct fielddef_s {
@@ -11,16 +13,14 @@ pub struct fielddef_s {
     pub substruct: *mut crate::src::botlib::l_struct::structdef_s,
 }
 
+pub type structdef_t = crate::src::botlib::l_struct::structdef_s;
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct structdef_s {
     pub size: libc::c_int,
     pub fields: *mut crate::src::botlib::l_struct::fielddef_t,
 }
-
-pub type fielddef_t = crate::src::botlib::l_struct::fielddef_s;
-
-pub type structdef_t = crate::src::botlib::l_struct::structdef_s;
 use ::libc;
 
 pub use crate::stddef_h::size_t;
@@ -58,9 +58,9 @@ pub use crate::src::qcommon::q_shared::qfalse;
 pub use crate::src::qcommon::q_shared::qtrue;
 pub use crate::src::qcommon::q_shared::Com_sprintf;
 use crate::stdlib::fprintf;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
 use crate::stdlib::strncpy;
+use ::libc::strcmp;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -107,7 +107,7 @@ pub unsafe extern "C" fn FindField(
     let mut i: libc::c_int = 0; //end for
     i = 0 as libc::c_int;
     while !(*defs.offset(i as isize)).name.is_null() {
-        if crate::stdlib::strcmp((*defs.offset(i as isize)).name, name) == 0 {
+        if ::libc::strcmp((*defs.offset(i as isize)).name, name) == 0 {
             return &mut *defs.offset(i as isize) as *mut crate::src::botlib::l_struct::fielddef_t;
         }
         i += 1
@@ -145,7 +145,11 @@ pub unsafe extern "C" fn ReadNumber(
     let mut intmin: libc::c_long = 0 as libc::c_int as libc::c_long;
     let mut intmax: libc::c_long = 0 as libc::c_int as libc::c_long;
     let mut floatval: libc::c_double = 0.;
-    if crate::src::botlib::l_precomp::PC_ExpectAnyToken(source, &mut token) == 0 {
+    if crate::src::botlib::l_precomp::PC_ExpectAnyToken(
+        source as *mut crate::src::botlib::l_precomp::source_s,
+        &mut token as *mut _ as *mut crate::src::botlib::l_script::token_s,
+    ) == 0
+    {
         return crate::src::qcommon::q_shared::qfalse;
     }
     //check for minus sign
@@ -153,7 +157,7 @@ pub unsafe extern "C" fn ReadNumber(
         //end if
         if (*fd).type_0 & 0x400 as libc::c_int != 0 {
             crate::src::botlib::l_precomp::SourceError(
-                source,
+                source as *mut crate::src::botlib::l_precomp::source_s,
                 b"expected unsigned value, found %s\x00" as *const u8 as *const libc::c_char
                     as *mut libc::c_char,
                 token.string.as_mut_ptr(),
@@ -161,13 +165,13 @@ pub unsafe extern "C" fn ReadNumber(
             return crate::src::qcommon::q_shared::qfalse;
         }
         //if not a minus sign
-        if crate::stdlib::strcmp(
+        if ::libc::strcmp(
             token.string.as_mut_ptr(),
             b"-\x00" as *const u8 as *const libc::c_char,
         ) != 0
         {
             crate::src::botlib::l_precomp::SourceError(
-                source,
+                source as *mut crate::src::botlib::l_precomp::source_s,
                 b"unexpected punctuation %s\x00" as *const u8 as *const libc::c_char
                     as *mut libc::c_char,
                 token.string.as_mut_ptr(),
@@ -176,14 +180,18 @@ pub unsafe extern "C" fn ReadNumber(
         }
         negative = crate::src::qcommon::q_shared::qtrue as libc::c_int;
         //read the number
-        if crate::src::botlib::l_precomp::PC_ExpectAnyToken(source, &mut token) == 0 {
+        if crate::src::botlib::l_precomp::PC_ExpectAnyToken(
+            source as *mut crate::src::botlib::l_precomp::source_s,
+            &mut token as *mut _ as *mut crate::src::botlib::l_script::token_s,
+        ) == 0
+        {
             return crate::src::qcommon::q_shared::qfalse;
         }
     }
     //check if it is a number
     if token.type_0 != 3 as libc::c_int {
         crate::src::botlib::l_precomp::SourceError(
-            source,
+            source as *mut crate::src::botlib::l_precomp::source_s,
             b"expected number, found %s\x00" as *const u8 as *const libc::c_char
                 as *mut libc::c_char,
             token.string.as_mut_ptr(),
@@ -195,7 +203,7 @@ pub unsafe extern "C" fn ReadNumber(
         //end if
         if (*fd).type_0 & 0xff as libc::c_int != 3 as libc::c_int {
             crate::src::botlib::l_precomp::SourceError(
-                source,
+                source as *mut crate::src::botlib::l_precomp::source_s,
                 b"unexpected float\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
             ); //end if
             return crate::src::qcommon::q_shared::qfalse;
@@ -209,7 +217,7 @@ pub unsafe extern "C" fn ReadNumber(
                 || floatval > (*fd).floatmax as libc::c_double
             {
                 crate::src::botlib::l_precomp::SourceError(
-                    source,
+                    source as *mut crate::src::botlib::l_precomp::source_s,
                     b"float out of range [%f, %f]\x00" as *const u8 as *const libc::c_char
                         as *mut libc::c_char,
                     (*fd).floatmin as libc::c_double,
@@ -263,7 +271,7 @@ pub unsafe extern "C" fn ReadNumber(
         }
         if intval < intmin || intval > intmax {
             crate::src::botlib::l_precomp::SourceError(
-                source,
+                source as *mut crate::src::botlib::l_precomp::source_s,
                 b"value %ld out of range [%ld, %ld]\x00" as *const u8 as *const libc::c_char
                     as *mut libc::c_char,
                 intval,
@@ -279,7 +287,7 @@ pub unsafe extern "C" fn ReadNumber(
                 || intval as libc::c_float > (*fd).floatmax
             {
                 crate::src::botlib::l_precomp::SourceError(
-                    source,
+                    source as *mut crate::src::botlib::l_precomp::source_s,
                     b"value %ld out of range [%f, %f]\x00" as *const u8 as *const libc::c_char
                         as *mut libc::c_char,
                     intval,
@@ -338,7 +346,11 @@ pub unsafe extern "C" fn ReadChar(
         linescrossed: 0,
         next: 0 as *mut crate::src::botlib::l_script::token_s,
     };
-    if crate::src::botlib::l_precomp::PC_ExpectAnyToken(source, &mut token) == 0 {
+    if crate::src::botlib::l_precomp::PC_ExpectAnyToken(
+        source as *mut crate::src::botlib::l_precomp::source_s,
+        &mut token as *mut _ as *mut crate::src::botlib::l_script::token_s,
+    ) == 0
+    {
         return crate::src::qcommon::q_shared::qfalse;
     }
     //take literals into account
@@ -347,7 +359,9 @@ pub unsafe extern "C" fn ReadChar(
         crate::src::botlib::l_script::StripSingleQuotes(token.string.as_mut_ptr()); //end if
         *(p as *mut libc::c_char) = token.string[0 as libc::c_int as usize]
     } else {
-        crate::src::botlib::l_precomp::PC_UnreadLastToken(source);
+        crate::src::botlib::l_precomp::PC_UnreadLastToken(
+            source as *mut crate::src::botlib::l_precomp::source_s,
+        );
         if ReadNumber(source, fd, p) as u64 == 0 {
             return crate::src::qcommon::q_shared::qfalse;
         }
@@ -381,10 +395,10 @@ pub unsafe extern "C" fn ReadString(
         next: 0 as *mut crate::src::botlib::l_script::token_s,
     };
     if crate::src::botlib::l_precomp::PC_ExpectTokenType(
-        source,
+        source as *mut crate::src::botlib::l_precomp::source_s,
         1 as libc::c_int,
         0 as libc::c_int,
-        &mut token,
+        &mut token as *mut _ as *mut crate::src::botlib::l_script::token_s,
     ) == 0
     {
         return 0 as libc::c_int;
@@ -435,18 +449,22 @@ pub unsafe extern "C" fn ReadStructure(
     let mut p: *mut libc::c_void = 0 as *mut libc::c_void;
     let mut num: libc::c_int = 0;
     if crate::src::botlib::l_precomp::PC_ExpectTokenString(
-        source,
+        source as *mut crate::src::botlib::l_precomp::source_s,
         b"{\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     ) == 0
     {
         return 0 as libc::c_int;
     }
     loop {
-        if crate::src::botlib::l_precomp::PC_ExpectAnyToken(source, &mut token) == 0 {
+        if crate::src::botlib::l_precomp::PC_ExpectAnyToken(
+            source as *mut crate::src::botlib::l_precomp::source_s,
+            &mut token as *mut _ as *mut crate::src::botlib::l_script::token_s,
+        ) == 0
+        {
             return crate::src::qcommon::q_shared::qfalse as libc::c_int;
         }
         //if end of structure
-        if crate::stdlib::strcmp(
+        if ::libc::strcmp(
             token.string.as_mut_ptr(),
             b"}\x00" as *const u8 as *const libc::c_char,
         ) == 0
@@ -457,7 +475,7 @@ pub unsafe extern "C" fn ReadStructure(
         fd = FindField((*def).fields, token.string.as_mut_ptr()); //end if
         if fd.is_null() {
             crate::src::botlib::l_precomp::SourceError(
-                source,
+                source as *mut crate::src::botlib::l_precomp::source_s,
                 b"unknown structure field %s\x00" as *const u8 as *const libc::c_char
                     as *mut libc::c_char,
                 token.string.as_mut_ptr(),
@@ -467,7 +485,7 @@ pub unsafe extern "C" fn ReadStructure(
         if (*fd).type_0 & 0x100 as libc::c_int != 0 {
             num = (*fd).maxarray; //end if
             if crate::src::botlib::l_precomp::PC_ExpectTokenString(
-                source,
+                source as *mut crate::src::botlib::l_precomp::source_s,
                 b"{\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
             ) == 0
             {
@@ -485,7 +503,7 @@ pub unsafe extern "C" fn ReadStructure(
             }
             if (*fd).type_0 & 0x100 as libc::c_int != 0 {
                 if crate::src::botlib::l_precomp::PC_CheckTokenString(
-                    source,
+                    source as *mut crate::src::botlib::l_precomp::source_s,
                     b"}\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
                 ) != 0
                 {
@@ -528,7 +546,7 @@ pub unsafe extern "C" fn ReadStructure(
                 6 => {
                     if (*fd).substruct.is_null() {
                         crate::src::botlib::l_precomp::SourceError(
-                            source,
+                            source as *mut crate::src::botlib::l_precomp::source_s,
                             b"BUG: no sub structure defined\x00" as *const u8 as *const libc::c_char
                                 as *mut libc::c_char,
                         ); //end if
@@ -543,23 +561,27 @@ pub unsafe extern "C" fn ReadStructure(
             if !((*fd).type_0 & 0x100 as libc::c_int != 0) {
                 continue;
             }
-            if crate::src::botlib::l_precomp::PC_ExpectAnyToken(source, &mut token) == 0 {
+            if crate::src::botlib::l_precomp::PC_ExpectAnyToken(
+                source as *mut crate::src::botlib::l_precomp::source_s,
+                &mut token as *mut _ as *mut crate::src::botlib::l_script::token_s,
+            ) == 0
+            {
                 return crate::src::qcommon::q_shared::qfalse as libc::c_int;
             }
-            if crate::stdlib::strcmp(
+            if ::libc::strcmp(
                 token.string.as_mut_ptr(),
                 b"}\x00" as *const u8 as *const libc::c_char,
             ) == 0
             {
                 break;
             }
-            if crate::stdlib::strcmp(
+            if ::libc::strcmp(
                 token.string.as_mut_ptr(),
                 b",\x00" as *const u8 as *const libc::c_char,
             ) != 0
             {
                 crate::src::botlib::l_precomp::SourceError(
-                    source,
+                    source as *mut crate::src::botlib::l_precomp::source_s,
                     b"expected a comma, found %s\x00" as *const u8 as *const libc::c_char
                         as *mut libc::c_char,
                     token.string.as_mut_ptr(),

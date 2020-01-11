@@ -201,7 +201,7 @@ pub unsafe extern "C" fn silk_process_NLSFs_FLP(
     let mut j: libc::c_int = 0;
     let mut PredCoef_Q12: [[crate::opus_types_h::opus_int16; 16]; 2] = [[0; 16]; 2];
     crate::src::opus_1_2_1::silk::process_NLSFs::silk_process_NLSFs(
-        psEncC,
+        psEncC as *mut crate::structs_h::silk_encoder_state,
         PredCoef_Q12.as_mut_ptr(),
         NLSF_Q15,
         prev_NLSF_Q15,
@@ -361,9 +361,9 @@ pub unsafe extern "C" fn silk_NSQ_wrapper_FLP(
         || (*psEnc).sCmn.warping_Q16 > 0 as libc::c_int
     {
         crate::src::opus_1_2_1::silk::NSQ_del_dec::silk_NSQ_del_dec_c(
-            &mut (*psEnc).sCmn,
-            psNSQ,
-            psIndices,
+            &mut (*psEnc).sCmn as *mut _ as *const crate::structs_h::silk_encoder_state,
+            psNSQ as *mut crate::structs_h::silk_nsq_state,
+            psIndices as *mut crate::structs_h::SideInfoIndices,
             x16.as_mut_ptr() as *const crate::opus_types_h::opus_int16,
             pulses,
             PredCoef_Q12[0 as libc::c_int as usize].as_mut_ptr()
@@ -380,9 +380,9 @@ pub unsafe extern "C" fn silk_NSQ_wrapper_FLP(
         );
     } else {
         crate::src::opus_1_2_1::silk::NSQ::silk_NSQ_c(
-            &mut (*psEnc).sCmn,
-            psNSQ,
-            psIndices,
+            &mut (*psEnc).sCmn as *mut _ as *const crate::structs_h::silk_encoder_state,
+            psNSQ as *mut crate::structs_h::silk_nsq_state,
+            psIndices as *mut crate::structs_h::SideInfoIndices,
             x16.as_mut_ptr() as *const crate::opus_types_h::opus_int16,
             pulses,
             PredCoef_Q12[0 as libc::c_int as usize].as_mut_ptr()

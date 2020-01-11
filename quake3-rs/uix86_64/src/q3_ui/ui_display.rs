@@ -511,45 +511,45 @@ unsafe extern "C" fn UI_DisplayOptionsMenu_Init() {
     displayOptionsInfo.back.focuspic =
         b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut displayOptionsInfo.menu,
+        &mut displayOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut displayOptionsInfo.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut displayOptionsInfo.menu,
+        &mut displayOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut displayOptionsInfo.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut displayOptionsInfo.menu,
+        &mut displayOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut displayOptionsInfo.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut displayOptionsInfo.menu,
+        &mut displayOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut displayOptionsInfo.graphics as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut displayOptionsInfo.menu,
+        &mut displayOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut displayOptionsInfo.display as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut displayOptionsInfo.menu,
+        &mut displayOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut displayOptionsInfo.sound as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut displayOptionsInfo.menu,
+        &mut displayOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut displayOptionsInfo.network as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut displayOptionsInfo.menu,
+        &mut displayOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut displayOptionsInfo.brightness as *mut crate::ui_local_h::menuslider_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut displayOptionsInfo.menu,
+        &mut displayOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut displayOptionsInfo.screensize as *mut crate::ui_local_h::menuslider_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut displayOptionsInfo.menu,
+        &mut displayOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut displayOptionsInfo.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     displayOptionsInfo.brightness.curvalue = crate::src::ui::ui_syscalls::trap_Cvar_VariableValue(
@@ -744,9 +744,11 @@ UI_DisplayOptionsMenu
 
 pub unsafe extern "C" fn UI_DisplayOptionsMenu() {
     UI_DisplayOptionsMenu_Init();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut displayOptionsInfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut displayOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     crate::src::q3_ui::ui_qmenu::Menu_SetCursorToItem(
-        &mut displayOptionsInfo.menu,
+        &mut displayOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut displayOptionsInfo.display as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
 }

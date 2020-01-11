@@ -4,9 +4,9 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub use crate::bg_public_h::animation_s;
@@ -208,8 +208,8 @@ use crate::stdlib::memcpy;
 use crate::stdlib::memset;
 use crate::stdlib::sin;
 use crate::stdlib::sqrt;
-use crate::stdlib::strtod;
 use crate::stdlib::tan;
+use ::libc::strtod;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -466,7 +466,8 @@ unsafe extern "C" fn CG_AddTestModel() {
         }
     }
     crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
-        &mut crate::src::cgame::cg_main::cg.testModelEntity,
+        &mut crate::src::cgame::cg_main::cg.testModelEntity as *mut _
+            as *const crate::tr_types_h::refEntity_t,
     );
 }
 //============================================================================
@@ -653,7 +654,7 @@ unsafe extern "C" fn CG_OffsetThirdPersonView() {
     // in a solid block.  Use an 8 by 8 block to prevent the view from near clipping anything
     if crate::src::cgame::cg_main::cg_cameraMode.integer == 0 {
         crate::src::cgame::cg_predict::CG_Trace(
-            &mut trace,
+            &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
             crate::src::cgame::cg_main::cg.refdef.vieworg.as_mut_ptr()
                 as *const crate::src::qcommon::q_shared::vec_t,
             mins.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -674,7 +675,7 @@ unsafe extern "C" fn CG_OffsetThirdPersonView() {
             // try another trace to this position, because a tunnel may have the ceiling
             // close enough that this is poking out
             crate::src::cgame::cg_predict::CG_Trace(
-                &mut trace,
+                &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
                 crate::src::cgame::cg_main::cg.refdef.vieworg.as_mut_ptr()
                     as *const crate::src::qcommon::q_shared::vec_t,
                 mins.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -1114,7 +1115,9 @@ unsafe extern "C" fn CG_DamageBlendBlob() {
     ent.shaderRGBA[3 as libc::c_int as usize] = (200 as libc::c_int as libc::c_double
         * (1.0f64 - (t as libc::c_float / maxTime as libc::c_float) as libc::c_double))
         as crate::src::qcommon::q_shared::byte;
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 ===============
@@ -1608,7 +1611,8 @@ pub unsafe extern "C" fn CG_DrawActiveFrame(
         crate::src::cgame::cg_localents::CG_AddLocalEntities();
     }
     crate::src::cgame::cg_weapons::CG_AddViewWeapon(
-        &mut crate::src::cgame::cg_main::cg.predictedPlayerState,
+        &mut crate::src::cgame::cg_main::cg.predictedPlayerState as *mut _
+            as *mut crate::src::qcommon::q_shared::playerState_s,
     );
     // add buffered sounds
     CG_PlayBufferedSounds();

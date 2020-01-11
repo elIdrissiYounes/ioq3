@@ -4,16 +4,16 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -59,18 +59,18 @@ pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
-use crate::stdlib::sscanf;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 use crate::stdlib::strncpy;
+use ::libc::sscanf;
+use ::libc::strcmp;
+use ::libc::strcpy;
 
 pub use crate::src::botlib::be_aas_bspq3::stdlib_h::atoi;
 use crate::src::botlib::l_memory::FreeMemory;
 use crate::src::botlib::l_memory::GetClearedHunkMemory;
 use crate::src::botlib::l_memory::GetHunkMemory;
-pub use crate::stdlib::strtod;
-pub use crate::stdlib::strtol;
+pub use ::libc::strtod;
+pub use ::libc::strtol;
 extern "C" {
     /*
     ===========================================================================
@@ -434,7 +434,7 @@ pub unsafe extern "C" fn AAS_ValueForBSPEpairKey(
     }
     epair = bspworld.entities[ent as usize].epairs;
     while !epair.is_null() {
-        if crate::stdlib::strcmp((*epair).key, key) == 0 {
+        if ::libc::strcmp((*epair).key, key) == 0 {
             crate::stdlib::strncpy(
                 value,
                 (*epair).value,
@@ -478,7 +478,7 @@ pub unsafe extern "C" fn AAS_VectorForBSPEpairKey(
     v3 = 0 as libc::c_int as libc::c_double;
     v2 = v3;
     v1 = v2;
-    crate::stdlib::sscanf(
+    ::libc::sscanf(
         buf.as_mut_ptr(),
         b"%lf %lf %lf\x00" as *const u8 as *const libc::c_char,
         &mut v1 as *mut libc::c_double,
@@ -630,23 +630,32 @@ pub unsafe extern "C" fn AAS_ParseBSPEntities() {
         bspworld.dentdata,
         bspworld.entdatasize,
         b"entdata\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+    ) as *mut crate::src::botlib::l_script::script_s;
+    crate::src::botlib::l_script::SetScriptFlags(
+        script as *mut crate::src::botlib::l_script::script_s,
+        0x4 as libc::c_int | 0x8 as libc::c_int,
     );
-    crate::src::botlib::l_script::SetScriptFlags(script, 0x4 as libc::c_int | 0x8 as libc::c_int);
     bspworld.numentities = 1 as libc::c_int;
     //end if
-    while crate::src::botlib::l_script::PS_ReadToken(script, &mut token) != 0 {
-        if crate::stdlib::strcmp(
+    while crate::src::botlib::l_script::PS_ReadToken(
+        script as *mut crate::src::botlib::l_script::script_s,
+        &mut token as *mut _ as *mut crate::src::botlib::l_script::token_s,
+    ) != 0
+    {
+        if ::libc::strcmp(
             token.string.as_mut_ptr(),
             b"{\x00" as *const u8 as *const libc::c_char,
         ) != 0
         {
             crate::src::botlib::l_script::ScriptError(
-                script,
+                script as *mut crate::src::botlib::l_script::script_s,
                 b"invalid %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
                 token.string.as_mut_ptr(),
             ); //end while
             AAS_FreeBSPEntities(); //end if
-            crate::src::botlib::l_script::FreeScript(script); //end if
+            crate::src::botlib::l_script::FreeScript(
+                script as *mut crate::src::botlib::l_script::script_s,
+            ); //end if
             return;
         } //end while
         if bspworld.numentities >= 2048 as libc::c_int {
@@ -663,8 +672,12 @@ pub unsafe extern "C" fn AAS_ParseBSPEntities() {
                 .offset(bspworld.numentities as isize) as *mut bsp_entity_t;
             bspworld.numentities += 1;
             (*ent).epairs = 0 as *mut bsp_epair_t;
-            while crate::src::botlib::l_script::PS_ReadToken(script, &mut token) != 0 {
-                if crate::stdlib::strcmp(
+            while crate::src::botlib::l_script::PS_ReadToken(
+                script as *mut crate::src::botlib::l_script::script_s,
+                &mut token as *mut _ as *mut crate::src::botlib::l_script::token_s,
+            ) != 0
+            {
+                if ::libc::strcmp(
                     token.string.as_mut_ptr(),
                     b"}\x00" as *const u8 as *const libc::c_char,
                 ) == 0
@@ -679,12 +692,14 @@ pub unsafe extern "C" fn AAS_ParseBSPEntities() {
                 (*ent).epairs = epair;
                 if token.type_0 != 1 as libc::c_int {
                     crate::src::botlib::l_script::ScriptError(
-                        script,
+                        script as *mut crate::src::botlib::l_script::script_s,
                         b"invalid %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
                         token.string.as_mut_ptr(),
                     );
                     AAS_FreeBSPEntities();
-                    crate::src::botlib::l_script::FreeScript(script);
+                    crate::src::botlib::l_script::FreeScript(
+                        script as *mut crate::src::botlib::l_script::script_s,
+                    );
                     return;
                 }
                 crate::src::botlib::l_script::StripDoubleQuotes(token.string.as_mut_ptr());
@@ -692,16 +707,18 @@ pub unsafe extern "C" fn AAS_ParseBSPEntities() {
                     crate::stdlib::strlen(token.string.as_mut_ptr())
                         .wrapping_add(1 as libc::c_int as libc::c_ulong),
                 ) as *mut libc::c_char;
-                crate::stdlib::strcpy((*epair).key, token.string.as_mut_ptr());
+                ::libc::strcpy((*epair).key, token.string.as_mut_ptr());
                 if crate::src::botlib::l_script::PS_ExpectTokenType(
-                    script,
+                    script as *mut crate::src::botlib::l_script::script_s,
                     1 as libc::c_int,
                     0 as libc::c_int,
-                    &mut token,
+                    &mut token as *mut _ as *mut crate::src::botlib::l_script::token_s,
                 ) == 0
                 {
                     AAS_FreeBSPEntities();
-                    crate::src::botlib::l_script::FreeScript(script);
+                    crate::src::botlib::l_script::FreeScript(
+                        script as *mut crate::src::botlib::l_script::script_s,
+                    );
                     return;
                 }
                 crate::src::botlib::l_script::StripDoubleQuotes(token.string.as_mut_ptr());
@@ -709,24 +726,26 @@ pub unsafe extern "C" fn AAS_ParseBSPEntities() {
                     crate::stdlib::strlen(token.string.as_mut_ptr())
                         .wrapping_add(1 as libc::c_int as libc::c_ulong),
                 ) as *mut libc::c_char;
-                crate::stdlib::strcpy((*epair).value, token.string.as_mut_ptr());
+                ::libc::strcpy((*epair).value, token.string.as_mut_ptr());
             }
-            if crate::stdlib::strcmp(
+            if ::libc::strcmp(
                 token.string.as_mut_ptr(),
                 b"}\x00" as *const u8 as *const libc::c_char,
             ) != 0
             {
                 crate::src::botlib::l_script::ScriptError(
-                    script,
+                    script as *mut crate::src::botlib::l_script::script_s,
                     b"missing }\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
                 );
                 AAS_FreeBSPEntities();
-                crate::src::botlib::l_script::FreeScript(script);
+                crate::src::botlib::l_script::FreeScript(
+                    script as *mut crate::src::botlib::l_script::script_s,
+                );
                 return;
             }
         }
     }
-    crate::src::botlib::l_script::FreeScript(script);
+    crate::src::botlib::l_script::FreeScript(script as *mut crate::src::botlib::l_script::script_s);
 }
 //end of the function AAS_ParseBSPEntities
 //===========================================================================

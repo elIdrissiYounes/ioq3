@@ -25,8 +25,8 @@ pub use crate::src::qcommon::q_shared::cvar_t;
 pub use crate::src::qcommon::q_shared::qboolean;
 pub use crate::src::qcommon::q_shared::qfalse;
 pub use crate::src::qcommon::q_shared::qtrue;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
+use ::libc::free;
 /*
 ===============================================================================
 
@@ -95,7 +95,7 @@ pub unsafe extern "C" fn SND_setup() {
         b"com_soundMegs\x00" as *const u8 as *const libc::c_char,
         b"8\x00" as *const u8 as *const libc::c_char,
         0x20 as libc::c_int | 0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     scs = (*cv).integer * 1536 as libc::c_int;
     buffer = crate::stdlib::malloc(
         (scs as libc::c_ulong)
@@ -131,8 +131,8 @@ pub unsafe extern "C" fn SND_setup() {
 #[no_mangle]
 
 pub unsafe extern "C" fn SND_shutdown() {
-    crate::stdlib::free(sfxScratchBuffer as *mut libc::c_void);
-    crate::stdlib::free(buffer as *mut libc::c_void);
+    ::libc::free(sfxScratchBuffer as *mut libc::c_void);
+    ::libc::free(buffer as *mut libc::c_void);
 }
 /*
 ================
@@ -340,8 +340,10 @@ pub unsafe extern "C" fn S_LoadSound(
         };
     //	int		size;
     // load it in
-    data = crate::src::client::snd_codec::S_CodecLoad((*sfx).soundName.as_mut_ptr(), &mut info)
-        as *mut crate::src::qcommon::q_shared::byte;
+    data = crate::src::client::snd_codec::S_CodecLoad(
+        (*sfx).soundName.as_mut_ptr(),
+        &mut info as *mut _ as *mut crate::src::client::snd_codec::snd_info_s,
+    ) as *mut crate::src::qcommon::q_shared::byte;
     if data.is_null() {
         return crate::src::qcommon::q_shared::qfalse;
     }
@@ -382,7 +384,10 @@ pub unsafe extern "C" fn S_LoadSound(
             info.samples,
             data.offset(info.dataofs as isize),
         );
-        crate::src::client::snd_adpcm::S_AdpcmEncodeSound(sfx, samples);
+        crate::src::client::snd_adpcm::S_AdpcmEncodeSound(
+            sfx as *mut crate::snd_local_h::sfx_s,
+            samples,
+        );
     } else {
         (*sfx).soundCompressionMethod = 0 as libc::c_int;
         (*sfx).soundData = 0 as *mut crate::snd_local_h::sndBuffer;

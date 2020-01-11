@@ -60,7 +60,7 @@ pub unsafe extern "C" fn silk_stereo_decode_pred(
     let mut step_Q13: crate::opus_types_h::opus_int32 = 0;
     /* Entropy decoding */
     n = crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
-        psRangeDec,
+        psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         crate::src::opus_1_2_1::silk::tables_other::silk_stereo_pred_joint_iCDF.as_ptr(),
         8 as libc::c_int as libc::c_uint,
     );
@@ -71,13 +71,13 @@ pub unsafe extern "C" fn silk_stereo_decode_pred(
     while n < 2 as libc::c_int {
         ix[n as usize][0 as libc::c_int as usize] =
             crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
-                psRangeDec,
+                psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 crate::src::opus_1_2_1::silk::tables_other::silk_uniform3_iCDF.as_ptr(),
                 8 as libc::c_int as libc::c_uint,
             );
         ix[n as usize][1 as libc::c_int as usize] =
             crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
-                psRangeDec,
+                psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 crate::src::opus_1_2_1::silk::tables_other::silk_uniform5_iCDF.as_ptr(),
                 8 as libc::c_int as libc::c_uint,
             );
@@ -187,7 +187,7 @@ pub unsafe extern "C" fn silk_stereo_decode_mid_only(
 {
     /* Decode flag that only mid channel is coded */
     *decode_only_mid = crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
-        psRangeDec,
+        psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         crate::src::opus_1_2_1::silk::tables_other::silk_stereo_only_code_mid_iCDF.as_ptr(),
         8 as libc::c_int as libc::c_uint,
     );

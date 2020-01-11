@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -55,11 +55,11 @@ pub use crate::src::qcommon::q_shared::EXEC_NOW;
 pub use crate::src::server::sv_game::SV_GameCommand;
 use crate::stdlib::memcpy;
 use crate::stdlib::memmove;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
-use crate::stdlib::strpbrk;
-pub use crate::stdlib::strtol;
+use ::libc::strcat;
+use ::libc::strcmp;
+use ::libc::strpbrk;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -556,9 +556,9 @@ pub unsafe extern "C" fn Cmd_Args() -> *mut libc::c_char {
     cmd_args[0 as libc::c_int as usize] = 0 as libc::c_int as libc::c_char;
     i = 1 as libc::c_int;
     while i < cmd_argc {
-        crate::stdlib::strcat(cmd_args.as_mut_ptr(), cmd_argv[i as usize]);
+        ::libc::strcat(cmd_args.as_mut_ptr(), cmd_argv[i as usize]);
         if i != cmd_argc - 1 as libc::c_int {
-            crate::stdlib::strcat(
+            ::libc::strcat(
                 cmd_args.as_mut_ptr(),
                 b" \x00" as *const u8 as *const libc::c_char,
             );
@@ -585,9 +585,9 @@ pub unsafe extern "C" fn Cmd_ArgsFrom(mut arg: libc::c_int) -> *mut libc::c_char
     }
     i = arg;
     while i < cmd_argc {
-        crate::stdlib::strcat(cmd_args.as_mut_ptr(), cmd_argv[i as usize]);
+        ::libc::strcat(cmd_args.as_mut_ptr(), cmd_argv[i as usize]);
         if i != cmd_argc - 1 as libc::c_int {
-            crate::stdlib::strcat(
+            ::libc::strcat(
                 cmd_args.as_mut_ptr(),
                 b" \x00" as *const u8 as *const libc::c_char,
             );
@@ -644,7 +644,7 @@ pub unsafe extern "C" fn Cmd_Args_Sanitize() {
                 '\u{0}' as i32 as libc::c_char
         }
         loop {
-            c = crate::stdlib::strpbrk(c, b"\n\r;\x00" as *const u8 as *const libc::c_char);
+            c = ::libc::strpbrk(c, b"\n\r;\x00" as *const u8 as *const libc::c_char);
             if c.is_null() {
                 break;
             }
@@ -901,7 +901,7 @@ pub unsafe extern "C" fn Cmd_RemoveCommand(mut cmd_name: *const libc::c_char) {
             // command wasn't active
             return;
         }
-        if crate::stdlib::strcmp(cmd_name, (*cmd).name) == 0 {
+        if ::libc::strcmp(cmd_name, (*cmd).name) == 0 {
             *back = (*cmd).next;
             crate::src::qcommon::common::Z_Free((*cmd).name as *mut libc::c_void);
             crate::src::qcommon::common::Z_Free(cmd as *mut libc::c_void);

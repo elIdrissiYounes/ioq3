@@ -524,8 +524,12 @@ unsafe extern "C" fn Main_MenuDraw() {
     ent.oldorigin[0 as libc::c_int as usize] = ent.origin[0 as libc::c_int as usize];
     ent.oldorigin[1 as libc::c_int as usize] = ent.origin[1 as libc::c_int as usize];
     ent.oldorigin[2 as libc::c_int as usize] = ent.origin[2 as libc::c_int as usize];
-    crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(&mut ent);
-    crate::src::ui::ui_syscalls::trap_R_RenderScene(&mut refdef);
+    crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(
+        &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
+    crate::src::ui::ui_syscalls::trap_R_RenderScene(
+        &mut refdef as *mut _ as *const crate::tr_types_h::refdef_t,
+    );
     if crate::stdlib::strlen(s_errorMessage.errorMessage.as_mut_ptr()) != 0 {
         crate::src::q3_ui::ui_atoms::UI_DrawProportionalString_AutoWrapped(
             320 as libc::c_int,
@@ -538,7 +542,9 @@ unsafe extern "C" fn Main_MenuDraw() {
         );
     } else {
         // standard menu drawing
-        crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut s_main.menu);
+        crate::src::q3_ui::ui_qmenu::Menu_Draw(
+            &mut s_main.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        );
     }
     if crate::src::q3_ui::ui_atoms::uis.demoversion as u64 != 0 {
         crate::src::q3_ui::ui_atoms::UI_DrawProportionalString(
@@ -719,7 +725,9 @@ pub unsafe extern "C" fn UI_MainMenu() {
         s_errorMessage.menu.showlogo = crate::src::qcommon::q_shared::qtrue;
         crate::src::ui::ui_syscalls::trap_Key_SetCatcher(0x2 as libc::c_int);
         crate::src::q3_ui::ui_atoms::uis.menusp = 0 as libc::c_int;
-        crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_errorMessage.menu);
+        crate::src::q3_ui::ui_atoms::UI_PushMenu(
+            &mut s_errorMessage.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        );
         return;
     }
     s_main.menu.draw = Some(Main_MenuDraw as unsafe extern "C" fn() -> ());
@@ -836,42 +844,44 @@ pub unsafe extern "C" fn UI_MainMenu() {
     s_main.exit.color = crate::src::q3_ui::ui_qmenu::color_red.as_mut_ptr();
     s_main.exit.style = style;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_main.menu,
+        &mut s_main.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_main.singleplayer as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_main.menu,
+        &mut s_main.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_main.multiplayer as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_main.menu,
+        &mut s_main.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_main.setup as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_main.menu,
+        &mut s_main.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_main.demos as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_main.menu,
+        &mut s_main.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_main.cinematics as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     if teamArena as u64 != 0 {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut s_main.menu,
+            &mut s_main.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut s_main.teamArena as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
         );
     }
     if crate::src::q3_ui::ui_atoms::uis.demoversion as u64 == 0 {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut s_main.menu,
+            &mut s_main.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut s_main.mods as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
         );
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_main.menu,
+        &mut s_main.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_main.exit as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::ui::ui_syscalls::trap_Key_SetCatcher(0x2 as libc::c_int);
     crate::src::q3_ui::ui_atoms::uis.menusp = 0 as libc::c_int;
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_main.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_main.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

@@ -343,10 +343,11 @@ pub unsafe extern "C" fn R_AddPolygonSurfaces() {
     i = 0 as libc::c_int;
     poly = crate::src::renderergl1::tr_main::tr.refdef.polys;
     while i < crate::src::renderergl1::tr_main::tr.refdef.numPolys {
-        sh = crate::src::renderergl1::tr_shader::R_GetShaderByHandle((*poly).hShader);
+        sh = crate::src::renderergl1::tr_shader::R_GetShaderByHandle((*poly).hShader)
+            as *mut crate::tr_local_h::shader_s;
         crate::src::renderergl1::tr_main::R_AddDrawSurf(
             poly as *mut libc::c_void as *mut crate::tr_local_h::surfaceType_t,
-            sh,
+            sh as *mut crate::tr_local_h::shader_s,
             (*poly).fogIndex,
             crate::src::qcommon::q_shared::qfalse as libc::c_int,
         );
@@ -1288,7 +1289,9 @@ pub unsafe extern "C" fn RE_RenderScene(mut fd: *const crate::tr_types_h::refdef
     parms.pvsOrigin[0 as libc::c_int as usize] = (*fd).vieworg[0 as libc::c_int as usize];
     parms.pvsOrigin[1 as libc::c_int as usize] = (*fd).vieworg[1 as libc::c_int as usize];
     parms.pvsOrigin[2 as libc::c_int as usize] = (*fd).vieworg[2 as libc::c_int as usize];
-    crate::src::renderergl1::tr_main::R_RenderView(&mut parms);
+    crate::src::renderergl1::tr_main::R_RenderView(
+        &mut parms as *mut _ as *mut crate::tr_local_h::viewParms_t,
+    );
     // the next scene rendered in this frame will tack on after this one
     r_firstSceneDrawSurf = crate::src::renderergl1::tr_main::tr.refdef.numDrawSurfs;
     r_firstSceneEntity = r_numentities;

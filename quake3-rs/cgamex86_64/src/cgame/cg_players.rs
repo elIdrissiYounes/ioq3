@@ -4,16 +4,16 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -288,11 +288,11 @@ use crate::stdlib::acos;
 use crate::stdlib::fabs;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
-pub use crate::stdlib::rand;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
-pub use crate::stdlib::strtod;
-pub use crate::stdlib::strtol;
+pub use ::libc::rand;
+use ::libc::strchr;
+use ::libc::strcmp;
+pub use ::libc::strtod;
+pub use ::libc::strtol;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -381,7 +381,7 @@ pub unsafe extern "C" fn CG_CustomSound(
         .offset(clientNum as isize) as *mut crate::cg_local_h::clientInfo_t;
     i = 0 as libc::c_int;
     while i < 32 as libc::c_int && !cg_customSoundNames[i as usize].is_null() {
-        if crate::stdlib::strcmp(soundName, cg_customSoundNames[i as usize]) == 0 {
+        if ::libc::strcmp(soundName, cg_customSoundNames[i as usize]) == 0 {
             return (*ci).sounds[i as usize];
         }
         i += 1
@@ -1495,7 +1495,7 @@ unsafe extern "C" fn CG_LoadClientInfo(
             };
         // if the torso model has the "tag_flag"
         if crate::src::cgame::cg_syscalls::trap_R_LerpTag(
-            &mut tag,
+            &mut tag as *mut _ as *mut crate::src::qcommon::q_shared::orientation_t,
             (*ci).torsoModel,
             0 as libc::c_int,
             0 as libc::c_int,
@@ -1976,7 +1976,7 @@ pub unsafe extern "C" fn CG_NewClientInfo(mut clientNum: libc::c_int) {
                 modelStr.as_mut_ptr(),
                 ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
             );
-            skin = crate::stdlib::strchr(modelStr.as_mut_ptr(), '/' as i32);
+            skin = ::libc::strchr(modelStr.as_mut_ptr(), '/' as i32);
             if skin.is_null() {
                 skin = b"default\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
             } else {
@@ -1999,7 +1999,7 @@ pub unsafe extern "C" fn CG_NewClientInfo(mut clientNum: libc::c_int) {
             >= crate::bg_public_h::GT_TEAM as libc::c_int as libc::c_uint
         {
             // keep skin name
-            slash = crate::stdlib::strchr(v, '/' as i32);
+            slash = ::libc::strchr(v, '/' as i32);
             if !slash.is_null() {
                 crate::src::qcommon::q_shared::Q_strncpyz(
                     newInfo.skinName.as_mut_ptr(),
@@ -2014,7 +2014,7 @@ pub unsafe extern "C" fn CG_NewClientInfo(mut clientNum: libc::c_int) {
             v,
             ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
         );
-        slash = crate::stdlib::strchr(newInfo.modelName.as_mut_ptr(), '/' as i32);
+        slash = ::libc::strchr(newInfo.modelName.as_mut_ptr(), '/' as i32);
         if slash.is_null() {
             // modelName didn not include a skin name
             crate::src::qcommon::q_shared::Q_strncpyz(
@@ -2061,7 +2061,7 @@ pub unsafe extern "C" fn CG_NewClientInfo(mut clientNum: libc::c_int) {
                 modelStr_0.as_mut_ptr(),
                 ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
             );
-            skin_0 = crate::stdlib::strchr(modelStr_0.as_mut_ptr(), '/' as i32);
+            skin_0 = ::libc::strchr(modelStr_0.as_mut_ptr(), '/' as i32);
             if skin_0.is_null() {
                 skin_0 = b"default\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
             } else {
@@ -2084,7 +2084,7 @@ pub unsafe extern "C" fn CG_NewClientInfo(mut clientNum: libc::c_int) {
             >= crate::bg_public_h::GT_TEAM as libc::c_int as libc::c_uint
         {
             // keep skin name
-            slash = crate::stdlib::strchr(v, '/' as i32);
+            slash = ::libc::strchr(v, '/' as i32);
             if !slash.is_null() {
                 crate::src::qcommon::q_shared::Q_strncpyz(
                     newInfo.headSkinName.as_mut_ptr(),
@@ -2099,7 +2099,7 @@ pub unsafe extern "C" fn CG_NewClientInfo(mut clientNum: libc::c_int) {
             v,
             ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
         );
-        slash = crate::stdlib::strchr(newInfo.headModelName.as_mut_ptr(), '/' as i32);
+        slash = ::libc::strchr(newInfo.headModelName.as_mut_ptr(), '/' as i32);
         if slash.is_null() {
             // modelName didn not include a skin name
             crate::src::qcommon::q_shared::Q_strncpyz(
@@ -2761,7 +2761,7 @@ unsafe extern "C" fn CG_HasteTrail(mut cent: *mut crate::cg_local_h::centity_t) 
         0 as libc::c_int,
         0 as libc::c_int,
         crate::src::cgame::cg_main::cgs.media.hastePuffShader,
-    );
+    ) as *mut crate::cg_local_h::localEntity_s;
     // use the optimized local entity add
     (*smoke).leType = crate::cg_local_h::LE_SCALE_FADE;
 }
@@ -2829,7 +2829,9 @@ unsafe extern "C" fn CG_TrailItem(
         ent.axis.as_mut_ptr(),
     );
     ent.hModel = hModel;
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 ===============
@@ -2910,12 +2912,14 @@ unsafe extern "C" fn CG_PlayerFlag(
     pole.shadowPlane = (*torso).shadowPlane;
     pole.renderfx = (*torso).renderfx;
     crate::src::cgame::cg_ents::CG_PositionEntityOnTag(
-        &mut pole,
-        torso,
+        &mut pole as *mut _ as *mut crate::tr_types_h::refEntity_t,
+        torso as *const crate::tr_types_h::refEntity_t,
         (*torso).hModel,
         b"tag_flag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     );
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut pole);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut pole as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
     // show the flag model
     crate::stdlib::memset(
         &mut flag as *mut crate::tr_types_h::refEntity_t as *mut libc::c_void,
@@ -3057,12 +3061,14 @@ unsafe extern "C" fn CG_PlayerFlag(
         flag.axis.as_mut_ptr(),
     );
     crate::src::cgame::cg_ents::CG_PositionRotatedEntityOnTag(
-        &mut flag,
-        &mut pole,
+        &mut flag as *mut _ as *mut crate::tr_types_h::refEntity_t,
+        &mut pole as *mut _ as *const crate::tr_types_h::refEntity_t,
         pole.hModel,
         b"tag_flag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     );
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut flag);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut flag as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 ===============
@@ -3084,7 +3090,7 @@ unsafe extern "C" fn CG_PlayerPowerups(
     if powerups & (1 as libc::c_int) << crate::bg_public_h::PW_QUAD as libc::c_int != 0 {
         crate::src::cgame::cg_syscalls::trap_R_AddLightToScene(
             (*cent).lerpOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-            (200 as libc::c_int + (crate::stdlib::rand() & 31 as libc::c_int)) as libc::c_float,
+            (200 as libc::c_int + (::libc::rand() & 31 as libc::c_int)) as libc::c_float,
             0.2f32,
             0.2f32,
             1 as libc::c_int as libc::c_float,
@@ -3118,7 +3124,7 @@ unsafe extern "C" fn CG_PlayerPowerups(
         }
         crate::src::cgame::cg_syscalls::trap_R_AddLightToScene(
             (*cent).lerpOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-            (200 as libc::c_int + (crate::stdlib::rand() & 31 as libc::c_int)) as libc::c_float,
+            (200 as libc::c_int + (::libc::rand() & 31 as libc::c_int)) as libc::c_float,
             1.0f64 as libc::c_float,
             0.2f32,
             0.2f32,
@@ -3137,7 +3143,7 @@ unsafe extern "C" fn CG_PlayerPowerups(
         }
         crate::src::cgame::cg_syscalls::trap_R_AddLightToScene(
             (*cent).lerpOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-            (200 as libc::c_int + (crate::stdlib::rand() & 31 as libc::c_int)) as libc::c_float,
+            (200 as libc::c_int + (::libc::rand() & 31 as libc::c_int)) as libc::c_float,
             0.2f32,
             0.2f32,
             1.0f64 as libc::c_float,
@@ -3156,7 +3162,7 @@ unsafe extern "C" fn CG_PlayerPowerups(
         }
         crate::src::cgame::cg_syscalls::trap_R_AddLightToScene(
             (*cent).lerpOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-            (200 as libc::c_int + (crate::stdlib::rand() & 31 as libc::c_int)) as libc::c_float,
+            (200 as libc::c_int + (::libc::rand() & 31 as libc::c_int)) as libc::c_float,
             1.0f64 as libc::c_float,
             1.0f64 as libc::c_float,
             1.0f64 as libc::c_float,
@@ -3231,7 +3237,9 @@ unsafe extern "C" fn CG_PlayerFloatSprite(
         255 as libc::c_int as crate::src::qcommon::q_shared::byte;
     ent.shaderRGBA[3 as libc::c_int as usize] =
         255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 ===============
@@ -3341,7 +3349,7 @@ unsafe extern "C" fn CG_PlayerShadow(
     end[2 as libc::c_int as usize] = (*cent).lerpOrigin[2 as libc::c_int as usize];
     end[2 as libc::c_int as usize] -= 128 as libc::c_int as libc::c_float;
     crate::src::cgame::cg_syscalls::trap_CM_BoxTrace(
-        &mut trace,
+        &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         (*cent).lerpOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         end.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         mins.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -3447,7 +3455,7 @@ unsafe extern "C" fn CG_PlayerSplash(mut cent: *mut crate::cg_local_h::centity_t
     }
     // trace down to find the surface
     crate::src::cgame::cg_syscalls::trap_CM_BoxTrace(
-        &mut trace,
+        &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         start.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         end.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         0 as *const crate::src::qcommon::q_shared::vec_t,
@@ -3550,7 +3558,7 @@ unsafe extern "C" fn CG_PlayerSplash(mut cent: *mut crate::cg_local_h::centity_t
     crate::src::cgame::cg_syscalls::trap_R_AddPolyToScene(
         crate::src::cgame::cg_main::cgs.media.wakeMarkShader,
         4 as libc::c_int,
-        verts.as_mut_ptr(),
+        verts.as_mut_ptr() as *const crate::tr_types_h::polyVert_t,
     );
 }
 /*
@@ -3570,7 +3578,9 @@ pub unsafe extern "C" fn CG_AddRefEntityWithPowerups(
 ) {
     if (*state).powerups & (1 as libc::c_int) << crate::bg_public_h::PW_INVIS as libc::c_int != 0 {
         (*ent).customShader = crate::src::cgame::cg_main::cgs.media.invisShader;
-        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(ent);
+        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+            ent as *const crate::tr_types_h::refEntity_t,
+        );
     } else {
         /*
         if ( state->eFlags & EF_KAMIKAZE ) {
@@ -3581,7 +3591,9 @@ pub unsafe extern "C" fn CG_AddRefEntityWithPowerups(
             trap_R_AddRefEntityToScene( ent );
         }
         else {*/
-        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(ent);
+        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+            ent as *const crate::tr_types_h::refEntity_t,
+        );
         //}
         if (*state).powerups & (1 as libc::c_int) << crate::bg_public_h::PW_QUAD as libc::c_int != 0
         {
@@ -3590,7 +3602,9 @@ pub unsafe extern "C" fn CG_AddRefEntityWithPowerups(
             } else {
                 (*ent).customShader = crate::src::cgame::cg_main::cgs.media.quadShader
             }
-            crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(ent);
+            crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+                ent as *const crate::tr_types_h::refEntity_t,
+            );
         }
         if (*state).powerups & (1 as libc::c_int) << crate::bg_public_h::PW_REGEN as libc::c_int
             != 0
@@ -3599,7 +3613,9 @@ pub unsafe extern "C" fn CG_AddRefEntityWithPowerups(
                 == 1 as libc::c_int
             {
                 (*ent).customShader = crate::src::cgame::cg_main::cgs.media.regenShader;
-                crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(ent);
+                crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+                    ent as *const crate::tr_types_h::refEntity_t,
+                );
             }
         }
         if (*state).powerups
@@ -3607,7 +3623,9 @@ pub unsafe extern "C" fn CG_AddRefEntityWithPowerups(
             != 0
         {
             (*ent).customShader = crate::src::cgame::cg_main::cgs.media.battleSuitShader;
-            crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(ent);
+            crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+                ent as *const crate::tr_types_h::refEntity_t,
+            );
         }
     };
 }
@@ -3869,8 +3887,8 @@ pub unsafe extern "C" fn CG_Player(mut cent: *mut crate::cg_local_h::centity_t) 
     torso.lightingOrigin[1 as libc::c_int as usize] = (*cent).lerpOrigin[1 as libc::c_int as usize];
     torso.lightingOrigin[2 as libc::c_int as usize] = (*cent).lerpOrigin[2 as libc::c_int as usize];
     crate::src::cgame::cg_ents::CG_PositionRotatedEntityOnTag(
-        &mut torso,
-        &mut legs,
+        &mut torso as *mut _ as *mut crate::tr_types_h::refEntity_t,
+        &mut legs as *mut _ as *const crate::tr_types_h::refEntity_t,
         (*ci).legsModel,
         b"tag_torso\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     );
@@ -3894,8 +3912,8 @@ pub unsafe extern "C" fn CG_Player(mut cent: *mut crate::cg_local_h::centity_t) 
     head.lightingOrigin[1 as libc::c_int as usize] = (*cent).lerpOrigin[1 as libc::c_int as usize];
     head.lightingOrigin[2 as libc::c_int as usize] = (*cent).lerpOrigin[2 as libc::c_int as usize];
     crate::src::cgame::cg_ents::CG_PositionRotatedEntityOnTag(
-        &mut head,
-        &mut torso,
+        &mut head as *mut _ as *mut crate::tr_types_h::refEntity_t,
+        &mut torso as *mut _ as *const crate::tr_types_h::refEntity_t,
         (*ci).torsoModel,
         b"tag_head\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     );
@@ -3910,9 +3928,10 @@ pub unsafe extern "C" fn CG_Player(mut cent: *mut crate::cg_local_h::centity_t) 
     // add the gun / barrel / flash
     //
     crate::src::cgame::cg_weapons::CG_AddPlayerWeapon(
-        &mut torso,
-        0 as *mut crate::src::qcommon::q_shared::playerState_t,
-        cent,
+        &mut torso as *mut _ as *mut crate::tr_types_h::refEntity_t,
+        0 as *mut crate::src::qcommon::q_shared::playerState_t
+            as *mut crate::src::qcommon::q_shared::playerState_s,
+        cent as *mut crate::cg_local_h::centity_s,
         (*ci).team as libc::c_int,
     );
     // add powerups floating behind the player
@@ -3954,12 +3973,14 @@ pub unsafe extern "C" fn CG_ResetPlayerEntity(mut cent: *mut crate::cg_local_h::
         (*cent).currentState.torsoAnim,
     );
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*cent).currentState.pos,
+        &mut (*cent).currentState.pos as *mut _
+            as *const crate::src::qcommon::q_shared::trajectory_t,
         crate::src::cgame::cg_main::cg.time,
         (*cent).lerpOrigin.as_mut_ptr(),
     );
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*cent).currentState.apos,
+        &mut (*cent).currentState.apos as *mut _
+            as *const crate::src::qcommon::q_shared::trajectory_t,
         crate::src::cgame::cg_main::cg.time,
         (*cent).lerpAngles.as_mut_ptr(),
     );

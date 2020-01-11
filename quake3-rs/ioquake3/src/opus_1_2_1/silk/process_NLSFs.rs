@@ -336,7 +336,7 @@ pub unsafe extern "C" fn silk_process_NLSFs(
     crate::src::opus_1_2_1::silk::NLSF_encode::silk_NLSF_encode(
         (*psEncC).indices.NLSFIndices.as_mut_ptr(),
         pNLSF_Q15,
-        (*psEncC).psNLSF_CB,
+        (*psEncC).psNLSF_CB as *const crate::structs_h::silk_NLSF_CB_struct,
         pNLSFW_QW.as_mut_ptr(),
         NLSF_mu_Q20,
         (*psEncC).NLSF_MSVQ_Survivors,

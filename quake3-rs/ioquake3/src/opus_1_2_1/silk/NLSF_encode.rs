@@ -492,7 +492,7 @@ pub unsafe extern "C" fn silk_NLSF_encode(
         crate::src::opus_1_2_1::silk::NLSF_unpack::silk_NLSF_unpack(
             ec_ix.as_mut_ptr(),
             pred_Q8.as_mut_ptr(),
-            psNLSF_CB,
+            psNLSF_CB as *const crate::structs_h::silk_NLSF_CB_struct,
             ind1,
         );
         /* Trellis quantizer */
@@ -545,7 +545,11 @@ pub unsafe extern "C" fn silk_NLSF_encode(
             .wrapping_mul(::std::mem::size_of::<libc::c_schar>() as libc::c_ulong),
     );
     /* Decode */
-    crate::src::opus_1_2_1::silk::NLSF_decode::silk_NLSF_decode(pNLSF_Q15, NLSFIndices, psNLSF_CB);
+    crate::src::opus_1_2_1::silk::NLSF_decode::silk_NLSF_decode(
+        pNLSF_Q15,
+        NLSFIndices,
+        psNLSF_CB as *const crate::structs_h::silk_NLSF_CB_struct,
+    );
     ret = *RD_Q25.offset(0 as libc::c_int as isize);
     return ret;
 }

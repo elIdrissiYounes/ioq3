@@ -773,7 +773,9 @@ pub unsafe extern "C" fn UI_DrawConnectScreen(
         );
     }
     // see what information we should display
-    crate::src::ui::ui_syscalls::trap_GetClientState(&mut cstate);
+    crate::src::ui::ui_syscalls::trap_GetClientState(
+        &mut cstate as *mut _ as *mut crate::ui_public_h::uiClientState_t,
+    );
     info[0 as libc::c_int as usize] = '\u{0}' as i32 as libc::c_char;
     if crate::src::ui::ui_syscalls::trap_GetConfigString(
         0 as libc::c_int,

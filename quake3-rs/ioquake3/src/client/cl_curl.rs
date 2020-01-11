@@ -1072,7 +1072,7 @@ pub unsafe extern "C" fn CL_cURL_BeginDownload(
         crate::src::qcommon::q_shared::va(
             b"ioQ3://%s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
             crate::src::qcommon::net_ip::NET_AdrToString(
-                crate::src::client::cl_main::clc.serverAddress,
+                crate::src::client::cl_main::clc.serverAddress as crate::qcommon_h::netadr_t,
             ),
         ),
     );
@@ -1081,7 +1081,7 @@ pub unsafe extern "C" fn CL_cURL_BeginDownload(
         crate::curl_h::CURLOPT_USERAGENT,
         crate::src::qcommon::q_shared::va(
             b"%s %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-            b"ioq3 1.36_GIT_a3a346c3-2019-12-19\x00" as *const u8 as *const libc::c_char,
+            b"ioq3 1.36_GIT_d0fe4462-2020-01-10\x00" as *const u8 as *const libc::c_char,
             qcurl_version.expect("non-null function pointer")(),
         ),
     );

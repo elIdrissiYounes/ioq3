@@ -954,7 +954,7 @@ unsafe extern "C" fn DrawSkySide(
 ) {
     let mut s: libc::c_int = 0;
     let mut t: libc::c_int = 0;
-    crate::src::renderergl1::tr_backend::GL_Bind(image);
+    crate::src::renderergl1::tr_backend::GL_Bind(image as *mut crate::tr_common_h::image_s);
     t = *mins.offset(1 as libc::c_int as isize) + 8 as libc::c_int / 2 as libc::c_int;
     while t < *maxs.offset(1 as libc::c_int as isize) + 8 as libc::c_int / 2 as libc::c_int {
         crate::src::sdl::sdl_glimp::qglBegin.expect("non-null function pointer")(
@@ -1600,7 +1600,10 @@ pub unsafe extern "C" fn RB_DrawSun(
     vec2[2 as libc::c_int as usize] = vec2[2 as libc::c_int as usize] * size;
     // farthest depth range
     crate::src::sdl::sdl_glimp::qglDepthRange.expect("non-null function pointer")(1.0f64, 1.0f64);
-    crate::src::renderergl1::tr_shade::RB_BeginSurface(shader, 0 as libc::c_int);
+    crate::src::renderergl1::tr_shade::RB_BeginSurface(
+        shader as *mut crate::tr_local_h::shader_s,
+        0 as libc::c_int,
+    );
     crate::src::renderergl1::tr_surface::RB_AddQuadStamp(
         origin.as_mut_ptr(),
         vec1.as_mut_ptr(),

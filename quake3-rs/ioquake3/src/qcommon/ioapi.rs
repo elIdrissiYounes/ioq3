@@ -46,6 +46,8 @@ pub type testerror_file_func = Option<
     unsafe extern "C" fn(_: crate::zconf_h::voidpf, _: crate::zconf_h::voidpf) -> libc::c_int,
 >;
 
+pub type zlib_filefunc_def = crate::src::qcommon::ioapi::zlib_filefunc_def_s;
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct zlib_filefunc_def_s {
@@ -58,8 +60,6 @@ pub struct zlib_filefunc_def_s {
     pub zerror_file: crate::src::qcommon::ioapi::testerror_file_func,
     pub opaque: crate::zconf_h::voidpf,
 }
-
-pub type zlib_filefunc_def = crate::src::qcommon::ioapi::zlib_filefunc_def_s;
 use ::libc;
 
 pub use crate::stddef_h::size_t;

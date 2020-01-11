@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -317,7 +317,6 @@ pub use crate::src::ui::ui_syscalls::trap_S_RegisterSound;
 pub use crate::src::ui::ui_syscalls::trap_S_StartLocalSound;
 use crate::stdlib::memset;
 use crate::stdlib::strlen;
-pub use crate::stdlib::strtol;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -344,6 +343,7 @@ pub use crate::ui_local_h::AWARD_FRAGS;
 pub use crate::ui_local_h::AWARD_GAUNTLET;
 pub use crate::ui_local_h::AWARD_IMPRESSIVE;
 pub use crate::ui_local_h::AWARD_PERFECT;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -629,7 +629,10 @@ unsafe extern "C" fn UI_SPPostgameMenu_MenuKey(
     {
         return 0 as libc::c_int;
     }
-    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(&mut postgameMenuInfo.menu, key);
+    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(
+        &mut postgameMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        key,
+    );
 }
 
 static mut medalLocations: [libc::c_int; 6] = [
@@ -917,7 +920,9 @@ unsafe extern "C" fn UI_SPPostgameMenu_MenuDraw() {
         postgameMenuInfo.item_next.generic.flags &= !(0x4000 as libc::c_int as libc::c_uint);
         postgameMenuInfo.item_menu.generic.flags &= !(0x4000 as libc::c_int as libc::c_uint);
         UI_SPPostgameMenu_DrawAwardsMedals(postgameMenuInfo.numAwards);
-        crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut postgameMenuInfo.menu);
+        crate::src::q3_ui::ui_qmenu::Menu_Draw(
+            &mut postgameMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        );
     }
     // draw the scoreboard
     if crate::src::ui::ui_syscalls::trap_Cvar_VariableValue(
@@ -1063,17 +1068,17 @@ unsafe extern "C" fn UI_SPPostgameMenu_Init() {
     postgameMenuInfo.item_next.focuspic =
         b"menu/art/next_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut postgameMenuInfo.menu,
+        &mut postgameMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut postgameMenuInfo.item_menu as *mut crate::ui_local_h::menubitmap_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut postgameMenuInfo.menu,
+        &mut postgameMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut postgameMenuInfo.item_again as *mut crate::ui_local_h::menubitmap_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut postgameMenuInfo.menu,
+        &mut postgameMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut postgameMenuInfo.item_next as *mut crate::ui_local_h::menubitmap_s
             as *mut libc::c_void,
     );
@@ -1420,16 +1425,18 @@ pub unsafe extern "C" fn UI_SPPostgameMenu_f() {
     crate::src::ui::ui_syscalls::trap_Key_SetCatcher(0x2 as libc::c_int);
     crate::src::q3_ui::ui_atoms::uis.menusp = 0 as libc::c_int;
     UI_SPPostgameMenu_Init();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut postgameMenuInfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut postgameMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     if playerGameRank == 1 as libc::c_int {
         crate::src::q3_ui::ui_qmenu::Menu_SetCursorToItem(
-            &mut postgameMenuInfo.menu,
+            &mut postgameMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut postgameMenuInfo.item_next as *mut crate::ui_local_h::menubitmap_s
                 as *mut libc::c_void,
         );
     } else {
         crate::src::q3_ui::ui_qmenu::Menu_SetCursorToItem(
-            &mut postgameMenuInfo.menu,
+            &mut postgameMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut postgameMenuInfo.item_again as *mut crate::ui_local_h::menubitmap_s
                 as *mut libc::c_void,
         );

@@ -542,7 +542,7 @@ unsafe extern "C" fn R_AddWorldSurface(
     }
     crate::src::renderergl1::tr_main::R_AddDrawSurf(
         (*surf).data,
-        (*surf).shader,
+        (*surf).shader as *mut crate::tr_local_h::shader_s,
         (*surf).fogIndex,
         dlightBits,
     );
@@ -566,17 +566,19 @@ pub unsafe extern "C" fn R_AddBrushModelSurfaces(mut ent: *mut crate::tr_local_h
     let mut clip: libc::c_int = 0;
     let mut pModel: *mut crate::tr_local_h::model_t = 0 as *mut crate::tr_local_h::model_t;
     let mut i: libc::c_int = 0;
-    pModel = crate::src::renderergl1::tr_model::R_GetModelByHandle((*ent).e.hModel);
+    pModel = crate::src::renderergl1::tr_model::R_GetModelByHandle((*ent).e.hModel)
+        as *mut crate::tr_local_h::model_s;
     bmodel = (*pModel).bmodel;
     clip = crate::src::renderergl1::tr_main::R_CullLocalBox((*bmodel).bounds.as_mut_ptr());
     if clip == 2 as libc::c_int {
         return;
     }
     crate::src::renderergl1::tr_light::R_SetupEntityLighting(
-        &mut crate::src::renderergl1::tr_main::tr.refdef,
-        ent,
+        &mut crate::src::renderergl1::tr_main::tr.refdef as *mut _
+            as *const crate::tr_local_h::trRefdef_t,
+        ent as *mut crate::tr_local_h::trRefEntity_t,
     );
-    crate::src::renderergl1::tr_light::R_DlightBmodel(bmodel);
+    crate::src::renderergl1::tr_light::R_DlightBmodel(bmodel as *mut crate::tr_local_h::bmodel_t);
     i = 0 as libc::c_int;
     while i < (*bmodel).numSurfaces {
         R_AddWorldSurface(
@@ -622,7 +624,8 @@ unsafe extern "C" fn R_RecursiveWorldNode(
                         .viewParms
                         .frustum
                         .as_mut_ptr()
-                        .offset(0 as libc::c_int as isize),
+                        .offset(0 as libc::c_int as isize) as *mut _
+                        as *mut crate::src::qcommon::q_shared::cplane_s,
                 );
                 if r == 2 as libc::c_int {
                     return;
@@ -641,7 +644,8 @@ unsafe extern "C" fn R_RecursiveWorldNode(
                         .viewParms
                         .frustum
                         .as_mut_ptr()
-                        .offset(1 as libc::c_int as isize),
+                        .offset(1 as libc::c_int as isize) as *mut _
+                        as *mut crate::src::qcommon::q_shared::cplane_s,
                 );
                 if r == 2 as libc::c_int {
                     return;
@@ -660,7 +664,8 @@ unsafe extern "C" fn R_RecursiveWorldNode(
                         .viewParms
                         .frustum
                         .as_mut_ptr()
-                        .offset(2 as libc::c_int as isize),
+                        .offset(2 as libc::c_int as isize) as *mut _
+                        as *mut crate::src::qcommon::q_shared::cplane_s,
                 );
                 if r == 2 as libc::c_int {
                     return;
@@ -679,7 +684,8 @@ unsafe extern "C" fn R_RecursiveWorldNode(
                         .viewParms
                         .frustum
                         .as_mut_ptr()
-                        .offset(3 as libc::c_int as isize),
+                        .offset(3 as libc::c_int as isize) as *mut _
+                        as *mut crate::src::qcommon::q_shared::cplane_s,
                 );
                 if r == 2 as libc::c_int {
                     return;

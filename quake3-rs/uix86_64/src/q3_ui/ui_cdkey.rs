@@ -414,24 +414,24 @@ unsafe extern "C" fn UI_CDKeyMenu_Init() {
     cdkeyMenuInfo.back.focuspic =
         b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cdkeyMenuInfo.menu,
+        &mut cdkeyMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cdkeyMenuInfo.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cdkeyMenuInfo.menu,
+        &mut cdkeyMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cdkeyMenuInfo.frame as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cdkeyMenuInfo.menu,
+        &mut cdkeyMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cdkeyMenuInfo.cdkey as *mut crate::ui_local_h::menufield_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut cdkeyMenuInfo.menu,
+        &mut cdkeyMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut cdkeyMenuInfo.accept as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     if crate::src::q3_ui::ui_atoms::uis.menusp != 0 {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut cdkeyMenuInfo.menu,
+            &mut cdkeyMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut cdkeyMenuInfo.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
         );
     }
@@ -482,7 +482,9 @@ UI_CDKeyMenu
 
 pub unsafe extern "C" fn UI_CDKeyMenu() {
     UI_CDKeyMenu_Init();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut cdkeyMenuInfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut cdkeyMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }
 /*
 ===========================================================================

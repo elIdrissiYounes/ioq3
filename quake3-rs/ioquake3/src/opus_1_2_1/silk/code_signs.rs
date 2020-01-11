@@ -90,7 +90,7 @@ pub unsafe extern "C" fn silk_encode_signs(
             while j < 16 as libc::c_int {
                 if *q_ptr.offset(j as isize) as libc::c_int != 0 as libc::c_int {
                     crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                        psRangeEnc,
+                        psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                         (*q_ptr.offset(j as isize) as libc::c_int >> 15 as libc::c_int)
                             + 1 as libc::c_int,
                         icdf.as_mut_ptr(),
@@ -227,7 +227,7 @@ pub unsafe extern "C" fn silk_decode_signs(
                     let ref mut fresh0 = *q_ptr.offset(j as isize);
                     *fresh0 = (*fresh0 as libc::c_int
                         * (((crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
-                            psRangeDec,
+                            psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                             icdf.as_mut_ptr(),
                             8 as libc::c_int as libc::c_uint,
                         ) as crate::opus_types_h::opus_uint32)

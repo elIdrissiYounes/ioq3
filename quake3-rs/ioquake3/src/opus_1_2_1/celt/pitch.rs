@@ -198,9 +198,9 @@ pub use crate::arch_h::opus_val32;
 pub use crate::opus_types_h::opus_uint32;
 pub use crate::src::opus_1_2_1::celt::pitch::entcode_h::celt_udiv;
 pub use crate::stdlib::__uint32_t;
-use crate::stdlib::abs;
 use crate::stdlib::sqrt;
 pub use crate::stdlib::uint32_t;
+use ::libc::abs;
 
 use crate::src::opus_1_2_1::celt::celt_lpc::_celt_autocorr;
 use crate::src::opus_1_2_1::celt::celt_lpc::_celt_lpc;
@@ -570,9 +570,9 @@ pub unsafe extern "C" fn pitch_search(
     while i < max_pitch >> 1 as libc::c_int {
         let mut sum: crate::arch_h::opus_val32 = 0.;
         *xcorr.offset(i as isize) = 0 as libc::c_int as crate::arch_h::opus_val32;
-        if !(crate::stdlib::abs(i - 2 as libc::c_int * best_pitch[0 as libc::c_int as usize])
+        if !(::libc::abs(i - 2 as libc::c_int * best_pitch[0 as libc::c_int as usize])
             > 2 as libc::c_int
-            && crate::stdlib::abs(i - 2 as libc::c_int * best_pitch[1 as libc::c_int as usize])
+            && ::libc::abs(i - 2 as libc::c_int * best_pitch[1 as libc::c_int as usize])
                 > 2 as libc::c_int)
         {
             sum = celt_inner_prod_c(x_lp, y.offset(i as isize), len >> 1 as libc::c_int);
@@ -780,10 +780,9 @@ pub unsafe extern "C" fn remove_doubling(
         xy = 0.5f32 * (xy + xy2);
         yy = 0.5f32 * (*yy_lookup.offset(T1 as isize) + *yy_lookup.offset(T1b as isize));
         g1 = compute_pitch_gain(xy, xx, yy);
-        if crate::stdlib::abs(T1 - prev_period) <= 1 as libc::c_int {
+        if ::libc::abs(T1 - prev_period) <= 1 as libc::c_int {
             cont = prev_gain
-        } else if crate::stdlib::abs(T1 - prev_period) <= 2 as libc::c_int
-            && 5 as libc::c_int * k * k < T0
+        } else if ::libc::abs(T1 - prev_period) <= 2 as libc::c_int && 5 as libc::c_int * k * k < T0
         {
             cont = 0.5f32 * prev_gain
         } else {

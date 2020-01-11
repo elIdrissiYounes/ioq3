@@ -63,7 +63,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -480,13 +480,13 @@ use crate::stdlib::fabs;
 use crate::stdlib::memcpy;
 use crate::stdlib::memmove;
 use crate::stdlib::memset;
-pub use crate::stdlib::rand;
 use crate::stdlib::sqrt;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
 use crate::stdlib::strncpy;
-use crate::stdlib::strstr;
-pub use crate::stdlib::strtol;
+pub use ::libc::rand;
+use ::libc::strcmp;
+use ::libc::strstr;
+pub use ::libc::strtol;
 
 use crate::src::game::ai_dmnet::AIEnter_Seek_ActivateEntity;
 use crate::src::game::ai_dmnet::AIEnter_Seek_LTG;
@@ -871,7 +871,11 @@ pub unsafe extern "C" fn EntityIsDead(
         };
     if (*entinfo).number >= 0 as libc::c_int && (*entinfo).number < 64 as libc::c_int {
         //retrieve the current client state
-        if crate::src::game::ai_main::BotAI_GetClientState((*entinfo).number, &mut ps) == 0 {
+        if crate::src::game::ai_main::BotAI_GetClientState(
+            (*entinfo).number,
+            &mut ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
+        ) == 0
+        {
             return crate::src::qcommon::q_shared::qfalse;
         }
         if ps.pm_type != crate::bg_public_h::PM_NORMAL as libc::c_int {
@@ -1116,7 +1120,7 @@ pub unsafe extern "C" fn BotRefuseOrder(mut bs: *mut crate::src::game::ai_main::
     {
         crate::src::game::g_syscalls::trap_EA_Action((*bs).client, 0x200000 as libc::c_int);
         crate::src::game::ai_team::BotVoiceChat(
-            bs,
+            bs as *mut crate::src::game::ai_main::bot_state_s,
             (*bs).decisionmaker,
             b"no\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
         );
@@ -1220,7 +1224,7 @@ pub unsafe extern "C" fn BotCTFSeekGoals(mut bs: *mut crate::src::game::ai_main:
                 ),
             );
             crate::src::game::ai_team::BotVoiceChat(
-                bs,
+                bs as *mut crate::src::game::ai_main::bot_state_s,
                 -(1 as libc::c_int),
                 b"ihaveflag\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
             );
@@ -1240,7 +1244,10 @@ pub unsafe extern "C" fn BotCTFSeekGoals(mut bs: *mut crate::src::game::ai_main:
     // if the bot decided to follow someone
     if (*bs).ltgtype == 2 as libc::c_int && (*bs).ordered == 0 {
         // if the team mate being accompanied no longer carries the flag
-        crate::src::game::ai_main::BotEntityInfo((*bs).teammate, &mut entinfo);
+        crate::src::game::ai_main::BotEntityInfo(
+            (*bs).teammate,
+            &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+        );
         if EntityCarriesFlag(&mut entinfo) as u64 == 0 {
             (*bs).ltgtype = 0 as libc::c_int
         }
@@ -1280,7 +1287,7 @@ pub unsafe extern "C" fn BotCTFSeekGoals(mut bs: *mut crate::src::game::ai_main:
                     (*bs).arrive_time = 1 as libc::c_int as libc::c_float;
                     //
                     crate::src::game::ai_team::BotVoiceChat(
-                        bs,
+                        bs as *mut crate::src::game::ai_main::bot_state_s,
                         (*bs).teammate,
                         b"onfollow\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
                     );
@@ -1319,7 +1326,7 @@ pub unsafe extern "C" fn BotCTFSeekGoals(mut bs: *mut crate::src::game::ai_main:
                     (*bs).decisionmaker = (*bs).client;
                     (*bs).ordered = crate::src::qcommon::q_shared::qfalse as libc::c_int;
                     //
-                    if (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    if (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                         as libc::c_double)
                         < 0.5f64
@@ -1370,7 +1377,7 @@ pub unsafe extern "C" fn BotCTFSeekGoals(mut bs: *mut crate::src::game::ai_main:
                             (*bs).arrive_time = 1 as libc::c_int as libc::c_float;
                             //
                             crate::src::game::ai_team::BotVoiceChat(
-                                bs,
+                                bs as *mut crate::src::game::ai_main::bot_state_s,
                                 (*bs).teammate,
                                 b"onfollow\x00" as *const u8 as *const libc::c_char
                                     as *mut libc::c_char,
@@ -1393,8 +1400,7 @@ pub unsafe extern "C" fn BotCTFSeekGoals(mut bs: *mut crate::src::game::ai_main:
                             //get the enemy flag
                             (*bs).teammessage_time = crate::src::game::ai_main::floattime
                                 + 2 as libc::c_int as libc::c_float
-                                    * ((crate::stdlib::rand() & 0x7fff as libc::c_int)
-                                        as libc::c_float
+                                    * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                                         / 0x7fff as libc::c_int as libc::c_float);
                             //get the flag
                             (*bs).ltgtype = 6 as libc::c_int;
@@ -1416,7 +1422,9 @@ pub unsafe extern "C" fn BotCTFSeekGoals(mut bs: *mut crate::src::game::ai_main:
         }
     }
     // don't just do something wait for the bot team leader to give orders
-    if crate::src::game::ai_main::BotTeamLeader(bs) != 0 {
+    if crate::src::game::ai_main::BotTeamLeader(bs as *mut crate::src::game::ai_main::bot_state_s)
+        != 0
+    {
         return;
     }
     // if the bot is ordered to do something
@@ -1461,7 +1469,7 @@ pub unsafe extern "C" fn BotCTFSeekGoals(mut bs: *mut crate::src::game::ai_main:
     //set the time to send a message to the team mates
     (*bs).teammessage_time = crate::src::game::ai_main::floattime
         + 2 as libc::c_int as libc::c_float
-            * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float);
     //
     if (*bs).teamtaskpreference & (2 as libc::c_int | 1 as libc::c_int) != 0 {
@@ -1476,7 +1484,7 @@ pub unsafe extern "C" fn BotCTFSeekGoals(mut bs: *mut crate::src::game::ai_main:
         l2 = 0.7f32
     }
     //get the flag or defend the base
-    rnd = (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+    rnd = (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
         / 0x7fff as libc::c_int as libc::c_float;
     if rnd < l1 && ctf_redflag.areanum != 0 && ctf_blueflag.areanum != 0 {
         (*bs).decisionmaker = (*bs).client;
@@ -1984,7 +1992,7 @@ pub unsafe extern "C" fn EasyClientName(
         i += 1
     }
     //remove all spaces
-    ptr = crate::stdlib::strstr(
+    ptr = ::libc::strstr(
         name.as_mut_ptr(),
         b" \x00" as *const u8 as *const libc::c_char,
     );
@@ -1995,17 +2003,17 @@ pub unsafe extern "C" fn EasyClientName(
             crate::stdlib::strlen(ptr.offset(1 as libc::c_int as isize))
                 .wrapping_add(1 as libc::c_int as libc::c_ulong),
         );
-        ptr = crate::stdlib::strstr(
+        ptr = ::libc::strstr(
             name.as_mut_ptr(),
             b" \x00" as *const u8 as *const libc::c_char,
         )
     }
     //check for [x] and ]x[ clan names
-    str1 = crate::stdlib::strstr(
+    str1 = ::libc::strstr(
         name.as_mut_ptr(),
         b"[\x00" as *const u8 as *const libc::c_char,
     );
-    str2 = crate::stdlib::strstr(
+    str2 = ::libc::strstr(
         name.as_mut_ptr(),
         b"]\x00" as *const u8 as *const libc::c_char,
     );
@@ -2351,7 +2359,10 @@ pub unsafe extern "C" fn BotUpdateBattleInventory(
         legsAnim: 0,
         torsoAnim: 0,
     };
-    crate::src::game::ai_main::BotEntityInfo(enemy, &mut entinfo);
+    crate::src::game::ai_main::BotEntityInfo(
+        enemy,
+        &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+    );
     dir[0 as libc::c_int as usize] =
         entinfo.origin[0 as libc::c_int as usize] - (*bs).origin[0 as libc::c_int as usize];
     dir[1 as libc::c_int as usize] =
@@ -2755,7 +2766,10 @@ pub unsafe extern "C" fn BotWantsToRetreat(
     }
     //
     if (*bs).enemy >= 0 as libc::c_int {
-        crate::src::game::ai_main::BotEntityInfo((*bs).enemy, &mut entinfo);
+        crate::src::game::ai_main::BotEntityInfo(
+            (*bs).enemy,
+            &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+        );
         // if the enemy is carrying a flag
         if EntityCarriesFlag(&mut entinfo) as u64 != 0 {
             return crate::src::qcommon::q_shared::qfalse as libc::c_int;
@@ -2813,7 +2827,10 @@ pub unsafe extern "C" fn BotWantsToChase(
             return crate::src::qcommon::q_shared::qfalse as libc::c_int;
         }
         //always chase if the enemy is carrying a flag
-        crate::src::game::ai_main::BotEntityInfo((*bs).enemy, &mut entinfo);
+        crate::src::game::ai_main::BotEntityInfo(
+            (*bs).enemy,
+            &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+        );
         if EntityCarriesFlag(&mut entinfo) as u64 != 0 {
             return crate::src::qcommon::q_shared::qtrue as libc::c_int;
         }
@@ -3000,7 +3017,7 @@ pub unsafe extern "C" fn BotGoCamp(
         (*bs).teamgoal_time = crate::src::game::ai_main::floattime
             + 120 as libc::c_int as libc::c_float
             + 180 as libc::c_int as libc::c_float * camper
-            + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            + (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float
                 * 15 as libc::c_int as libc::c_float
     }
@@ -3075,7 +3092,7 @@ pub unsafe extern "C" fn BotWantsToCamp(
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
     }
     //
-    if (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+    if (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
         / 0x7fff as libc::c_int as libc::c_float
         > camper
     {
@@ -3261,38 +3278,38 @@ pub unsafe extern "C" fn BotRoamGoal(
         bestorg[0 as libc::c_int as usize] = (*bs).origin[0 as libc::c_int as usize];
         bestorg[1 as libc::c_int as usize] = (*bs).origin[1 as libc::c_int as usize];
         bestorg[2 as libc::c_int as usize] = (*bs).origin[2 as libc::c_int as usize];
-        rnd = (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        rnd = (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float;
         if rnd as libc::c_double > 0.25f64 {
             //add a random value to the x-coordinate
-            if (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            if (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double)
                 < 0.5f64
             {
                 bestorg[0 as libc::c_int as usize] -= 800 as libc::c_int as libc::c_float
-                    * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                     + 100 as libc::c_int as libc::c_float
             } else {
                 bestorg[0 as libc::c_int as usize] += 800 as libc::c_int as libc::c_float
-                    * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                     + 100 as libc::c_int as libc::c_float
             }
         }
         if (rnd as libc::c_double) < 0.75f64 {
             //add a random value to the y-coordinate
-            if (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            if (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double)
                 < 0.5f64
             {
                 bestorg[1 as libc::c_int as usize] -= 800 as libc::c_int as libc::c_float
-                    * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                     + 100 as libc::c_int as libc::c_float
             } else {
                 bestorg[1 as libc::c_int as usize] += 800 as libc::c_int as libc::c_float
-                    * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                     + 100 as libc::c_int as libc::c_float
             }
@@ -3301,14 +3318,14 @@ pub unsafe extern "C" fn BotRoamGoal(
         bestorg[2 as libc::c_int as usize] = (bestorg[2 as libc::c_int as usize] as libc::c_double
             + (2 as libc::c_int * 48 as libc::c_int) as libc::c_double
                 * (2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                         as libc::c_double
                         - 0.5f64)))
             as crate::src::qcommon::q_shared::vec_t;
         //trace a line from the origin to the roam target
         crate::src::game::ai_main::BotAI_Trace(
-            &mut trace,
+            &mut trace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
             (*bs).origin.as_mut_ptr(),
             0 as *mut crate::src::qcommon::q_shared::vec_t,
             0 as *mut crate::src::qcommon::q_shared::vec_t,
@@ -3345,7 +3362,7 @@ pub unsafe extern "C" fn BotRoamGoal(
             belowbestorg[2 as libc::c_int as usize] =
                 bestorg[2 as libc::c_int as usize] - 800 as libc::c_int as libc::c_float;
             crate::src::game::ai_main::BotAI_Trace(
-                &mut trace,
+                &mut trace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
                 bestorg.as_mut_ptr(),
                 0 as *mut crate::src::qcommon::q_shared::vec_t,
                 0 as *mut crate::src::qcommon::q_shared::vec_t,
@@ -3516,7 +3533,10 @@ pub unsafe extern "C" fn BotAttackMove(
     //initialize the movement state
     BotSetupForMovement(bs);
     //get the enemy entity info
-    crate::src::game::ai_main::BotEntityInfo(attackentity, &mut entinfo);
+    crate::src::game::ai_main::BotEntityInfo(
+        attackentity,
+        &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+    );
     //direction towards the enemy
     forward[0 as libc::c_int as usize] =
         entinfo.origin[0 as libc::c_int as usize] - (*bs).origin[0 as libc::c_int as usize];
@@ -3535,14 +3555,14 @@ pub unsafe extern "C" fn BotAttackMove(
     if (*bs).attackcrouch_time
         < crate::src::game::ai_main::floattime - 1 as libc::c_int as libc::c_float
     {
-        if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        if ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float)
             < jumper
         {
             movetype = 4 as libc::c_int
         } else if (*bs).attackcrouch_time
             < crate::src::game::ai_main::floattime - 1 as libc::c_int as libc::c_float
-            && ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            && ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float)
                 < croucher
         {
@@ -3607,7 +3627,7 @@ pub unsafe extern "C" fn BotAttackMove(
     if attack_skill as libc::c_double > 0.7f64 {
         strafechange_time = (strafechange_time as libc::c_double
             + 2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                     - 0.5f64)
                 * 0.2f64) as libc::c_float
@@ -3615,7 +3635,7 @@ pub unsafe extern "C" fn BotAttackMove(
     //if the strafe direction should be changed
     if (*bs).attackstrafe_time > strafechange_time {
         //some magic number :)
-        if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        if ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             > 0.935f64
         {
@@ -3645,7 +3665,7 @@ pub unsafe extern "C" fn BotAttackMove(
             sideward[2 as libc::c_int as usize] = -sideward[2 as libc::c_int as usize]
         }
         //randomly go back a little
-        if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        if ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             > 0.9f64
         {
@@ -3846,7 +3866,10 @@ pub unsafe extern "C" fn BotEntityVisible(
     let mut start: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut end: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut middle: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    crate::src::game::ai_main::BotEntityInfo(ent, &mut entinfo);
+    crate::src::game::ai_main::BotEntityInfo(
+        ent,
+        &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+    );
     if entinfo.valid == 0 {
         return 0 as libc::c_int as libc::c_float;
     }
@@ -3926,7 +3949,7 @@ pub unsafe extern "C" fn BotEntityVisible(
         }
         //trace from start to end
         crate::src::game::ai_main::BotAI_Trace(
-            &mut trace,
+            &mut trace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
             start.as_mut_ptr(),
             0 as *mut crate::src::qcommon::q_shared::vec_t,
             0 as *mut crate::src::qcommon::q_shared::vec_t,
@@ -3942,7 +3965,7 @@ pub unsafe extern "C" fn BotEntityVisible(
             //trace through the water
             contents_mask &= !(8 as libc::c_int | 16 as libc::c_int | 32 as libc::c_int);
             crate::src::game::ai_main::BotAI_Trace(
-                &mut trace,
+                &mut trace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
                 trace.endpos.as_mut_ptr(),
                 0 as *mut crate::src::qcommon::q_shared::vec_t,
                 0 as *mut crate::src::qcommon::q_shared::vec_t,
@@ -3973,7 +3996,7 @@ pub unsafe extern "C" fn BotEntityVisible(
                 start[1 as libc::c_int as usize] = trace.endpos[1 as libc::c_int as usize];
                 start[2 as libc::c_int as usize] = trace.endpos[2 as libc::c_int as usize];
                 crate::src::game::ai_main::BotAI_Trace(
-                    &mut trace,
+                    &mut trace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
                     start.as_mut_ptr(),
                     0 as *mut crate::src::qcommon::q_shared::vec_t,
                     0 as *mut crate::src::qcommon::q_shared::vec_t,
@@ -3995,7 +4018,7 @@ pub unsafe extern "C" fn BotEntityVisible(
                 end[1 as libc::c_int as usize] = trace.endpos[1 as libc::c_int as usize];
                 end[2 as libc::c_int as usize] = trace.endpos[2 as libc::c_int as usize];
                 crate::src::game::ai_main::BotAI_Trace(
-                    &mut trace,
+                    &mut trace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
                     eye,
                     0 as *mut crate::src::qcommon::q_shared::vec_t,
                     0 as *mut crate::src::qcommon::q_shared::vec_t,
@@ -4138,7 +4161,10 @@ pub unsafe extern "C" fn BotFindEnemy(
     (*bs).lasthealth = (*bs).inventory[29 as libc::c_int as usize];
     //
     if curenemy >= 0 as libc::c_int {
-        crate::src::game::ai_main::BotEntityInfo(curenemy, &mut curenemyinfo);
+        crate::src::game::ai_main::BotEntityInfo(
+            curenemy,
+            &mut curenemyinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+        );
         if EntityCarriesFlag(&mut curenemyinfo) as u64 != 0 {
             return crate::src::qcommon::q_shared::qfalse as libc::c_int;
         }
@@ -4165,7 +4191,10 @@ pub unsafe extern "C" fn BotFindEnemy(
                     != 0)
                 {
                     //
-                    crate::src::game::ai_main::BotEntityInfo(i, &mut entinfo);
+                    crate::src::game::ai_main::BotEntityInfo(
+                        i,
+                        &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+                    );
                     //
                     if !(entinfo.valid == 0) {
                         //if the enemy isn't dead and the enemy isn't the bot self
@@ -4463,7 +4492,10 @@ pub unsafe extern "C" fn BotTeamFlagCarrierVisible(
     while i < crate::src::game::g_main::level.maxclients {
         if !(i == (*bs).client) {
             //
-            crate::src::game::ai_main::BotEntityInfo(i, &mut entinfo);
+            crate::src::game::ai_main::BotEntityInfo(
+                i,
+                &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+            );
             //if this player is active
             if !(entinfo.valid == 0) {
                 //if this player is carrying a flag
@@ -4531,7 +4563,10 @@ pub unsafe extern "C" fn BotTeamFlagCarrier(
     while i < crate::src::game::g_main::level.maxclients {
         if !(i == (*bs).client) {
             //
-            crate::src::game::ai_main::BotEntityInfo(i, &mut entinfo);
+            crate::src::game::ai_main::BotEntityInfo(
+                i,
+                &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+            );
             //if this player is active
             if !(entinfo.valid == 0) {
                 //if this player is carrying a flag
@@ -4590,7 +4625,10 @@ pub unsafe extern "C" fn BotEnemyFlagCarrierVisible(
     while i < crate::src::game::g_main::level.maxclients {
         if !(i == (*bs).client) {
             //
-            crate::src::game::ai_main::BotEntityInfo(i, &mut entinfo);
+            crate::src::game::ai_main::BotEntityInfo(
+                i,
+                &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+            );
             //if this player is active
             if !(entinfo.valid == 0) {
                 //if this player is carrying a flag
@@ -4669,7 +4707,10 @@ pub unsafe extern "C" fn BotVisibleTeamMatesAndEnemies(
     while i < crate::src::game::g_main::level.maxclients {
         if !(i == (*bs).client) {
             //
-            crate::src::game::ai_main::BotEntityInfo(i, &mut entinfo);
+            crate::src::game::ai_main::BotEntityInfo(
+                i,
+                &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+            );
             //if this player is active
             if !(entinfo.valid == 0) {
                 //if this player is carrying a flag
@@ -4848,7 +4889,10 @@ pub unsafe extern "C" fn BotAimAtEnemy(mut bs: *mut crate::src::game::ai_main::b
         return;
     }
     //get the enemy entity information
-    crate::src::game::ai_main::BotEntityInfo((*bs).enemy, &mut entinfo);
+    crate::src::game::ai_main::BotEntityInfo(
+        (*bs).enemy,
+        &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+    );
     //if this is not a player (should be an obelisk)
     if (*bs).enemy >= 64 as libc::c_int {
         //if the obelisk is visible
@@ -4997,10 +5041,13 @@ pub unsafe extern "C" fn BotAimAtEnemy(mut bs: *mut crate::src::game::ai_main::b
         aim_accuracy = 0.0001f32
     }
     //get the enemy entity information
-    crate::src::game::ai_main::BotEntityInfo((*bs).enemy, &mut entinfo);
+    crate::src::game::ai_main::BotEntityInfo(
+        (*bs).enemy,
+        &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+    );
     //if the enemy is invisible then shoot crappy most of the time
     if EntityIsInvisible(&mut entinfo) as u64 != 0 {
-        if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        if ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             > 0.1f64
         {
@@ -5082,7 +5129,7 @@ pub unsafe extern "C" fn BotAimAtEnemy(mut bs: *mut crate::src::game::ai_main::b
         start[2 as libc::c_int as usize] += wi.offset[2 as libc::c_int as usize];
         //
         crate::src::game::ai_main::BotAI_Trace(
-            &mut trace,
+            &mut trace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
             start.as_mut_ptr(),
             mins.as_mut_ptr(),
             maxs.as_mut_ptr(),
@@ -5247,7 +5294,7 @@ pub unsafe extern "C" fn BotAimAtEnemy(mut bs: *mut crate::src::game::ai_main::b
                 end[2 as libc::c_int as usize] = entinfo.origin[2 as libc::c_int as usize];
                 end[2 as libc::c_int as usize] -= 64 as libc::c_int as libc::c_float;
                 crate::src::game::ai_main::BotAI_Trace(
-                    &mut trace,
+                    &mut trace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
                     entinfo.origin.as_mut_ptr(),
                     0 as *mut crate::src::qcommon::q_shared::vec_t,
                     0 as *mut crate::src::qcommon::q_shared::vec_t,
@@ -5269,7 +5316,7 @@ pub unsafe extern "C" fn BotAimAtEnemy(mut bs: *mut crate::src::game::ai_main::b
                 }
                 //trace a line from projectile start to ground target
                 crate::src::game::ai_main::BotAI_Trace(
-                    &mut trace,
+                    &mut trace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
                     start.as_mut_ptr(),
                     0 as *mut crate::src::qcommon::q_shared::vec_t,
                     0 as *mut crate::src::qcommon::q_shared::vec_t,
@@ -5310,7 +5357,7 @@ pub unsafe extern "C" fn BotAimAtEnemy(mut bs: *mut crate::src::game::ai_main::b
                             trace.endpos[2 as libc::c_int as usize] +=
                                 1 as libc::c_int as libc::c_float;
                             crate::src::game::ai_main::BotAI_Trace(
-                                &mut trace,
+                                &mut trace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
                                 trace.endpos.as_mut_ptr(),
                                 0 as *mut crate::src::qcommon::q_shared::vec_t,
                                 0 as *mut crate::src::qcommon::q_shared::vec_t,
@@ -5338,7 +5385,7 @@ pub unsafe extern "C" fn BotAimAtEnemy(mut bs: *mut crate::src::game::ai_main::b
             as libc::c_double
             + 20 as libc::c_int as libc::c_double
                 * (2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                         as libc::c_double
                         - 0.5f64))
@@ -5348,7 +5395,7 @@ pub unsafe extern "C" fn BotAimAtEnemy(mut bs: *mut crate::src::game::ai_main::b
             as libc::c_double
             + 20 as libc::c_int as libc::c_double
                 * (2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                         as libc::c_double
                         - 0.5f64))
@@ -5358,7 +5405,7 @@ pub unsafe extern "C" fn BotAimAtEnemy(mut bs: *mut crate::src::game::ai_main::b
             as libc::c_double
             + 10 as libc::c_int as libc::c_double
                 * (2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                         as libc::c_double
                         - 0.5f64))
@@ -5440,7 +5487,7 @@ pub unsafe extern "C" fn BotAimAtEnemy(mut bs: *mut crate::src::game::ai_main::b
     //
     if enemyvisible != 0 {
         crate::src::game::ai_main::BotAI_Trace(
-            &mut trace,
+            &mut trace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
             (*bs).eye.as_mut_ptr(),
             0 as *mut crate::src::qcommon::q_shared::vec_t,
             0 as *mut crate::src::qcommon::q_shared::vec_t,
@@ -5486,7 +5533,7 @@ pub unsafe extern "C" fn BotAimAtEnemy(mut bs: *mut crate::src::game::ai_main::b
             dir[i as usize] = (dir[i as usize] as libc::c_double
                 + 0.3f64
                     * (2.0f64
-                        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                             / 0x7fff as libc::c_int as libc::c_float)
                             as libc::c_double
                             - 0.5f64))
@@ -5505,7 +5552,7 @@ pub unsafe extern "C" fn BotAimAtEnemy(mut bs: *mut crate::src::game::ai_main::b
         ((*bs).ideal_viewangles[0 as libc::c_int as usize] as libc::c_double
             + (6 as libc::c_int as libc::c_float * wi.vspread) as libc::c_double
                 * (2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                         as libc::c_double
                         - 0.5f64))
@@ -5517,7 +5564,7 @@ pub unsafe extern "C" fn BotAimAtEnemy(mut bs: *mut crate::src::game::ai_main::b
         ((*bs).ideal_viewangles[1 as libc::c_int as usize] as libc::c_double
             + (6 as libc::c_int as libc::c_float * wi.hspread) as libc::c_double
                 * (2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                         as libc::c_double
                         - 0.5f64))
@@ -5692,7 +5739,10 @@ pub unsafe extern "C" fn BotCheckAttack(mut bs: *mut crate::src::game::ai_main::
     ];
     attackentity = (*bs).enemy;
     //
-    crate::src::game::ai_main::BotEntityInfo(attackentity, &mut entinfo);
+    crate::src::game::ai_main::BotEntityInfo(
+        attackentity,
+        &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+    );
     // if not attacking a player
     (attackentity) >= 64 as libc::c_int;
     //
@@ -5725,7 +5775,7 @@ pub unsafe extern "C" fn BotCheckAttack(mut bs: *mut crate::src::game::ai_main::
         1 as libc::c_int as libc::c_float,
     );
     if (*bs).firethrottleshoot_time < crate::src::game::ai_main::floattime {
-        if (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        if (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float
             > firethrottle
         {
@@ -5770,7 +5820,7 @@ pub unsafe extern "C" fn BotCheckAttack(mut bs: *mut crate::src::game::ai_main::
         return;
     }
     crate::src::game::ai_main::BotAI_Trace(
-        &mut bsptrace,
+        &mut bsptrace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
         (*bs).eye.as_mut_ptr(),
         0 as *mut crate::src::qcommon::q_shared::vec_t,
         0 as *mut crate::src::qcommon::q_shared::vec_t,
@@ -5823,7 +5873,7 @@ pub unsafe extern "C" fn BotCheckAttack(mut bs: *mut crate::src::game::ai_main::
     start[2 as libc::c_int as usize] = start[2 as libc::c_int as usize]
         + forward[2 as libc::c_int as usize] * -(12 as libc::c_int) as libc::c_float;
     crate::src::game::ai_main::BotAI_Trace(
-        &mut trace,
+        &mut trace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
         start.as_mut_ptr(),
         mins.as_mut_ptr(),
         maxs.as_mut_ptr(),
@@ -5981,7 +6031,10 @@ pub unsafe extern "C" fn BotMapScripts(mut bs: *mut crate::src::game::ai_main::b
         while i < crate::src::game::g_main::level.maxclients {
             if !(i == (*bs).client) {
                 //
-                crate::src::game::ai_main::BotEntityInfo(i, &mut entinfo);
+                crate::src::game::ai_main::BotEntityInfo(
+                    i,
+                    &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+                );
                 //
                 if !(entinfo.valid == 0) {
                     //if the enemy isn't dead and the enemy isn't the bot self
@@ -6043,7 +6096,7 @@ pub unsafe extern "C" fn BotMapScripts(mut bs: *mut crate::src::game::ai_main::b
                 ((*bs).ideal_viewangles[0 as libc::c_int as usize] as libc::c_double
                     + 8 as libc::c_int as libc::c_double
                         * (2.0f64
-                            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                                 / 0x7fff as libc::c_int as libc::c_float)
                                 as libc::c_double
                                 - 0.5f64))
@@ -6057,7 +6110,7 @@ pub unsafe extern "C" fn BotMapScripts(mut bs: *mut crate::src::game::ai_main::b
                 ((*bs).ideal_viewangles[1 as libc::c_int as usize] as libc::c_double
                     + 8 as libc::c_int as libc::c_double
                         * (2.0f64
-                            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                                 / 0x7fff as libc::c_int as libc::c_float)
                                 as libc::c_double
                                 - 0.5f64))
@@ -6376,7 +6429,7 @@ pub unsafe extern "C" fn BotFuncButtonActivateGoal(
         (*activategoal).shoot = crate::src::qcommon::q_shared::qtrue as libc::c_int;
         //
         crate::src::game::ai_main::BotAI_Trace(
-            &mut bsptrace,
+            &mut bsptrace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
             (*bs).eye.as_mut_ptr(),
             0 as *mut crate::src::qcommon::q_shared::vec_t,
             0 as *mut crate::src::qcommon::q_shared::vec_t,
@@ -7032,7 +7085,10 @@ pub unsafe extern "C" fn BotGetActivateGoal(
         0 as libc::c_int,
         ::std::mem::size_of::<crate::src::game::ai_main::bot_activategoal_t>() as libc::c_ulong,
     );
-    crate::src::game::ai_main::BotEntityInfo(entitynum, &mut entinfo);
+    crate::src::game::ai_main::BotEntityInfo(
+        entitynum,
+        &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+    );
     crate::src::qcommon::q_shared::Com_sprintf(
         model.as_mut_ptr(),
         ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
@@ -7048,7 +7104,7 @@ pub unsafe extern "C" fn BotGetActivateGoal(
             ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong as libc::c_int,
         ) == 0)
         {
-            if crate::stdlib::strcmp(model.as_mut_ptr(), tmpmodel.as_mut_ptr()) == 0 {
+            if ::libc::strcmp(model.as_mut_ptr(), tmpmodel.as_mut_ptr()) == 0 {
                 break;
             }
         }
@@ -7079,7 +7135,7 @@ pub unsafe extern "C" fn BotGetActivateGoal(
         return 0 as libc::c_int;
     }
     //if it is a door
-    if crate::stdlib::strcmp(
+    if ::libc::strcmp(
         classname.as_mut_ptr(),
         b"func_door\x00" as *const u8 as *const libc::c_char,
     ) == 0
@@ -7198,7 +7254,7 @@ pub unsafe extern "C" fn BotGetActivateGoal(
         }
     }
     // if the bot is blocked by or standing on top of a button
-    if crate::stdlib::strcmp(
+    if ::libc::strcmp(
         classname.as_mut_ptr(),
         b"func_button\x00" as *const u8 as *const libc::c_char,
     ) == 0
@@ -7238,9 +7294,7 @@ pub unsafe extern "C" fn BotGetActivateGoal(
                 ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong as libc::c_int,
             ) == 0)
             {
-                if crate::stdlib::strcmp(targetname[i as usize].as_mut_ptr(), target.as_mut_ptr())
-                    == 0
-                {
+                if ::libc::strcmp(targetname[i as usize].as_mut_ptr(), target.as_mut_ptr()) == 0 {
                     cur_entities[i as usize] =
                         crate::src::game::g_syscalls::trap_AAS_NextBSPEntity(ent);
                     break;
@@ -7274,7 +7328,7 @@ pub unsafe extern "C" fn BotGetActivateGoal(
                     targetname[i as usize].as_mut_ptr(),
                 );
             }
-        } else if crate::stdlib::strcmp(
+        } else if ::libc::strcmp(
             classname.as_mut_ptr(),
             b"func_button\x00" as *const u8 as *const libc::c_char,
         ) == 0
@@ -7318,7 +7372,7 @@ pub unsafe extern "C" fn BotGetActivateGoal(
                     as libc::c_float
             }
             return ent;
-        } else if crate::stdlib::strcmp(
+        } else if ::libc::strcmp(
             classname.as_mut_ptr(),
             b"trigger_multiple\x00" as *const u8 as *const libc::c_char,
         ) == 0
@@ -7363,7 +7417,7 @@ pub unsafe extern "C" fn BotGetActivateGoal(
             }
             return ent;
         } else {
-            if crate::stdlib::strcmp(
+            if ::libc::strcmp(
                 classname.as_mut_ptr(),
                 b"func_timer\x00" as *const u8 as *const libc::c_char,
             ) == 0
@@ -7371,11 +7425,11 @@ pub unsafe extern "C" fn BotGetActivateGoal(
                 continue;
             }
             // the actual button or trigger might be linked through a target_relay or target_delay
-            if crate::stdlib::strcmp(
+            if ::libc::strcmp(
                 classname.as_mut_ptr(),
                 b"target_relay\x00" as *const u8 as *const libc::c_char,
             ) == 0
-                || crate::stdlib::strcmp(
+                || ::libc::strcmp(
                     classname.as_mut_ptr(),
                     b"target_delay\x00" as *const u8 as *const libc::c_char,
                 ) == 0
@@ -7438,7 +7492,10 @@ pub unsafe extern "C" fn BotGoForActivateGoal(
             crate::src::game::ai_main::floattime + 10 as libc::c_int as libc::c_float
     }
     (*activategoal).start_time = crate::src::game::ai_main::floattime;
-    crate::src::game::ai_main::BotEntityInfo((*activategoal).goal.entitynum, &mut activateinfo);
+    crate::src::game::ai_main::BotEntityInfo(
+        (*activategoal).goal.entitynum,
+        &mut activateinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+    );
     (*activategoal).origin[0 as libc::c_int as usize] =
         activateinfo.origin[0 as libc::c_int as usize];
     (*activategoal).origin[1 as libc::c_int as usize] =
@@ -7449,7 +7506,7 @@ pub unsafe extern "C" fn BotGoForActivateGoal(
     if BotPushOntoActivateGoalStack(bs, activategoal) != 0 {
         // enter the activate entity AI node
         crate::src::game::ai_dmnet::AIEnter_Seek_ActivateEntity(
-            bs,
+            bs as *mut crate::src::game::ai_main::bot_state_s,
             b"BotGoForActivateGoal\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
         );
         return crate::src::qcommon::q_shared::qtrue as libc::c_int;
@@ -7531,8 +7588,7 @@ pub unsafe extern "C" fn BotRandomMove(
     let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut angles: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     angles[0 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
-    angles[1 as libc::c_int as usize] = (crate::stdlib::rand() & 0x7fff as libc::c_int)
-        as libc::c_float
+    angles[1 as libc::c_int as usize] = (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
         / 0x7fff as libc::c_int as libc::c_float
         * 360 as libc::c_int as libc::c_float;
     angles[2 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
@@ -7646,7 +7702,10 @@ pub unsafe extern "C" fn BotAIBlocked(
         return;
     }
     // get info for the entity that is blocking the bot
-    crate::src::game::ai_main::BotEntityInfo((*moveresult).blockentity, &mut entinfo);
+    crate::src::game::ai_main::BotEntityInfo(
+        (*moveresult).blockentity,
+        &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+    );
     // OBSTACLEDEBUG
     // if blocked by a bsp model and the bot wants to activate it
     if activate != 0
@@ -7692,7 +7751,7 @@ pub unsafe extern "C" fn BotAIBlocked(
         angles[0 as libc::c_int as usize] =
             0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
         angles[1 as libc::c_int as usize] = 360 as libc::c_int as libc::c_float
-            * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float);
         angles[2 as libc::c_int as usize] =
             0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
@@ -7978,7 +8037,7 @@ pub unsafe extern "C" fn BotCheckConsoleMessages(
                 && m.time
                     > crate::src::game::ai_main::floattime
                         - (1 as libc::c_int as libc::c_float
-                            + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                            + (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                                 / 0x7fff as libc::c_int as libc::c_float)
             {
                 break;
@@ -8007,7 +8066,11 @@ pub unsafe extern "C" fn BotCheckConsoleMessages(
         context = BotSynonymContext(bs);
         crate::src::game::g_syscalls::trap_BotReplaceSynonyms(ptr, context as libc::c_ulong);
         //if there's no match
-        if crate::src::game::ai_cmd::BotMatchMessage(bs, m.message.as_mut_ptr()) == 0 {
+        if crate::src::game::ai_cmd::BotMatchMessage(
+            bs as *mut crate::src::game::ai_main::bot_state_s,
+            m.message.as_mut_ptr(),
+        ) == 0
+        {
             //if it is a chat message
             if m.type_0 == 1 as libc::c_int && bot_nochat.integer == 0 {
                 //
@@ -8049,7 +8112,10 @@ pub unsafe extern "C" fn BotCheckConsoleMessages(
                         //unify the message
                         crate::src::game::g_syscalls::trap_UnifyWhiteSpaces(message.as_mut_ptr());
                         //
-                        crate::src::game::g_syscalls::trap_Cvar_Update(&mut bot_testrchat);
+                        crate::src::game::g_syscalls::trap_Cvar_Update(
+                            &mut bot_testrchat as *mut _
+                                as *mut crate::src::qcommon::q_shared::vmCvar_t,
+                        );
                         if bot_testrchat.integer != 0 {
                             //
                             crate::src::game::g_syscalls::trap_BotLibVarSet(
@@ -8095,7 +8161,9 @@ pub unsafe extern "C" fn BotCheckConsoleMessages(
                                     )
                                         -> libc::c_int,
                             )
-                            && crate::src::game::ai_chat::BotValidChatPosition(bs) != 0
+                            && crate::src::game::ai_chat::BotValidChatPosition(
+                                bs as *mut crate::src::game::ai_main::bot_state_s,
+                            ) != 0
                             && TeamPlayIsOn() == 0
                         {
                             chat_reply = crate::src::game::g_syscalls::trap_Characteristic_BFloat(
@@ -8104,14 +8172,13 @@ pub unsafe extern "C" fn BotCheckConsoleMessages(
                                 0 as libc::c_int as libc::c_float,
                                 1 as libc::c_int as libc::c_float,
                             );
-                            if (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                            if (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                                 / 0x7fff as libc::c_int as libc::c_float)
                                 as libc::c_double)
                                 < 1.5f64
                                     / (crate::src::game::ai_main::NumBots() + 1 as libc::c_int)
                                         as libc::c_double
-                                && ((crate::stdlib::rand() & 0x7fff as libc::c_int)
-                                    as libc::c_float
+                                && ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                                     / 0x7fff as libc::c_int as libc::c_float)
                                     < chat_reply
                             {
@@ -8138,9 +8205,11 @@ pub unsafe extern "C" fn BotCheckConsoleMessages(
                                         handle,
                                     );
                                     (*bs).stand_time = crate::src::game::ai_main::floattime
-                                        + crate::src::game::ai_chat::BotChatTime(bs);
+                                        + crate::src::game::ai_chat::BotChatTime(
+                                            bs as *mut crate::src::game::ai_main::bot_state_s,
+                                        );
                                     crate::src::game::ai_dmnet::AIEnter_Stand(
-                                        bs,
+                                        bs as *mut crate::src::game::ai_main::bot_state_s,
                                         b"BotCheckConsoleMessages: reply chat\x00" as *const u8
                                             as *const libc::c_char
                                             as *mut libc::c_char,
@@ -8273,7 +8342,7 @@ pub unsafe extern "C" fn BotCheckEvents(
                     bs->flagstatuschanged = qtrue;
                 }
                 else*/
-                if crate::stdlib::strcmp(
+                if ::libc::strcmp(
                     buf.as_mut_ptr(),
                     b"sound/items/poweruprespawn.wav\x00" as *const u8 as *const libc::c_char,
                 ) == 0
@@ -8356,7 +8425,7 @@ pub unsafe extern "C" fn BotCheckEvents(
                             as libc::c_int,
                     );
                     //if falling into a death pit
-                    if crate::stdlib::strcmp(
+                    if ::libc::strcmp(
                         buf.as_mut_ptr(),
                         b"*falling1.wav\x00" as *const u8 as *const libc::c_char,
                     ) == 0
@@ -8441,7 +8510,11 @@ pub unsafe extern "C" fn BotCheckSnapshot(mut bs: *mut crate::src::game::ai_main
     //
     ent = 0 as libc::c_int;
     loop {
-        ent = crate::src::game::ai_main::BotAI_GetSnapshotEntity((*bs).client, ent, &mut state);
+        ent = crate::src::game::ai_main::BotAI_GetSnapshotEntity(
+            (*bs).client,
+            ent,
+            &mut state as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
+        );
         if !(ent != -(1 as libc::c_int)) {
             break;
         }
@@ -8452,7 +8525,10 @@ pub unsafe extern "C" fn BotCheckSnapshot(mut bs: *mut crate::src::game::ai_main
     }
     //check for grenades the bot should avoid
     //check the player state for events
-    crate::src::game::ai_main::BotAI_GetEntityState((*bs).client, &mut state);
+    crate::src::game::ai_main::BotAI_GetEntityState(
+        (*bs).client,
+        &mut state as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
+    );
     //copy the player state events to the entity state
     state.event = (*bs).cur_ps.externalEvent;
     state.eventParm = (*bs).cur_ps.externalEventParm;
@@ -8544,7 +8620,7 @@ pub unsafe extern "C" fn BotGetAlternateRouteGoal(
     if numaltroutegoals == 0 {
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
     }
-    rnd = ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+    rnd = ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
         / 0x7fff as libc::c_int as libc::c_float
         * numaltroutegoals as libc::c_float) as libc::c_int;
     if rnd >= numaltroutegoals {
@@ -8678,12 +8754,12 @@ pub unsafe extern "C" fn BotDeathmatchAI(
     //if not in the intermission and not in observer mode
     if BotIntermission(bs) as u64 == 0 && BotIsObserver(bs) as u64 == 0 {
         //do team AI
-        crate::src::game::ai_team::BotTeamAI(bs);
+        crate::src::game::ai_team::BotTeamAI(bs as *mut crate::src::game::ai_main::bot_state_s);
     }
     //if the bot has no ai node
     if (*bs).ainode.is_none() {
         crate::src::game::ai_dmnet::AIEnter_Seek_LTG(
-            bs,
+            bs as *mut crate::src::game::ai_main::bot_state_s,
             b"BotDeathmatchAI: no ai node\x00" as *const u8 as *const libc::c_char
                 as *mut libc::c_char,
         );
@@ -8693,11 +8769,16 @@ pub unsafe extern "C" fn BotDeathmatchAI(
         && (*bs).entergame_time
             > crate::src::game::ai_main::floattime - 8 as libc::c_int as libc::c_float
     {
-        if crate::src::game::ai_chat::BotChat_EnterGame(bs) != 0 {
-            (*bs).stand_time =
-                crate::src::game::ai_main::floattime + crate::src::game::ai_chat::BotChatTime(bs);
+        if crate::src::game::ai_chat::BotChat_EnterGame(
+            bs as *mut crate::src::game::ai_main::bot_state_s,
+        ) != 0
+        {
+            (*bs).stand_time = crate::src::game::ai_main::floattime
+                + crate::src::game::ai_chat::BotChatTime(
+                    bs as *mut crate::src::game::ai_main::bot_state_s,
+                );
             crate::src::game::ai_dmnet::AIEnter_Stand(
-                bs,
+                bs as *mut crate::src::game::ai_main::bot_state_s,
                 b"BotDeathmatchAI: chat enter game\x00" as *const u8 as *const libc::c_char
                     as *mut libc::c_char,
             );
@@ -8722,7 +8803,9 @@ pub unsafe extern "C" fn BotDeathmatchAI(
     if i >= 50 as libc::c_int {
         crate::src::game::g_syscalls::trap_BotDumpGoalStack((*bs).gs);
         crate::src::game::g_syscalls::trap_BotDumpAvoidGoals((*bs).gs);
-        crate::src::game::ai_dmnet::BotDumpNodeSwitches(bs);
+        crate::src::game::ai_dmnet::BotDumpNodeSwitches(
+            bs as *mut crate::src::game::ai_main::bot_state_s,
+        );
         ClientName(
             (*bs).client,
             name.as_mut_ptr(),
@@ -8903,7 +8986,7 @@ pub unsafe extern "C" fn BotGoalForBSPEntity(
             ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
         ) == 0)
         {
-            if crate::stdlib::strcmp(value.as_mut_ptr(), classname) == 0 {
+            if ::libc::strcmp(value.as_mut_ptr(), classname) == 0 {
                 if crate::src::game::g_syscalls::trap_AAS_VectorForBSPEpairKey(
                     ent,
                     b"origin\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
@@ -8987,49 +9070,49 @@ pub unsafe extern "C" fn BotSetupDeathmatchAI() {
         b"g_gametype\x00" as *const u8 as *const libc::c_char,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_rocketjump,
+        &mut bot_rocketjump as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_rocketjump\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_grapple,
+        &mut bot_grapple as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_grapple\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_fastchat,
+        &mut bot_fastchat as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_fastchat\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_nochat,
+        &mut bot_nochat as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_nochat\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_testrchat,
+        &mut bot_testrchat as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_testrchat\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_challenge,
+        &mut bot_challenge as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_challenge\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_predictobstacles,
+        &mut bot_predictobstacles as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_predictobstacles\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut g_spSkill,
+        &mut g_spSkill as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"g_spSkill\x00" as *const u8 as *const libc::c_char,
         b"2\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,

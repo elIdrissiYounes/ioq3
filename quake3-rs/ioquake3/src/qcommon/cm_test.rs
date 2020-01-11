@@ -220,7 +220,7 @@ pub unsafe extern "C" fn CM_BoxLeafnums_r(
         s = crate::src::qcommon::q_math::BoxOnPlaneSide(
             (*ll).bounds[0 as libc::c_int as usize].as_mut_ptr(),
             (*ll).bounds[1 as libc::c_int as usize].as_mut_ptr(),
-            plane,
+            plane as *mut crate::src::qcommon::q_shared::cplane_s,
         );
         if s == 1 as libc::c_int {
             nodenum = (*node).children[0 as libc::c_int as usize]
@@ -356,7 +356,8 @@ pub unsafe extern "C" fn CM_PointContents(
         return 0 as libc::c_int;
     }
     if model != 0 {
-        clipm = crate::src::qcommon::cm_load::CM_ClipHandleToModel(model);
+        clipm = crate::src::qcommon::cm_load::CM_ClipHandleToModel(model)
+            as *mut crate::cm_local_h::cmodel_s;
         leaf = &mut (*clipm).leaf
     } else {
         leafnum = CM_PointLeafnum_r(p, 0 as libc::c_int);

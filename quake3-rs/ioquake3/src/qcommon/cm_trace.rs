@@ -679,7 +679,7 @@ pub unsafe extern "C" fn CM_TestInLeaf(
                     (*patch).checkcount = crate::src::qcommon::cm_load::cm.checkcount;
                     if !((*patch).contents & (*tw).contents == 0) {
                         if crate::src::qcommon::cm_patch::CM_PositionTestInPatchCollide(
-                            tw,
+                            tw as *mut crate::cm_local_h::traceWork_t,
                             (*patch).pc,
                         ) as u64
                             != 0
@@ -885,7 +885,8 @@ pub unsafe extern "C" fn CM_TestBoundingBoxInCapsule(
         crate::src::qcommon::q_shared::qfalse as libc::c_int,
     );
     // calculate collision
-    cmod = crate::src::qcommon::cm_load::CM_ClipHandleToModel(h);
+    cmod =
+        crate::src::qcommon::cm_load::CM_ClipHandleToModel(h) as *mut crate::cm_local_h::cmodel_s;
     CM_TestInLeaf(tw, &mut (*cmod).leaf);
 }
 #[no_mangle]
@@ -937,7 +938,10 @@ pub unsafe extern "C" fn CM_PositionTest(mut tw: *mut crate::cm_local_h::traceWo
     ll.lastLeaf = 0 as libc::c_int;
     ll.overflowed = crate::src::qcommon::q_shared::qfalse;
     crate::src::qcommon::cm_load::cm.checkcount += 1;
-    crate::src::qcommon::cm_test::CM_BoxLeafnums_r(&mut ll, 0 as libc::c_int);
+    crate::src::qcommon::cm_test::CM_BoxLeafnums_r(
+        &mut ll as *mut _ as *mut crate::cm_local_h::leafList_s,
+        0 as libc::c_int,
+    );
     crate::src::qcommon::cm_load::cm.checkcount += 1;
     // test the contents of the leafs
     i = 0 as libc::c_int;
@@ -975,7 +979,10 @@ pub unsafe extern "C" fn CM_TraceThroughPatch(
     let mut oldFrac: libc::c_float = 0.;
     crate::src::qcommon::cm_load::c_patch_traces += 1;
     oldFrac = (*tw).trace.fraction;
-    crate::src::qcommon::cm_patch::CM_TraceThroughPatchCollide(tw, (*patch).pc);
+    crate::src::qcommon::cm_patch::CM_TraceThroughPatchCollide(
+        tw as *mut crate::cm_local_h::traceWork_t,
+        (*patch).pc,
+    );
     if (*tw).trace.fraction < oldFrac {
         (*tw).trace.surfaceFlags = (*patch).surfaceFlags;
         (*tw).trace.contents = (*patch).contents
@@ -1842,7 +1849,8 @@ pub unsafe extern "C" fn CM_TraceBoundingBoxThroughCapsule(
         crate::src::qcommon::q_shared::qfalse as libc::c_int,
     );
     // calculate collision
-    cmod = crate::src::qcommon::cm_load::CM_ClipHandleToModel(h);
+    cmod =
+        crate::src::qcommon::cm_load::CM_ClipHandleToModel(h) as *mut crate::cm_local_h::cmodel_s;
     CM_TraceThroughLeaf(tw, &mut (*cmod).leaf);
 }
 //=========================================================================================
@@ -2068,7 +2076,8 @@ pub unsafe extern "C" fn CM_Trace(
     }; // for statistics, may be zeroed
     let mut offset: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut cmod: *mut crate::cm_local_h::cmodel_t = 0 as *mut crate::cm_local_h::cmodel_t;
-    cmod = crate::src::qcommon::cm_load::CM_ClipHandleToModel(model);
+    cmod = crate::src::qcommon::cm_load::CM_ClipHandleToModel(model)
+        as *mut crate::cm_local_h::cmodel_s;
     crate::src::qcommon::cm_load::cm.checkcount += 1;
     crate::src::qcommon::cm_load::c_traces += 1;
     // fill in a default trace

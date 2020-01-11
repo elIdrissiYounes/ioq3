@@ -1,4 +1,6 @@
 // =============== BEGIN snd_codec_h ================
+pub type snd_info_t = crate::src::client::snd_codec::snd_info_s;
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct snd_info_s {
@@ -10,23 +12,7 @@ pub struct snd_info_s {
     pub dataofs: libc::c_int,
 }
 
-pub type snd_info_t = crate::src::client::snd_codec::snd_info_s;
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct snd_codec_s {
-    pub ext: *mut libc::c_char,
-    pub load: crate::src::client::snd_codec::CODEC_LOAD,
-    pub open: crate::src::client::snd_codec::CODEC_OPEN,
-    pub read: crate::src::client::snd_codec::CODEC_READ,
-    pub close: crate::src::client::snd_codec::CODEC_CLOSE,
-    pub next: *mut crate::src::client::snd_codec::snd_codec_t,
-}
-
 pub type snd_codec_t = crate::src::client::snd_codec::snd_codec_s;
-
-pub type CODEC_CLOSE =
-    Option<unsafe extern "C" fn(_: *mut crate::src::client::snd_codec::snd_stream_t) -> ()>;
 
 pub type snd_stream_t = crate::src::client::snd_codec::snd_stream_s;
 
@@ -41,12 +27,11 @@ pub struct snd_stream_s {
     pub ptr: *mut libc::c_void,
 }
 
-pub type CODEC_READ = Option<
+pub type CODEC_LOAD = Option<
     unsafe extern "C" fn(
-        _: *mut crate::src::client::snd_codec::snd_stream_t,
-        _: libc::c_int,
-        _: *mut libc::c_void,
-    ) -> libc::c_int,
+        _: *const libc::c_char,
+        _: *mut crate::src::client::snd_codec::snd_info_t,
+    ) -> *mut libc::c_void,
 >;
 
 pub type CODEC_OPEN = Option<
@@ -55,12 +40,27 @@ pub type CODEC_OPEN = Option<
     ) -> *mut crate::src::client::snd_codec::snd_stream_t,
 >;
 
-pub type CODEC_LOAD = Option<
+pub type CODEC_READ = Option<
     unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut crate::src::client::snd_codec::snd_info_t,
-    ) -> *mut libc::c_void,
+        _: *mut crate::src::client::snd_codec::snd_stream_t,
+        _: libc::c_int,
+        _: *mut libc::c_void,
+    ) -> libc::c_int,
 >;
+
+pub type CODEC_CLOSE =
+    Option<unsafe extern "C" fn(_: *mut crate::src::client::snd_codec::snd_stream_t) -> ()>;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct snd_codec_s {
+    pub ext: *mut libc::c_char,
+    pub load: crate::src::client::snd_codec::CODEC_LOAD,
+    pub open: crate::src::client::snd_codec::CODEC_OPEN,
+    pub read: crate::src::client::snd_codec::CODEC_READ,
+    pub close: crate::src::client::snd_codec::CODEC_CLOSE,
+    pub next: *mut crate::src::client::snd_codec::snd_codec_t,
+}
 use ::libc;
 
 pub use crate::src::client::snd_codec_ogg::ogg_codec;

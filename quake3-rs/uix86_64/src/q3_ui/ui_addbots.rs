@@ -5,7 +5,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -55,13 +55,13 @@ pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 pub use crate::stdlib::__compar_fn_t;
 use crate::stdlib::memset;
 pub use crate::stdlib::qsort;
-pub use crate::stdlib::strtol;
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
 pub use crate::ui_local_h::menucommon_s;
 pub use crate::ui_local_h::menuframework_s;
 pub use crate::ui_local_h::menulist_s;
 pub use crate::ui_local_h::menutext_s;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -729,49 +729,49 @@ unsafe extern "C" fn UI_AddBotsMenu_Init() {
     UI_AddBotsMenu_GetSortedBotNums();
     UI_AddBotsMenu_SetBotNames();
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut addBotsMenuInfo.menu,
+        &mut addBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut addBotsMenuInfo.background as *mut crate::ui_local_h::menubitmap_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut addBotsMenuInfo.menu,
+        &mut addBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut addBotsMenuInfo.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut addBotsMenuInfo.menu,
+        &mut addBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut addBotsMenuInfo.arrows as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut addBotsMenuInfo.menu,
+        &mut addBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut addBotsMenuInfo.up as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut addBotsMenuInfo.menu,
+        &mut addBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut addBotsMenuInfo.down as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     n = 0 as libc::c_int;
     while n < count {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut addBotsMenuInfo.menu,
+            &mut addBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut *addBotsMenuInfo.bots.as_mut_ptr().offset(n as isize)
                 as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
         );
         n += 1
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut addBotsMenuInfo.menu,
+        &mut addBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut addBotsMenuInfo.skill as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut addBotsMenuInfo.menu,
+        &mut addBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut addBotsMenuInfo.team as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut addBotsMenuInfo.menu,
+        &mut addBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut addBotsMenuInfo.go as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut addBotsMenuInfo.menu,
+        &mut addBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut addBotsMenuInfo.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
 }
@@ -957,5 +957,7 @@ UI_AddBotsMenu
 
 pub unsafe extern "C" fn UI_AddBotsMenu() {
     UI_AddBotsMenu_Init();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut addBotsMenuInfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut addBotsMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

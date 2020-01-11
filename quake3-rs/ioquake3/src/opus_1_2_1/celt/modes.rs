@@ -1,6 +1,15 @@
 // =============== BEGIN modes_h ================
 #[repr(C)]
 #[derive(Copy, Clone)]
+pub struct PulseCache {
+    pub size: libc::c_int,
+    pub index: *const crate::opus_types_h::opus_int16,
+    pub bits: *const libc::c_uchar,
+    pub caps: *const libc::c_uchar,
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
 pub struct OpusCustomMode {
     pub Fs: crate::opus_types_h::opus_int32,
     pub overlap: libc::c_int,
@@ -17,15 +26,6 @@ pub struct OpusCustomMode {
     pub window: *const crate::arch_h::opus_val16,
     pub mdct: crate::src::opus_1_2_1::celt::mdct::mdct_lookup,
     pub cache: crate::src::opus_1_2_1::celt::modes::PulseCache,
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct PulseCache {
-    pub size: libc::c_int,
-    pub index: *const crate::opus_types_h::opus_int16,
-    pub bits: *const libc::c_uchar,
-    pub caps: *const libc::c_uchar,
 }
 use ::libc;
 

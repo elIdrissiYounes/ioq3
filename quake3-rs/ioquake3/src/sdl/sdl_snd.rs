@@ -19,7 +19,6 @@ pub use crate::src::qcommon::q_shared::qfalse;
 pub use crate::src::qcommon::q_shared::qtrue;
 pub use crate::src::qcommon::q_shared::Q_stricmp;
 use crate::stdlib::calloc;
-use crate::stdlib::free;
 pub use crate::stdlib::uint16_t;
 pub use crate::stdlib::uint32_t;
 pub use crate::stdlib::uint8_t;
@@ -44,6 +43,7 @@ pub use crate::stdlib::Uint32;
 pub use crate::stdlib::Uint8;
 pub use crate::stdlib::SDL_FALSE;
 pub use crate::stdlib::SDL_TRUE;
+use ::libc::free;
 
 use crate::src::client::cl_main::cl_useMumble;
 use crate::src::qcommon::cvar::Cvar_Get;
@@ -362,27 +362,27 @@ pub unsafe extern "C" fn SNDDMA_Init() -> crate::src::qcommon::q_shared::qboolea
             b"s_sdlBits\x00" as *const u8 as *const libc::c_char,
             b"16\x00" as *const u8 as *const libc::c_char,
             0x1 as libc::c_int,
-        );
+        ) as *mut crate::src::qcommon::q_shared::cvar_s;
         s_sdlSpeed = crate::src::qcommon::cvar::Cvar_Get(
             b"s_sdlSpeed\x00" as *const u8 as *const libc::c_char,
             b"0\x00" as *const u8 as *const libc::c_char,
             0x1 as libc::c_int,
-        );
+        ) as *mut crate::src::qcommon::q_shared::cvar_s;
         s_sdlChannels = crate::src::qcommon::cvar::Cvar_Get(
             b"s_sdlChannels\x00" as *const u8 as *const libc::c_char,
             b"2\x00" as *const u8 as *const libc::c_char,
             0x1 as libc::c_int,
-        );
+        ) as *mut crate::src::qcommon::q_shared::cvar_s;
         s_sdlDevSamps = crate::src::qcommon::cvar::Cvar_Get(
             b"s_sdlDevSamps\x00" as *const u8 as *const libc::c_char,
             b"0\x00" as *const u8 as *const libc::c_char,
             0x1 as libc::c_int,
-        );
+        ) as *mut crate::src::qcommon::q_shared::cvar_s;
         s_sdlMixSamps = crate::src::qcommon::cvar::Cvar_Get(
             b"s_sdlMixSamps\x00" as *const u8 as *const libc::c_char,
             b"0\x00" as *const u8 as *const libc::c_char,
             0x1 as libc::c_int,
-        )
+        ) as *mut crate::src::qcommon::q_shared::cvar_s
     }
     crate::src::qcommon::common::Com_Printf(
         b"SDL_Init( SDL_INIT_AUDIO )... \x00" as *const u8 as *const libc::c_char,
@@ -499,7 +499,7 @@ pub unsafe extern "C" fn SNDDMA_Init() -> crate::src::qcommon::q_shared::qboolea
         b"s_sdlCapture\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x20 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     // !!! FIXME: pulseaudio capture records audio the entire time the program is running. https://bugzilla.libsdl.org/show_bug.cgi?id=4087
     if crate::src::qcommon::q_shared::Q_stricmp(
         crate::stdlib::SDL_GetCurrentAudioDriver(),
@@ -608,7 +608,7 @@ pub unsafe extern "C" fn SNDDMA_Shutdown() {
         sdlCaptureDevice = 0 as libc::c_int as crate::stdlib::SDL_AudioDeviceID
     }
     crate::stdlib::SDL_QuitSubSystem(0x10 as libc::c_uint);
-    crate::stdlib::free(crate::src::client::snd_dma::dma.buffer as *mut libc::c_void);
+    ::libc::free(crate::src::client::snd_dma::dma.buffer as *mut libc::c_void);
     crate::src::client::snd_dma::dma.buffer = 0 as *mut crate::src::qcommon::q_shared::byte;
     dmasize = 0 as libc::c_int;
     dmapos = dmasize;

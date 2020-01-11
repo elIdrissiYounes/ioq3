@@ -1,28 +1,6 @@
 // =============== BEGIN unzip_h ================
 pub type unzFile = crate::zconf_h::voidp;
 
-pub type unz_file_info = crate::src::qcommon::unzip::unz_file_info_s;
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct unz_file_info_s {
-    pub version: crate::zconf_h::uLong,
-    pub version_needed: crate::zconf_h::uLong,
-    pub flag: crate::zconf_h::uLong,
-    pub compression_method: crate::zconf_h::uLong,
-    pub dosDate: crate::zconf_h::uLong,
-    pub crc: crate::zconf_h::uLong,
-    pub compressed_size: crate::zconf_h::uLong,
-    pub uncompressed_size: crate::zconf_h::uLong,
-    pub size_filename: crate::zconf_h::uLong,
-    pub size_file_extra: crate::zconf_h::uLong,
-    pub size_file_comment: crate::zconf_h::uLong,
-    pub disk_num_start: crate::zconf_h::uLong,
-    pub internal_fa: crate::zconf_h::uLong,
-    pub external_fa: crate::zconf_h::uLong,
-    pub tmu_date: crate::src::qcommon::unzip::tm_unz,
-}
-
 pub type tm_unz = crate::src::qcommon::unzip::tm_unz_s;
 
 #[repr(C)]
@@ -43,6 +21,28 @@ pub type unz_global_info = crate::src::qcommon::unzip::unz_global_info_s;
 pub struct unz_global_info_s {
     pub number_entry: crate::zconf_h::uLong,
     pub size_comment: crate::zconf_h::uLong,
+}
+
+pub type unz_file_info = crate::src::qcommon::unzip::unz_file_info_s;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct unz_file_info_s {
+    pub version: crate::zconf_h::uLong,
+    pub version_needed: crate::zconf_h::uLong,
+    pub flag: crate::zconf_h::uLong,
+    pub compression_method: crate::zconf_h::uLong,
+    pub dosDate: crate::zconf_h::uLong,
+    pub crc: crate::zconf_h::uLong,
+    pub compressed_size: crate::zconf_h::uLong,
+    pub uncompressed_size: crate::zconf_h::uLong,
+    pub size_filename: crate::zconf_h::uLong,
+    pub size_file_extra: crate::zconf_h::uLong,
+    pub size_file_comment: crate::zconf_h::uLong,
+    pub disk_num_start: crate::zconf_h::uLong,
+    pub internal_fa: crate::zconf_h::uLong,
+    pub external_fa: crate::zconf_h::uLong,
+    pub tmu_date: crate::src::qcommon::unzip::tm_unz,
 }
 
 pub type unz_file_pos = crate::src::qcommon::unzip::unz_file_pos_s;
@@ -74,7 +74,6 @@ pub use crate::src::zlib::crc32::crc32;
 pub use crate::src::zlib::inflate::inflate;
 pub use crate::src::zlib::inflate::inflateEnd;
 pub use crate::src::zlib::inflate::inflateInit2_;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
 pub use crate::zconf_h::uInt;
 pub use crate::zconf_h::uLong;
@@ -88,15 +87,7 @@ pub use crate::zlib_h::internal_state;
 pub use crate::zlib_h::z_stream;
 pub use crate::zlib_h::z_stream_s;
 pub use crate::zlib_h::z_streamp;
-/* unz_file_info_interntal contain internal info about a file in zipfile*/
-
-pub type unz_file_info_internal = unz_file_info_internal_s;
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct unz_file_info_internal_s {
-    pub offset_curfile: crate::zconf_h::uLong,
-}
+use ::libc::strcmp;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -117,6 +108,15 @@ pub struct file_in_zip_read_info_s {
     pub compression_method: crate::zconf_h::uLong,
     pub byte_before_the_zipfile: crate::zconf_h::uLong,
     pub raw: libc::c_int,
+}
+/* unz_file_info_interntal contain internal info about a file in zipfile*/
+
+pub type unz_file_info_internal = unz_file_info_internal_s;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct unz_file_info_internal_s {
+    pub offset_curfile: crate::zconf_h::uLong,
 }
 
 #[repr(C)]
@@ -301,7 +301,7 @@ pub unsafe extern "C" fn unzStringFileNameCompare(
         iCaseSensitivity = 1 as libc::c_int
     }
     if iCaseSensitivity == 1 as libc::c_int {
-        return crate::stdlib::strcmp(fileName1, fileName2);
+        return ::libc::strcmp(fileName1, fileName2);
     }
     return strcmpcasenosensitive_internal(fileName1, fileName2);
 }
@@ -506,7 +506,9 @@ pub unsafe extern "C" fn unzOpen2(
         return 0 as *mut libc::c_void;
     }
     if pzlib_filefunc_def.is_null() {
-        crate::src::qcommon::ioapi::fill_fopen_filefunc(&mut us.z_filefunc);
+        crate::src::qcommon::ioapi::fill_fopen_filefunc(
+            &mut us.z_filefunc as *mut _ as *mut crate::src::qcommon::ioapi::zlib_filefunc_def_s,
+        );
     } else {
         us.z_filefunc = *pzlib_filefunc_def
     }
@@ -1512,7 +1514,7 @@ pub unsafe extern "C" fn unzOpenCurrentFile3(
         (*pfile_in_zip_read_info).stream.next_in = 0 as *mut crate::zconf_h::Bytef;
         (*pfile_in_zip_read_info).stream.avail_in = 0 as libc::c_int as crate::zconf_h::uInt;
         if crate::src::zlib::inflate::inflateInit2_(
-            &mut (*pfile_in_zip_read_info).stream,
+            &mut (*pfile_in_zip_read_info).stream as *mut _ as *mut crate::zlib_h::z_stream_s,
             -(15 as libc::c_int),
             b"1.2.3\x00" as *const u8 as *const libc::c_char,
             ::std::mem::size_of::<crate::zlib_h::z_stream>() as libc::c_ulong as libc::c_int,
@@ -1761,7 +1763,10 @@ pub unsafe extern "C" fn unzReadCurrentFile(
                 (pfile_in_zip_read_info->rest_read_compressed == 0))
                 flush = Z_FINISH;
             */
-            err = crate::src::zlib::inflate::inflate(&mut (*pfile_in_zip_read_info).stream, flush);
+            err = crate::src::zlib::inflate::inflate(
+                &mut (*pfile_in_zip_read_info).stream as *mut _ as *mut crate::zlib_h::z_stream_s,
+                flush,
+            );
             if err >= 0 as libc::c_int && !(*pfile_in_zip_read_info).stream.msg.is_null() {
                 err = -(3 as libc::c_int)
             }
@@ -1954,7 +1959,9 @@ pub unsafe extern "C" fn unzCloseCurrentFile(
     }
     (*pfile_in_zip_read_info).read_buffer = 0 as *mut libc::c_char;
     if (*pfile_in_zip_read_info).stream_initialised != 0 {
-        crate::src::zlib::inflate::inflateEnd(&mut (*pfile_in_zip_read_info).stream);
+        crate::src::zlib::inflate::inflateEnd(
+            &mut (*pfile_in_zip_read_info).stream as *mut _ as *mut crate::zlib_h::z_stream_s,
+        );
     }
     (*pfile_in_zip_read_info).stream_initialised = 0 as libc::c_int as crate::zconf_h::uLong;
     if !pfile_in_zip_read_info.is_null() {

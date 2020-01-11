@@ -10,9 +10,7 @@ pub use crate::stdlib::__time_t;
 pub use crate::stdlib::__timezone_ptr_t;
 pub use crate::stdlib::__uid_t;
 pub use crate::stdlib::__uint32_t;
-use crate::stdlib::close;
 pub use crate::stdlib::gettimeofday;
-use crate::stdlib::getuid;
 pub use crate::stdlib::int32_t;
 use crate::stdlib::mbstowcs;
 use crate::stdlib::memcpy;
@@ -20,12 +18,14 @@ use crate::stdlib::memset;
 pub use crate::stdlib::mmap;
 pub use crate::stdlib::mode_t;
 pub use crate::stdlib::munmap;
-pub use crate::stdlib::shm_open;
 use crate::stdlib::snprintf;
 use crate::stdlib::strlen;
-pub use crate::stdlib::timeval;
 pub use crate::stdlib::timezone;
 pub use crate::stdlib::uint32_t;
+use ::libc::close;
+use ::libc::getuid;
+pub use ::libc::shm_open;
+pub use ::libc::timeval;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -48,7 +48,7 @@ pub struct LinkedMem {
 static mut lm: *mut LinkedMem = 0 as *const LinkedMem as *mut LinkedMem;
 
 unsafe extern "C" fn GetTickCount() -> crate::stdlib::int32_t {
-    let mut tv: crate::stdlib::timeval = crate::stdlib::timeval {
+    let mut tv: ::libc::timeval = ::libc::timeval {
         tv_sec: 0,
         tv_usec: 0,
     };
@@ -89,9 +89,9 @@ pub unsafe extern "C" fn mumble_link(mut name: *const libc::c_char) -> libc::c_i
         file.as_mut_ptr(),
         ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong,
         b"/MumbleLink.%d\x00" as *const u8 as *const libc::c_char,
-        crate::stdlib::getuid(),
+        ::libc::getuid(),
     );
-    shmfd = crate::stdlib::shm_open(
+    shmfd = ::libc::shm_open(
         file.as_mut_ptr(),
         0o2 as libc::c_int,
         (0o400 as libc::c_int | 0o200 as libc::c_int) as crate::stdlib::mode_t,
@@ -109,10 +109,10 @@ pub unsafe extern "C" fn mumble_link(mut name: *const libc::c_char) -> libc::c_i
     ) as *mut LinkedMem;
     if lm == -(1 as libc::c_int) as *mut libc::c_void as *mut LinkedMem {
         lm = 0 as *mut LinkedMem;
-        crate::stdlib::close(shmfd);
+        ::libc::close(shmfd);
         return -(1 as libc::c_int);
     }
-    crate::stdlib::close(shmfd);
+    ::libc::close(shmfd);
     crate::stdlib::memset(
         lm as *mut libc::c_void,
         0 as libc::c_int,

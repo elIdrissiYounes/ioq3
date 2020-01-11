@@ -1,17 +1,5 @@
 // =============== BEGIN be_ai_move_h ================
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct bot_moveresult_s {
-    pub failure: libc::c_int,
-    pub type_0: libc::c_int,
-    pub blocked: libc::c_int,
-    pub blockentity: libc::c_int,
-    pub traveltype: libc::c_int,
-    pub flags: libc::c_int,
-    pub weapon: libc::c_int,
-    pub movedir: crate::src::qcommon::q_shared::vec3_t,
-    pub ideal_viewangles: crate::src::qcommon::q_shared::vec3_t,
-}
+pub type bot_initmove_t = crate::src::botlib::be_ai_move::bot_initmove_s;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -27,9 +15,23 @@ pub struct bot_initmove_s {
     pub or_moveflags: libc::c_int,
 }
 
-pub type bot_initmove_t = crate::src::botlib::be_ai_move::bot_initmove_s;
-
 pub type bot_moveresult_t = crate::src::botlib::be_ai_move::bot_moveresult_s;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct bot_moveresult_s {
+    pub failure: libc::c_int,
+    pub type_0: libc::c_int,
+    pub blocked: libc::c_int,
+    pub blockentity: libc::c_int,
+    pub traveltype: libc::c_int,
+    pub flags: libc::c_int,
+    pub weapon: libc::c_int,
+    pub movedir: crate::src::qcommon::q_shared::vec3_t,
+    pub ideal_viewangles: crate::src::qcommon::q_shared::vec3_t,
+}
+
+pub type bot_avoidspot_t = crate::src::botlib::be_ai_move::bot_avoidspot_s;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -38,8 +40,6 @@ pub struct bot_avoidspot_s {
     pub radius: libc::c_float,
     pub type_0: libc::c_int,
 }
-
-pub type bot_avoidspot_t = crate::src::botlib::be_ai_move::bot_avoidspot_s;
 use ::libc;
 
 pub mod q_shared_h {
@@ -74,7 +74,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -175,8 +175,8 @@ use crate::src::botlib::be_interface::botDeveloper;
 use crate::src::botlib::be_interface::botimport;
 use crate::src::botlib::l_memory::FreeMemory;
 use crate::src::botlib::l_memory::GetClearedMemory;
-pub use crate::stdlib::rand;
-pub use crate::stdlib::strtol;
+pub use ::libc::rand;
+pub use ::libc::strtol;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -700,7 +700,7 @@ pub unsafe extern "C" fn BotReachabilityArea(
         end.as_mut_ptr(),
         client,
         1 as libc::c_int | 0x10000 as libc::c_int,
-    );
+    ) as crate::botlib_h::bsp_trace_s;
     if bsptrace.startsolid as u64 == 0
         && bsptrace.fraction < 1 as libc::c_int as libc::c_float
         && bsptrace.ent != ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int
@@ -719,7 +719,10 @@ pub unsafe extern "C" fn BotReachabilityArea(
                 modelnum,
             );
             if reachnum != 0 {
-                crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(reachnum, &mut reach); //end else if
+                crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
+                    reachnum,
+                    &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
+                ); //end else if
                 return reach.areanum;
             }
             //end if
@@ -747,7 +750,7 @@ pub unsafe extern "C" fn BotReachabilityArea(
             end.as_mut_ptr(),
             4 as libc::c_int,
             -(1 as libc::c_int),
-        );
+        ) as crate::be_aas_h::aas_trace_s;
         if trace.startsolid as u64 == 0 {
             org[0 as libc::c_int as usize] = trace.endpos[0 as libc::c_int as usize];
             org[1 as libc::c_int as usize] = trace.endpos[1 as libc::c_int as usize];
@@ -950,7 +953,7 @@ pub unsafe extern "C" fn BotOnMover(
         end.as_mut_ptr(),
         entnum,
         1 as libc::c_int | 0x10000 as libc::c_int,
-    ); //end if
+    ) as crate::botlib_h::bsp_trace_s; //end if
     if trace.startsolid as u64 == 0 && trace.allsolid as u64 == 0 {
         //NOTE: the reachability face number is the model number of the elevator
         if trace.ent != ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int
@@ -1157,7 +1160,7 @@ pub unsafe extern "C" fn BotOnTopOfEntity(mut ms: *mut bot_movestate_t) -> libc:
         end.as_mut_ptr(),
         (*ms).entitynum,
         1 as libc::c_int | 0x10000 as libc::c_int,
-    );
+    ) as crate::botlib_h::bsp_trace_s;
     if trace.startsolid as u64 == 0
         && (trace.ent != ((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int
             && trace.ent != ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int)
@@ -1520,7 +1523,10 @@ pub unsafe extern "C" fn BotGetReachabilityToGoal(
             //end if
             //AVOIDREACH
             //get the reachability from the number
-            crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(reachnum, &mut reach);
+            crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
+                reachnum,
+                &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
+            );
             //NOTE: do not go back to the previous area if the goal didn't change
             //NOTE: is this actually avoidance of local routing minima between two areas???
             if !(lastgoalareanum == (*goal).areanum && reach.areanum == lastareanum) {
@@ -1644,7 +1650,10 @@ pub unsafe extern "C" fn BotMovementViewTarget(
     dist = 0 as libc::c_int as libc::c_float;
     //end if
     while reachnum != 0 && dist < lookahead {
-        crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(reachnum, &mut reach); //end while
+        crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
+            reachnum,
+            &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
+        ); //end while
         if BotAddToTarget(
             end.as_mut_ptr(),
             reach.start.as_mut_ptr(),
@@ -1758,7 +1767,7 @@ pub unsafe extern "C" fn BotVisible(
         target,
         ent,
         1 as libc::c_int | 0x10000 as libc::c_int,
-    );
+    ) as crate::botlib_h::bsp_trace_s;
     if trace.fraction >= 1 as libc::c_int as libc::c_float {
         return crate::src::qcommon::q_shared::qtrue as libc::c_int;
     }
@@ -1842,7 +1851,10 @@ pub unsafe extern "C" fn BotPredictVisiblePosition(
         if reachnum == 0 {
             return crate::src::qcommon::q_shared::qfalse as libc::c_int;
         }
-        crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(reachnum, &mut reach);
+        crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
+            reachnum,
+            &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
+        );
         //
         if BotVisible(
             (*goal).entitynum,
@@ -1999,7 +2011,7 @@ pub unsafe extern "C" fn BotGapDistance(
         end.as_mut_ptr(),
         4 as libc::c_int,
         entnum,
-    );
+    ) as crate::be_aas_h::aas_trace_s;
     if trace.fraction >= 1 as libc::c_int as libc::c_float {
         return 1 as libc::c_int as libc::c_float;
     }
@@ -2024,7 +2036,7 @@ pub unsafe extern "C" fn BotGapDistance(
             end.as_mut_ptr(),
             4 as libc::c_int,
             entnum,
-        );
+        ) as crate::be_aas_h::aas_trace_s;
         //end if
         //if solid is found the bot can't walk any further and fall into a gap
         if trace.startsolid as u64 == 0 {
@@ -2089,7 +2101,7 @@ pub unsafe extern "C" fn BotCheckBarrierJump(
         end.as_mut_ptr(),
         2 as libc::c_int,
         (*ms).entitynum,
-    );
+    ) as crate::be_aas_h::aas_trace_s;
     //this shouldn't happen... but we check anyway
     if trace.startsolid as u64 != 0 {
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
@@ -2127,7 +2139,7 @@ pub unsafe extern "C" fn BotCheckBarrierJump(
         end.as_mut_ptr(),
         2 as libc::c_int,
         (*ms).entitynum,
-    );
+    ) as crate::be_aas_h::aas_trace_s;
     //again this shouldn't happen
     if trace.startsolid as u64 != 0 {
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
@@ -2146,7 +2158,7 @@ pub unsafe extern "C" fn BotCheckBarrierJump(
         end.as_mut_ptr(),
         2 as libc::c_int,
         (*ms).entitynum,
-    );
+    ) as crate::be_aas_h::aas_trace_s;
     //if solid
     if trace.startsolid as u64 != 0 {
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
@@ -2310,7 +2322,7 @@ pub unsafe extern "C" fn BotWalkInDirection(
             + 0.5f64)
             as crate::src::qcommon::q_shared::vec_t;
         crate::src::botlib::be_aas_move::AAS_PredictClientMovement(
-            &mut move_0,
+            &mut move_0 as *mut _ as *mut crate::be_aas_h::aas_clientmove_s,
             (*ms).entitynum,
             origin.as_mut_ptr(),
             presencetype,
@@ -2554,7 +2566,7 @@ pub unsafe extern "C" fn BotCheckBlocked(
         end.as_mut_ptr(),
         (*ms).entitynum,
         1 as libc::c_int | 0x10000 as libc::c_int | 0x2000000 as libc::c_int,
-    );
+    ) as crate::botlib_h::bsp_trace_s;
     //if not started in solid and not hitting the world entity
     if trace.startsolid as u64 == 0
         && (trace.ent != ((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int
@@ -2586,7 +2598,7 @@ pub unsafe extern "C" fn BotCheckBlocked(
             end.as_mut_ptr(),
             (*ms).entitynum,
             1 as libc::c_int | 0x10000 as libc::c_int,
-        );
+        ) as crate::botlib_h::bsp_trace_s;
         if trace.startsolid as u64 == 0
             && (trace.ent != ((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int
                 && trace.ent != ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int)
@@ -3092,7 +3104,7 @@ pub unsafe extern "C" fn BotTravel_WaterJump(
     dir[2 as libc::c_int as usize] = (dir[2 as libc::c_int as usize] as libc::c_double
         + (15 as libc::c_int as libc::c_double
             + 2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float)
                     as libc::c_double
                     - 0.5f64)
@@ -3184,14 +3196,14 @@ pub unsafe extern "C" fn BotFinishTravel_WaterJump(
         (*reach).end[2 as libc::c_int as usize] - (*ms).origin[2 as libc::c_int as usize];
     dir[0 as libc::c_int as usize] = (dir[0 as libc::c_int as usize] as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 10 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     dir[1 as libc::c_int as usize] = (dir[1 as libc::c_int as usize] as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 10 as libc::c_int as libc::c_double)
@@ -3199,7 +3211,7 @@ pub unsafe extern "C" fn BotFinishTravel_WaterJump(
     dir[2 as libc::c_int as usize] = (dir[2 as libc::c_int as usize] as libc::c_double
         + (70 as libc::c_int as libc::c_double
             + 2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float)
                     as libc::c_double
                     - 0.5f64)
@@ -3699,7 +3711,10 @@ pub unsafe extern "C" fn BotTravel_Jump(
         init
     };
     //
-    crate::src::botlib::be_aas_move::AAS_JumpReachRunStart(reach, runstart.as_mut_ptr());
+    crate::src::botlib::be_aas_move::AAS_JumpReachRunStart(
+        reach as *mut crate::aasfile_h::aas_reachability_s,
+        runstart.as_mut_ptr(),
+    );
     //*
     hordir[0 as libc::c_int as usize] =
         runstart[0 as libc::c_int as usize] - (*reach).start[0 as libc::c_int as usize];
@@ -4974,7 +4989,10 @@ pub unsafe extern "C" fn GrappleState(
         if crate::src::botlib::be_aas_entity::AAS_EntityType(i)
             == (*entitytypemissile).value as libc::c_int
         {
-            crate::src::botlib::be_aas_entity::AAS_EntityInfo(i, &mut entinfo);
+            crate::src::botlib::be_aas_entity::AAS_EntityInfo(
+                i,
+                &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+            );
             if entinfo.weapon == (*weapindex_grapple).value as libc::c_int {
                 return 1 as libc::c_int;
             }
@@ -5005,7 +5023,10 @@ pub unsafe extern "C" fn BotResetGrapple(mut ms: *mut bot_movestate_t) {
         traveltype: 0,
         traveltime: 0,
     };
-    crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum((*ms).lastreachnum, &mut reach);
+    crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
+        (*ms).lastreachnum,
+        &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
+    );
     //if not using the grapple hook reachability anymore
     if reach.traveltype & 0xffffff as libc::c_int != 14 as libc::c_int {
         if (*ms).moveflags & 128 as libc::c_int != 0 || (*ms).grapplevisible_time != 0. {
@@ -5220,7 +5241,7 @@ pub unsafe extern "C" fn BotTravel_Grapple(
                 (*reach).end.as_mut_ptr(),
                 (*ms).entitynum,
                 1 as libc::c_int,
-            );
+            ) as crate::botlib_h::bsp_trace_s;
             dir[0 as libc::c_int as usize] =
                 (*reach).end[0 as libc::c_int as usize] - trace.endpos[0 as libc::c_int as usize];
             dir[1 as libc::c_int as usize] =
@@ -5953,7 +5974,7 @@ pub unsafe extern "C" fn BotMoveToGoal(
                     //end else
                     crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
                         (*ms).lastreachnum,
-                        &mut reach,
+                        &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
                     ); //end if
                        //if the bot is Not using the elevator
                     if reach.traveltype & 0xffffff as libc::c_int != 11 as libc::c_int
@@ -5967,7 +5988,8 @@ pub unsafe extern "C" fn BotMoveToGoal(
                             //end if
                             //end else
                             crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
-                                reachnum, &mut reach,
+                                reachnum,
+                                &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
                             ); //end if
                             (*ms).lastreachnum = reachnum;
                             (*ms).reachability_time = crate::src::botlib::be_aas_main::AAS_Time()
@@ -5996,7 +6018,7 @@ pub unsafe extern "C" fn BotMoveToGoal(
                 } else if modeltype == 2 as libc::c_int {
                     crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
                         (*ms).lastreachnum,
-                        &mut reach,
+                        &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
                     );
                     //if the bot is Not using the func bobbing
                     if reach.traveltype & 0xffffff as libc::c_int != 19 as libc::c_int
@@ -6010,7 +6032,8 @@ pub unsafe extern "C" fn BotMoveToGoal(
                             //end if
                             //end else
                             crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
-                                reachnum, &mut reach,
+                                reachnum,
+                                &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
                             ); //end if
                             (*ms).lastreachnum = reachnum;
                             (*ms).reachability_time = crate::src::botlib::be_aas_main::AAS_Time()
@@ -6071,7 +6094,7 @@ pub unsafe extern "C" fn BotMoveToGoal(
         //
         crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
             (*ms).lastreachnum,
-            &mut lastreach,
+            &mut lastreach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
         );
         //end else
         //DEBUG
@@ -6089,7 +6112,10 @@ pub unsafe extern "C" fn BotMoveToGoal(
         }
         reachnum = (*ms).lastreachnum;
         if reachnum != 0 {
-            crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(reachnum, &mut reach);
+            crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
+                reachnum,
+                &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
+            );
             //reachability area the bot is in
             //ms->areanum = BotReachabilityArea(ms->origin, ((lastreach.traveltype & TRAVELTYPE_MASK) != TRAVEL_ELEVATOR));
             //
@@ -6169,7 +6195,10 @@ pub unsafe extern "C" fn BotMoveToGoal(
             (*ms).jumpreach = 0 as libc::c_int;
             (*ms).moveflags &= !(256 as libc::c_int);
             if reachnum != 0 {
-                crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(reachnum, &mut reach);
+                crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
+                    reachnum,
+                    &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
+                );
                 //get a new reachability leading towards the goal
                 //the area number the reachability starts in
                 //reset some state variables
@@ -6191,7 +6220,10 @@ pub unsafe extern "C" fn BotMoveToGoal(
             //add the reachability to the reachabilities to avoid for a while
             //
             //if the bot has a reachability
-            crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(reachnum, &mut reach); //end if
+            crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
+                reachnum,
+                &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
+            ); //end if
             (*result).traveltype = reach.traveltype;
             //get the reachability from the number
             //
@@ -6297,7 +6329,7 @@ pub unsafe extern "C" fn BotMoveToGoal(
                         //get the reachability from the number
                         crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
                             lastreachnum,
-                            &mut reach,
+                            &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
                         );
                         if reach.traveltype & 0xffffff as libc::c_int == 18 as libc::c_int {
                             (*ms).lastreachnum = lastreachnum;
@@ -6337,7 +6369,7 @@ pub unsafe extern "C" fn BotMoveToGoal(
             //botimport.Print(PRT_MESSAGE, "%s: NOT onground, swimming or against ladder\n", ClientName(ms->entitynum-1));
             crate::src::botlib::be_aas_route::AAS_ReachabilityFromNum(
                 (*ms).lastreachnum,
-                &mut reach,
+                &mut reach as *mut _ as *mut crate::aasfile_h::aas_reachability_s,
             );
             (*result).traveltype = reach.traveltype;
             //DEBUG
@@ -6495,43 +6527,43 @@ pub unsafe extern "C" fn BotSetupMoveAI() -> libc::c_int {
     sv_maxstep = crate::src::botlib::l_libvar::LibVar(
         b"sv_step\x00" as *const u8 as *const libc::c_char,
         b"18\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::src::botlib::l_libvar::libvar_s;
     sv_maxbarrier = crate::src::botlib::l_libvar::LibVar(
         b"sv_maxbarrier\x00" as *const u8 as *const libc::c_char,
         b"32\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::src::botlib::l_libvar::libvar_s;
     sv_gravity = crate::src::botlib::l_libvar::LibVar(
         b"sv_gravity\x00" as *const u8 as *const libc::c_char,
         b"800\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::src::botlib::l_libvar::libvar_s;
     weapindex_rocketlauncher = crate::src::botlib::l_libvar::LibVar(
         b"weapindex_rocketlauncher\x00" as *const u8 as *const libc::c_char,
         b"5\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::src::botlib::l_libvar::libvar_s;
     weapindex_bfg10k = crate::src::botlib::l_libvar::LibVar(
         b"weapindex_bfg10k\x00" as *const u8 as *const libc::c_char,
         b"9\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::src::botlib::l_libvar::libvar_s;
     weapindex_grapple = crate::src::botlib::l_libvar::LibVar(
         b"weapindex_grapple\x00" as *const u8 as *const libc::c_char,
         b"10\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::src::botlib::l_libvar::libvar_s;
     entitytypemissile = crate::src::botlib::l_libvar::LibVar(
         b"entitytypemissile\x00" as *const u8 as *const libc::c_char,
         b"3\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::src::botlib::l_libvar::libvar_s;
     offhandgrapple = crate::src::botlib::l_libvar::LibVar(
         b"offhandgrapple\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::src::botlib::l_libvar::libvar_s;
     cmd_grappleon = crate::src::botlib::l_libvar::LibVar(
         b"cmd_grappleon\x00" as *const u8 as *const libc::c_char,
         b"grappleon\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::src::botlib::l_libvar::libvar_s;
     cmd_grappleoff = crate::src::botlib::l_libvar::LibVar(
         b"cmd_grappleoff\x00" as *const u8 as *const libc::c_char,
         b"grappleoff\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::src::botlib::l_libvar::libvar_s;
     return 0 as libc::c_int;
 }
 //shutdown movement AI

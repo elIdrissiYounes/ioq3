@@ -1154,7 +1154,7 @@ pub unsafe extern "C" fn RB_RenderDrawSurfList(
             crate::src::renderergl1::tr_main::R_DecomposeSort(
                 (*drawSurf).sort,
                 &mut entityNum,
-                &mut shader,
+                &mut shader as *mut _ as *mut *mut crate::tr_local_h::shader_s,
                 &mut fogNum,
                 &mut dlighted,
             );
@@ -1171,7 +1171,10 @@ pub unsafe extern "C" fn RB_RenderDrawSurfList(
                 if !oldShader.is_null() {
                     crate::src::renderergl1::tr_shade::RB_EndSurface();
                 }
-                crate::src::renderergl1::tr_shade::RB_BeginSurface(shader, fogNum);
+                crate::src::renderergl1::tr_shade::RB_BeginSurface(
+                    shader as *mut crate::tr_local_h::shader_s,
+                    fogNum,
+                );
                 oldShader = shader;
                 oldFogNum = fogNum;
                 oldDlighted = dlighted
@@ -1194,16 +1197,16 @@ pub unsafe extern "C" fn RB_RenderDrawSurfList(
                         - (*crate::src::renderergl1::tr_shade::tess.shader).timeOffset;
                     // set up the transformation matrix
                     crate::src::renderergl1::tr_main::R_RotateForEntity(
-                        backEnd.currentEntity,
-                        &mut backEnd.viewParms,
-                        &mut backEnd.or,
+                        backEnd.currentEntity as *const crate::tr_local_h::trRefEntity_t,
+                        &mut backEnd.viewParms as *mut _ as *const crate::tr_local_h::viewParms_t,
+                        &mut backEnd.or as *mut _ as *mut crate::tr_local_h::orientationr_t,
                     );
                     // set up the dynamic lighting if needed
                     if (*backEnd.currentEntity).needDlights as u64 != 0 {
                         crate::src::renderergl1::tr_light::R_TransformDlights(
                             backEnd.refdef.num_dlights,
-                            backEnd.refdef.dlights,
-                            &mut backEnd.or,
+                            backEnd.refdef.dlights as *mut crate::tr_local_h::dlight_s,
+                            &mut backEnd.or as *mut _ as *mut crate::tr_local_h::orientationr_t,
                         );
                     }
                     if (*backEnd.currentEntity).e.renderfx & 0x8 as libc::c_int != 0 {
@@ -1223,8 +1226,8 @@ pub unsafe extern "C" fn RB_RenderDrawSurfList(
                         - (*crate::src::renderergl1::tr_shade::tess.shader).timeOffset;
                     crate::src::renderergl1::tr_light::R_TransformDlights(
                         backEnd.refdef.num_dlights,
-                        backEnd.refdef.dlights,
-                        &mut backEnd.or,
+                        backEnd.refdef.dlights as *mut crate::tr_local_h::dlight_s,
+                        &mut backEnd.or as *mut _ as *mut crate::tr_local_h::orientationr_t,
                     );
                 }
                 crate::src::sdl::sdl_glimp::qglLoadMatrixf.expect("non-null function pointer")(
@@ -1260,7 +1263,7 @@ pub unsafe extern "C" fn RB_RenderDrawSurfList(
                             } else {
                                 let mut temp: crate::tr_local_h::viewParms_t = backEnd.viewParms;
                                 crate::src::renderergl1::tr_main::R_SetupProjection(
-                                    &mut temp,
+                                    &mut temp as *mut _ as *mut crate::tr_local_h::viewParms_t,
                                     (*crate::src::renderergl1::tr_init::r_znear).value,
                                     crate::src::qcommon::q_shared::qfalse,
                                 );
@@ -1341,7 +1344,7 @@ pub unsafe extern "C" fn RB_RenderDrawSurfList(
     if (*crate::src::renderergl1::tr_init::r_drawSun).integer != 0 {
         crate::src::renderergl1::tr_sky::RB_DrawSun(
             0.1f64 as libc::c_float,
-            crate::src::renderergl1::tr_main::tr.sunShader,
+            crate::src::renderergl1::tr_main::tr.sunShader as *mut crate::tr_local_h::shader_s,
         );
     }
     // darken down any stencil shadows
@@ -1644,7 +1647,10 @@ pub unsafe extern "C" fn RB_StretchPic(mut data: *const libc::c_void) -> *const 
             crate::src::renderergl1::tr_shade::RB_EndSurface();
         }
         backEnd.currentEntity = &mut backEnd.entity2D;
-        crate::src::renderergl1::tr_shade::RB_BeginSurface(shader, 0 as libc::c_int);
+        crate::src::renderergl1::tr_shade::RB_BeginSurface(
+            shader as *mut crate::tr_local_h::shader_s,
+            0 as libc::c_int,
+        );
     }
     if crate::src::renderergl1::tr_shade::tess.numVertexes + 4 as libc::c_int >= 1000 as libc::c_int
         || crate::src::renderergl1::tr_shade::tess.numIndexes + 6 as libc::c_int

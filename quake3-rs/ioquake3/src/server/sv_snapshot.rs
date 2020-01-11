@@ -282,9 +282,9 @@ unsafe extern "C" fn SV_EmitPacketEntities(
             // because the force parm is qfalse, this will not result
             // in any bytes being emitted if the entity has not changed at all
             crate::src::qcommon::msg::MSG_WriteDeltaEntity(
-                msg,
-                oldent,
-                newent,
+                msg as *mut crate::qcommon_h::msg_t,
+                oldent as *mut crate::src::qcommon::q_shared::entityState_s,
+                newent as *mut crate::src::qcommon::q_shared::entityState_s,
                 crate::src::qcommon::q_shared::qfalse,
             );
             oldindex += 1;
@@ -292,13 +292,14 @@ unsafe extern "C" fn SV_EmitPacketEntities(
         } else if newnum < oldnum {
             // this is a new entity, send it from the baseline
             crate::src::qcommon::msg::MSG_WriteDeltaEntity(
-                msg,
+                msg as *mut crate::qcommon_h::msg_t,
                 &mut (*crate::src::server::sv_main::sv
                     .svEntities
                     .as_mut_ptr()
                     .offset(newnum as isize))
-                .baseline,
-                newent,
+                .baseline as *mut _
+                    as *mut crate::src::qcommon::q_shared::entityState_s,
+                newent as *mut crate::src::qcommon::q_shared::entityState_s,
                 crate::src::qcommon::q_shared::qtrue,
             );
             newindex += 1
@@ -308,16 +309,17 @@ unsafe extern "C" fn SV_EmitPacketEntities(
             }
             // the old entity isn't present in the new message
             crate::src::qcommon::msg::MSG_WriteDeltaEntity(
-                msg,
-                oldent,
-                0 as *mut crate::src::qcommon::q_shared::entityState_s,
+                msg as *mut crate::qcommon_h::msg_t,
+                oldent as *mut crate::src::qcommon::q_shared::entityState_s,
+                0 as *mut crate::src::qcommon::q_shared::entityState_s
+                    as *mut crate::src::qcommon::q_shared::entityState_s,
                 crate::src::qcommon::q_shared::qtrue,
             );
             oldindex += 1
         }
     }
     crate::src::qcommon::msg::MSG_WriteBits(
-        msg,
+        msg as *mut crate::qcommon_h::msg_t,
         ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int,
         10 as libc::c_int,
     );
@@ -384,7 +386,10 @@ unsafe extern "C" fn SV_WriteSnapshotToClient(
             lastframe = 0 as libc::c_int
         }
     }
-    crate::src::qcommon::msg::MSG_WriteByte(msg, crate::qcommon_h::svc_snapshot as libc::c_int);
+    crate::src::qcommon::msg::MSG_WriteByte(
+        msg as *mut crate::qcommon_h::msg_t,
+        crate::qcommon_h::svc_snapshot as libc::c_int,
+    );
     // NOTE, MRE: now sent at the start of every message from server to client
     // let the client know which reliable clientCommands we have received
     //MSG_WriteLong( msg, client->lastClientCommand );
@@ -398,14 +403,17 @@ unsafe extern "C" fn SV_WriteSnapshotToClient(
         // incorrect, but since it'll be busy loading a map at
         // the time it doesn't really matter.
         crate::src::qcommon::msg::MSG_WriteLong(
-            msg,
+            msg as *mut crate::qcommon_h::msg_t,
             crate::src::server::sv_main::sv.time + (*client).oldServerTime,
         );
     } else {
-        crate::src::qcommon::msg::MSG_WriteLong(msg, crate::src::server::sv_main::sv.time);
+        crate::src::qcommon::msg::MSG_WriteLong(
+            msg as *mut crate::qcommon_h::msg_t,
+            crate::src::server::sv_main::sv.time,
+        );
     }
     // what we are delta'ing from
-    crate::src::qcommon::msg::MSG_WriteByte(msg, lastframe);
+    crate::src::qcommon::msg::MSG_WriteByte(msg as *mut crate::qcommon_h::msg_t, lastframe);
     snapFlags = crate::src::server::sv_main::svs.snapFlagServerBit;
     if (*client).rateDelayed as u64 != 0 {
         snapFlags |= 1 as libc::c_int
@@ -414,26 +422,30 @@ unsafe extern "C" fn SV_WriteSnapshotToClient(
     {
         snapFlags |= 2 as libc::c_int
     }
-    crate::src::qcommon::msg::MSG_WriteByte(msg, snapFlags);
+    crate::src::qcommon::msg::MSG_WriteByte(msg as *mut crate::qcommon_h::msg_t, snapFlags);
     // send over the areabits
-    crate::src::qcommon::msg::MSG_WriteByte(msg, (*frame).areabytes);
+    crate::src::qcommon::msg::MSG_WriteByte(
+        msg as *mut crate::qcommon_h::msg_t,
+        (*frame).areabytes,
+    );
     crate::src::qcommon::msg::MSG_WriteData(
-        msg,
+        msg as *mut crate::qcommon_h::msg_t,
         (*frame).areabits.as_mut_ptr() as *const libc::c_void,
         (*frame).areabytes,
     );
     // delta encode the playerstate
     if !oldframe.is_null() {
         crate::src::qcommon::msg::MSG_WriteDeltaPlayerstate(
-            msg,
-            &mut (*oldframe).ps,
-            &mut (*frame).ps,
+            msg as *mut crate::qcommon_h::msg_t,
+            &mut (*oldframe).ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
+            &mut (*frame).ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
         );
     } else {
         crate::src::qcommon::msg::MSG_WriteDeltaPlayerstate(
-            msg,
-            0 as *mut crate::src::qcommon::q_shared::playerState_s,
-            &mut (*frame).ps,
+            msg as *mut crate::qcommon_h::msg_t,
+            0 as *mut crate::src::qcommon::q_shared::playerState_s
+                as *mut crate::src::qcommon::q_shared::playerState_s,
+            &mut (*frame).ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
         );
     }
     // delta encode the entities
@@ -442,7 +454,10 @@ unsafe extern "C" fn SV_WriteSnapshotToClient(
     if (*crate::src::server::sv_main::sv_padPackets).integer != 0 {
         i = 0 as libc::c_int;
         while i < (*crate::src::server::sv_main::sv_padPackets).integer {
-            crate::src::qcommon::msg::MSG_WriteByte(msg, crate::qcommon_h::svc_nop as libc::c_int);
+            crate::src::qcommon::msg::MSG_WriteByte(
+                msg as *mut crate::qcommon_h::msg_t,
+                crate::qcommon_h::svc_nop as libc::c_int,
+            );
             i += 1
         }
     };
@@ -465,12 +480,12 @@ pub unsafe extern "C" fn SV_UpdateServerCommandsToClient(
     i = (*client).reliableAcknowledge + 1 as libc::c_int;
     while i <= (*client).reliableSequence {
         crate::src::qcommon::msg::MSG_WriteByte(
-            msg,
+            msg as *mut crate::qcommon_h::msg_t,
             crate::qcommon_h::svc_serverCommand as libc::c_int,
         );
-        crate::src::qcommon::msg::MSG_WriteLong(msg, i);
+        crate::src::qcommon::msg::MSG_WriteLong(msg as *mut crate::qcommon_h::msg_t, i);
         crate::src::qcommon::msg::MSG_WriteString(
-            msg,
+            msg as *mut crate::qcommon_h::msg_t,
             (*client).reliableCommands[(i & 64 as libc::c_int - 1 as libc::c_int) as usize]
                 .as_mut_ptr(),
         );
@@ -569,7 +584,8 @@ unsafe extern "C" fn SV_AddEntitiesVisibleFromPoint(
     let mut current_block_26: u64;
     e = 0 as libc::c_int;
     while e < crate::src::server::sv_main::sv.num_entities {
-        ent = crate::src::server::sv_game::SV_GentityNum(e);
+        ent =
+            crate::src::server::sv_game::SV_GentityNum(e) as *mut crate::g_public_h::sharedEntity_t;
         // never send entities that aren't linked in
         if !((*ent).r.linked as u64 == 0) {
             if (*ent).s.number != e {
@@ -631,8 +647,10 @@ unsafe extern "C" fn SV_AddEntitiesVisibleFromPoint(
                                 match current_block_26 {
                                     7651349459974463963 => {}
                                     _ => {
-                                        svEnt =
-                                            crate::src::server::sv_game::SV_SvEntityForGentity(ent);
+                                        svEnt = crate::src::server::sv_game::SV_SvEntityForGentity(
+                                            ent as *mut crate::g_public_h::sharedEntity_t,
+                                        )
+                                            as *mut crate::server_h::svEntity_s;
                                         // don't double add an entity through portals
                                         if !((*svEnt).snapshotCounter
                                             == crate::src::server::sv_main::sv.snapshotCounter)
@@ -884,7 +902,7 @@ unsafe extern "C" fn SV_BuildClientSnapshot(mut client: *mut crate::server_h::cl
     ps = crate::src::server::sv_game::SV_GameClientNum(
         client.wrapping_offset_from(crate::src::server::sv_main::svs.clients) as libc::c_long
             as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::playerState_s;
     (*frame).ps = *ps;
     // never send client's own entity, because it can
     // be regenerated from the playerstate
@@ -943,8 +961,8 @@ unsafe extern "C" fn SV_BuildClientSnapshot(mut client: *mut crate::server_h::cl
     (*frame).first_entity = crate::src::server::sv_main::svs.nextSnapshotEntities;
     i = 0 as libc::c_int;
     while i < entityNumbers.numSnapshotEntities {
-        ent =
-            crate::src::server::sv_game::SV_GentityNum(entityNumbers.snapshotEntities[i as usize]);
+        ent = crate::src::server::sv_game::SV_GentityNum(entityNumbers.snapshotEntities[i as usize])
+            as *mut crate::g_public_h::sharedEntity_t;
         state = &mut *crate::src::server::sv_main::svs.snapshotEntities.offset(
             (crate::src::server::sv_main::svs.nextSnapshotEntities
                 % crate::src::server::sv_main::svs.numSnapshotEntities) as isize,
@@ -996,20 +1014,36 @@ unsafe extern "C" fn SV_WriteVoipToClient(
                     break;
                 }
                 crate::src::qcommon::msg::MSG_WriteByte(
-                    msg,
+                    msg as *mut crate::qcommon_h::msg_t,
                     crate::qcommon_h::svc_voipOpus as libc::c_int,
                 );
-                crate::src::qcommon::msg::MSG_WriteShort(msg, (*packet).sender);
+                crate::src::qcommon::msg::MSG_WriteShort(
+                    msg as *mut crate::qcommon_h::msg_t,
+                    (*packet).sender,
+                );
                 crate::src::qcommon::msg::MSG_WriteByte(
-                    msg,
+                    msg as *mut crate::qcommon_h::msg_t,
                     (*packet).generation as crate::src::qcommon::q_shared::byte as libc::c_int,
                 );
-                crate::src::qcommon::msg::MSG_WriteLong(msg, (*packet).sequence);
-                crate::src::qcommon::msg::MSG_WriteByte(msg, (*packet).frames);
-                crate::src::qcommon::msg::MSG_WriteShort(msg, (*packet).len);
-                crate::src::qcommon::msg::MSG_WriteBits(msg, (*packet).flags, 2 as libc::c_int);
+                crate::src::qcommon::msg::MSG_WriteLong(
+                    msg as *mut crate::qcommon_h::msg_t,
+                    (*packet).sequence,
+                );
+                crate::src::qcommon::msg::MSG_WriteByte(
+                    msg as *mut crate::qcommon_h::msg_t,
+                    (*packet).frames,
+                );
+                crate::src::qcommon::msg::MSG_WriteShort(
+                    msg as *mut crate::qcommon_h::msg_t,
+                    (*packet).len,
+                );
+                crate::src::qcommon::msg::MSG_WriteBits(
+                    msg as *mut crate::qcommon_h::msg_t,
+                    (*packet).flags,
+                    2 as libc::c_int,
+                );
                 crate::src::qcommon::msg::MSG_WriteData(
-                    msg,
+                    msg as *mut crate::qcommon_h::msg_t,
                     (*packet).data.as_mut_ptr() as *const libc::c_void,
                     (*packet).len,
                 );
@@ -1053,7 +1087,10 @@ pub unsafe extern "C" fn SV_SendMessageToClient(
         [((*client).netchan.outgoingSequence & 32 as libc::c_int - 1 as libc::c_int) as usize]
         .messageAcked = -(1 as libc::c_int);
     // send the datagram
-    crate::src::server::sv_net_chan::SV_Netchan_Transmit(client, msg);
+    crate::src::server::sv_net_chan::SV_Netchan_Transmit(
+        client as *mut crate::server_h::client_s,
+        msg as *mut crate::qcommon_h::msg_t,
+    );
 }
 /*
 =======================
@@ -1085,7 +1122,7 @@ pub unsafe extern "C" fn SV_SendClientSnapshot(mut client: *mut crate::server_h:
         return;
     }
     crate::src::qcommon::msg::MSG_Init(
-        &mut msg,
+        &mut msg as *mut _ as *mut crate::qcommon_h::msg_t,
         msg_buf.as_mut_ptr(),
         ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 16384]>() as libc::c_ulong
             as libc::c_int,
@@ -1093,7 +1130,10 @@ pub unsafe extern "C" fn SV_SendClientSnapshot(mut client: *mut crate::server_h:
     msg.allowoverflow = crate::src::qcommon::q_shared::qtrue;
     // NOTE, MRE: all server->client messages now acknowledge
     // let the client know which reliable clientCommands we have received
-    crate::src::qcommon::msg::MSG_WriteLong(&mut msg, (*client).lastClientCommand);
+    crate::src::qcommon::msg::MSG_WriteLong(
+        &mut msg as *mut _ as *mut crate::qcommon_h::msg_t,
+        (*client).lastClientCommand,
+    );
     // (re)send any reliable server commands
     SV_UpdateServerCommandsToClient(client, &mut msg);
     // send over all the relevant entityState_t
@@ -1106,7 +1146,7 @@ pub unsafe extern "C" fn SV_SendClientSnapshot(mut client: *mut crate::server_h:
             b"WARNING: msg overflowed for %s\n\x00" as *const u8 as *const libc::c_char,
             (*client).name.as_mut_ptr(),
         );
-        crate::src::qcommon::msg::MSG_Clear(&mut msg);
+        crate::src::qcommon::msg::MSG_Clear(&mut msg as *mut _ as *mut crate::qcommon_h::msg_t);
     }
     SV_SendMessageToClient(&mut msg, client);
 }
@@ -1281,12 +1321,15 @@ pub unsafe extern "C" fn SV_SendClientMessages() {
                             == crate::qcommon_h::NA_LOOPBACK as libc::c_int as libc::c_uint
                             || (*crate::src::server::sv_main::sv_lanForceRate).integer != 0
                                 && crate::src::qcommon::net_ip::Sys_IsLANAddress(
-                                    (*c).netchan.remoteAddress,
+                                    (*c).netchan.remoteAddress as crate::qcommon_h::netadr_t,
                                 ) as libc::c_uint
                                     != 0)
                         {
                             // rate control for clients not on LAN
-                            if crate::src::server::sv_main::SV_RateMsec(c) > 0 as libc::c_int {
+                            if crate::src::server::sv_main::SV_RateMsec(
+                                c as *mut crate::server_h::client_s,
+                            ) > 0 as libc::c_int
+                            {
                                 // Not enough time since last packet passed through the line
                                 (*c).rateDelayed = crate::src::qcommon::q_shared::qtrue;
                                 current_block_6 = 16559507199688588974;

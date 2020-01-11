@@ -1,3 +1,58 @@
+pub type md3Frame_t = crate::qfiles_h::md3Frame_s;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct md3Frame_s {
+    pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
+    pub localOrigin: crate::src::qcommon::q_shared::vec3_t,
+    pub radius: libc::c_float,
+    pub name: [libc::c_char; 16],
+}
+pub type md3Tag_t = crate::qfiles_h::md3Tag_s;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct md3Tag_s {
+    pub name: [libc::c_char; 64],
+    pub origin: crate::src::qcommon::q_shared::vec3_t,
+    pub axis: [crate::src::qcommon::q_shared::vec3_t; 3],
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct md3Surface_t {
+    pub ident: libc::c_int,
+    pub name: [libc::c_char; 64],
+    pub flags: libc::c_int,
+    pub numFrames: libc::c_int,
+    pub numShaders: libc::c_int,
+    pub numVerts: libc::c_int,
+    pub numTriangles: libc::c_int,
+    pub ofsTriangles: libc::c_int,
+    pub ofsShaders: libc::c_int,
+    pub ofsSt: libc::c_int,
+    pub ofsXyzNormals: libc::c_int,
+    pub ofsEnd: libc::c_int,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct md3Shader_t {
+    pub name: [libc::c_char; 64],
+    pub shaderIndex: libc::c_int,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct md3Triangle_t {
+    pub indexes: [libc::c_int; 3],
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct md3St_t {
+    pub st: [libc::c_float; 2],
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct md3XyzNormal_t {
+    pub xyz: [libc::c_short; 3],
+    pub normal: libc::c_short,
+}
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct md3Header_t {
@@ -31,6 +86,11 @@ pub struct mdrVertex_t {
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
+pub struct mdrTriangle_t {
+    pub indexes: [libc::c_int; 3],
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
 pub struct mdrSurface_t {
     pub ident: libc::c_int,
     pub name: [libc::c_char; 64],
@@ -61,10 +121,29 @@ pub struct mdrFrame_t {
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
+pub struct mdrCompBone_t {
+    pub Comp: [libc::c_uchar; 24],
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct mdrCompFrame_t {
+    pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
+    pub localOrigin: crate::src::qcommon::q_shared::vec3_t,
+    pub radius: libc::c_float,
+    pub bones: [crate::qfiles_h::mdrCompBone_t; 1],
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
 pub struct mdrLOD_t {
     pub numSurfaces: libc::c_int,
     pub ofsSurfaces: libc::c_int,
     pub ofsEnd: libc::c_int,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct mdrTag_t {
+    pub boneIndex: libc::c_int,
+    pub name: [libc::c_char; 32],
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -80,13 +159,6 @@ pub struct mdrHeader_t {
     pub numTags: libc::c_int,
     pub ofsTags: libc::c_int,
     pub ofsEnd: libc::c_int,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct dshader_t {
-    pub shader: [libc::c_char; 64],
-    pub surfaceFlags: libc::c_int,
-    pub contentFlags: libc::c_int,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -110,6 +182,13 @@ pub struct dmodel_t {
     pub numSurfaces: libc::c_int,
     pub firstBrush: libc::c_int,
     pub numBrushes: libc::c_int,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct dshader_t {
+    pub shader: [libc::c_char; 64],
+    pub surfaceFlags: libc::c_int,
+    pub contentFlags: libc::c_int,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -166,6 +245,11 @@ pub struct drawVert_t {
     pub normal: crate::src::qcommon::q_shared::vec3_t,
     pub color: [crate::src::qcommon::q_shared::byte; 4],
 }
+pub const MST_BAD: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 0;
+pub const MST_PLANAR: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 1;
+pub const MST_PATCH: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 2;
+pub const MST_TRIANGLE_SOUP: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 3;
+pub const MST_FLARE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 4;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct dsurface_t {
@@ -186,87 +270,3 @@ pub struct dsurface_t {
     pub patchWidth: libc::c_int,
     pub patchHeight: libc::c_int,
 }
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct md3Frame_s {
-    pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
-    pub localOrigin: crate::src::qcommon::q_shared::vec3_t,
-    pub radius: libc::c_float,
-    pub name: [libc::c_char; 16],
-}
-pub type md3Frame_t = crate::qfiles_h::md3Frame_s;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct md3Surface_t {
-    pub ident: libc::c_int,
-    pub name: [libc::c_char; 64],
-    pub flags: libc::c_int,
-    pub numFrames: libc::c_int,
-    pub numShaders: libc::c_int,
-    pub numVerts: libc::c_int,
-    pub numTriangles: libc::c_int,
-    pub ofsTriangles: libc::c_int,
-    pub ofsShaders: libc::c_int,
-    pub ofsSt: libc::c_int,
-    pub ofsXyzNormals: libc::c_int,
-    pub ofsEnd: libc::c_int,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct md3Shader_t {
-    pub name: [libc::c_char; 64],
-    pub shaderIndex: libc::c_int,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct md3Tag_s {
-    pub name: [libc::c_char; 64],
-    pub origin: crate::src::qcommon::q_shared::vec3_t,
-    pub axis: [crate::src::qcommon::q_shared::vec3_t; 3],
-}
-pub type md3Tag_t = crate::qfiles_h::md3Tag_s;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct md3Triangle_t {
-    pub indexes: [libc::c_int; 3],
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct md3St_t {
-    pub st: [libc::c_float; 2],
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct md3XyzNormal_t {
-    pub xyz: [libc::c_short; 3],
-    pub normal: libc::c_short,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct mdrTriangle_t {
-    pub indexes: [libc::c_int; 3],
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct mdrCompBone_t {
-    pub Comp: [libc::c_uchar; 24],
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct mdrCompFrame_t {
-    pub bounds: [crate::src::qcommon::q_shared::vec3_t; 2],
-    pub localOrigin: crate::src::qcommon::q_shared::vec3_t,
-    pub radius: libc::c_float,
-    pub bones: [crate::qfiles_h::mdrCompBone_t; 1],
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct mdrTag_t {
-    pub boneIndex: libc::c_int,
-    pub name: [libc::c_char; 32],
-}
-pub const MST_FLARE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 4;
-pub const MST_TRIANGLE_SOUP: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 3;
-pub const MST_PATCH: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 2;
-pub const MST_PLANAR: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 1;
-pub const MST_BAD: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 0;

@@ -356,7 +356,6 @@ pub use crate::src::renderergl1::tr_main::tr;
 pub use crate::src::renderergl1::tr_model::R_AllocModel;
 pub use crate::src::renderergl1::tr_shader::R_FindShader;
 pub use crate::src::renderergl1::tr_shader::R_RemapShader;
-use crate::stdlib::sscanf;
 pub use crate::tr_common_h::image_s;
 pub use crate::tr_common_h::image_t;
 pub use crate::tr_common_h::imgFlags_t;
@@ -508,6 +507,7 @@ pub use crate::tr_local_h::TMOD_SCROLL;
 pub use crate::tr_local_h::TMOD_STRETCH;
 pub use crate::tr_local_h::TMOD_TRANSFORM;
 pub use crate::tr_local_h::TMOD_TURBULENT;
+use ::libc::sscanf;
 
 use crate::stdlib::ceil;
 use crate::stdlib::fabs;
@@ -515,9 +515,9 @@ use crate::stdlib::floor;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
 use crate::stdlib::sqrt;
-use crate::stdlib::strchr;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
+use ::libc::strchr;
+use ::libc::strcpy;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -814,7 +814,7 @@ unsafe extern "C" fn R_LoadLightmaps(mut l: *mut crate::qfiles_h::lump_t) {
                 | crate::tr_common_h::IMGFLAG_CLAMPTOEDGE as libc::c_int)
                 as crate::tr_common_h::imgFlags_t,
             0 as libc::c_int,
-        );
+        ) as *mut crate::tr_common_h::image_s;
         i += 1
     }
     if (*crate::src::renderergl1::tr_init::r_lightmap).integer == 2 as libc::c_int {
@@ -929,7 +929,7 @@ unsafe extern "C" fn ShaderForShaderNum(
         (*dsh).shader.as_mut_ptr(),
         lightmapNum,
         crate::src::qcommon::q_shared::qtrue,
-    );
+    ) as *mut crate::tr_local_h::shader_s;
     // if the shader had errors, just use default shader
     if (*shader).defaultShader as u64 != 0 {
         return crate::src::renderergl1::tr_main::tr.defaultShader;
@@ -1046,7 +1046,9 @@ unsafe extern "C" fn ParseFace(
             * (*cv).plane.normal[1 as libc::c_int as usize]
         + (*(*cv).points.as_mut_ptr().offset(0 as libc::c_int as isize))[2 as libc::c_int as usize]
             * (*cv).plane.normal[2 as libc::c_int as usize];
-    crate::src::qcommon::q_math::SetPlaneSignbits(&mut (*cv).plane);
+    crate::src::qcommon::q_math::SetPlaneSignbits(
+        &mut (*cv).plane as *mut _ as *mut crate::src::qcommon::q_shared::cplane_s,
+    );
     (*cv).plane.type_0 =
         if (*cv).plane.normal[0 as libc::c_int as usize] as libc::c_double == 1.0f64 {
             0 as libc::c_int
@@ -1135,8 +1137,8 @@ unsafe extern "C" fn ParseMesh(
     grid = crate::src::renderergl1::tr_curve::R_SubdividePatchToGrid(
         width,
         height,
-        points.as_mut_ptr(),
-    );
+        points.as_mut_ptr() as *mut crate::qfiles_h::drawVert_t,
+    ) as *mut crate::tr_local_h::srfGridMesh_s;
     (*surf).data = grid as *mut crate::tr_local_h::surfaceType_t;
     // copy the level of detail origin, which is the center
     // of the group of all curves that must subdivide the same
@@ -2095,7 +2097,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                         row = 0 as libc::c_int
                                                     }
                                                     grid2 =
-                                                        crate::src::renderergl1::tr_curve::R_GridInsertColumn(grid2,
+                                                        
+                                                        crate::src::renderergl1::tr_curve::R_GridInsertColumn(grid2 as *mut crate::tr_local_h::srfGridMesh_s,
                                                                            l +
                                                                                1
                                                                                    as
@@ -2116,7 +2119,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                                                                                    as
                                                                                                                    libc::c_int)
                                                                                                               as
-                                                                                                              isize));
+                                                                                                              isize))
+    as *mut crate::tr_local_h::srfGridMesh_s;
                                                     (*grid2).lodStitched =
                                                         crate::src::qcommon::q_shared::qfalse
                                                             as libc::c_int;
@@ -2247,7 +2251,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                         column = 0 as libc::c_int
                                                     }
                                                     grid2 =
-                                                        crate::src::renderergl1::tr_curve::R_GridInsertRow(grid2,
+                                                        
+                                                        crate::src::renderergl1::tr_curve::R_GridInsertRow(grid2 as *mut crate::tr_local_h::srfGridMesh_s,
                                                                         l +
                                                                             1
                                                                                 as
@@ -2268,7 +2273,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                                                                                 as
                                                                                                                 libc::c_int)
                                                                                                            as
-                                                                                                           isize));
+                                                                                                           isize))
+    as *mut crate::tr_local_h::srfGridMesh_s;
                                                     (*grid2).lodStitched =
                                                         crate::src::qcommon::q_shared::qfalse
                                                             as libc::c_int;
@@ -2414,7 +2420,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                         row = 0 as libc::c_int
                                                     }
                                                     grid2 =
-                                                        crate::src::renderergl1::tr_curve::R_GridInsertColumn(grid2,
+                                                        
+                                                        crate::src::renderergl1::tr_curve::R_GridInsertColumn(grid2 as *mut crate::tr_local_h::srfGridMesh_s,
                                                                            l +
                                                                                1
                                                                                    as
@@ -2437,7 +2444,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                                                                                     as
                                                                                                                     libc::c_int)
                                                                                                                as
-                                                                                                               isize));
+                                                                                                               isize))
+    as *mut crate::tr_local_h::srfGridMesh_s;
                                                     (*grid2).lodStitched =
                                                         crate::src::qcommon::q_shared::qfalse
                                                             as libc::c_int;
@@ -2571,7 +2579,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                         column = 0 as libc::c_int
                                                     }
                                                     grid2 =
-                                                        crate::src::renderergl1::tr_curve::R_GridInsertRow(grid2,
+                                                        
+                                                        crate::src::renderergl1::tr_curve::R_GridInsertRow(grid2 as *mut crate::tr_local_h::srfGridMesh_s,
                                                                         l +
                                                                             1
                                                                                 as
@@ -2594,7 +2603,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                                                                                  as
                                                                                                                  libc::c_int)
                                                                                                             as
-                                                                                                            isize));
+                                                                                                            isize))
+    as *mut crate::tr_local_h::srfGridMesh_s;
                                                     (*grid2).lodStitched =
                                                         crate::src::qcommon::q_shared::qfalse
                                                             as libc::c_int;
@@ -2737,7 +2747,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                         row = 0 as libc::c_int
                                                     }
                                                     grid2 =
-                                                        crate::src::renderergl1::tr_curve::R_GridInsertColumn(grid2,
+                                                        
+                                                        crate::src::renderergl1::tr_curve::R_GridInsertColumn(grid2 as *mut crate::tr_local_h::srfGridMesh_s,
                                                                            l +
                                                                                1
                                                                                    as
@@ -2758,7 +2769,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                                                                                    as
                                                                                                                    libc::c_int)
                                                                                                               as
-                                                                                                              isize));
+                                                                                                              isize))
+    as *mut crate::tr_local_h::srfGridMesh_s;
                                                     (*grid2).lodStitched =
                                                         crate::src::qcommon::q_shared::qfalse
                                                             as libc::c_int;
@@ -2889,7 +2901,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                         column = 0 as libc::c_int
                                                     }
                                                     grid2 =
-                                                        crate::src::renderergl1::tr_curve::R_GridInsertRow(grid2,
+                                                        
+                                                        crate::src::renderergl1::tr_curve::R_GridInsertRow(grid2 as *mut crate::tr_local_h::srfGridMesh_s,
                                                                         l +
                                                                             1
                                                                                 as
@@ -2910,7 +2923,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                                                                                 as
                                                                                                                 libc::c_int)
                                                                                                            as
-                                                                                                           isize));
+                                                                                                           isize))
+    as *mut crate::tr_local_h::srfGridMesh_s;
                                                     if grid2.is_null() {
                                                         break;
                                                     }
@@ -3059,7 +3073,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                         row = 0 as libc::c_int
                                                     }
                                                     grid2 =
-                                                        crate::src::renderergl1::tr_curve::R_GridInsertColumn(grid2,
+                                                        
+                                                        crate::src::renderergl1::tr_curve::R_GridInsertColumn(grid2 as *mut crate::tr_local_h::srfGridMesh_s,
                                                                            l +
                                                                                1
                                                                                    as
@@ -3082,7 +3097,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                                                                                     as
                                                                                                                     libc::c_int)
                                                                                                                as
-                                                                                                               isize));
+                                                                                                               isize))
+    as *mut crate::tr_local_h::srfGridMesh_s;
                                                     (*grid2).lodStitched =
                                                         crate::src::qcommon::q_shared::qfalse
                                                             as libc::c_int;
@@ -3216,7 +3232,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                         column = 0 as libc::c_int
                                                     }
                                                     grid2 =
-                                                        crate::src::renderergl1::tr_curve::R_GridInsertRow(grid2,
+                                                        
+                                                        crate::src::renderergl1::tr_curve::R_GridInsertRow(grid2 as *mut crate::tr_local_h::srfGridMesh_s,
                                                                         l +
                                                                             1
                                                                                 as
@@ -3239,7 +3256,8 @@ pub unsafe extern "C" fn R_StitchPatches(
                                                                                                                  as
                                                                                                                  libc::c_int)
                                                                                                             as
-                                                                                                            isize));
+                                                                                                            isize))
+    as *mut crate::tr_local_h::srfGridMesh_s;
                                                     (*grid2).lodStitched =
                                                         crate::src::qcommon::q_shared::qfalse
                                                             as libc::c_int;
@@ -3437,7 +3455,9 @@ pub unsafe extern "C" fn R_MovePatchSurfacesToHunk() {
                 (*grid).heightLodError as *const libc::c_void,
                 ((*grid).height * 4 as libc::c_int) as libc::c_ulong,
             );
-            crate::src::renderergl1::tr_curve::R_FreeSurfaceGridMesh(grid);
+            crate::src::renderergl1::tr_curve::R_FreeSurfaceGridMesh(
+                grid as *mut crate::tr_local_h::srfGridMesh_s,
+            );
             let ref mut fresh9 = (*s_worldData.surfaces.offset(i as isize)).data;
             *fresh9 = hunkgrid as *mut libc::c_void as *mut crate::tr_local_h::surfaceType_t
         }
@@ -3612,7 +3632,8 @@ unsafe extern "C" fn R_LoadSubmodels(mut l: *mut crate::qfiles_h::lump_t) {
     i = 0 as libc::c_int;
     while i < count {
         let mut model: *mut crate::tr_local_h::model_t = 0 as *mut crate::tr_local_h::model_t;
-        model = crate::src::renderergl1::tr_model::R_AllocModel();
+        model =
+            crate::src::renderergl1::tr_model::R_AllocModel() as *mut crate::tr_local_h::model_s;
         // this should never happen
         if model.is_null() {
             crate::src::renderergl1::tr_main::ri
@@ -4082,7 +4103,7 @@ unsafe extern "C" fn R_LoadFogs(
             (*fogs).shader.as_mut_ptr(),
             -(1 as libc::c_int),
             crate::src::qcommon::q_shared::qtrue,
-        );
+        ) as *mut crate::tr_local_h::shader_s;
         (*out).parms = (*shader).fogParms;
         (*out).colorInt = crate::src::qcommon::q_math::ColorBytes4(
             (*shader).fogParms.color[0 as libc::c_int as usize]
@@ -4234,7 +4255,7 @@ pub unsafe extern "C" fn R_LoadEntities(mut l: *mut crate::qfiles_h::lump_t) {
         (*l).filelen + 1 as libc::c_int,
         crate::src::qcommon::q_shared::h_low,
     ) as *mut libc::c_char;
-    crate::stdlib::strcpy((*w).entityString, p);
+    ::libc::strcpy((*w).entityString, p);
     (*w).entityParsePoint = (*w).entityString;
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(&mut p, crate::src::qcommon::q_shared::qtrue);
@@ -4278,7 +4299,7 @@ pub unsafe extern "C" fn R_LoadEntities(mut l: *mut crate::qfiles_h::lump_t) {
             crate::stdlib::strlen(s) as libc::c_int,
         ) == 0
         {
-            s = crate::stdlib::strchr(value.as_mut_ptr(), ';' as i32);
+            s = ::libc::strchr(value.as_mut_ptr(), ';' as i32);
             if s.is_null() {
                 crate::src::renderergl1::tr_main::ri
                     .Printf
@@ -4310,7 +4331,7 @@ pub unsafe extern "C" fn R_LoadEntities(mut l: *mut crate::qfiles_h::lump_t) {
                 crate::stdlib::strlen(s) as libc::c_int,
             ) == 0
             {
-                s = crate::stdlib::strchr(value.as_mut_ptr(), ';' as i32);
+                s = ::libc::strchr(value.as_mut_ptr(), ';' as i32);
                 if s.is_null() {
                     crate::src::renderergl1::tr_main::ri
                         .Printf
@@ -4340,7 +4361,7 @@ pub unsafe extern "C" fn R_LoadEntities(mut l: *mut crate::qfiles_h::lump_t) {
                 {
                     continue;
                 }
-                crate::stdlib::sscanf(
+                ::libc::sscanf(
                     value.as_mut_ptr(),
                     b"%f %f %f\x00" as *const u8 as *const libc::c_char,
                     &mut *(*w)

@@ -51,7 +51,9 @@ pub unsafe extern "C" fn vorbis_analysis(
     /* first things first.  Make sure encode is ready */
     i = 0 as libc::c_int;
     while i < 15 as libc::c_int {
-        crate::src::libogg_1_3_3::src::bitwise::oggpack_reset((*vbi).packetblob[i as usize]);
+        crate::src::libogg_1_3_3::src::bitwise::oggpack_reset(
+            (*vbi).packetblob[i as usize] as *mut crate::ogg_h::oggpack_buffer,
+        );
         i += 1
     }
     /* we only have one mapping type (0), and we let the mapping code
@@ -66,13 +68,20 @@ pub unsafe extern "C" fn vorbis_analysis(
         return ret;
     }
     if !op.is_null() {
-        if crate::src::libvorbis_1_3_6::lib::bitrate::vorbis_bitrate_managed(vb) != 0 {
+        if crate::src::libvorbis_1_3_6::lib::bitrate::vorbis_bitrate_managed(
+            vb as *mut crate::codec_h::vorbis_block,
+        ) != 0
+        {
             /* The app is using a bitmanaged mode... but not using the
             bitrate management interface. */
             return -(131 as libc::c_int);
         }
-        (*op).packet = crate::src::libogg_1_3_3::src::bitwise::oggpack_get_buffer(&mut (*vb).opb);
-        (*op).bytes = crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(&mut (*vb).opb);
+        (*op).packet = crate::src::libogg_1_3_3::src::bitwise::oggpack_get_buffer(
+            &mut (*vb).opb as *mut _ as *mut crate::ogg_h::oggpack_buffer,
+        );
+        (*op).bytes = crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
+            &mut (*vb).opb as *mut _ as *mut crate::ogg_h::oggpack_buffer,
+        );
         (*op).b_o_s = 0 as libc::c_int as libc::c_long;
         (*op).e_o_s = (*vb).eofflag as libc::c_long;
         (*op).granulepos = (*vb).granulepos;

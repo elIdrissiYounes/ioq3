@@ -215,11 +215,11 @@ pub mod os_support_h {
     #[inline]
 
     pub unsafe extern "C" fn opus_free(mut ptr: *mut libc::c_void) {
-        crate::stdlib::free(ptr);
+        ::libc::free(ptr);
     }
 
-    use crate::stdlib::free;
     use crate::stdlib::malloc;
+    use ::libc::free;
     /* OS_SUPPORT_H */
     /*#ifdef __GNUC__
     #pragma GCC poison printf sprintf
@@ -284,8 +284,8 @@ use crate::src::opus_1_2_1::src::opus::opus_packet_get_samples_per_frame;
 use crate::src::opus_1_2_1::src::opus::opus_pcm_soft_clip;
 pub use crate::src::opus_1_2_1::src::opus_decoder::cpu_support_h::opus_select_arch;
 pub use crate::src::opus_1_2_1::src::opus_decoder::stack_alloc_h::_opus_false;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
+use ::libc::free;
 
 pub use crate::src::opus_1_2_1::src::opus_decoder::float_cast_h::float2int;
 pub use crate::src::opus_1_2_1::src::opus_decoder::float_cast_h::FLOAT2INT16;
@@ -622,7 +622,7 @@ unsafe extern "C" fn opus_decode_frame(
         audiosize = (*st).frame_size;
         mode = (*st).mode;
         crate::src::opus_1_2_1::celt::entdec::ec_dec_init(
-            &mut dec,
+            &mut dec as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             data as *mut libc::c_uchar,
             len as crate::opus_types_h::opus_uint32,
         );
@@ -770,10 +770,10 @@ unsafe extern "C" fn opus_decode_frame(
             let mut first_frame: libc::c_int = (decoded_samples == 0 as libc::c_int) as libc::c_int;
             silk_ret = crate::src::opus_1_2_1::silk::dec_API::silk_Decode(
                 silk_dec,
-                &mut (*st).DecControl,
+                &mut (*st).DecControl as *mut _ as *mut crate::control_h::silk_DecControlStruct,
                 lost_flag,
                 first_frame,
-                &mut dec,
+                &mut dec as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 pcm_ptr,
                 &mut silk_frame_size,
                 (*st).arch,
@@ -811,7 +811,7 @@ unsafe extern "C" fn opus_decode_frame(
         /* Check if we have a redundant 0-8 kHz band */
         if mode == 1001 as libc::c_int {
             redundancy = crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(
-                &mut dec,
+                &mut dec as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 12 as libc::c_int as libc::c_uint,
             )
         } else {
@@ -819,14 +819,14 @@ unsafe extern "C" fn opus_decode_frame(
         }
         if redundancy != 0 {
             celt_to_silk = crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(
-                &mut dec,
+                &mut dec as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 1 as libc::c_int as libc::c_uint,
             );
             /* redundancy_bytes will be at least two, in the non-hybrid
             case due to the ec_tell() check above */
             redundancy_bytes = if mode == 1001 as libc::c_int {
                 (crate::src::opus_1_2_1::celt::entdec::ec_dec_uint(
-                    &mut dec,
+                    &mut dec as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     256 as libc::c_int as crate::opus_types_h::opus_uint32,
                 ) as crate::opus_types_h::opus_int32)
                     + 2 as libc::c_int
@@ -915,7 +915,8 @@ unsafe extern "C" fn opus_decode_frame(
             redundancy_bytes,
             redundant_audio,
             F5,
-            0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_dec,
+            0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_dec
+                as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             0 as libc::c_int,
         );
         crate::src::opus_1_2_1::celt::celt_decoder::opus_custom_decoder_ctl(
@@ -957,7 +958,7 @@ unsafe extern "C" fn opus_decode_frame(
             len,
             pcm,
             celt_frame_size,
-            &mut dec,
+            &mut dec as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             celt_accum,
         )
     } else {
@@ -988,7 +989,8 @@ unsafe extern "C" fn opus_decode_frame(
                 2 as libc::c_int,
                 pcm,
                 F2_5,
-                0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_dec,
+                0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_dec
+                    as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 celt_accum,
             );
         }
@@ -1033,7 +1035,8 @@ unsafe extern "C" fn opus_decode_frame(
             redundancy_bytes,
             redundant_audio,
             F5,
-            0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_dec,
+            0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_dec
+                as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             0 as libc::c_int,
         );
         crate::src::opus_1_2_1::celt::celt_decoder::opus_custom_decoder_ctl(

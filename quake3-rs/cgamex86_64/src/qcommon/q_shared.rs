@@ -1,5 +1,48 @@
+pub type byte = libc::c_uchar;
+pub type qboolean = libc::c_uint;
+pub const qfalse: crate::src::qcommon::q_shared::qboolean = 0;
+pub const qtrue: crate::src::qcommon::q_shared::qboolean = 1;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union floatint_t {
+    pub f: libc::c_float,
+    pub i: libc::c_int,
+    pub ui: libc::c_uint,
+}
+pub type qhandle_t = libc::c_int;
+pub type sfxHandle_t = libc::c_int;
 pub type fileHandle_t = libc::c_int;
+pub type clipHandle_t = libc::c_int;
+pub const ERR_FATAL: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 0;
+pub const ERR_DROP: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 1;
+pub const ERR_SERVERDISCONNECT: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 2;
+pub const ERR_DISCONNECT: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 3;
+pub const ERR_NEED_CD: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 4;
+/*
+==============================================================
+
+MATHLIB
+
+==============================================================
+*/
+pub type vec_t = libc::c_float;
+pub type vec3_t = [crate::src::qcommon::q_shared::vec_t; 3];
+pub type vec4_t = [crate::src::qcommon::q_shared::vec_t; 4];
+pub type pc_token_t = crate::src::qcommon::q_shared::pc_token_s;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct pc_token_s {
+    pub type_0: libc::c_int,
+    pub subtype: libc::c_int,
+    pub intvalue: libc::c_int,
+    pub floatvalue: libc::c_float,
+    pub string: [libc::c_char; 1024],
+}
 pub type fsMode_t = libc::c_uint;
+pub const FS_READ: crate::src::qcommon::q_shared::fsMode_t = 0;
+pub const FS_WRITE: crate::src::qcommon::q_shared::fsMode_t = 1;
+pub const FS_APPEND: crate::src::qcommon::q_shared::fsMode_t = 2;
+pub const FS_APPEND_SYNC: crate::src::qcommon::q_shared::fsMode_t = 3;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct qint64 {
@@ -12,108 +55,6 @@ pub struct qint64 {
     pub b6: crate::src::qcommon::q_shared::byte,
     pub b7: crate::src::qcommon::q_shared::byte,
 }
-pub const FS_APPEND_SYNC: crate::src::qcommon::q_shared::fsMode_t = 3;
-pub const FS_APPEND: crate::src::qcommon::q_shared::fsMode_t = 2;
-pub const FS_WRITE: crate::src::qcommon::q_shared::fsMode_t = 1;
-pub const FS_READ: crate::src::qcommon::q_shared::fsMode_t = 0;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct orientation_t {
-    pub origin: crate::src::qcommon::q_shared::vec3_t,
-    pub axis: [crate::src::qcommon::q_shared::vec3_t; 3],
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct markFragment_t {
-    pub firstPoint: libc::c_int,
-    pub numPoints: libc::c_int,
-}
-pub const ERR_NEED_CD: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 4;
-pub const ERR_DISCONNECT: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 3;
-pub const ERR_SERVERDISCONNECT: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 2;
-pub const ERR_DROP: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 1;
-pub const ERR_FATAL: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 0;
-//=====================================================================
-
-// in order from highest priority to lowest
-
-// if none of the catchers are active, bound key strings will be executed
-
-// sound channels
-
-// channel 0 never willingly overrides
-
-// other channels will allways override a playing sound on that channel
-pub type C2RustUnnamed_0 = libc::c_uint;
-/*
-===========================================================================
-Copyright (C) 1999-2005 Id Software, Inc.
-
-This file is part of Quake III Arena source code.
-
-Quake III Arena source code is free software; you can redistribute it
-and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the License,
-or (at your option) any later version.
-
-Quake III Arena source code is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Quake III Arena source code; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-===========================================================================
-*/
-
-//
-
-// q_shared.h -- included first by ALL program modules.
-
-// A user mod should never modify this file
-
-// Heartbeat for dpmaster protocol. You shouldn't change this unless you know what you're doing
-
-// When com_gamename is LEGACY_MASTER_GAMENAME, use quake3 master protocol.
-
-// You shouldn't change this unless you know what you're doing
-
-// number of supported master servers
-
-// standard demo extension
-
-//Ignore __attribute__ on non-gcc platforms
-
-/* *********************************************************************
- VM Considerations
-
- The VM can not use the standard system headers because we aren't really
- using the compiler they were meant for.  We use bg_lib.h which contains
- prototypes for the functions we define for our own use in bg_lib.c.
-
- When writing mods, please add needed headers HERE, do not start including
- stuff like <stdio.h> in the various .c files that make up each of the VMs
- since you will be including system headers files can will have issues.
-
- Remember, if you use a C library function that is not defined in bg_lib.c,
- you will have to add your own version for support in the VM.
-
-**********************************************************************/
-
-//=============================================================
-pub type byte = libc::c_uchar;
-pub type qboolean = libc::c_uint;
-pub type qhandle_t = libc::c_int;
-/*
-==============================================================
-
-MATHLIB
-
-==============================================================
-*/
-pub type vec_t = libc::c_float;
-pub type vec3_t = [crate::src::qcommon::q_shared::vec_t; 3];
 pub type cvarHandle_t = libc::c_int;
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -124,135 +65,7 @@ pub struct vmCvar_t {
     pub integer: libc::c_int,
     pub string: [libc::c_char; 256],
 }
-//=========================================================
-
-// bit field limits
-
-// playerState_t is the information needed by both the client and server
-
-// to predict player motion and actions
-
-// nothing outside of pmove should modify these, or some degree of prediction error
-
-// will occur
-
-// you can't add anything to this without modifying the code in msg.c
-
-// playerState_t is a full superset of entityState_t as it is used by players,
-
-// so if a playerState_t is transmitted, the entityState_t can be fully derived
-
-// from it.
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct playerState_s {
-    pub commandTime: libc::c_int,
-    pub pm_type: libc::c_int,
-    pub bobCycle: libc::c_int,
-    pub pm_flags: libc::c_int,
-    pub pm_time: libc::c_int,
-    pub origin: crate::src::qcommon::q_shared::vec3_t,
-    pub velocity: crate::src::qcommon::q_shared::vec3_t,
-    pub weaponTime: libc::c_int,
-    pub gravity: libc::c_int,
-    pub speed: libc::c_int,
-    pub delta_angles: [libc::c_int; 3],
-    pub groundEntityNum: libc::c_int,
-    pub legsTimer: libc::c_int,
-    pub legsAnim: libc::c_int,
-    pub torsoTimer: libc::c_int,
-    pub torsoAnim: libc::c_int,
-    pub movementDir: libc::c_int,
-    pub grapplePoint: crate::src::qcommon::q_shared::vec3_t,
-    pub eFlags: libc::c_int,
-    pub eventSequence: libc::c_int,
-    pub events: [libc::c_int; 2],
-    pub eventParms: [libc::c_int; 2],
-    pub externalEvent: libc::c_int,
-    pub externalEventParm: libc::c_int,
-    pub externalEventTime: libc::c_int,
-    pub clientNum: libc::c_int,
-    pub weapon: libc::c_int,
-    pub weaponstate: libc::c_int,
-    pub viewangles: crate::src::qcommon::q_shared::vec3_t,
-    pub viewheight: libc::c_int,
-    pub damageEvent: libc::c_int,
-    pub damageYaw: libc::c_int,
-    pub damagePitch: libc::c_int,
-    pub damageCount: libc::c_int,
-    pub stats: [libc::c_int; 16],
-    pub persistant: [libc::c_int; 16],
-    pub powerups: [libc::c_int; 16],
-    pub ammo: [libc::c_int; 16],
-    pub generic1: libc::c_int,
-    pub loopSound: libc::c_int,
-    pub jumppad_ent: libc::c_int,
-    pub ping: libc::c_int,
-    pub pmove_framecount: libc::c_int,
-    pub jumppad_frame: libc::c_int,
-    pub entityEventSequence: libc::c_int,
-}
-pub type playerState_t = crate::src::qcommon::q_shared::playerState_s;
-//===================================================================
-
-// if entityState->solid == SOLID_BMODEL, modelindex is an inline model number
-pub type trType_t = libc::c_uint;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct trajectory_t {
-    pub trType: crate::src::qcommon::q_shared::trType_t,
-    pub trTime: libc::c_int,
-    pub trDuration: libc::c_int,
-    pub trBase: crate::src::qcommon::q_shared::vec3_t,
-    pub trDelta: crate::src::qcommon::q_shared::vec3_t,
-}
-// entityState_t is the information conveyed from the server
-
-// in an update message about entities that the client will
-
-// need to render in some way
-
-// Different eTypes may use the information in different ways
-
-// The messages are delta compressed, so it doesn't really matter if
-
-// the structure size is fairly large
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct entityState_s {
-    pub number: libc::c_int,
-    pub eType: libc::c_int,
-    pub eFlags: libc::c_int,
-    pub pos: crate::src::qcommon::q_shared::trajectory_t,
-    pub apos: crate::src::qcommon::q_shared::trajectory_t,
-    pub time: libc::c_int,
-    pub time2: libc::c_int,
-    pub origin: crate::src::qcommon::q_shared::vec3_t,
-    pub origin2: crate::src::qcommon::q_shared::vec3_t,
-    pub angles: crate::src::qcommon::q_shared::vec3_t,
-    pub angles2: crate::src::qcommon::q_shared::vec3_t,
-    pub otherEntityNum: libc::c_int,
-    pub otherEntityNum2: libc::c_int,
-    pub groundEntityNum: libc::c_int,
-    pub constantLight: libc::c_int,
-    pub loopSound: libc::c_int,
-    pub modelindex: libc::c_int,
-    pub modelindex2: libc::c_int,
-    pub clientNum: libc::c_int,
-    pub frame: libc::c_int,
-    pub solid: libc::c_int,
-    pub event: libc::c_int,
-    pub eventParm: libc::c_int,
-    pub powerups: libc::c_int,
-    pub weapon: libc::c_int,
-    pub legsAnim: libc::c_int,
-    pub torsoAnim: libc::c_int,
-    pub generic1: libc::c_int,
-}
-pub type entityState_t = crate::src::qcommon::q_shared::entityState_s;
-pub type sfxHandle_t = libc::c_int;
-pub type clipHandle_t = libc::c_int;
-pub type vec4_t = [crate::src::qcommon::q_shared::vec_t; 4];
+pub type cplane_t = crate::src::qcommon::q_shared::cplane_s;
 /*
 // if your system does not have lrintf() and round() you can try this block. Please also open a bug report at bugzilla.icculus.org
 // or write a mail to the ioq3 mailing list.
@@ -475,7 +288,6 @@ pub struct cplane_s {
     pub signbits: crate::src::qcommon::q_shared::byte,
     pub pad: [crate::src::qcommon::q_shared::byte; 2],
 }
-pub type cplane_t = crate::src::qcommon::q_shared::cplane_s;
 // a trace is returned when a box is swept through the world
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -489,6 +301,42 @@ pub struct trace_t {
     pub contents: libc::c_int,
     pub entityNum: libc::c_int,
 }
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct markFragment_t {
+    pub firstPoint: libc::c_int,
+    pub numPoints: libc::c_int,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct orientation_t {
+    pub origin: crate::src::qcommon::q_shared::vec3_t,
+    pub axis: [crate::src::qcommon::q_shared::vec3_t; 3],
+}
+//=====================================================================
+
+// in order from highest priority to lowest
+
+// if none of the catchers are active, bound key strings will be executed
+
+// sound channels
+
+// channel 0 never willingly overrides
+
+// other channels will allways override a playing sound on that channel
+pub type C2RustUnnamed_0 = libc::c_uint;
+pub const CHAN_AUTO: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 0;
+pub const CHAN_LOCAL: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 1;
+// menu sounds, etc
+pub const CHAN_WEAPON: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 2;
+pub const CHAN_VOICE: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 3;
+pub const CHAN_ITEM: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 4;
+pub const CHAN_BODY: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 5;
+pub const CHAN_LOCAL_SOUND: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 6;
+// announcer voices, etc
+
+// chat messages, etc
+pub const CHAN_ANNOUNCER: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 7;
 /*
 ========================================================================
 
@@ -537,6 +385,76 @@ pub struct gameState_t {
     pub stringData: [libc::c_char; 16000],
     pub dataCount: libc::c_int,
 }
+pub type playerState_t = crate::src::qcommon::q_shared::playerState_s;
+//=========================================================
+
+// bit field limits
+
+// playerState_t is the information needed by both the client and server
+
+// to predict player motion and actions
+
+// nothing outside of pmove should modify these, or some degree of prediction error
+
+// will occur
+
+// you can't add anything to this without modifying the code in msg.c
+
+// playerState_t is a full superset of entityState_t as it is used by players,
+
+// so if a playerState_t is transmitted, the entityState_t can be fully derived
+
+// from it.
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct playerState_s {
+    pub commandTime: libc::c_int,
+    pub pm_type: libc::c_int,
+    pub bobCycle: libc::c_int,
+    pub pm_flags: libc::c_int,
+    pub pm_time: libc::c_int,
+    pub origin: crate::src::qcommon::q_shared::vec3_t,
+    pub velocity: crate::src::qcommon::q_shared::vec3_t,
+    pub weaponTime: libc::c_int,
+    pub gravity: libc::c_int,
+    pub speed: libc::c_int,
+    pub delta_angles: [libc::c_int; 3],
+    pub groundEntityNum: libc::c_int,
+    pub legsTimer: libc::c_int,
+    pub legsAnim: libc::c_int,
+    pub torsoTimer: libc::c_int,
+    pub torsoAnim: libc::c_int,
+    pub movementDir: libc::c_int,
+    pub grapplePoint: crate::src::qcommon::q_shared::vec3_t,
+    pub eFlags: libc::c_int,
+    pub eventSequence: libc::c_int,
+    pub events: [libc::c_int; 2],
+    pub eventParms: [libc::c_int; 2],
+    pub externalEvent: libc::c_int,
+    pub externalEventParm: libc::c_int,
+    pub externalEventTime: libc::c_int,
+    pub clientNum: libc::c_int,
+    pub weapon: libc::c_int,
+    pub weaponstate: libc::c_int,
+    pub viewangles: crate::src::qcommon::q_shared::vec3_t,
+    pub viewheight: libc::c_int,
+    pub damageEvent: libc::c_int,
+    pub damageYaw: libc::c_int,
+    pub damagePitch: libc::c_int,
+    pub damageCount: libc::c_int,
+    pub stats: [libc::c_int; 16],
+    pub persistant: [libc::c_int; 16],
+    pub powerups: [libc::c_int; 16],
+    pub ammo: [libc::c_int; 16],
+    pub generic1: libc::c_int,
+    pub loopSound: libc::c_int,
+    pub jumppad_ent: libc::c_int,
+    pub ping: libc::c_int,
+    pub pmove_framecount: libc::c_int,
+    pub jumppad_frame: libc::c_int,
+    pub entityEventSequence: libc::c_int,
+}
+pub type usercmd_t = crate::src::qcommon::q_shared::usercmd_s;
 //====================================================================
 
 //
@@ -577,46 +495,71 @@ pub struct usercmd_s {
     pub rightmove: libc::c_schar,
     pub upmove: libc::c_schar,
 }
-pub type usercmd_t = crate::src::qcommon::q_shared::usercmd_s;
-pub const qtrue: crate::src::qcommon::q_shared::qboolean = 1;
-pub const qfalse: crate::src::qcommon::q_shared::qboolean = 0;
-// value = base + sin( time / duration ) * delta
-pub const TR_GRAVITY: crate::src::qcommon::q_shared::trType_t = 5;
-pub const TR_SINE: crate::src::qcommon::q_shared::trType_t = 4;
-pub const TR_LINEAR_STOP: crate::src::qcommon::q_shared::trType_t = 3;
+//===================================================================
+
+// if entityState->solid == SOLID_BMODEL, modelindex is an inline model number
+pub type trType_t = libc::c_uint;
+pub const TR_STATIONARY: crate::src::qcommon::q_shared::trType_t = 0;
+pub const TR_INTERPOLATE: crate::src::qcommon::q_shared::trType_t = 1;
 // non-parametric, but interpolate between snapshots
 pub const TR_LINEAR: crate::src::qcommon::q_shared::trType_t = 2;
-pub const TR_INTERPOLATE: crate::src::qcommon::q_shared::trType_t = 1;
-pub const TR_STATIONARY: crate::src::qcommon::q_shared::trType_t = 0;
-// announcer voices, etc
+pub const TR_LINEAR_STOP: crate::src::qcommon::q_shared::trType_t = 3;
+pub const TR_SINE: crate::src::qcommon::q_shared::trType_t = 4;
+// value = base + sin( time / duration ) * delta
+pub const TR_GRAVITY: crate::src::qcommon::q_shared::trType_t = 5;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct trajectory_t {
+    pub trType: crate::src::qcommon::q_shared::trType_t,
+    pub trTime: libc::c_int,
+    pub trDuration: libc::c_int,
+    pub trBase: crate::src::qcommon::q_shared::vec3_t,
+    pub trDelta: crate::src::qcommon::q_shared::vec3_t,
+}
+pub type entityState_t = crate::src::qcommon::q_shared::entityState_s;
+// entityState_t is the information conveyed from the server
 
-// chat messages, etc
-pub const CHAN_ANNOUNCER: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 7;
-pub const CHAN_LOCAL_SOUND: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 6;
-pub const CHAN_BODY: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 5;
-pub const CHAN_ITEM: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 4;
-pub const CHAN_VOICE: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 3;
-// menu sounds, etc
-pub const CHAN_WEAPON: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 2;
-pub const CHAN_LOCAL: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 1;
-pub const CHAN_AUTO: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 0;
+// in an update message about entities that the client will
+
+// need to render in some way
+
+// Different eTypes may use the information in different ways
+
+// The messages are delta compressed, so it doesn't really matter if
+
+// the structure size is fairly large
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub union floatint_t {
-    pub f: libc::c_float,
-    pub i: libc::c_int,
-    pub ui: libc::c_uint,
+pub struct entityState_s {
+    pub number: libc::c_int,
+    pub eType: libc::c_int,
+    pub eFlags: libc::c_int,
+    pub pos: crate::src::qcommon::q_shared::trajectory_t,
+    pub apos: crate::src::qcommon::q_shared::trajectory_t,
+    pub time: libc::c_int,
+    pub time2: libc::c_int,
+    pub origin: crate::src::qcommon::q_shared::vec3_t,
+    pub origin2: crate::src::qcommon::q_shared::vec3_t,
+    pub angles: crate::src::qcommon::q_shared::vec3_t,
+    pub angles2: crate::src::qcommon::q_shared::vec3_t,
+    pub otherEntityNum: libc::c_int,
+    pub otherEntityNum2: libc::c_int,
+    pub groundEntityNum: libc::c_int,
+    pub constantLight: libc::c_int,
+    pub loopSound: libc::c_int,
+    pub modelindex: libc::c_int,
+    pub modelindex2: libc::c_int,
+    pub clientNum: libc::c_int,
+    pub frame: libc::c_int,
+    pub solid: libc::c_int,
+    pub event: libc::c_int,
+    pub eventParm: libc::c_int,
+    pub powerups: libc::c_int,
+    pub weapon: libc::c_int,
+    pub legsAnim: libc::c_int,
+    pub torsoAnim: libc::c_int,
+    pub generic1: libc::c_int,
 }
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct pc_token_s {
-    pub type_0: libc::c_int,
-    pub subtype: libc::c_int,
-    pub intvalue: libc::c_int,
-    pub floatvalue: libc::c_float,
-    pub string: [libc::c_char; 1024],
-}
-pub type pc_token_t = crate::src::qcommon::q_shared::pc_token_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct glyphInfo_t {
@@ -641,6 +584,7 @@ pub struct fontInfo_t {
     pub glyphScale: libc::c_float,
     pub name: [libc::c_char; 64],
 }
+pub type qtime_t = crate::src::qcommon::q_shared::qtime_s;
 // entityState_t is the information conveyed from the server
 
 // in an update message about entities that the client will
@@ -741,15 +685,14 @@ pub struct qtime_s {
     pub tm_yday: libc::c_int,
     pub tm_isdst: libc::c_int,
 }
-pub type qtime_t = crate::src::qcommon::q_shared::qtime_s;
 pub type e_status = libc::c_uint;
-pub const FMV_ID_WAIT: crate::src::qcommon::q_shared::e_status = 6;
-pub const FMV_LOOPED: crate::src::qcommon::q_shared::e_status = 5;
-pub const FMV_ID_IDLE: crate::src::qcommon::q_shared::e_status = 4;
-pub const FMV_ID_BLT: crate::src::qcommon::q_shared::e_status = 3;
-pub const FMV_EOF: crate::src::qcommon::q_shared::e_status = 2;
-pub const FMV_PLAY: crate::src::qcommon::q_shared::e_status = 1;
 pub const FMV_IDLE: crate::src::qcommon::q_shared::e_status = 0;
+pub const FMV_PLAY: crate::src::qcommon::q_shared::e_status = 1;
+pub const FMV_EOF: crate::src::qcommon::q_shared::e_status = 2;
+pub const FMV_ID_BLT: crate::src::qcommon::q_shared::e_status = 3;
+pub const FMV_ID_IDLE: crate::src::qcommon::q_shared::e_status = 4;
+pub const FMV_LOOPED: crate::src::qcommon::q_shared::e_status = 5;
+pub const FMV_ID_WAIT: crate::src::qcommon::q_shared::e_status = 6;
 // scale the velocity
 
 // accelerate
@@ -940,10 +883,10 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
 
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 pub use crate::internal::__builtin_va_list;
 pub use crate::internal::__va_list_tag;
@@ -971,15 +914,15 @@ pub use crate::stdlib::__ctype_tolower_loc;
 pub use crate::stdlib::__ctype_toupper_loc;
 pub use crate::stdlib::__int32_t;
 use crate::stdlib::memmove;
-use crate::stdlib::strcat;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 use crate::stdlib::strncpy;
-use crate::stdlib::strrchr;
-use crate::stdlib::strtod;
 use crate::stdlib::vsnprintf;
+use ::libc::strcat;
+use ::libc::strchr;
+use ::libc::strcmp;
+use ::libc::strcpy;
+use ::libc::strrchr;
+use ::libc::strtod;
 #[no_mangle]
 pub unsafe extern "C" fn Q_IsColorString(
     mut p: *const libc::c_char,
@@ -1035,10 +978,10 @@ pub unsafe extern "C" fn COM_SkipPath(mut pathname: *mut libc::c_char) -> *mut l
 }
 #[no_mangle]
 pub unsafe extern "C" fn COM_GetExtension(mut name: *const libc::c_char) -> *const libc::c_char {
-    let mut dot: *const libc::c_char = crate::stdlib::strrchr(name, '.' as i32);
+    let mut dot: *const libc::c_char = ::libc::strrchr(name, '.' as i32);
     let mut slash: *const libc::c_char = 0 as *const libc::c_char;
     if !dot.is_null() && {
-        slash = crate::stdlib::strrchr(name, '/' as i32);
+        slash = ::libc::strrchr(name, '/' as i32);
         (slash.is_null()) || slash < dot
     } {
         return dot.offset(1 as libc::c_int as isize);
@@ -1052,10 +995,10 @@ pub unsafe extern "C" fn COM_StripExtension(
     mut out: *mut libc::c_char,
     mut destsize: libc::c_int,
 ) {
-    let mut dot: *const libc::c_char = crate::stdlib::strrchr(in_0, '.' as i32);
+    let mut dot: *const libc::c_char = ::libc::strrchr(in_0, '.' as i32);
     let mut slash: *const libc::c_char = 0 as *const libc::c_char;
     if !dot.is_null() && {
-        slash = crate::stdlib::strrchr(in_0, '/' as i32);
+        slash = ::libc::strrchr(in_0, '/' as i32);
         (slash.is_null()) || slash < dot
     } {
         destsize = if (destsize as libc::c_long)
@@ -1095,10 +1038,10 @@ pub unsafe extern "C" fn COM_DefaultExtension(
     mut maxSize: libc::c_int,
     mut extension: *const libc::c_char,
 ) {
-    let mut dot: *const libc::c_char = crate::stdlib::strrchr(path, '.' as i32);
+    let mut dot: *const libc::c_char = ::libc::strrchr(path, '.' as i32);
     let mut slash: *const libc::c_char = 0 as *const libc::c_char;
     if !dot.is_null() && {
-        slash = crate::stdlib::strrchr(path, '/' as i32);
+        slash = ::libc::strrchr(path, '/' as i32);
         (slash.is_null()) || slash < dot
     } {
         return;
@@ -1483,7 +1426,7 @@ pub unsafe extern "C" fn COM_MatchToken(
 ) {
     let mut token: *mut libc::c_char = 0 as *mut libc::c_char;
     token = COM_Parse(buf_p);
-    if crate::stdlib::strcmp(token, match_0) != 0 {
+    if ::libc::strcmp(token, match_0) != 0 {
         crate::src::cgame::cg_main::Com_Error(
             crate::src::qcommon::q_shared::ERR_DROP as libc::c_int,
             b"MatchToken: %s != %s\x00" as *const u8 as *const libc::c_char,
@@ -1693,7 +1636,7 @@ pub unsafe extern "C" fn Q_isanumber(
     if *s as libc::c_int == '\u{0}' as i32 {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    d = crate::stdlib::strtod(s, &mut p);
+    d = ::libc::strtod(s, &mut p);
     return (*p as libc::c_int == '\u{0}' as i32) as libc::c_int
         as crate::src::qcommon::q_shared::qboolean;
 }
@@ -2176,7 +2119,7 @@ pub unsafe extern "C" fn Info_RemoveKey(mut s: *mut libc::c_char, mut key: *cons
             b"Info_RemoveKey: oversize infostring\x00" as *const u8 as *const libc::c_char,
         );
     }
-    if !crate::stdlib::strchr(key, '\\' as i32).is_null() {
+    if !::libc::strchr(key, '\\' as i32).is_null() {
         return;
     }
     loop {
@@ -2209,7 +2152,7 @@ pub unsafe extern "C" fn Info_RemoveKey(mut s: *mut libc::c_char, mut key: *cons
             *fresh27 = *fresh26
         }
         *o = 0 as libc::c_int as libc::c_char;
-        if crate::stdlib::strcmp(key, pkey.as_mut_ptr()) == 0 {
+        if ::libc::strcmp(key, pkey.as_mut_ptr()) == 0 {
             crate::stdlib::memmove(
                 start as *mut libc::c_void,
                 s as *const libc::c_void,
@@ -2237,7 +2180,7 @@ pub unsafe extern "C" fn Info_RemoveKey_Big(
             b"Info_RemoveKey_Big: oversize infostring\x00" as *const u8 as *const libc::c_char,
         );
     }
-    if !crate::stdlib::strchr(key, '\\' as i32).is_null() {
+    if !::libc::strchr(key, '\\' as i32).is_null() {
         return;
     }
     loop {
@@ -2270,7 +2213,7 @@ pub unsafe extern "C" fn Info_RemoveKey_Big(
             *fresh31 = *fresh30
         }
         *o = 0 as libc::c_int as libc::c_char;
-        if crate::stdlib::strcmp(key, pkey.as_mut_ptr()) == 0 {
+        if ::libc::strcmp(key, pkey.as_mut_ptr()) == 0 {
             crate::stdlib::memmove(
                 start as *mut libc::c_void,
                 s as *const libc::c_void,
@@ -2287,10 +2230,10 @@ pub unsafe extern "C" fn Info_RemoveKey_Big(
 pub unsafe extern "C" fn Info_Validate(
     mut s: *const libc::c_char,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    if !crate::stdlib::strchr(s, '\"' as i32).is_null() {
+    if !::libc::strchr(s, '\"' as i32).is_null() {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if !crate::stdlib::strchr(s, ';' as i32).is_null() {
+    if !::libc::strchr(s, ';' as i32).is_null() {
         return crate::src::qcommon::q_shared::qfalse;
     }
     return crate::src::qcommon::q_shared::qtrue;
@@ -2310,8 +2253,8 @@ pub unsafe extern "C" fn Info_SetValueForKey(
         );
     }
     while *blacklist != 0 {
-        if !crate::stdlib::strchr(key, *blacklist as libc::c_int).is_null()
-            || !crate::stdlib::strchr(value, *blacklist as libc::c_int).is_null()
+        if !::libc::strchr(key, *blacklist as libc::c_int).is_null()
+            || !::libc::strchr(value, *blacklist as libc::c_int).is_null()
         {
             crate::src::cgame::cg_main::Com_Printf(
                 b"^3Can\'t use keys or values with a \'%c\': %s = %s\n\x00" as *const u8
@@ -2343,8 +2286,8 @@ pub unsafe extern "C" fn Info_SetValueForKey(
         );
         return;
     }
-    crate::stdlib::strcat(newi.as_mut_ptr(), s);
-    crate::stdlib::strcpy(s, newi.as_mut_ptr());
+    ::libc::strcat(newi.as_mut_ptr(), s);
+    ::libc::strcpy(s, newi.as_mut_ptr());
 }
 #[no_mangle]
 pub unsafe extern "C" fn Info_SetValueForKey_Big(
@@ -2361,8 +2304,8 @@ pub unsafe extern "C" fn Info_SetValueForKey_Big(
         );
     }
     while *blacklist != 0 {
-        if !crate::stdlib::strchr(key, *blacklist as libc::c_int).is_null()
-            || !crate::stdlib::strchr(value, *blacklist as libc::c_int).is_null()
+        if !::libc::strchr(key, *blacklist as libc::c_int).is_null()
+            || !::libc::strchr(value, *blacklist as libc::c_int).is_null()
         {
             crate::src::cgame::cg_main::Com_Printf(
                 b"^3Can\'t use keys or values with a \'%c\': %s = %s\n\x00" as *const u8
@@ -2394,7 +2337,7 @@ pub unsafe extern "C" fn Info_SetValueForKey_Big(
         );
         return;
     }
-    crate::stdlib::strcat(s, newi.as_mut_ptr());
+    ::libc::strcat(s, newi.as_mut_ptr());
 }
 unsafe extern "C" fn Com_CharIsOneOfCharset(
     mut c: libc::c_char,

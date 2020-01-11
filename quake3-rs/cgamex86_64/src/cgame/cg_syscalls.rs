@@ -158,7 +158,6 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::exit;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -187,6 +186,7 @@ pub use crate::tr_types_h::RT_SPRITE;
 pub use crate::tr_types_h::TC_NONE;
 pub use crate::tr_types_h::TC_S3TC;
 pub use crate::tr_types_h::TC_S3TC_ARB;
+use ::libc::exit;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -249,7 +249,7 @@ pub unsafe extern "C" fn trap_Error(mut fmt: *const libc::c_char) -> ! {
         fmt,
     );
     // shut up GCC warning about returning functions, because we know better
-    crate::stdlib::exit(1 as libc::c_int);
+    ::libc::exit(1 as libc::c_int);
 }
 #[no_mangle]
 

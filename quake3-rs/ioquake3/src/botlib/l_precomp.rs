@@ -1,4 +1,6 @@
 // =============== BEGIN l_precomp_h ================
+pub type define_t = crate::src::botlib::l_precomp::define_s;
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct define_s {
@@ -12,7 +14,7 @@ pub struct define_s {
     pub hashnext: *mut crate::src::botlib::l_precomp::define_s,
 }
 
-pub type define_t = crate::src::botlib::l_precomp::define_s;
+pub type indent_t = crate::src::botlib::l_precomp::indent_s;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -23,7 +25,7 @@ pub struct indent_s {
     pub next: *mut crate::src::botlib::l_precomp::indent_s,
 }
 
-pub type indent_t = crate::src::botlib::l_precomp::indent_s;
+pub type source_t = crate::src::botlib::l_precomp::source_s;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -39,8 +41,6 @@ pub struct source_s {
     pub skip: libc::c_int,
     pub token: crate::src::botlib::l_script::token_t,
 }
-
-pub type source_t = crate::src::botlib::l_precomp::source_s;
 use ::libc;
 
 pub use crate::internal::__builtin_va_list;
@@ -96,8 +96,8 @@ pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
 use crate::stdlib::fabs;
-use crate::stdlib::sprintf;
 use crate::stdlib::vsnprintf;
+use ::libc::sprintf;
 
 use crate::src::botlib::be_interface::botimport;
 use crate::src::botlib::l_log::Log_Write;
@@ -105,26 +105,17 @@ use crate::src::botlib::l_memory::FreeMemory;
 use crate::src::botlib::l_memory::GetClearedMemory;
 use crate::src::botlib::l_memory::GetMemory;
 use crate::stdlib::ctime;
-use crate::stdlib::free;
-use crate::stdlib::labs;
 use crate::stdlib::memcpy;
 use crate::stdlib::memmove;
 use crate::stdlib::memset;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 use crate::stdlib::strncat;
-use crate::stdlib::time;
-//end of the function PC_Directive_endif
-//============================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//============================================================================
-
-pub type operator_t = operator_s;
+use ::libc::free;
+use ::libc::labs;
+use ::libc::strcat;
+use ::libc::strcmp;
+use ::libc::strcpy;
+use ::libc::time;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -147,6 +138,15 @@ pub struct value_s {
 }
 
 pub type value_t = value_s;
+//end of the function PC_Directive_endif
+//============================================================================
+//
+// Parameter:				-
+// Returns:					-
+// Changes Globals:		-
+//============================================================================
+
+pub type operator_t = operator_s;
 //directive name with parse function
 
 pub type directive_t = directive_s;
@@ -445,11 +445,18 @@ pub unsafe extern "C" fn PC_ReadSourceToken(
     while (*source).tokens.is_null() {
         //end while
         //if there's a token to read from the script
-        if crate::src::botlib::l_script::PS_ReadToken((*source).scriptstack, token) != 0 {
+        if crate::src::botlib::l_script::PS_ReadToken(
+            (*source).scriptstack as *mut crate::src::botlib::l_script::script_s,
+            token as *mut crate::src::botlib::l_script::token_s,
+        ) != 0
+        {
             return crate::src::qcommon::q_shared::qtrue as libc::c_int;
         }
         //if at the end of the script
-        if crate::src::botlib::l_script::EndOfScript((*source).scriptstack) != 0 {
+        if crate::src::botlib::l_script::EndOfScript(
+            (*source).scriptstack as *mut crate::src::botlib::l_script::script_s,
+        ) != 0
+        {
             //end if
             //remove all indents of the script
             while !(*source).indentstack.is_null()
@@ -470,7 +477,9 @@ pub unsafe extern "C" fn PC_ReadSourceToken(
         //remove the script and return to the last one
         script = (*source).scriptstack;
         (*source).scriptstack = (*(*source).scriptstack).next;
-        crate::src::botlib::l_script::FreeScript(script);
+        crate::src::botlib::l_script::FreeScript(
+            script as *mut crate::src::botlib::l_script::script_s,
+        );
     }
     //copy the already available token
     crate::stdlib::memcpy(
@@ -566,7 +575,7 @@ pub unsafe extern "C" fn PC_ReadDefineParms(
         i += 1
     }
     //if no leading "("
-    if crate::stdlib::strcmp(
+    if ::libc::strcmp(
         token.string.as_mut_ptr(),
         b"(\x00" as *const u8 as *const libc::c_char,
     ) != 0
@@ -620,7 +629,7 @@ pub unsafe extern "C" fn PC_ReadDefineParms(
             //
             //end if
             //
-            if crate::stdlib::strcmp(
+            if ::libc::strcmp(
                 token.string.as_mut_ptr(),
                 b",\x00" as *const u8 as *const libc::c_char,
             ) == 0
@@ -638,7 +647,7 @@ pub unsafe extern "C" fn PC_ReadDefineParms(
                 //end if
             }
             lastcomma = 0 as libc::c_int;
-            if crate::stdlib::strcmp(
+            if ::libc::strcmp(
                 token.string.as_mut_ptr(),
                 b"(\x00" as *const u8 as *const libc::c_char,
             ) == 0
@@ -647,7 +656,7 @@ pub unsafe extern "C" fn PC_ReadDefineParms(
                 //end if
                 indent += 1
             } else {
-                if crate::stdlib::strcmp(
+                if ::libc::strcmp(
                     token.string.as_mut_ptr(),
                     b")\x00" as *const u8 as *const libc::c_char,
                 ) == 0
@@ -707,7 +716,7 @@ pub unsafe extern "C" fn PC_StringizeTokens(
     (*token).whitespace_p = 0 as *mut libc::c_char;
     (*token).endwhitespace_p = 0 as *mut libc::c_char;
     (*token).string[0 as libc::c_int as usize] = '\u{0}' as i32 as libc::c_char;
-    crate::stdlib::strcat(
+    ::libc::strcat(
         (*token).string.as_mut_ptr(),
         b"\"\x00" as *const u8 as *const libc::c_char,
     );
@@ -748,7 +757,7 @@ pub unsafe extern "C" fn PC_MergeTokens(
     if (*t1).type_0 == 4 as libc::c_int
         && ((*t2).type_0 == 4 as libc::c_int || (*t2).type_0 == 3 as libc::c_int)
     {
-        crate::stdlib::strcat((*t1).string.as_mut_ptr(), (*t2).string.as_mut_ptr()); //end if
+        ::libc::strcat((*t1).string.as_mut_ptr(), (*t2).string.as_mut_ptr()); //end if
         return crate::src::qcommon::q_shared::qtrue as libc::c_int;
     }
     //merging of two strings
@@ -759,7 +768,7 @@ pub unsafe extern "C" fn PC_MergeTokens(
             .wrapping_sub(1 as libc::c_int as libc::c_ulong) as usize] =
             '\u{0}' as i32 as libc::c_char;
         //concat without leading double quote
-        crate::stdlib::strcat(
+        ::libc::strcat(
             (*t1).string.as_mut_ptr(),
             &mut *(*t2).string.as_mut_ptr().offset(1 as libc::c_int as isize),
         );
@@ -884,7 +893,7 @@ pub unsafe extern "C" fn PC_FindHashedDefine(
     hash = PC_NameHash(name);
     d = *definehash.offset(hash as isize);
     while !d.is_null() {
-        if crate::stdlib::strcmp((*d).name, name) == 0 {
+        if ::libc::strcmp((*d).name, name) == 0 {
             return d;
         }
         d = (*d).hashnext
@@ -909,7 +918,7 @@ pub unsafe extern "C" fn PC_FindDefine(
         0 as *mut crate::src::botlib::l_precomp::define_t; //end for
     d = defines;
     while !d.is_null() {
-        if crate::stdlib::strcmp((*d).name, name) == 0 {
+        if ::libc::strcmp((*d).name, name) == 0 {
             return d;
         }
         d = (*d).next
@@ -936,7 +945,7 @@ pub unsafe extern "C" fn PC_FindDefineParm(
     i = 0 as libc::c_int;
     p = (*define).parms;
     while !p.is_null() {
-        if crate::stdlib::strcmp((*p).string.as_mut_ptr(), name) == 0 {
+        if ::libc::strcmp((*p).string.as_mut_ptr(), name) == 0 {
             return i;
         }
         i += 1;
@@ -1043,7 +1052,7 @@ pub unsafe extern "C" fn PC_AddBuiltinDefines(
             crate::stdlib::strlen(builtin_0[i as usize].string)
                 .wrapping_add(1 as libc::c_int as libc::c_ulong),
         ) as *mut libc::c_char;
-        crate::stdlib::strcpy((*define).name, builtin_0[i as usize].string);
+        ::libc::strcpy((*define).name, builtin_0[i as usize].string);
         (*define).flags |= 0x1 as libc::c_int;
         (*define).builtin = builtin_0[i as usize].builtin;
         //DEFINEHASHING
@@ -1076,7 +1085,7 @@ pub unsafe extern "C" fn PC_ExpandBuiltinDefine(
     token = PC_CopyToken(deftoken);
     match (*define).builtin {
         1 => {
-            crate::stdlib::sprintf(
+            ::libc::sprintf(
                 (*token).string.as_mut_ptr(),
                 b"%d\x00" as *const u8 as *const libc::c_char,
                 (*deftoken).line,
@@ -1091,7 +1100,7 @@ pub unsafe extern "C" fn PC_ExpandBuiltinDefine(
             *lasttoken = token
         }
         2 => {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 (*token).string.as_mut_ptr(),
                 (*(*source).scriptstack).filename.as_mut_ptr(),
             );
@@ -1101,9 +1110,9 @@ pub unsafe extern "C" fn PC_ExpandBuiltinDefine(
             *lasttoken = token
         }
         3 => {
-            t = crate::stdlib::time(0 as *mut crate::stdlib::time_t);
+            t = ::libc::time(0 as *mut crate::stdlib::time_t);
             curtime = crate::stdlib::ctime(&mut t);
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 (*token).string.as_mut_ptr(),
                 b"\"\x00" as *const u8 as *const libc::c_char,
             );
@@ -1120,20 +1129,20 @@ pub unsafe extern "C" fn PC_ExpandBuiltinDefine(
                 curtime.offset(20 as libc::c_int as isize),
                 4 as libc::c_int as libc::c_ulong,
             );
-            crate::stdlib::strcat(
+            ::libc::strcat(
                 (*token).string.as_mut_ptr(),
                 b"\"\x00" as *const u8 as *const libc::c_char,
             );
-            crate::stdlib::free(curtime as *mut libc::c_void);
+            ::libc::free(curtime as *mut libc::c_void);
             (*token).type_0 = 4 as libc::c_int;
             (*token).subtype = crate::stdlib::strlen((*token).string.as_mut_ptr()) as libc::c_int;
             *firsttoken = token;
             *lasttoken = token
         }
         4 => {
-            t = crate::stdlib::time(0 as *mut crate::stdlib::time_t);
+            t = ::libc::time(0 as *mut crate::stdlib::time_t);
             curtime = crate::stdlib::ctime(&mut t);
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 (*token).string.as_mut_ptr(),
                 b"\"\x00" as *const u8 as *const libc::c_char,
             );
@@ -1142,11 +1151,11 @@ pub unsafe extern "C" fn PC_ExpandBuiltinDefine(
                 curtime.offset(11 as libc::c_int as isize),
                 8 as libc::c_int as libc::c_ulong,
             );
-            crate::stdlib::strcat(
+            ::libc::strcat(
                 (*token).string.as_mut_ptr(),
                 b"\"\x00" as *const u8 as *const libc::c_char,
             );
-            crate::stdlib::free(curtime as *mut libc::c_void);
+            ::libc::free(curtime as *mut libc::c_void);
             (*token).type_0 = 4 as libc::c_int;
             (*token).subtype = crate::stdlib::strlen((*token).string.as_mut_ptr()) as libc::c_int;
             *firsttoken = token;
@@ -1602,7 +1611,8 @@ pub unsafe extern "C" fn PC_Directive_include(
     if token.type_0 == 1 as libc::c_int {
         crate::src::botlib::l_script::StripDoubleQuotes(token.string.as_mut_ptr());
         PC_ConvertPath(token.string.as_mut_ptr());
-        script = crate::src::botlib::l_script::LoadScriptFile(token.string.as_mut_ptr());
+        script = crate::src::botlib::l_script::LoadScriptFile(token.string.as_mut_ptr())
+            as *mut crate::src::botlib::l_script::script_s;
         if script.is_null() {
             crate::src::qcommon::q_shared::Q_strncpyz(
                 path.as_mut_ptr(),
@@ -1615,6 +1625,7 @@ pub unsafe extern "C" fn PC_Directive_include(
                 token.string.as_mut_ptr(),
             );
             script = crate::src::botlib::l_script::LoadScriptFile(path.as_mut_ptr())
+                as *mut crate::src::botlib::l_script::script_s
         }
     //end if
     } else if token.type_0 == 5 as libc::c_int
@@ -1660,6 +1671,7 @@ pub unsafe extern "C" fn PC_Directive_include(
         }
         PC_ConvertPath(path.as_mut_ptr());
         script = crate::src::botlib::l_script::LoadScriptFile(path.as_mut_ptr())
+            as *mut crate::src::botlib::l_script::script_s
     } else {
         SourceError(
             source,
@@ -1708,7 +1720,7 @@ pub unsafe extern "C" fn PC_ReadLine(
             return crate::src::qcommon::q_shared::qfalse as libc::c_int;
         }
         crossline = 1 as libc::c_int;
-        if !(crate::stdlib::strcmp(
+        if !(::libc::strcmp(
             (*token).string.as_mut_ptr(),
             b"\\\x00" as *const u8 as *const libc::c_char,
         ) == 0)
@@ -1805,7 +1817,7 @@ pub unsafe extern "C" fn PC_Directive_undef(
     lastdefine = 0 as *mut crate::src::botlib::l_precomp::define_t;
     define = *(*source).definehash.offset(hash as isize);
     while !define.is_null() {
-        if crate::stdlib::strcmp((*define).name, token.string.as_mut_ptr()) == 0 {
+        if ::libc::strcmp((*define).name, token.string.as_mut_ptr()) == 0 {
             if (*define).flags & 0x1 as libc::c_int != 0 {
                 SourceWarning(
                     source,
@@ -1919,7 +1931,7 @@ pub unsafe extern "C" fn PC_Directive_define(
         crate::stdlib::strlen(token.string.as_mut_ptr())
             .wrapping_add(1 as libc::c_int as libc::c_ulong),
     ) as *mut libc::c_char;
-    crate::stdlib::strcpy((*define).name, token.string.as_mut_ptr());
+    ::libc::strcpy((*define).name, token.string.as_mut_ptr());
     //add the define to the source
     PC_AddDefineToHash(define, (*source).definehash);
     //DEFINEHASHING
@@ -1930,7 +1942,7 @@ pub unsafe extern "C" fn PC_Directive_define(
     }
     //if it is a define with parameters
     if PC_WhiteSpaceBeforeToken(&mut token) == 0
-        && crate::stdlib::strcmp(
+        && ::libc::strcmp(
             token.string.as_mut_ptr(),
             b"(\x00" as *const u8 as *const libc::c_char,
         ) == 0
@@ -1992,14 +2004,14 @@ pub unsafe extern "C" fn PC_Directive_define(
                     return crate::src::qcommon::q_shared::qfalse as libc::c_int;
                 }
                 //
-                if crate::stdlib::strcmp(
+                if ::libc::strcmp(
                     token.string.as_mut_ptr(),
                     b")\x00" as *const u8 as *const libc::c_char,
                 ) == 0
                 {
                     break;
                 }
-                if crate::stdlib::strcmp(
+                if ::libc::strcmp(
                     token.string.as_mut_ptr(),
                     b",\x00" as *const u8 as *const libc::c_char,
                 ) != 0
@@ -2024,7 +2036,7 @@ pub unsafe extern "C" fn PC_Directive_define(
     loop {
         t = PC_CopyToken(&mut token);
         if (*t).type_0 == 4 as libc::c_int
-            && crate::stdlib::strcmp((*t).string.as_mut_ptr(), (*define).name) == 0
+            && ::libc::strcmp((*t).string.as_mut_ptr(), (*define).name) == 0
         {
             SourceError(
                 source,
@@ -2049,11 +2061,11 @@ pub unsafe extern "C" fn PC_Directive_define(
     if !last.is_null() {
         //end if
         //check for merge operators at the beginning or end
-        if crate::stdlib::strcmp(
+        if ::libc::strcmp(
             (*(*define).tokens).string.as_mut_ptr(),
             b"##\x00" as *const u8 as *const libc::c_char,
         ) == 0
-            || crate::stdlib::strcmp(
+            || ::libc::strcmp(
                 (*last).string.as_mut_ptr(),
                 b"##\x00" as *const u8 as *const libc::c_char,
             ) == 0
@@ -2118,7 +2130,7 @@ pub unsafe extern "C" fn PC_DefineFromString(
         string,
         crate::stdlib::strlen(string) as libc::c_int,
         b"*extern\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-    );
+    ) as *mut crate::src::botlib::l_script::script_s;
     //create a new source
     crate::stdlib::memset(
         &mut src as *mut crate::src::botlib::l_precomp::source_t as *mut libc::c_void,
@@ -2162,7 +2174,7 @@ pub unsafe extern "C" fn PC_DefineFromString(
     crate::src::botlib::l_memory::FreeMemory(src.definehash as *mut libc::c_void);
     //DEFINEHASHING
     //
-    crate::src::botlib::l_script::FreeScript(script);
+    crate::src::botlib::l_script::FreeScript(script as *mut crate::src::botlib::l_script::script_s);
     //if the define was created successfully
     if res > 0 as libc::c_int {
         return def;
@@ -2292,7 +2304,7 @@ pub unsafe extern "C" fn PC_CopyDefine(
     (*newdefine).name = crate::src::botlib::l_memory::GetMemory(
         crate::stdlib::strlen((*define).name).wrapping_add(1 as libc::c_int as libc::c_ulong),
     ) as *mut libc::c_char;
-    crate::stdlib::strcpy((*newdefine).name, (*define).name);
+    ::libc::strcpy((*newdefine).name, (*define).name);
     (*newdefine).flags = (*define).flags;
     (*newdefine).builtin = (*define).builtin;
     (*newdefine).numparms = (*define).numparms;
@@ -2591,7 +2603,7 @@ pub unsafe extern "C" fn PC_EvaluateTokens(
                             as *mut libc::c_char,
                     );
                     error = 1 as libc::c_int
-                } else if crate::stdlib::strcmp(
+                } else if ::libc::strcmp(
                     (*t).string.as_mut_ptr(),
                     b"defined\x00" as *const u8 as *const libc::c_char,
                 ) != 0
@@ -2605,7 +2617,7 @@ pub unsafe extern "C" fn PC_EvaluateTokens(
                     error = 1 as libc::c_int
                 } else {
                     t = (*t).next;
-                    if crate::stdlib::strcmp(
+                    if ::libc::strcmp(
                         (*t).string.as_mut_ptr(),
                         b"(\x00" as *const u8 as *const libc::c_char,
                     ) == 0
@@ -2656,7 +2668,7 @@ pub unsafe extern "C" fn PC_EvaluateTokens(
                         if brace != 0 {
                             t = (*t).next;
                             if t.is_null()
-                                || crate::stdlib::strcmp(
+                                || ::libc::strcmp(
                                     (*t).string.as_mut_ptr(),
                                     b")\x00" as *const u8 as *const libc::c_char,
                                 ) != 0
@@ -3217,7 +3229,7 @@ pub unsafe extern "C" fn PC_Evaluate(
                     firsttoken = t
                 }
                 lasttoken = t
-            } else if crate::stdlib::strcmp(
+            } else if ::libc::strcmp(
                 token.string.as_mut_ptr(),
                 b"defined\x00" as *const u8 as *const libc::c_char,
             ) == 0
@@ -3368,7 +3380,7 @@ pub unsafe extern "C" fn PC_DollarEvaluate(
                     firsttoken = t
                 }
                 lasttoken = t
-            } else if crate::stdlib::strcmp(
+            } else if ::libc::strcmp(
                 token.string.as_mut_ptr(),
                 b"defined\x00" as *const u8 as *const libc::c_char,
             ) == 0
@@ -3555,7 +3567,7 @@ pub unsafe extern "C" fn PC_Directive_error(
         linescrossed: 0,
         next: 0 as *mut crate::src::botlib::l_script::token_s,
     };
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         token.string.as_mut_ptr(),
         b"\x00" as *const u8 as *const libc::c_char,
     );
@@ -3625,7 +3637,7 @@ pub unsafe extern "C" fn UnreadSignToken(mut source: *mut crate::src::botlib::l_
     token.whitespace_p = (*(*source).scriptstack).script_p;
     token.endwhitespace_p = (*(*source).scriptstack).script_p;
     token.linescrossed = 0 as libc::c_int;
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         token.string.as_mut_ptr(),
         b"-\x00" as *const u8 as *const libc::c_char,
     );
@@ -3672,10 +3684,10 @@ pub unsafe extern "C" fn PC_Directive_eval(
     token.whitespace_p = (*(*source).scriptstack).script_p;
     token.endwhitespace_p = (*(*source).scriptstack).script_p;
     token.linescrossed = 0 as libc::c_int;
-    crate::stdlib::sprintf(
+    ::libc::sprintf(
         token.string.as_mut_ptr(),
         b"%ld\x00" as *const u8 as *const libc::c_char,
-        crate::stdlib::labs(value),
+        ::libc::labs(value),
     );
     token.type_0 = 3 as libc::c_int;
     token.subtype = 0x1000 as libc::c_int | 0x2000 as libc::c_int | 0x8 as libc::c_int;
@@ -3723,7 +3735,7 @@ pub unsafe extern "C" fn PC_Directive_evalfloat(
     token.whitespace_p = (*(*source).scriptstack).script_p;
     token.endwhitespace_p = (*(*source).scriptstack).script_p;
     token.linescrossed = 0 as libc::c_int;
-    crate::stdlib::sprintf(
+    ::libc::sprintf(
         token.string.as_mut_ptr(),
         b"%1.2f\x00" as *const u8 as *const libc::c_char,
         crate::stdlib::fabs(value as libc::c_double),
@@ -3985,7 +3997,7 @@ pub unsafe extern "C" fn PC_ReadDirective(
         //find the precompiler directive
         i = 0 as libc::c_int;
         while !directives[i as usize].name.is_null() {
-            if crate::stdlib::strcmp(directives[i as usize].name, token.string.as_mut_ptr()) == 0 {
+            if ::libc::strcmp(directives[i as usize].name, token.string.as_mut_ptr()) == 0 {
                 return directives[i as usize]
                     .func
                     .expect("non-null function pointer")(source);
@@ -4042,14 +4054,14 @@ pub unsafe extern "C" fn PC_DollarDirective_evalint(
     token.whitespace_p = (*(*source).scriptstack).script_p;
     token.endwhitespace_p = (*(*source).scriptstack).script_p;
     token.linescrossed = 0 as libc::c_int;
-    crate::stdlib::sprintf(
+    ::libc::sprintf(
         token.string.as_mut_ptr(),
         b"%ld\x00" as *const u8 as *const libc::c_char,
-        crate::stdlib::labs(value),
+        ::libc::labs(value),
     );
     token.type_0 = 3 as libc::c_int;
     token.subtype = 0x1000 as libc::c_int | 0x2000 as libc::c_int | 0x8 as libc::c_int;
-    token.intvalue = crate::stdlib::labs(value) as libc::c_ulong;
+    token.intvalue = ::libc::labs(value) as libc::c_ulong;
     token.floatvalue = token.intvalue as libc::c_float;
     //NUMBERVALUE
     PC_UnreadSourceToken(source, &mut token);
@@ -4096,7 +4108,7 @@ pub unsafe extern "C" fn PC_DollarDirective_evalfloat(
     token.whitespace_p = (*(*source).scriptstack).script_p;
     token.endwhitespace_p = (*(*source).scriptstack).script_p;
     token.linescrossed = 0 as libc::c_int;
-    crate::stdlib::sprintf(
+    ::libc::sprintf(
         token.string.as_mut_ptr(),
         b"%1.2f\x00" as *const u8 as *const libc::c_char,
         crate::stdlib::fabs(value as libc::c_double),
@@ -4265,9 +4277,7 @@ pub unsafe extern "C" fn PC_ReadDollarDirective(
         //find the precompiler directive
         i = 0 as libc::c_int;
         while !dollardirectives[i as usize].name.is_null() {
-            if crate::stdlib::strcmp(dollardirectives[i as usize].name, token.string.as_mut_ptr())
-                == 0
-            {
+            if ::libc::strcmp(dollardirectives[i as usize].name, token.string.as_mut_ptr()) == 0 {
                 return dollardirectives[i as usize]
                     .func
                     .expect("non-null function pointer")(source);
@@ -4368,7 +4378,7 @@ pub unsafe extern "C" fn PC_ReadToken(
                             );
                             return crate::src::qcommon::q_shared::qfalse as libc::c_int;
                         }
-                        crate::stdlib::strcat(
+                        ::libc::strcat(
                             (*token).string.as_mut_ptr(),
                             newtoken
                                 .string
@@ -4448,7 +4458,7 @@ pub unsafe extern "C" fn PC_ExpectTokenString(
         ); //end if
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
     }
-    if crate::stdlib::strcmp(token.string.as_mut_ptr(), string) != 0 {
+    if ::libc::strcmp(token.string.as_mut_ptr(), string) != 0 {
         SourceError(
             source,
             b"expected %s, found %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
@@ -4485,36 +4495,36 @@ pub unsafe extern "C" fn PC_ExpectTokenType(
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
     } //end else if
     if (*token).type_0 != type_0 {
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             str.as_mut_ptr(),
             b"\x00" as *const u8 as *const libc::c_char,
         );
         if type_0 == 1 as libc::c_int {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 str.as_mut_ptr(),
                 b"string\x00" as *const u8 as *const libc::c_char,
             );
         }
         if type_0 == 2 as libc::c_int {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 str.as_mut_ptr(),
                 b"literal\x00" as *const u8 as *const libc::c_char,
             );
         }
         if type_0 == 3 as libc::c_int {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 str.as_mut_ptr(),
                 b"number\x00" as *const u8 as *const libc::c_char,
             );
         }
         if type_0 == 4 as libc::c_int {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 str.as_mut_ptr(),
                 b"name\x00" as *const u8 as *const libc::c_char,
             );
         }
         if type_0 == 5 as libc::c_int {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 str.as_mut_ptr(),
                 b"punctuation\x00" as *const u8 as *const libc::c_char,
             );
@@ -4529,54 +4539,54 @@ pub unsafe extern "C" fn PC_ExpectTokenType(
     }
     if (*token).type_0 == 3 as libc::c_int {
         if (*token).subtype & subtype != subtype {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 str.as_mut_ptr(),
                 b"\x00" as *const u8 as *const libc::c_char,
             );
             if subtype & 0x8 as libc::c_int != 0 {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     str.as_mut_ptr(),
                     b"decimal\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x100 as libc::c_int != 0 {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     str.as_mut_ptr(),
                     b"hex\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x200 as libc::c_int != 0 {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     str.as_mut_ptr(),
                     b"octal\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x400 as libc::c_int != 0 {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     str.as_mut_ptr(),
                     b"binary\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x2000 as libc::c_int != 0 {
-                crate::stdlib::strcat(
+                ::libc::strcat(
                     str.as_mut_ptr(),
                     b" long\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x4000 as libc::c_int != 0 {
-                crate::stdlib::strcat(
+                ::libc::strcat(
                     str.as_mut_ptr(),
                     b" unsigned\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x800 as libc::c_int != 0 {
-                crate::stdlib::strcat(
+                ::libc::strcat(
                     str.as_mut_ptr(),
                     b" float\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x1000 as libc::c_int != 0 {
-                crate::stdlib::strcat(
+                ::libc::strcat(
                     str.as_mut_ptr(),
                     b" integer\x00" as *const u8 as *const libc::c_char,
                 );
@@ -4660,7 +4670,7 @@ pub unsafe extern "C" fn PC_CheckTokenString(
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
     }
     //if the token is available
-    if crate::stdlib::strcmp(tok.string.as_mut_ptr(), string) == 0 {
+    if ::libc::strcmp(tok.string.as_mut_ptr(), string) == 0 {
         return crate::src::qcommon::q_shared::qtrue as libc::c_int;
     }
     //
@@ -4738,7 +4748,7 @@ pub unsafe extern "C" fn PC_SkipUntilString(
         next: 0 as *mut crate::src::botlib::l_script::token_s,
     }; //end while
     while PC_ReadToken(source, &mut token) != 0 {
-        if crate::stdlib::strcmp(token.string.as_mut_ptr(), string) == 0 {
+        if ::libc::strcmp(token.string.as_mut_ptr(), string) == 0 {
             return crate::src::qcommon::q_shared::qtrue as libc::c_int;
         }
     }
@@ -4806,7 +4816,7 @@ pub unsafe extern "C" fn PC_SetIncludePath(
             as libc::c_int
             != '/' as i32
     {
-        crate::stdlib::strcat(
+        ::libc::strcat(
             (*source).includepath.as_mut_ptr(),
             b"/\x00" as *const u8 as *const libc::c_char,
         );
@@ -4847,7 +4857,8 @@ pub unsafe extern "C" fn LoadSourceFile(
     let mut script: *mut crate::src::botlib::l_script::script_t =
         0 as *mut crate::src::botlib::l_script::script_t;
     PC_InitTokenHeap();
-    script = crate::src::botlib::l_script::LoadScriptFile(filename);
+    script = crate::src::botlib::l_script::LoadScriptFile(filename)
+        as *mut crate::src::botlib::l_script::script_s;
     if script.is_null() {
         return 0 as *mut crate::src::botlib::l_precomp::source_t;
     }
@@ -4899,7 +4910,8 @@ pub unsafe extern "C" fn LoadSourceMemory(
     let mut script: *mut crate::src::botlib::l_script::script_t =
         0 as *mut crate::src::botlib::l_script::script_t;
     PC_InitTokenHeap();
-    script = crate::src::botlib::l_script::LoadScriptMemory(ptr, length, name);
+    script = crate::src::botlib::l_script::LoadScriptMemory(ptr, length, name)
+        as *mut crate::src::botlib::l_script::script_s;
     if script.is_null() {
         return 0 as *mut crate::src::botlib::l_precomp::source_t;
     }
@@ -4956,7 +4968,9 @@ pub unsafe extern "C" fn FreeSource(mut source: *mut crate::src::botlib::l_preco
     while !(*source).scriptstack.is_null() {
         script = (*source).scriptstack; //end for
         (*source).scriptstack = (*(*source).scriptstack).next;
-        crate::src::botlib::l_script::FreeScript(script);
+        crate::src::botlib::l_script::FreeScript(
+            script as *mut crate::src::botlib::l_script::script_s,
+        );
     }
     //free all the tokens
     while !(*source).tokens.is_null() {
@@ -5077,7 +5091,7 @@ pub unsafe extern "C" fn PC_ReadTokenHandle(
         return 0 as libc::c_int;
     }
     ret = PC_ReadToken(sourceFiles[handle as usize], &mut token);
-    crate::stdlib::strcpy((*pc_token).string.as_mut_ptr(), token.string.as_mut_ptr());
+    ::libc::strcpy((*pc_token).string.as_mut_ptr(), token.string.as_mut_ptr());
     (*pc_token).type_0 = token.type_0;
     (*pc_token).subtype = token.subtype;
     (*pc_token).intvalue = token.intvalue as libc::c_int;
@@ -5107,7 +5121,7 @@ pub unsafe extern "C" fn PC_SourceFileAndLine(
     if sourceFiles[handle as usize].is_null() {
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
     }
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         filename,
         (*sourceFiles[handle as usize]).filename.as_mut_ptr(),
     );

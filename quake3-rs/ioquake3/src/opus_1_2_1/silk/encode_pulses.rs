@@ -351,7 +351,7 @@ pub unsafe extern "C" fn silk_encode_pulses(
         k += 1
     }
     crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-        psRangeEnc,
+        psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         RateLevelIndex,
         crate::src::opus_1_2_1::silk::tables_pulses_per_block::silk_rate_levels_iCDF
             [(signalType >> 1 as libc::c_int) as usize]
@@ -368,21 +368,21 @@ pub unsafe extern "C" fn silk_encode_pulses(
     while i < iter {
         if *nRshifts.offset(i as isize) == 0 as libc::c_int {
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 *sum_pulses.offset(i as isize),
                 cdf_ptr,
                 8 as libc::c_int as libc::c_uint,
             );
         } else {
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 16 as libc::c_int + 1 as libc::c_int,
                 cdf_ptr,
                 8 as libc::c_int as libc::c_uint,
             );
             k = 0 as libc::c_int;
             while k < *nRshifts.offset(i as isize) - 1 as libc::c_int {
-                crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(psRangeEnc, 16 as libc::c_int + 1 as libc::c_int,
+                crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx, 16 as libc::c_int + 1 as libc::c_int,
                             crate::src::opus_1_2_1::silk::tables_pulses_per_block::silk_pulses_per_block_iCDF[(10 as libc::c_int -
                                                             1 as libc::c_int)
                                                            as usize].as_ptr(),
@@ -390,7 +390,7 @@ pub unsafe extern "C" fn silk_encode_pulses(
                 k += 1
             }
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 *sum_pulses.offset(i as isize),
                 crate::src::opus_1_2_1::silk::tables_pulses_per_block::silk_pulses_per_block_iCDF
                     [(10 as libc::c_int - 1 as libc::c_int) as usize]
@@ -407,7 +407,7 @@ pub unsafe extern "C" fn silk_encode_pulses(
     while i < iter {
         if *sum_pulses.offset(i as isize) > 0 as libc::c_int {
             crate::src::opus_1_2_1::silk::shell_coder::silk_shell_encoder(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 &mut *abs_pulses.offset((i * 16 as libc::c_int) as isize),
             );
         }
@@ -433,7 +433,7 @@ pub unsafe extern "C" fn silk_encode_pulses(
                 while j > 0 as libc::c_int {
                     bit = abs_q >> j & 1 as libc::c_int;
                     crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                        psRangeEnc,
+                        psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                         bit,
                         crate::src::opus_1_2_1::silk::tables_other::silk_lsb_iCDF.as_ptr(),
                         8 as libc::c_int as libc::c_uint,
@@ -442,7 +442,7 @@ pub unsafe extern "C" fn silk_encode_pulses(
                 }
                 bit = abs_q & 1 as libc::c_int;
                 crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                    psRangeEnc,
+                    psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     bit,
                     crate::src::opus_1_2_1::silk::tables_other::silk_lsb_iCDF.as_ptr(),
                     8 as libc::c_int as libc::c_uint,
@@ -456,7 +456,7 @@ pub unsafe extern "C" fn silk_encode_pulses(
     /* Encode signs */
     /* ***************/
     crate::src::opus_1_2_1::silk::code_signs::silk_encode_signs(
-        psRangeEnc,
+        psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         pulses as *const libc::c_schar,
         frame_length,
         signalType,

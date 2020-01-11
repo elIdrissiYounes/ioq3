@@ -175,9 +175,9 @@ pub unsafe extern "C" fn vorbis_bitrate_addblock(
     let mut bi: *mut crate::src::libvorbis_1_3_6::lib::bitrate::bitrate_manager_info =
         &mut (*ci).bi;
     let mut choice: libc::c_int = crate::stdlib::rint((*bm).avgfloat) as libc::c_int;
-    let mut this_bits: libc::c_long =
-        crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes((*vbi).packetblob[choice as usize])
-            * 8 as libc::c_int as libc::c_long;
+    let mut this_bits: libc::c_long = crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
+        (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
+    ) * 8 as libc::c_int as libc::c_long;
     let mut min_target_bits: libc::c_long = if (*vb).W != 0 {
         ((*bm).min_bitsper) * (*bm).short_per_long
     } else {
@@ -229,7 +229,7 @@ pub unsafe extern "C" fn vorbis_bitrate_addblock(
             {
                 choice -= 1;
                 this_bits = crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
-                    (*vbi).packetblob[choice as usize],
+                    (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
                 ) * 8 as libc::c_int as libc::c_long
             }
         } else if (*bm).avg_reservoir + (this_bits - avg_target_bits) < desired_fill {
@@ -239,7 +239,7 @@ pub unsafe extern "C" fn vorbis_bitrate_addblock(
             {
                 choice += 1;
                 this_bits = crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
-                    (*vbi).packetblob[choice as usize],
+                    (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
                 ) * 8 as libc::c_int as libc::c_long
             }
         }
@@ -255,7 +255,7 @@ pub unsafe extern "C" fn vorbis_bitrate_addblock(
         (*bm).avgfloat += slew / (*vi).rate as libc::c_double * samples as libc::c_double;
         choice = crate::stdlib::rint((*bm).avgfloat) as libc::c_int;
         this_bits = crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
-            (*vbi).packetblob[choice as usize],
+            (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
         ) * 8 as libc::c_int as libc::c_long
     }
     /* enforce min(if used) on the current floater (if used) */
@@ -270,7 +270,7 @@ pub unsafe extern "C" fn vorbis_bitrate_addblock(
                     break;
                 }
                 this_bits = crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
-                    (*vbi).packetblob[choice as usize],
+                    (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
                 ) * 8 as libc::c_int as libc::c_long
             }
         }
@@ -285,7 +285,7 @@ pub unsafe extern "C" fn vorbis_bitrate_addblock(
                     break;
                 }
                 this_bits = crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
-                    (*vbi).packetblob[choice as usize],
+                    (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
                 ) * 8 as libc::c_int as libc::c_long
             }
         }
@@ -300,15 +300,16 @@ pub unsafe extern "C" fn vorbis_bitrate_addblock(
             / 8 as libc::c_int as libc::c_long;
         choice = 0 as libc::c_int;
         (*bm).choice = choice;
-        if crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes((*vbi).packetblob[choice as usize])
-            > maxsize
+        if crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
+            (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
+        ) > maxsize
         {
             crate::src::libogg_1_3_3::src::bitwise::oggpack_writetrunc(
-                (*vbi).packetblob[choice as usize],
+                (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
                 maxsize * 8 as libc::c_int as libc::c_long,
             );
             this_bits = crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
-                (*vbi).packetblob[choice as usize],
+                (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
             ) * 8 as libc::c_int as libc::c_long
         }
     } else {
@@ -321,7 +322,7 @@ pub unsafe extern "C" fn vorbis_bitrate_addblock(
         (*bm).choice = choice;
         /* prop up bitrate according to demand. pad this frame out with zeroes */
         minsize -= crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
-            (*vbi).packetblob[choice as usize],
+            (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
         );
         loop {
             let fresh0 = minsize;
@@ -330,13 +331,13 @@ pub unsafe extern "C" fn vorbis_bitrate_addblock(
                 break;
             }
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                (*vbi).packetblob[choice as usize],
+                (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
                 0 as libc::c_int as libc::c_ulong,
                 8 as libc::c_int,
             );
         }
         this_bits = crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
-            (*vbi).packetblob[choice as usize],
+            (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
         ) * 8 as libc::c_int as libc::c_long
     }
     /* now we have the final packet and the final packet size.  Update statistics */
@@ -403,10 +404,10 @@ pub unsafe extern "C" fn vorbis_bitrate_flushpacket(
             choice = (*bm).choice
         }
         (*op).packet = crate::src::libogg_1_3_3::src::bitwise::oggpack_get_buffer(
-            (*vbi).packetblob[choice as usize],
+            (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
         );
         (*op).bytes = crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
-            (*vbi).packetblob[choice as usize],
+            (*vbi).packetblob[choice as usize] as *mut crate::ogg_h::oggpack_buffer,
         );
         (*op).b_o_s = 0 as libc::c_int as libc::c_long;
         (*op).e_o_s = (*vb).eofflag as libc::c_long;

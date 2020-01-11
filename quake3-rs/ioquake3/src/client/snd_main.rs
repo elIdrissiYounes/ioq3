@@ -1038,42 +1038,42 @@ pub unsafe extern "C" fn S_Init() {
         b"s_volume\x00" as *const u8 as *const libc::c_char,
         b"0.8\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_musicVolume = crate::src::qcommon::cvar::Cvar_Get(
         b"s_musicvolume\x00" as *const u8 as *const libc::c_char,
         b"0.25\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_muted = crate::src::qcommon::cvar::Cvar_Get(
         b"s_muted\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_doppler = crate::src::qcommon::cvar::Cvar_Get(
         b"s_doppler\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_backend = crate::src::qcommon::cvar::Cvar_Get(
         b"s_backend\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_muteWhenMinimized = crate::src::qcommon::cvar::Cvar_Get(
         b"s_muteWhenMinimized\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_muteWhenUnfocused = crate::src::qcommon::cvar::Cvar_Get(
         b"s_muteWhenUnfocused\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     cv = crate::src::qcommon::cvar::Cvar_Get(
         b"s_initsound\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     if (*cv).integer == 0 {
         crate::src::qcommon::common::Com_Printf(
             b"Sound disabled.\n\x00" as *const u8 as *const libc::c_char,
@@ -1108,17 +1108,21 @@ pub unsafe extern "C" fn S_Init() {
             b"s_useOpenAL\x00" as *const u8 as *const libc::c_char,
             b"1\x00" as *const u8 as *const libc::c_char,
             0x1 as libc::c_int | 0x20 as libc::c_int,
-        );
+        ) as *mut crate::src::qcommon::q_shared::cvar_s;
         if (*cv).integer != 0 {
             //OpenAL
-            started = crate::src::client::snd_openal::S_AL_Init(&mut si);
+            started = crate::src::client::snd_openal::S_AL_Init(
+                &mut si as *mut _ as *mut crate::snd_local_h::soundInterface_t,
+            );
             crate::src::qcommon::cvar::Cvar_Set(
                 b"s_backend\x00" as *const u8 as *const libc::c_char,
                 b"OpenAL\x00" as *const u8 as *const libc::c_char,
             );
         }
         if started as u64 == 0 {
-            started = crate::src::client::snd_dma::S_Base_Init(&mut si);
+            started = crate::src::client::snd_dma::S_Base_Init(
+                &mut si as *mut _ as *mut crate::snd_local_h::soundInterface_t,
+            );
             crate::src::qcommon::cvar::Cvar_Set(
                 b"s_backend\x00" as *const u8 as *const libc::c_char,
                 b"base\x00" as *const u8 as *const libc::c_char,

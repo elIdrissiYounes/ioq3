@@ -10,9 +10,9 @@ use ::libc;
 
 use crate::stdlib::calloc;
 use crate::stdlib::cos;
-use crate::stdlib::free;
 use crate::stdlib::memset;
 use crate::stdlib::sin;
+use ::libc::free;
 /* *******************************************************************
 *                                                                  *
 * THIS FILE IS PART OF THE OggVorbis SOFTWARE CODEC SOURCE CODE.   *
@@ -1998,10 +1998,10 @@ pub unsafe extern "C" fn drft_clear(
 ) {
     if !l.is_null() {
         if !(*l).trigcache.is_null() {
-            crate::stdlib::free((*l).trigcache as *mut libc::c_void);
+            ::libc::free((*l).trigcache as *mut libc::c_void);
         }
         if !(*l).splitcache.is_null() {
-            crate::stdlib::free((*l).splitcache as *mut libc::c_void);
+            ::libc::free((*l).splitcache as *mut libc::c_void);
         }
         crate::stdlib::memset(
             l as *mut libc::c_void,

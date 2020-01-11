@@ -180,9 +180,9 @@ pub use crate::src::cgame::cg_syscalls::trap_R_AddLightToScene;
 pub use crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene;
 pub use crate::src::cgame::cg_syscalls::trap_S_StartSound;
 use crate::stdlib::memset;
-use crate::stdlib::rand;
 use crate::stdlib::sin;
 use crate::stdlib::sqrt;
+use ::libc::rand;
 #[no_mangle]
 
 pub static mut cg_localEntities: [crate::cg_local_h::localEntity_t; 512] =
@@ -411,7 +411,11 @@ pub unsafe extern "C" fn CG_BloodTrail(mut le: *mut crate::cg_local_h::localEnti
             / step);
     t2 = step * (crate::src::cgame::cg_main::cg.time / step);
     while t <= t2 {
-        crate::src::game::bg_misc::BG_EvaluateTrajectory(&mut (*le).pos, t, newOrigin.as_mut_ptr());
+        crate::src::game::bg_misc::BG_EvaluateTrajectory(
+            &mut (*le).pos as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
+            t,
+            newOrigin.as_mut_ptr(),
+        );
         blood = crate::src::cgame::cg_effects::CG_SmokePuff(
             newOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
@@ -426,7 +430,7 @@ pub unsafe extern "C" fn CG_BloodTrail(mut le: *mut crate::cg_local_h::localEnti
             0 as libc::c_int,
             0 as libc::c_int,
             crate::src::cgame::cg_main::cgs.media.bloodTrailShader,
-        );
+        ) as *mut crate::cg_local_h::localEntity_s;
         // use the optimized version
         (*blood).leType = crate::cg_local_h::LE_FALL_SCALE_FADE;
         // drop a total of 40 units over its lifetime
@@ -450,12 +454,12 @@ pub unsafe extern "C" fn CG_FragmentBounceMark(
     if (*le).leMarkType as libc::c_uint
         == crate::cg_local_h::LEMT_BLOOD as libc::c_int as libc::c_uint
     {
-        radius = 16 as libc::c_int + (crate::stdlib::rand() & 31 as libc::c_int);
+        radius = 16 as libc::c_int + (::libc::rand() & 31 as libc::c_int);
         crate::src::cgame::cg_marks::CG_ImpactMark(
             crate::src::cgame::cg_main::cgs.media.bloodMarkShader,
             (*trace).endpos.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             (*trace).plane.normal.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-            (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float
                 * 360 as libc::c_int as libc::c_float,
             1 as libc::c_int as libc::c_float,
@@ -469,12 +473,12 @@ pub unsafe extern "C" fn CG_FragmentBounceMark(
     } else if (*le).leMarkType as libc::c_uint
         == crate::cg_local_h::LEMT_BURN as libc::c_int as libc::c_uint
     {
-        radius = 8 as libc::c_int + (crate::stdlib::rand() & 15 as libc::c_int);
+        radius = 8 as libc::c_int + (::libc::rand() & 15 as libc::c_int);
         crate::src::cgame::cg_marks::CG_ImpactMark(
             crate::src::cgame::cg_main::cgs.media.burnMarkShader,
             (*trace).endpos.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             (*trace).plane.normal.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-            (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float
                 * 360 as libc::c_int as libc::c_float,
             1 as libc::c_int as libc::c_float,
@@ -505,8 +509,8 @@ pub unsafe extern "C" fn CG_FragmentBounceSound(
         == crate::cg_local_h::LEBS_BLOOD as libc::c_int as libc::c_uint
     {
         // half the gibs will make splat sounds
-        if crate::stdlib::rand() & 1 as libc::c_int != 0 {
-            let mut r: libc::c_int = crate::stdlib::rand() & 3 as libc::c_int;
+        if ::libc::rand() & 1 as libc::c_int != 0 {
+            let mut r: libc::c_int = ::libc::rand() & 3 as libc::c_int;
             let mut s: crate::src::qcommon::q_shared::sfxHandle_t = 0;
             if r == 0 as libc::c_int {
                 s = crate::src::cgame::cg_main::cgs.media.gibBounce1Sound
@@ -550,7 +554,7 @@ pub unsafe extern "C" fn CG_ReflectVelocity(
         + crate::src::cgame::cg_main::cg.frametime as libc::c_float * (*trace).fraction)
         as libc::c_int;
     crate::src::game::bg_misc::BG_EvaluateTrajectoryDelta(
-        &mut (*le).pos,
+        &mut (*le).pos as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
         hitTime,
         velocity.as_mut_ptr(),
     );
@@ -638,22 +642,26 @@ pub unsafe extern "C" fn CG_AddFragment(mut le: *mut crate::cg_local_h::localEnt
                         * (1.0f64
                             - (t as libc::c_float / 1000 as libc::c_int as libc::c_float)
                                 as libc::c_double)) as libc::c_float;
-            crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut (*le).refEntity);
+            crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+                &mut (*le).refEntity as *mut _ as *const crate::tr_types_h::refEntity_t,
+            );
             (*le).refEntity.origin[2 as libc::c_int as usize] = oldZ
         } else {
-            crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut (*le).refEntity);
+            crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+                &mut (*le).refEntity as *mut _ as *const crate::tr_types_h::refEntity_t,
+            );
         }
         return;
     }
     // calculate new position
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*le).pos,
+        &mut (*le).pos as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
         crate::src::cgame::cg_main::cg.time,
         newOrigin.as_mut_ptr(),
     );
     // trace a line from previous position to new position
     crate::src::cgame::cg_predict::CG_Trace(
-        &mut trace,
+        &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         (*le).refEntity.origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         0 as *const crate::src::qcommon::q_shared::vec_t,
         0 as *const crate::src::qcommon::q_shared::vec_t,
@@ -669,7 +677,7 @@ pub unsafe extern "C" fn CG_AddFragment(mut le: *mut crate::cg_local_h::localEnt
         if (*le).leFlags & crate::cg_local_h::LEF_TUMBLE as libc::c_int != 0 {
             let mut angles: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
             crate::src::game::bg_misc::BG_EvaluateTrajectory(
-                &mut (*le).angles,
+                &mut (*le).angles as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
                 crate::src::cgame::cg_main::cg.time,
                 angles.as_mut_ptr(),
             );
@@ -678,7 +686,9 @@ pub unsafe extern "C" fn CG_AddFragment(mut le: *mut crate::cg_local_h::localEnt
                 (*le).refEntity.axis.as_mut_ptr(),
             );
         }
-        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut (*le).refEntity);
+        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+            &mut (*le).refEntity as *mut _ as *const crate::tr_types_h::refEntity_t,
+        );
         // add a blood trail
         if (*le).leBounceSoundType as libc::c_uint
             == crate::cg_local_h::LEBS_BLOOD as libc::c_int as libc::c_uint
@@ -706,7 +716,9 @@ pub unsafe extern "C" fn CG_AddFragment(mut le: *mut crate::cg_local_h::localEnt
     CG_FragmentBounceSound(le, &mut trace);
     // reflect the velocity on the trace plane
     CG_ReflectVelocity(le, &mut trace);
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut (*le).refEntity);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut (*le).refEntity as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 =====================================================================
@@ -737,7 +749,9 @@ pub unsafe extern "C" fn CG_AddFadeRGB(mut le: *mut crate::cg_local_h::localEnti
         ((*le).color[2 as libc::c_int as usize] * c) as crate::src::qcommon::q_shared::byte;
     (*re).shaderRGBA[3 as libc::c_int as usize] =
         ((*le).color[3 as libc::c_int as usize] * c) as crate::src::qcommon::q_shared::byte;
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(re);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        re as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 ==================
@@ -770,7 +784,7 @@ unsafe extern "C" fn CG_AddMoveScaleFade(mut le: *mut crate::cg_local_h::localEn
             + 8 as libc::c_int as libc::c_double) as libc::c_float
     }
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*le).pos,
+        &mut (*le).pos as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
         crate::src::cgame::cg_main::cg.time,
         (*re).origin.as_mut_ptr(),
     );
@@ -787,7 +801,9 @@ unsafe extern "C" fn CG_AddMoveScaleFade(mut le: *mut crate::cg_local_h::localEn
         CG_FreeLocalEntity(le);
         return;
     }
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(re);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        re as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 ===================
@@ -825,7 +841,9 @@ unsafe extern "C" fn CG_AddScaleFade(mut le: *mut crate::cg_local_h::localEntity
         CG_FreeLocalEntity(le);
         return;
     }
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(re);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        re as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 =================
@@ -869,7 +887,9 @@ unsafe extern "C" fn CG_AddFallScaleFade(mut le: *mut crate::cg_local_h::localEn
         CG_FreeLocalEntity(le);
         return;
     }
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(re);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        re as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 ================
@@ -881,7 +901,9 @@ unsafe extern "C" fn CG_AddExplosion(mut ex: *mut crate::cg_local_h::localEntity
     let mut ent: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
     ent = &mut (*ex).refEntity;
     // add the entity
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(ent);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        ent as *const crate::tr_types_h::refEntity_t,
+    );
     // add the dlight
     if (*ex).light != 0. {
         let mut light: libc::c_float = 0.;
@@ -953,7 +975,9 @@ unsafe extern "C" fn CG_AddSpriteExplosion(mut le: *mut crate::cg_local_h::local
     re.reType = crate::tr_types_h::RT_SPRITE;
     re.radius = (42 as libc::c_int as libc::c_double * (1.0f64 - c as libc::c_double)
         + 30 as libc::c_int as libc::c_double) as libc::c_float;
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut re);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut re as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
     // add the dlight
     if (*le).light != 0. {
         let mut light: libc::c_float = 0.;
@@ -1134,7 +1158,9 @@ pub unsafe extern "C" fn CG_AddScorePlum(mut le: *mut crate::cg_local_h::localEn
                     * 8 as libc::c_int as libc::c_float);
         (*re).customShader = crate::src::cgame::cg_main::cgs.media.numberShaders
             [digits[(numdigits - 1 as libc::c_int - i) as usize] as usize];
-        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(re);
+        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+            re as *const crate::tr_types_h::refEntity_t,
+        );
         i += 1
     }
 }

@@ -254,7 +254,7 @@ pub unsafe extern "C" fn celt_decoder_get_size(mut channels: libc::c_int) -> lib
             48000 as libc::c_int,
             960 as libc::c_int,
             0 as *mut libc::c_int,
-        );
+        ) as *mut crate::src::opus_1_2_1::celt::modes::OpusCustomMode;
     return opus_custom_decoder_get_size(mode, channels);
 }
 #[inline]
@@ -294,7 +294,7 @@ pub unsafe extern "C" fn celt_decoder_init(
             48000 as libc::c_int,
             960 as libc::c_int,
             0 as *mut libc::c_int,
-        ),
+        ) as *mut crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
         channels,
     );
     if ret != 0 as libc::c_int {
@@ -520,7 +520,15 @@ unsafe extern "C" fn celt_synthesis(
         /* Copying a mono streams to two channels */
         let mut freq2: *mut crate::arch_h::celt_sig = 0 as *mut crate::arch_h::celt_sig;
         crate::src::opus_1_2_1::celt::bands::denormalise_bands(
-            mode, X, freq, oldBandE, start, effEnd, M, downsample, silence,
+            mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
+            X,
+            freq,
+            oldBandE,
+            start,
+            effEnd,
+            M,
+            downsample,
+            silence,
         );
         /* Store a temporary copy in the output buffer because the IMDCT destroys its input. */
         freq2 = (*out_syn.offset(1 as libc::c_int as isize))
@@ -539,7 +547,7 @@ unsafe extern "C" fn celt_synthesis(
         b = 0 as libc::c_int;
         while b < B {
             crate::src::opus_1_2_1::celt::mdct::clt_mdct_backward_c(
-                &(*mode).mdct,
+                &(*mode).mdct as *const _ as *const crate::src::opus_1_2_1::celt::mdct::mdct_lookup,
                 &mut *freq2.offset(b as isize),
                 (*out_syn.offset(0 as libc::c_int as isize)).offset((NB * b) as isize),
                 (*mode).window,
@@ -553,7 +561,7 @@ unsafe extern "C" fn celt_synthesis(
         b = 0 as libc::c_int;
         while b < B {
             crate::src::opus_1_2_1::celt::mdct::clt_mdct_backward_c(
-                &(*mode).mdct,
+                &(*mode).mdct as *const _ as *const crate::src::opus_1_2_1::celt::mdct::mdct_lookup,
                 &mut *freq.offset(b as isize),
                 (*out_syn.offset(1 as libc::c_int as isize)).offset((NB * b) as isize),
                 (*mode).window,
@@ -570,11 +578,19 @@ unsafe extern "C" fn celt_synthesis(
         freq2_0 = (*out_syn.offset(0 as libc::c_int as isize))
             .offset((overlap / 2 as libc::c_int) as isize);
         crate::src::opus_1_2_1::celt::bands::denormalise_bands(
-            mode, X, freq, oldBandE, start, effEnd, M, downsample, silence,
+            mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
+            X,
+            freq,
+            oldBandE,
+            start,
+            effEnd,
+            M,
+            downsample,
+            silence,
         );
         /* Use the output buffer as temp array before downmixing. */
         crate::src::opus_1_2_1::celt::bands::denormalise_bands(
-            mode,
+            mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
             X.offset(N as isize),
             freq2_0,
             oldBandE.offset(nbEBands as isize),
@@ -593,7 +609,7 @@ unsafe extern "C" fn celt_synthesis(
         b = 0 as libc::c_int;
         while b < B {
             crate::src::opus_1_2_1::celt::mdct::clt_mdct_backward_c(
-                &(*mode).mdct,
+                &(*mode).mdct as *const _ as *const crate::src::opus_1_2_1::celt::mdct::mdct_lookup,
                 &mut *freq.offset(b as isize),
                 (*out_syn.offset(0 as libc::c_int as isize)).offset((NB * b) as isize),
                 (*mode).window,
@@ -609,7 +625,7 @@ unsafe extern "C" fn celt_synthesis(
         c = 0 as libc::c_int;
         loop {
             crate::src::opus_1_2_1::celt::bands::denormalise_bands(
-                mode,
+                mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
                 X.offset((c * N) as isize),
                 freq,
                 oldBandE.offset((c * nbEBands) as isize),
@@ -622,7 +638,8 @@ unsafe extern "C" fn celt_synthesis(
             b = 0 as libc::c_int;
             while b < B {
                 crate::src::opus_1_2_1::celt::mdct::clt_mdct_backward_c(
-                    &(*mode).mdct,
+                    &(*mode).mdct as *const _
+                        as *const crate::src::opus_1_2_1::celt::mdct::mdct_lookup,
                     &mut *freq.offset(b as isize),
                     (*out_syn.offset(c as isize)).offset((NB * b) as isize),
                     (*mode).window,
@@ -693,8 +710,10 @@ unsafe extern "C" fn tf_decode(
     i = start;
     while i < end {
         if tell.wrapping_add(logp as libc::c_uint) <= budget {
-            curr ^=
-                crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(dec, logp as libc::c_uint);
+            curr ^= crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(
+                dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+                logp as libc::c_uint,
+            );
             tell = ec_tell(dec) as crate::opus_types_h::opus_uint32;
             tf_changed |= curr
         }
@@ -716,7 +735,7 @@ unsafe extern "C" fn tf_decode(
                 as libc::c_int
     {
         tf_select = crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(
-            dec,
+            dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             1 as libc::c_int as libc::c_uint,
         )
     }
@@ -1390,7 +1409,7 @@ pub unsafe extern "C" fn celt_decode_with_ec(
     (*st).skip_plc = ((*st).loss_count != 0 as libc::c_int) as libc::c_int;
     if dec.is_null() {
         crate::src::opus_1_2_1::celt::entdec::ec_dec_init(
-            &mut _dec,
+            &mut _dec as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             data as *mut libc::c_uchar,
             len as crate::opus_types_h::opus_uint32,
         );
@@ -1414,7 +1433,7 @@ pub unsafe extern "C" fn celt_decode_with_ec(
         silence = 1 as libc::c_int
     } else if tell == 1 as libc::c_int {
         silence = crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(
-            dec,
+            dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             15 as libc::c_int as libc::c_uint,
         )
     } else {
@@ -1430,30 +1449,30 @@ pub unsafe extern "C" fn celt_decode_with_ec(
     postfilter_tapset = 0 as libc::c_int;
     if start == 0 as libc::c_int && tell + 16 as libc::c_int <= total_bits {
         if crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(
-            dec,
+            dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             1 as libc::c_int as libc::c_uint,
         ) != 0
         {
             let mut qg: libc::c_int = 0;
             let mut octave: libc::c_int = 0;
             octave = crate::src::opus_1_2_1::celt::entdec::ec_dec_uint(
-                dec,
+                dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 6 as libc::c_int as crate::opus_types_h::opus_uint32,
             ) as libc::c_int;
             postfilter_pitch = (((16 as libc::c_int) << octave) as libc::c_uint)
                 .wrapping_add(crate::src::opus_1_2_1::celt::entdec::ec_dec_bits(
-                    dec,
+                    dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     (4 as libc::c_int + octave) as libc::c_uint,
                 ))
                 .wrapping_sub(1 as libc::c_int as libc::c_uint)
                 as libc::c_int;
             qg = crate::src::opus_1_2_1::celt::entdec::ec_dec_bits(
-                dec,
+                dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 3 as libc::c_int as libc::c_uint,
             ) as libc::c_int;
             if ec_tell(dec) + 2 as libc::c_int <= total_bits {
                 postfilter_tapset = crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
-                    dec,
+                    dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     tapset_icdf.as_ptr(),
                     2 as libc::c_int as libc::c_uint,
                 )
@@ -1464,7 +1483,7 @@ pub unsafe extern "C" fn celt_decode_with_ec(
     }
     if LM > 0 as libc::c_int && tell + 3 as libc::c_int <= total_bits {
         isTransient = crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(
-            dec,
+            dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             3 as libc::c_int as libc::c_uint,
         );
         tell = ec_tell(dec)
@@ -1478,13 +1497,23 @@ pub unsafe extern "C" fn celt_decode_with_ec(
     }
     /* Decode the global flags (first symbols in the stream) */
     intra_ener = if tell + 3 as libc::c_int <= total_bits {
-        crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(dec, 3 as libc::c_int as libc::c_uint)
+        crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(
+            dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+            3 as libc::c_int as libc::c_uint,
+        )
     } else {
         0 as libc::c_int
     };
     /* Get band energies */
     crate::src::opus_1_2_1::celt::quant_bands::unquant_coarse_energy(
-        mode, start, end, oldBandE, intra_ener, dec, C, LM,
+        mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
+        start,
+        end,
+        oldBandE,
+        intra_ener,
+        dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+        C,
+        LM,
     );
     let mut fresh6 = ::std::vec::from_elem(
         0,
@@ -1497,7 +1526,7 @@ pub unsafe extern "C" fn celt_decode_with_ec(
     spread_decision = 2 as libc::c_int;
     if tell + 4 as libc::c_int <= total_bits {
         spread_decision = crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
-            dec,
+            dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             spread_icdf.as_ptr(),
             5 as libc::c_int as libc::c_uint,
         )
@@ -1508,7 +1537,12 @@ pub unsafe extern "C" fn celt_decode_with_ec(
             .wrapping_mul(nbEBands as libc::c_ulong) as usize,
     );
     cap = fresh7.as_mut_ptr() as *mut libc::c_int;
-    crate::src::opus_1_2_1::celt::celt::init_caps(mode, cap, LM, C);
+    crate::src::opus_1_2_1::celt::celt::init_caps(
+        mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
+        cap,
+        LM,
+        C,
+    );
     let mut fresh8 = ::std::vec::from_elem(
         0,
         (::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
@@ -1517,8 +1551,9 @@ pub unsafe extern "C" fn celt_decode_with_ec(
     offsets = fresh8.as_mut_ptr() as *mut libc::c_int;
     dynalloc_logp = 6 as libc::c_int;
     total_bits <<= 3 as libc::c_int;
-    tell =
-        crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(dec) as crate::opus_types_h::opus_int32;
+    tell = crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(
+        dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+    ) as crate::opus_types_h::opus_int32;
     i = start;
     while i < end {
         let mut width: libc::c_int = 0;
@@ -1550,11 +1585,12 @@ pub unsafe extern "C" fn celt_decode_with_ec(
         {
             let mut flag: libc::c_int = 0;
             flag = crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(
-                dec,
+                dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 dynalloc_loop_logp as libc::c_uint,
             );
-            tell = crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(dec)
-                as crate::opus_types_h::opus_int32;
+            tell = crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(
+                dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+            ) as crate::opus_types_h::opus_int32;
             if flag == 0 {
                 break;
             }
@@ -1581,7 +1617,7 @@ pub unsafe extern "C" fn celt_decode_with_ec(
     fine_quant = fresh9.as_mut_ptr() as *mut libc::c_int;
     alloc_trim = if tell + ((6 as libc::c_int) << 3 as libc::c_int) <= total_bits {
         crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
-            dec,
+            dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             trim_icdf.as_ptr(),
             7 as libc::c_int as libc::c_uint,
         )
@@ -1589,7 +1625,9 @@ pub unsafe extern "C" fn celt_decode_with_ec(
         5 as libc::c_int
     };
     bits = (((len * 8 as libc::c_int) << 3 as libc::c_int) as libc::c_uint)
-        .wrapping_sub(crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(dec))
+        .wrapping_sub(crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(
+            dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+        ))
         .wrapping_sub(1 as libc::c_int as libc::c_uint)
         as crate::opus_types_h::opus_int32;
     anti_collapse_rsv = if isTransient != 0
@@ -1614,7 +1652,7 @@ pub unsafe extern "C" fn celt_decode_with_ec(
     );
     fine_priority = fresh11.as_mut_ptr() as *mut libc::c_int;
     codedBands = crate::src::opus_1_2_1::celt::rate::compute_allocation(
-        mode,
+        mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
         start,
         end,
         offsets,
@@ -1629,13 +1667,19 @@ pub unsafe extern "C" fn celt_decode_with_ec(
         fine_priority,
         C,
         LM,
-        dec,
+        dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         0 as libc::c_int,
         0 as libc::c_int,
         0 as libc::c_int,
     );
     crate::src::opus_1_2_1::celt::quant_bands::unquant_fine_energy(
-        mode, start, end, oldBandE, fine_quant, dec, C,
+        mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
+        start,
+        end,
+        oldBandE,
+        fine_quant,
+        dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+        C,
     );
     c = 0 as libc::c_int;
     loop {
@@ -1671,7 +1715,7 @@ pub unsafe extern "C" fn celt_decode_with_ec(
     X = fresh13.as_mut_ptr() as *mut crate::arch_h::celt_norm;
     crate::src::opus_1_2_1::celt::bands::quant_all_bands(
         0 as libc::c_int,
-        mode,
+        mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
         start,
         end,
         X,
@@ -1690,7 +1734,7 @@ pub unsafe extern "C" fn celt_decode_with_ec(
         tf_res,
         len * ((8 as libc::c_int) << 3 as libc::c_int) - anti_collapse_rsv,
         balance,
-        dec,
+        dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         LM,
         codedBands,
         &mut (*st).rng,
@@ -1699,24 +1743,25 @@ pub unsafe extern "C" fn celt_decode_with_ec(
         (*st).disable_inv,
     );
     if anti_collapse_rsv > 0 as libc::c_int {
-        anti_collapse_on =
-            crate::src::opus_1_2_1::celt::entdec::ec_dec_bits(dec, 1 as libc::c_int as libc::c_uint)
-                as libc::c_int
+        anti_collapse_on = crate::src::opus_1_2_1::celt::entdec::ec_dec_bits(
+            dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+            1 as libc::c_int as libc::c_uint,
+        ) as libc::c_int
     }
     crate::src::opus_1_2_1::celt::quant_bands::unquant_energy_finalise(
-        mode,
+        mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
         start,
         end,
         oldBandE,
         fine_quant,
         fine_priority,
         len * 8 as libc::c_int - ec_tell(dec),
-        dec,
+        dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         C,
     );
     if anti_collapse_on != 0 {
         crate::src::opus_1_2_1::celt::bands::anti_collapse(
-            mode,
+            mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
             X,
             collapse_masks,
             LM,

@@ -98,8 +98,8 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::abs;
 use crate::stdlib::memcpy;
+use ::libc::abs;
 
 use crate::src::botlib::be_aas_main::aasworld;
 use crate::src::botlib::be_aas_main::AAS_Time;
@@ -639,7 +639,7 @@ pub unsafe extern "C" fn AAS_ShowFace(mut facenum: libc::c_int) {
     i = 0 as libc::c_int; //end for
     while i < (*face).numedges {
         //edge number
-        edgenum = crate::stdlib::abs(
+        edgenum = ::libc::abs(
             *crate::src::botlib::be_aas_main::aasworld
                 .edgeindex
                 .offset(((*face).firstedge + i) as isize),
@@ -683,7 +683,7 @@ pub unsafe extern "C" fn AAS_ShowFace(mut facenum: libc::c_int) {
     plane = &mut *crate::src::botlib::be_aas_main::aasworld
         .planes
         .offset((*face).planenum as isize) as *mut crate::aasfile_h::aas_plane_t;
-    edgenum = crate::stdlib::abs(
+    edgenum = ::libc::abs(
         *crate::src::botlib::be_aas_main::aasworld
             .edgeindex
             .offset((*face).firstedge as isize),
@@ -754,9 +754,8 @@ pub unsafe extern "C" fn AAS_ShowFacePolygon(
             edge = &mut *crate::src::botlib::be_aas_main::aasworld
                 .edges
                 .offset(
-                    (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                        edgenum,
-                    ) as isize,
+                    (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum)
+                        as isize,
                 ) as *mut crate::aasfile_h::aas_edge_t;
             points[numpoints as usize][0 as libc::c_int as usize] =
                 (*crate::src::botlib::be_aas_main::aasworld.vertexes.offset(
@@ -784,9 +783,8 @@ pub unsafe extern "C" fn AAS_ShowFacePolygon(
             edge = &mut *crate::src::botlib::be_aas_main::aasworld
                 .edges
                 .offset(
-                    (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                        edgenum,
-                    ) as isize,
+                    (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum)
+                        as isize,
                 ) as *mut crate::aasfile_h::aas_edge_t;
             points[numpoints as usize][0 as libc::c_int as usize] =
                 (*crate::src::botlib::be_aas_main::aasworld.vertexes.offset(
@@ -852,7 +850,7 @@ pub unsafe extern "C" fn AAS_ShowArea(mut areanum: libc::c_int, mut groundfaceso
     //walk through the faces of the area
     i = 0 as libc::c_int; //end for
     while i < (*area).numfaces {
-        facenum = crate::stdlib::abs(
+        facenum = ::libc::abs(
             *crate::src::botlib::be_aas_main::aasworld
                 .faceindex
                 .offset(((*area).firstface + i) as isize),
@@ -889,7 +887,7 @@ pub unsafe extern "C" fn AAS_ShowArea(mut areanum: libc::c_int, mut groundfaceso
                 j = 0 as libc::c_int;
                 while j < (*face).numedges {
                     //edge number
-                    edgenum = crate::stdlib::abs(
+                    edgenum = ::libc::abs(
                         *crate::src::botlib::be_aas_main::aasworld
                             .edgeindex
                             .offset(((*face).firstedge + j) as isize),
@@ -1034,7 +1032,7 @@ pub unsafe extern "C" fn AAS_ShowAreaPolygons(
     //walk through the faces of the area
     i = 0 as libc::c_int;
     while i < (*area).numfaces {
-        facenum = crate::stdlib::abs(
+        facenum = ::libc::abs(
             *crate::src::botlib::be_aas_main::aasworld
                 .faceindex
                 .offset(((*area).firstface + i) as isize),
@@ -1275,7 +1273,7 @@ pub unsafe extern "C" fn AAS_ShowReachability(
         cmdmove[2 as libc::c_int as usize] =
             crate::src::botlib::be_aas_move::aassettings.phys_jumpvel;
         crate::src::botlib::be_aas_move::AAS_PredictClientMovement(
-            &mut move_0,
+            &mut move_0 as *mut _ as *mut crate::be_aas_h::aas_clientmove_s,
             -(1 as libc::c_int),
             (*reach).start.as_mut_ptr(),
             2 as libc::c_int,
@@ -1294,7 +1292,10 @@ pub unsafe extern "C" fn AAS_ShowReachability(
             crate::src::qcommon::q_shared::qtrue as libc::c_int,
         );
         if (*reach).traveltype & 0xffffff as libc::c_int == 5 as libc::c_int {
-            crate::src::botlib::be_aas_move::AAS_JumpReachRunStart(reach, dir.as_mut_ptr());
+            crate::src::botlib::be_aas_move::AAS_JumpReachRunStart(
+                reach as *mut crate::aasfile_h::aas_reachability_s,
+                dir.as_mut_ptr(),
+            );
             AAS_DrawCross(
                 dir.as_mut_ptr(),
                 4 as libc::c_int as libc::c_float,
@@ -1335,7 +1336,7 @@ pub unsafe extern "C" fn AAS_ShowReachability(
         velocity[2 as libc::c_int as usize] = zvel;
         //
         crate::src::botlib::be_aas_move::AAS_PredictClientMovement(
-            &mut move_0,
+            &mut move_0 as *mut _ as *mut crate::be_aas_h::aas_clientmove_s,
             -(1 as libc::c_int),
             (*reach).start.as_mut_ptr(),
             2 as libc::c_int,
@@ -1383,7 +1384,7 @@ pub unsafe extern "C" fn AAS_ShowReachability(
             (*reach).facenum as crate::src::qcommon::q_shared::vec_t;
         //
         crate::src::botlib::be_aas_move::AAS_PredictClientMovement(
-            &mut move_0,
+            &mut move_0 as *mut _ as *mut crate::be_aas_h::aas_clientmove_s,
             -(1 as libc::c_int),
             (*reach).start.as_mut_ptr(),
             2 as libc::c_int,
@@ -1500,7 +1501,7 @@ pub unsafe extern "C" fn AAS_FloodAreas_r(
     //walk through the faces of the area
     i = 0 as libc::c_int; //end for
     while i < (*area).numfaces {
-        facenum = crate::stdlib::abs(
+        facenum = ::libc::abs(
             *crate::src::botlib::be_aas_main::aasworld
                 .faceindex
                 .offset(((*area).firstface + i) as isize),

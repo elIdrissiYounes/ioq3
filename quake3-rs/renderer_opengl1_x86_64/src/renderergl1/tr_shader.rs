@@ -4,9 +4,9 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub mod ctype_h {
@@ -127,10 +127,7 @@ use crate::stdlib::memcmp;
 use crate::stdlib::memcpy;
 use crate::stdlib::memmove;
 use crate::stdlib::memset;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
-use crate::stdlib::strtod;
 pub use crate::stdlib::GLenum;
 pub use crate::stdlib::GLuint;
 pub use crate::tr_common_h::image_s;
@@ -315,6 +312,9 @@ pub use crate::tr_local_h::TMOD_SCROLL;
 pub use crate::tr_local_h::TMOD_STRETCH;
 pub use crate::tr_local_h::TMOD_TRANSFORM;
 pub use crate::tr_local_h::TMOD_TURBULENT;
+use ::libc::strcat;
+use ::libc::strcmp;
+use ::libc::strtod;
 
 pub use crate::src::renderergl1::tr_shader::ctype_h::tolower;
 use crate::src::sdl::sdl_glimp::qglActiveTextureARB;
@@ -622,7 +622,7 @@ unsafe extern "C" fn ParseVector(
     // FIXME: spaces are currently required after parens, should change parseext...
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if crate::stdlib::strcmp(token, b"(\x00" as *const u8 as *const libc::c_char) != 0 {
+    if ::libc::strcmp(token, b"(\x00" as *const u8 as *const libc::c_char) != 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
@@ -655,7 +655,7 @@ unsafe extern "C" fn ParseVector(
     }
     token =
         crate::src::qcommon::q_shared::COM_ParseExt(text, crate::src::qcommon::q_shared::qfalse);
-    if crate::stdlib::strcmp(token, b")\x00" as *const u8 as *const libc::c_char) != 0 {
+    if ::libc::strcmp(token, b")\x00" as *const u8 as *const libc::c_char) != 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
@@ -1569,7 +1569,8 @@ unsafe extern "C" fn ParseStage(
                     )
                 }
                 (*stage).bundle[0 as libc::c_int as usize].image[0 as libc::c_int as usize] =
-                    crate::src::renderergl1::tr_image::R_FindImageFile(token, type_0, flags);
+                    crate::src::renderergl1::tr_image::R_FindImageFile(token, type_0, flags)
+                        as *mut crate::tr_common_h::image_s;
                 if (*stage).bundle[0 as libc::c_int as usize].image[0 as libc::c_int as usize]
                     .is_null()
                 {
@@ -1621,7 +1622,8 @@ unsafe extern "C" fn ParseStage(
                 )
             }
             (*stage).bundle[0 as libc::c_int as usize].image[0 as libc::c_int as usize] =
-                crate::src::renderergl1::tr_image::R_FindImageFile(token, type_1, flags_0);
+                crate::src::renderergl1::tr_image::R_FindImageFile(token, type_1, flags_0)
+                    as *mut crate::tr_common_h::image_s;
             if (*stage).bundle[0 as libc::c_int as usize].image[0 as libc::c_int as usize].is_null()
             {
                 crate::src::renderergl1::tr_main::ri
@@ -1700,7 +1702,7 @@ unsafe extern "C" fn ParseStage(
                             token,
                             crate::tr_common_h::IMGTYPE_COLORALPHA,
                             flags_1,
-                        );
+                        ) as *mut crate::tr_common_h::image_s;
                     if (*stage).bundle[0 as libc::c_int as usize].image[num as usize].is_null() {
                         crate::src::renderergl1::tr_main::ri
                             .Printf
@@ -2618,7 +2620,7 @@ unsafe extern "C" fn ParseSkyParms(mut text: *mut *mut libc::c_char) {
         );
         return;
     }
-    if crate::stdlib::strcmp(token, b"-\x00" as *const u8 as *const libc::c_char) != 0 {
+    if ::libc::strcmp(token, b"-\x00" as *const u8 as *const libc::c_char) != 0 {
         i = 0 as libc::c_int;
         while i < 6 as libc::c_int {
             crate::src::qcommon::q_shared::Com_sprintf(
@@ -2634,7 +2636,7 @@ unsafe extern "C" fn ParseSkyParms(mut text: *mut *mut libc::c_char) {
                 (imgFlags as libc::c_uint
                     | crate::tr_common_h::IMGFLAG_CLAMPTOEDGE as libc::c_int as libc::c_uint)
                     as crate::tr_common_h::imgFlags_t,
-            );
+            ) as *mut crate::tr_common_h::image_s;
             if shader.sky.outerbox[i as usize].is_null() {
                 shader.sky.outerbox[i as usize] = crate::src::renderergl1::tr_main::tr.defaultImage
             }
@@ -2674,7 +2676,7 @@ unsafe extern "C" fn ParseSkyParms(mut text: *mut *mut libc::c_char) {
         );
         return;
     }
-    if crate::stdlib::strcmp(token, b"-\x00" as *const u8 as *const libc::c_char) != 0 {
+    if ::libc::strcmp(token, b"-\x00" as *const u8 as *const libc::c_char) != 0 {
         i = 0 as libc::c_int;
         while i < 6 as libc::c_int {
             crate::src::qcommon::q_shared::Com_sprintf(
@@ -2688,7 +2690,7 @@ unsafe extern "C" fn ParseSkyParms(mut text: *mut *mut libc::c_char) {
                 pathname.as_mut_ptr(),
                 crate::tr_common_h::IMGTYPE_COLORALPHA,
                 imgFlags,
-            );
+            ) as *mut crate::tr_common_h::image_s;
             if shader.sky.innerbox[i as usize].is_null() {
                 shader.sky.innerbox[i as usize] = crate::src::renderergl1::tr_main::tr.defaultImage
             }
@@ -3858,7 +3860,7 @@ unsafe extern "C" fn FixRenderCommandList(mut newShader: libc::c_int) {
                         crate::src::renderergl1::tr_main::R_DecomposeSort(
                             (*drawSurf).sort,
                             &mut entityNum,
-                            &mut shader_0,
+                            &mut shader_0 as *mut _ as *mut *mut crate::tr_local_h::shader_s,
                             &mut fogNum,
                             &mut dlightMap,
                         );
@@ -4627,7 +4629,7 @@ pub unsafe extern "C" fn R_FindShader(
         name,
         crate::tr_common_h::IMGTYPE_COLORALPHA,
         flags,
-    );
+    ) as *mut crate::tr_common_h::image_s;
     if image.is_null() {
         crate::src::renderergl1::tr_main::ri
             .Printf
@@ -9463,8 +9465,8 @@ unsafe extern "C" fn ScanAndLoadShaderFiles() {
     i = numShaderFiles - 1 as libc::c_int;
     while i >= 0 as libc::c_int {
         if !buffers[i as usize].is_null() {
-            crate::stdlib::strcat(textEnd, buffers[i as usize]);
-            crate::stdlib::strcat(textEnd, b"\n\x00" as *const u8 as *const libc::c_char);
+            ::libc::strcat(textEnd, buffers[i as usize]);
+            ::libc::strcat(textEnd, b"\n\x00" as *const u8 as *const libc::c_char);
             textEnd = textEnd.offset(crate::stdlib::strlen(textEnd) as isize);
             crate::src::renderergl1::tr_main::ri
                 .FS_FreeFile

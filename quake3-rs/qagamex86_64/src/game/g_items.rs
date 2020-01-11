@@ -258,7 +258,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
 use crate::stdlib::memset;
-use crate::stdlib::rand;
+use ::libc::rand;
 //======================================================================
 #[no_mangle]
 
@@ -352,7 +352,8 @@ pub unsafe extern "C" fn Pickup_Powerup(
                             {
                                 // if not line of sight, no sound
                                 crate::src::game::g_syscalls::trap_Trace(
-                                    &mut tr,
+                                    &mut tr as *mut _
+                                        as *mut crate::src::qcommon::q_shared::trace_t,
                                     (*client).ps.origin.as_mut_ptr()
                                         as *const crate::src::qcommon::q_shared::vec_t,
                                     0 as *const crate::src::qcommon::q_shared::vec_t,
@@ -552,7 +553,7 @@ pub unsafe extern "C" fn RespawnItem(mut ent: *mut crate::g_local_h::gentity_t) 
             ent = (*ent).teamchain;
             count += 1
         }
-        choice = crate::stdlib::rand() % count;
+        choice = ::libc::rand() % count;
         count = 0 as libc::c_int;
         ent = master;
         while !ent.is_null() && count < choice {
@@ -566,7 +567,7 @@ pub unsafe extern "C" fn RespawnItem(mut ent: *mut crate::g_local_h::gentity_t) 
     (*ent).r.contents = 0x40000000 as libc::c_int;
     (*ent).s.eFlags &= !(0x80 as libc::c_int);
     (*ent).r.svFlags &= !(0x1 as libc::c_int);
-    crate::src::game::g_syscalls::trap_LinkEntity(ent);
+    crate::src::game::g_syscalls::trap_LinkEntity(ent as *mut crate::g_local_h::gentity_s);
     if (*(*ent).item).giType as libc::c_uint
         == crate::bg_public_h::IT_POWERUP as libc::c_int as libc::c_uint
     {
@@ -577,12 +578,12 @@ pub unsafe extern "C" fn RespawnItem(mut ent: *mut crate::g_local_h::gentity_t) 
             te = crate::src::game::g_utils::G_TempEntity(
                 (*ent).s.pos.trBase.as_mut_ptr(),
                 crate::bg_public_h::EV_GENERAL_SOUND as libc::c_int,
-            )
+            ) as *mut crate::g_local_h::gentity_s
         } else {
             te = crate::src::game::g_utils::G_TempEntity(
                 (*ent).s.pos.trBase.as_mut_ptr(),
                 crate::bg_public_h::EV_GLOBAL_SOUND as libc::c_int,
-            )
+            ) as *mut crate::g_local_h::gentity_s
         }
         (*te).s.eventParm = crate::src::game::g_utils::G_SoundIndex(
             b"sound/items/poweruprespawn.wav\x00" as *const u8 as *const libc::c_char
@@ -601,12 +602,12 @@ pub unsafe extern "C" fn RespawnItem(mut ent: *mut crate::g_local_h::gentity_t) 
             te_0 = crate::src::game::g_utils::G_TempEntity(
                 (*ent).s.pos.trBase.as_mut_ptr(),
                 crate::bg_public_h::EV_GENERAL_SOUND as libc::c_int,
-            )
+            ) as *mut crate::g_local_h::gentity_s
         } else {
             te_0 = crate::src::game::g_utils::G_TempEntity(
                 (*ent).s.pos.trBase.as_mut_ptr(),
                 crate::bg_public_h::EV_GLOBAL_SOUND as libc::c_int,
-            )
+            ) as *mut crate::g_local_h::gentity_s
         }
         (*te_0).s.eventParm = crate::src::game::g_utils::G_SoundIndex(
             b"sound/items/kamikazerespawn.wav\x00" as *const u8 as *const libc::c_char
@@ -616,7 +617,7 @@ pub unsafe extern "C" fn RespawnItem(mut ent: *mut crate::g_local_h::gentity_t) 
     }
     // play the normal respawn sound only to nearby clients
     crate::src::game::g_utils::G_AddEvent(
-        ent,
+        ent as *mut crate::g_local_h::gentity_s,
         crate::bg_public_h::EV_ITEM_RESPAWN as libc::c_int,
         0 as libc::c_int,
     );
@@ -646,8 +647,8 @@ pub unsafe extern "C" fn Touch_Item(
     // the same pickup rules are used for client side and server side
     if crate::src::game::bg_misc::BG_CanItemBeGrabbed(
         crate::src::game::g_main::g_gametype.integer,
-        &mut (*ent).s,
-        &mut (*(*other).client).ps,
+        &mut (*ent).s as *mut _ as *const crate::src::qcommon::q_shared::entityState_s,
+        &mut (*(*other).client).ps as *mut _ as *const crate::src::qcommon::q_shared::playerState_s,
     ) as u64
         == 0
     {
@@ -669,7 +670,12 @@ pub unsafe extern "C" fn Touch_Item(
             respawn = Pickup_Powerup(ent, other);
             predict = crate::src::qcommon::q_shared::qfalse
         }
-        8 => respawn = crate::src::game::g_team::Pickup_Team(ent, other),
+        8 => {
+            respawn = crate::src::game::g_team::Pickup_Team(
+                ent as *mut crate::g_local_h::gentity_s,
+                other as *mut crate::g_local_h::gentity_s,
+            )
+        }
         6 => respawn = Pickup_Holdable(ent, other),
         _ => return,
     }
@@ -679,13 +685,13 @@ pub unsafe extern "C" fn Touch_Item(
     // play the normal pickup sound
     if predict as u64 != 0 {
         crate::src::game::g_utils::G_AddPredictableEvent(
-            other,
+            other as *mut crate::g_local_h::gentity_s,
             crate::bg_public_h::EV_ITEM_PICKUP as libc::c_int,
             (*ent).s.modelindex,
         );
     } else {
         crate::src::game::g_utils::G_AddEvent(
-            other,
+            other as *mut crate::g_local_h::gentity_s,
             crate::bg_public_h::EV_ITEM_PICKUP as libc::c_int,
             (*ent).s.modelindex,
         );
@@ -702,7 +708,7 @@ pub unsafe extern "C" fn Touch_Item(
             te = crate::src::game::g_utils::G_TempEntity(
                 (*ent).s.pos.trBase.as_mut_ptr(),
                 crate::bg_public_h::EV_GLOBAL_ITEM_PICKUP as libc::c_int,
-            );
+            ) as *mut crate::g_local_h::gentity_s;
             (*te).s.eventParm = (*ent).s.modelindex;
             (*te).r.svFlags |= 0x20 as libc::c_int
         } else {
@@ -710,7 +716,7 @@ pub unsafe extern "C" fn Touch_Item(
             te_0 = crate::src::game::g_utils::G_TempEntity(
                 (*ent).s.pos.trBase.as_mut_ptr(),
                 crate::bg_public_h::EV_GLOBAL_ITEM_PICKUP as libc::c_int,
-            );
+            ) as *mut crate::g_local_h::gentity_s;
             (*te_0).s.eventParm = (*ent).s.modelindex;
             // only send this temp entity to a single client
             (*te_0).r.svFlags |= 0x100 as libc::c_int;
@@ -718,7 +724,10 @@ pub unsafe extern "C" fn Touch_Item(
         }
     }
     // fire item targets
-    crate::src::game::g_utils::G_UseTargets(ent, other);
+    crate::src::game::g_utils::G_UseTargets(
+        ent as *mut crate::g_local_h::gentity_s,
+        other as *mut crate::g_local_h::gentity_s,
+    );
     // wait of -1 will not respawn
     if (*ent).wait == -(1 as libc::c_int) as libc::c_float {
         (*ent).r.svFlags |= 0x1 as libc::c_int;
@@ -735,7 +744,7 @@ pub unsafe extern "C" fn Touch_Item(
     if (*ent).random != 0. {
         respawn = (respawn as libc::c_double
             + 2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                     - 0.5f64)
                 * (*ent).random as libc::c_double) as libc::c_int;
@@ -765,7 +774,7 @@ pub unsafe extern "C" fn Touch_Item(
         (*ent).think =
             Some(RespawnItem as unsafe extern "C" fn(_: *mut crate::g_local_h::gentity_t) -> ())
     }
-    crate::src::game::g_syscalls::trap_LinkEntity(ent);
+    crate::src::game::g_syscalls::trap_LinkEntity(ent as *mut crate::g_local_h::gentity_s);
 }
 //======================================================================
 /*
@@ -783,7 +792,7 @@ pub unsafe extern "C" fn LaunchItem(
     mut velocity: *mut crate::src::qcommon::q_shared::vec_t,
 ) -> *mut crate::g_local_h::gentity_t {
     let mut dropped: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t; // store item number in modelindex
-    dropped = crate::src::game::g_utils::G_Spawn(); // This is non-zero is it's a dropped item
+    dropped = crate::src::game::g_utils::G_Spawn() as *mut crate::g_local_h::gentity_s; // This is non-zero is it's a dropped item
     (*dropped).s.eType = crate::bg_public_h::ET_ITEM as libc::c_int; // auto-remove after 30 seconds
     (*dropped).s.modelindex = item
         .wrapping_offset_from(crate::src::game::bg_misc::bg_itemlist.as_mut_ptr())
@@ -812,7 +821,7 @@ pub unsafe extern "C" fn LaunchItem(
                 _: *mut crate::src::qcommon::q_shared::trace_t,
             ) -> (),
     );
-    crate::src::game::g_utils::G_SetOrigin(dropped, origin);
+    crate::src::game::g_utils::G_SetOrigin(dropped as *mut crate::g_local_h::gentity_s, origin);
     (*dropped).s.pos.trType = crate::src::qcommon::q_shared::TR_GRAVITY;
     (*dropped).s.pos.trTime = crate::src::game::g_main::level.time;
     (*dropped).s.pos.trDelta[0 as libc::c_int as usize] =
@@ -832,7 +841,9 @@ pub unsafe extern "C" fn LaunchItem(
                 as unsafe extern "C" fn(_: *mut crate::g_local_h::gentity_t) -> (),
         );
         (*dropped).nextthink = crate::src::game::g_main::level.time + 30000 as libc::c_int;
-        crate::src::game::g_team::Team_CheckDroppedItem(dropped);
+        crate::src::game::g_team::Team_CheckDroppedItem(
+            dropped as *mut crate::g_local_h::gentity_s,
+        );
     } else {
         (*dropped).think = Some(
             crate::src::game::g_utils::G_FreeEntity
@@ -841,7 +852,7 @@ pub unsafe extern "C" fn LaunchItem(
         (*dropped).nextthink = crate::src::game::g_main::level.time + 30000 as libc::c_int
     }
     (*dropped).flags = 0x1000 as libc::c_int;
-    crate::src::game::g_syscalls::trap_LinkEntity(dropped);
+    crate::src::game::g_syscalls::trap_LinkEntity(dropped as *mut crate::g_local_h::gentity_s);
     return dropped;
 }
 /*
@@ -880,7 +891,7 @@ pub unsafe extern "C" fn Drop_Item(
     velocity[2 as libc::c_int as usize] = (velocity[2 as libc::c_int as usize] as libc::c_double
         + (200 as libc::c_int as libc::c_double
             + 2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float)
                     as libc::c_double
                     - 0.5f64)
@@ -975,7 +986,10 @@ pub unsafe extern "C" fn FinishSpawningItem(mut ent: *mut crate::g_local_h::gent
     );
     if (*ent).spawnflags & 1 as libc::c_int != 0 {
         // suspended
-        crate::src::game::g_utils::G_SetOrigin(ent, (*ent).s.origin.as_mut_ptr());
+        crate::src::game::g_utils::G_SetOrigin(
+            ent as *mut crate::g_local_h::gentity_s,
+            (*ent).s.origin.as_mut_ptr(),
+        );
     } else {
         // drop to floor
         dest[0 as libc::c_int as usize] = (*ent).s.origin[0 as libc::c_int as usize];
@@ -983,7 +997,7 @@ pub unsafe extern "C" fn FinishSpawningItem(mut ent: *mut crate::g_local_h::gent
         dest[2 as libc::c_int as usize] =
             (*ent).s.origin[2 as libc::c_int as usize] - 4096 as libc::c_int as libc::c_float;
         crate::src::game::g_syscalls::trap_Trace(
-            &mut tr,
+            &mut tr as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
             (*ent).s.origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             (*ent).r.mins.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             (*ent).r.maxs.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -1000,12 +1014,15 @@ pub unsafe extern "C" fn FinishSpawningItem(mut ent: *mut crate::g_local_h::gent
                     (*ent).s.origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t
                 ),
             );
-            crate::src::game::g_utils::G_FreeEntity(ent);
+            crate::src::game::g_utils::G_FreeEntity(ent as *mut crate::g_local_h::gentity_s);
             return;
         }
         // allow to ride movers
         (*ent).s.groundEntityNum = tr.entityNum;
-        crate::src::game::g_utils::G_SetOrigin(ent, tr.endpos.as_mut_ptr());
+        crate::src::game::g_utils::G_SetOrigin(
+            ent as *mut crate::g_local_h::gentity_s,
+            tr.endpos.as_mut_ptr(),
+        );
     }
     // team slaves and targeted items aren't present at start
     if (*ent).flags & 0x400 as libc::c_int != 0 || !(*ent).targetname.is_null() {
@@ -1020,7 +1037,7 @@ pub unsafe extern "C" fn FinishSpawningItem(mut ent: *mut crate::g_local_h::gent
         let mut respawn: libc::c_float = 0.;
         respawn = (45 as libc::c_int as libc::c_double
             + 2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                     - 0.5f64)
                 * 15 as libc::c_int as libc::c_double) as libc::c_float;
@@ -1033,7 +1050,7 @@ pub unsafe extern "C" fn FinishSpawningItem(mut ent: *mut crate::g_local_h::gent
             Some(RespawnItem as unsafe extern "C" fn(_: *mut crate::g_local_h::gentity_t) -> ());
         return;
     }
-    crate::src::game::g_syscalls::trap_LinkEntity(ent);
+    crate::src::game::g_syscalls::trap_LinkEntity(ent as *mut crate::g_local_h::gentity_s);
 }
 #[no_mangle]
 
@@ -1054,7 +1071,7 @@ pub unsafe extern "C" fn G_CheckTeamItems() {
         // check for the two flags
         item = crate::src::game::bg_misc::BG_FindItem(
             b"Red Flag\x00" as *const u8 as *const libc::c_char,
-        );
+        ) as *mut crate::bg_public_h::gitem_s;
         if item.is_null()
             || itemRegistered[item
                 .wrapping_offset_from(crate::src::game::bg_misc::bg_itemlist.as_mut_ptr())
@@ -1067,7 +1084,7 @@ pub unsafe extern "C" fn G_CheckTeamItems() {
         }
         item = crate::src::game::bg_misc::BG_FindItem(
             b"Blue Flag\x00" as *const u8 as *const libc::c_char,
-        );
+        ) as *mut crate::bg_public_h::gitem_s;
         if item.is_null()
             || itemRegistered[item
                 .wrapping_offset_from(crate::src::game::bg_misc::bg_itemlist.as_mut_ptr())
@@ -1094,12 +1111,14 @@ pub unsafe extern "C" fn ClearRegisteredItems() {
         ::std::mem::size_of::<[crate::src::qcommon::q_shared::qboolean; 256]>() as libc::c_ulong,
     );
     // players always start with the base weapon
-    RegisterItem(crate::src::game::bg_misc::BG_FindItemForWeapon(
-        crate::bg_public_h::WP_MACHINEGUN,
-    ));
-    RegisterItem(crate::src::game::bg_misc::BG_FindItemForWeapon(
-        crate::bg_public_h::WP_GAUNTLET,
-    ));
+    RegisterItem(
+        crate::src::game::bg_misc::BG_FindItemForWeapon(crate::bg_public_h::WP_MACHINEGUN)
+            as *mut crate::bg_public_h::gitem_s,
+    );
+    RegisterItem(
+        crate::src::game::bg_misc::BG_FindItemForWeapon(crate::bg_public_h::WP_GAUNTLET)
+            as *mut crate::bg_public_h::gitem_s,
+    );
 }
 /*
 ===============
@@ -1240,7 +1259,7 @@ pub unsafe extern "C" fn G_BounceItem(
             as libc::c_float
             * (*trace).fraction) as libc::c_int;
     crate::src::game::bg_misc::BG_EvaluateTrajectoryDelta(
-        &mut (*ent).s.pos,
+        &mut (*ent).s.pos as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
         hitTime,
         velocity.as_mut_ptr(),
     );
@@ -1279,7 +1298,10 @@ pub unsafe extern "C" fn G_BounceItem(
         (*trace).endpos[2 as libc::c_int as usize] = (*trace).endpos[2 as libc::c_int as usize]
             as libc::c_int
             as crate::src::qcommon::q_shared::vec_t;
-        crate::src::game::g_utils::G_SetOrigin(ent, (*trace).endpos.as_mut_ptr());
+        crate::src::game::g_utils::G_SetOrigin(
+            ent as *mut crate::g_local_h::gentity_s,
+            (*trace).endpos.as_mut_ptr(),
+        );
         (*ent).s.groundEntityNum = (*trace).entityNum;
         return;
     }
@@ -1341,12 +1363,12 @@ pub unsafe extern "C" fn G_RunItem(mut ent: *mut crate::g_local_h::gentity_t) {
         == crate::src::qcommon::q_shared::TR_STATIONARY as libc::c_int as libc::c_uint
     {
         // check think function
-        crate::src::game::g_main::G_RunThink(ent);
+        crate::src::game::g_main::G_RunThink(ent as *mut crate::g_local_h::gentity_s);
         return;
     }
     // get current position
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*ent).s.pos,
+        &mut (*ent).s.pos as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
         crate::src::game::g_main::level.time,
         origin.as_mut_ptr(),
     );
@@ -1359,7 +1381,7 @@ pub unsafe extern "C" fn G_RunItem(mut ent: *mut crate::g_local_h::gentity_t) {
         //MASK_SOLID;
     } // FIXME: avoid this for stationary?
     crate::src::game::g_syscalls::trap_Trace(
-        &mut tr,
+        &mut tr as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         (*ent).r.currentOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         (*ent).r.mins.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         (*ent).r.maxs.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -1373,9 +1395,9 @@ pub unsafe extern "C" fn G_RunItem(mut ent: *mut crate::g_local_h::gentity_t) {
     if tr.startsolid as u64 != 0 {
         tr.fraction = 0 as libc::c_int as libc::c_float
     }
-    crate::src::game::g_syscalls::trap_LinkEntity(ent);
+    crate::src::game::g_syscalls::trap_LinkEntity(ent as *mut crate::g_local_h::gentity_s);
     // check think function
-    crate::src::game::g_main::G_RunThink(ent);
+    crate::src::game::g_main::G_RunThink(ent as *mut crate::g_local_h::gentity_s);
     if tr.fraction == 1 as libc::c_int as libc::c_float {
         return;
     }
@@ -1389,9 +1411,9 @@ pub unsafe extern "C" fn G_RunItem(mut ent: *mut crate::g_local_h::gentity_t) {
             && (*(*ent).item).giType as libc::c_uint
                 == crate::bg_public_h::IT_TEAM as libc::c_int as libc::c_uint
         {
-            crate::src::game::g_team::Team_FreeEntity(ent);
+            crate::src::game::g_team::Team_FreeEntity(ent as *mut crate::g_local_h::gentity_s);
         } else {
-            crate::src::game::g_utils::G_FreeEntity(ent);
+            crate::src::game::g_utils::G_FreeEntity(ent as *mut crate::g_local_h::gentity_s);
         }
         return;
     }

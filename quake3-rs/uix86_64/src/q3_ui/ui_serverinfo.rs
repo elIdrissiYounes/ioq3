@@ -317,7 +317,9 @@ unsafe extern "C" fn ServerInfo_MenuDraw() {
         y += 16 as libc::c_int;
         i += 1
     }
-    crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut s_serverinfo.menu);
+    crate::src::q3_ui::ui_qmenu::Menu_Draw(
+        &mut s_serverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }
 /*
 =================
@@ -328,7 +330,10 @@ ServerInfo_MenuKey
 unsafe extern "C" fn ServerInfo_MenuKey(
     mut key: libc::c_int,
 ) -> crate::src::qcommon::q_shared::sfxHandle_t {
-    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(&mut s_serverinfo.menu, key);
+    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(
+        &mut s_serverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        key,
+    );
 }
 /*
 =================
@@ -542,24 +547,26 @@ pub unsafe extern "C" fn UI_ServerInfoMenu() {
         s_serverinfo.numlines = 16 as libc::c_int
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serverinfo.menu,
+        &mut s_serverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serverinfo.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serverinfo.menu,
+        &mut s_serverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serverinfo.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serverinfo.menu,
+        &mut s_serverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serverinfo.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serverinfo.menu,
+        &mut s_serverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serverinfo.add as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_serverinfo.menu,
+        &mut s_serverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_serverinfo.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_serverinfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_serverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

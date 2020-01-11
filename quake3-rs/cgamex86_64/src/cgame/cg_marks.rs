@@ -390,7 +390,7 @@ pub unsafe extern "C" fn CG_ImpactMark(
         384 as libc::c_int,
         markPoints[0 as libc::c_int as usize].as_mut_ptr(),
         128 as libc::c_int,
-        markFragments.as_mut_ptr(),
+        markFragments.as_mut_ptr() as *mut crate::src::qcommon::q_shared::markFragment_t,
     );
     colors[0 as libc::c_int as usize] =
         (red * 255 as libc::c_int as libc::c_float) as crate::src::qcommon::q_shared::byte;
@@ -459,7 +459,7 @@ pub unsafe extern "C" fn CG_ImpactMark(
             crate::src::cgame::cg_syscalls::trap_R_AddPolyToScene(
                 markShader,
                 (*mf).numPoints,
-                verts.as_mut_ptr(),
+                verts.as_mut_ptr() as *const crate::tr_types_h::polyVert_t,
             );
         } else {
             // otherwise save it persistantly
@@ -796,7 +796,7 @@ pub unsafe extern "C" fn CG_AddMarks() {
             crate::src::cgame::cg_syscalls::trap_R_AddPolyToScene(
                 (*mp).markShader,
                 (*mp).poly.numVerts,
-                (*mp).verts.as_mut_ptr(),
+                (*mp).verts.as_mut_ptr() as *const crate::tr_types_h::polyVert_t,
             );
         }
         mp = next

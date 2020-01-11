@@ -42,11 +42,11 @@ pub mod os_support_h {
     #[inline]
 
     pub unsafe extern "C" fn opus_free(mut ptr: *mut libc::c_void) {
-        crate::stdlib::free(ptr);
+        ::libc::free(ptr);
     }
 
-    use crate::stdlib::free;
     use crate::stdlib::malloc;
+    use ::libc::free;
     /* OS_SUPPORT_H */
     /*#ifdef __GNUC__
     #pragma GCC poison printf sprintf
@@ -74,8 +74,8 @@ use crate::stdlib::memmove;
 
 pub use crate::src::opus_1_2_1::src::repacketizer::os_support_h::opus_alloc;
 pub use crate::src::opus_1_2_1::src::repacketizer::os_support_h::opus_free;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
+use ::libc::free;
 /* Copyright (c) 2011 Xiph.Org Foundation
 Written by Jean-Marc Valin */
 /*

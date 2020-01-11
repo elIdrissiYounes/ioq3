@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -211,7 +211,7 @@ use crate::stdlib::fabs;
 use crate::stdlib::memset;
 use crate::stdlib::powf;
 use crate::stdlib::sqrt;
-pub use crate::stdlib::strtol;
+pub use ::libc::strtol;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -1398,7 +1398,7 @@ pub unsafe extern "C" fn CL_ReadyToSendPacket() -> crate::src::qcommon::q_shared
     // send every frame for LAN
     if (*crate::src::client::cl_main::cl_lanForcePackets).integer != 0
         && crate::src::qcommon::net_ip::Sys_IsLANAddress(
-            crate::src::client::cl_main::clc.netchan.remoteAddress,
+            crate::src::client::cl_main::clc.netchan.remoteAddress as crate::qcommon_h::netadr_t,
         ) as libc::c_uint
             != 0
     {
@@ -1495,37 +1495,43 @@ pub unsafe extern "C" fn CL_WritePacket() {
     );
     oldcmd = &mut nullcmd;
     crate::src::qcommon::msg::MSG_Init(
-        &mut buf,
+        &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
         data.as_mut_ptr(),
         ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 16384]>() as libc::c_ulong
             as libc::c_int,
     );
-    crate::src::qcommon::msg::MSG_Bitstream(&mut buf);
+    crate::src::qcommon::msg::MSG_Bitstream(&mut buf as *mut _ as *mut crate::qcommon_h::msg_t);
     // write the current serverId so the server
     // can tell if this is from the current gameState
-    crate::src::qcommon::msg::MSG_WriteLong(&mut buf, crate::src::client::cl_main::cl.serverId);
+    crate::src::qcommon::msg::MSG_WriteLong(
+        &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
+        crate::src::client::cl_main::cl.serverId,
+    );
     // write the last message we received, which can
     // be used for delta compression, and is also used
     // to tell if we dropped a gamestate
     crate::src::qcommon::msg::MSG_WriteLong(
-        &mut buf,
+        &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
         crate::src::client::cl_main::clc.serverMessageSequence,
     );
     // write the last reliable message we received
     crate::src::qcommon::msg::MSG_WriteLong(
-        &mut buf,
+        &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
         crate::src::client::cl_main::clc.serverCommandSequence,
     );
     // write any unacknowledged clientCommands
     i = crate::src::client::cl_main::clc.reliableAcknowledge + 1 as libc::c_int;
     while i <= crate::src::client::cl_main::clc.reliableSequence {
         crate::src::qcommon::msg::MSG_WriteByte(
-            &mut buf,
+            &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
             crate::qcommon_h::clc_clientCommand as libc::c_int,
         );
-        crate::src::qcommon::msg::MSG_WriteLong(&mut buf, i);
+        crate::src::qcommon::msg::MSG_WriteLong(
+            &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
+            i,
+        );
         crate::src::qcommon::msg::MSG_WriteString(
-            &mut buf,
+            &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
             crate::src::client::cl_main::clc.reliableCommands
                 [(i & 64 as libc::c_int - 1 as libc::c_int) as usize]
                 .as_mut_ptr(),
@@ -1569,37 +1575,37 @@ pub unsafe extern "C" fn CL_WritePacket() {
                 != 0
         {
             crate::src::qcommon::msg::MSG_WriteByte(
-                &mut buf,
+                &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
                 crate::qcommon_h::clc_voipOpus as libc::c_int,
             );
             crate::src::qcommon::msg::MSG_WriteByte(
-                &mut buf,
+                &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
                 crate::src::client::cl_main::clc.voipOutgoingGeneration as libc::c_int,
             );
             crate::src::qcommon::msg::MSG_WriteLong(
-                &mut buf,
+                &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
                 crate::src::client::cl_main::clc.voipOutgoingSequence,
             );
             crate::src::qcommon::msg::MSG_WriteByte(
-                &mut buf,
+                &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
                 crate::src::client::cl_main::clc.voipOutgoingDataFrames,
             );
             crate::src::qcommon::msg::MSG_WriteData(
-                &mut buf,
+                &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
                 crate::src::client::cl_main::clc.voipTargets.as_mut_ptr() as *const libc::c_void,
                 ::std::mem::size_of::<[crate::stdlib::uint8_t; 8]>() as libc::c_ulong
                     as libc::c_int,
             );
             crate::src::qcommon::msg::MSG_WriteByte(
-                &mut buf,
+                &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
                 crate::src::client::cl_main::clc.voipFlags as libc::c_int,
             );
             crate::src::qcommon::msg::MSG_WriteShort(
-                &mut buf,
+                &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
                 crate::src::client::cl_main::clc.voipOutgoingDataSize,
             );
             crate::src::qcommon::msg::MSG_WriteData(
-                &mut buf,
+                &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
                 crate::src::client::cl_main::clc
                     .voipOutgoingData
                     .as_mut_ptr() as *const libc::c_void,
@@ -1625,57 +1631,62 @@ pub unsafe extern "C" fn CL_WritePacket() {
                 };
                 let mut fakedata: [crate::src::qcommon::q_shared::byte; 16384] = [0; 16384];
                 crate::src::qcommon::msg::MSG_Init(
-                    &mut fakemsg,
+                    &mut fakemsg as *mut _ as *mut crate::qcommon_h::msg_t,
                     fakedata.as_mut_ptr(),
                     ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 16384]>()
                         as libc::c_ulong as libc::c_int,
                 );
-                crate::src::qcommon::msg::MSG_Bitstream(&mut fakemsg);
+                crate::src::qcommon::msg::MSG_Bitstream(
+                    &mut fakemsg as *mut _ as *mut crate::qcommon_h::msg_t,
+                );
                 crate::src::qcommon::msg::MSG_WriteLong(
-                    &mut fakemsg,
+                    &mut fakemsg as *mut _ as *mut crate::qcommon_h::msg_t,
                     crate::src::client::cl_main::clc.reliableAcknowledge,
                 );
                 crate::src::qcommon::msg::MSG_WriteByte(
-                    &mut fakemsg,
+                    &mut fakemsg as *mut _ as *mut crate::qcommon_h::msg_t,
                     crate::qcommon_h::svc_voipOpus as libc::c_int,
                 );
                 crate::src::qcommon::msg::MSG_WriteShort(
-                    &mut fakemsg,
+                    &mut fakemsg as *mut _ as *mut crate::qcommon_h::msg_t,
                     crate::src::client::cl_main::clc.clientNum,
                 );
                 crate::src::qcommon::msg::MSG_WriteByte(
-                    &mut fakemsg,
+                    &mut fakemsg as *mut _ as *mut crate::qcommon_h::msg_t,
                     crate::src::client::cl_main::clc.voipOutgoingGeneration as libc::c_int,
                 );
                 crate::src::qcommon::msg::MSG_WriteLong(
-                    &mut fakemsg,
+                    &mut fakemsg as *mut _ as *mut crate::qcommon_h::msg_t,
                     crate::src::client::cl_main::clc.voipOutgoingSequence,
                 );
                 crate::src::qcommon::msg::MSG_WriteByte(
-                    &mut fakemsg,
+                    &mut fakemsg as *mut _ as *mut crate::qcommon_h::msg_t,
                     crate::src::client::cl_main::clc.voipOutgoingDataFrames,
                 );
                 crate::src::qcommon::msg::MSG_WriteShort(
-                    &mut fakemsg,
+                    &mut fakemsg as *mut _ as *mut crate::qcommon_h::msg_t,
                     crate::src::client::cl_main::clc.voipOutgoingDataSize,
                 );
                 crate::src::qcommon::msg::MSG_WriteBits(
-                    &mut fakemsg,
+                    &mut fakemsg as *mut _ as *mut crate::qcommon_h::msg_t,
                     crate::src::client::cl_main::clc.voipFlags as libc::c_int,
                     2 as libc::c_int,
                 );
                 crate::src::qcommon::msg::MSG_WriteData(
-                    &mut fakemsg,
+                    &mut fakemsg as *mut _ as *mut crate::qcommon_h::msg_t,
                     crate::src::client::cl_main::clc
                         .voipOutgoingData
                         .as_mut_ptr() as *const libc::c_void,
                     voipSize,
                 );
                 crate::src::qcommon::msg::MSG_WriteByte(
-                    &mut fakemsg,
+                    &mut fakemsg as *mut _ as *mut crate::qcommon_h::msg_t,
                     crate::qcommon_h::svc_EOF as libc::c_int,
                 );
-                crate::src::client::cl_main::CL_WriteDemoMessage(&mut fakemsg, 0 as libc::c_int);
+                crate::src::client::cl_main::CL_WriteDemoMessage(
+                    &mut fakemsg as *mut _ as *mut crate::qcommon_h::msg_t,
+                    0 as libc::c_int,
+                );
             }
             crate::src::client::cl_main::clc.voipOutgoingSequence +=
                 crate::src::client::cl_main::clc.voipOutgoingDataFrames;
@@ -1702,17 +1713,20 @@ pub unsafe extern "C" fn CL_WritePacket() {
                 != crate::src::client::cl_main::cl.snap.messageNum
         {
             crate::src::qcommon::msg::MSG_WriteByte(
-                &mut buf,
+                &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
                 crate::qcommon_h::clc_moveNoDelta as libc::c_int,
             );
         } else {
             crate::src::qcommon::msg::MSG_WriteByte(
-                &mut buf,
+                &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
                 crate::qcommon_h::clc_move as libc::c_int,
             );
         }
         // write the command count
-        crate::src::qcommon::msg::MSG_WriteByte(&mut buf, count);
+        crate::src::qcommon::msg::MSG_WriteByte(
+            &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
+            count,
+        );
         // use the checksum feed in the key
         key = crate::src::client::cl_main::clc.checksumFeed;
         // also use the message acknowledge
@@ -1736,7 +1750,12 @@ pub unsafe extern "C" fn CL_WritePacket() {
                 .as_mut_ptr()
                 .offset(j as isize)
                 as *mut crate::src::qcommon::q_shared::usercmd_t;
-            crate::src::qcommon::msg::MSG_WriteDeltaUsercmdKey(&mut buf, key, oldcmd, cmd);
+            crate::src::qcommon::msg::MSG_WriteDeltaUsercmdKey(
+                &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
+                key,
+                oldcmd as *mut crate::src::qcommon::q_shared::usercmd_s,
+                cmd as *mut crate::src::qcommon::q_shared::usercmd_s,
+            );
             oldcmd = cmd;
             i += 1
         }
@@ -1760,8 +1779,8 @@ pub unsafe extern "C" fn CL_WritePacket() {
         );
     }
     crate::src::client::cl_net_chan::CL_Netchan_Transmit(
-        &mut crate::src::client::cl_main::clc.netchan,
-        &mut buf,
+        &mut crate::src::client::cl_main::clc.netchan as *mut _ as *mut crate::qcommon_h::netchan_t,
+        &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
     );
 }
 /*
@@ -2054,12 +2073,12 @@ pub unsafe extern "C" fn CL_InitInput() {
         b"cl_nodelta\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::client::cl_main::cl_debugMove = crate::src::qcommon::cvar::Cvar_Get(
         b"cl_debugMove\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
 }
 /*
 ===========================================================================

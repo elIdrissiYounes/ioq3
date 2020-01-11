@@ -1,14 +1,5 @@
 // =============== BEGIN l_libvar_h ================
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct libvar_s {
-    pub name: *mut libc::c_char,
-    pub string: *mut libc::c_char,
-    pub flags: libc::c_int,
-    pub modified: crate::src::qcommon::q_shared::qboolean,
-    pub value: libc::c_float,
-    pub next: *mut crate::src::botlib::l_libvar::libvar_s,
-}
+
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -30,6 +21,7 @@ along with Quake III Arena source code; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
+
 /* ****************************************************************************
  * name:		l_libvar.h
  *
@@ -38,9 +30,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * $Archive: /source/code/botlib/l_libvar.h $
  *
  *****************************************************************************/
-//library variable
 
+//library variable
 pub type libvar_t = crate::src::botlib::l_libvar::libvar_s;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct libvar_s {
+    pub name: *mut libc::c_char,
+    pub string: *mut libc::c_char,
+    pub flags: libc::c_int,
+    pub modified: crate::src::qcommon::q_shared::qboolean,
+    pub value: libc::c_float,
+    pub next: *mut crate::src::botlib::l_libvar::libvar_s,
+}
 use ::libc;
 
 use crate::src::botlib::l_memory::FreeMemory;
@@ -50,8 +53,8 @@ pub use crate::src::qcommon::q_shared::qfalse;
 pub use crate::src::qcommon::q_shared::qtrue;
 pub use crate::src::qcommon::q_shared::Q_stricmp;
 use crate::stdlib::memset;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
+use ::libc::strcpy;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -147,7 +150,7 @@ pub unsafe extern "C" fn LibVarAlloc(
     (*v).name = crate::src::botlib::l_memory::GetMemory(
         crate::stdlib::strlen(var_name).wrapping_add(1 as libc::c_int as libc::c_ulong),
     ) as *mut libc::c_char;
-    crate::stdlib::strcpy((*v).name, var_name);
+    ::libc::strcpy((*v).name, var_name);
     //add the variable in the list
     (*v).next = libvarlist;
     libvarlist = v;
@@ -283,7 +286,7 @@ pub unsafe extern "C" fn LibVar(
     (*v).string = crate::src::botlib::l_memory::GetMemory(
         crate::stdlib::strlen(value).wrapping_add(1 as libc::c_int as libc::c_ulong),
     ) as *mut libc::c_char;
-    crate::stdlib::strcpy((*v).string, value);
+    ::libc::strcpy((*v).string, value);
     //the value
     (*v).value = LibVarStringValue((*v).string);
     //variable is modified
@@ -355,7 +358,7 @@ pub unsafe extern "C" fn LibVarSet(
     (*v).string = crate::src::botlib::l_memory::GetMemory(
         crate::stdlib::strlen(value).wrapping_add(1 as libc::c_int as libc::c_ulong),
     ) as *mut libc::c_char;
-    crate::stdlib::strcpy((*v).string, value);
+    ::libc::strcpy((*v).string, value);
     //the value
     (*v).value = LibVarStringValue((*v).string);
     //variable is modified

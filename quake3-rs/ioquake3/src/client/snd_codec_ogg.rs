@@ -48,7 +48,7 @@ use crate::src::qcommon::common::Z_Malloc;
 use crate::src::qcommon::files::FS_FTell;
 use crate::src::qcommon::files::FS_Read;
 use crate::src::qcommon::files::FS_Seek;
-use crate::stdlib::__errno_location;
+use ::libc::__errno_location;
 // Q3 OGG codec
 #[no_mangle]
 
@@ -107,16 +107,16 @@ pub unsafe extern "C" fn S_OGG_Callback_read(
     let mut nMembRead: crate::stddef_h::size_t = 0 as libc::c_int as crate::stddef_h::size_t;
     // check if input is valid
     if ptr.is_null() {
-        *crate::stdlib::__errno_location() = 14 as libc::c_int;
+        *::libc::__errno_location() = 14 as libc::c_int;
         return 0 as libc::c_int as crate::stddef_h::size_t;
     }
     if !(size != 0 && nmemb != 0) {
         // It's not an error, caller just wants zero bytes!
-        *crate::stdlib::__errno_location() = 0 as libc::c_int;
+        *::libc::__errno_location() = 0 as libc::c_int;
         return 0 as libc::c_int as crate::stddef_h::size_t;
     }
     if datasource.is_null() {
-        *crate::stdlib::__errno_location() = 9 as libc::c_int;
+        *::libc::__errno_location() = 9 as libc::c_int;
         return 0 as libc::c_int as crate::stddef_h::size_t;
     }
     // we use a snd_stream_t in the generic pointer to pass around
@@ -149,7 +149,7 @@ pub unsafe extern "C" fn S_OGG_Callback_seek(
     let mut retVal: libc::c_int = 0 as libc::c_int;
     // check if input is valid
     if datasource.is_null() {
-        *crate::stdlib::__errno_location() = 9 as libc::c_int;
+        *::libc::__errno_location() = 9 as libc::c_int;
         return -(1 as libc::c_int);
     }
     // snd_stream_t in the generic pointer
@@ -200,7 +200,7 @@ pub unsafe extern "C" fn S_OGG_Callback_seek(
         }
         _ => {
             // unknown whence, so we return an error
-            *crate::stdlib::__errno_location() = 22 as libc::c_int;
+            *::libc::__errno_location() = 22 as libc::c_int;
             return -(1 as libc::c_int);
         }
     }
@@ -232,7 +232,7 @@ pub unsafe extern "C" fn S_OGG_Callback_tell(mut datasource: *mut libc::c_void) 
         0 as *mut crate::src::client::snd_codec::snd_stream_t;
     // check if input is valid
     if datasource.is_null() {
-        *crate::stdlib::__errno_location() = 9 as libc::c_int;
+        *::libc::__errno_location() = 9 as libc::c_int;
         return -(1 as libc::c_int) as libc::c_long;
     }
     // snd_stream_t in the generic pointer
@@ -293,7 +293,10 @@ pub unsafe extern "C" fn S_OGG_CodecOpenStream(
         return 0 as *mut crate::src::client::snd_codec::snd_stream_t;
     }
     // Open the stream
-    stream = crate::src::client::snd_codec::S_CodecUtilOpen(filename, &mut ogg_codec);
+    stream = crate::src::client::snd_codec::S_CodecUtilOpen(
+        filename,
+        &mut ogg_codec as *mut _ as *mut crate::src::client::snd_codec::snd_codec_s,
+    ) as *mut crate::src::client::snd_codec::snd_stream_s;
     if stream.is_null() {
         return 0 as *mut crate::src::client::snd_codec::snd_stream_t;
     }
@@ -303,48 +306,74 @@ pub unsafe extern "C" fn S_OGG_CodecOpenStream(
     >() as libc::c_ulong as libc::c_int)
         as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File;
     if vf.is_null() {
-        crate::src::client::snd_codec::S_CodecUtilClose(&mut stream);
+        crate::src::client::snd_codec::S_CodecUtilClose(
+            &mut stream as *mut _ as *mut *mut crate::src::client::snd_codec::snd_stream_s,
+        );
         return 0 as *mut crate::src::client::snd_codec::snd_stream_t;
     }
     // open the codec with our callbacks and stream as the generic pointer
     if crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_open_callbacks(
         stream as *mut libc::c_void,
-        vf,
+        vf as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File,
         0 as *const libc::c_char,
         0 as libc::c_int as libc::c_long,
-        S_OGG_Callbacks,
+        S_OGG_Callbacks as crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_callbacks,
     ) != 0 as libc::c_int
     {
         crate::src::qcommon::common::Z_Free(vf as *mut libc::c_void);
-        crate::src::client::snd_codec::S_CodecUtilClose(&mut stream);
+        crate::src::client::snd_codec::S_CodecUtilClose(
+            &mut stream as *mut _ as *mut *mut crate::src::client::snd_codec::snd_stream_s,
+        );
         return 0 as *mut crate::src::client::snd_codec::snd_stream_t;
     }
     // the stream must be seekable
-    if crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_seekable(vf) == 0 {
-        crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_clear(vf);
+    if crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_seekable(
+        vf as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File,
+    ) == 0
+    {
+        crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_clear(
+            vf as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File,
+        );
         crate::src::qcommon::common::Z_Free(vf as *mut libc::c_void);
-        crate::src::client::snd_codec::S_CodecUtilClose(&mut stream);
+        crate::src::client::snd_codec::S_CodecUtilClose(
+            &mut stream as *mut _ as *mut *mut crate::src::client::snd_codec::snd_stream_s,
+        );
         return 0 as *mut crate::src::client::snd_codec::snd_stream_t;
     }
     // we only support OGGs with one substream
-    if crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_streams(vf)
-        != 1 as libc::c_int as libc::c_long
+    if crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_streams(
+        vf as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File,
+    ) != 1 as libc::c_int as libc::c_long
     {
-        crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_clear(vf);
+        crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_clear(
+            vf as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File,
+        );
         crate::src::qcommon::common::Z_Free(vf as *mut libc::c_void);
-        crate::src::client::snd_codec::S_CodecUtilClose(&mut stream);
+        crate::src::client::snd_codec::S_CodecUtilClose(
+            &mut stream as *mut _ as *mut *mut crate::src::client::snd_codec::snd_stream_s,
+        );
         return 0 as *mut crate::src::client::snd_codec::snd_stream_t;
     }
     // get the info about channels and rate
-    OGGInfo = crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_info(vf, 0 as libc::c_int);
+    OGGInfo = crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_info(
+        vf as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File,
+        0 as libc::c_int,
+    ) as *mut crate::codec_h::vorbis_info;
     if OGGInfo.is_null() {
-        crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_clear(vf);
+        crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_clear(
+            vf as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File,
+        );
         crate::src::qcommon::common::Z_Free(vf as *mut libc::c_void);
-        crate::src::client::snd_codec::S_CodecUtilClose(&mut stream);
+        crate::src::client::snd_codec::S_CodecUtilClose(
+            &mut stream as *mut _ as *mut *mut crate::src::client::snd_codec::snd_stream_s,
+        );
         return 0 as *mut crate::src::client::snd_codec::snd_stream_t;
     }
     // get the number of sample-frames in the OGG
-    numSamples = crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_pcm_total(vf, 0 as libc::c_int);
+    numSamples = crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_pcm_total(
+        vf as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File,
+        0 as libc::c_int,
+    );
     // fill in the info-structure in the stream
     (*stream).info.rate = (*OGGInfo).rate as libc::c_int;
     (*stream).info.width = 2 as libc::c_int;
@@ -374,12 +403,15 @@ pub unsafe extern "C" fn S_OGG_CodecCloseStream(
     }
     // let the OGG codec cleanup its stuff
     crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_clear(
-        (*stream).ptr as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File,
+        (*stream).ptr as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File
+            as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File,
     );
     // free the OGG codec control struct
     crate::src::qcommon::common::Z_Free((*stream).ptr);
     // close the stream
-    crate::src::client::snd_codec::S_CodecUtilClose(&mut stream);
+    crate::src::client::snd_codec::S_CodecUtilClose(
+        &mut stream as *mut _ as *mut *mut crate::src::client::snd_codec::snd_stream_s,
+    );
 }
 /*
 =================
@@ -417,7 +449,8 @@ pub unsafe extern "C" fn S_OGG_CodecReadStream(
     while -(1 as libc::c_int) != 0 {
         // read some bytes from the OGG codec
         c = crate::src::libvorbis_1_3_6::lib::vorbisfile::ov_read(
-            (*stream).ptr as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File,
+            (*stream).ptr as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File
+                as *mut crate::src::libvorbis_1_3_6::lib::vorbisfile::OggVorbis_File,
             bufPtr,
             bytesLeft,
             IsBigEndian,

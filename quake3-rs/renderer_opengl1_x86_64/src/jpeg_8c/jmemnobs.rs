@@ -161,8 +161,8 @@ pub use crate::src::jpeg_8c::jerror::JWRN_JPEG_EOF;
 pub use crate::src::jpeg_8c::jerror::JWRN_MUST_RESYNC;
 pub use crate::src::jpeg_8c::jerror::JWRN_NOT_SEQUENTIAL;
 pub use crate::src::jpeg_8c::jerror::JWRN_TOO_MUCH_DATA;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
+use ::libc::free;
 /*
  * jmemsys.h
  *
@@ -230,7 +230,7 @@ pub unsafe extern "C" fn jpeg_free_small(
     mut object: *mut libc::c_void,
     mut sizeofobject: crate::stddef_h::size_t,
 ) {
-    crate::stdlib::free(object);
+    ::libc::free(object);
 }
 /*
  * These two functions are used to allocate and release large chunks of
@@ -261,7 +261,7 @@ pub unsafe extern "C" fn jpeg_free_large(
     mut object: *mut libc::c_void,
     mut sizeofobject: crate::stddef_h::size_t,
 ) {
-    crate::stdlib::free(object);
+    ::libc::free(object);
 }
 /*
  * The macro MAX_ALLOC_CHUNK designates the maximum number of bytes that may

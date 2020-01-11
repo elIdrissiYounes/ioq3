@@ -68,11 +68,11 @@ use crate::stdlib::fopen;
 use crate::stdlib::fprintf;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
 pub use crate::vm_local_h::vmSymbol_s;
 pub use crate::vm_local_h::vmSymbol_t;
 pub use crate::vm_local_h::vm_s;
+use ::libc::strcmp;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -191,17 +191,19 @@ pub unsafe extern "C" fn VM_Init() {
         b"vm_cgame\x00" as *const u8 as *const libc::c_char,
         b"2\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    ); // !@# SHIP WITH SET TO 2
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; // !@# SHIP WITH SET TO 2
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"vm_game\x00" as *const u8 as *const libc::c_char,
         b"2\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    ); // !@# SHIP WITH SET TO 2
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; // !@# SHIP WITH SET TO 2
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"vm_ui\x00" as *const u8 as *const libc::c_char,
         b"2\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    ); // !@# SHIP WITH SET TO 2
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; // !@# SHIP WITH SET TO 2
     crate::src::qcommon::cmd::Cmd_AddCommand(
         b"vmprofile\x00" as *const u8 as *const libc::c_char,
         Some(VM_VmProfile_f as unsafe extern "C" fn() -> ()),
@@ -294,7 +296,7 @@ pub unsafe extern "C" fn VM_SymbolToValue(
     let mut sym: *mut crate::vm_local_h::vmSymbol_t = 0 as *mut crate::vm_local_h::vmSymbol_t;
     sym = (*vm).symbols;
     while !sym.is_null() {
-        if crate::stdlib::strcmp(symbol, (*sym).symName.as_mut_ptr()) == 0 {
+        if ::libc::strcmp(symbol, (*sym).symName.as_mut_ptr()) == 0 {
             return (*sym).symValue;
         }
         sym = (*sym).next
@@ -906,11 +908,17 @@ pub unsafe extern "C" fn VM_Create(
     (*vm).compiled = crate::src::qcommon::q_shared::qfalse;
     if interpret as libc::c_uint != crate::qcommon_h::VMI_BYTECODE as libc::c_int as libc::c_uint {
         (*vm).compiled = crate::src::qcommon::q_shared::qtrue;
-        crate::src::qcommon::vm_x86::VM_Compile(vm, header);
+        crate::src::qcommon::vm_x86::VM_Compile(
+            vm as *mut crate::vm_local_h::vm_s,
+            header as *mut crate::qfiles_h::vmHeader_t,
+        );
     }
     // VM_Compile may have reset vm->compiled if compilation failed
     if (*vm).compiled as u64 == 0 {
-        crate::src::qcommon::vm_interpreted::VM_PrepareInterpreter(vm, header);
+        crate::src::qcommon::vm_interpreted::VM_PrepareInterpreter(
+            vm as *mut crate::vm_local_h::vm_s,
+            header as *mut crate::qfiles_h::vmHeader_t,
+        );
     }
     // free the original file
     crate::src::qcommon::files::FS_FreeFile(header as *mut libc::c_void);
@@ -1238,11 +1246,15 @@ pub unsafe extern "C" fn VM_Call(
             i += 1
         }
         if (*vm).compiled as u64 != 0 {
-            r = crate::src::qcommon::vm_x86::VM_CallCompiled(vm, &mut a.callnum)
-                as crate::stdlib::intptr_t
+            r = crate::src::qcommon::vm_x86::VM_CallCompiled(
+                vm as *mut crate::vm_local_h::vm_s,
+                &mut a.callnum,
+            ) as crate::stdlib::intptr_t
         } else {
-            r = crate::src::qcommon::vm_interpreted::VM_CallInterpreted(vm, &mut a.callnum)
-                as crate::stdlib::intptr_t
+            r = crate::src::qcommon::vm_interpreted::VM_CallInterpreted(
+                vm as *mut crate::vm_local_h::vm_s,
+                &mut a.callnum,
+            ) as crate::stdlib::intptr_t
         }
     }
     (*vm).callLevel -= 1;

@@ -214,9 +214,9 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub use crate::qfiles_h::dshader_t;
@@ -266,7 +266,6 @@ pub use crate::src::sdl::sdl_glimp::qglPushMatrix;
 pub use crate::src::sdl::sdl_glimp::qglReadPixels;
 use crate::stdlib::memset;
 use crate::stdlib::sqrt;
-use crate::stdlib::strtod;
 pub use crate::stdlib::GLdouble;
 pub use crate::stdlib::GLenum;
 pub use crate::stdlib::GLint;
@@ -444,6 +443,7 @@ pub use crate::tr_types_h::RT_SPRITE;
 pub use crate::tr_types_h::STEREO_CENTER;
 pub use crate::tr_types_h::STEREO_LEFT;
 pub use crate::tr_types_h::STEREO_RIGHT;
+use ::libc::strtod;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -668,7 +668,8 @@ pub unsafe extern "C" fn RB_AddFlare(
     }
     crate::src::renderergl1::tr_main::R_TransformClipToWindow(
         clip.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-        &mut crate::src::renderergl1::tr_backend::backEnd.viewParms,
+        &mut crate::src::renderergl1::tr_backend::backEnd.viewParms as *mut _
+            as *const crate::tr_local_h::viewParms_t,
         normalized.as_mut_ptr(),
         window.as_mut_ptr(),
     );
@@ -994,7 +995,7 @@ pub unsafe extern "C" fn RB_RenderFlare(mut f: *mut flare_t) {
         * fogFactors[2 as libc::c_int as usize] as libc::c_int as libc::c_float)
         as libc::c_int;
     crate::src::renderergl1::tr_shade::RB_BeginSurface(
-        crate::src::renderergl1::tr_main::tr.flareShader,
+        crate::src::renderergl1::tr_main::tr.flareShader as *mut crate::tr_local_h::shader_s,
         (*f).fogNum,
     );
     // FIXME: use quadstamp?

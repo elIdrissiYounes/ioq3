@@ -37,12 +37,12 @@ pub use crate::highlevel_h::highlevel_byblocktype;
 pub use crate::highlevel_h::highlevel_encode_setup;
 use crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc;
 use crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog;
-use crate::stdlib::abs;
 use crate::stdlib::calloc;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
+use ::libc::abs;
+use ::libc::free;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -70,7 +70,7 @@ pub unsafe extern "C" fn res0_free_info(mut i: *mut libc::c_void) {
             0 as libc::c_int,
             ::std::mem::size_of::<crate::backends_h::vorbis_info_residue0>() as libc::c_ulong,
         );
-        crate::stdlib::free(info as *mut libc::c_void);
+        ::libc::free(info as *mut libc::c_void);
     };
 }
 #[no_mangle]
@@ -104,24 +104,24 @@ pub unsafe extern "C" fn res0_free_look(mut i: *mut libc::c_void) {
                               code with a partitioned book */
         while j < (*look).parts {
             if !(*(*look).partbooks.offset(j as isize)).is_null() {
-                crate::stdlib::free(*(*look).partbooks.offset(j as isize) as *mut libc::c_void);
+                ::libc::free(*(*look).partbooks.offset(j as isize) as *mut libc::c_void);
                 /* possible partition choices */
             } /* group huffman book */
             j += 1
         }
-        crate::stdlib::free((*look).partbooks as *mut libc::c_void);
+        ::libc::free((*look).partbooks as *mut libc::c_void);
         j = 0 as libc::c_int;
         while j < (*look).partvals {
-            crate::stdlib::free(*(*look).decodemap.offset(j as isize) as *mut libc::c_void);
+            ::libc::free(*(*look).decodemap.offset(j as isize) as *mut libc::c_void);
             j += 1
         }
-        crate::stdlib::free((*look).decodemap as *mut libc::c_void);
+        ::libc::free((*look).decodemap as *mut libc::c_void);
         crate::stdlib::memset(
             look as *mut libc::c_void,
             0 as libc::c_int,
             ::std::mem::size_of::<vorbis_look_residue0>() as libc::c_ulong,
         );
-        crate::stdlib::free(look as *mut libc::c_void);
+        ::libc::free(look as *mut libc::c_void);
     };
 }
 
@@ -145,27 +145,27 @@ pub unsafe extern "C" fn res0_pack(
     let mut j: libc::c_int = 0;
     let mut acc: libc::c_int = 0 as libc::c_int;
     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-        opb,
+        opb as *mut crate::ogg_h::oggpack_buffer,
         (*info).begin as libc::c_ulong,
         24 as libc::c_int,
     );
     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-        opb,
+        opb as *mut crate::ogg_h::oggpack_buffer,
         (*info).end as libc::c_ulong,
         24 as libc::c_int,
     );
     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-        opb,
+        opb as *mut crate::ogg_h::oggpack_buffer,
         ((*info).grouping - 1 as libc::c_int) as libc::c_ulong,
         24 as libc::c_int,
     );
     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-        opb,
+        opb as *mut crate::ogg_h::oggpack_buffer,
         ((*info).partitions - 1 as libc::c_int) as libc::c_ulong,
         6 as libc::c_int,
     );
     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-        opb,
+        opb as *mut crate::ogg_h::oggpack_buffer,
         (*info).groupbook as libc::c_ulong,
         8 as libc::c_int,
     );
@@ -180,23 +180,23 @@ pub unsafe extern "C" fn res0_pack(
         {
             /* yes, this is a minor hack due to not thinking ahead */
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 (*info).secondstages[j as usize] as libc::c_ulong,
                 3 as libc::c_int,
             );
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 1 as libc::c_int as libc::c_ulong,
                 1 as libc::c_int,
             );
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 ((*info).secondstages[j as usize] >> 3 as libc::c_int) as libc::c_ulong,
                 5 as libc::c_int,
             );
         } else {
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 (*info).secondstages[j as usize] as libc::c_ulong,
                 4 as libc::c_int,
             );
@@ -207,7 +207,7 @@ pub unsafe extern "C" fn res0_pack(
     j = 0 as libc::c_int;
     while j < acc {
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             (*info).booklist[j as usize] as libc::c_ulong,
             8 as libc::c_int,
         );
@@ -231,16 +231,26 @@ pub unsafe extern "C" fn res0_unpack(
         as *mut crate::backends_h::vorbis_info_residue0;
     let mut ci: *mut crate::codec_internal_h::codec_setup_info =
         (*vi).codec_setup as *mut crate::codec_internal_h::codec_setup_info;
-    (*info).begin = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 24 as libc::c_int);
-    (*info).end = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 24 as libc::c_int);
-    (*info).grouping =
-        (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 24 as libc::c_int)
-            + 1 as libc::c_int as libc::c_long) as libc::c_int;
-    (*info).partitions =
-        (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 6 as libc::c_int)
-            + 1 as libc::c_int as libc::c_long) as libc::c_int;
-    (*info).groupbook =
-        crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 8 as libc::c_int) as libc::c_int;
+    (*info).begin = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        24 as libc::c_int,
+    );
+    (*info).end = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        24 as libc::c_int,
+    );
+    (*info).grouping = (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        24 as libc::c_int,
+    ) + 1 as libc::c_int as libc::c_long) as libc::c_int;
+    (*info).partitions = (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        6 as libc::c_int,
+    ) + 1 as libc::c_int as libc::c_long) as libc::c_int;
+    (*info).groupbook = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        8 as libc::c_int,
+    ) as libc::c_int;
     /* check for premature EOP */
     if !((*info).groupbook < 0 as libc::c_int) {
         j = 0 as libc::c_int;
@@ -249,20 +259,23 @@ pub unsafe extern "C" fn res0_unpack(
                 current_block = 5689001924483802034;
                 break;
             }
-            let mut cascade: libc::c_int =
-                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 3 as libc::c_int)
-                    as libc::c_int;
-            let mut cflag: libc::c_int =
-                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 1 as libc::c_int)
-                    as libc::c_int;
+            let mut cascade: libc::c_int = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+                opb as *mut crate::ogg_h::oggpack_buffer,
+                3 as libc::c_int,
+            ) as libc::c_int;
+            let mut cflag: libc::c_int = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+                opb as *mut crate::ogg_h::oggpack_buffer,
+                1 as libc::c_int,
+            ) as libc::c_int;
             if cflag < 0 as libc::c_int {
                 current_block = 3462665044408642796;
                 break;
             }
             if cflag != 0 {
-                let mut c: libc::c_int =
-                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 5 as libc::c_int)
-                        as libc::c_int;
+                let mut c: libc::c_int = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+                    opb as *mut crate::ogg_h::oggpack_buffer,
+                    5 as libc::c_int,
+                ) as libc::c_int;
                 if c < 0 as libc::c_int {
                     current_block = 3462665044408642796;
                     break;
@@ -282,9 +295,10 @@ pub unsafe extern "C" fn res0_unpack(
                         current_block = 5634871135123216486;
                         break;
                     }
-                    let mut book: libc::c_int =
-                        crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 8 as libc::c_int)
-                            as libc::c_int;
+                    let mut book: libc::c_int = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+                        opb as *mut crate::ogg_h::oggpack_buffer,
+                        8 as libc::c_int,
+                    ) as libc::c_int;
                     if book < 0 as libc::c_int {
                         current_block = 3462665044408642796;
                         break;
@@ -605,7 +619,11 @@ unsafe extern "C" fn _encodepart(
     i = 0 as libc::c_int;
     while i < step {
         let mut entry: libc::c_int = local_book_besterror(book, vec.offset((i * dim) as isize));
-        bits += crate::src::libvorbis_1_3_6::lib::codebook::vorbis_book_encode(book, entry, opb);
+        bits += crate::src::libvorbis_1_3_6::lib::codebook::vorbis_book_encode(
+            book as *mut crate::src::libvorbis_1_3_6::lib::codebook::codebook,
+            entry,
+            opb as *mut crate::ogg_h::oggpack_buffer,
+        );
         i += 1
     }
     return bits;
@@ -629,7 +647,7 @@ unsafe extern "C" fn _01class(
     let mut partvals: libc::c_int = n / samples_per_partition;
     let mut partword: *mut *mut libc::c_long =
         crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-            vb,
+            vb as *mut crate::codec_h::vorbis_block,
             (ch as libc::c_ulong)
                 .wrapping_mul(::std::mem::size_of::<*mut libc::c_long>() as libc::c_ulong)
                 as libc::c_long,
@@ -643,7 +661,7 @@ unsafe extern "C" fn _01class(
     while i < ch as libc::c_long {
         let ref mut fresh6 = *partword.offset(i as isize);
         *fresh6 = crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-            vb,
+            vb as *mut crate::codec_h::vorbis_block,
             ((n / samples_per_partition) as libc::c_ulong)
                 .wrapping_mul(::std::mem::size_of::<libc::c_long>() as libc::c_ulong)
                 as libc::c_long,
@@ -666,15 +684,15 @@ unsafe extern "C" fn _01class(
             let mut ent: libc::c_int = 0 as libc::c_int;
             k = 0 as libc::c_int as libc::c_long;
             while k < samples_per_partition as libc::c_long {
-                if crate::stdlib::abs(
+                if ::libc::abs(
                     *(*in_0.offset(j as isize)).offset((offset as libc::c_long + k) as isize),
                 ) > max
                 {
-                    max = crate::stdlib::abs(
+                    max = ::libc::abs(
                         *(*in_0.offset(j as isize)).offset((offset as libc::c_long + k) as isize),
                     )
                 }
-                ent += crate::stdlib::abs(
+                ent += ::libc::abs(
                     *(*in_0.offset(j as isize)).offset((offset as libc::c_long + k) as isize),
                 );
                 k += 1
@@ -721,12 +739,12 @@ unsafe extern "C" fn _2class(
     let mut partvals: libc::c_int = n / samples_per_partition;
     let mut partword: *mut *mut libc::c_long =
         crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-            vb,
+            vb as *mut crate::codec_h::vorbis_block,
             ::std::mem::size_of::<*mut libc::c_long>() as libc::c_ulong as libc::c_long,
         ) as *mut *mut libc::c_long;
     let ref mut fresh7 = *partword.offset(0 as libc::c_int as isize);
     *fresh7 = crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-        vb,
+        vb as *mut crate::codec_h::vorbis_block,
         (partvals as libc::c_ulong)
             .wrapping_mul(::std::mem::size_of::<libc::c_long>() as libc::c_ulong)
             as libc::c_long,
@@ -744,17 +762,13 @@ unsafe extern "C" fn _2class(
         let mut angmax: libc::c_int = 0 as libc::c_int;
         j = 0 as libc::c_int as libc::c_long;
         while j < samples_per_partition as libc::c_long {
-            if crate::stdlib::abs(*(*in_0.offset(0 as libc::c_int as isize)).offset(l as isize))
-                > magmax
-            {
-                magmax = crate::stdlib::abs(
-                    *(*in_0.offset(0 as libc::c_int as isize)).offset(l as isize),
-                )
+            if ::libc::abs(*(*in_0.offset(0 as libc::c_int as isize)).offset(l as isize)) > magmax {
+                magmax = ::libc::abs(*(*in_0.offset(0 as libc::c_int as isize)).offset(l as isize))
             }
             k = 1 as libc::c_int as libc::c_long;
             while k < ch as libc::c_long {
-                if crate::stdlib::abs(*(*in_0.offset(k as isize)).offset(l as isize)) > angmax {
-                    angmax = crate::stdlib::abs(*(*in_0.offset(k as isize)).offset(l as isize))
+                if ::libc::abs(*(*in_0.offset(k as isize)).offset(l as isize)) > angmax {
+                    angmax = ::libc::abs(*(*in_0.offset(k as isize)).offset(l as isize))
                 }
                 k += 1
             }
@@ -841,9 +855,10 @@ unsafe extern "C" fn _01forward(
                     if val < (*(*look).phrasebook).entries {
                         (*look).phrasebits +=
                             crate::src::libvorbis_1_3_6::lib::codebook::vorbis_book_encode(
-                                (*look).phrasebook,
+                                (*look).phrasebook
+                                    as *mut crate::src::libvorbis_1_3_6::lib::codebook::codebook,
                                 val as libc::c_int,
-                                opb,
+                                opb as *mut crate::ogg_h::oggpack_buffer,
                             ) as libc::c_long
                     }
                     j += 1
@@ -948,7 +963,7 @@ unsafe extern "C" fn _01inverse(
         while j < ch as libc::c_long {
             let ref mut fresh9 = *partword.offset(j as isize);
             *fresh9 = crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-                vb,
+                vb as *mut crate::codec_h::vorbis_block,
                 (partwords as libc::c_ulong)
                     .wrapping_mul(::std::mem::size_of::<*mut libc::c_int>() as libc::c_ulong)
                     as libc::c_long,
@@ -968,8 +983,9 @@ unsafe extern "C" fn _01inverse(
                     while j < ch as libc::c_long {
                         let mut temp: libc::c_int =
                             crate::src::libvorbis_1_3_6::lib::codebook::vorbis_book_decode(
-                                (*look).phrasebook,
-                                &mut (*vb).opb,
+                                (*look).phrasebook
+                                    as *mut crate::src::libvorbis_1_3_6::lib::codebook::codebook,
+                                &mut (*vb).opb as *mut _ as *mut crate::ogg_h::oggpack_buffer,
                             ) as libc::c_int;
                         if temp == -(1 as libc::c_int) || temp >= (*info).partvals {
                             break 's_55;
@@ -1233,7 +1249,7 @@ pub unsafe extern "C" fn res2_forward(
     reshape ourselves into a single channel res1 */
     /* ugly; reallocs for each coupling pass :-( */
     let mut work: *mut libc::c_int = crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-        vb,
+        vb as *mut crate::codec_h::vorbis_block,
         ((ch as libc::c_long * n) as libc::c_ulong)
             .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
             as libc::c_long,
@@ -1306,7 +1322,7 @@ pub unsafe extern "C" fn res2_inverse(
             (partvals + partitions_per_word - 1 as libc::c_int) / partitions_per_word;
         let mut partword: *mut *mut libc::c_int =
             crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-                vb,
+                vb as *mut crate::codec_h::vorbis_block,
                 (partwords as libc::c_ulong)
                     .wrapping_mul(::std::mem::size_of::<*mut libc::c_int>() as libc::c_ulong)
                     as libc::c_long,
@@ -1330,8 +1346,9 @@ pub unsafe extern "C" fn res2_inverse(
                     /* fetch the partition word */
                     let mut temp: libc::c_int =
                         crate::src::libvorbis_1_3_6::lib::codebook::vorbis_book_decode(
-                            (*look).phrasebook,
-                            &mut (*vb).opb,
+                            (*look).phrasebook
+                                as *mut crate::src::libvorbis_1_3_6::lib::codebook::codebook,
+                            &mut (*vb).opb as *mut _ as *mut crate::ogg_h::oggpack_buffer,
                         ) as libc::c_int;
                     if temp == -(1 as libc::c_int) || temp >= (*info).partvals {
                         break 's_65;
@@ -1362,11 +1379,12 @@ pub unsafe extern "C" fn res2_inverse(
                                                                                    isize);
                         if !stagebook.is_null() {
                             if crate::src::libvorbis_1_3_6::lib::codebook::vorbis_book_decodevv_add(
-                                stagebook,
+                                stagebook
+                                    as *mut crate::src::libvorbis_1_3_6::lib::codebook::codebook,
                                 in_0,
                                 i * samples_per_partition as libc::c_long + (*info).begin,
                                 ch,
-                                &mut (*vb).opb,
+                                &mut (*vb).opb as *mut _ as *mut crate::ogg_h::oggpack_buffer,
                                 samples_per_partition,
                             ) == -(1 as libc::c_int) as libc::c_long
                             {

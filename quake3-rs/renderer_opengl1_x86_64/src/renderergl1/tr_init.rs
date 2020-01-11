@@ -138,8 +138,6 @@ pub use crate::src::sdl::sdl_glimp::GLimp_Minimize;
 pub use crate::src::sdl::sdl_glimp::GLimp_Shutdown;
 use crate::stdlib::memset;
 use crate::stdlib::sin;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 pub use crate::stdlib::GLboolean;
 pub use crate::stdlib::GLclampd;
@@ -355,6 +353,8 @@ pub use crate::tr_types_h::STEREO_RIGHT;
 pub use crate::tr_types_h::TC_NONE;
 pub use crate::tr_types_h::TC_S3TC;
 pub use crate::tr_types_h::TC_S3TC_ARB;
+use ::libc::strcmp;
+use ::libc::strcpy;
 /*
 ** R_GetModeInfo
 */
@@ -908,37 +908,37 @@ pub unsafe extern "C" fn GL_CheckErrors() {
     }
     match err {
         1280 => {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 s.as_mut_ptr(),
                 b"GL_INVALID_ENUM\x00" as *const u8 as *const libc::c_char,
             );
         }
         1281 => {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 s.as_mut_ptr(),
                 b"GL_INVALID_VALUE\x00" as *const u8 as *const libc::c_char,
             );
         }
         1282 => {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 s.as_mut_ptr(),
                 b"GL_INVALID_OPERATION\x00" as *const u8 as *const libc::c_char,
             );
         }
         1283 => {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 s.as_mut_ptr(),
                 b"GL_STACK_OVERFLOW\x00" as *const u8 as *const libc::c_char,
             );
         }
         1284 => {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 s.as_mut_ptr(),
                 b"GL_STACK_UNDERFLOW\x00" as *const u8 as *const libc::c_char,
             );
         }
         1285 => {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 s.as_mut_ptr(),
                 b"GL_OUT_OF_MEMORY\x00" as *const u8 as *const libc::c_char,
             );
@@ -1715,7 +1715,7 @@ pub unsafe extern "C" fn R_ScreenShot_f() {
     let mut checkname: [libc::c_char; 4096] = [0; 4096];
     static mut lastNumber: libc::c_int = -(1 as libc::c_int);
     let mut silent: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
-    if crate::stdlib::strcmp(
+    if ::libc::strcmp(
         crate::src::renderergl1::tr_main::ri
             .Cmd_Argv
             .expect("non-null function pointer")(1 as libc::c_int),
@@ -1725,7 +1725,7 @@ pub unsafe extern "C" fn R_ScreenShot_f() {
         R_LevelShot();
         return;
     }
-    if crate::stdlib::strcmp(
+    if ::libc::strcmp(
         crate::src::renderergl1::tr_main::ri
             .Cmd_Argv
             .expect("non-null function pointer")(1 as libc::c_int),
@@ -1806,7 +1806,7 @@ pub unsafe extern "C" fn R_ScreenShotJPEG_f() {
     let mut checkname: [libc::c_char; 4096] = [0; 4096];
     static mut lastNumber: libc::c_int = -(1 as libc::c_int);
     let mut silent: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
-    if crate::stdlib::strcmp(
+    if ::libc::strcmp(
         crate::src::renderergl1::tr_main::ri
             .Cmd_Argv
             .expect("non-null function pointer")(1 as libc::c_int),
@@ -1816,7 +1816,7 @@ pub unsafe extern "C" fn R_ScreenShotJPEG_f() {
         R_LevelShot();
         return;
     }
-    if crate::stdlib::strcmp(
+    if ::libc::strcmp(
         crate::src::renderergl1::tr_main::ri
             .Cmd_Argv
             .expect("non-null function pointer")(1 as libc::c_int),

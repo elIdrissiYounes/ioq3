@@ -63,7 +63,7 @@ pub use crate::src::qcommon::q_shared::ERR_DROP;
 pub use crate::src::qcommon::q_shared::ERR_FATAL;
 pub use crate::src::qcommon::q_shared::ERR_NEED_CD;
 pub use crate::src::qcommon::q_shared::ERR_SERVERDISCONNECT;
-use crate::stdlib::printf;
+use ::libc::printf;
 
 use crate::stdlib::fabs;
 use crate::stdlib::memcpy;
@@ -112,7 +112,7 @@ pub unsafe extern "C" fn pw(mut w: *mut crate::src::qcommon::cm_polylib::winding
     let mut i: libc::c_int = 0;
     i = 0 as libc::c_int;
     while i < (*w).numpoints {
-        crate::stdlib::printf(
+        ::libc::printf(
             b"(%5.1f, %5.1f, %5.1f)\n\x00" as *const u8 as *const libc::c_char,
             (*(*w).p.as_mut_ptr().offset(i as isize))[0 as libc::c_int as usize] as libc::c_double,
             (*(*w).p.as_mut_ptr().offset(i as isize))[1 as libc::c_int as usize] as libc::c_double,

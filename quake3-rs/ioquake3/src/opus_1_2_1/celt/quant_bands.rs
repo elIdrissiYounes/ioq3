@@ -108,8 +108,8 @@ use crate::src::opus_1_2_1::celt::entenc::ec_enc_bits;
 use crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf;
 use crate::src::opus_1_2_1::celt::laplace::ec_laplace_decode;
 use crate::src::opus_1_2_1::celt::laplace::ec_laplace_encode;
-use crate::stdlib::abs;
 use crate::stdlib::memcpy;
+use ::libc::abs;
 /* Copyright (c) 2007-2008 CSIRO
 Copyright (c) 2007-2009 Xiph.Org Foundation
 Written by Jean-Marc Valin */
@@ -620,7 +620,7 @@ unsafe extern "C" fn quant_coarse_energy_impl(
     let mut beta: crate::arch_h::opus_val16 = 0.;
     if tell + 3 as libc::c_int <= budget {
         crate::src::opus_1_2_1::celt::entenc::ec_enc_bit_logp(
-            enc,
+            enc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             intra,
             3 as libc::c_int as libc::c_uint,
         );
@@ -705,7 +705,7 @@ unsafe extern "C" fn quant_coarse_energy_impl(
                         20 as libc::c_int
                     });
                 crate::src::opus_1_2_1::celt::laplace::ec_laplace_encode(
-                    enc,
+                    enc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     &mut qi,
                     ((*prob_model.offset(pi as isize) as libc::c_int) << 7 as libc::c_int)
                         as libc::c_uint,
@@ -726,7 +726,7 @@ unsafe extern "C" fn quant_coarse_energy_impl(
                     1 as libc::c_int
                 };
                 crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                    enc,
+                    enc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     2 as libc::c_int * qi ^ -((qi < 0 as libc::c_int) as libc::c_int),
                     small_energy_icdf.as_ptr(),
                     2 as libc::c_int as libc::c_uint,
@@ -738,7 +738,7 @@ unsafe extern "C" fn quant_coarse_energy_impl(
                     qi
                 };
                 crate::src::opus_1_2_1::celt::entenc::ec_enc_bit_logp(
-                    enc,
+                    enc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     -qi,
                     1 as libc::c_int as libc::c_uint,
                 );
@@ -746,7 +746,7 @@ unsafe extern "C" fn quant_coarse_energy_impl(
                 qi = -(1 as libc::c_int)
             }
             *error.offset((i + c * (*m).nbEBands) as isize) = f - qi as libc::c_float;
-            badness += crate::stdlib::abs(qi0 - qi);
+            badness += ::libc::abs(qi0 - qi);
             q = qi as crate::arch_h::opus_val32;
             tmp = coef * oldE + prev[c as usize] + q;
             *oldEBands.offset((i + c * (*m).nbEBands) as isize) = tmp;
@@ -894,8 +894,9 @@ pub unsafe extern "C" fn quant_coarse_energy(
         let mut save_bytes: crate::opus_types_h::opus_uint32 = 0;
         let mut badness2: libc::c_int = 0;
         let mut intra_bits: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-        tell_intra = crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(enc)
-            as crate::opus_types_h::opus_int32;
+        tell_intra = crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(
+            enc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+        ) as crate::opus_types_h::opus_int32;
         enc_intra_state = *enc;
         nstart_bytes = ec_range_bytes(&mut enc_start_state);
         nintra_bytes = ec_range_bytes(&mut enc_intra_state);
@@ -943,8 +944,9 @@ pub unsafe extern "C" fn quant_coarse_energy(
         if two_pass != 0
             && (badness1 < badness2
                 || badness1 == badness2
-                    && crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(enc)
-                        as crate::opus_types_h::opus_int32
+                    && crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(
+                        enc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+                    ) as crate::opus_types_h::opus_int32
                         + intra_bias
                         > tell_intra)
         {
@@ -1057,7 +1059,7 @@ pub unsafe extern "C" fn quant_fine_energy(
                     q2 = 0 as libc::c_int
                 }
                 crate::src::opus_1_2_1::celt::entenc::ec_enc_bits(
-                    enc,
+                    enc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     q2 as crate::opus_types_h::opus_uint32,
                     *fine_quant.offset(i as isize) as libc::c_uint,
                 );
@@ -1117,7 +1119,7 @@ pub unsafe extern "C" fn quant_energy_finalise(
                         1 as libc::c_int
                     };
                     crate::src::opus_1_2_1::celt::entenc::ec_enc_bits(
-                        enc,
+                        enc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                         q2 as crate::opus_types_h::opus_uint32,
                         1 as libc::c_int as libc::c_uint,
                     );
@@ -1198,7 +1200,7 @@ pub unsafe extern "C" fn unquant_coarse_energy(
                         20 as libc::c_int
                     });
                 qi = crate::src::opus_1_2_1::celt::laplace::ec_laplace_decode(
-                    dec,
+                    dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     ((*prob_model.offset(pi as isize) as libc::c_int) << 7 as libc::c_int)
                         as libc::c_uint,
                     (*prob_model.offset((pi + 1 as libc::c_int) as isize) as libc::c_int)
@@ -1206,14 +1208,14 @@ pub unsafe extern "C" fn unquant_coarse_energy(
                 )
             } else if budget - tell >= 2 as libc::c_int {
                 qi = crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
-                    dec,
+                    dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     small_energy_icdf.as_ptr(),
                     2 as libc::c_int as libc::c_uint,
                 );
                 qi = qi >> 1 as libc::c_int ^ -(qi & 1 as libc::c_int)
             } else if budget - tell >= 1 as libc::c_int {
                 qi = -crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(
-                    dec,
+                    dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     1 as libc::c_int as libc::c_uint,
                 )
             } else {
@@ -1259,7 +1261,7 @@ pub unsafe extern "C" fn unquant_fine_energy(
                 let mut q2: libc::c_int = 0;
                 let mut offset: crate::arch_h::opus_val16 = 0.;
                 q2 = crate::src::opus_1_2_1::celt::entdec::ec_dec_bits(
-                    dec,
+                    dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     *fine_quant.offset(i as isize) as libc::c_uint,
                 ) as libc::c_int;
                 offset = (q2 as libc::c_float + 0.5f32)
@@ -1307,7 +1309,7 @@ pub unsafe extern "C" fn unquant_energy_finalise(
                     let mut q2: libc::c_int = 0;
                     let mut offset: crate::arch_h::opus_val16 = 0.;
                     q2 = crate::src::opus_1_2_1::celt::entdec::ec_dec_bits(
-                        dec,
+                        dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                         1 as libc::c_int as libc::c_uint,
                     ) as libc::c_int;
                     offset = (q2 as libc::c_float - 0.5f32)

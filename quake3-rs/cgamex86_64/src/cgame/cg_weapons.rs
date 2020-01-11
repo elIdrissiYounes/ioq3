@@ -55,7 +55,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -395,10 +395,10 @@ pub use crate::src::cgame::cg_syscalls::trap_S_RegisterSound;
 pub use crate::src::cgame::cg_syscalls::trap_S_StartSound;
 pub use crate::src::cgame::cg_weapons::stdlib_h::atoi;
 use crate::stdlib::memset;
-pub use crate::stdlib::rand;
 use crate::stdlib::sin;
 use crate::stdlib::sqrt;
-pub use crate::stdlib::strtol;
+pub use ::libc::rand;
+pub use ::libc::strtol;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -440,13 +440,14 @@ unsafe extern "C" fn CG_MachineGunEjectBrass(mut cent: *mut crate::cg_local_h::c
     if crate::src::cgame::cg_main::cg_brassTime.integer <= 0 as libc::c_int {
         return;
     }
-    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
+    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity()
+        as *mut crate::cg_local_h::localEntity_s;
     re = &mut (*le).refEntity;
     velocity[0 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (-(50 as libc::c_int) as libc::c_double
         + 40 as libc::c_int as libc::c_double
             * (2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float)
                     as libc::c_double
                     - 0.5f64)))
@@ -454,7 +455,7 @@ unsafe extern "C" fn CG_MachineGunEjectBrass(mut cent: *mut crate::cg_local_h::c
     velocity[2 as libc::c_int as usize] = (100 as libc::c_int as libc::c_double
         + 50 as libc::c_int as libc::c_double
             * (2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float)
                     as libc::c_double
                     - 0.5f64)))
@@ -464,11 +465,10 @@ unsafe extern "C" fn CG_MachineGunEjectBrass(mut cent: *mut crate::cg_local_h::c
     (*le).endTime = (((*le).startTime + crate::src::cgame::cg_main::cg_brassTime.integer)
         as libc::c_float
         + (crate::src::cgame::cg_main::cg_brassTime.integer / 4 as libc::c_int) as libc::c_float
-            * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float)) as libc::c_int;
     (*le).pos.trType = crate::src::qcommon::q_shared::TR_GRAVITY;
-    (*le).pos.trTime =
-        crate::src::cgame::cg_main::cg.time - (crate::stdlib::rand() & 15 as libc::c_int);
+    (*le).pos.trTime = crate::src::cgame::cg_main::cg.time - (::libc::rand() & 15 as libc::c_int);
     crate::src::qcommon::q_math::AnglesToAxis(
         (*cent).lerpAngles.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         v.as_mut_ptr(),
@@ -544,11 +544,11 @@ unsafe extern "C" fn CG_MachineGunEjectBrass(mut cent: *mut crate::cg_local_h::c
     (*le).angles.trType = crate::src::qcommon::q_shared::TR_LINEAR;
     (*le).angles.trTime = crate::src::cgame::cg_main::cg.time;
     (*le).angles.trBase[0 as libc::c_int as usize] =
-        (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+        (::libc::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
     (*le).angles.trBase[1 as libc::c_int as usize] =
-        (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+        (::libc::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
     (*le).angles.trBase[2 as libc::c_int as usize] =
-        (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+        (::libc::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
     (*le).angles.trDelta[0 as libc::c_int as usize] =
         2 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
     (*le).angles.trDelta[1 as libc::c_int as usize] =
@@ -580,12 +580,13 @@ unsafe extern "C" fn CG_ShotgunEjectBrass(mut cent: *mut crate::cg_local_h::cent
     i = 0 as libc::c_int;
     while i < 2 as libc::c_int {
         let mut waterScale: libc::c_float = 1.0f32;
-        le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
+        le = crate::src::cgame::cg_localents::CG_AllocLocalEntity()
+            as *mut crate::cg_local_h::localEntity_s;
         re = &mut (*le).refEntity;
         velocity[0 as libc::c_int as usize] = (60 as libc::c_int as libc::c_double
             + 60 as libc::c_int as libc::c_double
                 * (2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                         as libc::c_double
                         - 0.5f64)))
@@ -594,7 +595,7 @@ unsafe extern "C" fn CG_ShotgunEjectBrass(mut cent: *mut crate::cg_local_h::cent
             velocity[1 as libc::c_int as usize] = (40 as libc::c_int as libc::c_double
                 + 10 as libc::c_int as libc::c_double
                     * (2.0f64
-                        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                             / 0x7fff as libc::c_int as libc::c_float)
                             as libc::c_double
                             - 0.5f64)))
@@ -603,7 +604,7 @@ unsafe extern "C" fn CG_ShotgunEjectBrass(mut cent: *mut crate::cg_local_h::cent
             velocity[1 as libc::c_int as usize] = (-(40 as libc::c_int) as libc::c_double
                 + 10 as libc::c_int as libc::c_double
                     * (2.0f64
-                        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                             / 0x7fff as libc::c_int as libc::c_float)
                             as libc::c_double
                             - 0.5f64)))
@@ -612,7 +613,7 @@ unsafe extern "C" fn CG_ShotgunEjectBrass(mut cent: *mut crate::cg_local_h::cent
         velocity[2 as libc::c_int as usize] = (100 as libc::c_int as libc::c_double
             + 50 as libc::c_int as libc::c_double
                 * (2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                         as libc::c_double
                         - 0.5f64)))
@@ -623,7 +624,7 @@ unsafe extern "C" fn CG_ShotgunEjectBrass(mut cent: *mut crate::cg_local_h::cent
             + crate::src::cgame::cg_main::cg_brassTime.integer * 3 as libc::c_int)
             as libc::c_float
             + crate::src::cgame::cg_main::cg_brassTime.integer as libc::c_float
-                * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float))
             as libc::c_int;
         (*le).pos.trType = crate::src::qcommon::q_shared::TR_GRAVITY;
@@ -706,11 +707,11 @@ unsafe extern "C" fn CG_ShotgunEjectBrass(mut cent: *mut crate::cg_local_h::cent
         (*le).angles.trType = crate::src::qcommon::q_shared::TR_LINEAR;
         (*le).angles.trTime = crate::src::cgame::cg_main::cg.time;
         (*le).angles.trBase[0 as libc::c_int as usize] =
-            (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+            (::libc::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
         (*le).angles.trBase[1 as libc::c_int as usize] =
-            (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+            (::libc::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
         (*le).angles.trBase[2 as libc::c_int as usize] =
-            (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+            (::libc::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
         (*le).angles.trDelta[0 as libc::c_int as usize] =
             1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
         (*le).angles.trDelta[1 as libc::c_int as usize] =
@@ -748,7 +749,8 @@ pub unsafe extern "C" fn CG_RailTrail(
     let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
     let ref mut fresh0 = *start.offset(2 as libc::c_int as isize);
     *fresh0 -= 4 as libc::c_int as libc::c_float;
-    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
+    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity()
+        as *mut crate::cg_local_h::localEntity_s;
     re = &mut (*le).refEntity;
     (*le).leType = crate::cg_local_h::LE_FADE_RGB;
     (*le).startTime = crate::src::cgame::cg_main::cg.time;
@@ -833,7 +835,8 @@ pub unsafe extern "C" fn CG_RailTrail(
     while (i as libc::c_float) < len {
         if i != skip {
             skip = i + 5 as libc::c_int;
-            le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
+            le = crate::src::cgame::cg_localents::CG_AllocLocalEntity()
+                as *mut crate::cg_local_h::localEntity_s;
             re = &mut (*le).refEntity;
             (*le).leFlags = crate::cg_local_h::LEF_PUFF_DONT_SCALE as libc::c_int;
             (*le).leType = crate::cg_local_h::LE_MOVE_SCALE_FADE;
@@ -931,7 +934,7 @@ unsafe extern "C" fn CG_RocketTrail(
     startTime = (*ent).trailTime;
     t = step * ((startTime + step) / step);
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*es).pos,
+        &mut (*es).pos as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
         crate::src::cgame::cg_main::cg.time,
         origin.as_mut_ptr(),
     );
@@ -947,7 +950,7 @@ unsafe extern "C" fn CG_RocketTrail(
         return;
     }
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*es).pos,
+        &mut (*es).pos as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
         (*ent).trailTime,
         lastPos.as_mut_ptr(),
     );
@@ -967,7 +970,11 @@ unsafe extern "C" fn CG_RocketTrail(
         return;
     }
     while t <= (*ent).trailTime {
-        crate::src::game::bg_misc::BG_EvaluateTrajectory(&mut (*es).pos, t, lastPos.as_mut_ptr());
+        crate::src::game::bg_misc::BG_EvaluateTrajectory(
+            &mut (*es).pos as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
+            t,
+            lastPos.as_mut_ptr(),
+        );
         smoke = crate::src::cgame::cg_effects::CG_SmokePuff(
             lastPos.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             up.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -981,7 +988,7 @@ unsafe extern "C" fn CG_RocketTrail(
             0 as libc::c_int,
             0 as libc::c_int,
             crate::src::cgame::cg_main::cgs.media.smokePuffShader,
-        );
+        ) as *mut crate::cg_local_h::localEntity_s;
         // use the optimized local entity add
         (*smoke).leType = crate::cg_local_h::LE_SCALE_FADE;
         t += step
@@ -1015,16 +1022,17 @@ unsafe extern "C" fn CG_PlasmaTrail(
     }
     es = &mut (*cent).currentState;
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*es).pos,
+        &mut (*es).pos as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
         crate::src::cgame::cg_main::cg.time,
         origin.as_mut_ptr(),
     );
-    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
+    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity()
+        as *mut crate::cg_local_h::localEntity_s;
     re = &mut (*le).refEntity;
     velocity[0 as libc::c_int as usize] = (60 as libc::c_int as libc::c_double
         - 120 as libc::c_int as libc::c_double
             * (2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float)
                     as libc::c_double
                     - 0.5f64)))
@@ -1032,7 +1040,7 @@ unsafe extern "C" fn CG_PlasmaTrail(
     velocity[1 as libc::c_int as usize] = (40 as libc::c_int as libc::c_double
         - 80 as libc::c_int as libc::c_double
             * (2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float)
                     as libc::c_double
                     - 0.5f64)))
@@ -1040,7 +1048,7 @@ unsafe extern "C" fn CG_PlasmaTrail(
     velocity[2 as libc::c_int as usize] = (100 as libc::c_int as libc::c_double
         - 200 as libc::c_int as libc::c_double
             * (2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float)
                     as libc::c_double
                     - 0.5f64)))
@@ -1152,11 +1160,11 @@ unsafe extern "C" fn CG_PlasmaTrail(
     (*le).angles.trType = crate::src::qcommon::q_shared::TR_LINEAR;
     (*le).angles.trTime = crate::src::cgame::cg_main::cg.time;
     (*le).angles.trBase[0 as libc::c_int as usize] =
-        (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+        (::libc::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
     (*le).angles.trBase[1 as libc::c_int as usize] =
-        (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+        (::libc::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
     (*le).angles.trBase[2 as libc::c_int as usize] =
-        (crate::stdlib::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+        (::libc::rand() & 31 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
     (*le).angles.trDelta[0 as libc::c_int as usize] =
         1 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
     (*le).angles.trDelta[1 as libc::c_int as usize] =
@@ -1204,7 +1212,7 @@ pub unsafe extern "C" fn CG_GrappleTrail(
     };
     es = &mut (*ent).currentState;
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*es).pos,
+        &mut (*es).pos as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
         crate::src::cgame::cg_main::cg.time,
         origin.as_mut_ptr(),
     );
@@ -1260,7 +1268,9 @@ pub unsafe extern "C" fn CG_GrappleTrail(
         0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
     beam.shaderRGBA[3 as libc::c_int as usize] =
         0xff as libc::c_int as crate::src::qcommon::q_shared::byte;
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut beam);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut beam as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 ==========================
@@ -2060,7 +2070,7 @@ unsafe extern "C" fn CG_LightningBolt(
         + forward[2 as libc::c_int as usize] * 768 as libc::c_int as libc::c_float;
     // see if it hit a wall
     crate::src::cgame::cg_predict::CG_Trace(
-        &mut trace,
+        &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         muzzlePoint.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
@@ -2081,7 +2091,9 @@ unsafe extern "C" fn CG_LightningBolt(
     beam.origin[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
     beam.reType = crate::tr_types_h::RT_LIGHTNING;
     beam.customShader = crate::src::cgame::cg_main::cgs.media.lightningShader;
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut beam);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut beam as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
     // add the impact flare if it hit something
     if (trace.fraction as libc::c_double) < 1.0f64 {
         let mut angles: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
@@ -2109,16 +2121,18 @@ unsafe extern "C" fn CG_LightningBolt(
             + dir[2 as libc::c_int as usize] * -(16 as libc::c_int) as libc::c_float;
         // make a random orientation
         angles[0 as libc::c_int as usize] =
-            (crate::stdlib::rand() % 360 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+            (::libc::rand() % 360 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
         angles[1 as libc::c_int as usize] =
-            (crate::stdlib::rand() % 360 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+            (::libc::rand() % 360 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
         angles[2 as libc::c_int as usize] =
-            (crate::stdlib::rand() % 360 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
+            (::libc::rand() % 360 as libc::c_int) as crate::src::qcommon::q_shared::vec_t;
         crate::src::qcommon::q_math::AnglesToAxis(
             angles.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             beam.axis.as_mut_ptr(),
         );
-        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut beam);
+        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+            &mut beam as *mut _ as *const crate::tr_types_h::refEntity_t,
+        );
     };
 }
 
@@ -2167,16 +2181,24 @@ unsafe extern "C" fn CG_AddWeaponWithPowerups(
     // add powerup effects
     if powerups & (1 as libc::c_int) << crate::bg_public_h::PW_INVIS as libc::c_int != 0 {
         (*gun).customShader = crate::src::cgame::cg_main::cgs.media.invisShader;
-        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(gun);
+        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+            gun as *const crate::tr_types_h::refEntity_t,
+        );
     } else {
-        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(gun);
+        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+            gun as *const crate::tr_types_h::refEntity_t,
+        );
         if powerups & (1 as libc::c_int) << crate::bg_public_h::PW_BATTLESUIT as libc::c_int != 0 {
             (*gun).customShader = crate::src::cgame::cg_main::cgs.media.battleWeaponShader;
-            crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(gun);
+            crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+                gun as *const crate::tr_types_h::refEntity_t,
+            );
         }
         if powerups & (1 as libc::c_int) << crate::bg_public_h::PW_QUAD as libc::c_int != 0 {
             (*gun).customShader = crate::src::cgame::cg_main::cgs.media.quadWeaponShader;
-            crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(gun);
+            crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+                gun as *const crate::tr_types_h::refEntity_t,
+            );
         }
     };
 }
@@ -2356,7 +2378,7 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
         }
     }
     crate::src::cgame::cg_syscalls::trap_R_LerpTag(
-        &mut lerped,
+        &mut lerped as *mut _ as *mut crate::src::qcommon::q_shared::orientation_t,
         (*parent).hModel,
         (*parent).oldframe,
         (*parent).frame,
@@ -2439,8 +2461,8 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
             barrel.axis.as_mut_ptr(),
         );
         crate::src::cgame::cg_ents::CG_PositionRotatedEntityOnTag(
-            &mut barrel,
-            &mut gun,
+            &mut barrel as *mut _ as *mut crate::tr_types_h::refEntity_t,
+            &mut gun as *mut _ as *const crate::tr_types_h::refEntity_t,
             (*weapon).weaponModel,
             b"tag_barrel\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
         );
@@ -2494,7 +2516,7 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
     angles[1 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
     angles[0 as libc::c_int as usize] = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
     angles[2 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 10 as libc::c_int as libc::c_double)
@@ -2523,12 +2545,14 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
             as crate::src::qcommon::q_shared::byte
     }
     crate::src::cgame::cg_ents::CG_PositionRotatedEntityOnTag(
-        &mut flash,
-        &mut gun,
+        &mut flash as *mut _ as *mut crate::tr_types_h::refEntity_t,
+        &mut gun as *mut _ as *const crate::tr_types_h::refEntity_t,
         (*weapon).weaponModel,
         b"tag_flash\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     );
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut flash);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut flash as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
     if !ps.is_null()
         || crate::src::cgame::cg_main::cg.renderingThirdPerson as libc::c_uint != 0
         || (*cent).currentState.number
@@ -2544,7 +2568,7 @@ pub unsafe extern "C" fn CG_AddPlayerWeapon(
         {
             crate::src::cgame::cg_syscalls::trap_R_AddLightToScene(
                 flash.origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-                (300 as libc::c_int + (crate::stdlib::rand() & 31 as libc::c_int)) as libc::c_float,
+                (300 as libc::c_int + (::libc::rand() & 31 as libc::c_int)) as libc::c_float,
                 (*weapon).flashDlightColor[0 as libc::c_int as usize],
                 (*weapon).flashDlightColor[1 as libc::c_int as usize],
                 (*weapon).flashDlightColor[2 as libc::c_int as usize],
@@ -3054,7 +3078,7 @@ pub unsafe extern "C" fn CG_FireWeapon(mut cent: *mut crate::cg_local_h::centity
         c += 1
     }
     if c > 0 as libc::c_int {
-        c = crate::stdlib::rand() % c;
+        c = ::libc::rand() % c;
         if (*weap).flashSound[c as usize] != 0 {
             crate::src::cgame::cg_syscalls::trap_S_StartSound(
                 0 as *mut crate::src::qcommon::q_shared::vec_t,
@@ -3196,7 +3220,7 @@ pub unsafe extern "C" fn CG_MissileHitWall(
             mod_0 = crate::src::cgame::cg_main::cgs.media.bulletFlashModel;
             shader = crate::src::cgame::cg_main::cgs.media.bulletExplosionShader;
             mark = crate::src::cgame::cg_main::cgs.media.bulletMarkShader;
-            r = crate::stdlib::rand() & 3 as libc::c_int;
+            r = ::libc::rand() & 3 as libc::c_int;
             if r == 0 as libc::c_int {
                 sfx = crate::src::cgame::cg_main::cgs.media.sfx_ric1
             } else if r == 1 as libc::c_int {
@@ -3208,7 +3232,7 @@ pub unsafe extern "C" fn CG_MissileHitWall(
         }
         6 | _ => {
             // no explosion at LG impact, it is added with the beam
-            r = crate::stdlib::rand() & 3 as libc::c_int;
+            r = ::libc::rand() & 3 as libc::c_int;
             if r < 2 as libc::c_int {
                 sfx = crate::src::cgame::cg_main::cgs.media.sfx_lghit2
             } else if r == 2 as libc::c_int {
@@ -3234,7 +3258,7 @@ pub unsafe extern "C" fn CG_MissileHitWall(
     if mod_0 != 0 {
         le = crate::src::cgame::cg_effects::CG_MakeExplosion(
             origin, dir, mod_0, shader, duration, isSprite,
-        );
+        ) as *mut crate::cg_local_h::localEntity_s;
         (*le).light = light;
         (*le).lightColor[0 as libc::c_int as usize] = lightColor[0 as libc::c_int as usize];
         (*le).lightColor[1 as libc::c_int as usize] = lightColor[1 as libc::c_int as usize];
@@ -3278,7 +3302,7 @@ pub unsafe extern "C" fn CG_MissileHitWall(
             mark,
             origin as *const crate::src::qcommon::q_shared::vec_t,
             dir as *const crate::src::qcommon::q_shared::vec_t,
-            (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float
                 * 360 as libc::c_int as libc::c_float,
             *color.offset(0 as libc::c_int as isize),
@@ -3294,7 +3318,7 @@ pub unsafe extern "C" fn CG_MissileHitWall(
             mark,
             origin as *const crate::src::qcommon::q_shared::vec_t,
             dir as *const crate::src::qcommon::q_shared::vec_t,
-            (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float
                 * 360 as libc::c_int as libc::c_float,
             1 as libc::c_int as libc::c_float,
@@ -3373,7 +3397,7 @@ unsafe extern "C" fn CG_ShotgunPellet(
     let mut sourceContentType: libc::c_int = 0;
     let mut destContentType: libc::c_int = 0;
     crate::src::cgame::cg_predict::CG_Trace(
-        &mut tr,
+        &mut tr as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         start as *const crate::src::qcommon::q_shared::vec_t,
         0 as *const crate::src::qcommon::q_shared::vec_t,
         0 as *const crate::src::qcommon::q_shared::vec_t,
@@ -3417,7 +3441,7 @@ unsafe extern "C" fn CG_ShotgunPellet(
                 entityNum: 0,
             };
         crate::src::cgame::cg_syscalls::trap_CM_BoxTrace(
-            &mut trace,
+            &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
             end as *const crate::src::qcommon::q_shared::vec_t,
             start as *const crate::src::qcommon::q_shared::vec_t,
             0 as *const crate::src::qcommon::q_shared::vec_t,
@@ -3449,7 +3473,7 @@ unsafe extern "C" fn CG_ShotgunPellet(
                 entityNum: 0,
             };
         crate::src::cgame::cg_syscalls::trap_CM_BoxTrace(
-            &mut trace_0,
+            &mut trace_0 as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
             start as *const crate::src::qcommon::q_shared::vec_t,
             end as *const crate::src::qcommon::q_shared::vec_t,
             0 as *const crate::src::qcommon::q_shared::vec_t,
@@ -3617,6 +3641,7 @@ pub unsafe extern "C" fn CG_ShotgunFire(mut es: *mut crate::src::qcommon::q_shar
                 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
             up[2 as libc::c_int as usize] =
                 8 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
+
             crate::src::cgame::cg_effects::CG_SmokePuff(
                 v.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                 up.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -3630,7 +3655,7 @@ pub unsafe extern "C" fn CG_ShotgunFire(mut es: *mut crate::src::qcommon::q_shar
                 0 as libc::c_int,
                 crate::cg_local_h::LEF_PUFF_DONT_SCALE as libc::c_int,
                 crate::src::cgame::cg_main::cgs.media.shotgunSmokePuffShader,
-            );
+            ) as *mut crate::cg_local_h::localEntity_s;
         }
     }
     CG_ShotgunPattern(
@@ -3685,7 +3710,7 @@ pub unsafe extern "C" fn CG_Tracer(
         return;
     }
     begin = 50 as libc::c_int as libc::c_float
-        + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        + (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float
             * (len - 60 as libc::c_int as libc::c_float);
     end = begin + crate::src::cgame::cg_main::cg_tracerLength.value;
@@ -3831,7 +3856,7 @@ pub unsafe extern "C" fn CG_Tracer(
     crate::src::cgame::cg_syscalls::trap_R_AddPolyToScene(
         crate::src::cgame::cg_main::cgs.media.tracerShader,
         4 as libc::c_int,
-        verts.as_mut_ptr(),
+        verts.as_mut_ptr() as *const crate::tr_types_h::polyVert_t,
     );
     midpoint[0 as libc::c_int as usize] =
         ((start[0 as libc::c_int as usize] + finish[0 as libc::c_int as usize]) as libc::c_double
@@ -4003,7 +4028,7 @@ pub unsafe extern "C" fn CG_Bullet(
                 );
             } else if sourceContentType & 32 as libc::c_int != 0 {
                 crate::src::cgame::cg_syscalls::trap_CM_BoxTrace(
-                    &mut trace,
+                    &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
                     end as *const crate::src::qcommon::q_shared::vec_t,
                     start.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                     0 as *const crate::src::qcommon::q_shared::vec_t,
@@ -4018,7 +4043,7 @@ pub unsafe extern "C" fn CG_Bullet(
                 );
             } else if destContentType & 32 as libc::c_int != 0 {
                 crate::src::cgame::cg_syscalls::trap_CM_BoxTrace(
-                    &mut trace,
+                    &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
                     start.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                     end as *const crate::src::qcommon::q_shared::vec_t,
                     0 as *const crate::src::qcommon::q_shared::vec_t,
@@ -4035,7 +4060,7 @@ pub unsafe extern "C" fn CG_Bullet(
             // bubble trail from water into air
             // bubble trail from air into water
             // draw a tracer
-            if ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            if ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float)
                 < crate::src::cgame::cg_main::cg_tracerChance.value
             {

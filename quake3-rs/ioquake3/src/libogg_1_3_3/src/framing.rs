@@ -13,7 +13,6 @@ pub use crate::ogg_h::ogg_packet;
 pub use crate::ogg_h::ogg_page;
 pub use crate::ogg_h::ogg_stream_state;
 pub use crate::ogg_h::ogg_sync_state;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
 use crate::stdlib::memchr;
 use crate::stdlib::memcmp;
@@ -21,6 +20,7 @@ use crate::stdlib::memcpy;
 use crate::stdlib::memmove;
 use crate::stdlib::memset;
 use crate::stdlib::realloc;
+use ::libc::free;
 /* *******************************************************************
 *                                                                  *
 * THIS FILE IS PART OF THE Ogg CONTAINER SOURCE CODE.              *
@@ -460,13 +460,13 @@ pub unsafe extern "C" fn ogg_stream_clear(
 ) -> libc::c_int {
     if !os.is_null() {
         if !(*os).body_data.is_null() {
-            crate::stdlib::free((*os).body_data as *mut libc::c_void);
+            ::libc::free((*os).body_data as *mut libc::c_void);
         }
         if !(*os).lacing_vals.is_null() {
-            crate::stdlib::free((*os).lacing_vals as *mut libc::c_void);
+            ::libc::free((*os).lacing_vals as *mut libc::c_void);
         }
         if !(*os).granule_vals.is_null() {
-            crate::stdlib::free((*os).granule_vals as *mut libc::c_void);
+            ::libc::free((*os).granule_vals as *mut libc::c_void);
         }
         crate::stdlib::memset(
             os as *mut libc::c_void,
@@ -483,7 +483,7 @@ pub unsafe extern "C" fn ogg_stream_destroy(
 ) -> libc::c_int {
     if !os.is_null() {
         ogg_stream_clear(os);
-        crate::stdlib::free(os as *mut libc::c_void);
+        ::libc::free(os as *mut libc::c_void);
     }
     return 0 as libc::c_int;
 }
@@ -1025,7 +1025,7 @@ pub unsafe extern "C" fn ogg_sync_init(mut oy: *mut crate::ogg_h::ogg_sync_state
 pub unsafe extern "C" fn ogg_sync_clear(mut oy: *mut crate::ogg_h::ogg_sync_state) -> libc::c_int {
     if !oy.is_null() {
         if !(*oy).data.is_null() {
-            crate::stdlib::free((*oy).data as *mut libc::c_void);
+            ::libc::free((*oy).data as *mut libc::c_void);
         }
         crate::stdlib::memset(
             oy as *mut libc::c_void,
@@ -1042,7 +1042,7 @@ pub unsafe extern "C" fn ogg_sync_destroy(
 ) -> libc::c_int {
     if !oy.is_null() {
         ogg_sync_clear(oy);
-        crate::stdlib::free(oy as *mut libc::c_void);
+        ::libc::free(oy as *mut libc::c_void);
     }
     return 0 as libc::c_int;
 }
@@ -1576,7 +1576,7 @@ pub unsafe extern "C" fn ogg_stream_packetpeek(
 #[no_mangle]
 
 pub unsafe extern "C" fn ogg_packet_clear(mut op: *mut crate::ogg_h::ogg_packet) {
-    crate::stdlib::free((*op).packet as *mut libc::c_void);
+    ::libc::free((*op).packet as *mut libc::c_void);
     crate::stdlib::memset(
         op as *mut libc::c_void,
         0 as libc::c_int,

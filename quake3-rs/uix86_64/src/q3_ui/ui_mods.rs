@@ -408,27 +408,27 @@ unsafe extern "C" fn UI_Mods_MenuInit() {
     s_mods.list.height = 14 as libc::c_int;
     UI_Mods_LoadMods();
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_mods.menu,
+        &mut s_mods.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_mods.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_mods.menu,
+        &mut s_mods.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_mods.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_mods.menu,
+        &mut s_mods.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_mods.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_mods.menu,
+        &mut s_mods.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_mods.list as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_mods.menu,
+        &mut s_mods.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_mods.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_mods.menu,
+        &mut s_mods.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_mods.go as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
 }
@@ -542,5 +542,7 @@ UI_ModsMenu
 
 pub unsafe extern "C" fn UI_ModsMenu() {
     UI_Mods_MenuInit();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_mods.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_mods.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

@@ -1,9 +1,13 @@
+pub type bot_input_t = crate::botlib_h::bot_input_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct bsp_surface_s {
-    pub name: [libc::c_char; 16],
-    pub flags: libc::c_int,
-    pub value: libc::c_int,
+pub struct bot_input_s {
+    pub thinktime: libc::c_float,
+    pub dir: crate::src::qcommon::q_shared::vec3_t,
+    pub speed: libc::c_float,
+    pub viewangles: crate::src::qcommon::q_shared::vec3_t,
+    pub actionflags: libc::c_int,
+    pub weapon: libc::c_int,
 }
 //origin of the goal
 
@@ -23,6 +27,17 @@ pub struct bsp_surface_s {
 pub type bsp_surface_t = crate::botlib_h::bsp_surface_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
+pub struct bsp_surface_s {
+    pub name: [libc::c_char; 16],
+    pub flags: libc::c_int,
+    pub value: libc::c_int,
+}
+//remove the bsp_trace_s structure definition l8r on
+
+//a trace is returned when a box is swept through the world
+pub type bsp_trace_t = crate::botlib_h::bsp_trace_s;
+#[repr(C)]
+#[derive(Copy, Clone)]
 pub struct bsp_trace_s {
     pub allsolid: crate::src::qcommon::q_shared::qboolean,
     pub startsolid: crate::src::qcommon::q_shared::qboolean,
@@ -34,36 +49,6 @@ pub struct bsp_trace_s {
     pub surface: crate::botlib_h::bsp_surface_t,
     pub contents: libc::c_int,
     pub ent: libc::c_int,
-}
-//remove the bsp_trace_s structure definition l8r on
-
-//a trace is returned when a box is swept through the world
-pub type bsp_trace_t = crate::botlib_h::bsp_trace_s;
-//origin of the goal
-
-//area number of the goal
-
-//mins and maxs of the goal
-
-//number of the goal entity
-
-//goal number
-
-//goal flags
-
-//item information
-
-//the bot input, will be converted to a usercmd_t
-pub type bot_input_t = crate::botlib_h::bot_input_s;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct bot_input_s {
-    pub thinktime: libc::c_float,
-    pub dir: crate::src::qcommon::q_shared::vec3_t,
-    pub speed: libc::c_float,
-    pub viewangles: crate::src::qcommon::q_shared::vec3_t,
-    pub actionflags: libc::c_int,
-    pub weapon: libc::c_int,
 }
 //time since last output (in seconds)
 

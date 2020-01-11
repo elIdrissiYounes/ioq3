@@ -398,14 +398,14 @@ pub unsafe extern "C" fn silk_encode_indices(
         + (*psIndices).quantOffsetType as libc::c_int;
     if encode_LBRR != 0 || typeOffset >= 2 as libc::c_int {
         crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-            psRangeEnc,
+            psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             typeOffset - 2 as libc::c_int,
             crate::src::opus_1_2_1::silk::tables_other::silk_type_offset_VAD_iCDF.as_ptr(),
             8 as libc::c_int as libc::c_uint,
         );
     } else {
         crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-            psRangeEnc,
+            psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             typeOffset,
             crate::src::opus_1_2_1::silk::tables_other::silk_type_offset_no_VAD_iCDF.as_ptr(),
             8 as libc::c_int as libc::c_uint,
@@ -418,7 +418,7 @@ pub unsafe extern "C" fn silk_encode_indices(
     if condCoding == 2 as libc::c_int {
         /* conditional coding */
         crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-            psRangeEnc,
+            psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             (*psIndices).GainsIndices[0 as libc::c_int as usize] as libc::c_int,
             crate::src::opus_1_2_1::silk::tables_gain::silk_delta_gain_iCDF.as_ptr(),
             8 as libc::c_int as libc::c_uint,
@@ -426,7 +426,7 @@ pub unsafe extern "C" fn silk_encode_indices(
     } else {
         /* independent coding, in two stages: MSB bits followed by 3 LSBs */
         crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-            psRangeEnc,
+            psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             (*psIndices).GainsIndices[0 as libc::c_int as usize] as libc::c_int >> 3 as libc::c_int,
             crate::src::opus_1_2_1::silk::tables_gain::silk_gain_iCDF
                 [(*psIndices).signalType as usize]
@@ -434,7 +434,7 @@ pub unsafe extern "C" fn silk_encode_indices(
             8 as libc::c_int as libc::c_uint,
         );
         crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-            psRangeEnc,
+            psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             (*psIndices).GainsIndices[0 as libc::c_int as usize] as libc::c_int & 7 as libc::c_int,
             crate::src::opus_1_2_1::silk::tables_other::silk_uniform8_iCDF.as_ptr(),
             8 as libc::c_int as libc::c_uint,
@@ -444,7 +444,7 @@ pub unsafe extern "C" fn silk_encode_indices(
     i = 1 as libc::c_int;
     while i < (*psEncC).nb_subfr {
         crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-            psRangeEnc,
+            psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             (*psIndices).GainsIndices[i as usize] as libc::c_int,
             crate::src::opus_1_2_1::silk::tables_gain::silk_delta_gain_iCDF.as_ptr(),
             8 as libc::c_int as libc::c_uint,
@@ -455,7 +455,7 @@ pub unsafe extern "C" fn silk_encode_indices(
     /* Encode NLSFs */
     /* ***************/
     crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-        psRangeEnc,
+        psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         (*psIndices).NLSFIndices[0 as libc::c_int as usize] as libc::c_int,
         &*(*(*psEncC).psNLSF_CB).CB1_iCDF.offset(
             (((*psIndices).signalType as libc::c_int >> 1 as libc::c_int)
@@ -466,7 +466,7 @@ pub unsafe extern "C" fn silk_encode_indices(
     crate::src::opus_1_2_1::silk::NLSF_unpack::silk_NLSF_unpack(
         ec_ix.as_mut_ptr(),
         pred_Q8.as_mut_ptr(),
-        (*psEncC).psNLSF_CB,
+        (*psEncC).psNLSF_CB as *const crate::structs_h::silk_NLSF_CB_struct,
         (*psIndices).NLSFIndices[0 as libc::c_int as usize] as libc::c_int,
     );
     i = 0 as libc::c_int;
@@ -475,7 +475,7 @@ pub unsafe extern "C" fn silk_encode_indices(
             >= 4 as libc::c_int
         {
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 2 as libc::c_int * 4 as libc::c_int,
                 &*(*(*psEncC).psNLSF_CB)
                     .ec_iCDF
@@ -483,7 +483,7 @@ pub unsafe extern "C" fn silk_encode_indices(
                 8 as libc::c_int as libc::c_uint,
             );
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 (*psIndices).NLSFIndices[(i + 1 as libc::c_int) as usize] as libc::c_int
                     - 4 as libc::c_int,
                 crate::src::opus_1_2_1::silk::tables_other::silk_NLSF_EXT_iCDF.as_ptr(),
@@ -493,7 +493,7 @@ pub unsafe extern "C" fn silk_encode_indices(
             <= -(4 as libc::c_int)
         {
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 0 as libc::c_int,
                 &*(*(*psEncC).psNLSF_CB)
                     .ec_iCDF
@@ -501,7 +501,7 @@ pub unsafe extern "C" fn silk_encode_indices(
                 8 as libc::c_int as libc::c_uint,
             );
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 -((*psIndices).NLSFIndices[(i + 1 as libc::c_int) as usize] as libc::c_int)
                     - 4 as libc::c_int,
                 crate::src::opus_1_2_1::silk::tables_other::silk_NLSF_EXT_iCDF.as_ptr(),
@@ -509,7 +509,7 @@ pub unsafe extern "C" fn silk_encode_indices(
             );
         } else {
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 (*psIndices).NLSFIndices[(i + 1 as libc::c_int) as usize] as libc::c_int
                     + 4 as libc::c_int,
                 &*(*(*psEncC).psNLSF_CB)
@@ -523,7 +523,7 @@ pub unsafe extern "C" fn silk_encode_indices(
     /* Encode NLSF interpolation factor */
     if (*psEncC).nb_subfr == 4 as libc::c_int {
         crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-            psRangeEnc,
+            psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             (*psIndices).NLSFInterpCoef_Q2 as libc::c_int,
             crate::src::opus_1_2_1::silk::tables_other::silk_NLSF_interpolation_factor_iCDF
                 .as_ptr(),
@@ -548,7 +548,7 @@ pub unsafe extern "C" fn silk_encode_indices(
                 /* Only use delta */
             }
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 delta_lagIndex,
                 crate::src::opus_1_2_1::silk::tables_pitch_lag::silk_pitch_delta_iCDF.as_ptr(),
                 8 as libc::c_int as libc::c_uint,
@@ -566,13 +566,13 @@ pub unsafe extern "C" fn silk_encode_indices(
                     * ((*psEncC).fs_kHz >> 1 as libc::c_int) as crate::opus_types_h::opus_int16
                         as crate::opus_types_h::opus_int32;
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 pitch_high_bits,
                 crate::src::opus_1_2_1::silk::tables_pitch_lag::silk_pitch_lag_iCDF.as_ptr(),
                 8 as libc::c_int as libc::c_uint,
             );
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 pitch_low_bits,
                 (*psEncC).pitch_lag_low_bits_iCDF,
                 8 as libc::c_int as libc::c_uint,
@@ -581,7 +581,7 @@ pub unsafe extern "C" fn silk_encode_indices(
         (*psEncC).ec_prevLagIndex = (*psIndices).lagIndex;
         /* Countour index */
         crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-            psRangeEnc,
+            psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             (*psIndices).contourIndex as libc::c_int,
             (*psEncC).pitch_contour_iCDF,
             8 as libc::c_int as libc::c_uint,
@@ -591,7 +591,7 @@ pub unsafe extern "C" fn silk_encode_indices(
         /* *******************/
         /* PERIndex value */
         crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-            psRangeEnc,
+            psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             (*psIndices).PERIndex as libc::c_int,
             crate::src::opus_1_2_1::silk::tables_LTP::silk_LTP_per_index_iCDF.as_ptr(),
             8 as libc::c_int as libc::c_uint,
@@ -600,7 +600,7 @@ pub unsafe extern "C" fn silk_encode_indices(
         k = 0 as libc::c_int;
         while k < (*psEncC).nb_subfr {
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 (*psIndices).LTPIndex[k as usize] as libc::c_int,
                 crate::src::opus_1_2_1::silk::tables_LTP::silk_LTP_gain_iCDF_ptrs
                     [(*psIndices).PERIndex as usize],
@@ -613,7 +613,7 @@ pub unsafe extern "C" fn silk_encode_indices(
         /* *********************/
         if condCoding == 0 as libc::c_int {
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-                psRangeEnc,
+                psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 (*psIndices).LTP_scaleIndex as libc::c_int,
                 crate::src::opus_1_2_1::silk::tables_other::silk_LTPscale_iCDF.as_ptr(),
                 8 as libc::c_int as libc::c_uint,
@@ -625,7 +625,7 @@ pub unsafe extern "C" fn silk_encode_indices(
     /* Encode seed */
     /* **************/
     crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
-        psRangeEnc,
+        psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         (*psIndices).Seed as libc::c_int,
         crate::src::opus_1_2_1::silk::tables_other::silk_uniform4_iCDF.as_ptr(),
         8 as libc::c_int as libc::c_uint,

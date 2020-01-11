@@ -2,12 +2,12 @@ use ::libc;
 
 pub use crate::stdlib::__off_t;
 use crate::stdlib::calloc;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
 pub use crate::stdlib::off_t;
 pub use crate::zconf_h::uInt;
 pub use crate::zconf_h::uLong;
 pub use crate::zconf_h::voidpf;
+use ::libc::free;
 /* for buggy compilers */
 #[no_mangle]
 
@@ -736,7 +736,7 @@ pub unsafe extern "C" fn zcfree(
     mut opaque: crate::zconf_h::voidpf,
     mut ptr: crate::zconf_h::voidpf,
 ) {
-    crate::stdlib::free(ptr);
+    ::libc::free(ptr);
     if !opaque.is_null() {
         return;
     };

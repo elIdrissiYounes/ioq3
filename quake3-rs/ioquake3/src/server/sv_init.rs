@@ -180,10 +180,10 @@ pub use crate::src::server::sv_main::SV_SendServerCommand;
 pub use crate::src::server::sv_snapshot::SV_SendClientSnapshot;
 pub use crate::src::server::sv_world::SV_ClearWorld;
 use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
 pub use crate::vm_local_h::vm_s;
+use ::libc::rand;
+use ::libc::strcmp;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -245,7 +245,7 @@ unsafe extern "C" fn SV_SendConfigstring(
                 maxChunkSize,
             );
             crate::src::server::sv_main::SV_SendServerCommand(
-                client,
+                client as *mut crate::server_h::client_s,
                 b"%s %i \"%s\"\n\x00" as *const u8 as *const libc::c_char,
                 cmd,
                 index,
@@ -257,7 +257,7 @@ unsafe extern "C" fn SV_SendConfigstring(
     } else {
         // standard cs, just send it
         crate::src::server::sv_main::SV_SendServerCommand(
-            client,
+            client as *mut crate::server_h::client_s,
             b"cs %i \"%s\"\n\x00" as *const u8 as *const libc::c_char,
             index,
             crate::src::server::sv_main::sv.configstrings[index as usize],
@@ -314,7 +314,7 @@ pub unsafe extern "C" fn SV_SetConfigstring(mut index: libc::c_int, mut val: *co
         val = b"\x00" as *const u8 as *const libc::c_char
     }
     // don't bother broadcasting an update if no change
-    if crate::stdlib::strcmp(
+    if ::libc::strcmp(
         val,
         crate::src::server::sv_main::sv.configstrings[index as usize],
     ) == 0
@@ -488,7 +488,8 @@ unsafe extern "C" fn SV_CreateBaseline() {
     let mut entnum: libc::c_int = 0;
     entnum = 1 as libc::c_int;
     while entnum < crate::src::server::sv_main::sv.num_entities {
-        svent = crate::src::server::sv_game::SV_GentityNum(entnum);
+        svent = crate::src::server::sv_game::SV_GentityNum(entnum)
+            as *mut crate::g_public_h::sharedEntity_t;
         if !((*svent).r.linked as u64 == 0) {
             (*svent).s.number = entnum;
             //
@@ -508,11 +509,12 @@ SV_BoundMaxClients
 
 unsafe extern "C" fn SV_BoundMaxClients(mut minimum: libc::c_int) {
     // get the current maxclients value
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"sv_maxclients\x00" as *const u8 as *const libc::c_char,
         b"8\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     (*crate::src::server::sv_main::sv_maxclients).modified = crate::src::qcommon::q_shared::qfalse;
     if (*crate::src::server::sv_main::sv_maxclients).integer < minimum {
         crate::src::qcommon::cvar::Cvar_Set(
@@ -819,9 +821,9 @@ pub unsafe extern "C" fn SV_SpawnServer(
         b"0\x00" as *const u8 as *const libc::c_char,
     );
     // get a new checksum feed and restart the file system
-    crate::src::server::sv_main::sv.checksumFeed = ((crate::stdlib::rand() as libc::c_uint)
+    crate::src::server::sv_main::sv.checksumFeed = ((::libc::rand() as libc::c_uint)
         << 16 as libc::c_int
-        ^ crate::stdlib::rand() as libc::c_uint
+        ^ ::libc::rand() as libc::c_uint
         ^ crate::src::qcommon::common::Com_Milliseconds() as libc::c_uint)
         as libc::c_int;
     crate::src::qcommon::files::FS_Restart(crate::src::server::sv_main::sv.checksumFeed);
@@ -894,7 +896,8 @@ pub unsafe extern "C" fn SV_SpawnServer(
             {
                 if killBots as u64 != 0 {
                     crate::src::server::sv_client::SV_DropClient(
-                        &mut *crate::src::server::sv_main::svs.clients.offset(i as isize),
+                        &mut *crate::src::server::sv_main::svs.clients.offset(i as isize) as *mut _
+                            as *mut crate::server_h::client_s,
                         b"\x00" as *const u8 as *const libc::c_char,
                     );
                     current_block_73 = 13460095289871124136;
@@ -924,7 +927,9 @@ pub unsafe extern "C" fn SV_SpawnServer(
                         // this generally shouldn't happen, because the client
                         // was connected before the level change
                         crate::src::server::sv_client::SV_DropClient(
-                            &mut *crate::src::server::sv_main::svs.clients.offset(i as isize),
+                            &mut *crate::src::server::sv_main::svs.clients.offset(i as isize)
+                                as *mut _
+                                as *mut crate::server_h::client_s,
                             denied,
                         );
                     } else if isBot as u64 == 0 {
@@ -940,7 +945,8 @@ pub unsafe extern "C" fn SV_SpawnServer(
                         client = &mut *crate::src::server::sv_main::svs.clients.offset(i as isize)
                             as *mut crate::server_h::client_t;
                         (*client).state = crate::server_h::CS_ACTIVE;
-                        ent = crate::src::server::sv_game::SV_GentityNum(i);
+                        ent = crate::src::server::sv_game::SV_GentityNum(i)
+                            as *mut crate::g_public_h::sharedEntity_t;
                         (*ent).s.number = i;
                         (*client).gentity = ent;
                         (*client).deltaMessage = -(1 as libc::c_int);
@@ -1050,104 +1056,112 @@ pub unsafe extern "C" fn SV_Init() {
     let mut index: libc::c_int = 0;
     crate::src::server::sv_ccmds::SV_AddOperatorCommands();
     // serverinfo vars
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"dmflags\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"fraglimit\x00" as *const u8 as *const libc::c_char,
         b"20\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"timelimit\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_gametype = crate::src::qcommon::cvar::Cvar_Get(
         b"g_gametype\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int | 0x20 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"sv_keywords\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_mapname = crate::src::qcommon::cvar::Cvar_Get(
         b"mapname\x00" as *const u8 as *const libc::c_char,
         b"nomap\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int | 0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_privateClients = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_privateClients\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_hostname = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_hostname\x00" as *const u8 as *const libc::c_char,
         b"noname\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int | 0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_maxclients = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_maxclients\x00" as *const u8 as *const libc::c_char,
         b"8\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int | 0x20 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_minRate = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_minRate\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x4 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_maxRate = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_maxRate\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x4 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_dlRate = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_dlRate\x00" as *const u8 as *const libc::c_char,
         b"100\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x4 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_minPing = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_minPing\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x4 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_maxPing = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_maxPing\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x4 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_floodProtect = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_floodProtect\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x4 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
     // systeminfo
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"sv_cheats\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x8 as libc::c_int | 0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_serverid = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_serverid\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x8 as libc::c_int | 0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_pure = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_pure\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x8 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_voip = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_voip\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x20 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::qcommon::cvar::Cvar_CheckRange(
-        crate::src::server::sv_main::sv_voip,
+        crate::src::server::sv_main::sv_voip as *mut crate::src::qcommon::q_shared::cvar_s,
         0 as libc::c_int as libc::c_float,
         1 as libc::c_int as libc::c_float,
         crate::src::qcommon::q_shared::qtrue,
@@ -1160,133 +1174,150 @@ pub unsafe extern "C" fn SV_Init() {
             b"\x00" as *const u8 as *const libc::c_char
         },
         0x8 as libc::c_int | 0x40 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"sv_paks\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x8 as libc::c_int | 0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"sv_pakNames\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x8 as libc::c_int | 0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"sv_referencedPaks\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x8 as libc::c_int | 0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"sv_referencedPakNames\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x8 as libc::c_int | 0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     // server vars
     crate::src::server::sv_main::sv_rconPassword = crate::src::qcommon::cvar::Cvar_Get(
         b"rconPassword\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x100 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_privatePassword = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_privatePassword\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x100 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_fps = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_fps\x00" as *const u8 as *const libc::c_char,
         b"20\x00" as *const u8 as *const libc::c_char,
         0x100 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_timeout = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_timeout\x00" as *const u8 as *const libc::c_char,
         b"200\x00" as *const u8 as *const libc::c_char,
         0x100 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_zombietime = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_zombietime\x00" as *const u8 as *const libc::c_char,
         b"2\x00" as *const u8 as *const libc::c_char,
         0x100 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"nextmap\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x100 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_allowDownload = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_allowDownload\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"sv_dlURL\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int | 0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_master[0 as libc::c_int as usize] =
         crate::src::qcommon::cvar::Cvar_Get(
             b"sv_master1\x00" as *const u8 as *const libc::c_char,
             b"master.quake3arena.com\x00" as *const u8 as *const libc::c_char,
             0 as libc::c_int,
-        );
+        ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_master[1 as libc::c_int as usize] =
         crate::src::qcommon::cvar::Cvar_Get(
             b"sv_master2\x00" as *const u8 as *const libc::c_char,
             b"master.ioquake3.org\x00" as *const u8 as *const libc::c_char,
             0 as libc::c_int,
-        );
+        ) as *mut crate::src::qcommon::q_shared::cvar_s;
     index = 2 as libc::c_int;
     while index < 5 as libc::c_int {
-        crate::src::server::sv_main::sv_master[index as usize] =
-            crate::src::qcommon::cvar::Cvar_Get(
-                crate::src::qcommon::q_shared::va(
-                    b"sv_master%d\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-                    index + 1 as libc::c_int,
-                ),
-                b"\x00" as *const u8 as *const libc::c_char,
-                0x1 as libc::c_int,
-            );
+        crate::src::server::sv_main::sv_master[index as usize] = crate::src::qcommon::cvar::Cvar_Get(
+            crate::src::qcommon::q_shared::va(
+                b"sv_master%d\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
+                index + 1 as libc::c_int,
+            ),
+            b"\x00" as *const u8 as *const libc::c_char,
+            0x1 as libc::c_int,
+        )
+            as *mut crate::src::qcommon::q_shared::cvar_s;
         index += 1
     }
     crate::src::server::sv_main::sv_reconnectlimit = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_reconnectlimit\x00" as *const u8 as *const libc::c_char,
         b"3\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_showloss = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_showloss\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_padPackets = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_padPackets\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_killserver = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_killserver\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_mapChecksum = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_mapChecksum\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x40 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_lanForceRate = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_lanForceRate\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_strictAuth = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_strictAuth\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    )
+        as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::server::sv_main::sv_banFile = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_banFile\x00" as *const u8 as *const libc::c_char,
         b"serverbans.dat\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     // initialize bot cvars so they are listed and can be set before loading the botlib
     crate::src::server::sv_bot::SV_BotInitCvars();
     // init the botlib here because we need the pre-compiler in the UI
@@ -1451,19 +1482,21 @@ pub unsafe extern "C" fn SV_FinalMessage(mut message: *mut libc::c_char) {
                     != crate::qcommon_h::NA_LOOPBACK as libc::c_int as libc::c_uint
                 {
                     crate::src::server::sv_main::SV_SendServerCommand(
-                        cl,
+                        cl as *mut crate::server_h::client_s,
                         b"print \"%s\n\"\n\x00" as *const u8 as *const libc::c_char,
                         message,
                     );
                     crate::src::server::sv_main::SV_SendServerCommand(
-                        cl,
+                        cl as *mut crate::server_h::client_s,
                         b"disconnect \"%s\"\x00" as *const u8 as *const libc::c_char,
                         message,
                     );
                 }
                 // force a snapshot to be sent
                 (*cl).lastSnapshotTime = 0 as libc::c_int;
-                crate::src::server::sv_snapshot::SV_SendClientSnapshot(cl);
+                crate::src::server::sv_snapshot::SV_SendClientSnapshot(
+                    cl as *mut crate::server_h::client_s,
+                );
             }
             i += 1;
             cl = cl.offset(1)
@@ -1856,7 +1889,8 @@ pub unsafe extern "C" fn SV_Shutdown(mut finalmsg: *mut libc::c_char) {
             crate::src::server::sv_client::SV_FreeClient(
                 &mut *crate::src::server::sv_main::svs
                     .clients
-                    .offset(index as isize),
+                    .offset(index as isize) as *mut _
+                    as *mut crate::server_h::client_s,
             );
             index += 1
         }

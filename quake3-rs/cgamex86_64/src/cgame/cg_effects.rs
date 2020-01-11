@@ -104,7 +104,6 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::rand;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -132,6 +131,7 @@ pub use crate::tr_types_h::RT_SPRITE;
 pub use crate::tr_types_h::TC_NONE;
 pub use crate::tr_types_h::TC_S3TC;
 pub use crate::tr_types_h::TC_S3TC_ARB;
+use ::libc::rand;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -188,7 +188,7 @@ pub unsafe extern "C" fn CG_BubbleTrail(
         *end.offset(2 as libc::c_int as isize) - *start.offset(2 as libc::c_int as isize);
     len = crate::src::qcommon::q_math::VectorNormalize(vec.as_mut_ptr());
     // advance a random amount first
-    i = crate::stdlib::rand() % spacing as libc::c_int;
+    i = ::libc::rand() % spacing as libc::c_int;
     move_0[0 as libc::c_int as usize] =
         move_0[0 as libc::c_int as usize] + vec[0 as libc::c_int as usize] * i as libc::c_float;
     move_0[1 as libc::c_int as usize] =
@@ -202,13 +202,14 @@ pub unsafe extern "C" fn CG_BubbleTrail(
         let mut le: *mut crate::cg_local_h::localEntity_t =
             0 as *mut crate::cg_local_h::localEntity_t;
         let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
-        le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
+        le = crate::src::cgame::cg_localents::CG_AllocLocalEntity()
+            as *mut crate::cg_local_h::localEntity_s;
         (*le).leFlags = crate::cg_local_h::LEF_PUFF_DONT_SCALE as libc::c_int;
         (*le).leType = crate::cg_local_h::LE_MOVE_SCALE_FADE;
         (*le).startTime = crate::src::cgame::cg_main::cg.time;
         (*le).endTime = ((crate::src::cgame::cg_main::cg.time + 1000 as libc::c_int)
             as libc::c_float
-            + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            + (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float
                 * 250 as libc::c_int as libc::c_float) as libc::c_int;
         (*le).lifeRate =
@@ -234,19 +235,19 @@ pub unsafe extern "C" fn CG_BubbleTrail(
         (*le).pos.trBase[1 as libc::c_int as usize] = move_0[1 as libc::c_int as usize];
         (*le).pos.trBase[2 as libc::c_int as usize] = move_0[2 as libc::c_int as usize];
         (*le).pos.trDelta[0 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 5 as libc::c_int as libc::c_double)
             as crate::src::qcommon::q_shared::vec_t;
         (*le).pos.trDelta[1 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 5 as libc::c_int as libc::c_double)
             as crate::src::qcommon::q_shared::vec_t;
         (*le).pos.trDelta[2 as libc::c_int as usize] = (2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 5 as libc::c_int as libc::c_double
@@ -288,7 +289,8 @@ pub unsafe extern "C" fn CG_SmokePuff(
     let mut le: *mut crate::cg_local_h::localEntity_t = 0 as *mut crate::cg_local_h::localEntity_t;
     let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
     //	int fadeInTime = startTime + duration / 2;
-    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
+    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity()
+        as *mut crate::cg_local_h::localEntity_s;
     (*le).leFlags = leFlags;
     (*le).radius = radius;
     re = &mut (*le).refEntity;
@@ -365,7 +367,8 @@ Player teleporting in or out
 pub unsafe extern "C" fn CG_SpawnEffect(mut org: *mut crate::src::qcommon::q_shared::vec_t) {
     let mut le: *mut crate::cg_local_h::localEntity_t = 0 as *mut crate::cg_local_h::localEntity_t;
     let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
-    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
+    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity()
+        as *mut crate::cg_local_h::localEntity_s;
     (*le).leFlags = 0 as libc::c_int;
     (*le).leType = crate::cg_local_h::LE_FADE_RGB;
     (*le).startTime = crate::src::cgame::cg_main::cg.time;
@@ -412,7 +415,8 @@ pub unsafe extern "C" fn CG_ScorePlum(
     {
         return;
     }
-    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
+    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity()
+        as *mut crate::cg_local_h::localEntity_s;
     (*le).leFlags = 0 as libc::c_int;
     (*le).leType = crate::cg_local_h::LE_SCOREPLUM;
     (*le).startTime = crate::src::cgame::cg_main::cg.time;
@@ -476,12 +480,13 @@ pub unsafe extern "C" fn CG_MakeExplosion(
         );
     }
     // skew the time a bit so they aren't all in sync
-    offset = crate::stdlib::rand() & 63 as libc::c_int;
-    ex = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
+    offset = ::libc::rand() & 63 as libc::c_int;
+    ex = crate::src::cgame::cg_localents::CG_AllocLocalEntity()
+        as *mut crate::cg_local_h::localEntity_s;
     if isSprite as u64 != 0 {
         (*ex).leType = crate::cg_local_h::LE_SPRITE_EXPLOSION;
         // randomly rotate sprite orientation
-        (*ex).refEntity.rotation = (crate::stdlib::rand() % 360 as libc::c_int) as libc::c_float;
+        (*ex).refEntity.rotation = (::libc::rand() % 360 as libc::c_int) as libc::c_float;
         tmpVec[0 as libc::c_int as usize] =
             *dir.offset(0 as libc::c_int as isize) * 16 as libc::c_int as libc::c_float;
         tmpVec[1 as libc::c_int as usize] =
@@ -503,7 +508,7 @@ pub unsafe extern "C" fn CG_MakeExplosion(
         if dir.is_null() {
             crate::src::qcommon::q_math::AxisClear((*ex).refEntity.axis.as_mut_ptr());
         } else {
-            ang = (crate::stdlib::rand() % 360 as libc::c_int) as libc::c_float;
+            ang = (::libc::rand() % 360 as libc::c_int) as libc::c_float;
             (*ex).refEntity.axis[0 as libc::c_int as usize][0 as libc::c_int as usize] =
                 *dir.offset(0 as libc::c_int as isize);
             (*ex).refEntity.axis[0 as libc::c_int as usize][1 as libc::c_int as usize] =
@@ -551,7 +556,8 @@ pub unsafe extern "C" fn CG_Bleed(
     if crate::src::cgame::cg_main::cg_blood.integer == 0 {
         return;
     }
-    ex = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
+    ex = crate::src::cgame::cg_localents::CG_AllocLocalEntity()
+        as *mut crate::cg_local_h::localEntity_s;
     (*ex).leType = crate::cg_local_h::LE_EXPLOSION;
     (*ex).startTime = crate::src::cgame::cg_main::cg.time;
     (*ex).endTime = (*ex).startTime + 500 as libc::c_int;
@@ -559,7 +565,7 @@ pub unsafe extern "C" fn CG_Bleed(
     (*ex).refEntity.origin[1 as libc::c_int as usize] = *origin.offset(1 as libc::c_int as isize);
     (*ex).refEntity.origin[2 as libc::c_int as usize] = *origin.offset(2 as libc::c_int as isize);
     (*ex).refEntity.reType = crate::tr_types_h::RT_SPRITE;
-    (*ex).refEntity.rotation = (crate::stdlib::rand() % 360 as libc::c_int) as libc::c_float;
+    (*ex).refEntity.rotation = (::libc::rand() % 360 as libc::c_int) as libc::c_float;
     (*ex).refEntity.radius = 24 as libc::c_int as libc::c_float;
     (*ex).refEntity.customShader = crate::src::cgame::cg_main::cgs.media.bloodExplosionShader;
     // don't show player's own blood in view
@@ -581,12 +587,13 @@ pub unsafe extern "C" fn CG_LaunchGib(
 ) {
     let mut le: *mut crate::cg_local_h::localEntity_t = 0 as *mut crate::cg_local_h::localEntity_t;
     let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
-    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
+    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity()
+        as *mut crate::cg_local_h::localEntity_s;
     re = &mut (*le).refEntity;
     (*le).leType = crate::cg_local_h::LE_FRAGMENT;
     (*le).startTime = crate::src::cgame::cg_main::cg.time;
     (*le).endTime = (((*le).startTime + 5000 as libc::c_int) as libc::c_float
-        + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        + (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float
             * 3000 as libc::c_int as libc::c_float) as libc::c_int;
     (*re).origin[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
@@ -621,25 +628,25 @@ pub unsafe extern "C" fn CG_GibPlayer(mut playerOrigin: *mut crate::src::qcommon
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
-    if crate::stdlib::rand() & 1 as libc::c_int != 0 {
+    if ::libc::rand() & 1 as libc::c_int != 0 {
         CG_LaunchGib(
             origin.as_mut_ptr(),
             velocity.as_mut_ptr(),
@@ -660,20 +667,20 @@ pub unsafe extern "C" fn CG_GibPlayer(mut playerOrigin: *mut crate::src::qcommon
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 250 as libc::c_int as libc::c_double)
@@ -687,20 +694,20 @@ pub unsafe extern "C" fn CG_GibPlayer(mut playerOrigin: *mut crate::src::qcommon
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 250 as libc::c_int as libc::c_double)
@@ -714,20 +721,20 @@ pub unsafe extern "C" fn CG_GibPlayer(mut playerOrigin: *mut crate::src::qcommon
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 250 as libc::c_int as libc::c_double)
@@ -741,20 +748,20 @@ pub unsafe extern "C" fn CG_GibPlayer(mut playerOrigin: *mut crate::src::qcommon
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 250 as libc::c_int as libc::c_double)
@@ -768,20 +775,20 @@ pub unsafe extern "C" fn CG_GibPlayer(mut playerOrigin: *mut crate::src::qcommon
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 250 as libc::c_int as libc::c_double)
@@ -795,20 +802,20 @@ pub unsafe extern "C" fn CG_GibPlayer(mut playerOrigin: *mut crate::src::qcommon
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 250 as libc::c_int as libc::c_double)
@@ -822,20 +829,20 @@ pub unsafe extern "C" fn CG_GibPlayer(mut playerOrigin: *mut crate::src::qcommon
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 250 as libc::c_int as libc::c_double)
@@ -849,20 +856,20 @@ pub unsafe extern "C" fn CG_GibPlayer(mut playerOrigin: *mut crate::src::qcommon
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 250 as libc::c_int as libc::c_double)
@@ -876,20 +883,20 @@ pub unsafe extern "C" fn CG_GibPlayer(mut playerOrigin: *mut crate::src::qcommon
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 250 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (250 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 250 as libc::c_int as libc::c_double)
@@ -914,12 +921,13 @@ pub unsafe extern "C" fn CG_LaunchExplode(
 ) {
     let mut le: *mut crate::cg_local_h::localEntity_t = 0 as *mut crate::cg_local_h::localEntity_t;
     let mut re: *mut crate::tr_types_h::refEntity_t = 0 as *mut crate::tr_types_h::refEntity_t;
-    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity();
+    le = crate::src::cgame::cg_localents::CG_AllocLocalEntity()
+        as *mut crate::cg_local_h::localEntity_s;
     re = &mut (*le).refEntity;
     (*le).leType = crate::cg_local_h::LE_FRAGMENT;
     (*le).startTime = crate::src::cgame::cg_main::cg.time;
     (*le).endTime = (((*le).startTime + 10000 as libc::c_int) as libc::c_float
-        + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        + (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float
             * 6000 as libc::c_int as libc::c_float) as libc::c_int;
     (*re).origin[0 as libc::c_int as usize] = *origin.offset(0 as libc::c_int as isize);
@@ -1199,20 +1207,20 @@ pub unsafe extern "C" fn CG_BigExplode(
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 100 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 100 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (150 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 100 as libc::c_int as libc::c_double)
@@ -1226,20 +1234,20 @@ pub unsafe extern "C" fn CG_BigExplode(
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 100 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 100 as libc::c_int as libc::c_double)
         as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (150 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 100 as libc::c_int as libc::c_double)
@@ -1253,20 +1261,20 @@ pub unsafe extern "C" fn CG_BigExplode(
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 100 as libc::c_int as libc::c_double
         * 1.5f64) as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 100 as libc::c_int as libc::c_double
         * 1.5f64) as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (150 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 100 as libc::c_int as libc::c_double)
@@ -1280,20 +1288,20 @@ pub unsafe extern "C" fn CG_BigExplode(
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 100 as libc::c_int as libc::c_double
         * 2.0f64) as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 100 as libc::c_int as libc::c_double
         * 2.0f64) as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (150 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 100 as libc::c_int as libc::c_double)
@@ -1307,20 +1315,20 @@ pub unsafe extern "C" fn CG_BigExplode(
     origin[1 as libc::c_int as usize] = *playerOrigin.offset(1 as libc::c_int as isize);
     origin[2 as libc::c_int as usize] = *playerOrigin.offset(2 as libc::c_int as isize);
     velocity[0 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 100 as libc::c_int as libc::c_double
         * 2.5f64) as crate::src::qcommon::q_shared::vec_t;
     velocity[1 as libc::c_int as usize] = (2.0f64
-        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
             / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
             - 0.5f64)
         * 100 as libc::c_int as libc::c_double
         * 2.5f64) as crate::src::qcommon::q_shared::vec_t;
     velocity[2 as libc::c_int as usize] = (150 as libc::c_int as libc::c_double
         + 2.0f64
-            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float) as libc::c_double
                 - 0.5f64)
             * 100 as libc::c_int as libc::c_double)

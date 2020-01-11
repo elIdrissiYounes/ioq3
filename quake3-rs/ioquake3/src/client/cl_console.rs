@@ -507,7 +507,10 @@ pub unsafe extern "C" fn Con_ToggleConsole_f() {
         return;
     }
     if (*con_autoclear).integer != 0 {
-        crate::src::qcommon::common::Field_Clear(&mut crate::src::client::cl_keys::g_consoleField);
+        crate::src::qcommon::common::Field_Clear(
+            &mut crate::src::client::cl_keys::g_consoleField as *mut _
+                as *mut crate::qcommon_h::field_t,
+        );
     }
     crate::src::client::cl_keys::g_consoleField.widthInChars = g_console_field_width;
     Con_ClearNotify();
@@ -544,7 +547,9 @@ Con_MessageMode_f
 pub unsafe extern "C" fn Con_MessageMode_f() {
     crate::src::client::cl_keys::chat_playerNum = -(1 as libc::c_int);
     crate::src::client::cl_keys::chat_team = crate::src::qcommon::q_shared::qfalse;
-    crate::src::qcommon::common::Field_Clear(&mut crate::src::client::cl_keys::chatField);
+    crate::src::qcommon::common::Field_Clear(
+        &mut crate::src::client::cl_keys::chatField as *mut _ as *mut crate::qcommon_h::field_t,
+    );
     crate::src::client::cl_keys::chatField.widthInChars = 30 as libc::c_int;
     crate::src::client::cl_keys::Key_SetCatcher(
         crate::src::client::cl_keys::Key_GetCatcher() ^ 0x4 as libc::c_int,
@@ -560,7 +565,9 @@ Con_MessageMode2_f
 pub unsafe extern "C" fn Con_MessageMode2_f() {
     crate::src::client::cl_keys::chat_playerNum = -(1 as libc::c_int);
     crate::src::client::cl_keys::chat_team = crate::src::qcommon::q_shared::qtrue;
-    crate::src::qcommon::common::Field_Clear(&mut crate::src::client::cl_keys::chatField);
+    crate::src::qcommon::common::Field_Clear(
+        &mut crate::src::client::cl_keys::chatField as *mut _ as *mut crate::qcommon_h::field_t,
+    );
     crate::src::client::cl_keys::chatField.widthInChars = 25 as libc::c_int;
     crate::src::client::cl_keys::Key_SetCatcher(
         crate::src::client::cl_keys::Key_GetCatcher() ^ 0x4 as libc::c_int,
@@ -585,7 +592,9 @@ pub unsafe extern "C" fn Con_MessageMode3_f() {
         return;
     }
     crate::src::client::cl_keys::chat_team = crate::src::qcommon::q_shared::qfalse;
-    crate::src::qcommon::common::Field_Clear(&mut crate::src::client::cl_keys::chatField);
+    crate::src::qcommon::common::Field_Clear(
+        &mut crate::src::client::cl_keys::chatField as *mut _ as *mut crate::qcommon_h::field_t,
+    );
     crate::src::client::cl_keys::chatField.widthInChars = 30 as libc::c_int;
     crate::src::client::cl_keys::Key_SetCatcher(
         crate::src::client::cl_keys::Key_GetCatcher() ^ 0x4 as libc::c_int,
@@ -610,7 +619,9 @@ pub unsafe extern "C" fn Con_MessageMode4_f() {
         return;
     }
     crate::src::client::cl_keys::chat_team = crate::src::qcommon::q_shared::qfalse;
-    crate::src::qcommon::common::Field_Clear(&mut crate::src::client::cl_keys::chatField);
+    crate::src::qcommon::common::Field_Clear(
+        &mut crate::src::client::cl_keys::chatField as *mut _ as *mut crate::qcommon_h::field_t,
+    );
     crate::src::client::cl_keys::chatField.widthInChars = 30 as libc::c_int;
     crate::src::client::cl_keys::Key_SetCatcher(
         crate::src::client::cl_keys::Key_GetCatcher() ^ 0x4 as libc::c_int,
@@ -873,25 +884,28 @@ pub unsafe extern "C" fn Con_Init() {
         b"con_notifytime\x00" as *const u8 as *const libc::c_char,
         b"3\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     con_conspeed = crate::src::qcommon::cvar::Cvar_Get(
         b"scr_conspeed\x00" as *const u8 as *const libc::c_char,
         b"3\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     con_autoclear = crate::src::qcommon::cvar::Cvar_Get(
         b"con_autoclear\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
+    crate::src::qcommon::common::Field_Clear(
+        &mut crate::src::client::cl_keys::g_consoleField as *mut _
+            as *mut crate::qcommon_h::field_t,
     );
-    crate::src::qcommon::common::Field_Clear(&mut crate::src::client::cl_keys::g_consoleField);
     crate::src::client::cl_keys::g_consoleField.widthInChars = g_console_field_width;
     i = 0 as libc::c_int;
     while i < 32 as libc::c_int {
         crate::src::qcommon::common::Field_Clear(
             &mut *crate::src::client::cl_keys::historyEditLines
                 .as_mut_ptr()
-                .offset(i as isize),
+                .offset(i as isize) as *mut _ as *mut crate::qcommon_h::field_t,
         );
         crate::src::client::cl_keys::historyEditLines[i as usize].widthInChars =
             g_console_field_width;
@@ -1135,7 +1149,8 @@ pub unsafe extern "C" fn Con_DrawInput() {
         ']' as i32,
     );
     crate::src::client::cl_keys::Field_Draw(
-        &mut crate::src::client::cl_keys::g_consoleField,
+        &mut crate::src::client::cl_keys::g_consoleField as *mut _
+            as *mut crate::qcommon_h::field_t,
         (con.xadjust + (2 as libc::c_int * 8 as libc::c_int) as libc::c_float) as libc::c_int,
         y,
         640 as libc::c_int - 3 as libc::c_int * 8 as libc::c_int,
@@ -1256,7 +1271,7 @@ pub unsafe extern "C" fn Con_DrawNotify() {
             skip = 5 as libc::c_int
         }
         crate::src::client::cl_keys::Field_BigDraw(
-            &mut crate::src::client::cl_keys::chatField,
+            &mut crate::src::client::cl_keys::chatField as *mut _ as *mut crate::qcommon_h::field_t,
             skip * 16 as libc::c_int,
             v,
             640 as libc::c_int - (skip + 1 as libc::c_int) * 16 as libc::c_int,
@@ -1334,7 +1349,7 @@ pub unsafe extern "C" fn Con_DrawSolidConsole(mut frac: libc::c_float) {
             .as_mut_ptr(),
     );
     i = crate::stdlib::strlen(
-        b"ioq3 1.36_GIT_a3a346c3-2019-12-19\x00" as *const u8 as *const libc::c_char,
+        b"ioq3 1.36_GIT_d0fe4462-2020-01-10\x00" as *const u8 as *const libc::c_char,
     ) as libc::c_int;
     x = 0 as libc::c_int;
     while x < i {
@@ -1343,7 +1358,7 @@ pub unsafe extern "C" fn Con_DrawSolidConsole(mut frac: libc::c_float) {
                 - (i - x + 1 as libc::c_int) * 8 as libc::c_int,
             lines - 16 as libc::c_int,
             (*::std::mem::transmute::<&[u8; 34], &[libc::c_char; 34]>(
-                b"ioq3 1.36_GIT_a3a346c3-2019-12-19\x00",
+                b"ioq3 1.36_GIT_d0fe4462-2020-01-10\x00",
             ))[x as usize] as libc::c_int,
         );
         x += 1
@@ -1536,7 +1551,10 @@ pub unsafe extern "C" fn Con_Close() {
     if (*crate::src::qcommon::common::com_cl_running).integer == 0 {
         return;
     }
-    crate::src::qcommon::common::Field_Clear(&mut crate::src::client::cl_keys::g_consoleField);
+    crate::src::qcommon::common::Field_Clear(
+        &mut crate::src::client::cl_keys::g_consoleField as *mut _
+            as *mut crate::qcommon_h::field_t,
+    );
     Con_ClearNotify();
     crate::src::client::cl_keys::Key_SetCatcher(
         crate::src::client::cl_keys::Key_GetCatcher() & !(0x1 as libc::c_int),

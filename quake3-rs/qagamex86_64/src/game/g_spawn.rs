@@ -4,16 +4,16 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -139,12 +139,12 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
 use crate::stdlib::memcpy;
-use crate::stdlib::sscanf;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
-use crate::stdlib::strstr;
-pub use crate::stdlib::strtod;
-pub use crate::stdlib::strtol;
+use ::libc::sscanf;
+use ::libc::strcmp;
+use ::libc::strstr;
+pub use ::libc::strtod;
+pub use ::libc::strtol;
 extern "C" {
     #[no_mangle]
     pub fn SP_info_player_start(ent: *mut crate::g_local_h::gentity_t);
@@ -354,7 +354,7 @@ pub unsafe extern "C" fn G_SpawnVector(
     let mut present: crate::src::qcommon::q_shared::qboolean =
         crate::src::qcommon::q_shared::qfalse;
     present = G_SpawnString(key, defaultString, &mut s);
-    crate::stdlib::sscanf(
+    ::libc::sscanf(
         s,
         b"%f %f %f\x00" as *const u8 as *const libc::c_char,
         &mut *out.offset(0 as libc::c_int as isize) as *mut libc::c_float,
@@ -908,8 +908,11 @@ pub unsafe extern "C" fn G_CallSpawn(
         .as_mut_ptr()
         .offset(1 as libc::c_int as isize);
     while !(*item).classname.is_null() {
-        if crate::stdlib::strcmp((*item).classname, (*ent).classname) == 0 {
-            crate::src::game::g_items::G_SpawnItem(ent, item);
+        if ::libc::strcmp((*item).classname, (*ent).classname) == 0 {
+            crate::src::game::g_items::G_SpawnItem(
+                ent as *mut crate::g_local_h::gentity_s,
+                item as *mut crate::bg_public_h::gitem_s,
+            );
             return crate::src::qcommon::q_shared::qtrue;
         }
         item = item.offset(1)
@@ -917,7 +920,7 @@ pub unsafe extern "C" fn G_CallSpawn(
     // check normal spawn functions
     s = spawns.as_mut_ptr();
     while !(*s).name.is_null() {
-        if crate::stdlib::strcmp((*s).name, (*ent).classname) == 0 {
+        if ::libc::strcmp((*s).name, (*ent).classname) == 0 {
             // found it
             (*s).spawn.expect("non-null function pointer")(ent);
             return crate::src::qcommon::q_shared::qtrue;
@@ -1003,7 +1006,7 @@ pub unsafe extern "C" fn G_ParseField(
                     *fresh3 = G_NewString(value)
                 }
                 3 => {
-                    crate::stdlib::sscanf(
+                    ::libc::sscanf(
                         value,
                         b"%f %f %f\x00" as *const u8 as *const libc::c_char,
                         &mut *vec.as_mut_ptr().offset(0 as libc::c_int as isize)
@@ -1068,7 +1071,7 @@ pub unsafe extern "C" fn G_SpawnGEntityFromSpawnVars() {
         b"harvester\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     ];
     // get the next free entity
-    ent = crate::src::game::g_utils::G_Spawn();
+    ent = crate::src::game::g_utils::G_Spawn() as *mut crate::g_local_h::gentity_s;
     i = 0 as libc::c_int;
     while i < crate::src::game::g_main::level.numSpawnVars {
         G_ParseField(
@@ -1089,13 +1092,15 @@ pub unsafe extern "C" fn G_SpawnGEntityFromSpawnVars() {
         );
         if i != 0 {
             if (*ent).s.eType == crate::bg_public_h::ET_MOVER as libc::c_int {
-                crate::src::game::g_syscalls::trap_LinkEntity(ent);
+                crate::src::game::g_syscalls::trap_LinkEntity(
+                    ent as *mut crate::g_local_h::gentity_s,
+                );
                 crate::src::game::g_syscalls::trap_AdjustAreaPortalState(
-                    ent,
+                    ent as *mut crate::g_local_h::gentity_s,
                     crate::src::qcommon::q_shared::qtrue,
                 );
             }
-            crate::src::game::g_utils::G_FreeEntity(ent);
+            crate::src::game::g_utils::G_FreeEntity(ent as *mut crate::g_local_h::gentity_s);
             return;
         }
     }
@@ -1108,13 +1113,15 @@ pub unsafe extern "C" fn G_SpawnGEntityFromSpawnVars() {
         );
         if i != 0 {
             if (*ent).s.eType == crate::bg_public_h::ET_MOVER as libc::c_int {
-                crate::src::game::g_syscalls::trap_LinkEntity(ent);
+                crate::src::game::g_syscalls::trap_LinkEntity(
+                    ent as *mut crate::g_local_h::gentity_s,
+                );
                 crate::src::game::g_syscalls::trap_AdjustAreaPortalState(
-                    ent,
+                    ent as *mut crate::g_local_h::gentity_s,
                     crate::src::qcommon::q_shared::qtrue,
                 );
             }
-            crate::src::game::g_utils::G_FreeEntity(ent);
+            crate::src::game::g_utils::G_FreeEntity(ent as *mut crate::g_local_h::gentity_s);
             return;
         }
     } else {
@@ -1125,13 +1132,15 @@ pub unsafe extern "C" fn G_SpawnGEntityFromSpawnVars() {
         );
         if i != 0 {
             if (*ent).s.eType == crate::bg_public_h::ET_MOVER as libc::c_int {
-                crate::src::game::g_syscalls::trap_LinkEntity(ent);
+                crate::src::game::g_syscalls::trap_LinkEntity(
+                    ent as *mut crate::g_local_h::gentity_s,
+                );
                 crate::src::game::g_syscalls::trap_AdjustAreaPortalState(
-                    ent,
+                    ent as *mut crate::g_local_h::gentity_s,
                     crate::src::qcommon::q_shared::qtrue,
                 );
             }
-            crate::src::game::g_utils::G_FreeEntity(ent);
+            crate::src::game::g_utils::G_FreeEntity(ent as *mut crate::g_local_h::gentity_s);
             return;
         }
     }
@@ -1142,13 +1151,13 @@ pub unsafe extern "C" fn G_SpawnGEntityFromSpawnVars() {
     );
     if i != 0 {
         if (*ent).s.eType == crate::bg_public_h::ET_MOVER as libc::c_int {
-            crate::src::game::g_syscalls::trap_LinkEntity(ent);
+            crate::src::game::g_syscalls::trap_LinkEntity(ent as *mut crate::g_local_h::gentity_s);
             crate::src::game::g_syscalls::trap_AdjustAreaPortalState(
-                ent,
+                ent as *mut crate::g_local_h::gentity_s,
                 crate::src::qcommon::q_shared::qtrue,
             );
         }
-        crate::src::game::g_utils::G_FreeEntity(ent);
+        crate::src::game::g_utils::G_FreeEntity(ent as *mut crate::g_local_h::gentity_s);
         return;
     }
     if G_SpawnString(
@@ -1163,16 +1172,18 @@ pub unsafe extern "C" fn G_SpawnGEntityFromSpawnVars() {
                 < crate::bg_public_h::GT_MAX_GAME_TYPE as libc::c_int
         {
             gametypeName = gametypeNames[crate::src::game::g_main::g_gametype.integer as usize];
-            s = crate::stdlib::strstr(value, gametypeName);
+            s = ::libc::strstr(value, gametypeName);
             if s.is_null() {
                 if (*ent).s.eType == crate::bg_public_h::ET_MOVER as libc::c_int {
-                    crate::src::game::g_syscalls::trap_LinkEntity(ent);
+                    crate::src::game::g_syscalls::trap_LinkEntity(
+                        ent as *mut crate::g_local_h::gentity_s,
+                    );
                     crate::src::game::g_syscalls::trap_AdjustAreaPortalState(
-                        ent,
+                        ent as *mut crate::g_local_h::gentity_s,
                         crate::src::qcommon::q_shared::qtrue,
                     );
                 }
-                crate::src::game::g_utils::G_FreeEntity(ent);
+                crate::src::game::g_utils::G_FreeEntity(ent as *mut crate::g_local_h::gentity_s);
                 return;
             }
         }
@@ -1186,7 +1197,7 @@ pub unsafe extern "C" fn G_SpawnGEntityFromSpawnVars() {
     (*ent).r.currentOrigin[2 as libc::c_int as usize] = (*ent).s.origin[2 as libc::c_int as usize];
     // if we didn't get a classname, don't bother spawning anything
     if G_CallSpawn(ent) as u64 == 0 {
-        crate::src::game::g_utils::G_FreeEntity(ent);
+        crate::src::game::g_utils::G_FreeEntity(ent as *mut crate::g_local_h::gentity_s);
     };
 }
 /*

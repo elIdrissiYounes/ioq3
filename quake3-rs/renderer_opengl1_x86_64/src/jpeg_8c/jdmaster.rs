@@ -305,7 +305,9 @@ pub unsafe extern "C" fn jpeg_calc_output_dimensions(
         .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr);
     }
     /* Compute core output image dimensions and DCT scaling choices. */
-    crate::src::jpeg_8c::jdinput::jpeg_core_output_dimensions(cinfo);
+    crate::src::jpeg_8c::jdinput::jpeg_core_output_dimensions(
+        cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+    );
     /* In selecting the actual DCT scaling for each component, we try to
      * scale up the chroma components via IDCT scaling rather than upsampling.
      * This saves time if the upsampler gets to use 1:1 scaling.
@@ -569,11 +571,15 @@ unsafe extern "C" fn master_selection(mut cinfo: crate::jpeglib_h::j_decompress_
             (*cinfo).enable_1pass_quant = 1 as libc::c_int
         }
         if (*cinfo).enable_1pass_quant != 0 {
-            crate::src::jpeg_8c::jquant1::jinit_1pass_quantizer(cinfo);
+            crate::src::jpeg_8c::jquant1::jinit_1pass_quantizer(
+                cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+            );
             (*master).quantizer_1pass = (*cinfo).cquantize
         }
         if (*cinfo).enable_2pass_quant != 0 || (*cinfo).enable_external_quant != 0 {
-            crate::src::jpeg_8c::jquant2::jinit_2pass_quantizer(cinfo);
+            crate::src::jpeg_8c::jquant2::jinit_2pass_quantizer(
+                cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+            );
             (*master).quantizer_2pass = (*cinfo).cquantize
         }
     }
@@ -582,28 +588,49 @@ unsafe extern "C" fn master_selection(mut cinfo: crate::jpeglib_h::j_decompress_
     /* Post-processing: in particular, color conversion first */
     if (*cinfo).raw_data_out == 0 {
         if (*master).using_merged_upsample != 0 {
-            crate::src::jpeg_8c::jdmerge::jinit_merged_upsampler(cinfo);
+            crate::src::jpeg_8c::jdmerge::jinit_merged_upsampler(
+                cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+            );
         /* does color conversion too */
         } else {
-            crate::src::jpeg_8c::jdcolor::jinit_color_deconverter(cinfo);
-            crate::src::jpeg_8c::jdsample::jinit_upsampler(cinfo);
+            crate::src::jpeg_8c::jdcolor::jinit_color_deconverter(
+                cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+            );
+            crate::src::jpeg_8c::jdsample::jinit_upsampler(
+                cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+            );
         }
-        crate::src::jpeg_8c::jdpostct::jinit_d_post_controller(cinfo, (*cinfo).enable_2pass_quant);
+        crate::src::jpeg_8c::jdpostct::jinit_d_post_controller(
+            cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+            (*cinfo).enable_2pass_quant,
+        );
     }
     /* Inverse DCT */
-    crate::src::jpeg_8c::jddctmgr::jinit_inverse_dct(cinfo);
+    crate::src::jpeg_8c::jddctmgr::jinit_inverse_dct(
+        cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+    );
     /* Entropy decoding: either Huffman or arithmetic coding. */
     if (*cinfo).arith_code != 0 {
-        crate::src::jpeg_8c::jdarith::jinit_arith_decoder(cinfo);
+        crate::src::jpeg_8c::jdarith::jinit_arith_decoder(
+            cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+        );
     } else {
-        crate::src::jpeg_8c::jdhuff::jinit_huff_decoder(cinfo);
+        crate::src::jpeg_8c::jdhuff::jinit_huff_decoder(
+            cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+        );
     }
     /* Initialize principal buffer controllers. */
     use_c_buffer = ((*(*cinfo).inputctl).has_multiple_scans != 0 || (*cinfo).buffered_image != 0)
         as libc::c_int;
-    crate::src::jpeg_8c::jdcoefct::jinit_d_coef_controller(cinfo, use_c_buffer);
+    crate::src::jpeg_8c::jdcoefct::jinit_d_coef_controller(
+        cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+        use_c_buffer,
+    );
     if (*cinfo).raw_data_out == 0 {
-        crate::src::jpeg_8c::jdmainct::jinit_d_main_controller(cinfo, 0 as libc::c_int);
+        crate::src::jpeg_8c::jdmainct::jinit_d_main_controller(
+            cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+            0 as libc::c_int,
+        );
     }
     /* We can now tell the memory manager to allocate virtual arrays. */
     Some(

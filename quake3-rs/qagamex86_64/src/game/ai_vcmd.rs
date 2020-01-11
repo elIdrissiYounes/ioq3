@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -76,8 +76,8 @@ use crate::src::game::ai_team::BotGetTeamMateTaskPreference;
 use crate::src::game::ai_team::BotSetTeamMateTaskPreference;
 use crate::src::game::ai_team::BotVoiceChatOnly;
 pub use crate::src::game::ai_vcmd::stdlib_h::atoi;
-pub use crate::stdlib::rand;
-pub use crate::stdlib::strtol;
+pub use ::libc::rand;
+pub use ::libc::strtol;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -155,7 +155,7 @@ pub unsafe extern "C" fn BotVoiceChat_GetFlag(
     //set the time to send a message to the team mates
     (*bs).teammessage_time = crate::src::game::ai_main::floattime
         + 2 as libc::c_int as libc::c_float
-            * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float);
     //set the ltg type
     (*bs).ltgtype = 4 as libc::c_int;
@@ -166,14 +166,18 @@ pub unsafe extern "C" fn BotVoiceChat_GetFlag(
     if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_CTF as libc::c_int {
         //get an alternative route goal towards the enemy base
         crate::src::game::ai_dmq3::BotGetAlternateRouteGoal(
-            bs,
-            crate::src::game::ai_dmq3::BotOppositeTeam(bs),
+            bs as *mut crate::src::game::ai_main::bot_state_s,
+            crate::src::game::ai_dmq3::BotOppositeTeam(
+                bs as *mut crate::src::game::ai_main::bot_state_s,
+            ),
         );
     }
     //
-    crate::src::game::ai_dmq3::BotSetTeamStatus(bs);
+    crate::src::game::ai_dmq3::BotSetTeamStatus(bs as *mut crate::src::game::ai_main::bot_state_s);
     // remember last ordered task
-    crate::src::game::ai_dmq3::BotRememberLastOrderedTask(bs);
+    crate::src::game::ai_dmq3::BotRememberLastOrderedTask(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+    );
     //DEBUG
 }
 /*
@@ -199,7 +203,7 @@ pub unsafe extern "C" fn BotVoiceChat_Offense(
     //set the time to send a message to the team mates
     (*bs).teammessage_time = crate::src::game::ai_main::floattime
         + 2 as libc::c_int as libc::c_float
-            * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float);
     //set the ltg type
     (*bs).ltgtype = 13 as libc::c_int;
@@ -208,9 +212,11 @@ pub unsafe extern "C" fn BotVoiceChat_Offense(
         crate::src::game::ai_main::floattime + 600 as libc::c_int as libc::c_float;
     (*bs).attackaway_time = 0 as libc::c_int as libc::c_float;
     //
-    crate::src::game::ai_dmq3::BotSetTeamStatus(bs);
+    crate::src::game::ai_dmq3::BotSetTeamStatus(bs as *mut crate::src::game::ai_main::bot_state_s);
     // remember last ordered task
-    crate::src::game::ai_dmq3::BotRememberLastOrderedTask(bs);
+    crate::src::game::ai_dmq3::BotRememberLastOrderedTask(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+    );
     //DEBUG
 }
 /*
@@ -227,7 +233,8 @@ pub unsafe extern "C" fn BotVoiceChat_Defend(
 ) {
     if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_CTF as libc::c_int {
         //
-        match crate::src::game::ai_dmq3::BotTeam(bs) {
+        match crate::src::game::ai_dmq3::BotTeam(bs as *mut crate::src::game::ai_main::bot_state_s)
+        {
             1 => {
                 crate::stdlib::memcpy(
                     &mut (*bs).teamgoal as *mut crate::be_ai_goal_h::bot_goal_t
@@ -260,7 +267,7 @@ pub unsafe extern "C" fn BotVoiceChat_Defend(
     //set the time to send a message to the team mates
     (*bs).teammessage_time = crate::src::game::ai_main::floattime
         + 2 as libc::c_int as libc::c_float
-            * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float);
     //set the ltg type
     (*bs).ltgtype = 3 as libc::c_int;
@@ -270,9 +277,11 @@ pub unsafe extern "C" fn BotVoiceChat_Defend(
     //away from defending
     (*bs).defendaway_time = 0 as libc::c_int as libc::c_float;
     //
-    crate::src::game::ai_dmq3::BotSetTeamStatus(bs);
+    crate::src::game::ai_dmq3::BotSetTeamStatus(bs as *mut crate::src::game::ai_main::bot_state_s);
     // remember last ordered task
-    crate::src::game::ai_dmq3::BotRememberLastOrderedTask(bs);
+    crate::src::game::ai_dmq3::BotRememberLastOrderedTask(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+    );
     //DEBUG
 }
 /*
@@ -309,18 +318,18 @@ pub unsafe extern "C" fn BotVoiceChat_Patrol(
     (*bs).lastgoal_ltgtype = 0 as libc::c_int;
     //
     crate::src::game::ai_main::BotAI_BotInitialChat(
-        bs,
+        bs as *mut crate::src::game::ai_main::bot_state_s,
         b"dismissed\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
         0 as *mut libc::c_void,
     );
     crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, client, 2 as libc::c_int);
     crate::src::game::ai_team::BotVoiceChatOnly(
-        bs,
+        bs as *mut crate::src::game::ai_main::bot_state_s,
         -(1 as libc::c_int),
         b"onpatrol\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     );
     //
-    crate::src::game::ai_dmq3::BotSetTeamStatus(bs);
+    crate::src::game::ai_dmq3::BotSetTeamStatus(bs as *mut crate::src::game::ai_main::bot_state_s);
     //DEBUG
 }
 /*
@@ -364,7 +373,10 @@ pub unsafe extern "C" fn BotVoiceChat_Camp(
     let mut netname: [libc::c_char; 36] = [0; 36];
     //
     (*bs).teamgoal.entitynum = -(1 as libc::c_int);
-    crate::src::game::ai_main::BotEntityInfo(client, &mut entinfo);
+    crate::src::game::ai_main::BotEntityInfo(
+        client,
+        &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+    );
     //if info is valid (in PVS)
     if entinfo.valid != 0 {
         areanum = crate::src::game::ai_dmq3::BotPointAreaNum(entinfo.origin.as_mut_ptr());
@@ -398,7 +410,7 @@ pub unsafe extern "C" fn BotVoiceChat_Camp(
     //if the other is not visible
     if (*bs).teamgoal.entitynum < 0 as libc::c_int {
         crate::src::game::ai_main::BotAI_BotInitialChat(
-            bs,
+            bs as *mut crate::src::game::ai_main::bot_state_s,
             b"whereareyou\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
             crate::src::game::ai_dmq3::EasyClientName(
                 client,
@@ -417,7 +429,7 @@ pub unsafe extern "C" fn BotVoiceChat_Camp(
     //set the time to send a message to the team mates
     (*bs).teammessage_time = crate::src::game::ai_main::floattime
         + 2 as libc::c_int as libc::c_float
-            * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float);
     //set the ltg type
     (*bs).ltgtype = 8 as libc::c_int;
@@ -429,9 +441,11 @@ pub unsafe extern "C" fn BotVoiceChat_Camp(
     //not arrived yet
     (*bs).arrive_time = 0 as libc::c_int as libc::c_float;
     //
-    crate::src::game::ai_dmq3::BotSetTeamStatus(bs);
+    crate::src::game::ai_dmq3::BotSetTeamStatus(bs as *mut crate::src::game::ai_main::bot_state_s);
     // remember last ordered task
-    crate::src::game::ai_dmq3::BotRememberLastOrderedTask(bs);
+    crate::src::game::ai_dmq3::BotRememberLastOrderedTask(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+    );
     //DEBUG
 }
 /*
@@ -474,7 +488,10 @@ pub unsafe extern "C" fn BotVoiceChat_FollowMe(
     };
     let mut netname: [libc::c_char; 36] = [0; 36];
     (*bs).teamgoal.entitynum = -(1 as libc::c_int);
-    crate::src::game::ai_main::BotEntityInfo(client, &mut entinfo);
+    crate::src::game::ai_main::BotEntityInfo(
+        client,
+        &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+    );
     //if info is valid (in PVS)
     if entinfo.valid != 0 {
         areanum = crate::src::game::ai_dmq3::BotPointAreaNum(entinfo.origin.as_mut_ptr());
@@ -505,7 +522,7 @@ pub unsafe extern "C" fn BotVoiceChat_FollowMe(
     //if the other is not visible
     if (*bs).teamgoal.entitynum < 0 as libc::c_int {
         crate::src::game::ai_main::BotAI_BotInitialChat(
-            bs,
+            bs as *mut crate::src::game::ai_main::bot_state_s,
             b"whereareyou\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
             crate::src::game::ai_dmq3::EasyClientName(
                 client,
@@ -528,7 +545,7 @@ pub unsafe extern "C" fn BotVoiceChat_FollowMe(
     //set the time to send a message to the team mates
     (*bs).teammessage_time = crate::src::game::ai_main::floattime
         + 2 as libc::c_int as libc::c_float
-            * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float);
     //get the team goal time
     (*bs).teamgoal_time =
@@ -538,9 +555,11 @@ pub unsafe extern "C" fn BotVoiceChat_FollowMe(
     (*bs).formation_dist = (3.5f64 * 32 as libc::c_int as libc::c_double) as libc::c_float;
     (*bs).arrive_time = 0 as libc::c_int as libc::c_float;
     //
-    crate::src::game::ai_dmq3::BotSetTeamStatus(bs);
+    crate::src::game::ai_dmq3::BotSetTeamStatus(bs as *mut crate::src::game::ai_main::bot_state_s);
     // remember last ordered task
-    crate::src::game::ai_dmq3::BotRememberLastOrderedTask(bs);
+    crate::src::game::ai_dmq3::BotRememberLastOrderedTask(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+    );
     //DEBUG
 }
 /*
@@ -556,7 +575,9 @@ pub unsafe extern "C" fn BotVoiceChat_FollowFlagCarrier(
     mut mode: libc::c_int,
 ) {
     let mut carrier: libc::c_int = 0;
-    carrier = crate::src::game::ai_dmq3::BotTeamFlagCarrier(bs);
+    carrier = crate::src::game::ai_dmq3::BotTeamFlagCarrier(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+    );
     if carrier >= 0 as libc::c_int {
         BotVoiceChat_FollowMe(bs, carrier, mode);
     };
@@ -585,7 +606,7 @@ pub unsafe extern "C" fn BotVoiceChat_ReturnFlag(
     //set the time to send a message to the team mates
     (*bs).teammessage_time = crate::src::game::ai_main::floattime
         + 2 as libc::c_int as libc::c_float
-            * ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+            * ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                 / 0x7fff as libc::c_int as libc::c_float);
     //set the ltg type
     (*bs).ltgtype = 6 as libc::c_int;
@@ -593,7 +614,7 @@ pub unsafe extern "C" fn BotVoiceChat_ReturnFlag(
     (*bs).teamgoal_time =
         crate::src::game::ai_main::floattime + 180 as libc::c_int as libc::c_float;
     (*bs).rushbaseaway_time = 0 as libc::c_int as libc::c_float;
-    crate::src::game::ai_dmq3::BotSetTeamStatus(bs);
+    crate::src::game::ai_dmq3::BotSetTeamStatus(bs as *mut crate::src::game::ai_main::bot_state_s);
     //DEBUG
 }
 /*
@@ -667,7 +688,7 @@ pub unsafe extern "C" fn BotVoiceChat_WhoIsLeader(
         == 0
     {
         crate::src::game::ai_main::BotAI_BotInitialChat(
-            bs,
+            bs as *mut crate::src::game::ai_main::bot_state_s,
             b"iamteamleader\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
             0 as *mut libc::c_void,
         );
@@ -677,7 +698,7 @@ pub unsafe extern "C" fn BotVoiceChat_WhoIsLeader(
             1 as libc::c_int,
         );
         crate::src::game::ai_team::BotVoiceChatOnly(
-            bs,
+            bs as *mut crate::src::game::ai_main::bot_state_s,
             -(1 as libc::c_int),
             b"startleader\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
         );
@@ -697,10 +718,17 @@ pub unsafe extern "C" fn BotVoiceChat_WantOnDefense(
 ) {
     let mut netname: [libc::c_char; 36] = [0; 36];
     let mut preference: libc::c_int = 0;
-    preference = crate::src::game::ai_team::BotGetTeamMateTaskPreference(bs, client);
+    preference = crate::src::game::ai_team::BotGetTeamMateTaskPreference(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+        client,
+    );
     preference &= !(2 as libc::c_int);
     preference |= 1 as libc::c_int;
-    crate::src::game::ai_team::BotSetTeamMateTaskPreference(bs, client, preference);
+    crate::src::game::ai_team::BotSetTeamMateTaskPreference(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+        client,
+        preference,
+    );
     //
     crate::src::game::ai_dmq3::EasyClientName(
         client,
@@ -708,14 +736,14 @@ pub unsafe extern "C" fn BotVoiceChat_WantOnDefense(
         ::std::mem::size_of::<[libc::c_char; 36]>() as libc::c_ulong as libc::c_int,
     );
     crate::src::game::ai_main::BotAI_BotInitialChat(
-        bs,
+        bs as *mut crate::src::game::ai_main::bot_state_s,
         b"keepinmind\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
         netname.as_mut_ptr(),
         0 as *mut libc::c_void,
     );
     crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, client, 2 as libc::c_int);
     crate::src::game::ai_team::BotVoiceChatOnly(
-        bs,
+        bs as *mut crate::src::game::ai_main::bot_state_s,
         client,
         b"yes\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     );
@@ -735,10 +763,17 @@ pub unsafe extern "C" fn BotVoiceChat_WantOnOffense(
 ) {
     let mut netname: [libc::c_char; 36] = [0; 36];
     let mut preference: libc::c_int = 0;
-    preference = crate::src::game::ai_team::BotGetTeamMateTaskPreference(bs, client);
+    preference = crate::src::game::ai_team::BotGetTeamMateTaskPreference(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+        client,
+    );
     preference &= !(1 as libc::c_int);
     preference |= 2 as libc::c_int;
-    crate::src::game::ai_team::BotSetTeamMateTaskPreference(bs, client, preference);
+    crate::src::game::ai_team::BotSetTeamMateTaskPreference(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+        client,
+        preference,
+    );
     //
     crate::src::game::ai_dmq3::EasyClientName(
         client,
@@ -746,14 +781,14 @@ pub unsafe extern "C" fn BotVoiceChat_WantOnOffense(
         ::std::mem::size_of::<[libc::c_char; 36]>() as libc::c_ulong as libc::c_int,
     );
     crate::src::game::ai_main::BotAI_BotInitialChat(
-        bs,
+        bs as *mut crate::src::game::ai_main::bot_state_s,
         b"keepinmind\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
         netname.as_mut_ptr(),
         0 as *mut libc::c_void,
     );
     crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, client, 2 as libc::c_int);
     crate::src::game::ai_team::BotVoiceChatOnly(
-        bs,
+        bs as *mut crate::src::game::ai_main::bot_state_s,
         client,
         b"yes\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     );
@@ -1068,7 +1103,11 @@ pub unsafe extern "C" fn BotVoiceChatCommand(
         *fresh2 = '\u{0}' as i32 as libc::c_char
     }
     //color = atoi(ptr);
-    if crate::src::game::ai_dmq3::BotSameTeam(bs, clientNum) == 0 {
+    if crate::src::game::ai_dmq3::BotSameTeam(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+        clientNum,
+    ) == 0
+    {
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
     }
     i = 0 as libc::c_int;

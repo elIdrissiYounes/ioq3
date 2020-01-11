@@ -51,12 +51,12 @@ pub use crate::stdlib::_ISspace;
 pub use crate::stdlib::_ISupper;
 pub use crate::stdlib::_ISxdigit;
 pub use crate::stdlib::__ctype_b_loc;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
 use crate::stdlib::memcpy;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
 use crate::stdlib::strspn;
+use ::libc::free;
+use ::libc::strcmp;
 
 unsafe extern "C" fn op_string_range_dup(
     mut _start: *const libc::c_char,
@@ -260,7 +260,7 @@ unsafe extern "C" fn op_parse_file_url(mut _src: *const libc::c_char) -> *const 
             op_unescape_url_component(host_buf.as_mut_ptr());
             op_string_tolower(host_buf.as_mut_ptr());
             /*Some other host: give up.*/
-            if (crate::stdlib::strcmp(
+            if (::libc::strcmp(
                 host_buf.as_mut_ptr(),
                 b"localhost\x00" as *const u8 as *const libc::c_char,
             ) != 0 as libc::c_int) as libc::c_int as libc::c_long
@@ -309,12 +309,12 @@ pub unsafe extern "C" fn opus_server_info_init(
 pub unsafe extern "C" fn opus_server_info_clear(
     mut _info: *mut crate::src::opusfile_0_9::src::opusfile::OpusServerInfo,
 ) {
-    crate::stdlib::free((*_info).content_type as *mut libc::c_void);
-    crate::stdlib::free((*_info).server as *mut libc::c_void);
-    crate::stdlib::free((*_info).url as *mut libc::c_void);
-    crate::stdlib::free((*_info).genre as *mut libc::c_void);
-    crate::stdlib::free((*_info).description as *mut libc::c_void);
-    crate::stdlib::free((*_info).name as *mut libc::c_void);
+    ::libc::free((*_info).content_type as *mut libc::c_void);
+    ::libc::free((*_info).server as *mut libc::c_void);
+    ::libc::free((*_info).url as *mut libc::c_void);
+    ::libc::free((*_info).genre as *mut libc::c_void);
+    ::libc::free((*_info).description as *mut libc::c_void);
+    ::libc::free((*_info).name as *mut libc::c_void);
 }
 /*The actual URL stream creation function.
 This one isn't extensible like the application-level interface, but because
@@ -341,11 +341,11 @@ unsafe extern "C" fn op_url_stream_create_impl(
             return 0 as *mut libc::c_void;
         }
         ret = crate::src::opusfile_0_9::src::stream::op_fopen(
-            _cb,
+            _cb as *mut crate::src::opusfile_0_9::src::opusfile::OpusFileCallbacks,
             op_unescape_url_component(unescaped_path),
             b"rb\x00" as *const u8 as *const libc::c_char,
         );
-        crate::stdlib::free(unescaped_path as *mut libc::c_void);
+        ::libc::free(unescaped_path as *mut libc::c_void);
         return ret;
     }
     return 0 as *mut libc::c_void;
@@ -536,11 +536,11 @@ pub unsafe extern "C" fn op_vopen_url(
     }
     of = crate::src::opusfile_0_9::src::opusfile::op_open_callbacks(
         source,
-        &mut cb,
+        &mut cb as *mut _ as *const crate::src::opusfile_0_9::src::opusfile::OpusFileCallbacks,
         0 as *const libc::c_uchar,
         0 as libc::c_int as crate::stddef_h::size_t,
         _error,
-    );
+    ) as *mut crate::internal_h::OggOpusFile;
     if of.is_null() as libc::c_int as libc::c_long != 0 {
         if !pinfo.is_null() {
             opus_server_info_clear(&mut info);
@@ -605,11 +605,11 @@ pub unsafe extern "C" fn op_vtest_url(
     }
     of = crate::src::opusfile_0_9::src::opusfile::op_test_callbacks(
         source,
-        &mut cb,
+        &mut cb as *mut _ as *const crate::src::opusfile_0_9::src::opusfile::OpusFileCallbacks,
         0 as *const libc::c_uchar,
         0 as libc::c_int as crate::stddef_h::size_t,
         _error,
-    );
+    ) as *mut crate::internal_h::OggOpusFile;
     if of.is_null() as libc::c_int as libc::c_long != 0 {
         if !pinfo.is_null() {
             opus_server_info_clear(&mut info);

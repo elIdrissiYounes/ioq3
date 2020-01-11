@@ -1,4 +1,10 @@
 // =============== BEGIN ai_main_h ================
+
+//
+
+//check points
+pub type bot_waypoint_t = crate::src::game::ai_main::bot_waypoint_s;
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct bot_waypoint_s {
@@ -8,10 +14,8 @@ pub struct bot_waypoint_s {
     pub next: *mut crate::src::game::ai_main::bot_waypoint_s,
     pub prev: *mut crate::src::game::ai_main::bot_waypoint_s,
 }
-//
-//check points
 
-pub type bot_waypoint_t = crate::src::game::ai_main::bot_waypoint_s;
+pub type bot_activategoal_t = crate::src::game::ai_main::bot_activategoal_s;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -30,8 +34,21 @@ pub struct bot_activategoal_s {
     pub areasdisabled: libc::c_int,
     pub next: *mut crate::src::game::ai_main::bot_activategoal_s,
 }
+//goal to activate (buttons etc.)
+//time to activate something
+//time starting to activate something
+//time the goal was used
+//true if bot has to shoot to activate
+//weapon to be used for activation
+//target to shoot at to activate something
+//origin of the blocking entity to activate
+//routing areas disabled by blocking entity
+//number of disabled routing areas
+//true if the areas are disabled for the routing
+//next activate goal on stack
+//bot state
 
-pub type bot_activategoal_t = crate::src::game::ai_main::bot_activategoal_s;
+pub type bot_state_t = crate::src::game::ai_main::bot_state_s;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -177,28 +194,13 @@ pub struct bot_state_s {
     pub curpatrolpoint: *mut crate::src::game::ai_main::bot_waypoint_t,
     pub patrolflags: libc::c_int,
 }
-//goal to activate (buttons etc.)
-//time to activate something
-//time starting to activate something
-//time the goal was used
-//true if bot has to shoot to activate
-//weapon to be used for activation
-//target to shoot at to activate something
-//origin of the blocking entity to activate
-//routing areas disabled by blocking entity
-//number of disabled routing areas
-//true if the areas are disabled for the routing
-//next activate goal on stack
-//bot state
-
-pub type bot_state_t = crate::src::game::ai_main::bot_state_s;
 use ::libc;
 
 pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -435,12 +437,12 @@ pub use crate::src::game::ai_main::stdlib_h::atoi;
 use crate::stdlib::memcpy;
 use crate::stdlib::memmove;
 use crate::stdlib::memset;
-use crate::stdlib::sscanf;
-use crate::stdlib::strchr;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
-pub use crate::stdlib::strtol;
 use crate::stdlib::vsnprintf;
+use ::libc::sscanf;
+use ::libc::strchr;
+use ::libc::strcpy;
+pub use ::libc::strtol;
 extern "C" {
     #[no_mangle]
     pub fn ExitLevel();
@@ -717,7 +719,7 @@ pub unsafe extern "C" fn BotAI_Trace(
             entityNum: 0,
         };
     crate::src::game::g_syscalls::trap_Trace(
-        &mut trace,
+        &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         start as *const crate::src::qcommon::q_shared::vec_t,
         mins as *const crate::src::qcommon::q_shared::vec_t,
         maxs as *const crate::src::qcommon::q_shared::vec_t,
@@ -871,7 +873,9 @@ pub unsafe extern "C" fn BotAI_BotInitialChat(
         p = ap.as_va_list().arg::<*mut libc::c_char>();
         i += 1
     }
-    mcontext = crate::src::game::ai_dmq3::BotSynonymContext(bs);
+    mcontext = crate::src::game::ai_dmq3::BotSynonymContext(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+    );
     crate::src::game::g_syscalls::trap_BotInitialChat(
         (*bs).cs,
         type_0,
@@ -904,8 +908,12 @@ pub unsafe extern "C" fn BotTestAAS(mut origin: *mut crate::src::qcommon::q_shar
         maxs: [0.; 3],
         center: [0.; 3],
     };
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut bot_testsolid);
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut bot_testclusters);
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut bot_testsolid as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut bot_testclusters as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
     if bot_testsolid.integer != 0 {
         if crate::src::game::g_syscalls::trap_AAS_Initialized() == 0 {
             return;
@@ -973,20 +981,24 @@ pub unsafe extern "C" fn BotReportStatus(mut bs: *mut crate::src::game::ai_main:
     } else {
         leader = b" \x00" as *const u8 as *const libc::c_char as *mut libc::c_char
     }
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         flagstatus.as_mut_ptr(),
         b"  \x00" as *const u8 as *const libc::c_char,
     );
     if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_CTF as libc::c_int {
-        if crate::src::game::ai_dmq3::BotCTFCarryingFlag(bs) != 0 {
-            if crate::src::game::ai_dmq3::BotTeam(bs) == crate::bg_public_h::TEAM_RED as libc::c_int
+        if crate::src::game::ai_dmq3::BotCTFCarryingFlag(
+            bs as *mut crate::src::game::ai_main::bot_state_s,
+        ) != 0
+        {
+            if crate::src::game::ai_dmq3::BotTeam(bs as *mut crate::src::game::ai_main::bot_state_s)
+                == crate::bg_public_h::TEAM_RED as libc::c_int
             {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     flagstatus.as_mut_ptr(),
                     b"^1F \x00" as *const u8 as *const libc::c_char,
                 );
             } else {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     flagstatus.as_mut_ptr(),
                     b"^4F \x00" as *const u8 as *const libc::c_char,
                 );
@@ -1272,13 +1284,16 @@ pub unsafe extern "C" fn BotSetInfoConfigString(
     } else {
         leader = b" \x00" as *const u8 as *const libc::c_char as *mut libc::c_char
     }
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         carrying.as_mut_ptr(),
         b"  \x00" as *const u8 as *const libc::c_char,
     );
     if crate::src::game::ai_dmq3::gametype == crate::bg_public_h::GT_CTF as libc::c_int {
-        if crate::src::game::ai_dmq3::BotCTFCarryingFlag(bs) != 0 {
-            crate::stdlib::strcpy(
+        if crate::src::game::ai_dmq3::BotCTFCarryingFlag(
+            bs as *mut crate::src::game::ai_main::bot_state_s,
+        ) != 0
+        {
+            ::libc::strcpy(
                 carrying.as_mut_ptr(),
                 b"F \x00" as *const u8 as *const libc::c_char,
             );
@@ -1565,7 +1580,9 @@ pub unsafe extern "C" fn BotInterbreedEndMatch() {
     if bot_interbreedmatchcount >= bot_interbreedcycle.integer {
         bot_interbreedmatchcount = 0 as libc::c_int;
         //
-        crate::src::game::g_syscalls::trap_Cvar_Update(&mut bot_interbreedwrite);
+        crate::src::game::g_syscalls::trap_Cvar_Update(
+            &mut bot_interbreedwrite as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+        );
         if crate::stdlib::strlen(bot_interbreedwrite.string.as_mut_ptr()) != 0 {
             BotWriteInterbreeded(bot_interbreedwrite.string.as_mut_ptr());
             crate::src::game::g_syscalls::trap_Cvar_Set(
@@ -1585,7 +1602,9 @@ BotInterbreeding
 
 pub unsafe extern "C" fn BotInterbreeding() {
     let mut i: libc::c_int = 0;
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut bot_interbreedchar);
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut bot_interbreedchar as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
     if crate::stdlib::strlen(bot_interbreedchar.string.as_mut_ptr()) == 0 {
         return;
     }
@@ -2164,7 +2183,7 @@ pub unsafe extern "C" fn BotAI(
     ) != 0
     {
         //have buf point to the command and args to the command arguments
-        args = crate::stdlib::strchr(buf.as_mut_ptr(), ' ' as i32);
+        args = ::libc::strchr(buf.as_mut_ptr(), ' ' as i32);
         if args.is_null() {
             continue;
         }
@@ -2283,7 +2302,10 @@ pub unsafe extern "C" fn BotAI(
     //get the area the bot is in
     (*bs).areanum = crate::src::game::ai_dmq3::BotPointAreaNum((*bs).origin.as_mut_ptr());
     //the real AI
-    crate::src::game::ai_dmq3::BotDeathmatchAI(bs, thinktime);
+    crate::src::game::ai_dmq3::BotDeathmatchAI(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+        thinktime,
+    );
     //set the weapon selection every AI frame
     crate::src::game::g_syscalls::trap_EA_SelectWeapon((*bs).client, (*bs).weaponnum);
     //subtract the delta angles
@@ -2378,7 +2400,7 @@ pub unsafe extern "C" fn BotReadSessionData(mut bs: *mut crate::src::game::ai_ma
         s.as_mut_ptr(),
         ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
     );
-    crate::stdlib::sscanf(
+    ::libc::sscanf(
         s.as_mut_ptr(),
         b"%i %i %i %i %i %i %i %i %f %f %f %f %f %f %f %f %f %f\x00" as *const u8
             as *const libc::c_char,
@@ -2600,7 +2622,7 @@ pub unsafe extern "C" fn BotAISetupClient(
             b"bot_testichat\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
             b"1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
         );
-        crate::src::game::ai_chat::BotChatTest(bs);
+        crate::src::game::ai_chat::BotChatTest(bs as *mut crate::src::game::ai_main::bot_state_s);
     }
     //NOTE: reschedule the bot thinking
     BotScheduleBotThink();
@@ -2639,7 +2661,10 @@ pub unsafe extern "C" fn BotAIShutdownClient(
     if restart as u64 != 0 {
         BotWriteSessionData(bs);
     }
-    if crate::src::game::ai_chat::BotChat_ExitGame(bs) != 0 {
+    if crate::src::game::ai_chat::BotChat_ExitGame(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+    ) != 0
+    {
         crate::src::game::g_syscalls::trap_BotEnterChat((*bs).cs, (*bs).client, 0 as libc::c_int);
     }
     crate::src::game::g_syscalls::trap_BotFreeMoveState((*bs).ms);
@@ -2652,10 +2677,16 @@ pub unsafe extern "C" fn BotAIShutdownClient(
     //free the bot character
     crate::src::game::g_syscalls::trap_BotFreeCharacter((*bs).character);
     //
-    crate::src::game::ai_dmq3::BotFreeWaypoints((*bs).checkpoints);
-    crate::src::game::ai_dmq3::BotFreeWaypoints((*bs).patrolpoints);
+    crate::src::game::ai_dmq3::BotFreeWaypoints(
+        (*bs).checkpoints as *mut crate::src::game::ai_main::bot_waypoint_s,
+    );
+    crate::src::game::ai_dmq3::BotFreeWaypoints(
+        (*bs).patrolpoints as *mut crate::src::game::ai_main::bot_waypoint_s,
+    );
     //clear activate goal stack
-    crate::src::game::ai_dmq3::BotClearActivateGoalStack(bs);
+    crate::src::game::ai_dmq3::BotClearActivateGoalStack(
+        bs as *mut crate::src::game::ai_main::bot_state_s,
+    );
     //clear the bot state
     crate::stdlib::memset(
         bs as *mut libc::c_void,
@@ -2764,8 +2795,12 @@ pub unsafe extern "C" fn BotResetState(mut bs: *mut crate::src::game::ai_main::b
     weaponstate = (*bs).ws;
     entergame_time = (*bs).entergame_time;
     //free checkpoints and patrol points
-    crate::src::game::ai_dmq3::BotFreeWaypoints((*bs).checkpoints);
-    crate::src::game::ai_dmq3::BotFreeWaypoints((*bs).patrolpoints);
+    crate::src::game::ai_dmq3::BotFreeWaypoints(
+        (*bs).checkpoints as *mut crate::src::game::ai_main::bot_waypoint_s,
+    );
+    crate::src::game::ai_dmq3::BotFreeWaypoints(
+        (*bs).patrolpoints as *mut crate::src::game::ai_main::bot_waypoint_s,
+    );
     //reset the whole state
     crate::stdlib::memset(
         bs as *mut libc::c_void,
@@ -2828,7 +2863,7 @@ pub unsafe extern "C" fn BotAILoadMap(mut restart: libc::c_int) -> libc::c_int {
         };
     if restart == 0 {
         crate::src::game::g_syscalls::trap_Cvar_Register(
-            &mut mapname,
+            &mut mapname as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
             b"mapname\x00" as *const u8 as *const libc::c_char,
             b"\x00" as *const u8 as *const libc::c_char,
             0x4 as libc::c_int | 0x40 as libc::c_int,
@@ -2882,16 +2917,41 @@ pub unsafe extern "C" fn BotAIStartFrame(mut time: libc::c_int) -> libc::c_int {
     static mut botlib_residual: libc::c_int = 0;
     static mut lastbotthink_time: libc::c_int = 0;
     crate::src::game::g_bot::G_CheckBotSpawn();
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut crate::src::game::ai_dmq3::bot_rocketjump);
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut crate::src::game::ai_dmq3::bot_grapple);
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut crate::src::game::ai_dmq3::bot_fastchat);
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut crate::src::game::ai_dmq3::bot_nochat);
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut crate::src::game::ai_dmq3::bot_testrchat);
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut bot_thinktime);
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut bot_memorydump);
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut bot_saveroutingcache);
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut bot_pause);
-    crate::src::game::g_syscalls::trap_Cvar_Update(&mut bot_report);
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut crate::src::game::ai_dmq3::bot_rocketjump as *mut _
+            as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut crate::src::game::ai_dmq3::bot_grapple as *mut _
+            as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut crate::src::game::ai_dmq3::bot_fastchat as *mut _
+            as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut crate::src::game::ai_dmq3::bot_nochat as *mut _
+            as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut crate::src::game::ai_dmq3::bot_testrchat as *mut _
+            as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut bot_thinktime as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut bot_memorydump as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut bot_saveroutingcache as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut bot_pause as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
+    crate::src::game::g_syscalls::trap_Cvar_Update(
+        &mut bot_report as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
+    );
     if bot_report.integer != 0 {
         //		BotTeamplayReport();
         //		trap_Cvar_Set("bot_report", "0");
@@ -2915,7 +2975,8 @@ pub unsafe extern "C" fn BotAIStartFrame(mut time: libc::c_int) -> libc::c_int {
                     (*botstates[i as usize]).lastucmd.serverTime = time;
                     crate::src::game::g_syscalls::trap_BotUserCommand(
                         (*botstates[i as usize]).client,
-                        &mut (**botstates.as_mut_ptr().offset(i as isize)).lastucmd,
+                        &mut (**botstates.as_mut_ptr().offset(i as isize)).lastucmd as *mut _
+                            as *mut crate::src::qcommon::q_shared::usercmd_s,
                     );
                 }
             }
@@ -3101,7 +3162,8 @@ pub unsafe extern "C" fn BotAIStartFrame(mut time: libc::c_int) -> libc::c_int {
                 BotUpdateInput(botstates[i as usize], time, elapsed_time);
                 crate::src::game::g_syscalls::trap_BotUserCommand(
                     (*botstates[i as usize]).client,
-                    &mut (**botstates.as_mut_ptr().offset(i as isize)).lastucmd,
+                    &mut (**botstates.as_mut_ptr().offset(i as isize)).lastucmd as *mut _
+                        as *mut crate::src::qcommon::q_shared::usercmd_s,
                 );
             }
         }
@@ -3182,7 +3244,7 @@ pub unsafe extern "C" fn BotInitLibrary() -> libc::c_int {
         ::std::mem::size_of::<[libc::c_char; 144]>() as libc::c_ulong as libc::c_int,
     );
     if crate::stdlib::strlen(buf.as_mut_ptr()) == 0 {
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             buf.as_mut_ptr(),
             b"0\x00" as *const u8 as *const libc::c_char,
         );
@@ -3296,7 +3358,7 @@ pub unsafe extern "C" fn BotInitLibrary() -> libc::c_int {
         ::std::mem::size_of::<[libc::c_char; 144]>() as libc::c_ulong as libc::c_int,
     );
     if crate::stdlib::strlen(buf.as_mut_ptr()) == 0 {
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             buf.as_mut_ptr(),
             b"0\x00" as *const u8 as *const libc::c_char,
         );
@@ -3355,73 +3417,73 @@ BotAISetup
 pub unsafe extern "C" fn BotAISetup(mut restart: libc::c_int) -> libc::c_int {
     let mut errnum: libc::c_int = 0;
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_thinktime,
+        &mut bot_thinktime as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_thinktime\x00" as *const u8 as *const libc::c_char,
         b"100\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_memorydump,
+        &mut bot_memorydump as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_memorydump\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_saveroutingcache,
+        &mut bot_saveroutingcache as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_saveroutingcache\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_pause,
+        &mut bot_pause as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_pause\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_report,
+        &mut bot_report as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_report\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_testsolid,
+        &mut bot_testsolid as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_testsolid\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_testclusters,
+        &mut bot_testclusters as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_testclusters\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_developer,
+        &mut bot_developer as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_developer\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_interbreedchar,
+        &mut bot_interbreedchar as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_interbreedchar\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_interbreedbots,
+        &mut bot_interbreedbots as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_interbreedbots\x00" as *const u8 as *const libc::c_char,
         b"10\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_interbreedcycle,
+        &mut bot_interbreedcycle as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_interbreedcycle\x00" as *const u8 as *const libc::c_char,
         b"20\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
     );
     crate::src::game::g_syscalls::trap_Cvar_Register(
-        &mut bot_interbreedwrite,
+        &mut bot_interbreedwrite as *mut _ as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"bot_interbreedwrite\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,

@@ -248,8 +248,9 @@ unsafe extern "C" fn UI_SaveConfigMenu_SavenameDraw(mut self_0: *mut libc::c_voi
     let mut style: libc::c_int = 0;
     let mut color: *mut libc::c_float = 0 as *mut libc::c_float;
     f = self_0 as *mut crate::ui_local_h::menufield_s;
-    if f == crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(&mut saveConfig.menu)
-        as *mut crate::ui_local_h::menufield_s
+    if f == crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(
+        &mut saveConfig.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    ) as *mut crate::ui_local_h::menufield_s
     {
         style = 0 as libc::c_int | 0x4000 as libc::c_int | 0x10 as libc::c_int;
         color = crate::src::q3_ui::ui_qmenu::text_color_highlight.as_mut_ptr()
@@ -272,7 +273,7 @@ unsafe extern "C" fn UI_SaveConfigMenu_SavenameDraw(mut self_0: *mut libc::c_voi
         crate::src::qcommon::q_math::colorBlack.as_mut_ptr(),
     );
     crate::src::q3_ui::ui_mfield::MField_Draw(
-        &mut (*f).field,
+        &mut (*f).field as *mut _ as *mut crate::ui_local_h::mfield_t,
         (*f).generic.x,
         (*f).generic.y,
         style,
@@ -354,23 +355,23 @@ unsafe extern "C" fn UI_SaveConfigMenu_Init() {
     saveConfig.save.focuspic =
         b"menu/art/save_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut saveConfig.menu,
+        &mut saveConfig.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut saveConfig.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut saveConfig.menu,
+        &mut saveConfig.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut saveConfig.background as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut saveConfig.menu,
+        &mut saveConfig.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut saveConfig.savename as *mut crate::ui_local_h::menufield_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut saveConfig.menu,
+        &mut saveConfig.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut saveConfig.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut saveConfig.menu,
+        &mut saveConfig.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut saveConfig.save as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
 }
@@ -559,5 +560,7 @@ UI_SaveConfigMenu
 
 pub unsafe extern "C" fn UI_SaveConfigMenu() {
     UI_SaveConfigMenu_Init();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut saveConfig.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut saveConfig.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

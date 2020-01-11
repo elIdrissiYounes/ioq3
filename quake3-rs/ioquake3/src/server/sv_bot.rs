@@ -503,7 +503,8 @@ pub unsafe extern "C" fn SV_BotAllocateClient() -> libc::c_int {
     if i == (*crate::src::server::sv_main::sv_maxclients).integer {
         return -(1 as libc::c_int);
     }
-    (*cl).gentity = crate::src::server::sv_game::SV_GentityNum(i);
+    (*cl).gentity =
+        crate::src::server::sv_game::SV_GentityNum(i) as *mut crate::g_public_h::sharedEntity_t;
     (*(*cl).gentity).s.number = i;
     (*cl).state = crate::server_h::CS_ACTIVE;
     (*cl).lastPacketTime = crate::src::server::sv_main::svs.time;
@@ -575,7 +576,7 @@ pub unsafe extern "C" fn BotDrawDebugPolygons(
             b"bot_debug\x00" as *const u8 as *const libc::c_char,
             b"0\x00" as *const u8 as *const libc::c_char,
             0 as libc::c_int,
-        )
+        ) as *mut crate::src::qcommon::q_shared::cvar_s
     }
     //
     if bot_enable != 0 && (*bot_debug).integer != 0 {
@@ -586,7 +587,7 @@ pub unsafe extern "C" fn BotDrawDebugPolygons(
                 b"bot_reachability\x00" as *const u8 as *const libc::c_char,
                 b"0\x00" as *const u8 as *const libc::c_char,
                 0 as libc::c_int,
-            )
+            ) as *mut crate::src::qcommon::q_shared::cvar_s
         }
         //show ground faces only
         if bot_groundonly.is_null() {
@@ -594,7 +595,7 @@ pub unsafe extern "C" fn BotDrawDebugPolygons(
                 b"bot_groundonly\x00" as *const u8 as *const libc::c_char,
                 b"1\x00" as *const u8 as *const libc::c_char,
                 0 as libc::c_int,
-            )
+            ) as *mut crate::src::qcommon::q_shared::cvar_s
         }
         //get the hightlight area
         if bot_highlightarea.is_null() {
@@ -602,7 +603,7 @@ pub unsafe extern "C" fn BotDrawDebugPolygons(
                 b"bot_highlightarea\x00" as *const u8 as *const libc::c_char,
                 b"0\x00" as *const u8 as *const libc::c_char,
                 0 as libc::c_int,
-            )
+            ) as *mut crate::src::qcommon::q_shared::cvar_s
         }
         //
         parm0 = 0 as libc::c_int;
@@ -754,7 +755,7 @@ unsafe extern "C" fn BotImport_Trace(
             entityNum: 0,
         };
     crate::src::server::sv_world::SV_Trace(
-        &mut trace,
+        &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         start as *const crate::src::qcommon::q_shared::vec_t,
         mins,
         maxs,
@@ -819,7 +820,7 @@ unsafe extern "C" fn BotImport_EntityTrace(
             entityNum: 0,
         };
     crate::src::server::sv_world::SV_ClipToEntity(
-        &mut trace,
+        &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         start as *const crate::src::qcommon::q_shared::vec_t,
         mins as *const crate::src::qcommon::q_shared::vec_t,
         maxs as *const crate::src::qcommon::q_shared::vec_t,
@@ -1200,7 +1201,7 @@ unsafe extern "C" fn BotClientCommand(mut client: libc::c_int, mut command: *mut
     crate::src::server::sv_client::SV_ExecuteClientCommand(
         &mut *crate::src::server::sv_main::svs
             .clients
-            .offset(client as isize),
+            .offset(client as isize) as *mut _ as *mut crate::server_h::client_s,
         command,
         crate::src::qcommon::q_shared::qtrue,
     );
@@ -1284,152 +1285,181 @@ pub unsafe extern "C" fn SV_BotInitCvars() {
         b"bot_enable\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //enable the bot
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //enable the bot
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_developer\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    ); //bot developer mode
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //bot developer mode
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_debug\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    ); //enable bot debugging
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //enable bot debugging
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_maxdebugpolys\x00" as *const u8 as *const libc::c_char,
         b"2\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //maximum number of debug polys
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //maximum number of debug polys
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_groundonly\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //only show ground faces of areas
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //only show ground faces of areas
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_reachability\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //show all reachabilities to other areas
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //show all reachabilities to other areas
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_visualizejumppads\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    ); //show jumppads
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //show jumppads
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_forceclustering\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //force cluster calculations
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //force cluster calculations
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_forcereachability\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //force reachability calculations
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //force reachability calculations
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_forcewrite\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //force writing aas file
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //force writing aas file
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_aasoptimize\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //no aas file optimisation
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //no aas file optimisation
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_saveroutingcache\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //save routing cache
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //save routing cache
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_thinktime\x00" as *const u8 as *const libc::c_char,
         b"100\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    ); //msec the bots thinks
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //msec the bots thinks
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_reloadcharacters\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //reload the bot characters each time
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //reload the bot characters each time
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_testichat\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //test ichats
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //test ichats
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_testrchat\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //test rchats
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //test rchats
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_testsolid\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    ); //test for solid areas
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //test for solid areas
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_testclusters\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    ); //test the AAS clusters
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //test the AAS clusters
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_fastchat\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //fast chatting bots
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //fast chatting bots
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_nochat\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //disable chats
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //disable chats
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_pause\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    ); //pause the bots thinking
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //pause the bots thinking
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_report\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    ); //get a full report in ctf
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //get a full report in ctf
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_grapple\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //enable grapple
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //enable grapple
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_rocketjump\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //enable rocket jumping
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //enable rocket jumping
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_challenge\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //challenging bot
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //challenging bot
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_minplayers\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    ); //minimum players in a team or the game
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //minimum players in a team or the game
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_interbreedchar\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    ); //bot character used for interbreeding
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //bot character used for interbreeding
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_interbreedbots\x00" as *const u8 as *const libc::c_char,
         b"10\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    ); //number of bots used for interbreeding
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //number of bots used for interbreeding
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_interbreedcycle\x00" as *const u8 as *const libc::c_char,
         b"20\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    ); //bot interbreeding cycle
+    ) as *mut crate::src::qcommon::q_shared::cvar_s; //bot interbreeding cycle
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"bot_interbreedwrite\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     //write interbreeded bots to this file
 }
 /*
@@ -1598,8 +1628,10 @@ pub unsafe extern "C" fn SV_BotInitBotLib() {
     );
     botlib_import.DebugPolygonDelete =
         Some(BotImport_DebugPolygonDelete as unsafe extern "C" fn(_: libc::c_int) -> ());
-    botlib_export =
-        crate::src::botlib::be_interface::GetBotLibAPI(2 as libc::c_int, &mut botlib_import);
+    botlib_export = crate::src::botlib::be_interface::GetBotLibAPI(
+        2 as libc::c_int,
+        &mut botlib_import as *mut _ as *mut crate::botlib_h::botlib_import_s,
+    ) as *mut crate::botlib_h::botlib_export_s;
     // somehow we end up with a zero import.
 }
 //

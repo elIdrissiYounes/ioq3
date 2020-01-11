@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -107,8 +107,6 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::strrchr;
-pub use crate::stdlib::strtol;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -136,6 +134,8 @@ pub use crate::tr_types_h::RT_SPRITE;
 pub use crate::tr_types_h::TC_NONE;
 pub use crate::tr_types_h::TC_S3TC;
 pub use crate::tr_types_h::TC_S3TC_ARB;
+use ::libc::strrchr;
+pub use ::libc::strtol;
 
 static mut loadingPlayerIconCount: libc::c_int = 0;
 
@@ -245,7 +245,7 @@ pub unsafe extern "C" fn CG_LoadingClient(mut clientNum: libc::c_int) {
             ),
             ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
         );
-        skin = crate::stdlib::strrchr(model.as_mut_ptr(), '/' as i32);
+        skin = ::libc::strrchr(model.as_mut_ptr(), '/' as i32);
         if !skin.is_null() {
             let fresh1 = skin;
             skin = skin.offset(1);

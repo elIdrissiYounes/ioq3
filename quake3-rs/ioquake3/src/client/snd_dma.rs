@@ -254,7 +254,6 @@ pub use crate::src::client::snd_dma::ctype_h::tolower;
 use crate::src::client::snd_mem::S_DisplayFreeMemory;
 pub use crate::stdlib::__ctype_tolower_loc;
 use crate::stdlib::memset;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
@@ -271,6 +270,7 @@ pub use crate::tr_types_h::GLHW_RIVA128;
 pub use crate::tr_types_h::TC_NONE;
 pub use crate::tr_types_h::TC_S3TC;
 pub use crate::tr_types_h::TC_S3TC_ARB;
+use ::libc::strcpy;
 #[no_mangle]
 
 pub static mut s_backgroundStream: *mut crate::src::client::snd_codec::snd_stream_t = 0
@@ -503,27 +503,27 @@ pub unsafe extern "C" fn S_Base_SoundList() {
     let mut total: libc::c_int = 0;
     let mut type_0: [[libc::c_char; 16]; 4] = [[0; 16]; 4];
     let mut mem: [[libc::c_char; 16]; 2] = [[0; 16]; 2];
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         type_0[0 as libc::c_int as usize].as_mut_ptr(),
         b"16bit\x00" as *const u8 as *const libc::c_char,
     );
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         type_0[1 as libc::c_int as usize].as_mut_ptr(),
         b"adpcm\x00" as *const u8 as *const libc::c_char,
     );
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         type_0[2 as libc::c_int as usize].as_mut_ptr(),
         b"daub4\x00" as *const u8 as *const libc::c_char,
     );
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         type_0[3 as libc::c_int as usize].as_mut_ptr(),
         b"mulaw\x00" as *const u8 as *const libc::c_char,
     );
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         mem[0 as libc::c_int as usize].as_mut_ptr(),
         b"paged out\x00" as *const u8 as *const libc::c_char,
     );
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         mem[1 as libc::c_int as usize].as_mut_ptr(),
         b"resident \x00" as *const u8 as *const libc::c_char,
     );
@@ -719,7 +719,7 @@ unsafe extern "C" fn S_FindName(mut name: *const libc::c_char) -> *mut crate::sn
         0 as libc::c_int,
         ::std::mem::size_of::<crate::snd_local_h::sfx_t>() as libc::c_ulong,
     );
-    crate::stdlib::strcpy((*sfx).soundName.as_mut_ptr(), name);
+    ::libc::strcpy((*sfx).soundName.as_mut_ptr(), name);
     (*sfx).next = sfxHash[hash as usize];
     sfxHash[hash as usize] = sfx;
     return sfx;
@@ -734,7 +734,8 @@ S_DefaultSound
 pub unsafe extern "C" fn S_DefaultSound(mut sfx: *mut crate::snd_local_h::sfx_t) {
     let mut i: libc::c_int = 0;
     (*sfx).soundLength = 512 as libc::c_int;
-    (*sfx).soundData = crate::src::client::snd_mem::SND_malloc();
+    (*sfx).soundData =
+        crate::src::client::snd_mem::SND_malloc() as *mut crate::snd_local_h::sndBuffer_s;
     (*(*sfx).soundData).next = 0 as *mut crate::snd_local_h::sndBuffer_s;
     i = 0 as libc::c_int;
     while i < (*sfx).soundLength {
@@ -839,7 +840,7 @@ pub unsafe extern "C" fn S_Base_BeginRegistration() {
 
 pub unsafe extern "C" fn S_memoryLoad(mut sfx: *mut crate::snd_local_h::sfx_t) {
     // load the sound file
-    if crate::src::client::snd_mem::S_LoadSound(sfx) as u64 == 0 {
+    if crate::src::client::snd_mem::S_LoadSound(sfx as *mut crate::snd_local_h::sfx_s) as u64 == 0 {
         //		Com_Printf( S_COLOR_YELLOW "WARNING: couldn't load sound: %s\n", sfx->soundName );
         (*sfx).defaultSound = crate::src::qcommon::q_shared::qtrue
     }
@@ -2115,7 +2116,9 @@ pub unsafe extern "C" fn S_Base_StopBackgroundTrack() {
     if s_backgroundStream.is_null() {
         return;
     }
-    crate::src::client::snd_codec::S_CodecCloseStream(s_backgroundStream);
+    crate::src::client::snd_codec::S_CodecCloseStream(
+        s_backgroundStream as *mut crate::src::client::snd_codec::snd_stream_s,
+    );
     s_backgroundStream = 0 as *mut crate::src::client::snd_codec::snd_stream_t;
     s_rawend[0 as libc::c_int as usize] = 0 as libc::c_int;
 }
@@ -2129,11 +2132,14 @@ unsafe extern "C" fn S_OpenBackgroundStream(mut filename: *const libc::c_char) {
     // close the background track, but DON'T reset s_rawend
     // if restarting the same back ground track
     if !s_backgroundStream.is_null() {
-        crate::src::client::snd_codec::S_CodecCloseStream(s_backgroundStream);
+        crate::src::client::snd_codec::S_CodecCloseStream(
+            s_backgroundStream as *mut crate::src::client::snd_codec::snd_stream_s,
+        );
         s_backgroundStream = 0 as *mut crate::src::client::snd_codec::snd_stream_t
     }
     // Open stream
-    s_backgroundStream = crate::src::client::snd_codec::S_CodecOpenStream(filename);
+    s_backgroundStream = crate::src::client::snd_codec::S_CodecOpenStream(filename)
+        as *mut crate::src::client::snd_codec::snd_stream_s;
     if s_backgroundStream.is_null() {
         crate::src::qcommon::common::Com_Printf(
             b"^3WARNING: couldn\'t open music file %s\n\x00" as *const u8 as *const libc::c_char,
@@ -2291,7 +2297,7 @@ pub unsafe extern "C" fn S_UpdateBackgroundTrack() {
         }
         // Read
         r = crate::src::client::snd_codec::S_CodecReadStream(
-            s_backgroundStream,
+            s_backgroundStream as *mut crate::src::client::snd_codec::snd_stream_s,
             fileBytes,
             raw.as_mut_ptr() as *mut libc::c_void,
         );
@@ -2356,7 +2362,7 @@ pub unsafe extern "C" fn S_FreeOldestSound() {
     buffer = (*sfx).soundData;
     while !buffer.is_null() {
         nbuffer = (*buffer).next;
-        crate::src::client::snd_mem::SND_free(buffer);
+        crate::src::client::snd_mem::SND_free(buffer as *mut crate::snd_local_h::sndBuffer_s);
         buffer = nbuffer
     }
     (*sfx).inMemory = crate::src::qcommon::q_shared::qfalse;
@@ -2456,22 +2462,22 @@ pub unsafe extern "C" fn S_Base_Init(
         b"s_mixahead\x00" as *const u8 as *const libc::c_char,
         b"0.2\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_mixPreStep = crate::src::qcommon::cvar::Cvar_Get(
         b"s_mixPreStep\x00" as *const u8 as *const libc::c_char,
         b"0.05\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_show = crate::src::qcommon::cvar::Cvar_Get(
         b"s_show\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_testsound = crate::src::qcommon::cvar::Cvar_Get(
         b"s_testsound\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     r = crate::src::sdl::sdl_snd::SNDDMA_Init();
     if r as u64 != 0 {
         s_soundStarted = 1 as libc::c_int;

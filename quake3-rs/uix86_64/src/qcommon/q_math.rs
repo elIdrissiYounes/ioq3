@@ -4,18 +4,6 @@ pub mod q_shared_h {
 
     #[inline]
 
-    pub unsafe extern "C" fn VectorLength(
-        mut v: *const crate::src::qcommon::q_shared::vec_t,
-    ) -> crate::src::qcommon::q_shared::vec_t {
-        return crate::stdlib::sqrt(
-            (*v.offset(0 as libc::c_int as isize) * *v.offset(0 as libc::c_int as isize)
-                + *v.offset(1 as libc::c_int as isize) * *v.offset(1 as libc::c_int as isize)
-                + *v.offset(2 as libc::c_int as isize) * *v.offset(2 as libc::c_int as isize))
-                as libc::c_double,
-        ) as crate::src::qcommon::q_shared::vec_t;
-    }
-    #[inline]
-
     pub unsafe extern "C" fn CrossProduct(
         mut v1: *const crate::src::qcommon::q_shared::vec_t,
         mut v2: *const crate::src::qcommon::q_shared::vec_t,
@@ -30,6 +18,18 @@ pub mod q_shared_h {
         *cross.offset(2 as libc::c_int as isize) = *v1.offset(0 as libc::c_int as isize)
             * *v2.offset(1 as libc::c_int as isize)
             - *v1.offset(1 as libc::c_int as isize) * *v2.offset(0 as libc::c_int as isize);
+    }
+    #[inline]
+
+    pub unsafe extern "C" fn VectorLength(
+        mut v: *const crate::src::qcommon::q_shared::vec_t,
+    ) -> crate::src::qcommon::q_shared::vec_t {
+        return crate::stdlib::sqrt(
+            (*v.offset(0 as libc::c_int as isize) * *v.offset(0 as libc::c_int as isize)
+                + *v.offset(1 as libc::c_int as isize) * *v.offset(1 as libc::c_int as isize)
+                + *v.offset(2 as libc::c_int as isize) * *v.offset(2 as libc::c_int as isize))
+                as libc::c_double,
+        ) as crate::src::qcommon::q_shared::vec_t;
     }
     use crate::stdlib::sqrt;
     // __Q_SHARED_H

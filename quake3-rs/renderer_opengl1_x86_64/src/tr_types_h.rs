@@ -1,42 +1,3 @@
-pub type textureCompression_t = libc::c_uint;
-pub type glDriverType_t = libc::c_uint;
-pub type glHardwareType_t = libc::c_uint;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct glconfig_t {
-    pub renderer_string: [libc::c_char; 1024],
-    pub vendor_string: [libc::c_char; 1024],
-    pub version_string: [libc::c_char; 1024],
-    pub extensions_string: [libc::c_char; 8192],
-    pub maxTextureSize: libc::c_int,
-    pub numTextureUnits: libc::c_int,
-    pub colorBits: libc::c_int,
-    pub depthBits: libc::c_int,
-    pub stencilBits: libc::c_int,
-    pub driverType: crate::tr_types_h::glDriverType_t,
-    pub hardwareType: crate::tr_types_h::glHardwareType_t,
-    pub deviceSupportsGamma: crate::src::qcommon::q_shared::qboolean,
-    pub textureCompression: crate::tr_types_h::textureCompression_t,
-    pub textureEnvAddAvailable: crate::src::qcommon::q_shared::qboolean,
-    pub vidWidth: libc::c_int,
-    pub vidHeight: libc::c_int,
-    pub windowAspect: libc::c_float,
-    pub displayFrequency: libc::c_int,
-    pub isFullscreen: crate::src::qcommon::q_shared::qboolean,
-    pub stereoEnabled: crate::src::qcommon::q_shared::qboolean,
-    pub smpActive: crate::src::qcommon::q_shared::qboolean,
-}
-pub const TC_S3TC_ARB: crate::tr_types_h::textureCompression_t = 2;
-pub const TC_S3TC: crate::tr_types_h::textureCompression_t = 1;
-pub const TC_NONE: crate::tr_types_h::textureCompression_t = 0;
-pub const GLDRV_VOODOO: crate::tr_types_h::glDriverType_t = 2;
-pub const GLDRV_STANDALONE: crate::tr_types_h::glDriverType_t = 1;
-pub const GLDRV_ICD: crate::tr_types_h::glDriverType_t = 0;
-pub const GLHW_PERMEDIA2: crate::tr_types_h::glHardwareType_t = 4;
-pub const GLHW_RAGEPRO: crate::tr_types_h::glHardwareType_t = 3;
-pub const GLHW_RIVA128: crate::tr_types_h::glHardwareType_t = 2;
-pub const GLHW_3DFX_2D3D: crate::tr_types_h::glHardwareType_t = 1;
-pub const GLHW_GENERIC: crate::tr_types_h::glHardwareType_t = 0;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct polyVert_t {
@@ -45,6 +6,15 @@ pub struct polyVert_t {
     pub modulate: [crate::src::qcommon::q_shared::byte; 4],
 }
 pub type refEntityType_t = libc::c_uint;
+pub const RT_MODEL: crate::tr_types_h::refEntityType_t = 0;
+pub const RT_POLY: crate::tr_types_h::refEntityType_t = 1;
+pub const RT_SPRITE: crate::tr_types_h::refEntityType_t = 2;
+pub const RT_BEAM: crate::tr_types_h::refEntityType_t = 3;
+pub const RT_RAIL_CORE: crate::tr_types_h::refEntityType_t = 4;
+pub const RT_RAIL_RINGS: crate::tr_types_h::refEntityType_t = 5;
+pub const RT_LIGHTNING: crate::tr_types_h::refEntityType_t = 6;
+pub const RT_PORTALSURFACE: crate::tr_types_h::refEntityType_t = 7;
+pub const RT_MAX_REF_ENTITY_TYPE: crate::tr_types_h::refEntityType_t = 8;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct refEntity_t {
@@ -69,19 +39,6 @@ pub struct refEntity_t {
     pub radius: libc::c_float,
     pub rotation: libc::c_float,
 }
-pub type stereoFrame_t = libc::c_uint;
-pub const RT_MAX_REF_ENTITY_TYPE: crate::tr_types_h::refEntityType_t = 8;
-pub const RT_PORTALSURFACE: crate::tr_types_h::refEntityType_t = 7;
-pub const RT_LIGHTNING: crate::tr_types_h::refEntityType_t = 6;
-pub const RT_RAIL_RINGS: crate::tr_types_h::refEntityType_t = 5;
-pub const RT_RAIL_CORE: crate::tr_types_h::refEntityType_t = 4;
-pub const RT_BEAM: crate::tr_types_h::refEntityType_t = 3;
-pub const RT_SPRITE: crate::tr_types_h::refEntityType_t = 2;
-pub const RT_POLY: crate::tr_types_h::refEntityType_t = 1;
-pub const RT_MODEL: crate::tr_types_h::refEntityType_t = 0;
-pub const STEREO_RIGHT: crate::tr_types_h::stereoFrame_t = 2;
-pub const STEREO_LEFT: crate::tr_types_h::stereoFrame_t = 1;
-pub const STEREO_CENTER: crate::tr_types_h::stereoFrame_t = 0;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct refdef_t {
@@ -97,4 +54,47 @@ pub struct refdef_t {
     pub rdflags: libc::c_int,
     pub areamask: [crate::src::qcommon::q_shared::byte; 32],
     pub text: [[libc::c_char; 32]; 8],
+}
+pub type stereoFrame_t = libc::c_uint;
+pub const STEREO_CENTER: crate::tr_types_h::stereoFrame_t = 0;
+pub const STEREO_LEFT: crate::tr_types_h::stereoFrame_t = 1;
+pub const STEREO_RIGHT: crate::tr_types_h::stereoFrame_t = 2;
+pub type textureCompression_t = libc::c_uint;
+pub const TC_NONE: crate::tr_types_h::textureCompression_t = 0;
+pub const TC_S3TC: crate::tr_types_h::textureCompression_t = 1;
+pub const TC_S3TC_ARB: crate::tr_types_h::textureCompression_t = 2;
+pub type glDriverType_t = libc::c_uint;
+pub const GLDRV_ICD: crate::tr_types_h::glDriverType_t = 0;
+pub const GLDRV_STANDALONE: crate::tr_types_h::glDriverType_t = 1;
+pub const GLDRV_VOODOO: crate::tr_types_h::glDriverType_t = 2;
+pub type glHardwareType_t = libc::c_uint;
+pub const GLHW_GENERIC: crate::tr_types_h::glHardwareType_t = 0;
+pub const GLHW_3DFX_2D3D: crate::tr_types_h::glHardwareType_t = 1;
+pub const GLHW_RIVA128: crate::tr_types_h::glHardwareType_t = 2;
+pub const GLHW_RAGEPRO: crate::tr_types_h::glHardwareType_t = 3;
+pub const GLHW_PERMEDIA2: crate::tr_types_h::glHardwareType_t = 4;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct glconfig_t {
+    pub renderer_string: [libc::c_char; 1024],
+    pub vendor_string: [libc::c_char; 1024],
+    pub version_string: [libc::c_char; 1024],
+    pub extensions_string: [libc::c_char; 8192],
+    pub maxTextureSize: libc::c_int,
+    pub numTextureUnits: libc::c_int,
+    pub colorBits: libc::c_int,
+    pub depthBits: libc::c_int,
+    pub stencilBits: libc::c_int,
+    pub driverType: crate::tr_types_h::glDriverType_t,
+    pub hardwareType: crate::tr_types_h::glHardwareType_t,
+    pub deviceSupportsGamma: crate::src::qcommon::q_shared::qboolean,
+    pub textureCompression: crate::tr_types_h::textureCompression_t,
+    pub textureEnvAddAvailable: crate::src::qcommon::q_shared::qboolean,
+    pub vidWidth: libc::c_int,
+    pub vidHeight: libc::c_int,
+    pub windowAspect: libc::c_float,
+    pub displayFrequency: libc::c_int,
+    pub isFullscreen: crate::src::qcommon::q_shared::qboolean,
+    pub stereoEnabled: crate::src::qcommon::q_shared::qboolean,
+    pub smpActive: crate::src::qcommon::q_shared::qboolean,
 }

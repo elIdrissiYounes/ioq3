@@ -250,9 +250,9 @@ pub use crate::src::qcommon::q_shared::usercmd_s;
 pub use crate::src::qcommon::q_shared::usercmd_t;
 pub use crate::src::qcommon::q_shared::vec3_t;
 pub use crate::src::qcommon::q_shared::vec_t;
-use crate::stdlib::abs;
 use crate::stdlib::memset;
 use crate::stdlib::sqrt;
+use ::libc::abs;
 extern "C" {
     /*
     ================
@@ -371,7 +371,7 @@ pub unsafe extern "C" fn PM_AddEvent(mut newEvent: libc::c_int) {
     crate::src::game::bg_misc::BG_AddPredictableEventToPlayerstate(
         newEvent,
         0 as libc::c_int,
-        (*pm).ps,
+        (*pm).ps as *mut crate::src::qcommon::q_shared::playerState_s,
     );
 }
 /*
@@ -607,12 +607,12 @@ unsafe extern "C" fn PM_CmdScale(
     let mut max: libc::c_int = 0;
     let mut total: libc::c_float = 0.;
     let mut scale: libc::c_float = 0.;
-    max = crate::stdlib::abs((*cmd).forwardmove as libc::c_int);
-    if crate::stdlib::abs((*cmd).rightmove as libc::c_int) > max {
-        max = crate::stdlib::abs((*cmd).rightmove as libc::c_int)
+    max = ::libc::abs((*cmd).forwardmove as libc::c_int);
+    if ::libc::abs((*cmd).rightmove as libc::c_int) > max {
+        max = ::libc::abs((*cmd).rightmove as libc::c_int)
     }
-    if crate::stdlib::abs((*cmd).upmove as libc::c_int) > max {
-        max = crate::stdlib::abs((*cmd).upmove as libc::c_int)
+    if ::libc::abs((*cmd).upmove as libc::c_int) > max {
+        max = ::libc::abs((*cmd).upmove as libc::c_int)
     }
     if max == 0 {
         return 0 as libc::c_int as libc::c_float;
@@ -2297,8 +2297,8 @@ pub unsafe extern "C" fn PmoveSingle(mut pmove: *mut crate::bg_public_h::pmove_t
     }
     // make sure walking button is clear if they are running, to avoid
     // proxy no-footsteps cheats
-    if crate::stdlib::abs((*pm).cmd.forwardmove as libc::c_int) > 64 as libc::c_int
-        || crate::stdlib::abs((*pm).cmd.rightmove as libc::c_int) > 64 as libc::c_int
+    if ::libc::abs((*pm).cmd.forwardmove as libc::c_int) > 64 as libc::c_int
+        || ::libc::abs((*pm).cmd.rightmove as libc::c_int) > 64 as libc::c_int
     {
         (*pm).cmd.buttons &= !(16 as libc::c_int)
     }

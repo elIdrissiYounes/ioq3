@@ -1,4 +1,6 @@
 // =============== BEGIN be_interface_h ================
+pub type botlib_globals_t = crate::src::botlib::be_interface::botlib_globals_s;
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct botlib_globals_s {
@@ -7,8 +9,6 @@ pub struct botlib_globals_s {
     pub maxclients: libc::c_int,
     pub time: libc::c_float,
 }
-
-pub type botlib_globals_t = crate::src::botlib::be_interface::botlib_globals_s;
 use ::libc;
 
 pub use crate::stdlib::__clock_t;
@@ -781,7 +781,10 @@ pub unsafe extern "C" fn Export_BotLibUpdateEntity(
     {
         return 2 as libc::c_int;
     }
-    return crate::src::botlib::be_aas_entity::AAS_UpdateEntity(ent, state);
+    return crate::src::botlib::be_aas_entity::AAS_UpdateEntity(
+        ent,
+        state as *mut crate::botlib_h::bot_entitystate_s,
+    );
 }
 #[no_mangle]
 

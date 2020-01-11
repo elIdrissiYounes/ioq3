@@ -369,7 +369,7 @@ pub mod os_support_h {
     #[inline]
 
     pub unsafe extern "C" fn opus_free(mut ptr: *mut libc::c_void) {
-        crate::stdlib::free(ptr);
+        ::libc::free(ptr);
     }
     #[inline]
 
@@ -377,8 +377,8 @@ pub mod os_support_h {
         return crate::stdlib::malloc(size);
     }
 
-    use crate::stdlib::free;
     use crate::stdlib::malloc;
+    use ::libc::free;
     /* OS_SUPPORT_H */
     /*#ifdef __GNUC__
     #pragma GCC poison printf sprintf
@@ -474,8 +474,8 @@ pub use crate::src::opus_1_2_1::src::opus_encoder::pitch_h::celt_inner_prod_c;
 use crate::src::opus_1_2_1::src::repacketizer::opus_packet_pad;
 use crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_cat;
 use crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_init;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
+use ::libc::free;
 
 use crate::src::opus_1_2_1::silk::lin2log::silk_lin2log;
 use crate::src::opus_1_2_1::silk::log2lin::silk_log2lin;
@@ -704,7 +704,7 @@ pub unsafe extern "C" fn opus_encoder_init(
     ret = crate::src::opus_1_2_1::silk::enc_API::silk_InitEncoder(
         silk_enc,
         (*st).arch,
-        &mut (*st).silk_mode,
+        &mut (*st).silk_mode as *mut _ as *mut crate::control_h::silk_EncControlStruct,
     );
     if ret != 0 {
         return -(3 as libc::c_int);
@@ -773,7 +773,11 @@ pub unsafe extern "C" fn opus_encoder_init(
     (*st).first = 1 as libc::c_int;
     (*st).mode = 1001 as libc::c_int;
     (*st).bandwidth = 1105 as libc::c_int;
-    crate::src::opus_1_2_1::src::analysis::tonality_analysis_init(&mut (*st).analysis, (*st).Fs);
+    crate::src::opus_1_2_1::src::analysis::tonality_analysis_init(
+        &mut (*st).analysis as *mut _
+            as *mut crate::src::opus_1_2_1::src::analysis::TonalityAnalysisState,
+        (*st).Fs,
+    );
     (*st).analysis.application = (*st).application;
     return 0 as libc::c_int;
 }
@@ -1769,7 +1773,10 @@ unsafe extern "C" fn encode_multiframe_packet(
             .wrapping_mul(1 as libc::c_int as libc::c_ulong) as usize,
     );
     rp = fresh5.as_mut_ptr() as *mut crate::opus_private_h::OpusRepacketizer;
-    crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_init(rp);
+
+    crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_init(
+        rp as *mut crate::opus_private_h::OpusRepacketizer,
+    ) as *mut crate::opus_private_h::OpusRepacketizer;
     bak_mode = (*st).user_forced_mode;
     bak_bandwidth = (*st).user_bandwidth;
     bak_channels = (*st).force_channels;
@@ -1809,7 +1816,7 @@ unsafe extern "C" fn encode_multiframe_packet(
             return -(3 as libc::c_int);
         }
         ret = crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_cat(
-            rp,
+            rp as *mut crate::opus_private_h::OpusRepacketizer,
             tmp_data.offset((i * bytes_per_frame) as isize),
             tmp_len,
         );
@@ -1819,7 +1826,7 @@ unsafe extern "C" fn encode_multiframe_packet(
         i += 1
     }
     ret = crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_out_range_impl(
-        rp,
+        rp as *mut crate::opus_private_h::OpusRepacketizer,
         0 as libc::c_int,
         nb_frames,
         data,
@@ -2004,8 +2011,9 @@ pub unsafe extern "C" fn opus_encode_native(
             analysis_read_pos_bak = (*st).analysis.read_pos;
             analysis_read_subframe_bak = (*st).analysis.read_subframe;
             crate::src::opus_1_2_1::src::analysis::run_analysis(
-                &mut (*st).analysis,
-                celt_mode,
+                &mut (*st).analysis as *mut _
+                    as *mut crate::src::opus_1_2_1::src::analysis::TonalityAnalysisState,
+                celt_mode as *const crate::src::opus_1_2_1::celt::modes::OpusCustomMode,
                 analysis_pcm,
                 analysis_size,
                 frame_size,
@@ -2015,7 +2023,7 @@ pub unsafe extern "C" fn opus_encode_native(
                 (*st).Fs,
                 lsb_depth,
                 downmix,
-                &mut analysis_info,
+                &mut analysis_info as *mut _ as *mut crate::celt_h::AnalysisInfo,
             );
         }
         /* Track the peak signal energy */
@@ -2378,7 +2386,11 @@ pub unsafe extern "C" fn opus_encode_native(
                 signalType: 0,
                 offset: 0,
             };
-        crate::src::opus_1_2_1::silk::enc_API::silk_InitEncoder(silk_enc, (*st).arch, &mut dummy);
+        crate::src::opus_1_2_1::silk::enc_API::silk_InitEncoder(
+            silk_enc,
+            (*st).arch,
+            &mut dummy as *mut _ as *mut crate::control_h::silk_EncControlStruct,
+        );
         prefill = 1 as libc::c_int
     }
     /* Automatic (rate-dependent) bandwidth selection */
@@ -2605,7 +2617,7 @@ pub unsafe extern "C" fn opus_encode_native(
     }) - 1 as libc::c_int;
     data = data.offset(1 as libc::c_int as isize);
     crate::src::opus_1_2_1::celt::entenc::ec_enc_init(
-        &mut enc,
+        &mut enc as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         data,
         (max_data_bytes - 1 as libc::c_int) as crate::opus_types_h::opus_uint32,
     );
@@ -2930,10 +2942,11 @@ pub unsafe extern "C" fn opus_encode_native(
             }
             crate::src::opus_1_2_1::silk::enc_API::silk_Encode(
                 silk_enc,
-                &mut (*st).silk_mode,
+                &mut (*st).silk_mode as *mut _ as *mut crate::control_h::silk_EncControlStruct,
                 pcm_silk,
                 (*st).encoder_buffer,
-                0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_enc,
+                0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_enc
+                    as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 &mut zero,
                 1 as libc::c_int,
             );
@@ -2946,10 +2959,10 @@ pub unsafe extern "C" fn opus_encode_native(
         }
         ret = crate::src::opus_1_2_1::silk::enc_API::silk_Encode(
             silk_enc,
-            &mut (*st).silk_mode,
+            &mut (*st).silk_mode as *mut _ as *mut crate::control_h::silk_EncControlStruct,
             pcm_silk,
             frame_size,
-            &mut enc,
+            &mut enc as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             &mut nBytes,
             0 as libc::c_int,
         );
@@ -3224,7 +3237,7 @@ pub unsafe extern "C" fn opus_encode_native(
         /* For SILK mode, the redundancy is inferred from the length */
         if (*st).mode == 1001 as libc::c_int {
             crate::src::opus_1_2_1::celt::entenc::ec_enc_bit_logp(
-                &mut enc,
+                &mut enc as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 redundancy,
                 12 as libc::c_int as libc::c_uint,
             );
@@ -3232,7 +3245,7 @@ pub unsafe extern "C" fn opus_encode_native(
         if redundancy != 0 {
             let mut max_redundancy: libc::c_int = 0;
             crate::src::opus_1_2_1::celt::entenc::ec_enc_bit_logp(
-                &mut enc,
+                &mut enc as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 celt_to_silk,
                 1 as libc::c_int as libc::c_uint,
             );
@@ -3269,7 +3282,7 @@ pub unsafe extern "C" fn opus_encode_native(
             };
             if (*st).mode == 1001 as libc::c_int {
                 crate::src::opus_1_2_1::celt::entenc::ec_enc_uint(
-                    &mut enc,
+                    &mut enc as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     (redundancy_bytes - 2 as libc::c_int) as crate::opus_types_h::opus_uint32,
                     256 as libc::c_int as crate::opus_types_h::opus_uint32,
                 );
@@ -3287,12 +3300,14 @@ pub unsafe extern "C" fn opus_encode_native(
     }
     if (*st).mode == 1000 as libc::c_int {
         ret = ec_tell(&mut enc) + 7 as libc::c_int >> 3 as libc::c_int;
-        crate::src::opus_1_2_1::celt::entenc::ec_enc_done(&mut enc);
+        crate::src::opus_1_2_1::celt::entenc::ec_enc_done(
+            &mut enc as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+        );
         nb_compr_bytes = ret
     } else {
         nb_compr_bytes = max_data_bytes - 1 as libc::c_int - redundancy_bytes;
         crate::src::opus_1_2_1::celt::entenc::ec_enc_shrink(
-            &mut enc,
+            &mut enc as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             nb_compr_bytes as crate::opus_types_h::opus_uint32,
         );
     }
@@ -3360,7 +3375,8 @@ pub unsafe extern "C" fn opus_encode_native(
             (*st).Fs / 200 as libc::c_int,
             data.offset(nb_compr_bytes as isize),
             redundancy_bytes,
-            0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_enc,
+            0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_enc
+                as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         );
         if err < 0 as libc::c_int {
             return -(3 as libc::c_int);
@@ -3398,7 +3414,8 @@ pub unsafe extern "C" fn opus_encode_native(
                 (*st).Fs / 400 as libc::c_int,
                 dummy_0.as_mut_ptr(),
                 2 as libc::c_int,
-                0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_enc,
+                0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_enc
+                    as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             );
             crate::src::opus_1_2_1::celt::celt_encoder::opus_custom_encoder_ctl(
                 celt_enc,
@@ -3431,7 +3448,7 @@ pub unsafe extern "C" fn opus_encode_native(
                 frame_size,
                 0 as *mut libc::c_uchar,
                 nb_compr_bytes,
-                &mut enc,
+                &mut enc as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             );
             if ret < 0 as libc::c_int {
                 return -(3 as libc::c_int);
@@ -3495,7 +3512,7 @@ pub unsafe extern "C" fn opus_encode_native(
             /* Shrink packet to what the encoder actually used. */
             nb_compr_bytes = ret;
             crate::src::opus_1_2_1::celt::entenc::ec_enc_shrink(
-                &mut enc,
+                &mut enc as *mut _ as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 nb_compr_bytes as crate::opus_types_h::opus_uint32,
             );
         }
@@ -3506,7 +3523,8 @@ pub unsafe extern "C" fn opus_encode_native(
             N4,
             dummy_1.as_mut_ptr(),
             2 as libc::c_int,
-            0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_enc,
+            0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_enc
+                as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         );
         err_0 = crate::src::opus_1_2_1::celt::celt_encoder::celt_encode_with_ec(
             celt_enc,
@@ -3514,7 +3532,8 @@ pub unsafe extern "C" fn opus_encode_native(
             N2,
             data.offset(nb_compr_bytes as isize),
             redundancy_bytes,
-            0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_enc,
+            0 as *mut crate::src::opus_1_2_1::celt::entcode::ec_enc
+                as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         );
         if err_0 < 0 as libc::c_int {
             return -(3 as libc::c_int);
@@ -4289,7 +4308,10 @@ pub unsafe extern "C" fn opus_encoder_ctl(
             let mut start: *mut libc::c_char = 0 as *mut libc::c_char;
             silk_enc = (st as *mut libc::c_char).offset((*st).silk_enc_offset as isize)
                 as *mut libc::c_void;
-            crate::src::opus_1_2_1::src::analysis::tonality_analysis_reset(&mut (*st).analysis);
+            crate::src::opus_1_2_1::src::analysis::tonality_analysis_reset(
+                &mut (*st).analysis as *mut _
+                    as *mut crate::src::opus_1_2_1::src::analysis::TonalityAnalysisState,
+            );
             start = &mut (*st).stream_channels as *mut libc::c_int as *mut libc::c_char;
             crate::stdlib::memset(
                 start as *mut libc::c_void,
@@ -4306,7 +4328,7 @@ pub unsafe extern "C" fn opus_encoder_ctl(
             crate::src::opus_1_2_1::silk::enc_API::silk_InitEncoder(
                 silk_enc,
                 (*st).arch,
-                &mut dummy,
+                &mut dummy as *mut _ as *mut crate::control_h::silk_EncControlStruct,
             );
             (*st).stream_channels = (*st).channels;
             (*st).hybrid_stereo_width_Q14 =

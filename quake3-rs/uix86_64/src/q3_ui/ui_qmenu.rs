@@ -276,8 +276,6 @@ pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 pub use crate::src::ui::ui_syscalls::trap_R_SetColor;
 pub use crate::src::ui::ui_syscalls::trap_S_RegisterSound;
 use crate::stdlib::sin;
-use crate::stdlib::strcat;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
@@ -306,6 +304,8 @@ pub use crate::ui_local_h::menuslider_s;
 pub use crate::ui_local_h::menutext_s;
 pub use crate::ui_local_h::mfield_t;
 pub use crate::ui_local_h::uiStatic_t;
+use ::libc::strcat;
+use ::libc::strcpy;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -452,11 +452,11 @@ unsafe extern "C" fn Text_Draw(mut t: *mut crate::ui_local_h::menutext_s) {
     buff[0 as libc::c_int as usize] = '\u{0}' as i32 as libc::c_char;
     // possible label
     if !(*t).generic.name.is_null() {
-        crate::stdlib::strcpy(buff.as_mut_ptr(), (*t).generic.name);
+        ::libc::strcpy(buff.as_mut_ptr(), (*t).generic.name);
     }
     // possible value
     if !(*t).string.is_null() {
-        crate::stdlib::strcat(buff.as_mut_ptr(), (*t).string);
+        ::libc::strcat(buff.as_mut_ptr(), (*t).string);
     }
     if (*t).generic.flags & 0x2000 as libc::c_int as libc::c_uint != 0 {
         color = text_color_disabled.as_mut_ptr()
@@ -1630,7 +1630,8 @@ pub unsafe extern "C" fn Menu_AddItem(
             }
             4 => {
                 crate::src::q3_ui::ui_mfield::MenuField_Init(
-                    item as *mut crate::ui_local_h::menufield_s,
+                    item as *mut crate::ui_local_h::menufield_s
+                        as *mut crate::ui_local_h::menufield_s,
                 );
             }
             3 => {
@@ -1836,7 +1837,8 @@ pub unsafe extern "C" fn Menu_Draw(mut menu: *mut crate::ui_local_h::menuframewo
                     }
                     4 => {
                         crate::src::q3_ui::ui_mfield::MenuField_Draw(
-                            itemptr as *mut crate::ui_local_h::menufield_s,
+                            itemptr as *mut crate::ui_local_h::menufield_s
+                                as *mut crate::ui_local_h::menufield_s,
                         );
                     }
                     1 => {
@@ -1956,7 +1958,8 @@ pub unsafe extern "C" fn Menu_DefaultKey(
             8 => sound = ScrollList_Key(item as *mut crate::ui_local_h::menulist_s, key),
             4 => {
                 sound = crate::src::q3_ui::ui_mfield::MenuField_Key(
-                    item as *mut crate::ui_local_h::menufield_s,
+                    item as *mut crate::ui_local_h::menufield_s
+                        as *mut crate::ui_local_h::menufield_s,
                     &mut key,
                 )
             }

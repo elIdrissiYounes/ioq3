@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -50,9 +50,7 @@ pub use crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer;
 pub use crate::src::ui::ui_syscalls::trap_Cvar_VariableValue;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 use crate::stdlib::memset;
-use crate::stdlib::strchr;
 use crate::stdlib::strlen;
-pub use crate::stdlib::strtol;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -76,6 +74,8 @@ pub use crate::ui_local_h::menulist_s;
 pub use crate::ui_local_h::menuslider_s;
 pub use crate::ui_local_h::menutext_s;
 pub use crate::ui_local_h::uiStatic_t;
+use ::libc::strchr;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -287,7 +287,9 @@ DriverInfo_MenuDraw
 unsafe extern "C" fn DriverInfo_MenuDraw() {
     let mut i: libc::c_int = 0;
     let mut y: libc::c_int = 0;
-    crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut s_driverinfo.menu);
+    crate::src::q3_ui::ui_qmenu::Menu_Draw(
+        &mut s_driverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     crate::src::q3_ui::ui_atoms::UI_DrawString(
         320 as libc::c_int,
         80 as libc::c_int,
@@ -494,22 +496,24 @@ unsafe extern "C" fn UI_DriverInfo_Menu() {
         i += 1
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_driverinfo.menu,
+        &mut s_driverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_driverinfo.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_driverinfo.menu,
+        &mut s_driverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_driverinfo.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_driverinfo.menu,
+        &mut s_driverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_driverinfo.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_driverinfo.menu,
+        &mut s_driverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_driverinfo.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_driverinfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_driverinfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }
 
 static mut s_ivo: InitialVideoOptions_s = InitialVideoOptions_s {
@@ -1356,7 +1360,7 @@ unsafe extern "C" fn GraphicsOptions_GetAspectRatios() {
         let mut x: *mut libc::c_char = 0 as *mut libc::c_char;
         let mut str: [libc::c_char; 8] = [0; 8];
         // calculate resolution's aspect ratio
-        x = crate::stdlib::strchr(*resolutions.offset(r as isize), 'x' as i32)
+        x = ::libc::strchr(*resolutions.offset(r as isize), 'x' as i32)
             .offset(1 as libc::c_int as isize);
         crate::src::qcommon::q_shared::Q_strncpyz(
             str.as_mut_ptr(),
@@ -1461,7 +1465,7 @@ unsafe extern "C" fn GraphicsOptions_GetResolutions() {
             let fresh2 = i;
             i = i.wrapping_add(1);
             detectedResolutions[fresh2 as usize] = s;
-            s = crate::stdlib::strchr(s, ' ' as i32);
+            s = ::libc::strchr(s, ' ' as i32);
             if !s.is_null() {
                 let fresh3 = s;
                 s = s.offset(1);
@@ -1663,10 +1667,10 @@ unsafe extern "C" fn GraphicsOptions_ApplyChanges(
                 detectedResolutions[s_graphicsoptions.mode.curvalue as usize],
                 ::std::mem::size_of::<[libc::c_char; 16]>() as libc::c_ulong as libc::c_int,
             );
-            *crate::stdlib::strchr(w.as_mut_ptr(), 'x' as i32) = 0 as libc::c_int as libc::c_char;
+            *::libc::strchr(w.as_mut_ptr(), 'x' as i32) = 0 as libc::c_int as libc::c_char;
             crate::src::qcommon::q_shared::Q_strncpyz(
                 h.as_mut_ptr(),
-                crate::stdlib::strchr(
+                ::libc::strchr(
                     detectedResolutions[s_graphicsoptions.mode.curvalue as usize],
                     'x' as i32,
                 )
@@ -1891,7 +1895,9 @@ GraphicsOptions_MenuDraw
 pub unsafe extern "C" fn GraphicsOptions_MenuDraw() {
     //APSFIX - rework this
     GraphicsOptions_UpdateMenuItems();
-    crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut s_graphicsoptions.menu);
+    crate::src::q3_ui::ui_qmenu::Menu_Draw(
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }
 /*
 =================
@@ -2360,95 +2366,95 @@ pub unsafe extern "C" fn GraphicsOptions_MenuInit() {
     s_graphicsoptions.apply.focuspic =
         b"menu/art/accept_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.graphics as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.display as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.sound as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.network as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.list as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.driver as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.allow_extensions as *mut crate::ui_local_h::menulist_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.ratio as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.mode as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.colordepth as *mut crate::ui_local_h::menulist_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.fs as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.lighting as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.geometry as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.tq as *mut crate::ui_local_h::menuslider_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.texturebits as *mut crate::ui_local_h::menulist_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.filter as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.driverinfo as *mut crate::ui_local_h::menutext_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.apply as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     GraphicsOptions_SetMenuItems();
@@ -2501,9 +2507,11 @@ UI_GraphicsOptionsMenu
 
 pub unsafe extern "C" fn UI_GraphicsOptionsMenu() {
     GraphicsOptions_MenuInit();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_graphicsoptions.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     crate::src::q3_ui::ui_qmenu::Menu_SetCursorToItem(
-        &mut s_graphicsoptions.menu,
+        &mut s_graphicsoptions.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_graphicsoptions.graphics as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
 }

@@ -11,9 +11,9 @@ use crate::src::opus_1_2_1::celt::entdec::ec_dec_uint;
 use crate::src::opus_1_2_1::celt::entenc::ec_enc_uint;
 pub use crate::stdlib::__int16_t;
 pub use crate::stdlib::__uint32_t;
-use crate::stdlib::abs;
 pub use crate::stdlib::int16_t;
 pub use crate::stdlib::uint32_t;
+use ::libc::abs;
 /* Copyright (c) 2007-2008 CSIRO
 Copyright (c) 2007-2009 Xiph.Org Foundation
 Copyright (c) 2007-2009 Timothy B. Terriberry
@@ -1462,7 +1462,7 @@ unsafe extern "C" fn icwrs(
     j = _n - 1 as libc::c_int;
     i = (*_y.offset(j as isize) < 0 as libc::c_int) as libc::c_int
         as crate::opus_types_h::opus_uint32;
-    k = crate::stdlib::abs(*_y.offset(j as isize));
+    k = ::libc::abs(*_y.offset(j as isize));
     loop {
         j -= 1;
         i =
@@ -1470,7 +1470,7 @@ unsafe extern "C" fn icwrs(
                 *CELT_PVQ_U_ROW[if _n - j < k { (_n) - j } else { k } as usize]
                     .offset(if _n - j > k { (_n) - j } else { k } as isize),
             ) as crate::opus_types_h::opus_uint32 as crate::opus_types_h::opus_uint32;
-        k += crate::stdlib::abs(*_y.offset(j as isize));
+        k += ::libc::abs(*_y.offset(j as isize));
         if *_y.offset(j as isize) < 0 as libc::c_int {
             i = (i as libc::c_uint).wrapping_add(
                 *CELT_PVQ_U_ROW[if _n - j < k + 1 as libc::c_int {
@@ -1501,7 +1501,7 @@ pub unsafe extern "C" fn encode_pulses(
     mut _enc: *mut crate::src::opus_1_2_1::celt::entcode::ec_enc,
 ) {
     crate::src::opus_1_2_1::celt::entenc::ec_enc_uint(
-        _enc,
+        _enc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         icwrs(_n, _y),
         (*CELT_PVQ_U_ROW[(if _n < _k { _n } else { _k }) as usize]
             .offset((if _n > _k { _n } else { _k }) as isize))
@@ -1673,7 +1673,7 @@ pub unsafe extern "C" fn decode_pulses(
         _n,
         _k,
         crate::src::opus_1_2_1::celt::entdec::ec_dec_uint(
-            _dec,
+            _dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
             (*CELT_PVQ_U_ROW[(if _n < _k { _n } else { _k }) as usize]
                 .offset((if _n > _k { _n } else { _k }) as isize))
             .wrapping_add(

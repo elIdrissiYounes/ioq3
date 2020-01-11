@@ -17,7 +17,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -430,10 +430,7 @@ pub use crate::src::client::cl_keys::stdlib_h::atoi;
 use crate::src::client::snd_main::S_StopAllSounds;
 use crate::stdlib::memcpy;
 use crate::stdlib::memmove;
-use crate::stdlib::strcat;
-use crate::stdlib::strchr;
 use crate::stdlib::strlen;
-pub use crate::stdlib::strtol;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -449,6 +446,9 @@ pub use crate::tr_types_h::GLHW_RIVA128;
 pub use crate::tr_types_h::TC_NONE;
 pub use crate::tr_types_h::TC_S3TC;
 pub use crate::tr_types_h::TC_S3TC_ARB;
+use ::libc::strcat;
+use ::libc::strchr;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -2547,7 +2547,7 @@ pub unsafe extern "C" fn Field_CharEvent(
     }
     if ch == 'c' as i32 - 'a' as i32 + 1 as libc::c_int {
         // ctrl-c clears the field
-        crate::src::qcommon::common::Field_Clear(edit);
+        crate::src::qcommon::common::Field_Clear(edit as *mut crate::qcommon_h::field_t);
         return;
     }
     len = crate::stdlib::strlen((*edit).buffer.as_mut_ptr()) as libc::c_int;
@@ -2702,7 +2702,9 @@ pub unsafe extern "C" fn Console_Key(mut key: libc::c_int) {
         historyEditLines[(nextHistoryLine % 32 as libc::c_int) as usize] = g_consoleField; // may take some time
         nextHistoryLine += 1;
         historyLine = nextHistoryLine;
-        crate::src::qcommon::common::Field_Clear(&mut g_consoleField);
+        crate::src::qcommon::common::Field_Clear(
+            &mut g_consoleField as *mut _ as *mut crate::qcommon_h::field_t,
+        );
         g_consoleField.widthInChars = crate::src::client::cl_console::g_console_field_width;
         CL_SaveConsoleHistory();
         if crate::src::client::cl_main::clc.state as libc::c_uint
@@ -2715,7 +2717,9 @@ pub unsafe extern "C" fn Console_Key(mut key: libc::c_int) {
     }
     // command completion
     if key == crate::keycodes_h::K_TAB as libc::c_int {
-        crate::src::qcommon::common::Field_AutoComplete(&mut g_consoleField);
+        crate::src::qcommon::common::Field_AutoComplete(
+            &mut g_consoleField as *mut _ as *mut crate::qcommon_h::field_t,
+        );
         return;
     }
     // command history (ctrl-p ctrl-n for unix style)
@@ -2780,7 +2784,9 @@ pub unsafe extern "C" fn Console_Key(mut key: libc::c_int) {
         historyLine += 1;
         if historyLine >= nextHistoryLine {
             historyLine = nextHistoryLine;
-            crate::src::qcommon::common::Field_Clear(&mut g_consoleField);
+            crate::src::qcommon::common::Field_Clear(
+                &mut g_consoleField as *mut _ as *mut crate::qcommon_h::field_t,
+            );
             g_consoleField.widthInChars = crate::src::client::cl_console::g_console_field_width;
             return;
         }
@@ -2847,7 +2853,9 @@ pub unsafe extern "C" fn Message_Key(mut key: libc::c_int) {
     let mut buffer: [libc::c_char; 1024] = [0; 1024];
     if key == crate::keycodes_h::K_ESCAPE as libc::c_int {
         Key_SetCatcher(Key_GetCatcher() & !(0x4 as libc::c_int));
-        crate::src::qcommon::common::Field_Clear(&mut chatField);
+        crate::src::qcommon::common::Field_Clear(
+            &mut chatField as *mut _ as *mut crate::qcommon_h::field_t,
+        );
         return;
     }
     if key == crate::keycodes_h::K_ENTER as libc::c_int
@@ -2886,7 +2894,9 @@ pub unsafe extern "C" fn Message_Key(mut key: libc::c_int) {
             );
         }
         Key_SetCatcher(Key_GetCatcher() & !(0x4 as libc::c_int));
-        crate::src::qcommon::common::Field_Clear(&mut chatField);
+        crate::src::qcommon::common::Field_Clear(
+            &mut chatField as *mut _ as *mut crate::qcommon_h::field_t,
+        );
         return;
     }
     Field_KeyDownEvent(&mut chatField, key);
@@ -3182,9 +3192,9 @@ pub unsafe extern "C" fn Key_Bind_f() {
     cmd[0 as libc::c_int as usize] = 0 as libc::c_int as libc::c_char; // start out with a null string
     i = 2 as libc::c_int;
     while i < c {
-        crate::stdlib::strcat(cmd.as_mut_ptr(), crate::src::qcommon::cmd::Cmd_Argv(i));
+        ::libc::strcat(cmd.as_mut_ptr(), crate::src::qcommon::cmd::Cmd_Argv(i));
         if i != c - 1 as libc::c_int {
-            crate::stdlib::strcat(
+            ::libc::strcat(
                 cmd.as_mut_ptr(),
                 b" \x00" as *const u8 as *const libc::c_char,
             );
@@ -3449,7 +3459,7 @@ pub unsafe extern "C" fn CL_ParseBinding(
         {
             p = p.offset(1)
         }
-        end = crate::stdlib::strchr(p, ';' as i32);
+        end = ::libc::strchr(p, ';' as i32);
         if !end.is_null() {
             *end = '\u{0}' as i32 as libc::c_char
         }
@@ -4237,7 +4247,8 @@ pub unsafe extern "C" fn CL_LoadConsoleHistory() {
         i = numLines;
         while i < 32 as libc::c_int {
             crate::src::qcommon::common::Field_Clear(
-                &mut *historyEditLines.as_mut_ptr().offset(i as isize),
+                &mut *historyEditLines.as_mut_ptr().offset(i as isize) as *mut _
+                    as *mut crate::qcommon_h::field_t,
             );
             i += 1
         }

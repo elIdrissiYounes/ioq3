@@ -1152,7 +1152,11 @@ unsafe extern "C" fn tonality_analysis(
         (*tonal).Fs,
     );
     (*tonal).mem_fill = 240 as libc::c_int + remaining;
-    crate::src::opus_1_2_1::celt::kiss_fft::opus_fft_c(kfft, in_0, out);
+    crate::src::opus_1_2_1::celt::kiss_fft::opus_fft_c(
+        kfft as *const crate::src::opus_1_2_1::celt::kiss_fft::kiss_fft_state,
+        in_0 as *const crate::src::opus_1_2_1::celt::kiss_fft::kiss_fft_cpx,
+        out as *mut crate::src::opus_1_2_1::celt::kiss_fft::kiss_fft_cpx,
+    );
     /* If there's any NaN on the input, the entire output will be NaN, so we only need to check one value. */
     if celt_isnan((*out.offset(0 as libc::c_int as isize)).r) != 0 {
         (*info).valid = 0 as libc::c_int;
@@ -1733,7 +1737,8 @@ unsafe extern "C" fn tonality_analysis(
     features[23 as libc::c_int as usize] = (*info).tonality_slope + 0.069216f32;
     features[24 as libc::c_int as usize] = (*tonal).lowECount - 0.067930f32;
     crate::src::opus_1_2_1::src::mlp::mlp_process(
-        &crate::src::opus_1_2_1::src::mlp_data::net,
+        &crate::src::opus_1_2_1::src::mlp_data::net as *const _
+            as *const crate::src::opus_1_2_1::src::mlp::MLP,
         features.as_mut_ptr(),
         frame_probs.as_mut_ptr(),
     );

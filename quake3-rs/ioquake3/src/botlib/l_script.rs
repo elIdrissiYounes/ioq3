@@ -1,4 +1,62 @@
 // =============== BEGIN l_script_h ================
+
+// string
+
+// literal
+
+// number
+
+// name
+
+// punctuation
+
+//string sub type
+
+//---------------
+
+//		the length of the string
+
+//literal sub type
+
+//----------------
+
+//		the ASCII code of the literal
+
+//number sub type
+
+//---------------
+
+// decimal number
+
+// hexadecimal number
+
+// octal number
+
+// binary number
+
+//BINARYNUMBERS
+
+// floating point number
+
+// integer number
+
+// long number
+
+// unsigned number
+
+//punctuation sub type
+
+//--------------------
+
+//name sub type
+
+//-------------
+
+//		the length of the name
+
+//punctuation
+pub type punctuation_t = crate::src::botlib::l_script::punctuation_s;
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct punctuation_s {
@@ -6,36 +64,12 @@ pub struct punctuation_s {
     pub n: libc::c_int,
     pub next: *mut crate::src::botlib::l_script::punctuation_s,
 }
-// string
-// literal
-// number
-// name
-// punctuation
-//string sub type
-//---------------
-//		the length of the string
-//literal sub type
-//----------------
-//		the ASCII code of the literal
-//number sub type
-//---------------
-// decimal number
-// hexadecimal number
-// octal number
-// binary number
-//BINARYNUMBERS
-// floating point number
-// integer number
-// long number
-// unsigned number
-//punctuation sub type
-//--------------------
-//name sub type
-//-------------
-//		the length of the name
-//punctuation
+//punctuation character(s)
+//punctuation indication
+//next punctuation
+//token
 
-pub type punctuation_t = crate::src::botlib::l_script::punctuation_s;
+pub type token_t = crate::src::botlib::l_script::token_s;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -51,12 +85,20 @@ pub struct token_s {
     pub linescrossed: libc::c_int,
     pub next: *mut crate::src::botlib::l_script::token_s,
 }
-//punctuation character(s)
-//punctuation indication
-//next punctuation
-//token
+//available token
+//last read token type
+//last read token sub type
+//integer value
+//floating point value
+//NUMBERVALUE
+//start of white space before token
+//start of white space before token
+//line the token was on
+//lines crossed in white space
+//next token in chain
+//script file
 
-pub type token_t = crate::src::botlib::l_script::token_s;
+pub type script_t = crate::src::botlib::l_script::script_s;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -78,20 +120,6 @@ pub struct script_s {
     pub token: crate::src::botlib::l_script::token_t,
     pub next: *mut crate::src::botlib::l_script::script_s,
 }
-//available token
-//last read token type
-//last read token sub type
-//integer value
-//floating point value
-//NUMBERVALUE
-//start of white space before token
-//start of white space before token
-//line the token was on
-//lines crossed in white space
-//next token in chain
-//script file
-
-pub type script_t = crate::src::botlib::l_script::script_s;
 use ::libc;
 
 pub use crate::internal::__builtin_va_list;
@@ -127,12 +155,12 @@ pub use crate::src::qcommon::q_shared::FS_WRITE;
 use crate::stdlib::memcpy;
 use crate::stdlib::memmove;
 use crate::stdlib::memset;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 use crate::stdlib::strncmp;
 use crate::stdlib::vsnprintf;
+use ::libc::strcat;
+use ::libc::strcmp;
+use ::libc::strcpy;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -1796,7 +1824,7 @@ pub unsafe extern "C" fn PS_ExpectTokenString(
         ); //end if
         return 0 as libc::c_int;
     }
-    if crate::stdlib::strcmp(token.string.as_mut_ptr(), string) != 0 {
+    if ::libc::strcmp(token.string.as_mut_ptr(), string) != 0 {
         ScriptError(
             script,
             b"expected %s, found %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
@@ -1833,36 +1861,36 @@ pub unsafe extern "C" fn PS_ExpectTokenType(
         return 0 as libc::c_int;
     } //end else if
     if (*token).type_0 != type_0 {
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             str.as_mut_ptr(),
             b"\x00" as *const u8 as *const libc::c_char,
         );
         if type_0 == 1 as libc::c_int {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 str.as_mut_ptr(),
                 b"string\x00" as *const u8 as *const libc::c_char,
             );
         }
         if type_0 == 2 as libc::c_int {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 str.as_mut_ptr(),
                 b"literal\x00" as *const u8 as *const libc::c_char,
             );
         }
         if type_0 == 3 as libc::c_int {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 str.as_mut_ptr(),
                 b"number\x00" as *const u8 as *const libc::c_char,
             );
         }
         if type_0 == 4 as libc::c_int {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 str.as_mut_ptr(),
                 b"name\x00" as *const u8 as *const libc::c_char,
             );
         }
         if type_0 == 5 as libc::c_int {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 str.as_mut_ptr(),
                 b"punctuation\x00" as *const u8 as *const libc::c_char,
             );
@@ -1877,54 +1905,54 @@ pub unsafe extern "C" fn PS_ExpectTokenType(
     }
     if (*token).type_0 == 3 as libc::c_int {
         if (*token).subtype & subtype != subtype {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 str.as_mut_ptr(),
                 b"\x00" as *const u8 as *const libc::c_char,
             );
             if subtype & 0x8 as libc::c_int != 0 {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     str.as_mut_ptr(),
                     b"decimal\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x100 as libc::c_int != 0 {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     str.as_mut_ptr(),
                     b"hex\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x200 as libc::c_int != 0 {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     str.as_mut_ptr(),
                     b"octal\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x400 as libc::c_int != 0 {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     str.as_mut_ptr(),
                     b"binary\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x2000 as libc::c_int != 0 {
-                crate::stdlib::strcat(
+                ::libc::strcat(
                     str.as_mut_ptr(),
                     b" long\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x4000 as libc::c_int != 0 {
-                crate::stdlib::strcat(
+                ::libc::strcat(
                     str.as_mut_ptr(),
                     b" unsigned\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x800 as libc::c_int != 0 {
-                crate::stdlib::strcat(
+                ::libc::strcat(
                     str.as_mut_ptr(),
                     b" float\x00" as *const u8 as *const libc::c_char,
                 );
             }
             if subtype & 0x1000 as libc::c_int != 0 {
-                crate::stdlib::strcat(
+                ::libc::strcat(
                     str.as_mut_ptr(),
                     b" integer\x00" as *const u8 as *const libc::c_char,
                 );
@@ -2018,7 +2046,7 @@ pub unsafe extern "C" fn PS_CheckTokenString(
         return 0 as libc::c_int;
     }
     //if the token is available
-    if crate::stdlib::strcmp(tok.string.as_mut_ptr(), string) == 0 {
+    if ::libc::strcmp(tok.string.as_mut_ptr(), string) == 0 {
         return 1 as libc::c_int;
     }
     //token not available
@@ -2096,7 +2124,7 @@ pub unsafe extern "C" fn PS_SkipUntilString(
         next: 0 as *mut crate::src::botlib::l_script::token_s,
     }; //end while
     while PS_ReadToken(script, &mut token) != 0 {
-        if crate::stdlib::strcmp(token.string.as_mut_ptr(), string) == 0 {
+        if ::libc::strcmp(token.string.as_mut_ptr(), string) == 0 {
             return 1 as libc::c_int;
         }
     }
@@ -2246,7 +2274,7 @@ pub unsafe extern "C" fn ReadSignedFloat(
     };
     let mut sign: libc::c_float = 1.0f64 as libc::c_float;
     PS_ExpectAnyToken(script, &mut token);
-    if crate::stdlib::strcmp(
+    if ::libc::strcmp(
         token.string.as_mut_ptr(),
         b"-\x00" as *const u8 as *const libc::c_char,
     ) == 0
@@ -2298,7 +2326,7 @@ pub unsafe extern "C" fn ReadSignedInt(
     };
     let mut sign: libc::c_long = 1 as libc::c_int as libc::c_long;
     PS_ExpectAnyToken(script, &mut token);
-    if crate::stdlib::strcmp(
+    if ::libc::strcmp(
         token.string.as_mut_ptr(),
         b"-\x00" as *const u8 as *const libc::c_char,
     ) == 0

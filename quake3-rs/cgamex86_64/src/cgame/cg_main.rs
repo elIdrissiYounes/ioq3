@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -211,9 +211,9 @@ pub use crate::tr_types_h::TC_S3TC_ARB;
 pub use crate::src::cgame::cg_main::stdlib_h::atoi;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
-pub use crate::stdlib::strtol;
+use ::libc::strcmp;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -3100,7 +3100,7 @@ pub unsafe extern "C" fn CG_RegisterCvars() {
     cv = cvarTable.as_mut_ptr();
     while i < cvarTableSize {
         crate::src::cgame::cg_syscalls::trap_Cvar_Register(
-            (*cv).vmCvar,
+            (*cv).vmCvar as *mut crate::src::qcommon::q_shared::vmCvar_t,
             (*cv).cvarName,
             (*cv).defaultString,
             (*cv).cvarFlags,
@@ -3117,25 +3117,29 @@ pub unsafe extern "C" fn CG_RegisterCvars() {
     cgs.localServer = atoi(var.as_mut_ptr()) as crate::src::qcommon::q_shared::qboolean;
     forceModelModificationCount = cg_forceModel.modificationCount;
     crate::src::cgame::cg_syscalls::trap_Cvar_Register(
-        0 as *mut crate::src::qcommon::q_shared::vmCvar_t,
+        0 as *mut crate::src::qcommon::q_shared::vmCvar_t
+            as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"model\x00" as *const u8 as *const libc::c_char,
         b"sarge\x00" as *const u8 as *const libc::c_char,
         0x2 as libc::c_int | 0x1 as libc::c_int,
     );
     crate::src::cgame::cg_syscalls::trap_Cvar_Register(
-        0 as *mut crate::src::qcommon::q_shared::vmCvar_t,
+        0 as *mut crate::src::qcommon::q_shared::vmCvar_t
+            as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"headmodel\x00" as *const u8 as *const libc::c_char,
         b"sarge\x00" as *const u8 as *const libc::c_char,
         0x2 as libc::c_int | 0x1 as libc::c_int,
     );
     crate::src::cgame::cg_syscalls::trap_Cvar_Register(
-        0 as *mut crate::src::qcommon::q_shared::vmCvar_t,
+        0 as *mut crate::src::qcommon::q_shared::vmCvar_t
+            as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"team_model\x00" as *const u8 as *const libc::c_char,
         b"sarge\x00" as *const u8 as *const libc::c_char,
         0x2 as libc::c_int | 0x1 as libc::c_int,
     );
     crate::src::cgame::cg_syscalls::trap_Cvar_Register(
-        0 as *mut crate::src::qcommon::q_shared::vmCvar_t,
+        0 as *mut crate::src::qcommon::q_shared::vmCvar_t
+            as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"team_headmodel\x00" as *const u8 as *const libc::c_char,
         b"sarge\x00" as *const u8 as *const libc::c_char,
         0x2 as libc::c_int | 0x1 as libc::c_int,
@@ -3173,7 +3177,9 @@ pub unsafe extern "C" fn CG_UpdateCvars() {
     i = 0 as libc::c_int;
     cv = cvarTable.as_mut_ptr();
     while i < cvarTableSize {
-        crate::src::cgame::cg_syscalls::trap_Cvar_Update((*cv).vmCvar);
+        crate::src::cgame::cg_syscalls::trap_Cvar_Update(
+            (*cv).vmCvar as *mut crate::src::qcommon::q_shared::vmCvar_t,
+        );
         i += 1;
         cv = cv.offset(1)
     }
@@ -3496,7 +3502,7 @@ unsafe extern "C" fn CG_RegisterItemSounds(mut itemNum: libc::c_int) {
         if *s != 0 {
             s = s.offset(1)
         }
-        if crate::stdlib::strcmp(
+        if ::libc::strcmp(
             data.as_mut_ptr()
                 .offset(len as isize)
                 .offset(-(3 as libc::c_int as isize)),
@@ -4493,14 +4499,18 @@ pub unsafe extern "C" fn CG_Init(
     cgs.flagStatus = -(1 as libc::c_int);
     // old servers
     // get the rendering configuration from the client system
-    crate::src::cgame::cg_syscalls::trap_GetGlconfig(&mut cgs.glconfig);
+    crate::src::cgame::cg_syscalls::trap_GetGlconfig(
+        &mut cgs.glconfig as *mut _ as *mut crate::tr_types_h::glconfig_t,
+    );
     cgs.screenXScale = (cgs.glconfig.vidWidth as libc::c_double / 640.0f64) as libc::c_float;
     cgs.screenYScale = (cgs.glconfig.vidHeight as libc::c_double / 480.0f64) as libc::c_float;
     // get the gamestate from the client system
-    crate::src::cgame::cg_syscalls::trap_GetGameState(&mut cgs.gameState);
+    crate::src::cgame::cg_syscalls::trap_GetGameState(
+        &mut cgs.gameState as *mut _ as *mut crate::src::qcommon::q_shared::gameState_t,
+    );
     // check version
     s = CG_ConfigString(20 as libc::c_int);
-    if crate::stdlib::strcmp(s, b"baseq3-1\x00" as *const u8 as *const libc::c_char) != 0 {
+    if ::libc::strcmp(s, b"baseq3-1\x00" as *const u8 as *const libc::c_char) != 0 {
         CG_Error(
             b"Client/Server game mismatch: %s/%s\x00" as *const u8 as *const libc::c_char,
             b"baseq3-1\x00" as *const u8 as *const libc::c_char,

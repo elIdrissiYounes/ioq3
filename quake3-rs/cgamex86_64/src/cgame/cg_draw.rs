@@ -4,9 +4,9 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub use crate::bg_public_h::animation_s;
@@ -260,11 +260,11 @@ pub use crate::src::cgame::cg_weapons::CG_DrawWeaponSelect;
 pub use crate::src::cgame::cg_weapons::CG_RegisterItemVisuals;
 use crate::stdlib::cos;
 use crate::stdlib::memset;
-use crate::stdlib::rand;
 use crate::stdlib::sin;
 use crate::stdlib::strlen;
-use crate::stdlib::strtod;
 use crate::stdlib::tan;
+use ::libc::rand;
+use ::libc::strtod;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -514,8 +514,12 @@ pub unsafe extern "C" fn CG_Draw3DModel(
     refdef.height = h as libc::c_int;
     refdef.time = crate::src::cgame::cg_main::cg.time;
     crate::src::cgame::cg_syscalls::trap_R_ClearScene();
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
-    crate::src::cgame::cg_syscalls::trap_R_RenderScene(&mut refdef);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
+    crate::src::cgame::cg_syscalls::trap_R_RenderScene(
+        &mut refdef as *mut _ as *const crate::tr_types_h::refdef_t,
+    );
 }
 /*
 ================
@@ -674,11 +678,14 @@ pub unsafe extern "C" fn CG_DrawFlagModel(
         let mut item: *mut crate::bg_public_h::gitem_t = 0 as *mut crate::bg_public_h::gitem_t;
         if team == crate::bg_public_h::TEAM_RED as libc::c_int {
             item = crate::src::game::bg_misc::BG_FindItemForPowerup(crate::bg_public_h::PW_REDFLAG)
+                as *mut crate::bg_public_h::gitem_s
         } else if team == crate::bg_public_h::TEAM_BLUE as libc::c_int {
             item = crate::src::game::bg_misc::BG_FindItemForPowerup(crate::bg_public_h::PW_BLUEFLAG)
+                as *mut crate::bg_public_h::gitem_s
         } else if team == crate::bg_public_h::TEAM_FREE as libc::c_int {
             item =
                 crate::src::game::bg_misc::BG_FindItemForPowerup(crate::bg_public_h::PW_NEUTRALFLAG)
+                    as *mut crate::bg_public_h::gitem_s
         } else {
             return;
         }
@@ -735,7 +742,7 @@ unsafe extern "C" fn CG_DrawStatusBarHead(mut x: libc::c_float) {
             + 20 as libc::c_int as libc::c_double
                 * crate::stdlib::cos(
                     2.0f64
-                        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                             / 0x7fff as libc::c_int as libc::c_float)
                             as libc::c_double
                             - 0.5f64)
@@ -744,7 +751,7 @@ unsafe extern "C" fn CG_DrawStatusBarHead(mut x: libc::c_float) {
         crate::src::cgame::cg_main::cg.headEndPitch = (5 as libc::c_int as libc::c_double
             * crate::stdlib::cos(
                 2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                         as libc::c_double
                         - 0.5f64)
@@ -753,7 +760,7 @@ unsafe extern "C" fn CG_DrawStatusBarHead(mut x: libc::c_float) {
         crate::src::cgame::cg_main::cg.headStartTime = crate::src::cgame::cg_main::cg.time;
         crate::src::cgame::cg_main::cg.headEndTime =
             ((crate::src::cgame::cg_main::cg.time + 100 as libc::c_int) as libc::c_float
-                + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                + (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float
                     * 2000 as libc::c_int as libc::c_float) as libc::c_int
     } else {
@@ -766,14 +773,14 @@ unsafe extern "C" fn CG_DrawStatusBarHead(mut x: libc::c_float) {
                 crate::src::cgame::cg_main::cg.headEndTime;
             crate::src::cgame::cg_main::cg.headEndTime =
                 ((crate::src::cgame::cg_main::cg.time + 100 as libc::c_int) as libc::c_float
-                    + (crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    + (::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float
                         * 2000 as libc::c_int as libc::c_float) as libc::c_int;
             crate::src::cgame::cg_main::cg.headEndYaw = (180 as libc::c_int as libc::c_double
                 + 20 as libc::c_int as libc::c_double
                     * crate::stdlib::cos(
                         2.0f64
-                            * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                            * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                                 / 0x7fff as libc::c_int as libc::c_float)
                                 as libc::c_double
                                 - 0.5f64)
@@ -782,7 +789,7 @@ unsafe extern "C" fn CG_DrawStatusBarHead(mut x: libc::c_float) {
             crate::src::cgame::cg_main::cg.headEndPitch = (5 as libc::c_int as libc::c_double
                 * crate::stdlib::cos(
                     2.0f64
-                        * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                        * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                             / 0x7fff as libc::c_int as libc::c_float)
                             as libc::c_double
                             - 0.5f64)
@@ -1549,7 +1556,7 @@ unsafe extern "C" fn CG_DrawTeamOverlay(
                 if (*ci).powerups & (1 as libc::c_int) << j != 0 {
                     item = crate::src::game::bg_misc::BG_FindItemForPowerup(
                         j as crate::bg_public_h::powerup_t,
-                    );
+                    ) as *mut crate::bg_public_h::gitem_s;
                     if !item.is_null() {
                         crate::src::cgame::cg_drawtools::CG_DrawPic(
                             xx as libc::c_float,
@@ -1687,8 +1694,8 @@ unsafe extern "C" fn CG_DrawScores(mut y: libc::c_float) -> libc::c_float {
             == crate::bg_public_h::GT_CTF as libc::c_int as libc::c_uint
         {
             // Display flag status
-            item =
-                crate::src::game::bg_misc::BG_FindItemForPowerup(crate::bg_public_h::PW_BLUEFLAG);
+            item = crate::src::game::bg_misc::BG_FindItemForPowerup(crate::bg_public_h::PW_BLUEFLAG)
+                as *mut crate::bg_public_h::gitem_s;
             if !item.is_null() {
                 y1 = y - 16 as libc::c_int as libc::c_float - 8 as libc::c_int as libc::c_float;
                 if crate::src::cgame::cg_main::cgs.blueflag >= 0 as libc::c_int
@@ -1745,7 +1752,8 @@ unsafe extern "C" fn CG_DrawScores(mut y: libc::c_float) -> libc::c_float {
             == crate::bg_public_h::GT_CTF as libc::c_int as libc::c_uint
         {
             // Display flag status
-            item = crate::src::game::bg_misc::BG_FindItemForPowerup(crate::bg_public_h::PW_REDFLAG);
+            item = crate::src::game::bg_misc::BG_FindItemForPowerup(crate::bg_public_h::PW_REDFLAG)
+                as *mut crate::bg_public_h::gitem_s;
             if !item.is_null() {
                 y1 = y - 16 as libc::c_int as libc::c_float - 8 as libc::c_int as libc::c_float;
                 if crate::src::cgame::cg_main::cgs.redflag >= 0 as libc::c_int
@@ -1981,7 +1989,7 @@ unsafe extern "C" fn CG_DrawPowerups(mut y: libc::c_float) -> libc::c_float {
     while i < active {
         item = crate::src::game::bg_misc::BG_FindItemForPowerup(
             sorted[i as usize] as crate::bg_public_h::powerup_t,
-        );
+        ) as *mut crate::bg_public_h::gitem_s;
         if !item.is_null() {
             color = 1 as libc::c_int;
             y -= 48 as libc::c_int as libc::c_float;
@@ -2439,7 +2447,10 @@ unsafe extern "C" fn CG_DrawDisconnect() {
     // draw the phone jack if we are completely past our buffers
     cmdNum = crate::src::cgame::cg_syscalls::trap_GetCurrentCmdNumber() - 64 as libc::c_int
         + 1 as libc::c_int;
-    crate::src::cgame::cg_syscalls::trap_GetUserCmd(cmdNum, &mut cmd);
+    crate::src::cgame::cg_syscalls::trap_GetUserCmd(
+        cmdNum,
+        &mut cmd as *mut _ as *mut crate::src::qcommon::q_shared::usercmd_s,
+    );
     if cmd.serverTime <= (*crate::src::cgame::cg_main::cg.snap).ps.commandTime
         || cmd.serverTime > crate::src::cgame::cg_main::cg.time
     {
@@ -2964,7 +2975,7 @@ unsafe extern "C" fn CG_DrawCrosshair3D() {
             [2 as libc::c_int as usize]
             * maxdist;
     crate::src::cgame::cg_predict::CG_Trace(
-        &mut trace,
+        &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         crate::src::cgame::cg_main::cg.refdef.vieworg.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
         0 as *const crate::src::qcommon::q_shared::vec_t,
@@ -2986,7 +2997,9 @@ unsafe extern "C" fn CG_DrawCrosshair3D() {
     // scale the crosshair so it appears the same size for all distances
     ent.radius = w / 640 as libc::c_int as libc::c_float * xmax * trace.fraction * maxdist / zProj;
     ent.customShader = hShader;
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 =================
@@ -3034,7 +3047,7 @@ unsafe extern "C" fn CG_ScanForCrosshairEntity() {
             [2 as libc::c_int as usize]
             * 131072 as libc::c_int as libc::c_float;
     crate::src::cgame::cg_predict::CG_Trace(
-        &mut trace,
+        &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         start.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
@@ -3611,7 +3624,9 @@ pub unsafe extern "C" fn CG_DrawActive(mut stereoView: crate::tr_types_h::stereo
         CG_DrawCrosshair3D();
     }
     // draw 3D view
-    crate::src::cgame::cg_syscalls::trap_R_RenderScene(&mut crate::src::cgame::cg_main::cg.refdef);
+    crate::src::cgame::cg_syscalls::trap_R_RenderScene(
+        &mut crate::src::cgame::cg_main::cg.refdef as *mut _ as *const crate::tr_types_h::refdef_t,
+    );
     // draw status bar and other floating elements
     CG_Draw2D(stereoView);
 }

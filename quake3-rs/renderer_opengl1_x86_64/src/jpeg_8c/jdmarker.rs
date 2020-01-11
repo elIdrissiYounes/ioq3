@@ -1379,8 +1379,9 @@ unsafe extern "C" fn get_dht(
         }
         if (*htblptr).is_null() {
             *htblptr = crate::src::jpeg_8c::jcomapi::jpeg_alloc_huff_table(
-                cinfo as crate::jpeglib_h::j_common_ptr,
-            )
+                cinfo as crate::jpeglib_h::j_common_ptr
+                    as *mut crate::jpeglib_h::jpeg_common_struct,
+            ) as *mut crate::jpeglib_h::JHUFF_TBL
         }
         crate::stdlib::memcpy(
             (**htblptr).bits.as_mut_ptr() as *mut libc::c_void,
@@ -1508,8 +1509,9 @@ unsafe extern "C" fn get_dqt(
         if (*cinfo).quant_tbl_ptrs[n as usize].is_null() {
             (*cinfo).quant_tbl_ptrs[n as usize] =
                 crate::src::jpeg_8c::jcomapi::jpeg_alloc_quant_table(
-                    cinfo as crate::jpeglib_h::j_common_ptr,
-                )
+                    cinfo as crate::jpeglib_h::j_common_ptr
+                        as *mut crate::jpeglib_h::jpeg_common_struct,
+                ) as *mut crate::jpeglib_h::JQUANT_TBL
         }
         quant_ptr = (*cinfo).quant_tbl_ptrs[n as usize];
         if prec != 0 {

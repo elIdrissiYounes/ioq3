@@ -18,10 +18,10 @@ pub use crate::stdlib::fputs;
 pub use crate::stdlib::select;
 pub use crate::stdlib::ssize_t;
 pub use crate::stdlib::stderr;
-pub use crate::stdlib::timeval;
 pub use crate::stdlib::uint8_t;
 pub use crate::stdlib::FILE;
 pub use crate::stdlib::_IO_FILE;
+pub use ::libc::timeval;
 use c2rust_asm_casts::AsmCastTrait;
 
 pub use crate::qcommon_h::field_t;
@@ -65,7 +65,7 @@ pub use crate::src::qcommon::q_shared::CA_DISCONNECTED;
 pub use crate::src::qcommon::q_shared::CA_LOADING;
 pub use crate::src::qcommon::q_shared::CA_PRIMED;
 pub use crate::src::qcommon::q_shared::CA_UNINITIALIZED;
-pub use crate::stdlib::termios;
+pub use ::libc::termios;
 
 pub use crate::client_h::clientConnection_t;
 pub use crate::curl_h::CURL;
@@ -82,12 +82,12 @@ pub use crate::stdlib::speed_t;
 use crate::stdlib::strlen;
 pub use crate::stdlib::tcflag_t;
 
-use crate::stdlib::fcntl;
 use crate::stdlib::read;
-use crate::stdlib::tcflush;
-use crate::stdlib::tcgetattr;
-use crate::stdlib::tcsetattr;
 use crate::stdlib::write;
+use ::libc::fcntl;
+use ::libc::tcflush;
+use ::libc::tcgetattr;
+use ::libc::tcsetattr;
 extern "C" {
     /*
     ===========================================================================
@@ -139,7 +139,7 @@ static mut TTY_erase: libc::c_int = 0;
 
 static mut TTY_eof: libc::c_int = 0;
 
-static mut TTY_tc: crate::stdlib::termios = crate::stdlib::termios {
+static mut TTY_tc: ::libc::termios = ::libc::termios {
     c_iflag: 0,
     c_oflag: 0,
     c_cflag: 0,
@@ -279,13 +279,17 @@ Never exit without calling this, or your terminal will be left in a pretty bad s
 pub unsafe extern "C" fn CON_Shutdown() {
     if ttycon_on as u64 != 0 {
         CON_Hide();
-        crate::stdlib::tcsetattr(0 as libc::c_int, 1 as libc::c_int, &mut TTY_tc);
+        ::libc::tcsetattr(
+            0 as libc::c_int,
+            1 as libc::c_int,
+            &mut TTY_tc as *mut _ as *const ::libc::termios,
+        );
     }
     // Restore blocking to stdin reads
-    crate::stdlib::fcntl(
+    ::libc::fcntl(
         0 as libc::c_int,
         4 as libc::c_int,
-        crate::stdlib::fcntl(0 as libc::c_int, 3 as libc::c_int, 0 as libc::c_int)
+        ::libc::fcntl(0 as libc::c_int, 3 as libc::c_int, 0 as libc::c_int)
             & !(0o4000 as libc::c_int),
     );
 }
@@ -371,7 +375,7 @@ Initialize the console input (tty mode if possible)
 #[no_mangle]
 
 pub unsafe extern "C" fn CON_Init() {
-    let mut tc: crate::stdlib::termios = crate::stdlib::termios {
+    let mut tc: ::libc::termios = ::libc::termios {
         c_iflag: 0,
         c_oflag: 0,
         c_cflag: 0,
@@ -401,11 +405,10 @@ pub unsafe extern "C" fn CON_Init() {
         Some(CON_SigCont as unsafe extern "C" fn(_: libc::c_int) -> ()),
     );
     // Make stdin reads non-blocking
-    crate::stdlib::fcntl(
+    ::libc::fcntl(
         0 as libc::c_int,
         4 as libc::c_int,
-        crate::stdlib::fcntl(0 as libc::c_int, 3 as libc::c_int, 0 as libc::c_int)
-            | 0o4000 as libc::c_int,
+        ::libc::fcntl(0 as libc::c_int, 3 as libc::c_int, 0 as libc::c_int) | 0o4000 as libc::c_int,
     );
     if stdinIsATTY as u64 == 0 {
         crate::src::qcommon::common::Com_Printf(
@@ -415,8 +418,13 @@ pub unsafe extern "C" fn CON_Init() {
         stdin_active = crate::src::qcommon::q_shared::qtrue;
         return;
     }
-    crate::src::qcommon::common::Field_Clear(&mut TTY_con);
-    crate::stdlib::tcgetattr(0 as libc::c_int, &mut TTY_tc);
+    crate::src::qcommon::common::Field_Clear(
+        &mut TTY_con as *mut _ as *mut crate::qcommon_h::field_t,
+    );
+    ::libc::tcgetattr(
+        0 as libc::c_int,
+        &mut TTY_tc as *mut _ as *mut ::libc::termios,
+    );
     TTY_erase = TTY_tc.c_cc[2 as libc::c_int as usize] as libc::c_int;
     TTY_eof = TTY_tc.c_cc[4 as libc::c_int as usize] as libc::c_int;
     tc = TTY_tc;
@@ -436,7 +444,11 @@ pub unsafe extern "C" fn CON_Init() {
     tc.c_iflag &= !(0o40 as libc::c_int | 0o20 as libc::c_int) as libc::c_uint; // Mark as hidden, so prompt is shown in CON_Show
     tc.c_cc[6 as libc::c_int as usize] = 1 as libc::c_int as crate::stdlib::cc_t;
     tc.c_cc[5 as libc::c_int as usize] = 0 as libc::c_int as crate::stdlib::cc_t;
-    crate::stdlib::tcsetattr(0 as libc::c_int, 1 as libc::c_int, &mut tc);
+    ::libc::tcsetattr(
+        0 as libc::c_int,
+        1 as libc::c_int,
+        &mut tc as *mut _ as *const ::libc::termios,
+    );
     ttycon_on = crate::src::qcommon::q_shared::qtrue;
     ttycon_hide = 1 as libc::c_int;
     CON_Show();
@@ -540,13 +552,17 @@ pub unsafe extern "C" fn CON_Input() -> *mut libc::c_char {
                         b"tty]\x00" as *const u8 as *const libc::c_char,
                         TTY_con.buffer.as_mut_ptr(),
                     );
-                    crate::src::qcommon::common::Field_Clear(&mut TTY_con);
+                    crate::src::qcommon::common::Field_Clear(
+                        &mut TTY_con as *mut _ as *mut crate::qcommon_h::field_t,
+                    );
                     CON_Show();
                     return text.as_mut_ptr();
                 }
                 if key as libc::c_int == '\t' as i32 {
                     CON_Hide();
-                    crate::src::qcommon::common::Field_AutoComplete(&mut TTY_con);
+                    crate::src::qcommon::common::Field_AutoComplete(
+                        &mut TTY_con as *mut _ as *mut crate::qcommon_h::field_t,
+                    );
                     CON_Show();
                     return 0 as *mut libc::c_char;
                 }
@@ -572,7 +588,7 @@ pub unsafe extern "C" fn CON_Input() -> *mut libc::c_char {
                                         TTY_con = *history;
                                         CON_Show();
                                     }
-                                    crate::stdlib::tcflush(0 as libc::c_int, 0 as libc::c_int);
+                                    ::libc::tcflush(0 as libc::c_int, 0 as libc::c_int);
                                     return 0 as *mut libc::c_char;
                                 }
                                 66 => {
@@ -581,10 +597,13 @@ pub unsafe extern "C" fn CON_Input() -> *mut libc::c_char {
                                     if !history.is_null() {
                                         TTY_con = *history
                                     } else {
-                                        crate::src::qcommon::common::Field_Clear(&mut TTY_con);
+                                        crate::src::qcommon::common::Field_Clear(
+                                            &mut TTY_con as *mut _
+                                                as *mut crate::qcommon_h::field_t,
+                                        );
                                     }
                                     CON_Show();
-                                    crate::stdlib::tcflush(0 as libc::c_int, 0 as libc::c_int);
+                                    ::libc::tcflush(0 as libc::c_int, 0 as libc::c_int);
                                     return 0 as *mut libc::c_char;
                                 }
                                 67 => return 0 as *mut libc::c_char,
@@ -600,7 +619,7 @@ pub unsafe extern "C" fn CON_Input() -> *mut libc::c_char {
                     key as libc::c_int,
                     TTY_erase,
                 );
-                crate::stdlib::tcflush(0 as libc::c_int, 0 as libc::c_int);
+                ::libc::tcflush(0 as libc::c_int, 0 as libc::c_int);
                 return 0 as *mut libc::c_char;
             }
             if TTY_con.cursor as libc::c_ulong
@@ -626,7 +645,7 @@ pub unsafe extern "C" fn CON_Input() -> *mut libc::c_char {
             let mut fdset: crate::stdlib::fd_set = crate::stdlib::fd_set {
                 __fds_bits: [0; 16],
             };
-            let mut timeout: crate::stdlib::timeval = crate::stdlib::timeval {
+            let mut timeout: ::libc::timeval = ::libc::timeval {
                 tv_sec: 0,
                 tv_usec: 0,
             };

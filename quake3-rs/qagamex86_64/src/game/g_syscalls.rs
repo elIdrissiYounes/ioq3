@@ -264,7 +264,7 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::exit;
+use ::libc::exit;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -327,7 +327,7 @@ pub unsafe extern "C" fn trap_Error(mut text: *const libc::c_char) -> ! {
         text,
     );
     // shut up GCC warning about returning functions, because we know better
-    crate::stdlib::exit(1 as libc::c_int);
+    ::libc::exit(1 as libc::c_int);
 }
 #[no_mangle]
 

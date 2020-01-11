@@ -425,7 +425,7 @@ pub unsafe extern "C" fn S_PaintChannelFromWavelet(
         || crate::src::client::snd_mem::sfxScratchPointer != sc
     {
         crate::src::client::snd_adpcm::S_AdpcmGetSamples(
-            chunk,
+            chunk as *mut crate::snd_local_h::sndBuffer_s,
             crate::src::client::snd_mem::sfxScratchBuffer,
         );
         crate::src::client::snd_mem::sfxScratchIndex = i;
@@ -442,7 +442,7 @@ pub unsafe extern "C" fn S_PaintChannelFromWavelet(
         if sampleOffset == 1024 as libc::c_int * 2 as libc::c_int {
             chunk = (*chunk).next;
             crate::src::client::snd_wavelet::decodeWavelet(
-                chunk,
+                chunk as *mut crate::snd_local_h::sndBuffer_s,
                 crate::src::client::snd_mem::sfxScratchBuffer,
             );
             crate::src::client::snd_mem::sfxScratchIndex += 1;
@@ -486,7 +486,7 @@ pub unsafe extern "C" fn S_PaintChannelFromADPCM(
         || crate::src::client::snd_mem::sfxScratchPointer != sc
     {
         crate::src::client::snd_adpcm::S_AdpcmGetSamples(
-            chunk,
+            chunk as *mut crate::snd_local_h::sndBuffer_s,
             crate::src::client::snd_mem::sfxScratchBuffer,
         );
         crate::src::client::snd_mem::sfxScratchIndex = i;
@@ -503,7 +503,7 @@ pub unsafe extern "C" fn S_PaintChannelFromADPCM(
         if sampleOffset == 1024 as libc::c_int * 4 as libc::c_int {
             chunk = (*chunk).next;
             crate::src::client::snd_adpcm::S_AdpcmGetSamples(
-                chunk,
+                chunk as *mut crate::snd_local_h::sndBuffer_s,
                 crate::src::client::snd_mem::sfxScratchBuffer,
             );
             sampleOffset = 0 as libc::c_int;

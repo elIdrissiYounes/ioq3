@@ -31,9 +31,9 @@ pub use crate::src::libvorbis_1_3_6::lib::psy::vorbis_info_psy_global;
 pub use crate::highlevel_h::highlevel_byblocktype;
 pub use crate::highlevel_h::highlevel_encode_setup;
 use crate::stdlib::calloc;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
 use crate::stdlib::memset;
+use ::libc::free;
 
 use crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc;
 use crate::src::libvorbis_1_3_6::lib::lsp::vorbis_lsp_to_curve;
@@ -63,7 +63,7 @@ unsafe extern "C" fn floor0_free_info(mut i: *mut libc::c_void) {
             0 as libc::c_int,
             ::std::mem::size_of::<crate::backends_h::vorbis_info_floor0>() as libc::c_ulong,
         );
-        crate::stdlib::free(info as *mut libc::c_void);
+        ::libc::free(info as *mut libc::c_void);
     };
 }
 
@@ -72,23 +72,23 @@ unsafe extern "C" fn floor0_free_look(mut i: *mut libc::c_void) {
     if !look.is_null() {
         if !(*look).linearmap.is_null() {
             if !(*(*look).linearmap.offset(0 as libc::c_int as isize)).is_null() {
-                crate::stdlib::free(
+                ::libc::free(
                     *(*look).linearmap.offset(0 as libc::c_int as isize) as *mut libc::c_void
                 );
             }
             if !(*(*look).linearmap.offset(1 as libc::c_int as isize)).is_null() {
-                crate::stdlib::free(
+                ::libc::free(
                     *(*look).linearmap.offset(1 as libc::c_int as isize) as *mut libc::c_void
                 );
             }
-            crate::stdlib::free((*look).linearmap as *mut libc::c_void);
+            ::libc::free((*look).linearmap as *mut libc::c_void);
         }
         crate::stdlib::memset(
             look as *mut libc::c_void,
             0 as libc::c_int,
             ::std::mem::size_of::<vorbis_look_floor0>() as libc::c_ulong,
         );
-        crate::stdlib::free(look as *mut libc::c_void);
+        ::libc::free(look as *mut libc::c_void);
     };
 }
 
@@ -104,16 +104,30 @@ unsafe extern "C" fn floor0_unpack(
         ::std::mem::size_of::<crate::backends_h::vorbis_info_floor0>() as libc::c_ulong,
     )
         as *mut crate::backends_h::vorbis_info_floor0;
-    (*info).order =
-        crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 8 as libc::c_int) as libc::c_int;
-    (*info).rate = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 16 as libc::c_int);
-    (*info).barkmap = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 16 as libc::c_int);
-    (*info).ampbits =
-        crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 6 as libc::c_int) as libc::c_int;
-    (*info).ampdB =
-        crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 8 as libc::c_int) as libc::c_int;
-    (*info).numbooks = (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 4 as libc::c_int)
-        + 1 as libc::c_int as libc::c_long) as libc::c_int;
+    (*info).order = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        8 as libc::c_int,
+    ) as libc::c_int;
+    (*info).rate = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        16 as libc::c_int,
+    );
+    (*info).barkmap = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        16 as libc::c_int,
+    );
+    (*info).ampbits = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        6 as libc::c_int,
+    ) as libc::c_int;
+    (*info).ampdB = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        8 as libc::c_int,
+    ) as libc::c_int;
+    (*info).numbooks = (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        4 as libc::c_int,
+    ) + 1 as libc::c_int as libc::c_long) as libc::c_int;
     if !((*info).order < 1 as libc::c_int) {
         if !((*info).rate < 1 as libc::c_int as libc::c_long) {
             if !((*info).barkmap < 1 as libc::c_int as libc::c_long) {
@@ -126,7 +140,7 @@ unsafe extern "C" fn floor0_unpack(
                         }
                         (*info).books[j as usize] =
                             crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                opb,
+                                opb as *mut crate::ogg_h::oggpack_buffer,
                                 8 as libc::c_int,
                             ) as libc::c_int;
                         if (*info).books[j as usize] < 0 as libc::c_int
@@ -272,9 +286,10 @@ unsafe extern "C" fn floor0_inverse1(
     let mut info: *mut crate::backends_h::vorbis_info_floor0 = (*look).vi;
     let mut j: libc::c_int = 0;
     let mut k: libc::c_int = 0;
-    let mut ampraw: libc::c_int =
-        crate::src::libogg_1_3_3::src::bitwise::oggpack_read(&mut (*vb).opb, (*info).ampbits)
-            as libc::c_int;
+    let mut ampraw: libc::c_int = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        &mut (*vb).opb as *mut _ as *mut crate::ogg_h::oggpack_buffer,
+        (*info).ampbits,
+    ) as libc::c_int;
     if ampraw > 0 as libc::c_int {
         /* also handles the -1 out of data case */
         let mut maxval: libc::c_long =
@@ -282,7 +297,7 @@ unsafe extern "C" fn floor0_inverse1(
         let mut amp: libc::c_float =
             ampraw as libc::c_float / maxval as libc::c_float * (*info).ampdB as libc::c_float;
         let mut booknum: libc::c_int = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-            &mut (*vb).opb,
+            &mut (*vb).opb as *mut _ as *mut crate::ogg_h::oggpack_buffer,
             crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog(
                 (*info).numbooks as crate::config_types_h::ogg_uint32_t,
             ),
@@ -300,16 +315,16 @@ unsafe extern "C" fn floor0_inverse1(
             vector */
             let mut lsp: *mut libc::c_float =
                 crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
-                    vb,
+                    vb as *mut crate::codec_h::vorbis_block,
                     (::std::mem::size_of::<libc::c_float>() as libc::c_ulong).wrapping_mul(
                         ((*look).m as libc::c_long + (*b).dim + 1 as libc::c_int as libc::c_long)
                             as libc::c_ulong,
                     ) as libc::c_long,
                 ) as *mut libc::c_float;
             if !(crate::src::libvorbis_1_3_6::lib::codebook::vorbis_book_decodev_set(
-                b,
+                b as *mut crate::src::libvorbis_1_3_6::lib::codebook::codebook,
                 lsp,
-                &mut (*vb).opb,
+                &mut (*vb).opb as *mut _ as *mut crate::ogg_h::oggpack_buffer,
                 (*look).m,
             ) == -(1 as libc::c_int) as libc::c_long)
             {

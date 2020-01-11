@@ -277,7 +277,9 @@ pub unsafe extern "C" fn jpeg_CreateDecompress(
     (*cinfo).client_data = client_data;
     (*cinfo).is_decompressor = 1 as libc::c_int;
     /* Initialize a memory manager instance for this object */
-    crate::src::jpeg_8c::jmemmgr::jinit_memory_mgr(cinfo as crate::jpeglib_h::j_common_ptr);
+    crate::src::jpeg_8c::jmemmgr::jinit_memory_mgr(
+        cinfo as crate::jpeglib_h::j_common_ptr as *mut crate::jpeglib_h::jpeg_common_struct,
+    );
     /* Zero out pointers to permanent structures. */
     (*cinfo).progress = 0 as *mut crate::jpeglib_h::jpeg_progress_mgr;
     (*cinfo).src = 0 as *mut crate::jpeglib_h::jpeg_source_mgr;
@@ -296,9 +298,13 @@ pub unsafe extern "C" fn jpeg_CreateDecompress(
      * for COM, APPn markers before calling jpeg_read_header.
      */
     (*cinfo).marker_list = 0 as crate::jpeglib_h::jpeg_saved_marker_ptr;
-    crate::src::jpeg_8c::jdmarker::jinit_marker_reader(cinfo);
+    crate::src::jpeg_8c::jdmarker::jinit_marker_reader(
+        cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+    );
     /* And initialize the overall input controller. */
-    crate::src::jpeg_8c::jdinput::jinit_input_controller(cinfo);
+    crate::src::jpeg_8c::jdinput::jinit_input_controller(
+        cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+    );
     /* OK, I'm ready */
     (*cinfo).global_state = 200 as libc::c_int;
 }
@@ -308,7 +314,9 @@ pub unsafe extern "C" fn jpeg_CreateDecompress(
 #[no_mangle]
 
 pub unsafe extern "C" fn jpeg_destroy_decompress(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
-    crate::src::jpeg_8c::jcomapi::jpeg_destroy(cinfo as crate::jpeglib_h::j_common_ptr);
+    crate::src::jpeg_8c::jcomapi::jpeg_destroy(
+        cinfo as crate::jpeglib_h::j_common_ptr as *mut crate::jpeglib_h::jpeg_common_struct,
+    );
     /* use common routine */
 }
 /* Return value is one of: */
@@ -334,7 +342,9 @@ pub unsafe extern "C" fn jpeg_destroy_decompress(mut cinfo: crate::jpeglib_h::j_
 #[no_mangle]
 
 pub unsafe extern "C" fn jpeg_abort_decompress(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
-    crate::src::jpeg_8c::jcomapi::jpeg_abort(cinfo as crate::jpeglib_h::j_common_ptr);
+    crate::src::jpeg_8c::jcomapi::jpeg_abort(
+        cinfo as crate::jpeglib_h::j_common_ptr as *mut crate::jpeglib_h::jpeg_common_struct,
+    );
     /* use common routine */
 }
 /*
@@ -531,7 +541,10 @@ pub unsafe extern "C" fn jpeg_read_header(
              * call jpeg_abort, but we can't change it now for compatibility reasons.
              * A side effect is to free any temporary memory (there shouldn't be any).
              */
-            crate::src::jpeg_8c::jcomapi::jpeg_abort(cinfo as crate::jpeglib_h::j_common_ptr); /* sets state = DSTATE_START */
+            crate::src::jpeg_8c::jcomapi::jpeg_abort(
+                cinfo as crate::jpeglib_h::j_common_ptr
+                    as *mut crate::jpeglib_h::jpeg_common_struct,
+            ); /* sets state = DSTATE_START */
             retcode = 2 as libc::c_int
         }
         0 | _ => {}
@@ -797,6 +810,8 @@ pub unsafe extern "C" fn jpeg_finish_decompress(
     )
     .expect("non-null function pointer")(cinfo);
     /* We can use jpeg_abort to release memory and reset global_state */
-    crate::src::jpeg_8c::jcomapi::jpeg_abort(cinfo as crate::jpeglib_h::j_common_ptr);
+    crate::src::jpeg_8c::jcomapi::jpeg_abort(
+        cinfo as crate::jpeglib_h::j_common_ptr as *mut crate::jpeglib_h::jpeg_common_struct,
+    );
     return 1 as libc::c_int;
 }

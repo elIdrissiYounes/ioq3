@@ -17,16 +17,16 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -245,11 +245,11 @@ pub use crate::src::game::g_utils::G_FreeEntity;
 pub use crate::src::game::g_utils::G_Spawn;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
-use crate::stdlib::strcat;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
-pub use crate::stdlib::strtod;
-pub use crate::stdlib::strtol;
+use ::libc::strcat;
+use ::libc::strcpy;
+pub use ::libc::strtod;
+pub use ::libc::strtol;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -363,7 +363,7 @@ pub unsafe extern "C" fn DeathmatchScoreboardMessage(mut ent: *mut crate::g_loca
         {
             break;
         }
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             string.as_mut_ptr().offset(stringlength as isize),
             entry.as_mut_ptr(),
         );
@@ -714,11 +714,11 @@ pub unsafe extern "C" fn Cmd_Give_f(mut ent: *mut crate::g_local_h::gentity_t) {
     }
     // spawn a specific item right on the player
     if give_all as u64 == 0 {
-        it = crate::src::game::bg_misc::BG_FindItem(name);
+        it = crate::src::game::bg_misc::BG_FindItem(name) as *mut crate::bg_public_h::gitem_s;
         if it.is_null() {
             return;
         }
-        it_ent = crate::src::game::g_utils::G_Spawn();
+        it_ent = crate::src::game::g_utils::G_Spawn() as *mut crate::g_local_h::gentity_s;
         (*it_ent).s.origin[0 as libc::c_int as usize] =
             (*ent).r.currentOrigin[0 as libc::c_int as usize];
         (*it_ent).s.origin[1 as libc::c_int as usize] =
@@ -726,16 +726,23 @@ pub unsafe extern "C" fn Cmd_Give_f(mut ent: *mut crate::g_local_h::gentity_t) {
         (*it_ent).s.origin[2 as libc::c_int as usize] =
             (*ent).r.currentOrigin[2 as libc::c_int as usize];
         (*it_ent).classname = (*it).classname;
-        crate::src::game::g_items::G_SpawnItem(it_ent, it);
-        crate::src::game::g_items::FinishSpawningItem(it_ent);
+        crate::src::game::g_items::G_SpawnItem(
+            it_ent as *mut crate::g_local_h::gentity_s,
+            it as *mut crate::bg_public_h::gitem_s,
+        );
+        crate::src::game::g_items::FinishSpawningItem(it_ent as *mut crate::g_local_h::gentity_s);
         crate::stdlib::memset(
             &mut trace as *mut crate::src::qcommon::q_shared::trace_t as *mut libc::c_void,
             0 as libc::c_int,
             ::std::mem::size_of::<crate::src::qcommon::q_shared::trace_t>() as libc::c_ulong,
         );
-        crate::src::game::g_items::Touch_Item(it_ent, ent, &mut trace);
+        crate::src::game::g_items::Touch_Item(
+            it_ent as *mut crate::g_local_h::gentity_s,
+            ent as *mut crate::g_local_h::gentity_s,
+            &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
+        );
         if (*it_ent).inuse as u64 != 0 {
-            crate::src::game::g_utils::G_FreeEntity(it_ent);
+            crate::src::game::g_utils::G_FreeEntity(it_ent as *mut crate::g_local_h::gentity_s);
         }
     };
 }
@@ -936,9 +943,9 @@ pub unsafe extern "C" fn Cmd_Kill_f(mut ent: *mut crate::g_local_h::gentity_t) {
     (*(*ent).client).ps.stats[crate::bg_public_h::STAT_HEALTH as libc::c_int as usize] =
         (*ent).health;
     crate::src::game::g_combat::player_die(
-        ent,
-        ent,
-        ent,
+        ent as *mut crate::g_local_h::gentity_s,
+        ent as *mut crate::g_local_h::gentity_s,
+        ent as *mut crate::g_local_h::gentity_s,
         100000 as libc::c_int,
         crate::bg_public_h::MOD_SUICIDE as libc::c_int,
     );
@@ -1164,7 +1171,7 @@ pub unsafe extern "C" fn SetTeam(
         && (*client).pers.connected as libc::c_uint
             == crate::g_local_h::CON_CONNECTED as libc::c_int as libc::c_uint
     {
-        crate::src::game::g_client::CopyToBodyQue(ent);
+        crate::src::game::g_client::CopyToBodyQue(ent as *mut crate::g_local_h::gentity_s);
     }
     // he starts at 'base'
     (*client).pers.teamState.state = crate::g_local_h::TEAM_BEGIN;
@@ -1175,16 +1182,16 @@ pub unsafe extern "C" fn SetTeam(
         (*(*ent).client).ps.stats[crate::bg_public_h::STAT_HEALTH as libc::c_int as usize] =
             (*ent).health;
         crate::src::game::g_combat::player_die(
-            ent,
-            ent,
-            ent,
+            ent as *mut crate::g_local_h::gentity_s,
+            ent as *mut crate::g_local_h::gentity_s,
+            ent as *mut crate::g_local_h::gentity_s,
             100000 as libc::c_int,
             crate::bg_public_h::MOD_SUICIDE as libc::c_int,
         );
     }
     // they go to the end of the line for tournements
     if team == crate::bg_public_h::TEAM_SPECTATOR as libc::c_int && oldTeam != team {
-        crate::src::game::g_main::AddTournamentQueue(client);
+        crate::src::game::g_main::AddTournamentQueue(client as *mut crate::g_local_h::gclient_s);
     }
     (*client).sess.sessionTeam = team as crate::bg_public_h::team_t;
     (*client).sess.spectatorState = specState;
@@ -1248,7 +1255,7 @@ pub unsafe extern "C" fn StopFollowing(mut ent: *mut crate::g_local_h::gentity_t
         .wrapping_offset_from(crate::src::game::g_main::g_entities.as_mut_ptr())
         as libc::c_long as libc::c_int;
     crate::src::game::g_client::SetClientViewAngle(
-        ent,
+        ent as *mut crate::g_local_h::gentity_s,
         (*(*ent).client).ps.viewangles.as_mut_ptr(),
     );
     // don't use dead view angles
@@ -1501,7 +1508,13 @@ unsafe extern "C" fn G_SayTo(
     {
         return;
     }
-    if mode == 1 as libc::c_int && crate::src::game::g_team::OnSameTeam(ent, other) as u64 == 0 {
+    if mode == 1 as libc::c_int
+        && crate::src::game::g_team::OnSameTeam(
+            ent as *mut crate::g_local_h::gentity_s,
+            other as *mut crate::g_local_h::gentity_s,
+        ) as u64
+            == 0
+    {
         return;
     }
     // no chatting to players in tournements
@@ -1559,7 +1572,7 @@ pub unsafe extern "C" fn G_Say(
                 chatText,
             );
             if crate::src::game::g_team::Team_GetLocationMsg(
-                ent,
+                ent as *mut crate::g_local_h::gentity_s,
                 location.as_mut_ptr(),
                 ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
             ) as u64
@@ -1595,7 +1608,7 @@ pub unsafe extern "C" fn G_Say(
                 && (*(*target).client).sess.sessionTeam as libc::c_uint
                     == (*(*ent).client).sess.sessionTeam as libc::c_uint
                 && crate::src::game::g_team::Team_GetLocationMsg(
-                    ent,
+                    ent as *mut crate::g_local_h::gentity_s,
                     location.as_mut_ptr(),
                     ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
                 ) as libc::c_uint
@@ -2447,7 +2460,7 @@ pub unsafe extern "C" fn Cmd_CallTeamVote_f(mut ent: *mut crate::g_local_h::gent
     i = 2 as libc::c_int;
     while i < crate::src::game::g_syscalls::trap_Argc() {
         if i > 2 as libc::c_int {
-            crate::stdlib::strcat(
+            ::libc::strcat(
                 arg2.as_mut_ptr(),
                 b" \x00" as *const u8 as *const libc::c_char,
             );
@@ -2829,7 +2842,11 @@ pub unsafe extern "C" fn Cmd_SetViewpos_f(mut ent: *mut crate::g_local_h::gentit
     );
     angles[1 as libc::c_int as usize] =
         atof(buffer.as_mut_ptr()) as crate::src::qcommon::q_shared::vec_t;
-    crate::src::game::g_misc::TeleportPlayer(ent, origin.as_mut_ptr(), angles.as_mut_ptr());
+    crate::src::game::g_misc::TeleportPlayer(
+        ent as *mut crate::g_local_h::gentity_s,
+        origin.as_mut_ptr(),
+        angles.as_mut_ptr(),
+    );
 }
 /*
 =================

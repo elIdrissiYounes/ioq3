@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -106,8 +106,8 @@ pub use crate::src::qcommon::q_shared::TR_LINEAR;
 pub use crate::src::qcommon::q_shared::TR_LINEAR_STOP;
 pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
-use crate::stdlib::sscanf;
-pub use crate::stdlib::strtol;
+use ::libc::sscanf;
+pub use ::libc::strtol;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -193,7 +193,7 @@ pub unsafe extern "C" fn G_ReadSessionData(mut client: *mut crate::g_local_h::gc
         s.as_mut_ptr(),
         ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
     );
-    crate::stdlib::sscanf(
+    ::libc::sscanf(
         s.as_mut_ptr(),
         b"%i %i %i %i %i %i %i\x00" as *const u8 as *const libc::c_char,
         &mut sessionTeam as *mut libc::c_int,
@@ -258,7 +258,7 @@ pub unsafe extern "C" fn G_InitSessionData(
                 &mut *crate::src::game::g_main::g_entities.as_mut_ptr().offset(
                     client.wrapping_offset_from(crate::src::game::g_main::level.clients)
                         as libc::c_long as isize,
-                ),
+                ) as *mut _ as *mut crate::g_local_h::gentity_s,
                 value,
             );
         }
@@ -290,7 +290,7 @@ pub unsafe extern "C" fn G_InitSessionData(
         }
         (*sess).spectatorState = crate::g_local_h::SPECTATOR_FREE
     }
-    crate::src::game::g_main::AddTournamentQueue(client);
+    crate::src::game::g_main::AddTournamentQueue(client as *mut crate::g_local_h::gclient_s);
     G_WriteClientSessionData(client);
 }
 /*

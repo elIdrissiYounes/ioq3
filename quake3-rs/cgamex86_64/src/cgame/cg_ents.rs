@@ -184,7 +184,6 @@ pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
 use crate::stdlib::cos;
 use crate::stdlib::memset;
-use crate::stdlib::rand;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -212,6 +211,7 @@ pub use crate::tr_types_h::RT_SPRITE;
 pub use crate::tr_types_h::TC_NONE;
 pub use crate::tr_types_h::TC_S3TC;
 pub use crate::tr_types_h::TC_S3TC_ARB;
+use ::libc::rand;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -259,7 +259,7 @@ pub unsafe extern "C" fn CG_PositionEntityOnTag(
         };
     // lerp the tag
     crate::src::cgame::cg_syscalls::trap_R_LerpTag(
-        &mut lerped,
+        &mut lerped as *mut _ as *mut crate::src::qcommon::q_shared::orientation_t,
         parentModel,
         (*parent).oldframe,
         (*parent).frame,
@@ -316,7 +316,7 @@ pub unsafe extern "C" fn CG_PositionRotatedEntityOnTag(
     //AxisClear( entity->axis );
     // lerp the tag
     crate::src::cgame::cg_syscalls::trap_R_LerpTag(
-        &mut lerped,
+        &mut lerped as *mut _ as *mut crate::src::qcommon::q_shared::orientation_t,
         parentModel,
         (*parent).oldframe,
         (*parent).frame,
@@ -510,7 +510,9 @@ unsafe extern "C" fn CG_General(mut cent: *mut crate::cg_local_h::centity_t) {
         ent.axis.as_mut_ptr(),
     );
     // add to refresh list
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 ==================
@@ -542,7 +544,7 @@ unsafe extern "C" fn CG_Speaker(mut cent: *mut crate::cg_local_h::centity_t) {
         as libc::c_double
         + ((*cent).currentState.clientNum * 100 as libc::c_int) as libc::c_double
             * (2.0f64
-                * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                     / 0x7fff as libc::c_int as libc::c_float)
                     as libc::c_double
                     - 0.5f64))) as libc::c_int;
@@ -620,7 +622,9 @@ unsafe extern "C" fn CG_Item(mut cent: *mut crate::cg_local_h::centity_t) {
             255 as libc::c_int as crate::src::qcommon::q_shared::byte;
         ent.shaderRGBA[3 as libc::c_int as usize] =
             255 as libc::c_int as crate::src::qcommon::q_shared::byte;
-        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+            &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+        );
         return;
     }
     // items bob up and down continuously
@@ -791,7 +795,9 @@ unsafe extern "C" fn CG_Item(mut cent: *mut crate::cg_local_h::centity_t) {
         ent.nonNormalizedAxes = crate::src::qcommon::q_shared::qtrue
     }
     // add to refresh list
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
     if (*item).giType as libc::c_uint
         == crate::bg_public_h::IT_WEAPON as libc::c_int as libc::c_uint
         && !wi.is_null()
@@ -851,7 +857,9 @@ unsafe extern "C" fn CG_Item(mut cent: *mut crate::cg_local_h::centity_t) {
             b"tag_barrel\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
         );
         barrel.nonNormalizedAxes = ent.nonNormalizedAxes;
-        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut barrel);
+        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+            &mut barrel as *mut _ as *const crate::tr_types_h::refEntity_t,
+        );
     }
     // accompanying rings / spheres for powerups
     if crate::src::cgame::cg_main::cg_simpleItems.integer == 0 {
@@ -903,7 +911,9 @@ unsafe extern "C" fn CG_Item(mut cent: *mut crate::cg_local_h::centity_t) {
                         ent.axis[2 as libc::c_int as usize][2 as libc::c_int as usize] * frac;
                     ent.nonNormalizedAxes = crate::src::qcommon::q_shared::qtrue
                 }
-                crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+                crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+                    &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+                );
             }
         }
     };
@@ -991,7 +1001,8 @@ unsafe extern "C" fn CG_Missile(mut cent: *mut crate::cg_local_h::centity_t) {
     if (*weapon).missileSound != 0 {
         let mut velocity: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
         crate::src::game::bg_misc::BG_EvaluateTrajectoryDelta(
-            &mut (*cent).currentState.pos,
+            &mut (*cent).currentState.pos as *mut _
+                as *const crate::src::qcommon::q_shared::trajectory_t,
             crate::src::cgame::cg_main::cg.time,
             velocity.as_mut_ptr(),
         );
@@ -1019,7 +1030,9 @@ unsafe extern "C" fn CG_Missile(mut cent: *mut crate::cg_local_h::centity_t) {
         ent.radius = 16 as libc::c_int as libc::c_float;
         ent.rotation = 0 as libc::c_int as libc::c_float;
         ent.customShader = crate::src::cgame::cg_main::cgs.media.plasmaBallShader;
-        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+            &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+        );
         return;
     }
     // flicker between two skins
@@ -1051,8 +1064,8 @@ unsafe extern "C" fn CG_Missile(mut cent: *mut crate::cg_local_h::centity_t) {
     }
     // add to refresh list, possibly with quad glow
     crate::src::cgame::cg_players::CG_AddRefEntityWithPowerups(
-        &mut ent,
-        s1,
+        &mut ent as *mut _ as *mut crate::tr_types_h::refEntity_t,
+        s1 as *mut crate::src::qcommon::q_shared::entityState_s,
         crate::bg_public_h::TEAM_FREE as libc::c_int,
     );
 }
@@ -1104,7 +1117,10 @@ unsafe extern "C" fn CG_Grapple(mut cent: *mut crate::cg_local_h::centity_t) {
     (*cent).lerpAngles[2 as libc::c_int as usize] = (*s1).angles[2 as libc::c_int as usize];
     // FIXME add grapple pull sound here..?
     // Will draw cable if needed
-    crate::src::cgame::cg_weapons::CG_GrappleTrail(cent, weapon);
+    crate::src::cgame::cg_weapons::CG_GrappleTrail(
+        cent as *mut crate::cg_local_h::centity_s,
+        weapon as *const crate::cg_local_h::weaponInfo_s,
+    );
     // create the render entity
     crate::stdlib::memset(
         &mut ent as *mut crate::tr_types_h::refEntity_t as *mut libc::c_void,
@@ -1130,7 +1146,9 @@ unsafe extern "C" fn CG_Grapple(mut cent: *mut crate::cg_local_h::centity_t) {
         ent.axis[0 as libc::c_int as usize][2 as libc::c_int as usize] =
             1 as libc::c_int as crate::src::qcommon::q_shared::vec_t
     }
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 ===============
@@ -1190,12 +1208,16 @@ unsafe extern "C" fn CG_Mover(mut cent: *mut crate::cg_local_h::centity_t) {
         ent.hModel = crate::src::cgame::cg_main::cgs.gameModels[(*s1).modelindex as usize]
     }
     // add to refresh list
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
     // add the secondary model
     if (*s1).modelindex2 != 0 {
         ent.skinNum = 0 as libc::c_int;
         ent.hModel = crate::src::cgame::cg_main::cgs.gameModels[(*s1).modelindex2 as usize];
-        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+            &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+        );
     };
 }
 /*
@@ -1249,7 +1271,9 @@ pub unsafe extern "C" fn CG_Beam(mut cent: *mut crate::cg_local_h::centity_t) {
     ent.reType = crate::tr_types_h::RT_BEAM;
     ent.renderfx = 0x40 as libc::c_int;
     // add to refresh list
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 ===============
@@ -1328,7 +1352,9 @@ unsafe extern "C" fn CG_Portal(mut cent: *mut crate::cg_local_h::centity_t) {
     ent.skinNum = ((*s1).clientNum as libc::c_double / 256.0f64
         * 360 as libc::c_int as libc::c_double) as libc::c_int;
     // add to refresh list
-    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+    crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+        &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 ================
@@ -1469,22 +1495,26 @@ pub unsafe extern "C" fn CG_AdjustPositionForMover(
         return;
     }
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*cent).currentState.pos,
+        &mut (*cent).currentState.pos as *mut _
+            as *const crate::src::qcommon::q_shared::trajectory_t,
         fromTime,
         oldOrigin.as_mut_ptr(),
     );
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*cent).currentState.apos,
+        &mut (*cent).currentState.apos as *mut _
+            as *const crate::src::qcommon::q_shared::trajectory_t,
         fromTime,
         oldAngles.as_mut_ptr(),
     );
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*cent).currentState.pos,
+        &mut (*cent).currentState.pos as *mut _
+            as *const crate::src::qcommon::q_shared::trajectory_t,
         toTime,
         origin.as_mut_ptr(),
     );
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*cent).currentState.apos,
+        &mut (*cent).currentState.apos as *mut _
+            as *const crate::src::qcommon::q_shared::trajectory_t,
         toTime,
         angles.as_mut_ptr(),
     );
@@ -1560,12 +1590,13 @@ unsafe extern "C" fn CG_InterpolateEntityPosition(mut cent: *mut crate::cg_local
     // this will linearize a sine or parabolic curve, but it is important
     // to not extrapolate player positions if more recent data is available
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*cent).currentState.pos,
+        &mut (*cent).currentState.pos as *mut _
+            as *const crate::src::qcommon::q_shared::trajectory_t,
         (*crate::src::cgame::cg_main::cg.snap).serverTime,
         current.as_mut_ptr(),
     );
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*cent).nextState.pos,
+        &mut (*cent).nextState.pos as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
         (*crate::src::cgame::cg_main::cg.nextSnap).serverTime,
         next.as_mut_ptr(),
     );
@@ -1576,12 +1607,13 @@ unsafe extern "C" fn CG_InterpolateEntityPosition(mut cent: *mut crate::cg_local
     (*cent).lerpOrigin[2 as libc::c_int as usize] = current[2 as libc::c_int as usize]
         + f * (next[2 as libc::c_int as usize] - current[2 as libc::c_int as usize]);
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*cent).currentState.apos,
+        &mut (*cent).currentState.apos as *mut _
+            as *const crate::src::qcommon::q_shared::trajectory_t,
         (*crate::src::cgame::cg_main::cg.snap).serverTime,
         current.as_mut_ptr(),
     );
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*cent).nextState.apos,
+        &mut (*cent).nextState.apos as *mut _ as *const crate::src::qcommon::q_shared::trajectory_t,
         (*crate::src::cgame::cg_main::cg.nextSnap).serverTime,
         next.as_mut_ptr(),
     );
@@ -1636,12 +1668,14 @@ unsafe extern "C" fn CG_CalcEntityLerpPositions(mut cent: *mut crate::cg_local_h
     }
     // just use the current frame and evaluate as best we can
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*cent).currentState.pos,
+        &mut (*cent).currentState.pos as *mut _
+            as *const crate::src::qcommon::q_shared::trajectory_t,
         crate::src::cgame::cg_main::cg.time,
         (*cent).lerpOrigin.as_mut_ptr(),
     );
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*cent).currentState.apos,
+        &mut (*cent).currentState.apos as *mut _
+            as *const crate::src::qcommon::q_shared::trajectory_t,
         crate::src::cgame::cg_main::cg.time,
         (*cent).lerpAngles.as_mut_ptr(),
     );
@@ -1721,7 +1755,9 @@ unsafe extern "C" fn CG_TeamBase(mut cent: *mut crate::cg_local_h::centity_t) {
         } else {
             model.hModel = crate::src::cgame::cg_main::cgs.media.neutralFlagBaseModel
         }
-        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(&mut model);
+        crate::src::cgame::cg_syscalls::trap_R_AddRefEntityToScene(
+            &mut model as *mut _ as *const crate::tr_types_h::refEntity_t,
+        );
     };
 }
 /*
@@ -1746,7 +1782,7 @@ unsafe extern "C" fn CG_AddCEntity(mut cent: *mut crate::cg_local_h::centity_t) 
             CG_General(cent);
         }
         1 => {
-            crate::src::cgame::cg_players::CG_Player(cent);
+            crate::src::cgame::cg_players::CG_Player(cent as *mut crate::cg_local_h::centity_s);
         }
         2 => {
             CG_Item(cent);
@@ -2065,10 +2101,10 @@ pub unsafe extern "C" fn CG_AddPacketEntities() {
     // generate and add the entity from the playerstate
     ps = &mut crate::src::cgame::cg_main::cg.predictedPlayerState;
     crate::src::game::bg_misc::BG_PlayerStateToEntityState(
-        ps,
+        ps as *mut crate::src::qcommon::q_shared::playerState_s,
         &mut crate::src::cgame::cg_main::cg
             .predictedPlayerEntity
-            .currentState,
+            .currentState as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
         crate::src::qcommon::q_shared::qfalse,
     );
     CG_AddCEntity(&mut crate::src::cgame::cg_main::cg.predictedPlayerEntity);

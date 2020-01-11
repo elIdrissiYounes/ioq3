@@ -4,16 +4,16 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -152,11 +152,7 @@ pub use crate::src::ui::ui_syscalls::trap_S_StartLocalSound;
 use crate::stdlib::atan2;
 use crate::stdlib::fabs;
 use crate::stdlib::memset;
-pub use crate::stdlib::rand;
 use crate::stdlib::sin;
-use crate::stdlib::strchr;
-pub use crate::stdlib::strtod;
-pub use crate::stdlib::strtol;
 use crate::stdlib::tan;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
@@ -190,6 +186,10 @@ pub use crate::ui_local_h::lerpFrame_t;
 pub use crate::ui_local_h::menuframework_s;
 pub use crate::ui_local_h::playerInfo_t;
 pub use crate::ui_local_h::uiStatic_t;
+pub use ::libc::rand;
+use ::libc::strchr;
+pub use ::libc::strtod;
+pub use ::libc::strtol;
 
 static mut dp_realtime: libc::c_int = 0;
 
@@ -507,7 +507,7 @@ unsafe extern "C" fn UI_PositionEntityOnTag(
         };
     // lerp the tag
     crate::src::ui::ui_syscalls::trap_CM_LerpTag(
-        &mut lerped,
+        &mut lerped as *mut _ as *mut crate::src::qcommon::q_shared::orientation_t,
         parentModel,
         (*parent).oldframe,
         (*parent).frame,
@@ -559,7 +559,7 @@ unsafe extern "C" fn UI_PositionRotatedEntityOnTag(
     let mut tempAxis: [crate::src::qcommon::q_shared::vec3_t; 3] = [[0.; 3]; 3];
     // lerp the tag
     crate::src::ui::ui_syscalls::trap_CM_LerpTag(
-        &mut lerped,
+        &mut lerped as *mut _ as *mut crate::src::qcommon::q_shared::orientation_t,
         parentModel,
         (*parent).oldframe,
         (*parent).frame,
@@ -1048,7 +1048,9 @@ unsafe extern "C" fn UI_PlayerFloatSprite(
     ent.customShader = shader;
     ent.radius = 10 as libc::c_int as libc::c_float;
     ent.renderfx = 0 as libc::c_int;
-    crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(&mut ent);
+    crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(
+        &mut ent as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
 }
 /*
 ======================
@@ -1404,7 +1406,9 @@ pub unsafe extern "C" fn UI_DrawPlayer(
     legs.oldorigin[0 as libc::c_int as usize] = legs.origin[0 as libc::c_int as usize];
     legs.oldorigin[1 as libc::c_int as usize] = legs.origin[1 as libc::c_int as usize];
     legs.oldorigin[2 as libc::c_int as usize] = legs.origin[2 as libc::c_int as usize];
-    crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(&mut legs);
+    crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(
+        &mut legs as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
     if legs.hModel == 0 {
         return;
     }
@@ -1426,7 +1430,9 @@ pub unsafe extern "C" fn UI_DrawPlayer(
         b"tag_torso\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     );
     torso.renderfx = renderfx;
-    crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(&mut torso);
+    crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(
+        &mut torso as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
     //
     // add the head
     //
@@ -1445,7 +1451,9 @@ pub unsafe extern "C" fn UI_DrawPlayer(
         b"tag_head\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     );
     head.renderfx = renderfx;
-    crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(&mut head);
+    crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(
+        &mut head as *mut _ as *const crate::tr_types_h::refEntity_t,
+    );
     //
     // add the gun
     //
@@ -1489,7 +1497,9 @@ pub unsafe extern "C" fn UI_DrawPlayer(
             b"tag_weapon\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
         );
         gun.renderfx = renderfx;
-        crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(&mut gun);
+        crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(
+            &mut gun as *mut _ as *const crate::tr_types_h::refEntity_t,
+        );
     }
     //
     // add the spinning barrel
@@ -1524,7 +1534,9 @@ pub unsafe extern "C" fn UI_DrawPlayer(
             (*pi).weaponModel,
             b"tag_barrel\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
         );
-        crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(&mut barrel);
+        crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(
+            &mut barrel as *mut _ as *const crate::tr_types_h::refEntity_t,
+        );
     }
     //
     // add muzzle flash
@@ -1572,7 +1584,9 @@ pub unsafe extern "C" fn UI_DrawPlayer(
                 b"tag_flash\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
             );
             flash.renderfx = renderfx;
-            crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(&mut flash);
+            crate::src::ui::ui_syscalls::trap_R_AddRefEntityToScene(
+                &mut flash as *mut _ as *const crate::tr_types_h::refEntity_t,
+            );
         }
         // make a dlight for the flash
         if (*pi).flashDlightColor[0 as libc::c_int as usize] != 0.
@@ -1581,7 +1595,7 @@ pub unsafe extern "C" fn UI_DrawPlayer(
         {
             crate::src::ui::ui_syscalls::trap_R_AddLightToScene(
                 flash.origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
-                (200 as libc::c_int + (crate::stdlib::rand() & 31 as libc::c_int)) as libc::c_float,
+                (200 as libc::c_int + (::libc::rand() & 31 as libc::c_int)) as libc::c_float,
                 (*pi).flashDlightColor[0 as libc::c_int as usize],
                 (*pi).flashDlightColor[1 as libc::c_int as usize],
                 (*pi).flashDlightColor[2 as libc::c_int as usize],
@@ -1623,7 +1637,9 @@ pub unsafe extern "C" fn UI_DrawPlayer(
         0.0f64 as libc::c_float,
         0.0f64 as libc::c_float,
     );
-    crate::src::ui::ui_syscalls::trap_R_RenderScene(&mut refdef);
+    crate::src::ui::ui_syscalls::trap_R_RenderScene(
+        &mut refdef as *mut _ as *const crate::tr_types_h::refdef_t,
+    );
 }
 /*
 ==========================
@@ -1901,7 +1917,7 @@ pub unsafe extern "C" fn UI_RegisterClientModelname(
         modelSkinName,
         ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
     );
-    slash = crate::stdlib::strchr(modelName.as_mut_ptr(), '/' as i32);
+    slash = ::libc::strchr(modelName.as_mut_ptr(), '/' as i32);
     if slash.is_null() {
         // modelName did not include a skin name
         crate::src::qcommon::q_shared::Q_strncpyz(

@@ -1,4 +1,27 @@
 // =============== BEGIN be_ai_weap_h ================
+pub type projectileinfo_t = crate::src::botlib::be_ai_weap::projectileinfo_s;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct projectileinfo_s {
+    pub name: [libc::c_char; 80],
+    pub model: [libc::c_char; 80],
+    pub flags: libc::c_int,
+    pub gravity: libc::c_float,
+    pub damage: libc::c_int,
+    pub radius: libc::c_float,
+    pub visdamage: libc::c_int,
+    pub damagetype: libc::c_int,
+    pub healthinc: libc::c_int,
+    pub push: libc::c_float,
+    pub detonation: libc::c_float,
+    pub bounce: libc::c_float,
+    pub bouncefric: libc::c_float,
+    pub bouncestop: libc::c_float,
+}
+
+pub type weaponinfo_t = crate::src::botlib::be_ai_weap::weaponinfo_s;
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct weaponinfo_s {
@@ -27,29 +50,6 @@ pub struct weaponinfo_s {
     pub spindown: libc::c_float,
     pub proj: crate::src::botlib::be_ai_weap::projectileinfo_t,
 }
-
-pub type projectileinfo_t = crate::src::botlib::be_ai_weap::projectileinfo_s;
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct projectileinfo_s {
-    pub name: [libc::c_char; 80],
-    pub model: [libc::c_char; 80],
-    pub flags: libc::c_int,
-    pub gravity: libc::c_float,
-    pub damage: libc::c_int,
-    pub radius: libc::c_float,
-    pub visdamage: libc::c_int,
-    pub damagetype: libc::c_int,
-    pub healthinc: libc::c_int,
-    pub push: libc::c_float,
-    pub detonation: libc::c_float,
-    pub bounce: libc::c_float,
-    pub bouncefric: libc::c_float,
-    pub bouncestop: libc::c_float,
-}
-
-pub type weaponinfo_t = crate::src::botlib::be_ai_weap::weaponinfo_s;
 use ::libc;
 
 pub use crate::stddef_h::size_t;
@@ -114,7 +114,7 @@ pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
-use crate::stdlib::strcmp;
+use ::libc::strcmp;
 //weapon configuration: set of weapons with projectiles
 
 pub type weaponconfig_t = weaponconfig_s;
@@ -404,7 +404,8 @@ pub unsafe extern "C" fn LoadWeaponConfig(mut filename: *mut libc::c_char) -> *m
     crate::src::botlib::l_precomp::PC_SetBaseFolder(
         b"botfiles\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     );
-    source = crate::src::botlib::l_precomp::LoadSourceFile(path.as_mut_ptr());
+    source = crate::src::botlib::l_precomp::LoadSourceFile(path.as_mut_ptr())
+        as *mut crate::src::botlib::l_precomp::source_s;
     if source.is_null() {
         crate::src::botlib::be_interface::botimport
             .Print
@@ -440,8 +441,12 @@ pub unsafe extern "C" fn LoadWeaponConfig(mut filename: *mut libc::c_char) -> *m
     (*wc).numweapons = max_weaponinfo;
     (*wc).numprojectiles = 0 as libc::c_int;
     //parse the source file
-    while crate::src::botlib::l_precomp::PC_ReadToken(source, &mut token) != 0 {
-        if crate::stdlib::strcmp(
+    while crate::src::botlib::l_precomp::PC_ReadToken(
+        source as *mut crate::src::botlib::l_precomp::source_s,
+        &mut token as *mut _ as *mut crate::src::botlib::l_script::token_s,
+    ) != 0
+    {
+        if ::libc::strcmp(
             token.string.as_mut_ptr(),
             b"weaponinfo\x00" as *const u8 as *const libc::c_char,
         ) == 0
@@ -455,14 +460,16 @@ pub unsafe extern "C" fn LoadWeaponConfig(mut filename: *mut libc::c_char) -> *m
                     as libc::c_ulong,
             ); //end if
             if crate::src::botlib::l_struct::ReadStructure(
-                source,
-                &mut weaponinfo_struct,
+                source as *mut crate::src::botlib::l_precomp::source_s,
+                &mut weaponinfo_struct as *mut _ as *mut crate::src::botlib::l_struct::structdef_s,
                 &mut weaponinfo as *mut crate::src::botlib::be_ai_weap::weaponinfo_t
                     as *mut libc::c_char,
             ) == 0
             {
                 crate::src::botlib::l_memory::FreeMemory(wc as *mut libc::c_void); //end if
-                crate::src::botlib::l_precomp::FreeSource(source); //end if
+                crate::src::botlib::l_precomp::FreeSource(
+                    source as *mut crate::src::botlib::l_precomp::source_s,
+                ); //end if
                 return 0 as *mut weaponconfig_t;
             } //end if
             if weaponinfo.number < 0 as libc::c_int || weaponinfo.number >= max_weaponinfo {
@@ -476,7 +483,9 @@ pub unsafe extern "C" fn LoadWeaponConfig(mut filename: *mut libc::c_char) -> *m
                     path.as_mut_ptr(),
                 ); //end if
                 crate::src::botlib::l_memory::FreeMemory(wc as *mut libc::c_void); //end if
-                crate::src::botlib::l_precomp::FreeSource(source);
+                crate::src::botlib::l_precomp::FreeSource(
+                    source as *mut crate::src::botlib::l_precomp::source_s,
+                );
                 return 0 as *mut weaponconfig_t;
             }
             crate::stdlib::memcpy(
@@ -490,7 +499,7 @@ pub unsafe extern "C" fn LoadWeaponConfig(mut filename: *mut libc::c_char) -> *m
             );
             (*(*wc).weaponinfo.offset(weaponinfo.number as isize)).valid =
                 crate::src::qcommon::q_shared::qtrue as libc::c_int
-        } else if crate::stdlib::strcmp(
+        } else if ::libc::strcmp(
             token.string.as_mut_ptr(),
             b"projectileinfo\x00" as *const u8 as *const libc::c_char,
         ) == 0
@@ -506,7 +515,9 @@ pub unsafe extern "C" fn LoadWeaponConfig(mut filename: *mut libc::c_char) -> *m
                     path.as_mut_ptr(),
                 );
                 crate::src::botlib::l_memory::FreeMemory(wc as *mut libc::c_void);
-                crate::src::botlib::l_precomp::FreeSource(source);
+                crate::src::botlib::l_precomp::FreeSource(
+                    source as *mut crate::src::botlib::l_precomp::source_s,
+                );
                 return 0 as *mut weaponconfig_t;
             }
             crate::stdlib::memset(
@@ -518,15 +529,18 @@ pub unsafe extern "C" fn LoadWeaponConfig(mut filename: *mut libc::c_char) -> *m
                     as libc::c_ulong,
             );
             if crate::src::botlib::l_struct::ReadStructure(
-                source,
-                &mut projectileinfo_struct,
+                source as *mut crate::src::botlib::l_precomp::source_s,
+                &mut projectileinfo_struct as *mut _
+                    as *mut crate::src::botlib::l_struct::structdef_s,
                 &mut *(*wc).projectileinfo.offset((*wc).numprojectiles as isize)
                     as *mut crate::src::botlib::be_ai_weap::projectileinfo_t
                     as *mut libc::c_char,
             ) == 0
             {
                 crate::src::botlib::l_memory::FreeMemory(wc as *mut libc::c_void);
-                crate::src::botlib::l_precomp::FreeSource(source);
+                crate::src::botlib::l_precomp::FreeSource(
+                    source as *mut crate::src::botlib::l_precomp::source_s,
+                );
                 return 0 as *mut weaponconfig_t;
             }
             (*wc).numprojectiles += 1
@@ -541,12 +555,16 @@ pub unsafe extern "C" fn LoadWeaponConfig(mut filename: *mut libc::c_char) -> *m
                 path.as_mut_ptr(),
             );
             crate::src::botlib::l_memory::FreeMemory(wc as *mut libc::c_void);
-            crate::src::botlib::l_precomp::FreeSource(source);
+            crate::src::botlib::l_precomp::FreeSource(
+                source as *mut crate::src::botlib::l_precomp::source_s,
+            );
             return 0 as *mut weaponconfig_t;
         }
         //end else
     }
-    crate::src::botlib::l_precomp::FreeSource(source);
+    crate::src::botlib::l_precomp::FreeSource(
+        source as *mut crate::src::botlib::l_precomp::source_s,
+    );
     //fix up weapons
     i = 0 as libc::c_int; //end for
     while i < (*wc).numweapons {
@@ -580,7 +598,7 @@ pub unsafe extern "C" fn LoadWeaponConfig(mut filename: *mut libc::c_char) -> *m
             //find the projectile info and copy it to the weapon info
             j = 0 as libc::c_int; //end for
             while j < (*wc).numprojectiles {
-                if crate::stdlib::strcmp(
+                if ::libc::strcmp(
                     (*(*wc).projectileinfo.offset(j as isize)).name.as_mut_ptr(),
                     (*(*wc).weaponinfo.offset(i as isize))
                         .projectile
@@ -660,7 +678,7 @@ pub unsafe extern "C" fn WeaponWeightIndex(
     i = 0 as libc::c_int;
     while i < (*wc).numweapons {
         *index.offset(i as isize) = crate::src::botlib::be_ai_weight::FindFuzzyWeight(
-            wwc,
+            wwc as *mut crate::src::botlib::be_ai_weight::weightconfig_s,
             (*(*wc).weaponinfo.offset(i as isize)).name.as_mut_ptr(),
         );
         i += 1
@@ -683,7 +701,9 @@ pub unsafe extern "C" fn BotFreeWeaponWeights(mut weaponstate: libc::c_int) {
         return;
     }
     if !(*ws).weaponweightconfig.is_null() {
-        crate::src::botlib::be_ai_weight::FreeWeightConfig((*ws).weaponweightconfig);
+        crate::src::botlib::be_ai_weight::FreeWeightConfig(
+            (*ws).weaponweightconfig as *mut crate::src::botlib::be_ai_weight::weightconfig_s,
+        );
     }
     if !(*ws).weaponweightindex.is_null() {
         crate::src::botlib::l_memory::FreeMemory((*ws).weaponweightindex as *mut libc::c_void);
@@ -710,7 +730,8 @@ pub unsafe extern "C" fn BotLoadWeaponWeights(
     }
     BotFreeWeaponWeights(weaponstate);
     //
-    (*ws).weaponweightconfig = crate::src::botlib::be_ai_weight::ReadWeightConfig(filename); //end if
+    (*ws).weaponweightconfig = crate::src::botlib::be_ai_weight::ReadWeightConfig(filename)
+        as *mut crate::src::botlib::be_ai_weight::weightconfig_s; //end if
     if (*ws).weaponweightconfig.is_null() {
         crate::src::botlib::be_interface::botimport
             .Print
@@ -803,7 +824,8 @@ pub unsafe extern "C" fn BotChooseBestFightWeapon(
             if !(index < 0 as libc::c_int) {
                 weight = crate::src::botlib::be_ai_weight::FuzzyWeight(
                     inventory,
-                    (*ws).weaponweightconfig,
+                    (*ws).weaponweightconfig
+                        as *mut crate::src::botlib::be_ai_weight::weightconfig_s,
                     index,
                 );
                 if weight > bestweight {

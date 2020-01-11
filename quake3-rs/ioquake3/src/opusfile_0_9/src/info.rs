@@ -13,15 +13,15 @@ use crate::src::opusfile_0_9::src::internal::op_strncasecmp;
 pub use crate::src::opusfile_0_9::src::opusfile::OpusHead;
 pub use crate::src::opusfile_0_9::src::opusfile::OpusPictureTag;
 pub use crate::src::opusfile_0_9::src::opusfile::OpusTags;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
 use crate::stdlib::memcmp;
 use crate::stdlib::memcpy;
 use crate::stdlib::memmove;
 use crate::stdlib::memset;
 use crate::stdlib::realloc;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
+use ::libc::free;
+use ::libc::strcmp;
 /* *******************************************************************
  *                                                                  *
  * THIS FILE IS PART OF THE libopusfile SOFTWARE CODEC SOURCE CODE. *
@@ -214,11 +214,11 @@ pub unsafe extern "C" fn opus_tags_clear(
         if !(fresh0 > 0 as libc::c_int) {
             break;
         }
-        crate::stdlib::free(*(*_tags).user_comments.offset(ci as isize) as *mut libc::c_void);
+        ::libc::free(*(*_tags).user_comments.offset(ci as isize) as *mut libc::c_void);
     }
-    crate::stdlib::free((*_tags).user_comments as *mut libc::c_void);
-    crate::stdlib::free((*_tags).comment_lengths as *mut libc::c_void);
-    crate::stdlib::free((*_tags).vendor as *mut libc::c_void);
+    ::libc::free((*_tags).user_comments as *mut libc::c_void);
+    ::libc::free((*_tags).comment_lengths as *mut libc::c_void);
+    ::libc::free((*_tags).vendor as *mut libc::c_void);
 }
 /*Ensure there's room for up to _ncomments comments.*/
 
@@ -1352,7 +1352,7 @@ unsafe extern "C" fn opus_picture_tag_parse_impl(
     /*Attempt to determine the image format.*/
     format = -(1 as libc::c_int);
     if mime_type_length == 3 as libc::c_int as libc::c_uint
-        && crate::stdlib::strcmp(mime_type, b"-->\x00" as *const u8 as *const libc::c_char)
+        && ::libc::strcmp(mime_type, b"-->\x00" as *const u8 as *const libc::c_char)
             == 0 as libc::c_int
     {
         format = 0 as libc::c_int;
@@ -1590,7 +1590,7 @@ pub unsafe extern "C" fn opus_picture_tag_parse(
     ret = opus_picture_tag_parse_impl(&mut pic, _tag, buf, buf_sz, base64_sz);
     if ret < 0 as libc::c_int {
         opus_picture_tag_clear(&mut pic);
-        crate::stdlib::free(buf as *mut libc::c_void);
+        ::libc::free(buf as *mut libc::c_void);
     } else {
         *_pic = pic
     }
@@ -2128,7 +2128,7 @@ It will free all memory used by the structure members.
 pub unsafe extern "C" fn opus_picture_tag_clear(
     mut _pic: *mut crate::src::opusfile_0_9::src::opusfile::OpusPictureTag,
 ) {
-    crate::stdlib::free((*_pic).description as *mut libc::c_void);
-    crate::stdlib::free((*_pic).mime_type as *mut libc::c_void);
-    crate::stdlib::free((*_pic).data as *mut libc::c_void);
+    ::libc::free((*_pic).description as *mut libc::c_void);
+    ::libc::free((*_pic).mime_type as *mut libc::c_void);
+    ::libc::free((*_pic).data as *mut libc::c_void);
 }

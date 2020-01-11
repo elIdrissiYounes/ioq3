@@ -506,7 +506,8 @@ pub unsafe extern "C" fn S_AdpcmEncodeSound(
         if n > 1024 as libc::c_int * 2 as libc::c_int * 2 as libc::c_int {
             n = 1024 as libc::c_int * 2 as libc::c_int * 2 as libc::c_int
         }
-        newchunk = crate::src::client::snd_mem::SND_malloc();
+        newchunk =
+            crate::src::client::snd_mem::SND_malloc() as *mut crate::snd_local_h::sndBuffer_s;
         if (*sfx).soundData.is_null() {
             (*sfx).soundData = newchunk
         } else if !chunk.is_null() {

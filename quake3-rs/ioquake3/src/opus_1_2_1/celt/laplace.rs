@@ -88,7 +88,7 @@ pub unsafe extern "C" fn ec_laplace_encode(
         }
     }
     crate::src::opus_1_2_1::celt::entenc::ec_encode_bin(
-        enc,
+        enc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         fl,
         fl.wrapping_add(fs),
         15 as libc::c_int as libc::c_uint,
@@ -145,8 +145,10 @@ pub unsafe extern "C" fn ec_laplace_decode(
     let mut val: libc::c_int = 0 as libc::c_int;
     let mut fl: libc::c_uint = 0;
     let mut fm: libc::c_uint = 0;
-    fm =
-        crate::src::opus_1_2_1::celt::entdec::ec_decode_bin(dec, 15 as libc::c_int as libc::c_uint);
+    fm = crate::src::opus_1_2_1::celt::entdec::ec_decode_bin(
+        dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+        15 as libc::c_int as libc::c_uint,
+    );
     fl = 0 as libc::c_int as libc::c_uint;
     if fm >= fs {
         val += 1;
@@ -184,7 +186,7 @@ pub unsafe extern "C" fn ec_laplace_decode(
         }
     }
     crate::src::opus_1_2_1::celt::entdec::ec_dec_update(
-        dec,
+        dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
         fl,
         if fl.wrapping_add(fs) < 32768 as libc::c_int as libc::c_uint {
             fl.wrapping_add(fs)

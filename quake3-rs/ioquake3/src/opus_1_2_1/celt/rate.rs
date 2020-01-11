@@ -291,20 +291,20 @@ unsafe extern "C" fn interp_bits2pulses(
                             && j <= signalBandwidth
                     {
                         crate::src::opus_1_2_1::celt::entenc::ec_enc_bit_logp(
-                            ec,
+                            ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                             1 as libc::c_int,
                             1 as libc::c_int as libc::c_uint,
                         );
                         break;
                     } else {
                         crate::src::opus_1_2_1::celt::entenc::ec_enc_bit_logp(
-                            ec,
+                            ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                             0 as libc::c_int,
                             1 as libc::c_int as libc::c_uint,
                         );
                     }
                 } else if crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     1 as libc::c_int as libc::c_uint,
                 ) != 0
                 {
@@ -340,14 +340,14 @@ unsafe extern "C" fn interp_bits2pulses(
                 codedBands
             };
             crate::src::opus_1_2_1::celt::entenc::ec_enc_uint(
-                ec,
+                ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 (*intensity - start) as crate::opus_types_h::opus_uint32,
                 (codedBands + 1 as libc::c_int - start) as crate::opus_types_h::opus_uint32,
             );
         } else {
             *intensity = (start as libc::c_uint).wrapping_add(
                 crate::src::opus_1_2_1::celt::entdec::ec_dec_uint(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     (codedBands + 1 as libc::c_int - start) as crate::opus_types_h::opus_uint32,
                 ),
             ) as libc::c_int
@@ -362,13 +362,13 @@ unsafe extern "C" fn interp_bits2pulses(
     if dual_stereo_rsv > 0 as libc::c_int {
         if encode != 0 {
             crate::src::opus_1_2_1::celt::entenc::ec_enc_bit_logp(
-                ec,
+                ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 *dual_stereo,
                 1 as libc::c_int as libc::c_uint,
             );
         } else {
             *dual_stereo = crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(
-                ec,
+                ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                 1 as libc::c_int as libc::c_uint,
             )
         }

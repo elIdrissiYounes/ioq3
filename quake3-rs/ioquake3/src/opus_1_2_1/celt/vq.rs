@@ -497,7 +497,12 @@ pub unsafe extern "C" fn alg_quant(
     iy = fresh7.as_mut_ptr() as *mut libc::c_int;
     exp_rotation(X, N, 1 as libc::c_int, B, K, spread);
     yy = op_pvq_search_c(X, iy, K, N, arch);
-    crate::src::opus_1_2_1::celt::cwrs::encode_pulses(iy, N, K, enc);
+    crate::src::opus_1_2_1::celt::cwrs::encode_pulses(
+        iy,
+        N,
+        K,
+        enc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+    );
     if resynth != 0 {
         normalise_residual(iy, X, N, yy, gain);
         exp_rotation(X, N, -(1 as libc::c_int), B, K, spread);
@@ -527,7 +532,12 @@ pub unsafe extern "C" fn alg_unquant(
             as usize,
     );
     iy = fresh8.as_mut_ptr() as *mut libc::c_int;
-    Ryy = crate::src::opus_1_2_1::celt::cwrs::decode_pulses(iy, N, K, dec);
+    Ryy = crate::src::opus_1_2_1::celt::cwrs::decode_pulses(
+        iy,
+        N,
+        K,
+        dec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+    );
     normalise_residual(iy, X, N, Ryy, gain);
     exp_rotation(X, N, -(1 as libc::c_int), B, K, spread);
     collapse_mask = extract_collapse_mask(iy, N, B);

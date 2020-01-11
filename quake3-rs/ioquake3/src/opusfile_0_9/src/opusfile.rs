@@ -1,39 +1,26 @@
 // =============== BEGIN opusfile_h ================
 #[repr(C)]
 #[derive(Copy, Clone)]
+pub struct OpusHead {
+    pub version: libc::c_int,
+    pub channel_count: libc::c_int,
+    pub pre_skip: libc::c_uint,
+    pub input_sample_rate: crate::opus_types_h::opus_uint32,
+    pub output_gain: libc::c_int,
+    pub mapping_family: libc::c_int,
+    pub stream_count: libc::c_int,
+    pub coupled_count: libc::c_int,
+    pub mapping: [libc::c_uchar; 255],
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
 pub struct OpusTags {
     pub user_comments: *mut *mut libc::c_char,
     pub comment_lengths: *mut libc::c_int,
     pub comments: libc::c_int,
     pub vendor: *mut libc::c_char,
 }
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct OpusServerInfo {
-    pub name: *mut libc::c_char,
-    pub description: *mut libc::c_char,
-    pub genre: *mut libc::c_char,
-    pub url: *mut libc::c_char,
-    pub server: *mut libc::c_char,
-    pub content_type: *mut libc::c_char,
-    pub bitrate_kbps: crate::opus_types_h::opus_int32,
-    pub is_public: libc::c_int,
-    pub is_ssl: libc::c_int,
-}
-
-pub type op_decode_cb_func = Option<
-    unsafe extern "C" fn(
-        _: *mut libc::c_void,
-        _: *mut crate::src::opus_1_2_1::src::opus_multistream_decoder::OpusMSDecoder,
-        _: *mut libc::c_void,
-        _: *const crate::ogg_h::ogg_packet,
-        _: libc::c_int,
-        _: libc::c_int,
-        _: libc::c_int,
-        _: libc::c_int,
-    ) -> libc::c_int,
->;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -52,17 +39,33 @@ pub struct OpusPictureTag {
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct OpusHead {
-    pub version: libc::c_int,
-    pub channel_count: libc::c_int,
-    pub pre_skip: libc::c_uint,
-    pub input_sample_rate: crate::opus_types_h::opus_uint32,
-    pub output_gain: libc::c_int,
-    pub mapping_family: libc::c_int,
-    pub stream_count: libc::c_int,
-    pub coupled_count: libc::c_int,
-    pub mapping: [libc::c_uchar; 255],
+pub struct OpusServerInfo {
+    pub name: *mut libc::c_char,
+    pub description: *mut libc::c_char,
+    pub genre: *mut libc::c_char,
+    pub url: *mut libc::c_char,
+    pub server: *mut libc::c_char,
+    pub content_type: *mut libc::c_char,
+    pub bitrate_kbps: crate::opus_types_h::opus_int32,
+    pub is_public: libc::c_int,
+    pub is_ssl: libc::c_int,
 }
+
+pub type op_read_func = Option<
+    unsafe extern "C" fn(
+        _: *mut libc::c_void,
+        _: *mut libc::c_uchar,
+        _: libc::c_int,
+    ) -> libc::c_int,
+>;
+
+pub type op_seek_func = Option<
+    unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_longlong, _: libc::c_int) -> libc::c_int,
+>;
+
+pub type op_tell_func = Option<unsafe extern "C" fn(_: *mut libc::c_void) -> libc::c_longlong>;
+
+pub type op_close_func = Option<unsafe extern "C" fn(_: *mut libc::c_void) -> libc::c_int>;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -73,18 +76,15 @@ pub struct OpusFileCallbacks {
     pub close: crate::src::opusfile_0_9::src::opusfile::op_close_func,
 }
 
-pub type op_close_func = Option<unsafe extern "C" fn(_: *mut libc::c_void) -> libc::c_int>;
-
-pub type op_tell_func = Option<unsafe extern "C" fn(_: *mut libc::c_void) -> libc::c_longlong>;
-
-pub type op_seek_func = Option<
-    unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_longlong, _: libc::c_int) -> libc::c_int,
->;
-
-pub type op_read_func = Option<
+pub type op_decode_cb_func = Option<
     unsafe extern "C" fn(
         _: *mut libc::c_void,
-        _: *mut libc::c_uchar,
+        _: *mut crate::src::opus_1_2_1::src::opus_multistream_decoder::OpusMSDecoder,
+        _: *mut libc::c_void,
+        _: *const crate::ogg_h::ogg_packet,
+        _: libc::c_int,
+        _: libc::c_int,
+        _: libc::c_int,
         _: libc::c_int,
     ) -> libc::c_int,
 >;
@@ -146,13 +146,13 @@ pub use crate::src::opusfile_0_9::src::info::opus_tags_get_track_gain;
 pub use crate::src::opusfile_0_9::src::info::opus_tags_parse;
 pub use crate::src::opusfile_0_9::src::stream::op_fopen;
 pub use crate::src::opusfile_0_9::src::stream::op_mem_stream_create;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
 use crate::stdlib::memcmp;
 use crate::stdlib::memcpy;
 use crate::stdlib::memmove;
 use crate::stdlib::memset;
 use crate::stdlib::realloc;
+use ::libc::free;
 /*We use this to remember the pages we found while enumerating the links of a
  chained stream.
 We keep track of the starting and ending offsets, as well as the point we
@@ -228,9 +228,11 @@ pub unsafe extern "C" fn op_test(
     {
         return -(129 as libc::c_int);
     }
-    crate::src::libogg_1_3_3::src::framing::ogg_sync_init(&mut oy);
+    crate::src::libogg_1_3_3::src::framing::ogg_sync_init(
+        &mut oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
+    );
     data = crate::src::libogg_1_3_3::src::framing::ogg_sync_buffer(
-        &mut oy,
+        &mut oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
         _initial_bytes as libc::c_long,
     );
     if !data.is_null() {
@@ -267,10 +269,13 @@ pub unsafe extern "C" fn op_test(
             _initial_bytes,
         );
         crate::src::libogg_1_3_3::src::framing::ogg_sync_wrote(
-            &mut oy,
+            &mut oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
             _initial_bytes as libc::c_long,
         );
-        crate::src::libogg_1_3_3::src::framing::ogg_stream_init(&mut os, -(1 as libc::c_int));
+        crate::src::libogg_1_3_3::src::framing::ogg_stream_init(
+            &mut os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+            -(1 as libc::c_int),
+        );
         err = -(1 as libc::c_int);
         loop {
             let mut op: crate::ogg_h::ogg_packet = crate::ogg_h::ogg_packet {
@@ -281,7 +286,10 @@ pub unsafe extern "C" fn op_test(
                 granulepos: 0,
                 packetno: 0,
             };
-            ret = crate::src::libogg_1_3_3::src::framing::ogg_sync_pageout(&mut oy, &mut og);
+            ret = crate::src::libogg_1_3_3::src::framing::ogg_sync_pageout(
+                &mut oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
+                &mut og as *mut _ as *mut crate::ogg_h::ogg_page,
+            );
             /*Ignore holes.*/
             if !(ret < 0 as libc::c_int) {
                 /*Stop if we run out of data.*/
@@ -289,18 +297,25 @@ pub unsafe extern "C" fn op_test(
                     break;
                 }
                 crate::src::libogg_1_3_3::src::framing::ogg_stream_reset_serialno(
-                    &mut os,
-                    crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(&mut og),
+                    &mut os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+                    crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(
+                        &mut og as *mut _ as *const crate::ogg_h::ogg_page,
+                    ),
                 );
-                crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(&mut os, &mut og);
+                crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(
+                    &mut os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+                    &mut og as *mut _ as *mut crate::ogg_h::ogg_page,
+                );
                 /*Only process the first packet on this page (if it's a BOS packet,
                 it's required to be the only one).*/
-                if crate::src::libogg_1_3_3::src::framing::ogg_stream_packetout(&mut os, &mut op)
-                    == 1 as libc::c_int
+                if crate::src::libogg_1_3_3::src::framing::ogg_stream_packetout(
+                    &mut os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+                    &mut op as *mut _ as *mut crate::ogg_h::ogg_packet,
+                ) == 1 as libc::c_int
                 {
                     if op.b_o_s != 0 {
                         ret = crate::src::opusfile_0_9::src::info::opus_head_parse(
-                            _head,
+                            _head as *mut crate::src::opusfile_0_9::src::opusfile::OpusHead,
                             op.packet,
                             op.bytes as crate::stddef_h::size_t,
                         );
@@ -320,11 +335,15 @@ pub unsafe extern "C" fn op_test(
                 break;
             }
         }
-        crate::src::libogg_1_3_3::src::framing::ogg_stream_clear(&mut os);
+        crate::src::libogg_1_3_3::src::framing::ogg_stream_clear(
+            &mut os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+        );
     } else {
         err = -(129 as libc::c_int)
     }
-    crate::src::libogg_1_3_3::src::framing::ogg_sync_clear(&mut oy);
+    crate::src::libogg_1_3_3::src::framing::ogg_sync_clear(
+        &mut oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
+    );
     return err;
 }
 /*Many, many internal helpers.
@@ -347,14 +366,14 @@ unsafe extern "C" fn op_get_data(
     let mut buffer: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
     let mut nbytes: libc::c_int = 0;
     buffer = crate::src::libogg_1_3_3::src::framing::ogg_sync_buffer(
-        &mut (*_of).oy,
+        &mut (*_of).oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
         _nbytes as libc::c_long,
     ) as *mut libc::c_uchar;
     nbytes = Some((*_of).callbacks.read.expect("non-null function pointer"))
         .expect("non-null function pointer")((*_of).stream, buffer, _nbytes);
     if (nbytes > 0 as libc::c_int) as libc::c_int as libc::c_long != 0 {
         crate::src::libogg_1_3_3::src::framing::ogg_sync_wrote(
-            &mut (*_of).oy,
+            &mut (*_of).oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
             nbytes as libc::c_long,
         );
     }
@@ -377,7 +396,9 @@ unsafe extern "C" fn op_seek_helper(
         return -(128 as libc::c_int);
     }
     (*_of).offset = _offset;
-    crate::src::libogg_1_3_3::src::framing::ogg_sync_reset(&mut (*_of).oy);
+    crate::src::libogg_1_3_3::src::framing::ogg_sync_reset(
+        &mut (*_of).oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
+    );
     return 0 as libc::c_int;
 }
 /*Get the current position indicator of the underlying stream.
@@ -410,8 +431,10 @@ unsafe extern "C" fn op_get_next_page(
 ) -> libc::c_longlong {
     while _boundary <= 0 as libc::c_int as libc::c_longlong || (*_of).offset < _boundary {
         let mut more: libc::c_int = 0;
-        more = crate::src::libogg_1_3_3::src::framing::ogg_sync_pageseek(&mut (*_of).oy, _og)
-            as libc::c_int;
+        more = crate::src::libogg_1_3_3::src::framing::ogg_sync_pageseek(
+            &mut (*_of).oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
+            _og as *mut crate::ogg_h::ogg_page,
+        ) as libc::c_int;
         /*Skipped (-more) bytes.*/
         if (more < 0 as libc::c_int) as libc::c_int as libc::c_long != 0 {
             (*_of).offset -= more as libc::c_longlong
@@ -477,8 +500,9 @@ unsafe extern "C" fn op_add_serialno(
     let mut nserialnos: libc::c_int = 0;
     let mut cserialnos: libc::c_int = 0;
     let mut s: crate::config_types_h::ogg_uint32_t = 0;
-    s = crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(_og)
-        as crate::config_types_h::ogg_uint32_t;
+    s = crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(
+        _og as *const crate::ogg_h::ogg_page,
+    ) as crate::config_types_h::ogg_uint32_t;
     serialnos = *_serialnos;
     nserialnos = *_nserialnos;
     cserialnos = *_cserialnos;
@@ -532,8 +556,9 @@ unsafe extern "C" fn op_lookup_page_serialno(
     mut _nserialnos: libc::c_int,
 ) -> libc::c_int {
     return op_lookup_serialno(
-        crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(_og)
-            as crate::config_types_h::ogg_uint32_t,
+        crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(
+            _og as *const crate::ogg_h::ogg_page,
+        ) as crate::config_types_h::ogg_uint32_t,
         _serialnos,
         _nserialnos,
     );
@@ -622,8 +647,9 @@ unsafe extern "C" fn op_get_prev_page_serial(
                 if llret == -(1 as libc::c_int) as libc::c_longlong {
                     break;
                 }
-                serialno = crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(&mut og)
-                    as crate::config_types_h::ogg_uint32_t;
+                serialno = crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(
+                    &mut og as *mut _ as *const crate::ogg_h::ogg_page,
+                ) as crate::config_types_h::ogg_uint32_t;
                 /*Save the information for this page.
                 We're not interested in the page itself... just the serial number, byte
                  offset, page size, and granule position.*/
@@ -632,7 +658,9 @@ unsafe extern "C" fn op_get_prev_page_serial(
                 (*_sr).offset = _offset;
                 (*_sr).serialno = serialno;
                 (*_sr).size = ((*_of).offset - _offset) as crate::opus_types_h::opus_int32;
-                (*_sr).gp = crate::src::libogg_1_3_3::src::framing::ogg_page_granulepos(&mut og);
+                (*_sr).gp = crate::src::libogg_1_3_3::src::framing::ogg_page_granulepos(
+                    &mut og as *mut _ as *const crate::ogg_h::ogg_page,
+                );
                 /*If this page is from the stream we're looking for, remember it.*/
                 if serialno == _serialno {
                     preferred_found = 1 as libc::c_int;
@@ -755,12 +783,15 @@ unsafe extern "C" fn op_get_last_page(
                 if llret == -(1 as libc::c_int) as libc::c_longlong {
                     break;
                 }
-                serialno = crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(&mut og)
-                    as crate::config_types_h::ogg_uint32_t;
+                serialno = crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(
+                    &mut og as *mut _ as *const crate::ogg_h::ogg_page,
+                ) as crate::config_types_h::ogg_uint32_t;
                 if serialno == _serialno {
                     let mut page_gp: crate::config_types_h::ogg_int64_t = 0;
                     /*The page is from the right stream...*/
-                    page_gp = crate::src::libogg_1_3_3::src::framing::ogg_page_granulepos(&mut og);
+                    page_gp = crate::src::libogg_1_3_3::src::framing::ogg_page_granulepos(
+                        &mut og as *mut _ as *const crate::ogg_h::ogg_page,
+                    );
                     if page_gp != -(1 as libc::c_int) as libc::c_long {
                         /*And has a valid granule position.
                         Let's remember it.*/
@@ -836,7 +867,9 @@ unsafe extern "C" fn op_fetch_headers_impl(
     }
     /*Extract the serialnos of all BOS pages plus the first set of Opus headers
     we see in the link.*/
-    while crate::src::libogg_1_3_3::src::framing::ogg_page_bos(_og) != 0 {
+    while crate::src::libogg_1_3_3::src::framing::ogg_page_bos(_og as *const crate::ogg_h::ogg_page)
+        != 0
+    {
         if !_serialnos.is_null() {
             if (op_lookup_page_serialno(_og, *_serialnos, *_nserialnos) != 0) as libc::c_int
                 as libc::c_long
@@ -855,18 +888,23 @@ unsafe extern "C" fn op_fetch_headers_impl(
              stream setup.
             We need a stream to get packets.*/
             crate::src::libogg_1_3_3::src::framing::ogg_stream_reset_serialno(
-                &mut (*_of).os,
-                crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(_og),
+                &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+                crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(
+                    _og as *const crate::ogg_h::ogg_page,
+                ),
             );
-            crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(&mut (*_of).os, _og);
+            crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(
+                &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+                _og as *mut crate::ogg_h::ogg_page,
+            );
             if (crate::src::libogg_1_3_3::src::framing::ogg_stream_packetout(
-                &mut (*_of).os,
-                &mut op,
+                &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+                &mut op as *mut _ as *mut crate::ogg_h::ogg_packet,
             ) > 0 as libc::c_int) as libc::c_int as libc::c_long
                 != 0
             {
                 ret = crate::src::opusfile_0_9::src::info::opus_head_parse(
-                    _head,
+                    _head as *mut crate::src::opusfile_0_9::src::opusfile::OpusHead,
                     op.packet,
                     op.bytes as crate::stddef_h::size_t,
                 );
@@ -920,15 +958,22 @@ unsafe extern "C" fn op_fetch_headers_impl(
     }
     /*If the first non-header page belonged to our Opus stream, submit it.*/
     if (*_of).os.serialno
-        == crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(_og) as libc::c_long
+        == crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(
+            _og as *const crate::ogg_h::ogg_page,
+        ) as libc::c_long
     {
-        crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(&mut (*_of).os, _og);
+        crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(
+            &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+            _og as *mut crate::ogg_h::ogg_page,
+        );
     }
     loop
     /*Loop getting packets.*/
     {
-        match crate::src::libogg_1_3_3::src::framing::ogg_stream_packetout(&mut (*_of).os, &mut op)
-        {
+        match crate::src::libogg_1_3_3::src::framing::ogg_stream_packetout(
+            &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+            &mut op as *mut _ as *mut crate::ogg_h::ogg_packet,
+        ) {
             0 => {
                 loop
                 /*Loop getting pages.*/
@@ -965,16 +1010,18 @@ unsafe extern "C" fn op_fetch_headers_impl(
                     }
                     /*If this page belongs to the correct stream, go parse it.*/
                     if (*_of).os.serialno
-                        == crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(_og)
-                            as libc::c_long
+                        == crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(
+                            _og as *const crate::ogg_h::ogg_page,
+                        ) as libc::c_long
                     {
                         crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(
-                            &mut (*_of).os,
-                            _og,
+                            &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+                            _og as *mut crate::ogg_h::ogg_page,
                         );
                         break;
-                    } else if (crate::src::libogg_1_3_3::src::framing::ogg_page_bos(_og) != 0)
-                        as libc::c_int as libc::c_long
+                    } else if (crate::src::libogg_1_3_3::src::framing::ogg_page_bos(
+                        _og as *const crate::ogg_h::ogg_page,
+                    ) != 0) as libc::c_int as libc::c_long
                         != 0
                     {
                         return -(133 as libc::c_int);
@@ -990,7 +1037,7 @@ unsafe extern "C" fn op_fetch_headers_impl(
                 /*Got a packet.
                 It should be the comment header.*/
                 ret = crate::src::opusfile_0_9::src::info::opus_tags_parse(
-                    _tags,
+                    _tags as *mut crate::src::opusfile_0_9::src::opusfile::OpusTags,
                     op.packet,
                     op.bytes as crate::stddef_h::size_t,
                 );
@@ -1003,8 +1050,8 @@ unsafe extern "C" fn op_fetch_headers_impl(
                 Otherwise seekable sources won't be able to seek back to the start
                  properly.*/
                 ret = crate::src::libogg_1_3_3::src::framing::ogg_stream_packetout(
-                    &mut (*_of).os,
-                    &mut op,
+                    &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+                    &mut op as *mut _ as *mut crate::ogg_h::ogg_packet,
                 );
                 if (ret != 0 as libc::c_int) as libc::c_int as libc::c_long != 0
                     || (*(*_og)
@@ -1015,7 +1062,9 @@ unsafe extern "C" fn op_fetch_headers_impl(
                         != 0
                 {
                     /*If we fail, the caller assumes our tags are uninitialized.*/
-                    crate::src::opusfile_0_9::src::info::opus_tags_clear(_tags);
+                    crate::src::opusfile_0_9::src::info::opus_tags_clear(
+                        _tags as *mut crate::src::opusfile_0_9::src::opusfile::OpusTags,
+                    );
                     return -(133 as libc::c_int);
                 }
                 return 0 as libc::c_int;
@@ -1387,8 +1436,8 @@ unsafe extern "C" fn op_collect_audio_packets(
          ownership/lifetime rules are well-documented.
         But I can read its code and know this will work.*/
         ret = crate::src::libogg_1_3_3::src::framing::ogg_stream_packetout(
-            &mut (*_of).os,
-            (*_of).op.as_mut_ptr().offset(op_count as isize),
+            &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+            (*_of).op.as_mut_ptr().offset(op_count as isize) as *mut crate::ogg_h::ogg_packet,
         );
         if ret == 0 {
             break;
@@ -1500,8 +1549,9 @@ unsafe extern "C" fn op_find_initial_pcm_offset(
             return 0 as libc::c_int;
         }
         /*Similarly, if we hit the next link in the chain, we've gone too far.*/
-        if (crate::src::libogg_1_3_3::src::framing::ogg_page_bos(_og) != 0) as libc::c_int
-            as libc::c_long
+        if (crate::src::libogg_1_3_3::src::framing::ogg_page_bos(
+            _og as *const crate::ogg_h::ogg_page,
+        ) != 0) as libc::c_int as libc::c_long
             != 0
         {
             if (*_link).head.pre_skip > 0 as libc::c_int as libc::c_uint {
@@ -1519,10 +1569,14 @@ unsafe extern "C" fn op_find_initial_pcm_offset(
         /*Ignore pages from other streams (not strictly necessary, because of the
         checks in ogg_stream_pagein(), but saves some work).*/
         if !(serialno
-            != crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(_og)
-                as crate::config_types_h::ogg_uint32_t)
+            != crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(
+                _og as *const crate::ogg_h::ogg_page,
+            ) as crate::config_types_h::ogg_uint32_t)
         {
-            crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(&mut (*_of).os, _og);
+            crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(
+                &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+                _og as *mut crate::ogg_h::ogg_page,
+            );
             /*Bitrate tracking: add the header's bytes here.
             The body bytes are counted when we consume the packets.*/
             (*_of).bytes_tracked += (*_og).header_len as libc::c_longlong;
@@ -2012,9 +2066,12 @@ unsafe extern "C" fn op_bisect_forward_serialno(
             } else {
                 let mut serialno: crate::config_types_h::ogg_uint32_t = 0;
                 let mut gp: crate::config_types_h::ogg_int64_t = 0;
-                serialno = crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(&mut og)
-                    as crate::config_types_h::ogg_uint32_t;
-                gp = crate::src::libogg_1_3_3::src::framing::ogg_page_granulepos(&mut og);
+                serialno = crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(
+                    &mut og as *mut _ as *const crate::ogg_h::ogg_page,
+                ) as crate::config_types_h::ogg_uint32_t;
+                gp = crate::src::libogg_1_3_3::src::framing::ogg_page_granulepos(
+                    &mut og as *mut _ as *const crate::ogg_h::ogg_page,
+                );
                 if op_lookup_serialno(serialno, serialnos, nserialnos) == 0 {
                     end_searched = bisect;
                     next = last;
@@ -2157,7 +2214,7 @@ unsafe extern "C" fn op_bisect_forward_serialno(
         (*_of).links = links
     }
     /*We also don't need these anymore.*/
-    crate::stdlib::free(*_serialnos as *mut libc::c_void);
+    ::libc::free(*_serialnos as *mut libc::c_void);
     *_serialnos = 0 as *mut crate::config_types_h::ogg_uint32_t;
     *_nserialnos = 0 as libc::c_int;
     *_cserialnos = *_nserialnos;
@@ -2189,7 +2246,8 @@ unsafe extern "C" fn op_update_gain(mut _of: *mut crate::internal_h::OggOpusFile
             let mut album_gain_q8: libc::c_int = 0;
             album_gain_q8 = 0 as libc::c_int;
             crate::src::opusfile_0_9::src::info::opus_tags_get_album_gain(
-                &mut (*(*_of).links.offset(li as isize)).tags,
+                &mut (*(*_of).links.offset(li as isize)).tags as *mut _
+                    as *const crate::src::opusfile_0_9::src::opusfile::OpusTags,
                 &mut album_gain_q8,
             );
             gain_q8 += album_gain_q8;
@@ -2199,7 +2257,8 @@ unsafe extern "C" fn op_update_gain(mut _of: *mut crate::internal_h::OggOpusFile
             let mut track_gain_q8: libc::c_int = 0;
             track_gain_q8 = 0 as libc::c_int;
             crate::src::opusfile_0_9::src::info::opus_tags_get_track_gain(
-                &mut (*(*_of).links.offset(li as isize)).tags,
+                &mut (*(*_of).links.offset(li as isize)).tags as *mut _
+                    as *const crate::src::opusfile_0_9::src::opusfile::OpusTags,
                 &mut track_gain_q8,
             );
             gain_q8 += track_gain_q8;
@@ -2437,12 +2496,21 @@ unsafe extern "C" fn op_open_seekable2(
         (::std::mem::size_of::<crate::ogg_h::ogg_packet>() as libc::c_ulong)
             .wrapping_mul(start_op_count as libc::c_ulong),
     );
-    crate::src::libogg_1_3_3::src::framing::ogg_sync_init(&mut (*_of).oy);
-    crate::src::libogg_1_3_3::src::framing::ogg_stream_init(&mut (*_of).os, -(1 as libc::c_int));
+    crate::src::libogg_1_3_3::src::framing::ogg_sync_init(
+        &mut (*_of).oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
+    );
+    crate::src::libogg_1_3_3::src::framing::ogg_stream_init(
+        &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+        -(1 as libc::c_int),
+    );
     ret = op_open_seekable2_impl(_of);
     /*Restore the old stream state.*/
-    crate::src::libogg_1_3_3::src::framing::ogg_stream_clear(&mut (*_of).os);
-    crate::src::libogg_1_3_3::src::framing::ogg_sync_clear(&mut (*_of).oy);
+    crate::src::libogg_1_3_3::src::framing::ogg_stream_clear(
+        &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+    );
+    crate::src::libogg_1_3_3::src::framing::ogg_sync_clear(
+        &mut (*_of).oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
+    );
     (*_of).oy = oy_start;
     (*_of).os = os_start;
     (*_of).offset = start_offset;
@@ -2453,7 +2521,7 @@ unsafe extern "C" fn op_open_seekable2(
         (::std::mem::size_of::<crate::ogg_h::ogg_packet>() as libc::c_ulong)
             .wrapping_mul(start_op_count as libc::c_ulong),
     );
-    crate::stdlib::free(op_start as *mut libc::c_void);
+    ::libc::free(op_start as *mut libc::c_void);
     (*_of).prev_packet_gp = (*(*_of).links.offset(0 as libc::c_int as isize)).pcm_start;
     (*_of).prev_page_offset = prev_page_offset;
     (*_of).cur_discard_count = (*(*_of).links.offset(0 as libc::c_int as isize))
@@ -2484,7 +2552,8 @@ unsafe extern "C" fn op_decode_clear(mut _of: *mut crate::internal_h::OggOpusFil
     (*_of).prev_page_offset = -(1 as libc::c_int) as libc::c_longlong;
     if (*_of).seekable == 0 {
         crate::src::opusfile_0_9::src::info::opus_tags_clear(
-            &mut (*(*_of).links.offset(0 as libc::c_int as isize)).tags,
+            &mut (*(*_of).links.offset(0 as libc::c_int as isize)).tags as *mut _
+                as *mut crate::src::opusfile_0_9::src::opusfile::OpusTags,
         );
     }
     (*_of).ready_state = 2 as libc::c_int;
@@ -2492,7 +2561,7 @@ unsafe extern "C" fn op_decode_clear(mut _of: *mut crate::internal_h::OggOpusFil
 
 unsafe extern "C" fn op_clear(mut _of: *mut crate::internal_h::OggOpusFile) {
     let mut links: *mut crate::internal_h::OggOpusLink = 0 as *mut crate::internal_h::OggOpusLink;
-    crate::stdlib::free((*_of).od_buffer as *mut libc::c_void);
+    ::libc::free((*_of).od_buffer as *mut libc::c_void);
     if !(*_of).od.is_null() {
         crate::src::opus_1_2_1::src::opus_multistream_decoder::opus_multistream_decoder_destroy(
             (*_of).od,
@@ -2502,7 +2571,8 @@ unsafe extern "C" fn op_clear(mut _of: *mut crate::internal_h::OggOpusFile) {
     if (*_of).seekable == 0 {
         if (*_of).ready_state > 2 as libc::c_int || (*_of).ready_state == 1 as libc::c_int {
             crate::src::opusfile_0_9::src::info::opus_tags_clear(
-                &mut (*links.offset(0 as libc::c_int as isize)).tags,
+                &mut (*links.offset(0 as libc::c_int as isize)).tags as *mut _
+                    as *mut crate::src::opusfile_0_9::src::opusfile::OpusTags,
             );
         }
     } else if !links.is_null() as libc::c_int as libc::c_long != 0 {
@@ -2512,15 +2582,20 @@ unsafe extern "C" fn op_clear(mut _of: *mut crate::internal_h::OggOpusFile) {
         link = 0 as libc::c_int;
         while link < nlinks {
             crate::src::opusfile_0_9::src::info::opus_tags_clear(
-                &mut (*links.offset(link as isize)).tags,
+                &mut (*links.offset(link as isize)).tags as *mut _
+                    as *mut crate::src::opusfile_0_9::src::opusfile::OpusTags,
             );
             link += 1
         }
     }
-    crate::stdlib::free(links as *mut libc::c_void);
-    crate::stdlib::free((*_of).serialnos as *mut libc::c_void);
-    crate::src::libogg_1_3_3::src::framing::ogg_stream_clear(&mut (*_of).os);
-    crate::src::libogg_1_3_3::src::framing::ogg_sync_clear(&mut (*_of).oy);
+    ::libc::free(links as *mut libc::c_void);
+    ::libc::free((*_of).serialnos as *mut libc::c_void);
+    crate::src::libogg_1_3_3::src::framing::ogg_stream_clear(
+        &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+    );
+    crate::src::libogg_1_3_3::src::framing::ogg_sync_clear(
+        &mut (*_of).oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
+    );
     if (*_of).callbacks.close.is_some() {
         Some((*_of).callbacks.close.expect("non-null function pointer"))
             .expect("non-null function pointer")((*_of).stream);
@@ -2562,7 +2637,9 @@ unsafe extern "C" fn op_open1(
         return -(128 as libc::c_int);
     }
     /*Initialize the framing state.*/
-    crate::src::libogg_1_3_3::src::framing::ogg_sync_init(&mut (*_of).oy);
+    crate::src::libogg_1_3_3::src::framing::ogg_sync_init(
+        &mut (*_of).oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
+    );
     /*Perhaps some data was previously read into a buffer for testing against
      other stream types.
     Allow initialization from this previously read data (especially as we may
@@ -2573,7 +2650,7 @@ unsafe extern "C" fn op_open1(
     if _initial_bytes > 0 as libc::c_int as libc::c_ulong {
         let mut buffer: *mut libc::c_char = 0 as *mut libc::c_char;
         buffer = crate::src::libogg_1_3_3::src::framing::ogg_sync_buffer(
-            &mut (*_of).oy,
+            &mut (*_of).oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
             _initial_bytes as libc::c_long,
         );
         crate::stdlib::memcpy(
@@ -2582,7 +2659,7 @@ unsafe extern "C" fn op_open1(
             _initial_bytes.wrapping_mul(::std::mem::size_of::<libc::c_char>() as libc::c_ulong),
         );
         crate::src::libogg_1_3_3::src::framing::ogg_sync_wrote(
-            &mut (*_of).oy,
+            &mut (*_of).oy as *mut _ as *mut crate::ogg_h::ogg_sync_state,
             _initial_bytes as libc::c_long,
         );
     }
@@ -2616,7 +2693,10 @@ unsafe extern "C" fn op_open1(
         ::std::mem::size_of::<crate::internal_h::OggOpusLink>() as libc::c_ulong
     ) as *mut crate::internal_h::OggOpusLink;
     /*The serialno gets filled in later by op_fetch_headers().*/
-    crate::src::libogg_1_3_3::src::framing::ogg_stream_init(&mut (*_of).os, -(1 as libc::c_int));
+    crate::src::libogg_1_3_3::src::framing::ogg_stream_init(
+        &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+        -(1 as libc::c_int),
+    );
     pog = 0 as *mut crate::ogg_h::ogg_page;
     loop {
         /*Fetch all BOS pages, store the Opus header and all seen serial numbers,
@@ -2650,7 +2730,8 @@ unsafe extern "C" fn op_open1(
          og.
         We can't seek, so start processing the next link right now.*/
         crate::src::opusfile_0_9::src::info::opus_tags_clear(
-            &mut (*(*_of).links.offset(0 as libc::c_int as isize)).tags,
+            &mut (*(*_of).links.offset(0 as libc::c_int as isize)).tags as *mut _
+                as *mut crate::src::opusfile_0_9::src::opusfile::OpusTags,
         );
         (*_of).nlinks = 0 as libc::c_int;
         if seekable == 0 {
@@ -2712,7 +2793,7 @@ pub unsafe extern "C" fn op_test_callbacks(
         /*Don't auto-close the stream on failure.*/
         (*of).callbacks.close = None;
         op_clear(of);
-        crate::stdlib::free(of as *mut libc::c_void);
+        ::libc::free(of as *mut libc::c_void);
     }
     if !_error.is_null() {
         *_error = ret
@@ -2739,7 +2820,7 @@ pub unsafe extern "C" fn op_open_callbacks(
         if !_error.is_null() {
             *_error = ret
         }
-        crate::stdlib::free(of as *mut libc::c_void);
+        ::libc::free(of as *mut libc::c_void);
     }
     return 0 as *mut crate::internal_h::OggOpusFile;
 }
@@ -2787,7 +2868,7 @@ pub unsafe extern "C" fn op_open_file(
         };
     return op_open_close_on_failure(
         crate::src::opusfile_0_9::src::stream::op_fopen(
-            &mut cb,
+            &mut cb as *mut _ as *mut crate::src::opusfile_0_9::src::opusfile::OpusFileCallbacks,
             _path,
             b"rb\x00" as *const u8 as *const libc::c_char,
         ),
@@ -2810,7 +2891,11 @@ pub unsafe extern "C" fn op_open_memory(
             close: None,
         };
     return op_open_close_on_failure(
-        crate::src::opusfile_0_9::src::stream::op_mem_stream_create(&mut cb, _data, _size),
+        crate::src::opusfile_0_9::src::stream::op_mem_stream_create(
+            &mut cb as *mut _ as *mut crate::src::opusfile_0_9::src::opusfile::OpusFileCallbacks,
+            _data,
+            _size,
+        ),
         &mut cb,
         _error,
     );
@@ -2859,7 +2944,7 @@ pub unsafe extern "C" fn op_test_file(
         };
     return op_test_close_on_failure(
         crate::src::opusfile_0_9::src::stream::op_fopen(
-            &mut cb,
+            &mut cb as *mut _ as *mut crate::src::opusfile_0_9::src::opusfile::OpusFileCallbacks,
             _path,
             b"rb\x00" as *const u8 as *const libc::c_char,
         ),
@@ -2882,7 +2967,11 @@ pub unsafe extern "C" fn op_test_memory(
             close: None,
         };
     return op_test_close_on_failure(
-        crate::src::opusfile_0_9::src::stream::op_mem_stream_create(&mut cb, _data, _size),
+        crate::src::opusfile_0_9::src::stream::op_mem_stream_create(
+            &mut cb as *mut _ as *mut crate::src::opusfile_0_9::src::opusfile::OpusFileCallbacks,
+            _data,
+            _size,
+        ),
         &mut cb,
         _error,
     );
@@ -2911,7 +3000,7 @@ pub unsafe extern "C" fn op_test_open(mut _of: *mut crate::internal_h::OggOpusFi
 pub unsafe extern "C" fn op_free(mut _of: *mut crate::internal_h::OggOpusFile) {
     if !_of.is_null() as libc::c_int as libc::c_long != 0 {
         op_clear(_of);
-        crate::stdlib::free(_of as *mut libc::c_void);
+        ::libc::free(_of as *mut libc::c_void);
     };
 }
 #[no_mangle]
@@ -3255,13 +3344,15 @@ unsafe extern "C" fn op_fetch_and_process_page(
         }
         if ((*_of).ready_state >= 3 as libc::c_int) as libc::c_int as libc::c_long != 0
             && cur_serialno
-                != crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(&mut og)
-                    as crate::config_types_h::ogg_uint32_t
+                != crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(
+                    &mut og as *mut _ as *const crate::ogg_h::ogg_page,
+                ) as crate::config_types_h::ogg_uint32_t
         {
             /*Two possibilities:
             1) Another stream is multiplexed into this logical section, or*/
-            if (crate::src::libogg_1_3_3::src::framing::ogg_page_bos(&mut og) == 0) as libc::c_int
-                as libc::c_long
+            if (crate::src::libogg_1_3_3::src::framing::ogg_page_bos(
+                &mut og as *mut _ as *const crate::ogg_h::ogg_page,
+            ) == 0) as libc::c_int as libc::c_long
                 != 0
             {
                 continue;
@@ -3289,8 +3380,9 @@ unsafe extern "C" fn op_fetch_and_process_page(
         if ((*_of).ready_state < 3 as libc::c_int) as libc::c_int as libc::c_long != 0 {
             if seekable != 0 {
                 let mut serialno: crate::config_types_h::ogg_uint32_t = 0;
-                serialno = crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(&mut og)
-                    as crate::config_types_h::ogg_uint32_t;
+                serialno = crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(
+                    &mut og as *mut _ as *const crate::ogg_h::ogg_page,
+                ) as crate::config_types_h::ogg_uint32_t;
                 /*Match the serialno to bitstream section.*/
                 if (*links.offset(cur_link as isize)).serialno != serialno {
                     /*It wasn't a page from the current link.
@@ -3315,7 +3407,7 @@ unsafe extern "C" fn op_fetch_and_process_page(
                 cur_serialno = serialno;
                 (*_of).cur_link = cur_link;
                 crate::src::libogg_1_3_3::src::framing::ogg_stream_reset_serialno(
-                    &mut (*_of).os,
+                    &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
                     serialno as libc::c_int,
                 );
                 (*_of).ready_state = 3 as libc::c_int;
@@ -3383,7 +3475,10 @@ unsafe extern "C" fn op_fetch_and_process_page(
             }
         }
         /*Extract all the packets from the current page.*/
-        crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(&mut (*_of).os, &mut og);
+        crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(
+            &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+            &mut og as *mut _ as *mut crate::ogg_h::ogg_page,
+        );
         if !(((*_of).ready_state >= 4 as libc::c_int) as libc::c_int as libc::c_long != 0) {
             continue;
         }
@@ -3732,12 +3827,17 @@ unsafe extern "C" fn op_buffer_continued_data(
         granulepos: 0,
         packetno: 0,
     };
-    crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(&mut (*_of).os, _og);
+    crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(
+        &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+        _og as *mut crate::ogg_h::ogg_page,
+    );
     /*Drain any packets that did end on this page (and ignore holes).
     We only care about the continued packet data.*/
-    while crate::src::libogg_1_3_3::src::framing::ogg_stream_packetout(&mut (*_of).os, &mut op) != 0
-    {
-    }
+    while crate::src::libogg_1_3_3::src::framing::ogg_stream_packetout(
+        &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+        &mut op as *mut _ as *mut crate::ogg_h::ogg_packet,
+    ) != 0
+    {}
 }
 /*Note: The OP_SMALL_FOOTPRINT #define doesn't (currently) save much code size,
 but it's meant to serve as documentation for portions of the seeking
@@ -3915,7 +4015,7 @@ unsafe extern "C" fn op_pcm_seek_page(
     op_decode_clear(_of);
     if buffering == 0 {
         crate::src::libogg_1_3_3::src::framing::ogg_stream_reset_serialno(
-            &mut (*_of).os,
+            &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
             serialno as libc::c_int,
         );
     }
@@ -3958,7 +4058,9 @@ unsafe extern "C" fn op_pcm_seek_page(
         if bisect != (*_of).offset {
             /*Discard any buffered continued packet data.*/
             if buffering != 0 {
-                crate::src::libogg_1_3_3::src::framing::ogg_stream_reset(&mut (*_of).os);
+                crate::src::libogg_1_3_3::src::framing::ogg_stream_reset(
+                    &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+                );
             }
             buffering = 0 as libc::c_int;
             page_offset = -(1 as libc::c_int) as libc::c_longlong;
@@ -3992,7 +4094,9 @@ unsafe extern "C" fn op_pcm_seek_page(
                     /*Otherwise, back up one chunk.
                     First, discard any data from a continued packet.*/
                     if buffering != 0 {
-                        crate::src::libogg_1_3_3::src::framing::ogg_stream_reset(&mut (*_of).os);
+                        crate::src::libogg_1_3_3::src::framing::ogg_stream_reset(
+                            &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+                        );
                     }
                     buffering = 0 as libc::c_int;
                     bisect = if bisect - chunk_size as libc::c_longlong > begin {
@@ -4027,19 +4131,23 @@ unsafe extern "C" fn op_pcm_seek_page(
                     next_boundary
                 };
                 if serialno
-                    != crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(&mut og)
-                        as crate::config_types_h::ogg_uint32_t
+                    != crate::src::libogg_1_3_3::src::framing::ogg_page_serialno(
+                        &mut og as *mut _ as *const crate::ogg_h::ogg_page,
+                    ) as crate::config_types_h::ogg_uint32_t
                 {
                     continue;
                 }
-                has_packets = (crate::src::libogg_1_3_3::src::framing::ogg_page_packets(&mut og)
-                    > 0 as libc::c_int) as libc::c_int;
+                has_packets = (crate::src::libogg_1_3_3::src::framing::ogg_page_packets(
+                    &mut og as *mut _ as *const crate::ogg_h::ogg_page,
+                ) > 0 as libc::c_int) as libc::c_int;
                 /*Force the gp to -1 (as it should be per spec) if no packets end on
                  this page.
                 Otherwise we might get confused when we try to pull out a packet
                  with that timestamp and can't find it.*/
                 gp_0 = if has_packets != 0 {
-                    crate::src::libogg_1_3_3::src::framing::ogg_page_granulepos(&mut og)
+                    crate::src::libogg_1_3_3::src::framing::ogg_page_granulepos(
+                        &mut og as *mut _ as *const crate::ogg_h::ogg_page,
+                    )
                 } else {
                     -(1 as libc::c_int) as libc::c_long
                 };
@@ -4047,8 +4155,8 @@ unsafe extern "C" fn op_pcm_seek_page(
                     if buffering != 0 {
                         if (has_packets == 0) as libc::c_int as libc::c_long != 0 {
                             crate::src::libogg_1_3_3::src::framing::ogg_stream_pagein(
-                                &mut (*_of).os,
-                                &mut og,
+                                &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+                                &mut og as *mut _ as *mut crate::ogg_h::ogg_page,
                             );
                         } else {
                             /*If packets did end on this page, but we still didn't have a
@@ -4057,7 +4165,7 @@ unsafe extern "C" fn op_pcm_seek_page(
                             Otherwise we might continue past the packet we actually
                              wanted.*/
                             crate::src::libogg_1_3_3::src::framing::ogg_stream_reset(
-                                &mut (*_of).os,
+                                &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
                             );
                             buffering = 0 as libc::c_int
                         }
@@ -4083,7 +4191,9 @@ unsafe extern "C" fn op_pcm_seek_page(
                     This avoids the need to seek back here if the next timestamp we
                      encounter while scanning forward lies after our target.*/
                     if buffering != 0 {
-                        crate::src::libogg_1_3_3::src::framing::ogg_stream_reset(&mut (*_of).os);
+                        crate::src::libogg_1_3_3::src::framing::ogg_stream_reset(
+                            &mut (*_of).os as *mut _ as *mut crate::ogg_h::ogg_stream_state,
+                        );
                     }
                     if op_page_continues(&mut og) != 0 {
                         op_buffer_continued_data(_of, &mut og);

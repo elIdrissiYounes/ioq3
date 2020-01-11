@@ -48,8 +48,8 @@ pub use crate::src::libvorbis_1_3_6::lib::sharedbook::_book_maptype1_quantvals;
 use crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog;
 pub use crate::src::libvorbis_1_3_6::lib::sharedbook::vorbis_staticbook_destroy;
 use crate::stdlib::calloc;
-use crate::stdlib::labs;
 use crate::stdlib::malloc;
+use ::libc::labs;
 /* *******************************************************************
 *                                                                  *
 * THIS FILE IS PART OF THE OggVorbis SOFTWARE CODEC SOURCE CODE.   *
@@ -77,17 +77,17 @@ pub unsafe extern "C" fn vorbis_staticbook_pack(
     let mut ordered: libc::c_int = 0 as libc::c_int;
     /* first the basic parameters */
     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-        opb,
+        opb as *mut crate::ogg_h::oggpack_buffer,
         0x564342 as libc::c_int as libc::c_ulong,
         24 as libc::c_int,
     );
     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-        opb,
+        opb as *mut crate::ogg_h::oggpack_buffer,
         (*c).dim as libc::c_ulong,
         16 as libc::c_int,
     );
     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-        opb,
+        opb as *mut crate::ogg_h::oggpack_buffer,
         (*c).entries as libc::c_ulong,
         24 as libc::c_int,
     );
@@ -118,12 +118,12 @@ pub unsafe extern "C" fn vorbis_staticbook_pack(
         deterministically */
         let mut count: libc::c_long = 0 as libc::c_int as libc::c_long; /* ordered */
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             1 as libc::c_int as libc::c_ulong,
             1 as libc::c_int,
         ); /* 1 to 32 */
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             (*(*c).lengthlist.offset(0 as libc::c_int as isize) as libc::c_int - 1 as libc::c_int)
                 as libc::c_ulong,
             5 as libc::c_int,
@@ -138,7 +138,7 @@ pub unsafe extern "C" fn vorbis_staticbook_pack(
                 j = last as libc::c_long;
                 while j < this as libc::c_long {
                     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                        opb,
+                        opb as *mut crate::ogg_h::oggpack_buffer,
                         (i - count) as libc::c_ulong,
                         crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog(
                             ((*c).entries - count) as crate::config_types_h::ogg_uint32_t,
@@ -151,7 +151,7 @@ pub unsafe extern "C" fn vorbis_staticbook_pack(
             i += 1
         }
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             (i - count) as libc::c_ulong,
             crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog(
                 ((*c).entries - count) as crate::config_types_h::ogg_uint32_t,
@@ -161,7 +161,7 @@ pub unsafe extern "C" fn vorbis_staticbook_pack(
         /* length random.  Again, we don't code the codeword itself, just
         the length.  This time, though, we have to encode each length */
         crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-            opb,
+            opb as *mut crate::ogg_h::oggpack_buffer,
             0 as libc::c_int as libc::c_ulong,
             1 as libc::c_int,
         ); /* unordered */
@@ -177,14 +177,14 @@ pub unsafe extern "C" fn vorbis_staticbook_pack(
         }
         if i == (*c).entries {
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 0 as libc::c_int as libc::c_ulong,
                 1 as libc::c_int,
             );
             i = 0 as libc::c_int as libc::c_long;
             while i < (*c).entries {
                 crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                    opb,
+                    opb as *mut crate::ogg_h::oggpack_buffer,
                     (*(*c).lengthlist.offset(i as isize) as libc::c_int - 1 as libc::c_int)
                         as libc::c_ulong,
                     5 as libc::c_int,
@@ -193,7 +193,7 @@ pub unsafe extern "C" fn vorbis_staticbook_pack(
             }
         } else {
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 1 as libc::c_int as libc::c_ulong,
                 1 as libc::c_int,
             );
@@ -201,18 +201,18 @@ pub unsafe extern "C" fn vorbis_staticbook_pack(
             while i < (*c).entries {
                 if *(*c).lengthlist.offset(i as isize) as libc::c_int == 0 as libc::c_int {
                     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                        opb,
+                        opb as *mut crate::ogg_h::oggpack_buffer,
                         0 as libc::c_int as libc::c_ulong,
                         1 as libc::c_int,
                     );
                 } else {
                     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                        opb,
+                        opb as *mut crate::ogg_h::oggpack_buffer,
                         1 as libc::c_int as libc::c_ulong,
                         1 as libc::c_int,
                     );
                     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                        opb,
+                        opb as *mut crate::ogg_h::oggpack_buffer,
                         (*(*c).lengthlist.offset(i as isize) as libc::c_int - 1 as libc::c_int)
                             as libc::c_ulong,
                         5 as libc::c_int,
@@ -225,7 +225,7 @@ pub unsafe extern "C" fn vorbis_staticbook_pack(
     /* is the entry number the desired return value, or do we have a
     mapping? If we have a mapping, what type? */
     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-        opb,
+        opb as *mut crate::ogg_h::oggpack_buffer,
         (*c).maptype as libc::c_ulong,
         4 as libc::c_int,
     );
@@ -240,22 +240,22 @@ pub unsafe extern "C" fn vorbis_staticbook_pack(
             }
             /* values that define the dequantization */
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 (*c).q_min as libc::c_ulong,
                 32 as libc::c_int,
             );
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 (*c).q_delta as libc::c_ulong,
                 32 as libc::c_int,
             );
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 ((*c).q_quant - 1 as libc::c_int) as libc::c_ulong,
                 4 as libc::c_int,
             );
             crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                opb,
+                opb as *mut crate::ogg_h::oggpack_buffer,
                 (*c).q_sequencep as libc::c_ulong,
                 1 as libc::c_int,
             );
@@ -265,8 +265,9 @@ pub unsafe extern "C" fn vorbis_staticbook_pack(
                     /* a single column of (c->entries/c->dim) quantized values for
                     building a full value list algorithmically (square lattice) */
                     quantvals =
-                        crate::src::libvorbis_1_3_6::lib::sharedbook::_book_maptype1_quantvals(c)
-                            as libc::c_int
+                        crate::src::libvorbis_1_3_6::lib::sharedbook::_book_maptype1_quantvals(
+                            c as *const crate::src::libvorbis_1_3_6::lib::codebook::static_codebook,
+                        ) as libc::c_int
                 }
                 2 => {
                     /* every value (c->entries*c->dim total) specified explicitly */
@@ -281,8 +282,8 @@ pub unsafe extern "C" fn vorbis_staticbook_pack(
             i = 0 as libc::c_int as libc::c_long;
             while i < quantvals as libc::c_long {
                 crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-                    opb,
-                    crate::stdlib::labs(*(*c).quantlist.offset(i as isize)) as libc::c_ulong,
+                    opb as *mut crate::ogg_h::oggpack_buffer,
+                    ::libc::labs(*(*c).quantlist.offset(i as isize)) as libc::c_ulong,
                     (*c).q_quant,
                 );
                 i += 1
@@ -313,12 +314,20 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
         ) as *mut crate::src::libvorbis_1_3_6::lib::codebook::static_codebook;
     (*s).allocedp = 1 as libc::c_int;
     /* make sure alignment is correct */
-    if !(crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 24 as libc::c_int)
-        != 0x564342 as libc::c_int as libc::c_long)
+    if !(crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+        opb as *mut crate::ogg_h::oggpack_buffer,
+        24 as libc::c_int,
+    ) != 0x564342 as libc::c_int as libc::c_long)
     {
         /* first the basic parameters */
-        (*s).dim = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 16 as libc::c_int);
-        (*s).entries = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 24 as libc::c_int);
+        (*s).dim = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+            opb as *mut crate::ogg_h::oggpack_buffer,
+            16 as libc::c_int,
+        );
+        (*s).entries = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+            opb as *mut crate::ogg_h::oggpack_buffer,
+            24 as libc::c_int,
+        );
         if !((*s).entries == -(1 as libc::c_int) as libc::c_long) {
             if !(crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog(
                 (*s).dim as crate::config_types_h::ogg_uint32_t,
@@ -327,8 +336,10 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
             ) > 24 as libc::c_int)
             {
                 /* codeword ordering.... length ordered or unordered? */
-                match crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb, 1 as libc::c_int)
-                    as libc::c_int
+                match crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
+                    opb as *mut crate::ogg_h::oggpack_buffer,
+                    1 as libc::c_int,
+                ) as libc::c_int
                 {
                     0 => {
                         current_block = 14523784380283086299;
@@ -337,7 +348,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                 let mut unused: libc::c_long = 0;
                                 /* allocated but unused entries? */
                                 unused = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                    opb,
+                                    opb as *mut crate::ogg_h::oggpack_buffer,
                                     1 as libc::c_int,
                                 );
                                 if (*s).entries
@@ -349,7 +360,9 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                     + 7 as libc::c_int as libc::c_long
                                     >> 3 as libc::c_int
                                     > (*opb).storage
-                                        - crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(opb)
+                                        - crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
+                                            opb as *mut crate::ogg_h::oggpack_buffer,
+                                        )
                                 {
                                     current_block = 15187751986642917127;
                                 } else {
@@ -369,12 +382,12 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                 break;
                                             }
                                             if crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                                opb,
+                                                opb as *mut crate::ogg_h::oggpack_buffer,
                                                 1 as libc::c_int,
                                             ) != 0
                                             {
                                                 let mut num: libc::c_long =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  5 as
                                                                      libc::c_int);
                                                 if num == -(1 as libc::c_int) as libc::c_long {
@@ -399,7 +412,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                 break;
                                             }
                                             let mut num_0: libc::c_long =
-                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                              5 as
                                                                  libc::c_int);
                                             if num_0 == -(1 as libc::c_int) as libc::c_long {
@@ -419,7 +432,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                             {
                                 let mut length: libc::c_long =
                                     crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                        opb,
+                                        opb as *mut crate::ogg_h::oggpack_buffer,
                                         5 as libc::c_int,
                                     ) + 1 as libc::c_int as libc::c_long;
                                 if length == 0 as libc::c_int as libc::c_long {
@@ -437,7 +450,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                             break;
                                         }
                                         let mut num_1: libc::c_long =
-                                            crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                            crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                          crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog(((*s).entries
                                                                       - i) as
                                                                      crate::config_types_h::ogg_uint32_t));
@@ -477,7 +490,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                             /* Do we have a mapping to unpack? */
                             {
                                 (*s).maptype = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                    opb,
+                                    opb as *mut crate::ogg_h::oggpack_buffer,
                                     4 as libc::c_int,
                                 ) as libc::c_int;
                                 match (*s).maptype {
@@ -488,15 +501,15 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                 /* implicitly populated value mapping */
                                                 /* explicitly populated value mapping */
                                                 (*s).q_min =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  32 as
                                                                      libc::c_int);
                                                 (*s).q_delta =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  32 as
                                                                      libc::c_int);
                                                 (*s).q_quant =
-                                                    (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                   4 as
                                                                       libc::c_int)
                                                          +
@@ -504,7 +517,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                              libc::c_long) as
                                                         libc::c_int;
                                                 (*s).q_sequencep =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  1 as
                                                                      libc::c_int)
                                                         as libc::c_int;
@@ -520,7 +533,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                             {
                                                                 0 as libc::c_int as libc::c_long
                                                             } else {
-                                                                crate::src::libvorbis_1_3_6::lib::sharedbook::_book_maptype1_quantvals(s)
+                                                                crate::src::libvorbis_1_3_6::lib::sharedbook::_book_maptype1_quantvals(s as *const crate::src::libvorbis_1_3_6::lib::codebook::static_codebook)
                                                             }
                                                                 as libc::c_int
                                                         }
@@ -538,7 +551,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                             3 as libc::c_int)
                                                            as libc::c_long >
                                                            (*opb).storage -
-                                                               crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(opb)
+                                                               crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(opb as *mut crate::ogg_h::oggpack_buffer)
                                                        {
                                                         current_block =
                                                             15187751986642917127;
@@ -563,7 +576,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                                                        as
                                                                                        isize)
                                                                 =
-                                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                              (*s).q_quant);
                                                             i += 1
                                                         }
@@ -607,15 +620,15 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                         match current_block {
                                             9333025334031379274 => {
                                                 (*s).q_min =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  32 as
                                                                      libc::c_int);
                                                 (*s).q_delta =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  32 as
                                                                      libc::c_int);
                                                 (*s).q_quant =
-                                                    (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                   4 as
                                                                       libc::c_int)
                                                          +
@@ -623,7 +636,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                              libc::c_long) as
                                                         libc::c_int;
                                                 (*s).q_sequencep =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  1 as
                                                                      libc::c_int)
                                                         as libc::c_int;
@@ -639,7 +652,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                             {
                                                                 0 as libc::c_int as libc::c_long
                                                             } else {
-                                                                crate::src::libvorbis_1_3_6::lib::sharedbook::_book_maptype1_quantvals(s)
+                                                                crate::src::libvorbis_1_3_6::lib::sharedbook::_book_maptype1_quantvals(s as *const crate::src::libvorbis_1_3_6::lib::codebook::static_codebook)
                                                             }
                                                                 as libc::c_int
                                                         }
@@ -656,7 +669,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                             3 as libc::c_int)
                                                            as libc::c_long >
                                                            (*opb).storage -
-                                                               crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(opb)
+                                                               crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(opb as *mut crate::ogg_h::oggpack_buffer)
                                                        {
                                                         current_block =
                                                             15187751986642917127;
@@ -681,7 +694,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                                                        as
                                                                                        isize)
                                                                 =
-                                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                              (*s).q_quant);
                                                             i += 1
                                                         }
@@ -726,7 +739,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                             14523784380283086299 => {
                                 let mut unused: libc::c_long = 0;
                                 unused = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                    opb,
+                                    opb as *mut crate::ogg_h::oggpack_buffer,
                                     1 as libc::c_int,
                                 );
                                 if (*s).entries
@@ -738,7 +751,9 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                     + 7 as libc::c_int as libc::c_long
                                     >> 3 as libc::c_int
                                     > (*opb).storage
-                                        - crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(opb)
+                                        - crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(
+                                            opb as *mut crate::ogg_h::oggpack_buffer,
+                                        )
                                 {
                                     current_block = 15187751986642917127;
                                 } else {
@@ -755,12 +770,12 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                 break;
                                             }
                                             if crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                                opb,
+                                                opb as *mut crate::ogg_h::oggpack_buffer,
                                                 1 as libc::c_int,
                                             ) != 0
                                             {
                                                 let mut num: libc::c_long =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  5 as
                                                                      libc::c_int);
                                                 if num == -(1 as libc::c_int) as libc::c_long {
@@ -784,7 +799,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                 break;
                                             }
                                             let mut num_0: libc::c_long =
-                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                              5 as
                                                                  libc::c_int);
                                             if num_0 == -(1 as libc::c_int) as libc::c_long {
@@ -802,7 +817,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                             _ => {
                                 let mut length: libc::c_long =
                                     crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                        opb,
+                                        opb as *mut crate::ogg_h::oggpack_buffer,
                                         5 as libc::c_int,
                                     ) + 1 as libc::c_int as libc::c_long;
                                 if length == 0 as libc::c_int as libc::c_long {
@@ -820,7 +835,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                             break;
                                         }
                                         let mut num_1: libc::c_long =
-                                            crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                            crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                          crate::src::libvorbis_1_3_6::lib::sharedbook::ov_ilog(((*s).entries
                                                                       - i) as
                                                                      crate::config_types_h::ogg_uint32_t));
@@ -858,7 +873,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                             15187751986642917127 => {}
                             _ => {
                                 (*s).maptype = crate::src::libogg_1_3_3::src::bitwise::oggpack_read(
-                                    opb,
+                                    opb as *mut crate::ogg_h::oggpack_buffer,
                                     4 as libc::c_int,
                                 ) as libc::c_int;
                                 match (*s).maptype {
@@ -867,15 +882,15 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                         match current_block {
                                             9333025334031379274 => {
                                                 (*s).q_min =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  32 as
                                                                      libc::c_int);
                                                 (*s).q_delta =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  32 as
                                                                      libc::c_int);
                                                 (*s).q_quant =
-                                                    (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                   4 as
                                                                       libc::c_int)
                                                          +
@@ -883,7 +898,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                              libc::c_long) as
                                                         libc::c_int;
                                                 (*s).q_sequencep =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  1 as
                                                                      libc::c_int)
                                                         as libc::c_int;
@@ -899,7 +914,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                             {
                                                                 0 as libc::c_int as libc::c_long
                                                             } else {
-                                                                crate::src::libvorbis_1_3_6::lib::sharedbook::_book_maptype1_quantvals(s)
+                                                                crate::src::libvorbis_1_3_6::lib::sharedbook::_book_maptype1_quantvals(s as *const crate::src::libvorbis_1_3_6::lib::codebook::static_codebook)
                                                             }
                                                                 as libc::c_int
                                                         }
@@ -916,7 +931,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                             3 as libc::c_int)
                                                            as libc::c_long >
                                                            (*opb).storage -
-                                                               crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(opb)
+                                                               crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(opb as *mut crate::ogg_h::oggpack_buffer)
                                                        {
                                                         current_block =
                                                             15187751986642917127;
@@ -941,7 +956,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                                                        as
                                                                                        isize)
                                                                 =
-                                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                              (*s).q_quant);
                                                             i += 1
                                                         }
@@ -980,15 +995,15 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                         match current_block {
                                             9333025334031379274 => {
                                                 (*s).q_min =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  32 as
                                                                      libc::c_int);
                                                 (*s).q_delta =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  32 as
                                                                      libc::c_int);
                                                 (*s).q_quant =
-                                                    (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    (crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                   4 as
                                                                       libc::c_int)
                                                          +
@@ -996,7 +1011,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                              libc::c_long) as
                                                         libc::c_int;
                                                 (*s).q_sequencep =
-                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                    crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                  1 as
                                                                      libc::c_int)
                                                         as libc::c_int;
@@ -1012,7 +1027,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                             {
                                                                 0 as libc::c_int as libc::c_long
                                                             } else {
-                                                                crate::src::libvorbis_1_3_6::lib::sharedbook::_book_maptype1_quantvals(s)
+                                                                crate::src::libvorbis_1_3_6::lib::sharedbook::_book_maptype1_quantvals(s as *const crate::src::libvorbis_1_3_6::lib::codebook::static_codebook)
                                                             }
                                                                 as libc::c_int
                                                         }
@@ -1029,7 +1044,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                             3 as libc::c_int)
                                                            as libc::c_long >
                                                            (*opb).storage -
-                                                               crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(opb)
+                                                               crate::src::libogg_1_3_3::src::bitwise::oggpack_bytes(opb as *mut crate::ogg_h::oggpack_buffer)
                                                        {
                                                         current_block =
                                                             15187751986642917127;
@@ -1054,7 +1069,7 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
                                                                                        as
                                                                                        isize)
                                                                 =
-                                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb,
+                                                                crate::src::libogg_1_3_3::src::bitwise::oggpack_read(opb as *mut crate::ogg_h::oggpack_buffer,
                                                                              (*s).q_quant);
                                                             i += 1
                                                         }
@@ -1099,7 +1114,9 @@ pub unsafe extern "C" fn vorbis_staticbook_unpack(
         }
     }
     /* EOF */
-    crate::src::libvorbis_1_3_6::lib::sharedbook::vorbis_staticbook_destroy(s);
+    crate::src::libvorbis_1_3_6::lib::sharedbook::vorbis_staticbook_destroy(
+        s as *mut crate::src::libvorbis_1_3_6::lib::codebook::static_codebook,
+    );
     return 0 as *mut crate::src::libvorbis_1_3_6::lib::codebook::static_codebook;
 }
 /* returns the number of bits ************************************************/
@@ -1114,7 +1131,7 @@ pub unsafe extern "C" fn vorbis_book_encode(
         return 0 as libc::c_int;
     }
     crate::src::libogg_1_3_3::src::bitwise::oggpack_write(
-        b,
+        b as *mut crate::ogg_h::oggpack_buffer,
         *(*book).codelist.offset(a as isize) as libc::c_ulong,
         *(*(*book).c).lengthlist.offset(a as isize) as libc::c_int,
     );
@@ -1151,8 +1168,10 @@ unsafe extern "C" fn decode_packed_entry_number(
     let mut read: libc::c_int = (*book).dec_maxlength;
     let mut lo: libc::c_long = 0;
     let mut hi: libc::c_long = 0;
-    let mut lok: libc::c_long =
-        crate::src::libogg_1_3_3::src::bitwise::oggpack_look(b, (*book).dec_firsttablen);
+    let mut lok: libc::c_long = crate::src::libogg_1_3_3::src::bitwise::oggpack_look(
+        b as *mut crate::ogg_h::oggpack_buffer,
+        (*book).dec_firsttablen,
+    );
     if lok >= 0 as libc::c_int as libc::c_long {
         let mut entry: libc::c_long = *(*book).dec_firsttable.offset(lok as isize) as libc::c_long;
         if entry as libc::c_ulong & 0x80000000 as libc::c_ulong != 0 {
@@ -1160,7 +1179,7 @@ unsafe extern "C" fn decode_packed_entry_number(
             hi = (*book).used_entries - (entry & 0x7fff as libc::c_int as libc::c_long)
         } else {
             crate::src::libogg_1_3_3::src::bitwise::oggpack_adv(
-                b,
+                b as *mut crate::ogg_h::oggpack_buffer,
                 *(*book)
                     .dec_codelengths
                     .offset((entry - 1 as libc::c_int as libc::c_long) as isize)
@@ -1177,10 +1196,16 @@ unsafe extern "C" fn decode_packed_entry_number(
     failure to read one bit above), the next look attempt will also
     fail and we'll correctly kick out instead of trying to walk the
     underformed tree */
-    lok = crate::src::libogg_1_3_3::src::bitwise::oggpack_look(b, read);
+    lok = crate::src::libogg_1_3_3::src::bitwise::oggpack_look(
+        b as *mut crate::ogg_h::oggpack_buffer,
+        read,
+    );
     while lok < 0 as libc::c_int as libc::c_long && read > 1 as libc::c_int {
         read -= 1;
-        lok = crate::src::libogg_1_3_3::src::bitwise::oggpack_look(b, read)
+        lok = crate::src::libogg_1_3_3::src::bitwise::oggpack_look(
+            b as *mut crate::ogg_h::oggpack_buffer,
+            read,
+        )
     }
     if lok < 0 as libc::c_int as libc::c_long {
         return -(1 as libc::c_int) as libc::c_long;
@@ -1197,12 +1222,15 @@ unsafe extern "C" fn decode_packed_entry_number(
     }
     if *(*book).dec_codelengths.offset(lo as isize) as libc::c_int <= read {
         crate::src::libogg_1_3_3::src::bitwise::oggpack_adv(
-            b,
+            b as *mut crate::ogg_h::oggpack_buffer,
             *(*book).dec_codelengths.offset(lo as isize) as libc::c_int,
         );
         return lo;
     }
-    crate::src::libogg_1_3_3::src::bitwise::oggpack_adv(b, read);
+    crate::src::libogg_1_3_3::src::bitwise::oggpack_adv(
+        b as *mut crate::ogg_h::oggpack_buffer,
+        read,
+    );
     return -(1 as libc::c_int) as libc::c_long;
 }
 /* Decode side is specced and easier, because we don't need to find

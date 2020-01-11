@@ -4,9 +4,9 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const libc::c_char) -> libc::c_double {
-        return crate::stdlib::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
+        return ::libc::strtod(__nptr, 0 as *mut libc::c_void as *mut *mut libc::c_char);
     }
-    use crate::stdlib::strtod;
+    use ::libc::strtod;
 }
 
 pub mod ctype_h {
@@ -48,10 +48,10 @@ pub use crate::stdlib::__uint8_t;
 pub use crate::stdlib::intptr_t;
 pub use crate::stdlib::mode_t;
 pub use crate::stdlib::time_t;
-pub use crate::stdlib::tm;
 pub use crate::stdlib::uint8_t;
 pub use crate::stdlib::FILE;
 pub use crate::stdlib::_IO_FILE;
+pub use ::libc::tm;
 
 pub use crate::be_aas_h::C2RustUnnamed_0;
 pub use crate::src::asm::ftola::qvmftolsse;
@@ -228,26 +228,26 @@ pub use crate::src::sys::sys_unix::Sys_Milliseconds;
 pub use crate::src::sys::sys_unix::Sys_RandomBytes;
 pub use crate::src::sys::sys_unix::Sys_SetEnv;
 use crate::stdlib::calloc;
-use crate::stdlib::getenv;
 use crate::stdlib::memmove;
 use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::srand;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
-use crate::stdlib::strtod;
 use crate::stdlib::vsnprintf;
+use ::libc::getenv;
+use ::libc::rand;
+use ::libc::srand;
+use ::libc::strcat;
+use ::libc::strcmp;
+use ::libc::strcpy;
+use ::libc::strtod;
 
 pub use crate::src::qcommon::common::ctype_h::tolower;
 pub use crate::src::qcommon::common::ctype_h::toupper;
 pub use crate::stdlib::__ctype_tolower_loc;
 pub use crate::stdlib::__ctype_toupper_loc;
 use crate::stdlib::asctime;
-use crate::stdlib::localtime;
-use crate::stdlib::time;
-use crate::stdlib::umask;
+use ::libc::localtime;
+use ::libc::time;
+use ::libc::umask;
 extern "C" {
     #[no_mangle]
     pub fn CIN_CloseAllVideos();
@@ -659,11 +659,11 @@ pub unsafe extern "C" fn Com_Printf(mut fmt: *const libc::c_char, mut args: ...)
             && crate::src::qcommon::files::FS_Initialized() as libc::c_uint != 0
             && opening_qconsole as u64 == 0
         {
-            let mut newtime: *mut crate::stdlib::tm = 0 as *mut crate::stdlib::tm;
+            let mut newtime: *mut ::libc::tm = 0 as *mut ::libc::tm;
             let mut aclock: crate::stdlib::time_t = 0;
             opening_qconsole = crate::src::qcommon::q_shared::qtrue;
-            crate::stdlib::time(&mut aclock);
-            newtime = crate::stdlib::localtime(&mut aclock);
+            ::libc::time(&mut aclock);
+            newtime = ::libc::localtime(&mut aclock) as *mut ::libc::tm;
             logfile = crate::src::qcommon::files::FS_FOpenFileWrite(
                 b"qconsole.log\x00" as *const u8 as *const libc::c_char,
             );
@@ -1027,13 +1027,13 @@ pub unsafe extern "C" fn Com_StartupVariable(mut match_0: *const libc::c_char) {
     i = 0 as libc::c_int;
     while i < com_numConsoleLines {
         crate::src::qcommon::cmd::Cmd_TokenizeString(com_consoleLines[i as usize]);
-        if !(crate::stdlib::strcmp(
+        if !(::libc::strcmp(
             crate::src::qcommon::cmd::Cmd_Argv(0 as libc::c_int),
             b"set\x00" as *const u8 as *const libc::c_char,
         ) != 0)
         {
             s = crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int);
-            if match_0.is_null() || crate::stdlib::strcmp(s, match_0) == 0 {
+            if match_0.is_null() || ::libc::strcmp(s, match_0) == 0 {
                 if crate::src::qcommon::cvar::Cvar_Flags(s) as libc::c_uint
                     == 0x80000000 as libc::c_uint
                 {
@@ -1041,13 +1041,13 @@ pub unsafe extern "C" fn Com_StartupVariable(mut match_0: *const libc::c_char) {
                         s,
                         crate::src::qcommon::cmd::Cmd_ArgsFrom(2 as libc::c_int),
                         0x80 as libc::c_int,
-                    );
+                    ) as *mut crate::src::qcommon::q_shared::cvar_s;
                 } else {
                     crate::src::qcommon::cvar::Cvar_Set2(
                         s,
                         crate::src::qcommon::cmd::Cmd_ArgsFrom(2 as libc::c_int),
                         crate::src::qcommon::q_shared::qfalse,
-                    );
+                    ) as *mut crate::src::qcommon::q_shared::cvar_s;
                 }
             }
         }
@@ -1565,12 +1565,12 @@ pub unsafe extern "C" fn Com_RealTime(
     mut qtime: *mut crate::src::qcommon::q_shared::qtime_t,
 ) -> libc::c_int {
     let mut t: crate::stdlib::time_t = 0;
-    let mut tms: *mut crate::stdlib::tm = 0 as *mut crate::stdlib::tm;
-    t = crate::stdlib::time(0 as *mut crate::stdlib::time_t);
+    let mut tms: *mut ::libc::tm = 0 as *mut ::libc::tm;
+    t = ::libc::time(0 as *mut crate::stdlib::time_t);
     if qtime.is_null() {
         return t as libc::c_int;
     }
-    tms = crate::stdlib::localtime(&mut t);
+    tms = ::libc::localtime(&mut t) as *mut ::libc::tm;
     if !tms.is_null() {
         (*qtime).tm_sec = (*tms).tm_sec;
         (*qtime).tm_min = (*tms).tm_min;
@@ -2061,7 +2061,7 @@ pub unsafe extern "C" fn CopyString(mut in_0: *const libc::c_char) -> *mut libc:
     out = S_Malloc(
         crate::stdlib::strlen(in_0).wrapping_add(1 as libc::c_int as libc::c_ulong) as libc::c_int,
     ) as *mut libc::c_char;
-    crate::stdlib::strcpy(out, in_0);
+    ::libc::strcpy(out, in_0);
     return out;
 }
 
@@ -2349,7 +2349,7 @@ pub unsafe extern "C" fn Com_InitZoneMemory() {
         b"com_zoneMegs\x00" as *const u8 as *const libc::c_char,
         b"24\x00" as *const u8 as *const libc::c_char,
         0x20 as libc::c_int | 0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     if (*cv).integer < 24 as libc::c_int {
         s_zoneTotal = 1024 as libc::c_int * 1024 as libc::c_int * 24 as libc::c_int
     } else {
@@ -2535,9 +2535,9 @@ pub unsafe extern "C" fn Com_InitHunkMemory() {
         b"com_hunkMegs\x00" as *const u8 as *const libc::c_char,
         b"128\x00" as *const u8 as *const libc::c_char,
         0x20 as libc::c_int | 0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::qcommon::cvar::Cvar_SetDescription(
-        cv,
+        cv as *mut crate::src::qcommon::q_shared::cvar_s,
         b"The size of the hunk memory segment\x00" as *const u8 as *const libc::c_char,
     );
     // if we are not dedicated min allocation is 56, otherwise min is 1
@@ -2898,7 +2898,7 @@ pub unsafe extern "C" fn Com_InitJournaling() {
         b"journal\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x10 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     if (*com_journal).integer == 0 {
         return;
     }
@@ -3036,7 +3036,7 @@ pub unsafe extern "C" fn Com_GetSystemEvent() -> crate::qcommon_h::sysEvent_t {
         len =
             crate::stdlib::strlen(s).wrapping_add(1 as libc::c_int as libc::c_ulong) as libc::c_int;
         b = Z_Malloc(len) as *mut libc::c_char;
-        crate::stdlib::strcpy(b, s);
+        ::libc::strcpy(b, s);
         Com_QueueEvent(
             0 as libc::c_int,
             crate::qcommon_h::SE_CONSOLE,
@@ -3219,7 +3219,10 @@ pub unsafe extern "C" fn Com_RunAndTimeServerPacket(
     if (*com_speeds).integer != 0 {
         t1 = crate::src::sys::sys_unix::Sys_Milliseconds()
     }
-    crate::src::server::sv_main::SV_PacketEvent(*evFrom, buf);
+    crate::src::server::sv_main::SV_PacketEvent(
+        *evFrom as crate::qcommon_h::netadr_t,
+        buf as *mut crate::qcommon_h::msg_t,
+    );
     if (*com_speeds).integer != 0 {
         t2 = crate::src::sys::sys_unix::Sys_Milliseconds();
         msec = t2 - t1;
@@ -3268,7 +3271,7 @@ pub unsafe extern "C" fn Com_EventLoop() -> libc::c_int {
         bit: 0,
     };
     crate::src::qcommon::msg::MSG_Init(
-        &mut buf,
+        &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
         bufData.as_mut_ptr(),
         ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 16384]>() as libc::c_ulong
             as libc::c_int,
@@ -3280,17 +3283,20 @@ pub unsafe extern "C" fn Com_EventLoop() -> libc::c_int {
             // manually send packet events for the loopback channel
             while crate::src::qcommon::net_chan::NET_GetLoopPacket(
                 crate::qcommon_h::NS_CLIENT,
-                &mut evFrom,
-                &mut buf,
+                &mut evFrom as *mut _ as *mut crate::qcommon_h::netadr_t,
+                &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
             ) as u64
                 != 0
             {
-                crate::src::client::cl_main::CL_PacketEvent(evFrom, &mut buf);
+                crate::src::client::cl_main::CL_PacketEvent(
+                    evFrom as crate::qcommon_h::netadr_t,
+                    &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
+                );
             }
             while crate::src::qcommon::net_chan::NET_GetLoopPacket(
                 crate::qcommon_h::NS_SERVER,
-                &mut evFrom,
-                &mut buf,
+                &mut evFrom as *mut _ as *mut crate::qcommon_h::netadr_t,
+                &mut buf as *mut _ as *mut crate::qcommon_h::msg_t,
             ) as u64
                 != 0
             {
@@ -3447,7 +3453,7 @@ pub unsafe extern "C" fn Com_Setenv_f() {
         let mut arg2: *mut libc::c_char = crate::src::qcommon::cmd::Cmd_ArgsFrom(2 as libc::c_int);
         crate::src::sys::sys_unix::Sys_SetEnv(arg1, arg2);
     } else if argc == 2 as libc::c_int {
-        let mut env: *mut libc::c_char = crate::stdlib::getenv(arg1);
+        let mut env: *mut libc::c_char = ::libc::getenv(arg1);
         if !env.is_null() {
             Com_Printf(
                 b"%s=%s\n\x00" as *const u8 as *const libc::c_char,
@@ -3654,7 +3660,7 @@ pub unsafe extern "C" fn Com_AppendCDKey(mut filename: *const libc::c_char) {
     );
     crate::src::qcommon::files::FS_FCloseFile(f);
     if CL_CDKeyValidate(buffer.as_mut_ptr(), 0 as *const libc::c_char) as u64 != 0 {
-        crate::stdlib::strcat(
+        ::libc::strcat(
             &mut *cl_cdkey.as_mut_ptr().offset(16 as libc::c_int as isize),
             buffer.as_mut_ptr(),
         );
@@ -3690,7 +3696,7 @@ unsafe extern "C" fn Com_WriteCDKey(
     if CL_CDKeyValidate(key.as_mut_ptr(), 0 as *const libc::c_char) as u64 == 0 {
         return;
     }
-    savedumask = crate::stdlib::umask(0o77 as libc::c_int as crate::stdlib::__mode_t);
+    savedumask = ::libc::umask(0o77 as libc::c_int as crate::stdlib::__mode_t);
     f = crate::src::qcommon::files::FS_SV_FOpenFileWrite(fbuffer.as_mut_ptr());
     if f == 0 {
         Com_Printf(
@@ -3718,7 +3724,7 @@ unsafe extern "C" fn Com_WriteCDKey(
         );
         crate::src::qcommon::files::FS_FCloseFile(f);
     }
-    crate::stdlib::umask(savedumask);
+    ::libc::umask(savedumask);
 }
 // STANDALONE
 
@@ -3770,9 +3776,9 @@ unsafe extern "C" fn Com_InitRand() {
     ) as u64
         != 0
     {
-        crate::stdlib::srand(seed);
+        ::libc::srand(seed);
     } else {
-        crate::stdlib::srand(crate::stdlib::time(0 as *mut crate::stdlib::time_t) as libc::c_uint);
+        ::libc::srand(::libc::time(0 as *mut crate::stdlib::time_t) as libc::c_uint);
     };
 }
 // commandLine should not include the executable name (argv[0])
@@ -3788,9 +3794,9 @@ pub unsafe extern "C" fn Com_Init(mut commandLine: *mut libc::c_char) {
     let mut qport: libc::c_int = 0;
     Com_Printf(
         b"%s %s %s\n\x00" as *const u8 as *const libc::c_char,
-        b"ioq3 1.36_GIT_a3a346c3-2019-12-19\x00" as *const u8 as *const libc::c_char,
+        b"ioq3 1.36_GIT_d0fe4462-2020-01-10\x00" as *const u8 as *const libc::c_char,
         b"linux-x86_64\x00" as *const u8 as *const libc::c_char,
-        b"Jan  7 2020\x00" as *const u8 as *const libc::c_char,
+        b"Jan 10 2020\x00" as *const u8 as *const libc::c_char,
     );
     if crate::stdlib::_setjmp(abortframe.as_mut_ptr()) != 0 {
         crate::src::sys::sys_main::Sys_Error(
@@ -3826,24 +3832,24 @@ pub unsafe extern "C" fn Com_Init(mut commandLine: *mut libc::c_char) {
         b"developer\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x100 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     // done early so bind command exists
     crate::src::client::cl_keys::CL_InitKeyCommands();
     com_standalone = crate::src::qcommon::cvar::Cvar_Get(
         b"com_standalone\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_basegame = crate::src::qcommon::cvar::Cvar_Get(
         b"com_basegame\x00" as *const u8 as *const libc::c_char,
         b"baseq3\x00" as *const u8 as *const libc::c_char,
         0x10 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_homepath = crate::src::qcommon::cvar::Cvar_Get(
         b"com_homepath\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x10 as libc::c_int | 0x2000 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::qcommon::files::FS_InitFilesystem();
     Com_InitJournaling();
     // Add some commands here already so users can use them from config files
@@ -3901,9 +3907,9 @@ pub unsafe extern "C" fn Com_Init(mut commandLine: *mut libc::c_char) {
         b"dedicated\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x20 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::qcommon::cvar::Cvar_CheckRange(
-        com_dedicated,
+        com_dedicated as *mut crate::src::qcommon::q_shared::cvar_s,
         0 as libc::c_int as libc::c_float,
         2 as libc::c_int as libc::c_float,
         crate::src::qcommon::q_shared::qtrue,
@@ -3920,148 +3926,149 @@ pub unsafe extern "C" fn Com_Init(mut commandLine: *mut libc::c_char) {
         b"com_altivec\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_maxfps = crate::src::qcommon::cvar::Cvar_Get(
         b"com_maxfps\x00" as *const u8 as *const libc::c_char,
         b"85\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_blood = crate::src::qcommon::cvar::Cvar_Get(
         b"com_blood\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_logfile = crate::src::qcommon::cvar::Cvar_Get(
         b"logfile\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x100 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_timescale = crate::src::qcommon::cvar::Cvar_Get(
         b"timescale\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int | 0x8 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_fixedtime = crate::src::qcommon::cvar::Cvar_Get(
         b"fixedtime\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_showtrace = crate::src::qcommon::cvar::Cvar_Get(
         b"com_showtrace\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_speeds = crate::src::qcommon::cvar::Cvar_Get(
         b"com_speeds\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_timedemo = crate::src::qcommon::cvar::Cvar_Get(
         b"timedemo\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_cameraMode = crate::src::qcommon::cvar::Cvar_Get(
         b"com_cameraMode\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     cl_paused = crate::src::qcommon::cvar::Cvar_Get(
         b"cl_paused\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     sv_paused = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_paused\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     cl_packetdelay = crate::src::qcommon::cvar::Cvar_Get(
         b"cl_packetdelay\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     sv_packetdelay = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_packetdelay\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_sv_running = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_running\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_cl_running = crate::src::qcommon::cvar::Cvar_Get(
         b"cl_running\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_buildScript = crate::src::qcommon::cvar::Cvar_Get(
         b"com_buildScript\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_ansiColor = crate::src::qcommon::cvar::Cvar_Get(
         b"com_ansiColor\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_unfocused = crate::src::qcommon::cvar::Cvar_Get(
         b"com_unfocused\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_maxfpsUnfocused = crate::src::qcommon::cvar::Cvar_Get(
         b"com_maxfpsUnfocused\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_minimized = crate::src::qcommon::cvar::Cvar_Get(
         b"com_minimized\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_maxfpsMinimized = crate::src::qcommon::cvar::Cvar_Get(
         b"com_maxfpsMinimized\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_abnormalExit = crate::src::qcommon::cvar::Cvar_Get(
         b"com_abnormalExit\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_busyWait = crate::src::qcommon::cvar::Cvar_Get(
         b"com_busyWait\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"com_errorMessage\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x40 as libc::c_int | 0x400 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_introPlayed = crate::src::qcommon::cvar::Cvar_Get(
         b"com_introplayed\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s = crate::src::qcommon::q_shared::va(
         b"%s %s %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-        b"ioq3 1.36_GIT_a3a346c3-2019-12-19\x00" as *const u8 as *const libc::c_char,
+        b"ioq3 1.36_GIT_d0fe4462-2020-01-10\x00" as *const u8 as *const libc::c_char,
         b"linux-x86_64\x00" as *const u8 as *const libc::c_char,
-        b"Jan  7 2020\x00" as *const u8 as *const libc::c_char,
+        b"Jan 10 2020\x00" as *const u8 as *const libc::c_char,
     );
     com_version = crate::src::qcommon::cvar::Cvar_Get(
         b"version\x00" as *const u8 as *const libc::c_char,
         s,
         0x40 as libc::c_int | 0x4 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_gamename = crate::src::qcommon::cvar::Cvar_Get(
         b"com_gamename\x00" as *const u8 as *const libc::c_char,
         b"Quake3Arena\x00" as *const u8 as *const libc::c_char,
         0x4 as libc::c_int | 0x10 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_protocol = crate::src::qcommon::cvar::Cvar_Get(
         b"com_protocol\x00" as *const u8 as *const libc::c_char,
         crate::src::qcommon::q_shared::va(
@@ -4069,7 +4076,7 @@ pub unsafe extern "C" fn Com_Init(mut commandLine: *mut libc::c_char) {
             71 as libc::c_int,
         ),
         0x4 as libc::c_int | 0x10 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     com_legacyprotocol = crate::src::qcommon::cvar::Cvar_Get(
         b"com_legacyprotocol\x00" as *const u8 as *const libc::c_char,
         crate::src::qcommon::q_shared::va(
@@ -4077,26 +4084,26 @@ pub unsafe extern "C" fn Com_Init(mut commandLine: *mut libc::c_char) {
             68 as libc::c_int,
         ),
         0x10 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     // Keep for compatibility with old mods / mods that haven't updated yet.
     if (*com_legacyprotocol).integer > 0 as libc::c_int {
         crate::src::qcommon::cvar::Cvar_Get(
             b"protocol\x00" as *const u8 as *const libc::c_char,
             (*com_legacyprotocol).string,
             0x40 as libc::c_int,
-        );
+        ) as *mut crate::src::qcommon::q_shared::cvar_s;
     } else {
         crate::src::qcommon::cvar::Cvar_Get(
             b"protocol\x00" as *const u8 as *const libc::c_char,
             (*com_protocol).string,
             0x40 as libc::c_int,
-        );
+        ) as *mut crate::src::qcommon::q_shared::cvar_s;
     }
     con_autochat = crate::src::qcommon::cvar::Cvar_Get(
         b"con_autochat\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::src::sys::sys_main::Sys_Init();
     crate::src::sys::sys_main::Sys_InitPIDFile(crate::src::qcommon::files::FS_GetCurrentGameDir());
     // Pick a random port value
@@ -4150,7 +4157,7 @@ pub unsafe extern "C" fn Com_Init(mut commandLine: *mut libc::c_char) {
         b"com_pipefile\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x20 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     if *(*com_pipefile).string.offset(0 as libc::c_int as isize) != 0 {
         pipefile = crate::src::qcommon::files::FS_FCreateOpenPipeFile((*com_pipefile).string)
     }
@@ -4507,11 +4514,12 @@ pub unsafe extern "C" fn Com_Frame() {
     // but before the client tries to auto-connect
     if (*com_dedicated).modified as u64 != 0 {
         // get the latched value
+
         crate::src::qcommon::cvar::Cvar_Get(
             b"dedicated\x00" as *const u8 as *const libc::c_char,
             b"0\x00" as *const u8 as *const libc::c_char,
             0 as libc::c_int,
-        );
+        ) as *mut crate::src::qcommon::q_shared::cvar_s;
         (*com_dedicated).modified = crate::src::qcommon::q_shared::qfalse;
         if (*com_dedicated).integer == 0 {
             crate::src::server::sv_init::SV_Shutdown(
@@ -5044,7 +5052,7 @@ pub unsafe extern "C" fn Com_RandomBytes(
     );
     i = 0 as libc::c_int;
     while i < len {
-        *string.offset(i as isize) = (crate::stdlib::rand() % 256 as libc::c_int) as libc::c_uchar;
+        *string.offset(i as isize) = (::libc::rand() % 256 as libc::c_int) as libc::c_uchar;
         i += 1
     }
 }
@@ -5309,7 +5317,7 @@ pub unsafe extern "C" fn Com_strCompare(
 ) -> libc::c_int {
     let mut pa: *mut *const libc::c_char = a as *mut *const libc::c_char;
     let mut pb: *mut *const libc::c_char = b as *mut *const libc::c_char;
-    return crate::stdlib::strcmp(*pa, *pb);
+    return ::libc::strcmp(*pa, *pb);
 }
 unsafe extern "C" fn run_static_initializers() {
     emptystring = {

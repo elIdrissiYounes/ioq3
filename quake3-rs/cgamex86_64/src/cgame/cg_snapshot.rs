@@ -174,7 +174,9 @@ unsafe extern "C" fn CG_ResetEntity(mut cent: *mut crate::cg_local_h::centity_t)
     (*cent).lerpAngles[2 as libc::c_int as usize] =
         (*cent).currentState.angles[2 as libc::c_int as usize];
     if (*cent).currentState.eType == crate::bg_public_h::ET_PLAYER as libc::c_int {
-        crate::src::cgame::cg_players::CG_ResetPlayerEntity(cent);
+        crate::src::cgame::cg_players::CG_ResetPlayerEntity(
+            cent as *mut crate::cg_local_h::centity_s,
+        );
     };
 }
 /*
@@ -195,7 +197,7 @@ unsafe extern "C" fn CG_TransitionEntity(mut cent: *mut crate::cg_local_h::centi
     // clear the next state.  if will be set by the next CG_SetNextSnap
     (*cent).interpolate = crate::src::qcommon::q_shared::qfalse;
     // check for events
-    crate::src::cgame::cg_event::CG_CheckEvents(cent);
+    crate::src::cgame::cg_event::CG_CheckEvents(cent as *mut crate::cg_local_h::centity_s);
 }
 /*
 ==================
@@ -214,11 +216,11 @@ pub unsafe extern "C" fn CG_SetInitialSnapshot(mut snap: *mut crate::cg_public_h
         0 as *mut crate::src::qcommon::q_shared::entityState_t;
     crate::src::cgame::cg_main::cg.snap = snap;
     crate::src::game::bg_misc::BG_PlayerStateToEntityState(
-        &mut (*snap).ps,
+        &mut (*snap).ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
         &mut (*crate::src::cgame::cg_main::cg_entities
             .as_mut_ptr()
             .offset((*snap).ps.clientNum as isize))
-        .currentState,
+        .currentState as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
         crate::src::qcommon::q_shared::qfalse,
     );
     // sort out solid entities
@@ -248,7 +250,7 @@ pub unsafe extern "C" fn CG_SetInitialSnapshot(mut snap: *mut crate::cg_public_h
         (*cent).currentValid = crate::src::qcommon::q_shared::qtrue;
         CG_ResetEntity(cent);
         // check for events
-        crate::src::cgame::cg_event::CG_CheckEvents(cent);
+        crate::src::cgame::cg_event::CG_CheckEvents(cent as *mut crate::cg_local_h::centity_s);
         i += 1
     }
 }
@@ -298,11 +300,12 @@ unsafe extern "C" fn CG_TransitionSnapshot() {
     oldFrame = crate::src::cgame::cg_main::cg.snap;
     crate::src::cgame::cg_main::cg.snap = crate::src::cgame::cg_main::cg.nextSnap;
     crate::src::game::bg_misc::BG_PlayerStateToEntityState(
-        &mut (*crate::src::cgame::cg_main::cg.snap).ps,
+        &mut (*crate::src::cgame::cg_main::cg.snap).ps as *mut _
+            as *mut crate::src::qcommon::q_shared::playerState_s,
         &mut (*crate::src::cgame::cg_main::cg_entities
             .as_mut_ptr()
             .offset((*crate::src::cgame::cg_main::cg.snap).ps.clientNum as isize))
-        .currentState,
+        .currentState as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
         crate::src::qcommon::q_shared::qfalse,
     );
     crate::src::cgame::cg_main::cg_entities
@@ -343,7 +346,10 @@ unsafe extern "C" fn CG_TransitionSnapshot() {
             || crate::src::cgame::cg_main::cg_nopredict.integer != 0
             || crate::src::cgame::cg_main::cg_synchronousClients.integer != 0
         {
-            crate::src::cgame::cg_playerstate::CG_TransitionPlayerState(ps, ops);
+            crate::src::cgame::cg_playerstate::CG_TransitionPlayerState(
+                ps as *mut crate::src::qcommon::q_shared::playerState_s,
+                ops as *mut crate::src::qcommon::q_shared::playerState_s,
+            );
         }
     };
 }
@@ -362,11 +368,11 @@ unsafe extern "C" fn CG_SetNextSnap(mut snap: *mut crate::cg_public_h::snapshot_
     let mut cent: *mut crate::cg_local_h::centity_t = 0 as *mut crate::cg_local_h::centity_t;
     crate::src::cgame::cg_main::cg.nextSnap = snap;
     crate::src::game::bg_misc::BG_PlayerStateToEntityState(
-        &mut (*snap).ps,
+        &mut (*snap).ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
         &mut (*crate::src::cgame::cg_main::cg_entities
             .as_mut_ptr()
             .offset((*snap).ps.clientNum as isize))
-        .nextState,
+        .nextState as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
         crate::src::qcommon::q_shared::qfalse,
     );
     crate::src::cgame::cg_main::cg_entities
@@ -478,16 +484,18 @@ unsafe extern "C" fn CG_ReadNextSnapshot() -> *mut crate::cg_public_h::snapshot_
         crate::src::cgame::cg_main::cgs.processedSnapshotNum += 1;
         r = crate::src::cgame::cg_syscalls::trap_GetSnapshot(
             crate::src::cgame::cg_main::cgs.processedSnapshotNum,
-            dest,
+            dest as *mut crate::cg_public_h::snapshot_t,
         );
         (!crate::src::cgame::cg_main::cg.snap.is_null() && r as libc::c_uint != 0)
             && (*dest).serverTime == (*crate::src::cgame::cg_main::cg.snap).serverTime;
         if r as u64 != 0 {
-            crate::src::cgame::cg_draw::CG_AddLagometerSnapshotInfo(dest);
+            crate::src::cgame::cg_draw::CG_AddLagometerSnapshotInfo(
+                dest as *mut crate::cg_public_h::snapshot_t,
+            );
             return dest;
         }
         crate::src::cgame::cg_draw::CG_AddLagometerSnapshotInfo(
-            0 as *mut crate::cg_public_h::snapshot_t,
+            0 as *mut crate::cg_public_h::snapshot_t as *mut crate::cg_public_h::snapshot_t,
         );
     }
     // try to read the snapshot from the client system

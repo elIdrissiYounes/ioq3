@@ -238,7 +238,9 @@ pub unsafe extern "C" fn jpeg_start_decompress(
 ) -> crate::jmorecfg_h::boolean {
     if (*cinfo).global_state == 202 as libc::c_int {
         /* First call: initialize master control, select active modules */
-        crate::src::jpeg_8c::jdmaster::jinit_master_decompress(cinfo);
+        crate::src::jpeg_8c::jdmaster::jinit_master_decompress(
+            cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+        );
         if (*cinfo).buffered_image != 0 {
             /* No more work here; expecting jpeg_start_output next */
             (*cinfo).global_state = 207 as libc::c_int;

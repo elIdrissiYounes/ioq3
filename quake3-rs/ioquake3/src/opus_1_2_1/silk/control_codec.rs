@@ -266,8 +266,8 @@ pub unsafe extern "C" fn silk_control_encoder(
     /* Determine internal sampling rate         */
     /* *******************************************/
     fs_kHz = crate::src::opus_1_2_1::silk::control_audio_bandwidth::silk_control_audio_bandwidth(
-        &mut (*psEnc).sCmn,
-        encControl,
+        &mut (*psEnc).sCmn as *mut _ as *mut crate::structs_h::silk_encoder_state,
+        encControl as *mut crate::control_h::silk_EncControlStruct,
     );
     if force_fs_kHz != 0 {
         fs_kHz = force_fs_kHz
@@ -332,7 +332,8 @@ unsafe extern "C" fn silk_setup_resamplers(
         if (*psEnc).sCmn.fs_kHz == 0 as libc::c_int {
             /* Initialize the resampler for enc_API.c preparing resampling from API_fs_Hz to fs_kHz */
             ret += crate::src::opus_1_2_1::silk::resampler::silk_resampler_init(
-                &mut (*psEnc).sCmn.resampler_state,
+                &mut (*psEnc).sCmn.resampler_state as *mut _
+                    as *mut crate::resampler_structs_h::_silk_resampler_state_struct,
                 (*psEnc).sCmn.API_fs_Hz,
                 fs_kHz * 1000 as libc::c_int,
                 1 as libc::c_int,
@@ -377,7 +378,8 @@ unsafe extern "C" fn silk_setup_resamplers(
             temp_resampler_state =
                 fresh1.as_mut_ptr() as *mut crate::resampler_structs_h::silk_resampler_state_struct;
             ret += crate::src::opus_1_2_1::silk::resampler::silk_resampler_init(
-                temp_resampler_state,
+                temp_resampler_state
+                    as *mut crate::resampler_structs_h::_silk_resampler_state_struct,
                 (*psEnc).sCmn.fs_kHz as crate::opus_types_h::opus_int16
                     as crate::opus_types_h::opus_int32
                     * 1000 as libc::c_int as crate::opus_types_h::opus_int16
@@ -395,14 +397,16 @@ unsafe extern "C" fn silk_setup_resamplers(
             );
             x_buf_API_fs_Hz = fresh2.as_mut_ptr() as *mut crate::opus_types_h::opus_int16;
             ret += crate::src::opus_1_2_1::silk::resampler::silk_resampler(
-                temp_resampler_state,
+                temp_resampler_state
+                    as *mut crate::resampler_structs_h::_silk_resampler_state_struct,
                 x_buf_API_fs_Hz,
                 x_bufFIX as *const crate::opus_types_h::opus_int16,
                 old_buf_samples,
             );
             /* Initialize the resampler for enc_API.c preparing resampling from API_fs_Hz to fs_kHz */
             ret += crate::src::opus_1_2_1::silk::resampler::silk_resampler_init(
-                &mut (*psEnc).sCmn.resampler_state,
+                &mut (*psEnc).sCmn.resampler_state as *mut _
+                    as *mut crate::resampler_structs_h::_silk_resampler_state_struct,
                 (*psEnc).sCmn.API_fs_Hz,
                 fs_kHz as crate::opus_types_h::opus_int16 as crate::opus_types_h::opus_int32
                     * 1000 as libc::c_int as crate::opus_types_h::opus_int16
@@ -411,7 +415,8 @@ unsafe extern "C" fn silk_setup_resamplers(
             );
             /* Correct resampler state by resampling buffered data from API_fs_Hz to fs_kHz */
             ret += crate::src::opus_1_2_1::silk::resampler::silk_resampler(
-                &mut (*psEnc).sCmn.resampler_state,
+                &mut (*psEnc).sCmn.resampler_state as *mut _
+                    as *mut crate::resampler_structs_h::_silk_resampler_state_struct,
                 x_bufFIX,
                 x_buf_API_fs_Hz as *const crate::opus_types_h::opus_int16,
                 api_buf_samples,

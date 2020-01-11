@@ -1,37 +1,4 @@
-pub const AWARD_PERFECT: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 5;
-pub const AWARD_FRAGS: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 4;
-pub const AWARD_GAUNTLET: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 3;
-pub const AWARD_EXCELLENT: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 2;
-pub const AWARD_IMPRESSIVE: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 1;
-pub const AWARD_ACCURACY: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 0;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct uiStatic_t {
-    pub frametime: libc::c_int,
-    pub realtime: libc::c_int,
-    pub cursorx: libc::c_int,
-    pub cursory: libc::c_int,
-    pub menusp: libc::c_int,
-    pub activemenu: *mut crate::ui_local_h::menuframework_s,
-    pub stack: [*mut crate::ui_local_h::menuframework_s; 8],
-    pub glconfig: crate::tr_types_h::glconfig_t,
-    pub debug: crate::src::qcommon::q_shared::qboolean,
-    pub whiteShader: crate::src::qcommon::q_shared::qhandle_t,
-    pub menuBackShader: crate::src::qcommon::q_shared::qhandle_t,
-    pub menuBackNoLogoShader: crate::src::qcommon::q_shared::qhandle_t,
-    pub charset: crate::src::qcommon::q_shared::qhandle_t,
-    pub charsetProp: crate::src::qcommon::q_shared::qhandle_t,
-    pub charsetPropGlow: crate::src::qcommon::q_shared::qhandle_t,
-    pub charsetPropB: crate::src::qcommon::q_shared::qhandle_t,
-    pub cursor: crate::src::qcommon::q_shared::qhandle_t,
-    pub rb_on: crate::src::qcommon::q_shared::qhandle_t,
-    pub rb_off: crate::src::qcommon::q_shared::qhandle_t,
-    pub xscale: libc::c_float,
-    pub yscale: libc::c_float,
-    pub bias: libc::c_float,
-    pub demoversion: crate::src::qcommon::q_shared::qboolean,
-    pub firstdraw: crate::src::qcommon::q_shared::qboolean,
-}
+pub type menuframework_s = crate::ui_local_h::_tag_menuframework;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct _tag_menuframework {
@@ -46,7 +13,6 @@ pub struct _tag_menuframework {
     pub fullscreen: crate::src::qcommon::q_shared::qboolean,
     pub showlogo: crate::src::qcommon::q_shared::qboolean,
 }
-pub type menuframework_s = crate::ui_local_h::_tag_menuframework;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct menucommon_s {
@@ -65,40 +31,6 @@ pub struct menucommon_s {
     pub callback: Option<unsafe extern "C" fn(_: *mut libc::c_void, _: libc::c_int) -> ()>,
     pub statusbar: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
     pub ownerdraw: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct menulist_s {
-    pub generic: crate::ui_local_h::menucommon_s,
-    pub oldvalue: libc::c_int,
-    pub curvalue: libc::c_int,
-    pub numitems: libc::c_int,
-    pub top: libc::c_int,
-    pub itemnames: *mut *const libc::c_char,
-    pub width: libc::c_int,
-    pub height: libc::c_int,
-    pub columns: libc::c_int,
-    pub separation: libc::c_int,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct menubitmap_s {
-    pub generic: crate::ui_local_h::menucommon_s,
-    pub focuspic: *mut libc::c_char,
-    pub errorpic: *mut libc::c_char,
-    pub shader: crate::src::qcommon::q_shared::qhandle_t,
-    pub focusshader: crate::src::qcommon::q_shared::qhandle_t,
-    pub width: libc::c_int,
-    pub height: libc::c_int,
-    pub focuscolor: *mut libc::c_float,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct menutext_s {
-    pub generic: crate::ui_local_h::menucommon_s,
-    pub string: *mut libc::c_char,
-    pub style: libc::c_int,
-    pub color: *mut libc::c_float,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -126,6 +58,20 @@ pub struct menuslider_s {
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
+pub struct menulist_s {
+    pub generic: crate::ui_local_h::menucommon_s,
+    pub oldvalue: libc::c_int,
+    pub curvalue: libc::c_int,
+    pub numitems: libc::c_int,
+    pub top: libc::c_int,
+    pub itemnames: *mut *const libc::c_char,
+    pub width: libc::c_int,
+    pub height: libc::c_int,
+    pub columns: libc::c_int,
+    pub separation: libc::c_int,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
 pub struct menuaction_s {
     pub generic: crate::ui_local_h::menucommon_s,
 }
@@ -134,6 +80,42 @@ pub struct menuaction_s {
 pub struct menuradiobutton_s {
     pub generic: crate::ui_local_h::menucommon_s,
     pub curvalue: libc::c_int,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct menubitmap_s {
+    pub generic: crate::ui_local_h::menucommon_s,
+    pub focuspic: *mut libc::c_char,
+    pub errorpic: *mut libc::c_char,
+    pub shader: crate::src::qcommon::q_shared::qhandle_t,
+    pub focusshader: crate::src::qcommon::q_shared::qhandle_t,
+    pub width: libc::c_int,
+    pub height: libc::c_int,
+    pub focuscolor: *mut libc::c_float,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct menutext_s {
+    pub generic: crate::ui_local_h::menucommon_s,
+    pub string: *mut libc::c_char,
+    pub style: libc::c_int,
+    pub color: *mut libc::c_float,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct lerpFrame_t {
+    pub oldFrame: libc::c_int,
+    pub oldFrameTime: libc::c_int,
+    pub frame: libc::c_int,
+    pub frameTime: libc::c_int,
+    pub backlerp: libc::c_float,
+    pub yawAngle: libc::c_float,
+    pub yawing: crate::src::qcommon::q_shared::qboolean,
+    pub pitchAngle: libc::c_float,
+    pub pitching: crate::src::qcommon::q_shared::qboolean,
+    pub animationNumber: libc::c_int,
+    pub animation: *mut crate::bg_public_h::animation_t,
+    pub animationTime: libc::c_int,
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -178,17 +160,35 @@ pub struct playerInfo_t {
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct lerpFrame_t {
-    pub oldFrame: libc::c_int,
-    pub oldFrameTime: libc::c_int,
-    pub frame: libc::c_int,
-    pub frameTime: libc::c_int,
-    pub backlerp: libc::c_float,
-    pub yawAngle: libc::c_float,
-    pub yawing: crate::src::qcommon::q_shared::qboolean,
-    pub pitchAngle: libc::c_float,
-    pub pitching: crate::src::qcommon::q_shared::qboolean,
-    pub animationNumber: libc::c_int,
-    pub animation: *mut crate::bg_public_h::animation_t,
-    pub animationTime: libc::c_int,
+pub struct uiStatic_t {
+    pub frametime: libc::c_int,
+    pub realtime: libc::c_int,
+    pub cursorx: libc::c_int,
+    pub cursory: libc::c_int,
+    pub menusp: libc::c_int,
+    pub activemenu: *mut crate::ui_local_h::menuframework_s,
+    pub stack: [*mut crate::ui_local_h::menuframework_s; 8],
+    pub glconfig: crate::tr_types_h::glconfig_t,
+    pub debug: crate::src::qcommon::q_shared::qboolean,
+    pub whiteShader: crate::src::qcommon::q_shared::qhandle_t,
+    pub menuBackShader: crate::src::qcommon::q_shared::qhandle_t,
+    pub menuBackNoLogoShader: crate::src::qcommon::q_shared::qhandle_t,
+    pub charset: crate::src::qcommon::q_shared::qhandle_t,
+    pub charsetProp: crate::src::qcommon::q_shared::qhandle_t,
+    pub charsetPropGlow: crate::src::qcommon::q_shared::qhandle_t,
+    pub charsetPropB: crate::src::qcommon::q_shared::qhandle_t,
+    pub cursor: crate::src::qcommon::q_shared::qhandle_t,
+    pub rb_on: crate::src::qcommon::q_shared::qhandle_t,
+    pub rb_off: crate::src::qcommon::q_shared::qhandle_t,
+    pub xscale: libc::c_float,
+    pub yscale: libc::c_float,
+    pub bias: libc::c_float,
+    pub demoversion: crate::src::qcommon::q_shared::qboolean,
+    pub firstdraw: crate::src::qcommon::q_shared::qboolean,
 }
+pub const AWARD_ACCURACY: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 0;
+pub const AWARD_IMPRESSIVE: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 1;
+pub const AWARD_EXCELLENT: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 2;
+pub const AWARD_GAUNTLET: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 3;
+pub const AWARD_FRAGS: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 4;
+pub const AWARD_PERFECT: crate::src::qcommon::q_shared::C2RustUnnamed_0 = 5;

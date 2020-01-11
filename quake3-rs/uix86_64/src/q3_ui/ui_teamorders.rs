@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -333,7 +333,6 @@ pub use crate::src::ui::ui_syscalls::trap_GetClientState;
 pub use crate::src::ui::ui_syscalls::trap_GetConfigString;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 use crate::stdlib::memset;
-pub use crate::stdlib::strtol;
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
 pub use crate::ui_local_h::menucommon_s;
@@ -341,6 +340,7 @@ pub use crate::ui_local_h::menuframework_s;
 pub use crate::ui_local_h::menulist_s;
 pub use crate::ui_local_h::menutext_s;
 pub use crate::ui_local_h::uiStatic_t;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -580,10 +580,14 @@ pub unsafe extern "C" fn UI_TeamOrdersMenu_Key(
     let mut x: libc::c_int = 0;
     let mut y: libc::c_int = 0;
     let mut index: libc::c_int = 0;
-    l = crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(&mut teamOrdersMenuInfo.menu)
-        as *mut crate::ui_local_h::menulist_s;
+    l = crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(
+        &mut teamOrdersMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    ) as *mut crate::ui_local_h::menulist_s;
     if l != &mut teamOrdersMenuInfo.list as *mut crate::ui_local_h::menulist_s {
-        return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(&mut teamOrdersMenuInfo.menu, key);
+        return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(
+            &mut teamOrdersMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+            key,
+        );
     }
     match key {
         178 => {
@@ -630,7 +634,10 @@ pub unsafe extern "C" fn UI_TeamOrdersMenu_Key(
         }
         _ => {}
     }
-    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(&mut teamOrdersMenuInfo.menu, key);
+    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(
+        &mut teamOrdersMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        key,
+    );
 }
 /*
 =================
@@ -751,7 +758,9 @@ unsafe extern "C" fn UI_TeamOrdersMenu_BuildBotList() {
         teamOrdersMenuInfo.bots[n as usize] = teamOrdersMenuInfo.botNames[n as usize].as_mut_ptr();
         n += 1
     }
-    crate::src::ui::ui_syscalls::trap_GetClientState(&mut cs);
+    crate::src::ui::ui_syscalls::trap_GetClientState(
+        &mut cs as *mut _ as *mut crate::ui_public_h::uiClientState_t,
+    );
     crate::src::qcommon::q_shared::Q_strncpyz(
         teamOrdersMenuInfo.botNames[0 as libc::c_int as usize].as_mut_ptr(),
         b"Everyone\x00" as *const u8 as *const libc::c_char,
@@ -874,19 +883,19 @@ unsafe extern "C" fn UI_TeamOrdersMenu_Init() {
     teamOrdersMenuInfo.back.focuspic =
         b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut teamOrdersMenuInfo.menu,
+        &mut teamOrdersMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut teamOrdersMenuInfo.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut teamOrdersMenuInfo.menu,
+        &mut teamOrdersMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut teamOrdersMenuInfo.frame as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut teamOrdersMenuInfo.menu,
+        &mut teamOrdersMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut teamOrdersMenuInfo.list as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut teamOrdersMenuInfo.menu,
+        &mut teamOrdersMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut teamOrdersMenuInfo.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     teamOrdersMenuInfo.list.generic.left = 220 as libc::c_int;
@@ -921,7 +930,9 @@ UI_TeamOrdersMenu
 
 pub unsafe extern "C" fn UI_TeamOrdersMenu() {
     UI_TeamOrdersMenu_Init();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut teamOrdersMenuInfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut teamOrdersMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }
 /*
 ===========================================================================
@@ -1101,7 +1112,9 @@ pub unsafe extern "C" fn UI_TeamOrdersMenu_f() {
         return;
     }
     // not available to spectators
-    crate::src::ui::ui_syscalls::trap_GetClientState(&mut cs);
+    crate::src::ui::ui_syscalls::trap_GetClientState(
+        &mut cs as *mut _ as *mut crate::ui_public_h::uiClientState_t,
+    );
     crate::src::ui::ui_syscalls::trap_GetConfigString(
         32 as libc::c_int + 256 as libc::c_int + 256 as libc::c_int + cs.clientNum,
         info.as_mut_ptr(),

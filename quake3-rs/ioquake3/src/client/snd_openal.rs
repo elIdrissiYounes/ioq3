@@ -203,9 +203,9 @@ use crate::stdlib::fmodf;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
 use crate::stdlib::sqrt;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
+use ::libc::strcmp;
+use ::libc::strcpy;
 //===========================================================================
 
 pub type src_t = src_s;
@@ -567,7 +567,7 @@ unsafe extern "C" fn S_AL_BufferFind(
             ::std::mem::size_of::<alSfx_t>() as libc::c_ulong,
         );
         (*ptr).masterLoopSrc = -(1 as libc::c_int);
-        crate::stdlib::strcpy((*ptr).filename.as_mut_ptr(), filename);
+        ::libc::strcpy((*ptr).filename.as_mut_ptr(), filename);
     }
     // Return the handle
     return sfx;
@@ -727,7 +727,10 @@ unsafe extern "C" fn S_AL_BufferLoad(
         return;
     }
     // Try to load
-    data = crate::src::client::snd_codec::S_CodecLoad((*curSfx).filename.as_mut_ptr(), &mut info);
+    data = crate::src::client::snd_codec::S_CodecLoad(
+        (*curSfx).filename.as_mut_ptr(),
+        &mut info as *mut _ as *mut crate::src::client::snd_codec::snd_info_s,
+    );
     if data.is_null() {
         S_AL_BufferUseDefault(sfx);
         return;
@@ -2663,11 +2666,15 @@ S_AL_CloseMusicFiles
 
 unsafe extern "C" fn S_AL_CloseMusicFiles() {
     if !intro_stream.is_null() {
-        crate::src::client::snd_codec::S_CodecCloseStream(intro_stream);
+        crate::src::client::snd_codec::S_CodecCloseStream(
+            intro_stream as *mut crate::src::client::snd_codec::snd_stream_s,
+        );
         intro_stream = 0 as *mut crate::src::client::snd_codec::snd_stream_t
     }
     if !mus_stream.is_null() {
-        crate::src::client::snd_codec::S_CodecCloseStream(mus_stream);
+        crate::src::client::snd_codec::S_CodecCloseStream(
+            mus_stream as *mut crate::src::client::snd_codec::snd_stream_s,
+        );
         mus_stream = 0 as *mut crate::src::client::snd_codec::snd_stream_t
     };
 }
@@ -2722,13 +2729,15 @@ unsafe extern "C" fn S_AL_MusicProcess(mut b: crate::al_h::ALuint) {
         return;
     }
     l = crate::src::client::snd_codec::S_CodecReadStream(
-        curstream,
+        curstream as *mut crate::src::client::snd_codec::snd_stream_s,
         4096 as libc::c_int,
         decode_buffer.as_mut_ptr() as *mut libc::c_void,
     );
     // Run out data to read, start at the beginning again
     if l == 0 as libc::c_int {
-        crate::src::client::snd_codec::S_CodecCloseStream(curstream);
+        crate::src::client::snd_codec::S_CodecCloseStream(
+            curstream as *mut crate::src::client::snd_codec::snd_stream_s,
+        );
         // the intro stream just finished playing so we don't need to reopen
         // the music stream.
         if !intro_stream.is_null() {
@@ -2736,6 +2745,7 @@ unsafe extern "C" fn S_AL_MusicProcess(mut b: crate::al_h::ALuint) {
         } else {
             mus_stream =
                 crate::src::client::snd_codec::S_CodecOpenStream(s_backgroundLoop.as_mut_ptr())
+                    as *mut crate::src::client::snd_codec::snd_stream_s
         }
         curstream = mus_stream;
         if curstream.is_null() {
@@ -2743,7 +2753,7 @@ unsafe extern "C" fn S_AL_MusicProcess(mut b: crate::al_h::ALuint) {
             return;
         }
         l = crate::src::client::snd_codec::S_CodecReadStream(
-            curstream,
+            curstream as *mut crate::src::client::snd_codec::snd_stream_s,
             4096 as libc::c_int,
             decode_buffer.as_mut_ptr() as *mut libc::c_void,
         )
@@ -2805,10 +2815,7 @@ unsafe extern "C" fn S_AL_StartBackgroundTrack(
     if loop_0.is_null() || *loop_0 == 0 {
         loop_0 = intro;
         issame = crate::src::qcommon::q_shared::qtrue
-    } else if !intro.is_null()
-        && *intro as libc::c_int != 0
-        && crate::stdlib::strcmp(intro, loop_0) == 0
-    {
+    } else if !intro.is_null() && *intro as libc::c_int != 0 && ::libc::strcmp(intro, loop_0) == 0 {
         issame = crate::src::qcommon::q_shared::qtrue
     } else {
         issame = crate::src::qcommon::q_shared::qfalse
@@ -2823,10 +2830,12 @@ unsafe extern "C" fn S_AL_StartBackgroundTrack(
         // Open the intro and don't mind whether it succeeds.
         // The important part is the loop.
         intro_stream = crate::src::client::snd_codec::S_CodecOpenStream(intro)
+            as *mut crate::src::client::snd_codec::snd_stream_s
     } else {
         intro_stream = 0 as *mut crate::src::client::snd_codec::snd_stream_t
     }
-    mus_stream = crate::src::client::snd_codec::S_CodecOpenStream(s_backgroundLoop.as_mut_ptr());
+    mus_stream = crate::src::client::snd_codec::S_CodecOpenStream(s_backgroundLoop.as_mut_ptr())
+        as *mut crate::src::client::snd_codec::snd_stream_s;
     if mus_stream.is_null() {
         S_AL_CloseMusicFiles();
         S_AL_MusicSourceFree();
@@ -3372,62 +3381,62 @@ pub unsafe extern "C" fn S_AL_Init(
         b"s_alPrecache\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_alGain = crate::src::qcommon::cvar::Cvar_Get(
         b"s_alGain\x00" as *const u8 as *const libc::c_char,
         b"1.0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_alSources = crate::src::qcommon::cvar::Cvar_Get(
         b"s_alSources\x00" as *const u8 as *const libc::c_char,
         b"96\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_alDopplerFactor = crate::src::qcommon::cvar::Cvar_Get(
         b"s_alDopplerFactor\x00" as *const u8 as *const libc::c_char,
         b"1.0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_alDopplerSpeed = crate::src::qcommon::cvar::Cvar_Get(
         b"s_alDopplerSpeed\x00" as *const u8 as *const libc::c_char,
         b"9000\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_alMinDistance = crate::src::qcommon::cvar::Cvar_Get(
         b"s_alMinDistance\x00" as *const u8 as *const libc::c_char,
         b"120\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_alMaxDistance = crate::src::qcommon::cvar::Cvar_Get(
         b"s_alMaxDistance\x00" as *const u8 as *const libc::c_char,
         b"1024\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_alRolloff = crate::src::qcommon::cvar::Cvar_Get(
         b"s_alRolloff\x00" as *const u8 as *const libc::c_char,
         b"2\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_alGraceDistance = crate::src::qcommon::cvar::Cvar_Get(
         b"s_alGraceDistance\x00" as *const u8 as *const libc::c_char,
         b"512\x00" as *const u8 as *const libc::c_char,
         0x200 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_alDriver = crate::src::qcommon::cvar::Cvar_Get(
         b"s_alDriver\x00" as *const u8 as *const libc::c_char,
         b"libopenal.so.1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x20 as libc::c_int | 0x2000 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_alInputDevice = crate::src::qcommon::cvar::Cvar_Get(
         b"s_alInputDevice\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x20 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     s_alDevice = crate::src::qcommon::cvar::Cvar_Get(
         b"s_alDevice\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x20 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     // Load QAL
     if crate::src::client::qal::QAL_Init((*s_alDriver).string) as u64 == 0 {
         crate::src::qcommon::common::Com_Printf(
@@ -3509,7 +3518,7 @@ pub unsafe extern "C" fn S_AL_Init(
             b"s_alAvailableDevices\x00" as *const u8 as *const libc::c_char,
             devicenames.as_mut_ptr(),
             0x40 as libc::c_int | 0x400 as libc::c_int,
-        )
+        ) as *mut crate::src::qcommon::q_shared::cvar_s
     }
     alDevice = crate::src::client::qal::qalcOpenDevice.expect("non-null function pointer")(device);
     if alDevice.is_null() && !device.is_null() {
@@ -3563,7 +3572,7 @@ pub unsafe extern "C" fn S_AL_Init(
         b"s_alCapture\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x20 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     if (*s_alCapture).integer == 0 {
         crate::src::qcommon::common::Com_Printf(
             b"OpenAL capture support disabled by user (\'+set s_alCapture 1\' to enable)\n\x00"
@@ -3626,7 +3635,7 @@ pub unsafe extern "C" fn S_AL_Init(
             b"s_alAvailableInputDevices\x00" as *const u8 as *const libc::c_char,
             inputdevicenames.as_mut_ptr(),
             0x40 as libc::c_int | 0x400 as libc::c_int,
-        );
+        ) as *mut crate::src::qcommon::q_shared::cvar_s;
         crate::src::qcommon::common::Com_Printf(
             b"OpenAL default capture device is \'%s\'\n\x00" as *const u8 as *const libc::c_char,
             if !defaultinputdevice.is_null() {

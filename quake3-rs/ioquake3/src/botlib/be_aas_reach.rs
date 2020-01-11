@@ -47,7 +47,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -132,14 +132,14 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-pub use crate::stdlib::abs;
 use crate::stdlib::fabs;
 use crate::stdlib::fabsf;
 use crate::stdlib::memset;
 use crate::stdlib::sqrt;
-use crate::stdlib::strcmp;
-pub use crate::stdlib::strtol;
 use crate::stdlib::tan;
+pub use ::libc::abs;
+use ::libc::strcmp;
+pub use ::libc::strtol;
 
 use crate::src::botlib::be_aas_bspq3::AAS_BSPModelMinsMaxsOrigin;
 use crate::src::botlib::be_aas_bspq3::AAS_FloatForBSPEpairKey;
@@ -359,8 +359,7 @@ pub unsafe extern "C" fn AAS_FaceArea(
     edge = &mut *crate::src::botlib::be_aas_main::aasworld
         .edges
         .offset(
-            (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum)
-                as isize,
+            (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum) as isize,
         ) as *mut crate::aasfile_h::aas_edge_t;
     v = (*crate::src::botlib::be_aas_main::aasworld
         .vertexes
@@ -376,7 +375,7 @@ pub unsafe extern "C" fn AAS_FaceArea(
         edge = &mut *crate::src::botlib::be_aas_main::aasworld
             .edges
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum)
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum)
                     as isize,
             ) as *mut crate::aasfile_h::aas_edge_t;
         d1[0 as libc::c_int as usize] = (*crate::src::botlib::be_aas_main::aasworld
@@ -451,8 +450,7 @@ pub unsafe extern "C" fn AAS_AreaVolume(mut areanum: libc::c_int) -> libc::c_flo
     face = &mut *crate::src::botlib::be_aas_main::aasworld
         .faces
         .offset(
-            (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(facenum)
-                as isize,
+            (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(facenum) as isize,
         ) as *mut crate::aasfile_h::aas_face_t;
     edgenum = *crate::src::botlib::be_aas_main::aasworld
         .edgeindex
@@ -460,8 +458,7 @@ pub unsafe extern "C" fn AAS_AreaVolume(mut areanum: libc::c_int) -> libc::c_flo
     edge = &mut *crate::src::botlib::be_aas_main::aasworld
         .edges
         .offset(
-            (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum)
-                as isize,
+            (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum) as isize,
         ) as *mut crate::aasfile_h::aas_edge_t;
     //
     corner[0 as libc::c_int as usize] = (*crate::src::botlib::be_aas_main::aasworld
@@ -477,7 +474,7 @@ pub unsafe extern "C" fn AAS_AreaVolume(mut areanum: libc::c_int) -> libc::c_flo
     volume = 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t; //end for
     i = 0 as libc::c_int;
     while i < (*area).numfaces {
-        facenum = crate::stdlib::abs(
+        facenum = ::libc::abs(
             *crate::src::botlib::be_aas_main::aasworld
                 .faceindex
                 .offset(((*area).firstface + i) as isize),
@@ -642,7 +639,7 @@ pub unsafe extern "C" fn AAS_GetJumpPadInfo(
         origin.as_mut_ptr(),
         4 as libc::c_int,
         -(1 as libc::c_int),
-    );
+    ) as crate::be_aas_h::aas_trace_s;
     if trace.startsolid as u64 != 0 {
         botimport.Print.expect("non-null function pointer")(
             1 as libc::c_int,
@@ -677,7 +674,7 @@ pub unsafe extern "C" fn AAS_GetJumpPadInfo(
             128 as libc::c_int,
         ) == 0)
         {
-            if crate::stdlib::strcmp(targetname.as_mut_ptr(), target.as_mut_ptr()) == 0 {
+            if ::libc::strcmp(targetname.as_mut_ptr(), target.as_mut_ptr()) == 0 {
                 break;
             }
         }
@@ -803,7 +800,7 @@ pub unsafe extern "C" fn AAS_BestReachableFromJumpPadArea(
             128 as libc::c_int,
         ) == 0)
         {
-            if !(crate::stdlib::strcmp(
+            if !(::libc::strcmp(
                 classname.as_mut_ptr(),
                 b"trigger_push\x00" as *const u8 as *const libc::c_char,
             ) != 0)
@@ -823,7 +820,7 @@ pub unsafe extern "C" fn AAS_BestReachableFromJumpPadArea(
                         absmaxs.as_mut_ptr(),
                         -(1 as libc::c_int),
                         4 as libc::c_int,
-                    ); //end for
+                    ) as *mut crate::be_aas_def_h::aas_link_s; //end for
                     link = areas; //end if
                     while !link.is_null() {
                         if AAS_AreaJumpPad((*link).areanum) != 0 {
@@ -838,7 +835,9 @@ pub unsafe extern "C" fn AAS_BestReachableFromJumpPadArea(
                                 as *const libc::c_char
                                 as *mut libc::c_char,
                         );
-                        crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(areas);
+                        crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(
+                            areas as *mut crate::be_aas_def_h::aas_link_s,
+                        );
                     } else {
                         //
                         //botimport.Print(PRT_MESSAGE, "found a trigger_push with velocity %f %f %f\n", velocity[0], velocity[1], velocity[2]);
@@ -857,7 +856,7 @@ pub unsafe extern "C" fn AAS_BestReachableFromJumpPadArea(
                                 as libc::c_ulong,
                         );
                         crate::src::botlib::be_aas_move::AAS_ClientMovementHitBBox(
-                            &mut move_0,
+                            &mut move_0 as *mut _ as *mut crate::be_aas_h::aas_clientmove_s,
                             -(1 as libc::c_int),
                             areastart.as_mut_ptr(),
                             2 as libc::c_int,
@@ -886,10 +885,14 @@ pub unsafe extern "C" fn AAS_BestReachableFromJumpPadArea(
                                 link = (*link).next_area
                                 //end if
                             }
-                            crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(areas);
+                            crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(
+                                areas as *mut crate::be_aas_def_h::aas_link_s,
+                            );
                             return bestareanum;
                         }
-                        crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(areas);
+                        crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(
+                            areas as *mut crate::be_aas_def_h::aas_link_s,
+                        );
                     }
                 }
             }
@@ -993,7 +996,7 @@ pub unsafe extern "C" fn AAS_BestReachableArea(
             end.as_mut_ptr(),
             4 as libc::c_int,
             -(1 as libc::c_int),
-        );
+        ) as crate::be_aas_h::aas_trace_s;
         if trace.startsolid as u64 == 0 {
             //end else
             areanum =
@@ -1047,11 +1050,13 @@ pub unsafe extern "C" fn AAS_BestReachableArea(
         absmaxs.as_mut_ptr(),
         -(1 as libc::c_int),
         4 as libc::c_int,
-    );
+    ) as *mut crate::be_aas_def_h::aas_link_s;
     //get the reachable link area
     areanum = AAS_BestReachableLinkArea(areas);
     //unlink the invalid entity
-    crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(areas);
+    crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(
+        areas as *mut crate::be_aas_def_h::aas_link_s,
+    );
     //
     return areanum;
 }
@@ -1192,7 +1197,7 @@ pub unsafe extern "C" fn AAS_AreaGroundFaceArea(mut areanum: libc::c_int) -> lib
         face = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
                     *crate::src::botlib::be_aas_main::aasworld
                         .faceindex
                         .offset(((*area).firstface + i) as isize),
@@ -1237,7 +1242,7 @@ pub unsafe extern "C" fn AAS_FaceCenter(
         edge = &mut *crate::src::botlib::be_aas_main::aasworld
             .edges
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
                     *crate::src::botlib::be_aas_main::aasworld
                         .edgeindex
                         .offset(((*face).firstedge + i) as isize),
@@ -1751,11 +1756,11 @@ pub unsafe extern "C" fn AAS_Reachability_Swim(
             .faceindex
             .offset(((*area1).firstface + i) as isize);
         side1 = (face1num < 0 as libc::c_int) as libc::c_int;
-        face1num = crate::stdlib::abs(face1num);
+        face1num = ::libc::abs(face1num);
         //end for
         j = 0 as libc::c_int;
         while j < (*area2).numfaces {
-            face2num = crate::stdlib::abs(
+            face2num = ::libc::abs(
                 *crate::src::botlib::be_aas_main::aasworld
                     .faceindex
                     .offset(((*area2).firstface + j) as isize),
@@ -1930,7 +1935,7 @@ pub unsafe extern "C" fn AAS_Reachability_EqualFloorHeight(
         face1 = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
                     *crate::src::botlib::be_aas_main::aasworld
                         .faceindex
                         .offset(((*area1).firstface + i) as isize),
@@ -1941,13 +1946,15 @@ pub unsafe extern "C" fn AAS_Reachability_EqualFloorHeight(
             //
             j = 0 as libc::c_int;
             while j < (*area2).numfaces {
-                face2 = &mut *crate::src::botlib::be_aas_main::aasworld.faces.offset(
-                    (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                        *crate::src::botlib::be_aas_main::aasworld
-                            .faceindex
-                            .offset(((*area2).firstface + j) as isize),
-                    ) as isize,
-                ) as *mut crate::aasfile_h::aas_face_t;
+                face2 = &mut *crate::src::botlib::be_aas_main::aasworld
+                    .faces
+                    .offset(
+                        (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
+                            *crate::src::botlib::be_aas_main::aasworld
+                                .faceindex
+                                .offset(((*area2).firstface + j) as isize),
+                        ) as isize,
+                    ) as *mut crate::aasfile_h::aas_face_t;
                 if !((*face2).faceflags & 4 as libc::c_int == 0) {
                     //end for
                     //if there is a common edge
@@ -1955,11 +1962,11 @@ pub unsafe extern "C" fn AAS_Reachability_EqualFloorHeight(
                     while edgenum1 < (*face1).numedges {
                         edgenum2 = 0 as libc::c_int;
                         while edgenum2 < (*face2).numedges {
-                            if !(crate::stdlib::abs(
+                            if !(::libc::abs(
                                 *crate::src::botlib::be_aas_main::aasworld
                                     .edgeindex
                                     .offset(((*face1).firstedge + edgenum1) as isize),
-                            ) != crate::stdlib::abs(
+                            ) != ::libc::abs(
                                 *crate::src::botlib::be_aas_main::aasworld
                                     .edgeindex
                                     .offset(((*face2).firstedge + edgenum2) as isize),
@@ -1969,7 +1976,7 @@ pub unsafe extern "C" fn AAS_Reachability_EqualFloorHeight(
                                     .offset(((*face1).firstedge + edgenum1) as isize);
                                 side = (edgenum < 0 as libc::c_int) as libc::c_int;
                                 edge = &mut *crate::src::botlib::be_aas_main::aasworld.edges.offset(
-                                    (crate::stdlib::abs
+                                    (::libc::abs
                                         as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
                                         edgenum,
                                     ) as isize,
@@ -2386,14 +2393,12 @@ pub unsafe extern "C" fn AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(
             .faceindex
             .offset(((*area1).firstface + i) as isize);
         faceside1 = (groundface1num < 0 as libc::c_int) as libc::c_int;
-        groundface1 =
-            &mut *crate::src::botlib::be_aas_main::aasworld
-                .faces
-                .offset(
-                    (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                        groundface1num,
-                    ) as isize,
-                ) as *mut crate::aasfile_h::aas_face_t;
+        groundface1 = &mut *crate::src::botlib::be_aas_main::aasworld
+            .faces
+            .offset(
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(groundface1num)
+                    as isize,
+            ) as *mut crate::aasfile_h::aas_face_t;
         //end for
         //if this isn't a ground face
         if (*groundface1).faceflags & 4 as libc::c_int == 0 {
@@ -2438,7 +2443,7 @@ pub unsafe extern "C" fn AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(
                     if (*groundface1).faceflags & 4 as libc::c_int == 0 {
                         side1 = (side1 == faceside1) as libc::c_int
                     }
-                    edge1num = crate::stdlib::abs(edge1num);
+                    edge1num = ::libc::abs(edge1num);
                     edge1 = &mut *crate::src::botlib::be_aas_main::aasworld
                         .edges
                         .offset(edge1num as isize)
@@ -2485,8 +2490,7 @@ pub unsafe extern "C" fn AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(
                     j = 0 as libc::c_int;
                     while j < (*area2).numfaces {
                         groundface2 = &mut *crate::src::botlib::be_aas_main::aasworld.faces.offset(
-                            (crate::stdlib::abs
-                                as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
+                            (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
                                 *crate::src::botlib::be_aas_main::aasworld
                                     .faceindex
                                     .offset(((*area2).firstface + j) as isize),
@@ -2507,7 +2511,7 @@ pub unsafe extern "C" fn AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(
                             //check the edges of this ground face
                             l = 0 as libc::c_int;
                             while l < (*groundface2).numedges {
-                                edge2num = crate::stdlib::abs(
+                                edge2num = ::libc::abs(
                                     *crate::src::botlib::be_aas_main::aasworld
                                         .edgeindex
                                         .offset(((*groundface2).firstedge + l) as isize),
@@ -3376,7 +3380,7 @@ pub unsafe extern "C" fn AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(
                     end.as_mut_ptr(),
                     2 as libc::c_int,
                     -(1 as libc::c_int),
-                );
+                ) as crate::be_aas_h::aas_trace_s;
                 //end if
                 if trace.startsolid as u64 == 0 && trace.fraction as libc::c_double >= 1.0f64 {
                     //if no solids were found
@@ -4341,9 +4345,8 @@ pub unsafe extern "C" fn AAS_Reachability_Jump(
         face1 = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                    face1num,
-                ) as isize,
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(face1num)
+                    as isize,
             ) as *mut crate::aasfile_h::aas_face_t;
         //end for
         //if not a ground face
@@ -4354,18 +4357,20 @@ pub unsafe extern "C" fn AAS_Reachability_Jump(
                 face2num = *crate::src::botlib::be_aas_main::aasworld
                     .faceindex
                     .offset(((*area2).firstface + j) as isize);
-                face2 = &mut *crate::src::botlib::be_aas_main::aasworld.faces.offset(
-                    (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                        face2num,
-                    ) as isize,
-                ) as *mut crate::aasfile_h::aas_face_t;
+                face2 = &mut *crate::src::botlib::be_aas_main::aasworld
+                    .faces
+                    .offset(
+                        (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
+                            face2num,
+                        ) as isize,
+                    ) as *mut crate::aasfile_h::aas_face_t;
                 //end for
                 //if not a ground face
                 if !((*face2).faceflags & 4 as libc::c_int == 0) {
                     //
                     k = 0 as libc::c_int;
                     while k < (*face1).numedges {
-                        edge1num = crate::stdlib::abs(
+                        edge1num = ::libc::abs(
                             *crate::src::botlib::be_aas_main::aasworld
                                 .edgeindex
                                 .offset(((*face1).firstedge + k) as isize),
@@ -4376,7 +4381,7 @@ pub unsafe extern "C" fn AAS_Reachability_Jump(
                             as *mut crate::aasfile_h::aas_edge_t;
                         l = 0 as libc::c_int;
                         while l < (*face2).numedges {
-                            edge2num = crate::stdlib::abs(
+                            edge2num = ::libc::abs(
                                 *crate::src::botlib::be_aas_main::aasworld
                                     .edgeindex
                                     .offset(((*face2).firstedge + l) as isize),
@@ -4522,7 +4527,7 @@ pub unsafe extern "C" fn AAS_Reachability_Jump(
             testend.as_mut_ptr(),
             2 as libc::c_int,
             -(1 as libc::c_int),
-        );
+        ) as crate::be_aas_h::aas_trace_s;
         //
         if trace.startsolid as u64 != 0 {
             return crate::src::qcommon::q_shared::qfalse as libc::c_int;
@@ -4572,7 +4577,7 @@ pub unsafe extern "C" fn AAS_Reachability_Jump(
             testend.as_mut_ptr(),
             2 as libc::c_int,
             -(1 as libc::c_int),
-        );
+        ) as crate::be_aas_h::aas_trace_s;
         //
         if trace.startsolid as u64 != 0 {
             return crate::src::qcommon::q_shared::qfalse as libc::c_int;
@@ -4678,7 +4683,7 @@ pub unsafe extern "C" fn AAS_Reachability_Jump(
             velocity[2 as libc::c_int as usize] = dir[2 as libc::c_int as usize] * speed;
             //
             crate::src::botlib::be_aas_move::AAS_PredictClientMovement(
-                &mut move_0,
+                &mut move_0 as *mut _ as *mut crate::be_aas_h::aas_clientmove_s,
                 -(1 as libc::c_int),
                 beststart.as_mut_ptr(),
                 2 as libc::c_int,
@@ -4905,9 +4910,8 @@ pub unsafe extern "C" fn AAS_Reachability_Ladder(
         face1 = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                    face1num,
-                ) as isize,
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(face1num)
+                    as isize,
             ) as *mut crate::aasfile_h::aas_face_t;
         //end for
         //if not a ladder face
@@ -4918,11 +4922,13 @@ pub unsafe extern "C" fn AAS_Reachability_Ladder(
                 face2num = *crate::src::botlib::be_aas_main::aasworld
                     .faceindex
                     .offset(((*area2).firstface + j) as isize);
-                face2 = &mut *crate::src::botlib::be_aas_main::aasworld.faces.offset(
-                    (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                        face2num,
-                    ) as isize,
-                ) as *mut crate::aasfile_h::aas_face_t;
+                face2 = &mut *crate::src::botlib::be_aas_main::aasworld
+                    .faces
+                    .offset(
+                        (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
+                            face2num,
+                        ) as isize,
+                    ) as *mut crate::aasfile_h::aas_face_t;
                 //end for
                 //if not a ladder face
                 if !((*face2).faceflags & 2 as libc::c_int == 0) {
@@ -4937,7 +4943,7 @@ pub unsafe extern "C" fn AAS_Reachability_Ladder(
                             edge2num = *crate::src::botlib::be_aas_main::aasworld
                                 .edgeindex
                                 .offset(((*face2).firstedge + l) as isize);
-                            if crate::stdlib::abs(edge1num) == crate::stdlib::abs(edge2num) {
+                            if ::libc::abs(edge1num) == ::libc::abs(edge2num) {
                                 //end if
                                 //get the face with the largest area
                                 face1area = AAS_FaceArea(face1); //end if
@@ -4971,14 +4977,12 @@ pub unsafe extern "C" fn AAS_Reachability_Ladder(
     if !ladderface1.is_null() && !ladderface2.is_null() {
         //end if
         //get the middle of the shared edge
-        sharededge =
-            &mut *crate::src::botlib::be_aas_main::aasworld
-                .edges
-                .offset(
-                    (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                        sharededgenum,
-                    ) as isize,
-                ) as *mut crate::aasfile_h::aas_edge_t;
+        sharededge = &mut *crate::src::botlib::be_aas_main::aasworld
+            .edges
+            .offset(
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(sharededgenum)
+                    as isize,
+            ) as *mut crate::aasfile_h::aas_edge_t;
         firstv = (sharededgenum < 0 as libc::c_int) as libc::c_int;
         //end if
         v1[0 as libc::c_int as usize] = (*crate::src::botlib::be_aas_main::aasworld
@@ -5098,7 +5102,7 @@ pub unsafe extern "C" fn AAS_Reachability_Ladder(
             }
             (*lreach).areanum = area2num;
             (*lreach).facenum = ladderface1num;
-            (*lreach).edgenum = crate::stdlib::abs(sharededgenum);
+            (*lreach).edgenum = ::libc::abs(sharededgenum);
             (*lreach).start[0 as libc::c_int as usize] = area1point[0 as libc::c_int as usize];
             (*lreach).start[1 as libc::c_int as usize] = area1point[1 as libc::c_int as usize];
             (*lreach).start[2 as libc::c_int as usize] = area1point[2 as libc::c_int as usize];
@@ -5126,7 +5130,7 @@ pub unsafe extern "C" fn AAS_Reachability_Ladder(
             }
             (*lreach).areanum = area1num;
             (*lreach).facenum = ladderface2num;
-            (*lreach).edgenum = crate::stdlib::abs(sharededgenum);
+            (*lreach).edgenum = ::libc::abs(sharededgenum);
             (*lreach).start[0 as libc::c_int as usize] = area2point[0 as libc::c_int as usize];
             (*lreach).start[1 as libc::c_int as usize] = area2point[1 as libc::c_int as usize];
             (*lreach).start[2 as libc::c_int as usize] = area2point[2 as libc::c_int as usize];
@@ -5162,7 +5166,7 @@ pub unsafe extern "C" fn AAS_Reachability_Ladder(
             }
             (*lreach).areanum = area2num;
             (*lreach).facenum = ladderface1num;
-            (*lreach).edgenum = crate::stdlib::abs(sharededgenum);
+            (*lreach).edgenum = ::libc::abs(sharededgenum);
             (*lreach).start[0 as libc::c_int as usize] = area1point[0 as libc::c_int as usize];
             (*lreach).start[1 as libc::c_int as usize] = area1point[1 as libc::c_int as usize];
             (*lreach).start[2 as libc::c_int as usize] = area1point[2 as libc::c_int as usize];
@@ -5193,7 +5197,7 @@ pub unsafe extern "C" fn AAS_Reachability_Ladder(
             }
             (*lreach).areanum = area1num;
             (*lreach).facenum = ladderface2num;
-            (*lreach).edgenum = crate::stdlib::abs(sharededgenum);
+            (*lreach).edgenum = ::libc::abs(sharededgenum);
             (*lreach).start[0 as libc::c_int as usize] = area2point[0 as libc::c_int as usize];
             (*lreach).start[1 as libc::c_int as usize] = area2point[1 as libc::c_int as usize];
             (*lreach).start[2 as libc::c_int as usize] = area2point[2 as libc::c_int as usize];
@@ -5263,7 +5267,7 @@ pub unsafe extern "C" fn AAS_Reachability_Ladder(
             } //end if*/
             i = 0 as libc::c_int; //end for
             while i < (*ladderface1).numedges {
-                edge1num = crate::stdlib::abs(
+                edge1num = ::libc::abs(
                     *crate::src::botlib::be_aas_main::aasworld
                         .edgeindex
                         .offset(((*ladderface1).firstedge + i) as isize),
@@ -5340,7 +5344,7 @@ pub unsafe extern "C" fn AAS_Reachability_Ladder(
                 end.as_mut_ptr(),
                 2 as libc::c_int,
                 -(1 as libc::c_int),
-            );
+            ) as crate::be_aas_h::aas_trace_s;
             trace.endpos[2 as libc::c_int as usize] += 1 as libc::c_int as libc::c_float;
             area2num =
                 crate::src::botlib::be_aas_sample::AAS_PointAreaNum(trace.endpos.as_mut_ptr());
@@ -5352,11 +5356,13 @@ pub unsafe extern "C" fn AAS_Reachability_Ladder(
                 face2num = *crate::src::botlib::be_aas_main::aasworld
                     .faceindex
                     .offset(((*area2).firstface + i) as isize);
-                face2 = &mut *crate::src::botlib::be_aas_main::aasworld.faces.offset(
-                    (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                        face2num,
-                    ) as isize,
-                ) as *mut crate::aasfile_h::aas_face_t;
+                face2 = &mut *crate::src::botlib::be_aas_main::aasworld
+                    .faces
+                    .offset(
+                        (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
+                            face2num,
+                        ) as isize,
+                    ) as *mut crate::aasfile_h::aas_face_t;
                 //
                 //
                 //
@@ -5582,7 +5588,7 @@ pub unsafe extern "C" fn AAS_Reachability_Teleport() {
             128 as libc::c_int,
         ) == 0)
         {
-            if crate::stdlib::strcmp(
+            if ::libc::strcmp(
                 classname.as_mut_ptr(),
                 b"trigger_multiple\x00" as *const u8 as *const libc::c_char,
             ) == 0
@@ -5642,7 +5648,7 @@ pub unsafe extern "C" fn AAS_Reachability_Teleport() {
                             128 as libc::c_int,
                         ) == 0)
                         {
-                            if crate::stdlib::strcmp(
+                            if ::libc::strcmp(
                                 classname.as_mut_ptr(),
                                 b"target_teleporter\x00" as *const u8 as *const libc::c_char,
                             ) == 0
@@ -5655,10 +5661,8 @@ pub unsafe extern "C" fn AAS_Reachability_Teleport() {
                                     128 as libc::c_int,
                                 ) == 0)
                                 {
-                                    if crate::stdlib::strcmp(
-                                        targetname.as_mut_ptr(),
-                                        target.as_mut_ptr(),
-                                    ) == 0
+                                    if ::libc::strcmp(targetname.as_mut_ptr(), target.as_mut_ptr())
+                                        == 0
                                     {
                                         break;
                                     }
@@ -5689,7 +5693,7 @@ pub unsafe extern "C" fn AAS_Reachability_Teleport() {
                         current_block_61 = 3123434771885419771;
                     }
                 }
-            } else if crate::stdlib::strcmp(
+            } else if ::libc::strcmp(
                 classname.as_mut_ptr(),
                 b"trigger_teleport\x00" as *const u8 as *const libc::c_char,
             ) == 0
@@ -5760,9 +5764,7 @@ pub unsafe extern "C" fn AAS_Reachability_Teleport() {
                             128 as libc::c_int,
                         ) != 0
                         {
-                            if crate::stdlib::strcmp(targetname.as_mut_ptr(), target.as_mut_ptr())
-                                == 0
-                            {
+                            if ::libc::strcmp(targetname.as_mut_ptr(), target.as_mut_ptr()) == 0 {
                                 break;
                                 //end if
                             }
@@ -5807,7 +5809,7 @@ pub unsafe extern "C" fn AAS_Reachability_Teleport() {
                                 end.as_mut_ptr(),
                                 4 as libc::c_int,
                                 -(1 as libc::c_int),
-                            );
+                            ) as crate::be_aas_h::aas_trace_s;
                             //end else
                             if trace.startsolid as u64 != 0 {
                                 botimport.Print.expect("non-null function pointer")(
@@ -5873,7 +5875,7 @@ pub unsafe extern "C" fn AAS_Reachability_Teleport() {
                                 cmdmove[0 as libc::c_int as usize] =
                                     cmdmove[1 as libc::c_int as usize];
                                 crate::src::botlib::be_aas_move::AAS_PredictClientMovement(
-                                    &mut move_0,
+                                    &mut move_0 as *mut _ as *mut crate::be_aas_h::aas_clientmove_s,
                                     -(1 as libc::c_int),
                                     destorigin.as_mut_ptr(),
                                     2 as libc::c_int,
@@ -5958,7 +5960,8 @@ pub unsafe extern "C" fn AAS_Reachability_Teleport() {
                                     maxs.as_mut_ptr(),
                                     -(1 as libc::c_int),
                                     4 as libc::c_int,
-                                );
+                                )
+                                    as *mut crate::be_aas_def_h::aas_link_s;
                                 if areas.is_null() {
                                     botimport.Print.expect("non-null function pointer")(
                                         1 as libc::c_int,
@@ -6010,7 +6013,9 @@ pub unsafe extern "C" fn AAS_Reachability_Teleport() {
                                     link = (*link).next_area
                                 }
                                 //unlink the invalid entity
-                                crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(areas);
+                                crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(
+                                    areas as *mut crate::be_aas_def_h::aas_link_s,
+                                );
                             }
                         }
                     }
@@ -6090,7 +6095,7 @@ pub unsafe extern "C" fn AAS_Reachability_Elevator() {
             128 as libc::c_int,
         ) == 0)
         {
-            if crate::stdlib::strcmp(
+            if ::libc::strcmp(
                 classname.as_mut_ptr(),
                 b"func_plat\x00" as *const u8 as *const libc::c_char,
             ) == 0
@@ -6419,6 +6424,7 @@ pub unsafe extern "C" fn AAS_Reachability_Elevator() {
                                                         end[2 as libc::c_int as usize] +=
                                                             1 as libc::c_int as libc::c_float;
                                                         trace =
+                                                            
                                                             crate::src::botlib::be_aas_sample::AAS_TraceClientBBox(start.as_mut_ptr(),
                                                                                 end.as_mut_ptr(),
                                                                                 4
@@ -6426,7 +6432,8 @@ pub unsafe extern "C" fn AAS_Reachability_Elevator() {
                                                                                     libc::c_int,
                                                                                 -(1
                                                                                       as
-                                                                                      libc::c_int));
+                                                                                      libc::c_int)) as
+    crate::be_aas_h::aas_trace_s;
                                                         if trace.fraction
                                                             >= 1 as libc::c_int as libc::c_float
                                                         {
@@ -6674,9 +6681,8 @@ pub unsafe extern "C" fn AAS_FindFaceReachabilities(
             face = &mut *crate::src::botlib::be_aas_main::aasworld
                 .faces
                 .offset(
-                    (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                        facenum,
-                    ) as isize,
+                    (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(facenum)
+                        as isize,
                 ) as *mut crate::aasfile_h::aas_face_t;
             //end for
             //if not a ground face
@@ -6689,7 +6695,7 @@ pub unsafe extern "C" fn AAS_FindFaceReachabilities(
                 //
                 k = 0 as libc::c_int;
                 while k < (*face).numedges {
-                    edgenum = crate::stdlib::abs(
+                    edgenum = ::libc::abs(
                         *crate::src::botlib::be_aas_main::aasworld
                             .edgeindex
                             .offset(((*face).firstedge + k) as isize),
@@ -6985,7 +6991,7 @@ pub unsafe extern "C" fn AAS_Reachability_FuncBobbing() {
             128 as libc::c_int,
         ) == 0)
         {
-            if !(crate::stdlib::strcmp(
+            if !(::libc::strcmp(
                 classname.as_mut_ptr(),
                 b"func_bobbing\x00" as *const u8 as *const libc::c_char,
             ) != 0)
@@ -7638,7 +7644,7 @@ pub unsafe extern "C" fn AAS_Reachability_JumpPad() {
             128 as libc::c_int,
         ) == 0)
         {
-            if !(crate::stdlib::strcmp(
+            if !(::libc::strcmp(
                 classname.as_mut_ptr(),
                 b"trigger_push\x00" as *const u8 as *const libc::c_char,
             ) != 0)
@@ -7728,7 +7734,7 @@ pub unsafe extern "C" fn AAS_Reachability_JumpPad() {
                         absmaxs.as_mut_ptr(),
                         -(1 as libc::c_int),
                         4 as libc::c_int,
-                    );
+                    ) as *mut crate::be_aas_def_h::aas_link_s;
                     /*
                     for (link = areas; link; link = link->next_area)
                     {
@@ -7752,7 +7758,9 @@ pub unsafe extern "C" fn AAS_Reachability_JumpPad() {
                                 as *const libc::c_char
                                 as *mut libc::c_char,
                         );
-                        crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(areas);
+                        crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(
+                            areas as *mut crate::be_aas_def_h::aas_link_s,
+                        );
                     } else {
                         //
                         botimport.Print.expect("non-null function pointer")(
@@ -7786,7 +7794,7 @@ pub unsafe extern "C" fn AAS_Reachability_JumpPad() {
                             i = 0 as libc::c_int;
                             while i < 20 as libc::c_int {
                                 crate::src::botlib::be_aas_move::AAS_PredictClientMovement(
-                                    &mut move_0,
+                                    &mut move_0 as *mut _ as *mut crate::be_aas_h::aas_clientmove_s,
                                     -(1 as libc::c_int),
                                     areastart.as_mut_ptr(),
                                     2 as libc::c_int,
@@ -7847,7 +7855,7 @@ pub unsafe extern "C" fn AAS_Reachability_JumpPad() {
                                             //create a rocket or bfg jump reachability from area1 to area2
                                             lreach = AAS_AllocReachability(); //end if
                                             if lreach.is_null() {
-                                                crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(areas);
+                                                crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(areas as *mut crate::be_aas_def_h::aas_link_s);
                                                 return;
                                             }
                                             (*lreach).areanum = area2num;
@@ -7949,7 +7957,7 @@ pub unsafe extern "C" fn AAS_Reachability_JumpPad() {
                                             .offset(((*area2).firstface + i) as isize);
                                         face2 = &mut *crate::src::botlib::be_aas_main::aasworld
                                             .faces
-                                            .offset((crate::stdlib::abs
+                                            .offset((::libc::abs
                                                 as unsafe extern "C" fn(
                                                     _: libc::c_int,
                                                 )
@@ -8002,7 +8010,7 @@ pub unsafe extern "C" fn AAS_Reachability_JumpPad() {
                                                         dir[1 as libc::c_int as usize] * speed;
                                                     cmdmove[2 as libc::c_int as usize] =
                                                         dir[2 as libc::c_int as usize] * speed;
-                                                    crate::src::botlib::be_aas_move::AAS_PredictClientMovement(&mut move_0,
+                                                    crate::src::botlib::be_aas_move::AAS_PredictClientMovement(&mut move_0 as *mut _ as *mut crate::be_aas_h::aas_clientmove_s,
                                                                               -(1
                                                                                     as
                                                                                     libc::c_int),
@@ -8091,7 +8099,7 @@ pub unsafe extern "C" fn AAS_Reachability_JumpPad() {
                                                                         lreach =
                                                                             AAS_AllocReachability(); //end if
                                                                         if lreach.is_null() {
-                                                                            crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(areas);
+                                                                            crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(areas as *mut crate::be_aas_def_h::aas_link_s);
                                                                             return;
                                                                         }
                                                                         (*lreach).areanum =
@@ -8202,7 +8210,9 @@ pub unsafe extern "C" fn AAS_Reachability_JumpPad() {
                                 }
                                 area2num += 1
                             }
-                            crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(areas);
+                            crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(
+                                areas as *mut crate::be_aas_def_h::aas_link_s,
+                            );
                         }
                     }
                 }
@@ -8347,7 +8357,7 @@ pub unsafe extern "C" fn AAS_Reachability_Grapple(
             end.as_mut_ptr(),
             4 as libc::c_int,
             -(1 as libc::c_int),
-        );
+        ) as crate::be_aas_h::aas_trace_s;
         if trace.startsolid as u64 != 0 {
             return crate::src::qcommon::q_shared::qfalse as libc::c_int;
         }
@@ -8371,9 +8381,8 @@ pub unsafe extern "C" fn AAS_Reachability_Grapple(
         face2 = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                    face2num,
-                ) as isize,
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(face2num)
+                    as isize,
             ) as *mut crate::aasfile_h::aas_face_t;
         //if it is not a solid face
         if !((*face2).faceflags & 1 as libc::c_int == 0) {
@@ -8381,7 +8390,7 @@ pub unsafe extern "C" fn AAS_Reachability_Grapple(
             v = (*crate::src::botlib::be_aas_main::aasworld.vertexes.offset(
                 (*crate::src::botlib::be_aas_main::aasworld
                     .edges
-                    .offset(crate::stdlib::abs(
+                    .offset(::libc::abs(
                         *crate::src::botlib::be_aas_main::aasworld
                             .edgeindex
                             .offset((*face2).firstedge as isize),
@@ -8503,7 +8512,8 @@ pub unsafe extern "C" fn AAS_Reachability_Grapple(
                                         end.as_mut_ptr(),
                                         0 as libc::c_int,
                                         1 as libc::c_int,
-                                    );
+                                    )
+                                        as crate::botlib_h::bsp_trace_s;
                                     //the grapple won't stick to the sky and the grapple point should be near the AAS wall
                                     if !(bsptrace.surface.flags & 0x4 as libc::c_int != 0
                                         || bsptrace.fraction * 500 as libc::c_int as libc::c_float
@@ -8547,7 +8557,8 @@ pub unsafe extern "C" fn AAS_Reachability_Grapple(
                                                 end.as_mut_ptr(),
                                                 2 as libc::c_int,
                                                 -(1 as libc::c_int),
-                                            );
+                                            )
+                                                as crate::be_aas_h::aas_trace_s;
                                         dir[0 as libc::c_int as usize] = trace.endpos
                                             [0 as libc::c_int as usize]
                                             - facecenter[0 as libc::c_int as usize];
@@ -8577,12 +8588,14 @@ pub unsafe extern "C" fn AAS_Reachability_Grapple(
                                             end[2 as libc::c_int as usize] -=
                                                 AAS_FallDamageDistance() as libc::c_float;
                                             trace =
+                                                
                                                 crate::src::botlib::be_aas_sample::AAS_TraceClientBBox(start.as_mut_ptr(),
                                                                     end.as_mut_ptr(),
                                                                     2 as
                                                                         libc::c_int,
                                                                     -(1 as
-                                                                          libc::c_int));
+                                                                          libc::c_int)) as
+    crate::be_aas_h::aas_trace_s;
                                             if !(trace.fraction
                                                 >= 1 as libc::c_int as libc::c_float)
                                             {
@@ -8803,51 +8816,51 @@ pub unsafe extern "C" fn AAS_SetWeaponJumpAreaFlags() {
             128 as libc::c_int,
         ) == 0)
         {
-            if crate::stdlib::strcmp(
+            if ::libc::strcmp(
                 classname.as_mut_ptr(),
                 b"item_armor_body\x00" as *const u8 as *const libc::c_char,
             ) == 0
-                || crate::stdlib::strcmp(
+                || ::libc::strcmp(
                     classname.as_mut_ptr(),
                     b"item_armor_combat\x00" as *const u8 as *const libc::c_char,
                 ) == 0
-                || crate::stdlib::strcmp(
+                || ::libc::strcmp(
                     classname.as_mut_ptr(),
                     b"item_health_mega\x00" as *const u8 as *const libc::c_char,
                 ) == 0
-                || crate::stdlib::strcmp(
+                || ::libc::strcmp(
                     classname.as_mut_ptr(),
                     b"weapon_grenadelauncher\x00" as *const u8 as *const libc::c_char,
                 ) == 0
-                || crate::stdlib::strcmp(
+                || ::libc::strcmp(
                     classname.as_mut_ptr(),
                     b"weapon_rocketlauncher\x00" as *const u8 as *const libc::c_char,
                 ) == 0
-                || crate::stdlib::strcmp(
+                || ::libc::strcmp(
                     classname.as_mut_ptr(),
                     b"weapon_lightning\x00" as *const u8 as *const libc::c_char,
                 ) == 0
-                || crate::stdlib::strcmp(
+                || ::libc::strcmp(
                     classname.as_mut_ptr(),
                     b"weapon_plasmagun\x00" as *const u8 as *const libc::c_char,
                 ) == 0
-                || crate::stdlib::strcmp(
+                || ::libc::strcmp(
                     classname.as_mut_ptr(),
                     b"weapon_railgun\x00" as *const u8 as *const libc::c_char,
                 ) == 0
-                || crate::stdlib::strcmp(
+                || ::libc::strcmp(
                     classname.as_mut_ptr(),
                     b"weapon_bfg\x00" as *const u8 as *const libc::c_char,
                 ) == 0
-                || crate::stdlib::strcmp(
+                || ::libc::strcmp(
                     classname.as_mut_ptr(),
                     b"item_quad\x00" as *const u8 as *const libc::c_char,
                 ) == 0
-                || crate::stdlib::strcmp(
+                || ::libc::strcmp(
                     classname.as_mut_ptr(),
                     b"item_regen\x00" as *const u8 as *const libc::c_char,
                 ) == 0
-                || crate::stdlib::strcmp(
+                || ::libc::strcmp(
                     classname.as_mut_ptr(),
                     b"item_invulnerability\x00" as *const u8 as *const libc::c_char,
                 ) == 0
@@ -9063,7 +9076,7 @@ pub unsafe extern "C" fn AAS_Reachability_WeaponJump(
         end.as_mut_ptr(),
         4 as libc::c_int,
         -(1 as libc::c_int),
-    );
+    ) as crate::be_aas_h::aas_trace_s;
     if trace.startsolid as u64 != 0 {
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
     }
@@ -9081,9 +9094,8 @@ pub unsafe extern "C" fn AAS_Reachability_WeaponJump(
         face2 = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                    face2num,
-                ) as isize,
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(face2num)
+                    as isize,
             ) as *mut crate::aasfile_h::aas_face_t;
         //end for
         //if it is not a solid face
@@ -9139,7 +9151,7 @@ pub unsafe extern "C" fn AAS_Reachability_WeaponJump(
                             0 as libc::c_int as crate::src::qcommon::q_shared::vec_t;
                         velocity[2 as libc::c_int as usize] = zvel;
                         crate::src::botlib::be_aas_move::AAS_PredictClientMovement(
-                            &mut move_0,
+                            &mut move_0 as *mut _ as *mut crate::be_aas_h::aas_clientmove_s,
                             -(1 as libc::c_int),
                             areastart.as_mut_ptr(),
                             2 as libc::c_int,
@@ -9294,9 +9306,8 @@ pub unsafe extern "C" fn AAS_Reachability_WalkOffLedge(mut areanum: libc::c_int)
         face1 = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                    face1num,
-                ) as isize,
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(face1num)
+                    as isize,
             ) as *mut crate::aasfile_h::aas_face_t;
         //end for
         //face 1 must be a ground face
@@ -9313,11 +9324,14 @@ pub unsafe extern "C" fn AAS_Reachability_WalkOffLedge(mut areanum: libc::c_int)
                     face2num = *crate::src::botlib::be_aas_main::aasworld
                         .faceindex
                         .offset(((*area).firstface + j) as isize);
-                    face2 = &mut *crate::src::botlib::be_aas_main::aasworld.faces.offset(
-                        (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
-                            face2num,
-                        ) as isize,
-                    ) as *mut crate::aasfile_h::aas_face_t;
+                    face2 =
+                        &mut *crate::src::botlib::be_aas_main::aasworld
+                            .faces
+                            .offset((::libc::abs
+                                as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
+                                face2num
+                            ) as isize)
+                            as *mut crate::aasfile_h::aas_face_t;
                     //find another not ground face using this same edge
                     //end for
                     //face 2 may not be a ground face
@@ -9328,7 +9342,7 @@ pub unsafe extern "C" fn AAS_Reachability_WalkOffLedge(mut areanum: libc::c_int)
                             edge2num = *crate::src::botlib::be_aas_main::aasworld
                                 .edgeindex
                                 .offset(((*face2).firstedge + l) as isize);
-                            if crate::stdlib::abs(edge1num) == crate::stdlib::abs(edge2num) {
+                            if ::libc::abs(edge1num) == ::libc::abs(edge2num) {
                                 //end if
                                 //get the area at the other side of the face
                                 if (*face2).frontarea == areanum {
@@ -9358,13 +9372,11 @@ pub unsafe extern "C" fn AAS_Reachability_WalkOffLedge(mut areanum: libc::c_int)
                                             .faceindex
                                             .offset(((*area2).firstface + n) as isize);
                                         //may not be the shared face of the two areas
-                                        if !(crate::stdlib::abs(face3num)
-                                            == crate::stdlib::abs(face2num))
-                                        {
+                                        if !(::libc::abs(face3num) == ::libc::abs(face2num)) {
                                             //
                                             face3 = &mut *crate::src::botlib::be_aas_main::aasworld
                                                 .faces
-                                                .offset((crate::stdlib::abs
+                                                .offset((::libc::abs
                                                     as unsafe extern "C" fn(
                                                         _: libc::c_int,
                                                     )
@@ -9381,9 +9393,7 @@ pub unsafe extern "C" fn AAS_Reachability_WalkOffLedge(mut areanum: libc::c_int)
                                                         .edgeindex
                                                         .offset(((*face3).firstedge + m) as isize);
                                                 //end if
-                                                if crate::stdlib::abs(edge3num)
-                                                    == crate::stdlib::abs(edge1num)
-                                                {
+                                                if ::libc::abs(edge3num) == ::libc::abs(edge1num) {
                                                     //but the edge should be shared by all three faces
                                                     if (*face3).faceflags & 1 as libc::c_int == 0 {
                                                         gap = crate::src::qcommon::q_shared::qtrue
@@ -9419,7 +9429,7 @@ pub unsafe extern "C" fn AAS_Reachability_WalkOffLedge(mut areanum: libc::c_int)
                                 }
                                 //check for a walk off ledge reachability
                                 edge = &mut *crate::src::botlib::be_aas_main::aasworld.edges.offset(
-                                    (crate::stdlib::abs
+                                    (::libc::abs
                                         as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
                                         edge1num,
                                     ) as isize,
@@ -9497,7 +9507,8 @@ pub unsafe extern "C" fn AAS_Reachability_WalkOffLedge(mut areanum: libc::c_int)
                                     testend.as_mut_ptr(),
                                     4 as libc::c_int,
                                     -(1 as libc::c_int),
-                                );
+                                )
+                                    as crate::be_aas_h::aas_trace_s;
                                 //
                                 if trace.startsolid as u64 != 0 {
                                     //end if

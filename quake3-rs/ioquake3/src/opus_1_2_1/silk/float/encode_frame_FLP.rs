@@ -132,7 +132,6 @@ pub use crate::src::opus_1_2_1::celt::entcode::ec_ctx;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_enc;
 pub use crate::src::opus_1_2_1::celt::entcode::ec_window;
 pub use crate::src::opus_1_2_1::silk::float::encode_frame_FLP::entcode_h::ec_tell;
-use crate::stdlib::abs;
 pub use crate::structs_FLP_h::silk_encoder_control_FLP;
 pub use crate::structs_FLP_h::silk_encoder_state_FLP;
 pub use crate::structs_FLP_h::silk_shape_state_FLP;
@@ -142,6 +141,7 @@ pub use crate::structs_h::silk_VAD_state;
 pub use crate::structs_h::silk_encoder_state;
 pub use crate::structs_h::silk_nsq_state;
 pub use crate::structs_h::SideInfoIndices;
+use ::libc::abs;
 
 pub use crate::src::opus_1_2_1::silk::float::encode_frame_FLP::SigProc_FIX_h::silk_min_int;
 pub use crate::src::opus_1_2_1::silk::float::encode_frame_FLP::SigProc_FLP_h::silk_short2float_array;
@@ -172,7 +172,7 @@ pub unsafe extern "C" fn silk_encode_do_VAD_FLP(
     /* Voice Activity Detection */
     /* ***************************/
     crate::src::opus_1_2_1::silk::VAD::silk_VAD_GetSA_Q8_c(
-        &mut (*psEnc).sCmn,
+        &mut (*psEnc).sCmn as *mut _ as *mut crate::structs_h::silk_encoder_state,
         (*psEnc)
             .sCmn
             .inputBuf
@@ -383,7 +383,7 @@ pub unsafe extern "C" fn silk_encode_frame_FLP(
     /* Ensure smooth bandwidth transitions */
     /* **************************************/
     crate::src::opus_1_2_1::silk::LP_variable_cutoff::silk_LP_variable_cutoff(
-        &mut (*psEnc).sCmn.sLP,
+        &mut (*psEnc).sCmn.sLP as *mut _ as *mut crate::structs_h::silk_LP_state,
         (*psEnc)
             .sCmn
             .inputBuf
@@ -417,8 +417,8 @@ pub unsafe extern "C" fn silk_encode_frame_FLP(
         /* Find pitch lags, initial LPC analysis */
         /* ****************************************/
         crate::src::opus_1_2_1::silk::float::find_pitch_lags_FLP::silk_find_pitch_lags_FLP(
-            psEnc,
-            &mut sEncCtrl,
+            psEnc as *mut crate::structs_FLP_h::silk_encoder_state_FLP,
+            &mut sEncCtrl as *mut _ as *mut crate::structs_FLP_h::silk_encoder_control_FLP,
             res_pitch.as_mut_ptr(),
             x_frame as *const libc::c_float,
             (*psEnc).sCmn.arch,
@@ -426,14 +426,14 @@ pub unsafe extern "C" fn silk_encode_frame_FLP(
         /* ***********************/
         /* Noise shape analysis */
         /* ***********************/
-        crate::src::opus_1_2_1::silk::float::noise_shape_analysis_FLP::silk_noise_shape_analysis_FLP(psEnc, &mut sEncCtrl, res_pitch_frame,
+        crate::src::opus_1_2_1::silk::float::noise_shape_analysis_FLP::silk_noise_shape_analysis_FLP(psEnc as *mut crate::structs_FLP_h::silk_encoder_state_FLP,  &mut sEncCtrl as *mut _ as *mut crate::structs_FLP_h::silk_encoder_control_FLP, res_pitch_frame,
                                       x_frame);
         /* **************************************************/
         /* Find linear prediction coefficients (LPC + LTP) */
         /* **************************************************/
         crate::src::opus_1_2_1::silk::float::find_pred_coefs_FLP::silk_find_pred_coefs_FLP(
-            psEnc,
-            &mut sEncCtrl,
+            psEnc as *mut crate::structs_FLP_h::silk_encoder_state_FLP,
+            &mut sEncCtrl as *mut _ as *mut crate::structs_FLP_h::silk_encoder_control_FLP,
             res_pitch_frame as *const libc::c_float,
             x_frame as *const libc::c_float,
             condCoding,
@@ -442,8 +442,8 @@ pub unsafe extern "C" fn silk_encode_frame_FLP(
         /* Process gains                        */
         /* ***************************************/
         crate::src::opus_1_2_1::silk::float::process_gains_FLP::silk_process_gains_FLP(
-            psEnc,
-            &mut sEncCtrl,
+            psEnc as *mut crate::structs_FLP_h::silk_encoder_state_FLP,
+            &mut sEncCtrl as *mut _ as *mut crate::structs_FLP_h::silk_encoder_control_FLP,
             condCoding,
         );
         /* ***************************************/
@@ -516,10 +516,10 @@ pub unsafe extern "C" fn silk_encode_frame_FLP(
                 /* Noise shaping quantization            */
                 /* ****************************************/
                 crate::src::opus_1_2_1::silk::float::wrappers_FLP::silk_NSQ_wrapper_FLP(
-                    psEnc,
-                    &mut sEncCtrl,
-                    &mut (*psEnc).sCmn.indices,
-                    &mut (*psEnc).sCmn.sNSQ,
+                    psEnc as *mut crate::structs_FLP_h::silk_encoder_state_FLP,
+                    &mut sEncCtrl as *mut _ as *mut crate::structs_FLP_h::silk_encoder_control_FLP,
+                    &mut (*psEnc).sCmn.indices as *mut _ as *mut crate::structs_h::SideInfoIndices,
+                    &mut (*psEnc).sCmn.sNSQ as *mut _ as *mut crate::structs_h::silk_nsq_state,
                     (*psEnc).sCmn.pulses.as_mut_ptr(),
                     x_frame as *const libc::c_float,
                 );
@@ -536,8 +536,8 @@ pub unsafe extern "C" fn silk_encode_frame_FLP(
                 /* Encode Parameters                    */
                 /* ***************************************/
                 crate::src::opus_1_2_1::silk::encode_indices::silk_encode_indices(
-                    &mut (*psEnc).sCmn,
-                    psRangeEnc,
+                    &mut (*psEnc).sCmn as *mut _ as *mut crate::structs_h::silk_encoder_state,
+                    psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     (*psEnc).sCmn.nFramesEncoded,
                     0 as libc::c_int,
                     condCoding,
@@ -546,7 +546,7 @@ pub unsafe extern "C" fn silk_encode_frame_FLP(
                 /* Encode Excitation Signal             */
                 /* ***************************************/
                 crate::src::opus_1_2_1::silk::encode_pulses::silk_encode_pulses(
-                    psRangeEnc,
+                    psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     (*psEnc).sCmn.indices.signalType as libc::c_int,
                     (*psEnc).sCmn.indices.quantOffsetType as libc::c_int,
                     (*psEnc).sCmn.pulses.as_mut_ptr(),
@@ -583,14 +583,14 @@ pub unsafe extern "C" fn silk_encode_frame_FLP(
                         i += 1
                     }
                     crate::src::opus_1_2_1::silk::encode_indices::silk_encode_indices(
-                        &mut (*psEnc).sCmn,
-                        psRangeEnc,
+                        &mut (*psEnc).sCmn as *mut _ as *mut crate::structs_h::silk_encoder_state,
+                        psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                         (*psEnc).sCmn.nFramesEncoded,
                         0 as libc::c_int,
                         condCoding,
                     );
                     crate::src::opus_1_2_1::silk::encode_pulses::silk_encode_pulses(
-                        psRangeEnc,
+                        psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                         (*psEnc).sCmn.indices.signalType as libc::c_int,
                         (*psEnc).sCmn.indices.quantOffsetType as libc::c_int,
                         (*psEnc).sCmn.pulses.as_mut_ptr(),
@@ -687,8 +687,7 @@ pub unsafe extern "C" fn silk_encode_frame_FLP(
                         let mut sum: libc::c_int = 0 as libc::c_int;
                         j = i * (*psEnc).sCmn.subfr_length;
                         while j < (i + 1 as libc::c_int) * (*psEnc).sCmn.subfr_length {
-                            sum +=
-                                crate::stdlib::abs((*psEnc).sCmn.pulses[j as usize] as libc::c_int);
+                            sum += ::libc::abs((*psEnc).sCmn.pulses[j as usize] as libc::c_int);
                             j += 1
                         }
                         if iter == 0 as libc::c_int
@@ -997,10 +996,10 @@ unsafe extern "C" fn silk_LBRR_encode_FLP(
         /* Noise shaping quantization            */
         /* ****************************************/
         crate::src::opus_1_2_1::silk::float::wrappers_FLP::silk_NSQ_wrapper_FLP(
-            psEnc,
-            psEncCtrl,
-            psIndices_LBRR,
-            &mut sNSQ_LBRR,
+            psEnc as *mut crate::structs_FLP_h::silk_encoder_state_FLP,
+            psEncCtrl as *mut crate::structs_FLP_h::silk_encoder_control_FLP,
+            psIndices_LBRR as *mut crate::structs_h::SideInfoIndices,
+            &mut sNSQ_LBRR as *mut _ as *mut crate::structs_h::silk_nsq_state,
             (*psEnc).sCmn.pulses_LBRR[(*psEnc).sCmn.nFramesEncoded as usize].as_mut_ptr(),
             xfw,
         );

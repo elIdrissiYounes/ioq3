@@ -1,4 +1,6 @@
 // =============== BEGIN be_ai_goal_h ================
+pub type bot_goal_t = crate::src::botlib::be_ai_goal::bot_goal_s;
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct bot_goal_s {
@@ -11,8 +13,6 @@ pub struct bot_goal_s {
     pub flags: libc::c_int,
     pub iteminfo: libc::c_int,
 }
-
-pub type bot_goal_t = crate::src::botlib::be_ai_goal::bot_goal_s;
 use ::libc;
 
 pub mod q_shared_h {
@@ -109,8 +109,8 @@ pub use crate::src::qcommon::q_shared::FS_WRITE;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
 use crate::stdlib::sqrt;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
+use ::libc::strcmp;
+use ::libc::strcpy;
 
 use crate::src::botlib::be_aas_reach::AAS_AreaJumpPad;
 use crate::src::botlib::be_aas_reach::AAS_AreaReachability;
@@ -154,60 +154,6 @@ pub struct bot_goalstate_s {
     pub avoidgoaltimes: [libc::c_float; 256],
 }
 
-pub type levelitem_t = levelitem_s;
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct levelitem_s {
-    pub number: libc::c_int,
-    pub iteminfo: libc::c_int,
-    pub flags: libc::c_int,
-    pub weight: libc::c_float,
-    pub origin: crate::src::qcommon::q_shared::vec3_t,
-    pub goalareanum: libc::c_int,
-    pub goalorigin: crate::src::qcommon::q_shared::vec3_t,
-    pub entitynum: libc::c_int,
-    pub timeout: libc::c_float,
-    pub prev: *mut levelitem_s,
-    pub next: *mut levelitem_s,
-}
-//weight config
-//index from item to weight
-//
-//client using this goal state
-//last area with reachabilities the bot was in
-//
-//goal stack
-//the top of the goal stack
-//
-//goals to avoid
-//times to avoid the goals
-//number of the level item
-//index into the item info
-//item flags
-//fixed roam weight
-//origin of the item
-//area the item is in
-//goal origin within the area
-//entity number
-//item is removed after this time
-//camp spots "info_camp"
-
-pub type campspot_t = campspot_s;
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct campspot_s {
-    pub origin: crate::src::qcommon::q_shared::vec3_t,
-    pub areanum: libc::c_int,
-    pub name: [libc::c_char; 128],
-    pub range: libc::c_float,
-    pub weight: libc::c_float,
-    pub wait: libc::c_float,
-    pub random: libc::c_float,
-    pub next: *mut campspot_s,
-}
-
 pub type itemconfig_t = itemconfig_s;
 
 #[repr(C)]
@@ -233,6 +179,17 @@ pub struct iteminfo_s {
     pub maxs: crate::src::qcommon::q_shared::vec3_t,
     pub number: libc::c_int,
 }
+//weight config
+//index from item to weight
+//
+//client using this goal state
+//last area with reachabilities the bot was in
+//
+//goal stack
+//the top of the goal stack
+//
+//goals to avoid
+//times to avoid the goals
 //classname of the item
 //name of the item
 //model of the item
@@ -255,6 +212,49 @@ pub struct maplocation_s {
     pub areanum: libc::c_int,
     pub name: [libc::c_char; 128],
     pub next: *mut maplocation_s,
+}
+
+pub type levelitem_t = levelitem_s;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct levelitem_s {
+    pub number: libc::c_int,
+    pub iteminfo: libc::c_int,
+    pub flags: libc::c_int,
+    pub weight: libc::c_float,
+    pub origin: crate::src::qcommon::q_shared::vec3_t,
+    pub goalareanum: libc::c_int,
+    pub goalorigin: crate::src::qcommon::q_shared::vec3_t,
+    pub entitynum: libc::c_int,
+    pub timeout: libc::c_float,
+    pub prev: *mut levelitem_s,
+    pub next: *mut levelitem_s,
+}
+//number of the level item
+//index into the item info
+//item flags
+//fixed roam weight
+//origin of the item
+//area the item is in
+//goal origin within the area
+//entity number
+//item is removed after this time
+//camp spots "info_camp"
+
+pub type campspot_t = campspot_s;
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct campspot_s {
+    pub origin: crate::src::qcommon::q_shared::vec3_t,
+    pub areanum: libc::c_int,
+    pub name: [libc::c_char; 128],
+    pub range: libc::c_float,
+    pub weight: libc::c_float,
+    pub wait: libc::c_float,
+    pub random: libc::c_float,
+    pub next: *mut campspot_s,
 }
 
 pub const GT_TEAM: C2RustUnnamed_3 = 3;
@@ -391,9 +391,9 @@ pub unsafe extern "C" fn BotInterbreedGoalFuzzyLogic(
         return;
     }
     crate::src::botlib::be_ai_weight::InterbreedWeightConfigs(
-        (*p1).itemweightconfig,
-        (*p2).itemweightconfig,
-        (*c).itemweightconfig,
+        (*p1).itemweightconfig as *mut crate::src::botlib::be_ai_weight::weightconfig_s,
+        (*p2).itemweightconfig as *mut crate::src::botlib::be_ai_weight::weightconfig_s,
+        (*c).itemweightconfig as *mut crate::src::botlib::be_ai_weight::weightconfig_s,
     );
 }
 //save the goal fuzzy logic to disk
@@ -434,7 +434,9 @@ pub unsafe extern "C" fn BotMutateGoalFuzzyLogic(
     if gs.is_null() {
         return;
     }
-    crate::src::botlib::be_ai_weight::EvolveWeightConfig((*gs).itemweightconfig);
+    crate::src::botlib::be_ai_weight::EvolveWeightConfig(
+        (*gs).itemweightconfig as *mut crate::src::botlib::be_ai_weight::weightconfig_s,
+    );
 }
 //end of the function BotMutateGoalFuzzyLogic
 //===========================================================================
@@ -490,7 +492,8 @@ pub unsafe extern "C" fn LoadItemConfig(mut filename: *mut libc::c_char) -> *mut
     crate::src::botlib::l_precomp::PC_SetBaseFolder(
         b"botfiles\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
     );
-    source = crate::src::botlib::l_precomp::LoadSourceFile(path.as_mut_ptr());
+    source = crate::src::botlib::l_precomp::LoadSourceFile(path.as_mut_ptr())
+        as *mut crate::src::botlib::l_precomp::source_s;
     if source.is_null() {
         crate::src::botlib::be_interface::botimport
             .Print
@@ -513,8 +516,12 @@ pub unsafe extern "C" fn LoadItemConfig(mut filename: *mut libc::c_char) -> *mut
         as *mut iteminfo_t;
     (*ic).numiteminfo = 0 as libc::c_int;
     //parse the item config file
-    while crate::src::botlib::l_precomp::PC_ReadToken(source, &mut token) != 0 {
-        if crate::stdlib::strcmp(
+    while crate::src::botlib::l_precomp::PC_ReadToken(
+        source as *mut crate::src::botlib::l_precomp::source_s,
+        &mut token as *mut _ as *mut crate::src::botlib::l_script::token_s,
+    ) != 0
+    {
+        if ::libc::strcmp(
             token.string.as_mut_ptr(),
             b"iteminfo\x00" as *const u8 as *const libc::c_char,
         ) == 0
@@ -522,13 +529,15 @@ pub unsafe extern "C" fn LoadItemConfig(mut filename: *mut libc::c_char) -> *mut
             //end while
             if (*ic).numiteminfo >= max_iteminfo {
                 crate::src::botlib::l_precomp::SourceError(
-                    source,
+                    source as *mut crate::src::botlib::l_precomp::source_s,
                     b"more than %d item info defined\x00" as *const u8 as *const libc::c_char
                         as *mut libc::c_char,
                     max_iteminfo,
                 ); //end if
                 crate::src::botlib::l_memory::FreeMemory(ic as *mut libc::c_void); //end if
-                crate::src::botlib::l_precomp::FreeSource(source); //end if
+                crate::src::botlib::l_precomp::FreeSource(
+                    source as *mut crate::src::botlib::l_precomp::source_s,
+                ); //end if
                 return 0 as *mut itemconfig_t;
             } //end if
             ii = &mut *(*ic).iteminfo.offset((*ic).numiteminfo as isize) as *mut iteminfo_t;
@@ -538,14 +547,16 @@ pub unsafe extern "C" fn LoadItemConfig(mut filename: *mut libc::c_char) -> *mut
                 ::std::mem::size_of::<iteminfo_t>() as libc::c_ulong,
             );
             if crate::src::botlib::l_precomp::PC_ExpectTokenType(
-                source,
+                source as *mut crate::src::botlib::l_precomp::source_s,
                 1 as libc::c_int,
                 0 as libc::c_int,
-                &mut token,
+                &mut token as *mut _ as *mut crate::src::botlib::l_script::token_s,
             ) == 0
             {
                 crate::src::botlib::l_memory::FreeMemory(ic as *mut libc::c_void);
-                crate::src::botlib::l_precomp::FreeSource(source);
+                crate::src::botlib::l_precomp::FreeSource(
+                    source as *mut crate::src::botlib::l_precomp::source_s,
+                );
                 return 0 as *mut itemconfig_t;
             }
             crate::src::botlib::l_script::StripDoubleQuotes(token.string.as_mut_ptr());
@@ -555,31 +566,37 @@ pub unsafe extern "C" fn LoadItemConfig(mut filename: *mut libc::c_char) -> *mut
                 ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
             );
             if crate::src::botlib::l_struct::ReadStructure(
-                source,
-                &mut iteminfo_struct,
+                source as *mut crate::src::botlib::l_precomp::source_s,
+                &mut iteminfo_struct as *mut _ as *mut crate::src::botlib::l_struct::structdef_s,
                 ii as *mut libc::c_char,
             ) == 0
             {
                 crate::src::botlib::l_memory::FreeMemory(ic as *mut libc::c_void);
-                crate::src::botlib::l_precomp::FreeSource(source);
+                crate::src::botlib::l_precomp::FreeSource(
+                    source as *mut crate::src::botlib::l_precomp::source_s,
+                );
                 return 0 as *mut itemconfig_t;
             }
             (*ii).number = (*ic).numiteminfo;
             (*ic).numiteminfo += 1
         } else {
             crate::src::botlib::l_precomp::SourceError(
-                source,
+                source as *mut crate::src::botlib::l_precomp::source_s,
                 b"unknown definition %s\x00" as *const u8 as *const libc::c_char
                     as *mut libc::c_char,
                 token.string.as_mut_ptr(),
             );
             crate::src::botlib::l_memory::FreeMemory(ic as *mut libc::c_void);
-            crate::src::botlib::l_precomp::FreeSource(source);
+            crate::src::botlib::l_precomp::FreeSource(
+                source as *mut crate::src::botlib::l_precomp::source_s,
+            );
             return 0 as *mut itemconfig_t;
         }
         //end else
     }
-    crate::src::botlib::l_precomp::FreeSource(source);
+    crate::src::botlib::l_precomp::FreeSource(
+        source as *mut crate::src::botlib::l_precomp::source_s,
+    );
     //
     if (*ic).numiteminfo == 0 {
         crate::src::botlib::be_interface::botimport
@@ -622,7 +639,7 @@ pub unsafe extern "C" fn ItemWeightIndex(
     i = 0 as libc::c_int;
     while i < (*ic).numiteminfo {
         *index.offset(i as isize) = crate::src::botlib::be_ai_weight::FindFuzzyWeight(
-            iwc,
+            iwc as *mut crate::src::botlib::be_ai_weight::weightconfig_s,
             (*(*ic).iteminfo.offset(i as isize)).classname.as_mut_ptr(),
         );
         if *index.offset(i as isize) < 0 as libc::c_int {
@@ -810,7 +827,7 @@ pub unsafe extern "C" fn BotInitInfoEntities() {
         ) == 0)
         {
             //map locations
-            if crate::stdlib::strcmp(
+            if ::libc::strcmp(
                 classname.as_mut_ptr(),
                 b"target_location\x00" as *const u8 as *const libc::c_char,
             ) == 0
@@ -835,7 +852,7 @@ pub unsafe extern "C" fn BotInitInfoEntities() {
                 (*ml).next = maplocations;
                 maplocations = ml;
                 numlocations += 1
-            } else if crate::stdlib::strcmp(
+            } else if ::libc::strcmp(
                 classname.as_mut_ptr(),
                 b"info_camp\x00" as *const u8 as *const libc::c_char,
             ) == 0
@@ -1010,7 +1027,7 @@ pub unsafe extern "C" fn BotInitLevelItems() {
             //
             i = 0 as libc::c_int; //end for
             while i < (*ic).numiteminfo {
-                if crate::stdlib::strcmp(
+                if ::libc::strcmp(
                     classname.as_mut_ptr(),
                     (*(*ic).iteminfo.offset(i as isize)).classname.as_mut_ptr(),
                 ) == 0
@@ -1063,7 +1080,7 @@ pub unsafe extern "C" fn BotInitLevelItems() {
                             end.as_mut_ptr(),
                             -(1 as libc::c_int),
                             1 as libc::c_int | 0x10000 as libc::c_int,
-                        );
+                        ) as crate::botlib_h::bsp_trace_s;
                         //end if
                         if trace.fraction >= 1 as libc::c_int as libc::c_float {
                             //if the item not near the ground
@@ -1144,7 +1161,7 @@ pub unsafe extern "C" fn BotInitLevelItems() {
                         if value != 0 {
                             (*li).flags |= 8 as libc::c_int
                         }
-                        if crate::stdlib::strcmp(
+                        if ::libc::strcmp(
                             classname.as_mut_ptr(),
                             b"item_botroam\x00" as *const u8 as *const libc::c_char,
                         ) == 0
@@ -1273,7 +1290,7 @@ pub unsafe extern "C" fn BotGoalName(
         li = (*li).next
         //end for
     }
-    crate::stdlib::strcpy(name, b"\x00" as *const u8 as *const libc::c_char);
+    ::libc::strcpy(name, b"\x00" as *const u8 as *const libc::c_char);
 }
 //reset avoid goals
 //end of the function BotGoalName
@@ -1764,7 +1781,10 @@ pub unsafe extern "C" fn BotFindEntityForLevelItem(mut li: *mut levelitem_t) {
         //
         if !(modelindex == 0) {
             //get info about the entity
-            crate::src::botlib::be_aas_entity::AAS_EntityInfo(ent, &mut entinfo);
+            crate::src::botlib::be_aas_entity::AAS_EntityInfo(
+                ent,
+                &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+            );
             //if the entity is still moving
             if !(entinfo.origin[0 as libc::c_int as usize]
                 != entinfo.lastvisorigin[0 as libc::c_int as usize]
@@ -1862,7 +1882,10 @@ pub unsafe extern "C" fn BotUpdateEntityItems() {
             //
             if !(modelindex == 0) {
                 //get info about the entity
-                crate::src::botlib::be_aas_entity::AAS_EntityInfo(ent, &mut entinfo);
+                crate::src::botlib::be_aas_entity::AAS_EntityInfo(
+                    ent,
+                    &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+                );
                 //FIXME: don't do this
                 //skip all floating items for now
                 //if (entinfo.groundent != ENTITYNUM_WORLD) continue;
@@ -2368,7 +2391,8 @@ pub unsafe extern "C" fn BotChooseLTGItem(
                             if !(weightnum < 0 as libc::c_int) {
                                 weight = crate::src::botlib::be_ai_weight::FuzzyWeightUndecided(
                                     inventory,
-                                    (*gs).itemweightconfig,
+                                    (*gs).itemweightconfig
+                                        as *mut crate::src::botlib::be_ai_weight::weightconfig_s,
                                     weightnum,
                                 );
                                 //UNDECIDEDFUZZY
@@ -2615,7 +2639,8 @@ pub unsafe extern "C" fn BotChooseNBGItem(
                                 //
                                 weight = crate::src::botlib::be_ai_weight::FuzzyWeightUndecided(
                                     inventory,
-                                    (*gs).itemweightconfig,
+                                    (*gs).itemweightconfig
+                                        as *mut crate::src::botlib::be_ai_weight::weightconfig_s,
                                     weightnum,
                                 );
                                 //UNDECIDEDFUZZY
@@ -2903,7 +2928,7 @@ pub unsafe extern "C" fn BotItemGoalInVisButNotVisible(
         middle.as_mut_ptr(),
         viewer,
         1 as libc::c_int,
-    );
+    ) as crate::botlib_h::bsp_trace_s;
     //if the goal middle point is visible
     if trace.fraction >= 1 as libc::c_int as libc::c_float {
         //end if
@@ -2914,7 +2939,10 @@ pub unsafe extern "C" fn BotItemGoalInVisButNotVisible(
         }
         //
         //if the entity data isn't valid
-        crate::src::botlib::be_aas_entity::AAS_EntityInfo((*goal).entitynum, &mut entinfo);
+        crate::src::botlib::be_aas_entity::AAS_EntityInfo(
+            (*goal).entitynum,
+            &mut entinfo as *mut _ as *mut crate::be_aas_h::aas_entityinfo_s,
+        );
         //NOTE: for some wacko reason entities are sometimes
         // not updated
         //if (!entinfo.valid) return qtrue;
@@ -2972,7 +3000,8 @@ pub unsafe extern "C" fn BotLoadItemWeights(
         return 9 as libc::c_int;
     }
     //load the weight configuration
-    (*gs).itemweightconfig = crate::src::botlib::be_ai_weight::ReadWeightConfig(filename); //end if
+    (*gs).itemweightconfig = crate::src::botlib::be_ai_weight::ReadWeightConfig(filename)
+        as *mut crate::src::botlib::be_ai_weight::weightconfig_s; //end if
     if (*gs).itemweightconfig.is_null() {
         crate::src::botlib::be_interface::botimport
             .Print
@@ -3009,7 +3038,9 @@ pub unsafe extern "C" fn BotFreeItemWeights(mut goalstate: libc::c_int) {
         return;
     }
     if !(*gs).itemweightconfig.is_null() {
-        crate::src::botlib::be_ai_weight::FreeWeightConfig((*gs).itemweightconfig);
+        crate::src::botlib::be_ai_weight::FreeWeightConfig(
+            (*gs).itemweightconfig as *mut crate::src::botlib::be_ai_weight::weightconfig_s,
+        );
     }
     if !(*gs).itemweightindex.is_null() {
         crate::src::botlib::l_memory::FreeMemory((*gs).itemweightindex as *mut libc::c_void);
@@ -3116,7 +3147,7 @@ pub unsafe extern "C" fn BotSetupGoalAI() -> libc::c_int {
     droppedweight = crate::src::botlib::l_libvar::LibVar(
         b"droppedweight\x00" as *const u8 as *const libc::c_char,
         b"1000\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::src::botlib::l_libvar::libvar_s;
     //everything went ok
     return 0 as libc::c_int;
 }

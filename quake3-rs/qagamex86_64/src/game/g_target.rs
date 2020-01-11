@@ -239,8 +239,8 @@ pub use crate::src::game::g_utils::G_SoundIndex;
 pub use crate::src::game::g_utils::G_TeamCommand;
 pub use crate::src::game::g_utils::G_UseTargets;
 use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::strstr;
+use ::libc::rand;
+use ::libc::strstr;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -306,21 +306,25 @@ pub unsafe extern "C" fn Use_Target_Give(
     t = 0 as *mut crate::g_local_h::gentity_t;
     loop {
         t = crate::src::game::g_utils::G_Find(
-            t,
+            t as *mut crate::g_local_h::gentity_s,
             &mut (*(0 as *mut crate::g_local_h::gentity_t)).targetname as *mut *mut libc::c_char
                 as crate::stddef_h::size_t as libc::c_int,
             (*ent).target,
-        );
+        ) as *mut crate::g_local_h::gentity_s;
         if t.is_null() {
             break;
         }
         if (*t).item.is_null() {
             continue;
         }
-        crate::src::game::g_items::Touch_Item(t, activator, &mut trace);
+        crate::src::game::g_items::Touch_Item(
+            t as *mut crate::g_local_h::gentity_s,
+            activator as *mut crate::g_local_h::gentity_s,
+            &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
+        );
         // make sure it isn't going to respawn or show any events
         (*t).nextthink = 0 as libc::c_int;
-        crate::src::game::g_syscalls::trap_UnlinkEntity(t);
+        crate::src::game::g_syscalls::trap_UnlinkEntity(t as *mut crate::g_local_h::gentity_s);
     }
 }
 #[no_mangle]
@@ -391,7 +395,10 @@ pub unsafe extern "C" fn SP_target_remove_powerups(mut ent: *mut crate::g_local_
 #[no_mangle]
 
 pub unsafe extern "C" fn Think_Target_Delay(mut ent: *mut crate::g_local_h::gentity_t) {
-    crate::src::game::g_utils::G_UseTargets(ent, (*ent).activator);
+    crate::src::game::g_utils::G_UseTargets(
+        ent as *mut crate::g_local_h::gentity_s,
+        (*ent).activator as *mut crate::g_local_h::gentity_s,
+    );
 }
 #[no_mangle]
 
@@ -404,7 +411,7 @@ pub unsafe extern "C" fn Use_Target_Delay(
         + ((*ent).wait as libc::c_double
             + (*ent).random as libc::c_double
                 * (2.0f64
-                    * (((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+                    * (((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
                         / 0x7fff as libc::c_int as libc::c_float)
                         as libc::c_double
                         - 0.5f64)))
@@ -456,7 +463,7 @@ pub unsafe extern "C" fn Use_Target_Score(
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     crate::src::game::g_combat::AddScore(
-        activator,
+        activator as *mut crate::g_local_h::gentity_s,
         (*ent).r.currentOrigin.as_mut_ptr(),
         (*ent).count,
     );
@@ -570,19 +577,19 @@ pub unsafe extern "C" fn Use_Target_Speaker(
           // start it
     } else if (*ent).spawnflags & 8 as libc::c_int != 0 {
         crate::src::game::g_utils::G_AddEvent(
-            activator,
+            activator as *mut crate::g_local_h::gentity_s,
             crate::bg_public_h::EV_GENERAL_SOUND as libc::c_int,
             (*ent).noise_index,
         );
     } else if (*ent).spawnflags & 4 as libc::c_int != 0 {
         crate::src::game::g_utils::G_AddEvent(
-            ent,
+            ent as *mut crate::g_local_h::gentity_s,
             crate::bg_public_h::EV_GLOBAL_SOUND as libc::c_int,
             (*ent).noise_index,
         );
     } else {
         crate::src::game::g_utils::G_AddEvent(
-            ent,
+            ent as *mut crate::g_local_h::gentity_s,
             crate::bg_public_h::EV_GENERAL_SOUND as libc::c_int,
             (*ent).noise_index,
         );
@@ -622,7 +629,7 @@ pub unsafe extern "C" fn SP_target_speaker(mut ent: *mut crate::g_local_h::genti
     if *s.offset(0 as libc::c_int as isize) as libc::c_int == '*' as i32 {
         (*ent).spawnflags |= 8 as libc::c_int
     }
-    if crate::stdlib::strstr(s, b".wav\x00" as *const u8 as *const libc::c_char).is_null() {
+    if ::libc::strstr(s, b".wav\x00" as *const u8 as *const libc::c_char).is_null() {
         crate::src::qcommon::q_shared::Com_sprintf(
             buffer.as_mut_ptr(),
             ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
@@ -662,7 +669,7 @@ pub unsafe extern "C" fn SP_target_speaker(mut ent: *mut crate::g_local_h::genti
     (*ent).s.pos.trBase[2 as libc::c_int as usize] = (*ent).s.origin[2 as libc::c_int as usize];
     // must link the entity so we get areas and clusters so
     // the server can determine who to send updates to
-    crate::src::game::g_syscalls::trap_LinkEntity(ent);
+    crate::src::game::g_syscalls::trap_LinkEntity(ent as *mut crate::g_local_h::gentity_s);
 }
 //==========================================================
 /*QUAKED target_laser (0 .5 .8) (-8 -8 -8) (8 8 8) START_ON
@@ -728,7 +735,7 @@ pub unsafe extern "C" fn target_laser_think(mut self_0: *mut crate::g_local_h::g
     end[2 as libc::c_int as usize] = (*self_0).s.origin[2 as libc::c_int as usize]
         + (*self_0).movedir[2 as libc::c_int as usize] * 2048 as libc::c_int as libc::c_float;
     crate::src::game::g_syscalls::trap_Trace(
-        &mut tr,
+        &mut tr as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         (*self_0).s.origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         0 as *const crate::src::qcommon::q_shared::vec_t,
         0 as *const crate::src::qcommon::q_shared::vec_t,
@@ -741,9 +748,10 @@ pub unsafe extern "C" fn target_laser_think(mut self_0: *mut crate::g_local_h::g
         crate::src::game::g_combat::G_Damage(
             &mut *crate::src::game::g_main::g_entities
                 .as_mut_ptr()
-                .offset(tr.entityNum as isize),
-            self_0,
-            (*self_0).activator,
+                .offset(tr.entityNum as isize) as *mut _
+                as *mut crate::g_local_h::gentity_s,
+            self_0 as *mut crate::g_local_h::gentity_s,
+            (*self_0).activator as *mut crate::g_local_h::gentity_s,
             (*self_0).movedir.as_mut_ptr(),
             tr.endpos.as_mut_ptr(),
             (*self_0).damage,
@@ -754,7 +762,7 @@ pub unsafe extern "C" fn target_laser_think(mut self_0: *mut crate::g_local_h::g
     (*self_0).s.origin2[0 as libc::c_int as usize] = tr.endpos[0 as libc::c_int as usize];
     (*self_0).s.origin2[1 as libc::c_int as usize] = tr.endpos[1 as libc::c_int as usize];
     (*self_0).s.origin2[2 as libc::c_int as usize] = tr.endpos[2 as libc::c_int as usize];
-    crate::src::game::g_syscalls::trap_LinkEntity(self_0);
+    crate::src::game::g_syscalls::trap_LinkEntity(self_0 as *mut crate::g_local_h::gentity_s);
     (*self_0).nextthink = crate::src::game::g_main::level.time + 100 as libc::c_int;
 }
 #[no_mangle]
@@ -768,7 +776,7 @@ pub unsafe extern "C" fn target_laser_on(mut self_0: *mut crate::g_local_h::gent
 #[no_mangle]
 
 pub unsafe extern "C" fn target_laser_off(mut self_0: *mut crate::g_local_h::gentity_t) {
-    crate::src::game::g_syscalls::trap_UnlinkEntity(self_0);
+    crate::src::game::g_syscalls::trap_UnlinkEntity(self_0 as *mut crate::g_local_h::gentity_s);
     (*self_0).nextthink = 0 as libc::c_int;
 }
 #[no_mangle]
@@ -792,11 +800,11 @@ pub unsafe extern "C" fn target_laser_start(mut self_0: *mut crate::g_local_h::g
     (*self_0).s.eType = crate::bg_public_h::ET_BEAM as libc::c_int;
     if !(*self_0).target.is_null() {
         ent = crate::src::game::g_utils::G_Find(
-            0 as *mut crate::g_local_h::gentity_t,
+            0 as *mut crate::g_local_h::gentity_t as *mut crate::g_local_h::gentity_s,
             &mut (*(0 as *mut crate::g_local_h::gentity_t)).targetname as *mut *mut libc::c_char
                 as crate::stddef_h::size_t as libc::c_int,
             (*self_0).target,
-        );
+        ) as *mut crate::g_local_h::gentity_s;
         if ent.is_null() {
             crate::src::game::g_main::G_Printf(
                 b"%s at %s: %s is a bad target\n\x00" as *const u8 as *const libc::c_char,
@@ -853,7 +861,8 @@ pub unsafe extern "C" fn target_teleporter_use(
     if (*activator).client.is_null() {
         return;
     }
-    dest = crate::src::game::g_utils::G_PickTarget((*self_0).target);
+    dest = crate::src::game::g_utils::G_PickTarget((*self_0).target)
+        as *mut crate::g_local_h::gentity_s;
     if dest.is_null() {
         crate::src::game::g_main::G_Printf(
             b"Couldn\'t find teleporter destination\n\x00" as *const u8 as *const libc::c_char,
@@ -861,7 +870,7 @@ pub unsafe extern "C" fn target_teleporter_use(
         return;
     }
     crate::src::game::g_misc::TeleportPlayer(
-        activator,
+        activator as *mut crate::g_local_h::gentity_s,
         (*dest).s.origin.as_mut_ptr(),
         (*dest).s.angles.as_mut_ptr(),
     );
@@ -919,13 +928,17 @@ pub unsafe extern "C" fn target_relay_use(
     }
     if (*self_0).spawnflags & 4 as libc::c_int != 0 {
         let mut ent: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
-        ent = crate::src::game::g_utils::G_PickTarget((*self_0).target);
+        ent = crate::src::game::g_utils::G_PickTarget((*self_0).target)
+            as *mut crate::g_local_h::gentity_s;
         if !ent.is_null() && (*ent).use_0.is_some() {
             (*ent).use_0.expect("non-null function pointer")(ent, self_0, activator);
         }
         return;
     }
-    crate::src::game::g_utils::G_UseTargets(self_0, activator);
+    crate::src::game::g_utils::G_UseTargets(
+        self_0 as *mut crate::g_local_h::gentity_s,
+        activator as *mut crate::g_local_h::gentity_s,
+    );
 }
 #[no_mangle]
 
@@ -951,9 +964,9 @@ pub unsafe extern "C" fn target_kill_use(
     mut activator: *mut crate::g_local_h::gentity_t,
 ) {
     crate::src::game::g_combat::G_Damage(
-        activator,
-        0 as *mut crate::g_local_h::gentity_t,
-        0 as *mut crate::g_local_h::gentity_t,
+        activator as *mut crate::g_local_h::gentity_s,
+        0 as *mut crate::g_local_h::gentity_t as *mut crate::g_local_h::gentity_s,
+        0 as *mut crate::g_local_h::gentity_t as *mut crate::g_local_h::gentity_s,
         0 as *mut crate::src::qcommon::q_shared::vec_t,
         0 as *mut crate::src::qcommon::q_shared::vec_t,
         100000 as libc::c_int,
@@ -979,7 +992,10 @@ Used as a positional target for in-game calculation, like jumppad targets.
 #[no_mangle]
 
 pub unsafe extern "C" fn SP_target_position(mut self_0: *mut crate::g_local_h::gentity_t) {
-    crate::src::game::g_utils::G_SetOrigin(self_0, (*self_0).s.origin.as_mut_ptr());
+    crate::src::game::g_utils::G_SetOrigin(
+        self_0 as *mut crate::g_local_h::gentity_s,
+        (*self_0).s.origin.as_mut_ptr(),
+    );
 }
 
 unsafe extern "C" fn target_location_linkup(mut ent: *mut crate::g_local_h::gentity_t) {
@@ -1034,5 +1050,8 @@ pub unsafe extern "C" fn SP_target_location(mut self_0: *mut crate::g_local_h::g
         target_location_linkup as unsafe extern "C" fn(_: *mut crate::g_local_h::gentity_t) -> (),
     ); // Let them all spawn first
     (*self_0).nextthink = crate::src::game::g_main::level.time + 200 as libc::c_int;
-    crate::src::game::g_utils::G_SetOrigin(self_0, (*self_0).s.origin.as_mut_ptr());
+    crate::src::game::g_utils::G_SetOrigin(
+        self_0 as *mut crate::g_local_h::gentity_s,
+        (*self_0).s.origin.as_mut_ptr(),
+    );
 }

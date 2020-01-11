@@ -32,13 +32,13 @@ pub use crate::src::qcommon::q_shared::PRINT_DEVELOPER;
 pub use crate::src::qcommon::q_shared::PRINT_ERROR;
 pub use crate::src::qcommon::q_shared::PRINT_WARNING;
 use crate::src::renderergl1::tr_main::ri;
-use crate::stdlib::abs;
 use crate::stdlib::memcmp;
 use crate::stdlib::memcpy;
 pub use crate::stdlib::uint16_t;
 pub use crate::stdlib::uint32_t;
 pub use crate::stdlib::uint8_t;
 pub use crate::tr_public_h::refimport_t;
+use ::libc::abs;
 /*
  *  Some support functions for buffered files follow.
  */
@@ -599,9 +599,9 @@ unsafe extern "C" fn PredictPaeth(
     let mut pb: libc::c_int = 0;
     let mut pc: libc::c_int = 0;
     p = a as libc::c_int + b as libc::c_int - c as libc::c_int;
-    pa = crate::stdlib::abs(p - a as libc::c_int);
-    pb = crate::stdlib::abs(p - b as libc::c_int);
-    pc = crate::stdlib::abs(p - c as libc::c_int);
+    pa = ::libc::abs(p - a as libc::c_int);
+    pb = ::libc::abs(p - b as libc::c_int);
+    pc = ::libc::abs(p - c as libc::c_int);
     if pa <= pb && pa <= pc {
         Pr = a
     } else if pb <= pc {

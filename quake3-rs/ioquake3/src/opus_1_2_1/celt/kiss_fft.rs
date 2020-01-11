@@ -1,21 +1,9 @@
 // =============== BEGIN kiss_fft_h ================
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct kiss_fft_state {
-    pub nfft: libc::c_int,
-    pub scale: crate::arch_h::opus_val16,
-    pub shift: libc::c_int,
-    pub factors: [crate::opus_types_h::opus_int16; 16],
-    pub bitrev: *const crate::opus_types_h::opus_int16,
-    pub twiddles: *const crate::src::opus_1_2_1::celt::kiss_fft::kiss_twiddle_cpx,
-    pub arch_fft: *mut crate::src::opus_1_2_1::celt::kiss_fft::arch_fft_state,
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct arch_fft_state {
-    pub is_supported: libc::c_int,
-    pub priv_0: *mut libc::c_void,
+pub struct kiss_fft_cpx {
+    pub r: libc::c_float,
+    pub i: libc::c_float,
 }
 
 #[repr(C)]
@@ -27,9 +15,21 @@ pub struct kiss_twiddle_cpx {
 
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct kiss_fft_cpx {
-    pub r: libc::c_float,
-    pub i: libc::c_float,
+pub struct arch_fft_state {
+    pub is_supported: libc::c_int,
+    pub priv_0: *mut libc::c_void,
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct kiss_fft_state {
+    pub nfft: libc::c_int,
+    pub scale: crate::arch_h::opus_val16,
+    pub shift: libc::c_int,
+    pub factors: [crate::opus_types_h::opus_int16; 16],
+    pub bitrev: *const crate::opus_types_h::opus_int16,
+    pub twiddles: *const crate::src::opus_1_2_1::celt::kiss_fft::kiss_twiddle_cpx,
+    pub arch_fft: *mut crate::src::opus_1_2_1::celt::kiss_fft::arch_fft_state,
 }
 use ::libc;
 

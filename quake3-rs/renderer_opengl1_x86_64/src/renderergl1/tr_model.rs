@@ -108,9 +108,6 @@ pub use crate::src::renderergl1::tr_model_iqm::R_LoadIQM;
 pub use crate::src::renderergl1::tr_scene::RE_ClearScene;
 pub use crate::src::renderergl1::tr_shader::R_FindShader;
 use crate::stdlib::memcpy;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 pub use crate::tr_common_h::image_s;
 pub use crate::tr_common_h::image_t;
@@ -260,6 +257,9 @@ pub use crate::tr_local_h::TMOD_SCROLL;
 pub use crate::tr_local_h::TMOD_STRETCH;
 pub use crate::tr_local_h::TMOD_TRANSFORM;
 pub use crate::tr_local_h::TMOD_TURBULENT;
+use ::libc::strchr;
+use ::libc::strcmp;
+use ::libc::strcpy;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -317,8 +317,8 @@ pub unsafe extern "C" fn R_RegisterMD3(
     let mut defex: [libc::c_char; 4] =
         *::std::mem::transmute::<&[u8; 4], &mut [libc::c_char; 4]>(b"md3\x00");
     numLoaded = 0 as libc::c_int;
-    crate::stdlib::strcpy(filename.as_mut_ptr(), name);
-    fext = crate::stdlib::strchr(filename.as_mut_ptr(), '.' as i32);
+    ::libc::strcpy(filename.as_mut_ptr(), name);
+    fext = ::libc::strchr(filename.as_mut_ptr(), '.' as i32);
     if fext.is_null() {
         fext = defex.as_mut_ptr()
     } else {
@@ -469,7 +469,7 @@ pub unsafe extern "C" fn R_RegisterIQM(
         return 0 as libc::c_int;
     }
     loaded = crate::src::renderergl1::tr_model_iqm::R_LoadIQM(
-        mod_0,
+        mod_0 as *mut crate::tr_local_h::model_s,
         buf.u as *mut libc::c_void,
         filesize,
         name,
@@ -632,7 +632,7 @@ pub unsafe extern "C" fn RE_RegisterModel(
     hModel = 1 as libc::c_int;
     while hModel < crate::src::renderergl1::tr_main::tr.numModels {
         mod_0 = crate::src::renderergl1::tr_main::tr.models[hModel as usize];
-        if crate::stdlib::strcmp((*mod_0).name.as_mut_ptr(), name) == 0 {
+        if ::libc::strcmp((*mod_0).name.as_mut_ptr(), name) == 0 {
             if (*mod_0).type_0 as libc::c_uint
                 == crate::tr_local_h::MOD_BAD as libc::c_int as libc::c_uint
             {
@@ -948,7 +948,7 @@ unsafe extern "C" fn R_LoadMD3(
                 (*shader).name.as_mut_ptr(),
                 -(1 as libc::c_int),
                 crate::src::qcommon::q_shared::qtrue,
-            );
+            ) as *mut crate::tr_local_h::shader_s;
             if (*sh).defaultShader as u64 != 0 {
                 (*shader).shaderIndex = 0 as libc::c_int
             } else {
@@ -1358,7 +1358,7 @@ unsafe extern "C" fn R_LoadMDR(
                 (*surf).shader.as_mut_ptr(),
                 -(1 as libc::c_int),
                 crate::src::qcommon::q_shared::qtrue,
-            );
+            ) as *mut crate::tr_local_h::shader_s;
             if (*sh).defaultShader as u64 != 0 {
                 (*surf).shaderIndex = 0 as libc::c_int
             } else {
@@ -1745,7 +1745,7 @@ unsafe extern "C" fn R_GetTag(
         .offset((frame * (*mod_0).numTags) as isize);
     i = 0 as libc::c_int;
     while i < (*mod_0).numTags {
-        if crate::stdlib::strcmp((*tag).name.as_mut_ptr(), tagName) == 0 {
+        if ::libc::strcmp((*tag).name.as_mut_ptr(), tagName) == 0 {
             return tag;
             // found it
         }
@@ -1776,7 +1776,7 @@ pub unsafe extern "C" fn R_GetAnimTag(
         as *mut crate::qfiles_h::mdrTag_t;
     i = 0 as libc::c_int;
     while i < (*mod_0).numTags {
-        if crate::stdlib::strcmp((*tag).name.as_mut_ptr(), tagName) == 0 {
+        if ::libc::strcmp((*tag).name.as_mut_ptr(), tagName) == 0 {
             crate::src::qcommon::q_shared::Q_strncpyz(
                 (*dest).name.as_mut_ptr(),
                 (*tag).name.as_mut_ptr(),
@@ -1881,8 +1881,9 @@ pub unsafe extern "C" fn R_LerpTag(
             == crate::tr_local_h::MOD_IQM as libc::c_int as libc::c_uint
         {
             return crate::src::renderergl1::tr_model_iqm::R_IQMLerpTag(
-                tag,
-                (*model).modelData as *mut crate::tr_local_h::iqmData_t,
+                tag as *mut crate::src::qcommon::q_shared::orientation_t,
+                (*model).modelData as *mut crate::tr_local_h::iqmData_t
+                    as *mut crate::tr_local_h::iqmData_t,
                 startFrame,
                 endFrame,
                 frac,

@@ -958,7 +958,6 @@ pub use crate::src::qcommon::q_shared::EXEC_APPEND;
 pub use crate::src::qcommon::q_shared::EXEC_INSERT;
 pub use crate::src::qcommon::q_shared::EXEC_NOW;
 pub use crate::src::sys::sys_unix::Sys_Milliseconds;
-use crate::stdlib::abs;
 use crate::stdlib::memset;
 pub use crate::stdlib::SDL_AudioDeviceEvent;
 pub use crate::stdlib::SDL_CommonEvent;
@@ -1062,6 +1061,7 @@ pub use crate::tr_types_h::GLHW_RIVA128;
 pub use crate::tr_types_h::TC_NONE;
 pub use crate::tr_types_h::TC_S3TC;
 pub use crate::tr_types_h::TC_S3TC_ARB;
+use ::libc::abs;
 
 use crate::stdlib::SDL_Init;
 use crate::stdlib::SDL_QuitSubSystem;
@@ -1677,11 +1677,12 @@ unsafe extern "C" fn IN_InitJoystick() {
         );
         i += 1
     }
+
     crate::src::qcommon::cvar::Cvar_Get(
         b"in_availableJoysticks\x00" as *const u8 as *const libc::c_char,
         buf.as_mut_ptr(),
         0x40 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     if (*in_joystick).integer == 0 {
         crate::src::qcommon::common::Com_DPrintf(
             b"Joystick is not active.\n\x00" as *const u8 as *const libc::c_char,
@@ -1693,7 +1694,7 @@ unsafe extern "C" fn IN_InitJoystick() {
         b"in_joystickNo\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     if (*in_joystickNo).integer < 0 as libc::c_int || (*in_joystickNo).integer >= total {
         crate::src::qcommon::cvar::Cvar_Set(
             b"in_joystickNo\x00" as *const u8 as *const libc::c_char,
@@ -1704,7 +1705,7 @@ unsafe extern "C" fn IN_InitJoystick() {
         b"in_joystickUseAnalog\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     stick = crate::stdlib::SDL_JoystickOpen((*in_joystickNo).integer);
     if stick.is_null() {
         crate::src::qcommon::common::Com_DPrintf(
@@ -1966,7 +1967,7 @@ unsafe extern "C" fn IN_GamepadMove() {
         ) as libc::c_int;
         let mut oldAxis: libc::c_int = stick_state.oldaaxes[i as usize];
         // Smoothly ramp from dead zone to maximum value
-        let mut f: libc::c_float = (crate::stdlib::abs(axis) as libc::c_float / 32767.0f32
+        let mut f: libc::c_float = (::libc::abs(axis) as libc::c_float / 32767.0f32
             - (*in_joystickThreshold).value)
             / (1.0f32 - (*in_joystickThreshold).value);
         if f < 0.0f32 {
@@ -2153,10 +2154,10 @@ unsafe extern "C" fn IN_JoyMove() {
         if balldx != 0 || balldy != 0 {
             // !!! FIXME: is this good for stick balls, or just mice?
             // Scale like the mouse input...
-            if crate::stdlib::abs(balldx) > 1 as libc::c_int {
+            if ::libc::abs(balldx) > 1 as libc::c_int {
                 balldx *= 2 as libc::c_int
             }
-            if crate::stdlib::abs(balldy) > 1 as libc::c_int {
+            if ::libc::abs(balldy) > 1 as libc::c_int {
                 balldy *= 2 as libc::c_int
             }
             crate::src::qcommon::common::Com_QueueEvent(
@@ -2481,7 +2482,7 @@ unsafe extern "C" fn IN_JoyMove() {
             while i < total {
                 let mut axis: crate::stdlib::Sint16 = crate::stdlib::SDL_JoystickGetAxis(stick, i);
                 let mut f: libc::c_float =
-                    crate::stdlib::abs(axis as libc::c_int) as libc::c_float / 32767.0f32;
+                    ::libc::abs(axis as libc::c_int) as libc::c_float / 32767.0f32;
                 if f < (*in_joystickThreshold).value {
                     axis = 0 as libc::c_int as crate::stdlib::Sint16
                 }
@@ -2958,28 +2959,28 @@ pub unsafe extern "C" fn IN_Init(mut windowData: *mut libc::c_void) {
         b"in_keyboardDebug\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     // mouse variables
     in_mouse = crate::src::qcommon::cvar::Cvar_Get(
         b"in_mouse\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     in_nograb = crate::src::qcommon::cvar::Cvar_Get(
         b"in_nograb\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     in_joystick = crate::src::qcommon::cvar::Cvar_Get(
         b"in_joystick\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int | 0x20 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     in_joystickThreshold = crate::src::qcommon::cvar::Cvar_Get(
         b"joy_threshold\x00" as *const u8 as *const libc::c_char,
         b"0.15\x00" as *const u8 as *const libc::c_char,
         0x1 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     crate::stdlib::SDL_StartTextInput();
     mouseAvailable = ((*in_mouse).value != 0 as libc::c_int as libc::c_float) as libc::c_int
         as crate::src::qcommon::q_shared::qboolean;

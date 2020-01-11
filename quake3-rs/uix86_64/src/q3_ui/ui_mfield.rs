@@ -724,7 +724,9 @@ pub unsafe extern "C" fn MenuField_Draw(mut f: *mut crate::ui_local_h::menufield
         w = 16 as libc::c_int;
         style = 0x20 as libc::c_int
     }
-    if crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor((*f).generic.parent) == f as *mut libc::c_void
+    if crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(
+        (*f).generic.parent as *mut crate::ui_local_h::_tag_menuframework,
+    ) == f as *mut libc::c_void
     {
         focus = crate::src::qcommon::q_shared::qtrue;
         style |= 0x4000 as libc::c_int

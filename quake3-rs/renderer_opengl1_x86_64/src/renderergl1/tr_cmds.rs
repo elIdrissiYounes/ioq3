@@ -727,7 +727,8 @@ pub unsafe extern "C" fn RE_StretchPic(
         return;
     }
     (*cmd).commandId = crate::tr_local_h::RC_STRETCH_PIC as libc::c_int;
-    (*cmd).shader = crate::src::renderergl1::tr_shader::R_GetShaderByHandle(hShader);
+    (*cmd).shader = crate::src::renderergl1::tr_shader::R_GetShaderByHandle(hShader)
+        as *mut crate::tr_local_h::shader_s;
     (*cmd).x = x;
     (*cmd).y = y;
     (*cmd).w = w;

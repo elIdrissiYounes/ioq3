@@ -9,11 +9,11 @@ pub struct code {
 
 pub type codetype = libc::c_uint;
 
-pub const DISTS: crate::src::zlib::inftrees::codetype = 2;
+pub const CODES: crate::src::zlib::inftrees::codetype = 0;
 
 pub const LENS: crate::src::zlib::inftrees::codetype = 1;
 
-pub const CODES: crate::src::zlib::inftrees::codetype = 0;
+pub const DISTS: crate::src::zlib::inftrees::codetype = 2;
 use ::libc;
 
 #[no_mangle]

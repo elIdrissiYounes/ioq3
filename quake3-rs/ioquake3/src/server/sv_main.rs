@@ -158,12 +158,12 @@ pub use crate::src::sys::sys_unix::Sys_Milliseconds;
 use crate::stdlib::memcmp;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 use crate::stdlib::strncmp;
 use crate::stdlib::vsnprintf;
 pub use crate::vm_local_h::vm_s;
+use ::libc::strcmp;
+use ::libc::strcpy;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -565,7 +565,7 @@ pub unsafe extern "C" fn SV_AddServerCommand(
             cmd,
         );
         crate::src::server::sv_client::SV_DropClient(
-            client,
+            client as *mut crate::server_h::client_s,
             b"Server command overflow\x00" as *const u8 as *const libc::c_char,
         );
         return;
@@ -702,7 +702,8 @@ pub unsafe extern "C" fn SV_MasterHeartbeat(mut message: *const libc::c_char) {
                         (*sv_master[i as usize]).string,
                         &mut *(*adr.as_mut_ptr().offset(i as isize))
                             .as_mut_ptr()
-                            .offset(0 as libc::c_int as isize),
+                            .offset(0 as libc::c_int as isize) as *mut _
+                            as *mut crate::qcommon_h::netadr_t,
                         crate::qcommon_h::NA_IP,
                     );
                     if res == 2 as libc::c_int {
@@ -717,7 +718,8 @@ pub unsafe extern "C" fn SV_MasterHeartbeat(mut message: *const libc::c_char) {
                             b"%s resolved to %s\n\x00" as *const u8 as *const libc::c_char,
                             (*sv_master[i as usize]).string,
                             crate::src::qcommon::net_ip::NET_AdrToStringwPort(
-                                adr[i as usize][0 as libc::c_int as usize],
+                                adr[i as usize][0 as libc::c_int as usize]
+                                    as crate::qcommon_h::netadr_t,
                             ),
                         );
                     } else {
@@ -736,7 +738,8 @@ pub unsafe extern "C" fn SV_MasterHeartbeat(mut message: *const libc::c_char) {
                         (*sv_master[i as usize]).string,
                         &mut *(*adr.as_mut_ptr().offset(i as isize))
                             .as_mut_ptr()
-                            .offset(1 as libc::c_int as isize),
+                            .offset(1 as libc::c_int as isize) as *mut _
+                            as *mut crate::qcommon_h::netadr_t,
                         crate::qcommon_h::NA_IP6,
                     );
                     if res == 2 as libc::c_int {
@@ -751,7 +754,8 @@ pub unsafe extern "C" fn SV_MasterHeartbeat(mut message: *const libc::c_char) {
                             b"%s resolved to %s\n\x00" as *const u8 as *const libc::c_char,
                             (*sv_master[i as usize]).string,
                             crate::src::qcommon::net_ip::NET_AdrToStringwPort(
-                                adr[i as usize][1 as libc::c_int as usize],
+                                adr[i as usize][1 as libc::c_int as usize]
+                                    as crate::qcommon_h::netadr_t,
                             ),
                         );
                     } else {
@@ -778,7 +782,7 @@ pub unsafe extern "C" fn SV_MasterHeartbeat(mut message: *const libc::c_char) {
                 {
                     crate::src::qcommon::net_chan::NET_OutOfBandPrint(
                         crate::qcommon_h::NS_SERVER,
-                        adr[i as usize][0 as libc::c_int as usize],
+                        adr[i as usize][0 as libc::c_int as usize] as crate::qcommon_h::netadr_t,
                         b"heartbeat %s\n\x00" as *const u8 as *const libc::c_char,
                         message,
                     );
@@ -788,7 +792,7 @@ pub unsafe extern "C" fn SV_MasterHeartbeat(mut message: *const libc::c_char) {
                 {
                     crate::src::qcommon::net_chan::NET_OutOfBandPrint(
                         crate::qcommon_h::NS_SERVER,
-                        adr[i as usize][1 as libc::c_int as usize],
+                        adr[i as usize][1 as libc::c_int as usize] as crate::qcommon_h::netadr_t,
                         b"heartbeat %s\n\x00" as *const u8 as *const libc::c_char,
                         message,
                     );
@@ -1063,7 +1067,7 @@ unsafe extern "C" fn SVC_Status(mut from: crate::qcommon_h::netadr_t) {
         crate::src::qcommon::common::Com_DPrintf(
             b"SVC_Status: rate limit from %s exceeded, dropping request\n\x00" as *const u8
                 as *const libc::c_char,
-            crate::src::qcommon::net_ip::NET_AdrToString(from),
+            crate::src::qcommon::net_ip::NET_AdrToString(from as crate::qcommon_h::netadr_t),
         );
         return;
     }
@@ -1088,7 +1092,7 @@ unsafe extern "C" fn SVC_Status(mut from: crate::qcommon_h::netadr_t) {
     {
         return;
     }
-    crate::stdlib::strcpy(
+    ::libc::strcpy(
         infostring.as_mut_ptr(),
         crate::src::qcommon::cvar::Cvar_InfoString(0x4 as libc::c_int),
     );
@@ -1107,7 +1111,8 @@ unsafe extern "C" fn SVC_Status(mut from: crate::qcommon_h::netadr_t) {
         if (*cl).state as libc::c_uint
             >= crate::server_h::CS_CONNECTED as libc::c_int as libc::c_uint
         {
-            ps = crate::src::server::sv_game::SV_GameClientNum(i);
+            ps = crate::src::server::sv_game::SV_GameClientNum(i)
+                as *mut crate::src::qcommon::q_shared::playerState_s;
             crate::src::qcommon::q_shared::Com_sprintf(
                 player.as_mut_ptr(),
                 ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
@@ -1122,7 +1127,7 @@ unsafe extern "C" fn SVC_Status(mut from: crate::qcommon_h::netadr_t) {
             {
                 break;
             }
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 status.as_mut_ptr().offset(statusLength as isize),
                 player.as_mut_ptr(),
             );
@@ -1132,7 +1137,7 @@ unsafe extern "C" fn SVC_Status(mut from: crate::qcommon_h::netadr_t) {
     }
     crate::src::qcommon::net_chan::NET_OutOfBandPrint(
         crate::qcommon_h::NS_SERVER,
-        from,
+        from as crate::qcommon_h::netadr_t,
         b"statusResponse\n%s\n%s\x00" as *const u8 as *const libc::c_char,
         infostring.as_mut_ptr(),
         status.as_mut_ptr(),
@@ -1169,7 +1174,7 @@ pub unsafe extern "C" fn SVC_Info(mut from: crate::qcommon_h::netadr_t) {
         crate::src::qcommon::common::Com_DPrintf(
             b"SVC_Info: rate limit from %s exceeded, dropping request\n\x00" as *const u8
                 as *const libc::c_char,
-            crate::src::qcommon::net_ip::NET_AdrToString(from),
+            crate::src::qcommon::net_ip::NET_AdrToString(from as crate::qcommon_h::netadr_t),
         );
         return;
     }
@@ -1349,7 +1354,7 @@ pub unsafe extern "C" fn SVC_Info(mut from: crate::qcommon_h::netadr_t) {
     }
     crate::src::qcommon::net_chan::NET_OutOfBandPrint(
         crate::qcommon_h::NS_SERVER,
-        from,
+        from as crate::qcommon_h::netadr_t,
         b"infoResponse\n%s\x00" as *const u8 as *const libc::c_char,
         infostring.as_mut_ptr(),
     );
@@ -1364,7 +1369,7 @@ SVC_FlushRedirect
 unsafe extern "C" fn SV_FlushRedirect(mut outputbuf: *mut libc::c_char) {
     crate::src::qcommon::net_chan::NET_OutOfBandPrint(
         crate::qcommon_h::NS_SERVER,
-        svs.redirectAddress,
+        svs.redirectAddress as crate::qcommon_h::netadr_t,
         b"print\n%s\x00" as *const u8 as *const libc::c_char,
         outputbuf,
     );
@@ -1394,12 +1399,12 @@ unsafe extern "C" fn SVC_RemoteCommand(
         crate::src::qcommon::common::Com_DPrintf(
             b"SVC_RemoteCommand: rate limit from %s exceeded, dropping request\n\x00" as *const u8
                 as *const libc::c_char,
-            crate::src::qcommon::net_ip::NET_AdrToString(from),
+            crate::src::qcommon::net_ip::NET_AdrToString(from as crate::qcommon_h::netadr_t),
         );
         return;
     }
     if crate::stdlib::strlen((*sv_rconPassword).string) == 0
-        || crate::stdlib::strcmp(
+        || ::libc::strcmp(
             crate::src::qcommon::cmd::Cmd_Argv(1 as libc::c_int),
             (*sv_rconPassword).string,
         ) != 0
@@ -1424,14 +1429,14 @@ unsafe extern "C" fn SVC_RemoteCommand(
         valid = crate::src::qcommon::q_shared::qfalse;
         crate::src::qcommon::common::Com_Printf(
             b"Bad rcon from %s: %s\n\x00" as *const u8 as *const libc::c_char,
-            crate::src::qcommon::net_ip::NET_AdrToString(from),
+            crate::src::qcommon::net_ip::NET_AdrToString(from as crate::qcommon_h::netadr_t),
             crate::src::qcommon::cmd::Cmd_ArgsFrom(2 as libc::c_int),
         );
     } else {
         valid = crate::src::qcommon::q_shared::qtrue;
         crate::src::qcommon::common::Com_Printf(
             b"Rcon from %s: %s\n\x00" as *const u8 as *const libc::c_char,
-            crate::src::qcommon::net_ip::NET_AdrToString(from),
+            crate::src::qcommon::net_ip::NET_AdrToString(from as crate::qcommon_h::netadr_t),
             crate::src::qcommon::cmd::Cmd_ArgsFrom(2 as libc::c_int),
         );
     }
@@ -1496,8 +1501,8 @@ unsafe extern "C" fn SV_ConnectionlessPacket(
 ) {
     let mut s: *mut libc::c_char = 0 as *mut libc::c_char; // skip the -1 marker
     let mut c: *mut libc::c_char = 0 as *mut libc::c_char;
-    crate::src::qcommon::msg::MSG_BeginReadingOOB(msg);
-    crate::src::qcommon::msg::MSG_ReadLong(msg);
+    crate::src::qcommon::msg::MSG_BeginReadingOOB(msg as *mut crate::qcommon_h::msg_t);
+    crate::src::qcommon::msg::MSG_ReadLong(msg as *mut crate::qcommon_h::msg_t);
     if crate::src::qcommon::q_shared::Q_strncmp(
         b"connect\x00" as *const u8 as *const libc::c_char,
         &mut *(*msg).data.offset(4 as libc::c_int as isize)
@@ -1505,14 +1510,17 @@ unsafe extern "C" fn SV_ConnectionlessPacket(
         7 as libc::c_int,
     ) == 0
     {
-        crate::src::qcommon::huffman::Huff_Decompress(msg, 12 as libc::c_int);
+        crate::src::qcommon::huffman::Huff_Decompress(
+            msg as *mut crate::qcommon_h::msg_t,
+            12 as libc::c_int,
+        );
     }
-    s = crate::src::qcommon::msg::MSG_ReadStringLine(msg);
+    s = crate::src::qcommon::msg::MSG_ReadStringLine(msg as *mut crate::qcommon_h::msg_t);
     crate::src::qcommon::cmd::Cmd_TokenizeString(s);
     c = crate::src::qcommon::cmd::Cmd_Argv(0 as libc::c_int);
     crate::src::qcommon::common::Com_DPrintf(
         b"SV packet %s : %s\n\x00" as *const u8 as *const libc::c_char,
-        crate::src::qcommon::net_ip::NET_AdrToString(from),
+        crate::src::qcommon::net_ip::NET_AdrToString(from as crate::qcommon_h::netadr_t),
         c,
     );
     if crate::src::qcommon::q_shared::Q_stricmp(
@@ -1532,19 +1540,19 @@ unsafe extern "C" fn SV_ConnectionlessPacket(
         b"getchallenge\x00" as *const u8 as *const libc::c_char,
     ) == 0
     {
-        crate::src::server::sv_client::SV_GetChallenge(from);
+        crate::src::server::sv_client::SV_GetChallenge(from as crate::qcommon_h::netadr_t);
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         c,
         b"connect\x00" as *const u8 as *const libc::c_char,
     ) == 0
     {
-        crate::src::server::sv_client::SV_DirectConnect(from);
+        crate::src::server::sv_client::SV_DirectConnect(from as crate::qcommon_h::netadr_t);
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         c,
         b"ipAuthorize\x00" as *const u8 as *const libc::c_char,
     ) == 0
     {
-        crate::src::server::sv_client::SV_AuthorizeIpPacket(from);
+        crate::src::server::sv_client::SV_AuthorizeIpPacket(from as crate::qcommon_h::netadr_t);
     } else if crate::src::qcommon::q_shared::Q_stricmp(
         c,
         b"rcon\x00" as *const u8 as *const libc::c_char,
@@ -1558,7 +1566,7 @@ unsafe extern "C" fn SV_ConnectionlessPacket(
     {
         crate::src::qcommon::common::Com_DPrintf(
             b"bad connectionless packet from %s:\n%s\n\x00" as *const u8 as *const libc::c_char,
-            crate::src::qcommon::net_ip::NET_AdrToString(from),
+            crate::src::qcommon::net_ip::NET_AdrToString(from as crate::qcommon_h::netadr_t),
             s,
         );
     };
@@ -1587,17 +1595,20 @@ pub unsafe extern "C" fn SV_PacketEvent(
     }
     // read the qport out of the message so we can fix up
     // stupid address translating routers
-    crate::src::qcommon::msg::MSG_BeginReadingOOB(msg); // sequence number
-    crate::src::qcommon::msg::MSG_ReadLong(msg);
-    qport = crate::src::qcommon::msg::MSG_ReadShort(msg) & 0xffff as libc::c_int;
+    crate::src::qcommon::msg::MSG_BeginReadingOOB(msg as *mut crate::qcommon_h::msg_t); // sequence number
+    crate::src::qcommon::msg::MSG_ReadLong(msg as *mut crate::qcommon_h::msg_t);
+    qport = crate::src::qcommon::msg::MSG_ReadShort(msg as *mut crate::qcommon_h::msg_t)
+        & 0xffff as libc::c_int;
     // find which client the message is from
     i = 0 as libc::c_int;
     cl = svs.clients;
     while i < (*sv_maxclients).integer {
         if !((*cl).state as libc::c_uint == crate::server_h::CS_FREE as libc::c_int as libc::c_uint)
         {
-            if !(crate::src::qcommon::net_ip::NET_CompareBaseAdr(from, (*cl).netchan.remoteAddress)
-                as u64
+            if !(crate::src::qcommon::net_ip::NET_CompareBaseAdr(
+                from as crate::qcommon_h::netadr_t,
+                (*cl).netchan.remoteAddress as crate::qcommon_h::netadr_t,
+            ) as u64
                 == 0)
             {
                 // it is possible to have multiple clients from a single IP
@@ -1614,7 +1625,12 @@ pub unsafe extern "C" fn SV_PacketEvent(
                         (*cl).netchan.remoteAddress.port = from.port
                     }
                     // make sure it is a valid, in sequence packet
-                    if crate::src::server::sv_net_chan::SV_Netchan_Process(cl, msg) as u64 != 0 {
+                    if crate::src::server::sv_net_chan::SV_Netchan_Process(
+                        cl as *mut crate::server_h::client_s,
+                        msg as *mut crate::qcommon_h::msg_t,
+                    ) as u64
+                        != 0
+                    {
                         // zombie clients still need to do the Netchan_Process
                         // to make sure they don't need to retransmit the final
                         // reliable message, but they don't do any other processing
@@ -1622,7 +1638,10 @@ pub unsafe extern "C" fn SV_PacketEvent(
                             != crate::server_h::CS_ZOMBIE as libc::c_int as libc::c_uint
                         {
                             (*cl).lastPacketTime = svs.time; // don't timeout
-                            crate::src::server::sv_client::SV_ExecuteClientMessage(cl, msg);
+                            crate::src::server::sv_client::SV_ExecuteClientMessage(
+                                cl as *mut crate::server_h::client_s,
+                                msg as *mut crate::qcommon_h::msg_t,
+                            );
                         }
                     }
                     return;
@@ -1682,7 +1701,8 @@ unsafe extern "C" fn SV_CalcPings() {
                 }
             }
             // let the game dll know about the ping
-            ps = crate::src::server::sv_game::SV_GameClientNum(i);
+            ps = crate::src::server::sv_game::SV_GameClientNum(i)
+                as *mut crate::src::qcommon::q_shared::playerState_s;
             (*ps).ping = (*cl).ping
         }
         i += 1
@@ -1735,7 +1755,7 @@ unsafe extern "C" fn SV_CheckTimeouts() {
             (*cl).timeoutCount += 1;
             if (*cl).timeoutCount > 5 as libc::c_int {
                 crate::src::server::sv_client::SV_DropClient(
-                    cl,
+                    cl as *mut crate::server_h::client_s,
                     b"timed out\x00" as *const u8 as *const libc::c_char,
                 );
                 (*cl).state = crate::server_h::CS_FREE

@@ -73,7 +73,7 @@ unsafe extern "C" fn encode_split(
 /* I    table of shell cdfs                         */
 {
     if p > 0 as libc::c_int {
-        crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(psRangeEnc, p_child1,
+        crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(psRangeEnc as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx, p_child1,
                     &*shell_table.offset(*crate::src::opus_1_2_1::silk::tables_pulses_per_block::silk_shell_code_table_offsets.as_ptr().offset(p
                                                                                             as
                                                                                             isize)
@@ -94,7 +94,7 @@ unsafe extern "C" fn decode_split(
 {
     if p > 0 as libc::c_int {
         *p_child1.offset(0 as libc::c_int as isize) =
-            crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(psRangeDec,
+            crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(psRangeDec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                         &*shell_table.offset(*crate::src::opus_1_2_1::silk::tables_pulses_per_block::silk_shell_code_table_offsets.as_ptr().offset(p
                                                                                                 as
                                                                                                 isize)

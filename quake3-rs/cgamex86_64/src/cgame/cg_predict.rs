@@ -492,7 +492,8 @@ unsafe extern "C" fn CG_ClipMoveToEntities(
                 angles[1 as libc::c_int as usize] = (*cent).lerpAngles[1 as libc::c_int as usize];
                 angles[2 as libc::c_int as usize] = (*cent).lerpAngles[2 as libc::c_int as usize];
                 crate::src::game::bg_misc::BG_EvaluateTrajectory(
-                    &mut (*cent).currentState.pos,
+                    &mut (*cent).currentState.pos as *mut _
+                        as *const crate::src::qcommon::q_shared::trajectory_t,
                     crate::src::cgame::cg_main::cg.physicsTime,
                     origin.as_mut_ptr(),
                 );
@@ -522,7 +523,7 @@ unsafe extern "C" fn CG_ClipMoveToEntities(
                 origin[2 as libc::c_int as usize] = (*cent).lerpOrigin[2 as libc::c_int as usize]
             }
             crate::src::cgame::cg_syscalls::trap_CM_TransformedBoxTrace(
-                &mut trace,
+                &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
                 start,
                 end,
                 mins,
@@ -578,7 +579,7 @@ pub unsafe extern "C" fn CG_Trace(
         entityNum: 0,
     };
     crate::src::cgame::cg_syscalls::trap_CM_BoxTrace(
-        &mut t,
+        &mut t as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         start,
         end,
         mins,
@@ -673,8 +674,14 @@ unsafe extern "C" fn CG_InterpolatePlayerState(
             };
         let mut cmdNum: libc::c_int = 0;
         cmdNum = crate::src::cgame::cg_syscalls::trap_GetCurrentCmdNumber();
-        crate::src::cgame::cg_syscalls::trap_GetUserCmd(cmdNum, &mut cmd);
-        crate::src::game::bg_pmove::PM_UpdateViewAngles(out, &mut cmd);
+        crate::src::cgame::cg_syscalls::trap_GetUserCmd(
+            cmdNum,
+            &mut cmd as *mut _ as *mut crate::src::qcommon::q_shared::usercmd_s,
+        );
+        crate::src::game::bg_pmove::PM_UpdateViewAngles(
+            out as *mut crate::src::qcommon::q_shared::playerState_s,
+            &mut cmd as *mut _ as *const crate::src::qcommon::q_shared::usercmd_s,
+        );
     }
     // if the next frame is a teleport, we can't lerp to it
     if crate::src::cgame::cg_main::cg.nextFrameTeleport as u64 != 0 {
@@ -720,8 +727,9 @@ unsafe extern "C" fn CG_TouchItem(mut cent: *mut crate::cg_local_h::centity_t) {
         return;
     }
     if crate::src::game::bg_misc::BG_PlayerTouchesItem(
-        &mut crate::src::cgame::cg_main::cg.predictedPlayerState,
-        &mut (*cent).currentState,
+        &mut crate::src::cgame::cg_main::cg.predictedPlayerState as *mut _
+            as *mut crate::src::qcommon::q_shared::playerState_s,
+        &mut (*cent).currentState as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
         crate::src::cgame::cg_main::cg.time,
     ) as u64
         == 0
@@ -734,8 +742,9 @@ unsafe extern "C" fn CG_TouchItem(mut cent: *mut crate::cg_local_h::centity_t) {
     }
     if crate::src::game::bg_misc::BG_CanItemBeGrabbed(
         crate::src::cgame::cg_main::cgs.gametype as libc::c_int,
-        &mut (*cent).currentState,
-        &mut crate::src::cgame::cg_main::cg.predictedPlayerState,
+        &mut (*cent).currentState as *mut _ as *const crate::src::qcommon::q_shared::entityState_s,
+        &mut crate::src::cgame::cg_main::cg.predictedPlayerState as *mut _
+            as *const crate::src::qcommon::q_shared::playerState_s,
     ) as u64
         == 0
     {
@@ -776,7 +785,8 @@ unsafe extern "C" fn CG_TouchItem(mut cent: *mut crate::cg_local_h::centity_t) {
     crate::src::game::bg_misc::BG_AddPredictableEventToPlayerstate(
         crate::bg_public_h::EV_ITEM_PICKUP as libc::c_int,
         (*cent).currentState.modelindex,
-        &mut crate::src::cgame::cg_main::cg.predictedPlayerState,
+        &mut crate::src::cgame::cg_main::cg.predictedPlayerState as *mut _
+            as *mut crate::src::qcommon::q_shared::playerState_s,
     );
     // remove it from the frame so it won't be drawn
     (*cent).currentState.eFlags |= 0x80 as libc::c_int;
@@ -854,7 +864,7 @@ unsafe extern "C" fn CG_TouchTriggerPrediction() {
             cmodel = crate::src::cgame::cg_syscalls::trap_CM_InlineModel((*ent).modelindex);
             if !(cmodel == 0) {
                 crate::src::cgame::cg_syscalls::trap_CM_BoxTrace(
-                    &mut trace,
+                    &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
                     crate::src::cgame::cg_main::cg
                         .predictedPlayerState
                         .origin
@@ -876,8 +886,9 @@ unsafe extern "C" fn CG_TouchTriggerPrediction() {
                             crate::src::qcommon::q_shared::qtrue
                     } else if (*ent).eType == crate::bg_public_h::ET_PUSH_TRIGGER as libc::c_int {
                         crate::src::game::bg_misc::BG_TouchJumpPad(
-                            &mut crate::src::cgame::cg_main::cg.predictedPlayerState,
-                            ent,
+                            &mut crate::src::cgame::cg_main::cg.predictedPlayerState as *mut _
+                                as *mut crate::src::qcommon::q_shared::playerState_s,
+                            ent as *mut crate::src::qcommon::q_shared::entityState_s,
                         );
                     }
                 }
@@ -1285,7 +1296,10 @@ pub unsafe extern "C" fn CG_PredictPlayerState() {
     // can't accurately predict a current position, so just freeze at
     // the last good position we had
     cmdNum = current - 64 as libc::c_int + 1 as libc::c_int;
-    crate::src::cgame::cg_syscalls::trap_GetUserCmd(cmdNum, &mut oldestCmd);
+    crate::src::cgame::cg_syscalls::trap_GetUserCmd(
+        cmdNum,
+        &mut oldestCmd as *mut _ as *mut crate::src::qcommon::q_shared::usercmd_s,
+    );
     if oldestCmd.serverTime > (*crate::src::cgame::cg_main::cg.snap).ps.commandTime
         && oldestCmd.serverTime < crate::src::cgame::cg_main::cg.time
     {
@@ -1298,7 +1312,10 @@ pub unsafe extern "C" fn CG_PredictPlayerState() {
         return;
     }
     // get the latest command so we can know which commands are from previous map_restarts
-    crate::src::cgame::cg_syscalls::trap_GetUserCmd(current, &mut latestCmd);
+    crate::src::cgame::cg_syscalls::trap_GetUserCmd(
+        current,
+        &mut latestCmd as *mut _ as *mut crate::src::qcommon::q_shared::usercmd_s,
+    );
     // get the most recent information we have, even if
     // the server time is beyond our current cg.time,
     // because predicted player positions are going to
@@ -1323,7 +1340,8 @@ pub unsafe extern "C" fn CG_PredictPlayerState() {
             b"8\x00" as *const u8 as *const libc::c_char,
         );
         crate::src::cgame::cg_syscalls::trap_Cvar_Update(
-            &mut crate::src::cgame::cg_main::pmove_msec,
+            &mut crate::src::cgame::cg_main::pmove_msec as *mut _
+                as *mut crate::src::qcommon::q_shared::vmCvar_t,
         );
     } else if crate::src::cgame::cg_main::pmove_msec.integer > 33 as libc::c_int {
         crate::src::cgame::cg_syscalls::trap_Cvar_Set(
@@ -1331,7 +1349,8 @@ pub unsafe extern "C" fn CG_PredictPlayerState() {
             b"33\x00" as *const u8 as *const libc::c_char,
         );
         crate::src::cgame::cg_syscalls::trap_Cvar_Update(
-            &mut crate::src::cgame::cg_main::pmove_msec,
+            &mut crate::src::cgame::cg_main::pmove_msec as *mut _
+                as *mut crate::src::qcommon::q_shared::vmCvar_t,
         );
     }
     cg_pmove.pmove_fixed = crate::src::cgame::cg_main::pmove_fixed.integer;
@@ -1341,9 +1360,15 @@ pub unsafe extern "C" fn CG_PredictPlayerState() {
     cmdNum = current - 64 as libc::c_int + 1 as libc::c_int;
     while cmdNum <= current {
         // get the command
-        crate::src::cgame::cg_syscalls::trap_GetUserCmd(cmdNum, &mut cg_pmove.cmd);
+        crate::src::cgame::cg_syscalls::trap_GetUserCmd(
+            cmdNum,
+            &mut cg_pmove.cmd as *mut _ as *mut crate::src::qcommon::q_shared::usercmd_s,
+        );
         if cg_pmove.pmove_fixed != 0 {
-            crate::src::game::bg_pmove::PM_UpdateViewAngles(cg_pmove.ps, &mut cg_pmove.cmd);
+            crate::src::game::bg_pmove::PM_UpdateViewAngles(
+                cg_pmove.ps as *mut crate::src::qcommon::q_shared::playerState_s,
+                &mut cg_pmove.cmd as *mut _ as *const crate::src::qcommon::q_shared::usercmd_s,
+            );
         }
         // check for predictable events that changed from previous predictions
         //CG_CheckChangedPredictableEvents(&cg.predictedPlayerState);
@@ -1508,7 +1533,9 @@ pub unsafe extern "C" fn CG_PredictPlayerState() {
                         / crate::src::cgame::cg_main::pmove_msec.integer
                         * crate::src::cgame::cg_main::pmove_msec.integer
                 }
-                crate::src::game::bg_pmove::Pmove(&mut cg_pmove);
+                crate::src::game::bg_pmove::Pmove(
+                    &mut cg_pmove as *mut _ as *mut crate::bg_public_h::pmove_t,
+                );
                 moved = crate::src::qcommon::q_shared::qtrue;
                 // add push trigger movement effects
                 CG_TouchTriggerPrediction();
@@ -1568,8 +1595,9 @@ pub unsafe extern "C" fn CG_PredictPlayerState() {
     }
     // fire events and other transition triggered things
     crate::src::cgame::cg_playerstate::CG_TransitionPlayerState(
-        &mut crate::src::cgame::cg_main::cg.predictedPlayerState,
-        &mut oldPlayerState,
+        &mut crate::src::cgame::cg_main::cg.predictedPlayerState as *mut _
+            as *mut crate::src::qcommon::q_shared::playerState_s,
+        &mut oldPlayerState as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
     );
     if crate::src::cgame::cg_main::cg_showmiss.integer != 0 {
         if crate::src::cgame::cg_main::cg.eventSequence

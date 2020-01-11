@@ -22,7 +22,7 @@ pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
 use crate::stdlib::memcpy;
-use crate::stdlib::rand;
+use ::libc::rand;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -92,7 +92,7 @@ pub unsafe extern "C" fn GeneticSelection(
         //end for
     }
     //select a bot randomly
-    index = ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+    index = ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
         / 0x7fff as libc::c_int as libc::c_float
         * numranks as libc::c_float) as libc::c_int; //end for
     i = 0 as libc::c_int;

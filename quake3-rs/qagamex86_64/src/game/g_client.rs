@@ -125,7 +125,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -432,10 +432,10 @@ use crate::stdlib::sqrt;
 pub use crate::src::game::g_client::stdlib_h::atoi;
 use crate::src::game::g_team::SelectCTFSpawnPoint;
 use crate::stdlib::memset;
-pub use crate::stdlib::rand;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
-pub use crate::stdlib::strtol;
+pub use ::libc::rand;
+use ::libc::strcmp;
+use ::libc::strcpy;
+pub use ::libc::strtol;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -593,11 +593,11 @@ pub unsafe extern "C" fn SelectNearestDeathmatchSpawnPoint(
     spot = 0 as *mut crate::g_local_h::gentity_t;
     loop {
         spot = crate::src::game::g_utils::G_Find(
-            spot,
+            spot as *mut crate::g_local_h::gentity_s,
             &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut libc::c_char
                 as crate::stddef_h::size_t as libc::c_int,
             b"info_player_deathmatch\x00" as *const u8 as *const libc::c_char,
-        );
+        ) as *mut crate::g_local_h::gentity_s;
         if spot.is_null() {
             break;
         }
@@ -631,11 +631,11 @@ pub unsafe extern "C" fn SelectRandomDeathmatchSpawnPoint(
     // spot is not for this human/bot player
     {
         spot = crate::src::game::g_utils::G_Find(
-            spot,
+            spot as *mut crate::g_local_h::gentity_s,
             &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut libc::c_char
                 as crate::stddef_h::size_t as libc::c_int,
             b"info_player_deathmatch\x00" as *const u8 as *const libc::c_char,
-        );
+        ) as *mut crate::g_local_h::gentity_s;
         if !(!spot.is_null() && count < 128 as libc::c_int) {
             break;
         }
@@ -653,13 +653,13 @@ pub unsafe extern "C" fn SelectRandomDeathmatchSpawnPoint(
     if count == 0 {
         // no spots that won't telefrag
         return crate::src::game::g_utils::G_Find(
-            0 as *mut crate::g_local_h::gentity_t,
+            0 as *mut crate::g_local_h::gentity_t as *mut crate::g_local_h::gentity_s,
             &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut libc::c_char
                 as crate::stddef_h::size_t as libc::c_int,
             b"info_player_deathmatch\x00" as *const u8 as *const libc::c_char,
-        );
+        ) as *mut crate::g_local_h::gentity_s;
     }
-    selection = crate::stdlib::rand() % count;
+    selection = ::libc::rand() % count;
     return spots[selection as usize];
 }
 /*
@@ -693,11 +693,11 @@ pub unsafe extern "C" fn SelectRandomFurthestSpawnPoint(
     // spot is not for this human/bot player
     {
         spot = crate::src::game::g_utils::G_Find(
-            spot,
+            spot as *mut crate::g_local_h::gentity_s,
             &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut libc::c_char
                 as crate::stddef_h::size_t as libc::c_int,
             b"info_player_deathmatch\x00" as *const u8 as *const libc::c_char,
-        );
+        ) as *mut crate::g_local_h::gentity_s;
         if spot.is_null() {
             break;
         }
@@ -744,11 +744,11 @@ pub unsafe extern "C" fn SelectRandomFurthestSpawnPoint(
     }
     if numSpots == 0 {
         spot = crate::src::game::g_utils::G_Find(
-            0 as *mut crate::g_local_h::gentity_t,
+            0 as *mut crate::g_local_h::gentity_t as *mut crate::g_local_h::gentity_s,
             &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut libc::c_char
                 as crate::stddef_h::size_t as libc::c_int,
             b"info_player_deathmatch\x00" as *const u8 as *const libc::c_char,
-        );
+        ) as *mut crate::g_local_h::gentity_s;
         if spot.is_null() {
             crate::src::game::g_main::G_Error(
                 b"Couldn\'t find a spawn point\x00" as *const u8 as *const libc::c_char,
@@ -765,7 +765,7 @@ pub unsafe extern "C" fn SelectRandomFurthestSpawnPoint(
         return spot;
     }
     // select a random spot from the spawn points furthest away
-    rnd = ((crate::stdlib::rand() & 0x7fff as libc::c_int) as libc::c_float
+    rnd = ((::libc::rand() & 0x7fff as libc::c_int) as libc::c_float
         / 0x7fff as libc::c_int as libc::c_float
         * (numSpots / 2 as libc::c_int) as libc::c_float) as libc::c_int;
     *origin.offset(0 as libc::c_int as isize) =
@@ -847,11 +847,11 @@ pub unsafe extern "C" fn SelectInitialSpawnPoint(
     spot = 0 as *mut crate::g_local_h::gentity_t;
     loop {
         spot = crate::src::game::g_utils::G_Find(
-            spot,
+            spot as *mut crate::g_local_h::gentity_s,
             &mut (*(0 as *mut crate::g_local_h::gentity_t)).classname as *mut *mut libc::c_char
                 as crate::stddef_h::size_t as libc::c_int,
             b"info_player_deathmatch\x00" as *const u8 as *const libc::c_char,
-        );
+        ) as *mut crate::g_local_h::gentity_s;
         if spot.is_null() {
             break;
         }
@@ -929,7 +929,7 @@ pub unsafe extern "C" fn InitBodyQue() {
     crate::src::game::g_main::level.bodyQueIndex = 0 as libc::c_int;
     i = 0 as libc::c_int;
     while i < 8 as libc::c_int {
-        ent = crate::src::game::g_utils::G_Spawn();
+        ent = crate::src::game::g_utils::G_Spawn() as *mut crate::g_local_h::gentity_s;
         (*ent).classname = b"bodyque\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
         (*ent).neverFree = crate::src::qcommon::q_shared::qtrue;
         crate::src::game::g_main::level.bodyQue[i as usize] = ent;
@@ -948,7 +948,7 @@ After sitting around for five seconds, fall into the ground and disappear
 pub unsafe extern "C" fn BodySink(mut ent: *mut crate::g_local_h::gentity_t) {
     if crate::src::game::g_main::level.time - (*ent).timestamp > 6500 as libc::c_int {
         // the body ques are never actually freed, they are just unlinked
-        crate::src::game::g_syscalls::trap_UnlinkEntity(ent);
+        crate::src::game::g_syscalls::trap_UnlinkEntity(ent as *mut crate::g_local_h::gentity_s);
         (*ent).physicsObject = crate::src::qcommon::q_shared::qfalse;
         return;
     }
@@ -968,7 +968,7 @@ just like the existing corpse to leave behind.
 pub unsafe extern "C" fn CopyToBodyQue(mut ent: *mut crate::g_local_h::gentity_t) {
     let mut body: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut contents: libc::c_int = 0;
-    crate::src::game::g_syscalls::trap_UnlinkEntity(ent);
+    crate::src::game::g_syscalls::trap_UnlinkEntity(ent as *mut crate::g_local_h::gentity_s);
     // if client is in a nodrop area, don't leave the body
     contents = crate::src::game::g_syscalls::trap_PointContents(
         (*ent).s.origin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -1061,7 +1061,7 @@ pub unsafe extern "C" fn CopyToBodyQue(mut ent: *mut crate::g_local_h::gentity_t
         (*body).s.pos.trBase[1 as libc::c_int as usize];
     (*body).r.currentOrigin[2 as libc::c_int as usize] =
         (*body).s.pos.trBase[2 as libc::c_int as usize];
-    crate::src::game::g_syscalls::trap_LinkEntity(body);
+    crate::src::game::g_syscalls::trap_LinkEntity(body as *mut crate::g_local_h::gentity_s);
 }
 //======================================================================
 /*
@@ -1345,7 +1345,7 @@ pub unsafe extern "C" fn ClientUserinfoChanged(mut clientNum: libc::c_int) {
     );
     // check for malformed or illegal info strings
     if crate::src::qcommon::q_shared::Info_Validate(userinfo.as_mut_ptr()) as u64 == 0 {
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             userinfo.as_mut_ptr(),
             b"\\name\\badinfo\x00" as *const u8 as *const libc::c_char,
         );
@@ -1396,7 +1396,7 @@ pub unsafe extern "C" fn ClientUserinfoChanged(mut clientNum: libc::c_int) {
     if (*client).pers.connected as libc::c_uint
         == crate::g_local_h::CON_CONNECTED as libc::c_int as libc::c_uint
     {
-        if crate::stdlib::strcmp(oldname.as_mut_ptr(), (*client).pers.netname.as_mut_ptr()) != 0 {
+        if ::libc::strcmp(oldname.as_mut_ptr(), (*client).pers.netname.as_mut_ptr()) != 0 {
             crate::src::game::g_syscalls::trap_SendServerCommand(
                 -(1 as libc::c_int),
                 crate::src::qcommon::q_shared::va(
@@ -1628,7 +1628,7 @@ pub unsafe extern "C" fn ClientConnect(
     // NOTE: local client <-> "ip" "localhost"
     //   this means this client is not running in our current process
     if isBot as u64 == 0
-        && crate::stdlib::strcmp(value, b"localhost\x00" as *const u8 as *const libc::c_char)
+        && ::libc::strcmp(value, b"localhost\x00" as *const u8 as *const libc::c_char)
             != 0 as libc::c_int
     {
         // check for a password
@@ -1642,7 +1642,7 @@ pub unsafe extern "C" fn ClientConnect(
                 crate::src::game::g_main::g_password.string.as_mut_ptr(),
                 b"none\x00" as *const u8 as *const libc::c_char,
             ) != 0
-            && crate::stdlib::strcmp(
+            && ::libc::strcmp(
                 crate::src::game::g_main::g_password.string.as_mut_ptr(),
                 value,
             ) != 0 as libc::c_int
@@ -1676,7 +1676,7 @@ pub unsafe extern "C" fn ClientConnect(
         userinfo.as_mut_ptr(),
         b"ip\x00" as *const u8 as *const libc::c_char,
     );
-    if crate::stdlib::strcmp(value, b"localhost\x00" as *const u8 as *const libc::c_char) == 0 {
+    if ::libc::strcmp(value, b"localhost\x00" as *const u8 as *const libc::c_char) == 0 {
         (*client).pers.localClient = crate::src::qcommon::q_shared::qtrue
     }
     if isBot as u64 != 0 {
@@ -1695,9 +1695,12 @@ pub unsafe extern "C" fn ClientConnect(
     if firstTime as libc::c_uint != 0
         || crate::src::game::g_main::level.newSession as libc::c_uint != 0
     {
-        crate::src::game::g_session::G_InitSessionData(client, userinfo.as_mut_ptr());
+        crate::src::game::g_session::G_InitSessionData(
+            client as *mut crate::g_local_h::gclient_s,
+            userinfo.as_mut_ptr(),
+        );
     }
-    crate::src::game::g_session::G_ReadSessionData(client);
+    crate::src::game::g_session::G_ReadSessionData(client as *mut crate::g_local_h::gclient_s);
     // get and distribute relevant parameters
     crate::src::game::g_main::G_LogPrintf(
         b"ClientConnect: %i\n\x00" as *const u8 as *const libc::c_char,
@@ -1719,7 +1722,10 @@ pub unsafe extern "C" fn ClientConnect(
         && (*client).sess.sessionTeam as libc::c_uint
             != crate::bg_public_h::TEAM_SPECTATOR as libc::c_int as libc::c_uint
     {
-        crate::src::game::g_cmds::BroadcastTeamChange(client, -(1 as libc::c_int));
+        crate::src::game::g_cmds::BroadcastTeamChange(
+            client as *mut crate::g_local_h::gclient_s,
+            -(1 as libc::c_int),
+        );
     }
     // count current clients and rank for scoreboard
     crate::src::game::g_main::CalculateRanks();
@@ -1751,9 +1757,9 @@ pub unsafe extern "C" fn ClientBegin(mut clientNum: libc::c_int) {
         .clients
         .offset(clientNum as isize);
     if (*ent).r.linked as u64 != 0 {
-        crate::src::game::g_syscalls::trap_UnlinkEntity(ent);
+        crate::src::game::g_syscalls::trap_UnlinkEntity(ent as *mut crate::g_local_h::gentity_s);
     }
-    crate::src::game::g_utils::G_InitGentity(ent);
+    crate::src::game::g_utils::G_InitGentity(ent as *mut crate::g_local_h::gentity_s);
     (*ent).touch = None;
     (*ent).pain = None;
     (*ent).client = client;
@@ -1894,7 +1900,7 @@ pub unsafe extern "C" fn ClientSpawn(mut ent: *mut crate::g_local_h::gentity_t) 
             spawn_angles.as_mut_ptr(),
             ((*ent).r.svFlags & 0x8 as libc::c_int != 0) as libc::c_int
                 as crate::src::qcommon::q_shared::qboolean,
-        )
+        ) as *mut crate::g_local_h::gentity_s
     } else if (*client).pers.initialSpawn as u64 == 0
         && (*client).pers.localClient as libc::c_uint != 0
     {
@@ -2027,7 +2033,10 @@ pub unsafe extern "C" fn ClientSpawn(mut ent: *mut crate::g_local_h::gentity_t) 
         (*client).ps.stats[crate::bg_public_h::STAT_MAX_HEALTH as libc::c_int as usize]
             + 25 as libc::c_int;
     (*ent).health = (*client).ps.stats[crate::bg_public_h::STAT_HEALTH as libc::c_int as usize];
-    crate::src::game::g_utils::G_SetOrigin(ent, spawn_origin.as_mut_ptr());
+    crate::src::game::g_utils::G_SetOrigin(
+        ent as *mut crate::g_local_h::gentity_s,
+        spawn_origin.as_mut_ptr(),
+    );
     (*client).ps.origin[0 as libc::c_int as usize] = spawn_origin[0 as libc::c_int as usize];
     (*client).ps.origin[1 as libc::c_int as usize] = spawn_origin[1 as libc::c_int as usize];
     (*client).ps.origin[2 as libc::c_int as usize] = spawn_origin[2 as libc::c_int as usize];
@@ -2036,7 +2045,7 @@ pub unsafe extern "C" fn ClientSpawn(mut ent: *mut crate::g_local_h::gentity_t) 
     crate::src::game::g_syscalls::trap_GetUsercmd(
         client.wrapping_offset_from(crate::src::game::g_main::level.clients) as libc::c_long
             as libc::c_int,
-        &mut (*(*ent).client).pers.cmd,
+        &mut (*(*ent).client).pers.cmd as *mut _ as *mut crate::src::qcommon::q_shared::usercmd_s,
     );
     SetClientViewAngle(ent, spawn_angles.as_mut_ptr());
     // don't allow full run speed for a bit
@@ -2053,12 +2062,15 @@ pub unsafe extern "C" fn ClientSpawn(mut ent: *mut crate::g_local_h::gentity_t) 
         if (*(*ent).client).sess.sessionTeam as libc::c_uint
             != crate::bg_public_h::TEAM_SPECTATOR as libc::c_int as libc::c_uint
         {
-            crate::src::game::g_utils::G_KillBox(ent);
+            crate::src::game::g_utils::G_KillBox(ent as *mut crate::g_local_h::gentity_s);
             // force the base weapon up
             (*client).ps.weapon = crate::bg_public_h::WP_MACHINEGUN as libc::c_int;
             (*client).ps.weaponstate = crate::bg_public_h::WEAPON_READY as libc::c_int;
             // fire the targets of the spawn point
-            crate::src::game::g_utils::G_UseTargets(spawnPoint, ent);
+            crate::src::game::g_utils::G_UseTargets(
+                spawnPoint as *mut crate::g_local_h::gentity_s,
+                ent as *mut crate::g_local_h::gentity_s,
+            );
             // select the highest weapon number available, after any spawn given items have fired
             (*client).ps.weapon = 1 as libc::c_int;
             i = crate::bg_public_h::WP_NUM_WEAPONS as libc::c_int - 1 as libc::c_int;
@@ -2083,13 +2095,13 @@ pub unsafe extern "C" fn ClientSpawn(mut ent: *mut crate::g_local_h::gentity_t) 
             tent = crate::src::game::g_utils::G_TempEntity(
                 (*(*ent).client).ps.origin.as_mut_ptr(),
                 crate::bg_public_h::EV_PLAYER_TELEPORT_IN as libc::c_int,
-            );
+            ) as *mut crate::g_local_h::gentity_s;
             (*tent).s.clientNum = (*ent).s.clientNum;
-            crate::src::game::g_syscalls::trap_LinkEntity(ent);
+            crate::src::game::g_syscalls::trap_LinkEntity(ent as *mut crate::g_local_h::gentity_s);
         }
     } else {
         // move players to intermission
-        crate::src::game::g_main::MoveClientToIntermission(ent);
+        crate::src::game::g_main::MoveClientToIntermission(ent as *mut crate::g_local_h::gentity_s);
     }
     // run a client frame to drop exactly to the floor,
     // initialize animations and other things
@@ -2104,12 +2116,12 @@ pub unsafe extern "C" fn ClientSpawn(mut ent: *mut crate::g_local_h::gentity_t) 
     if (*(*ent).client).sess.spectatorState as libc::c_uint
         != crate::g_local_h::SPECTATOR_FOLLOW as libc::c_int as libc::c_uint
     {
-        crate::src::game::g_active::ClientEndFrame(ent);
+        crate::src::game::g_active::ClientEndFrame(ent as *mut crate::g_local_h::gentity_s);
     }
     // clear entity state values
     crate::src::game::bg_misc::BG_PlayerStateToEntityState(
-        &mut (*client).ps,
-        &mut (*ent).s,
+        &mut (*client).ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
+        &mut (*ent).s as *mut _ as *mut crate::src::qcommon::q_shared::entityState_s,
         crate::src::qcommon::q_shared::qtrue,
     );
 }
@@ -2377,7 +2389,8 @@ pub unsafe extern "C" fn ClientDisconnect(mut clientNum: libc::c_int) {
             crate::src::game::g_cmds::StopFollowing(
                 &mut *crate::src::game::g_main::g_entities
                     .as_mut_ptr()
-                    .offset(i as isize),
+                    .offset(i as isize) as *mut _
+                    as *mut crate::g_local_h::gentity_s,
             );
         }
         i += 1
@@ -2391,11 +2404,11 @@ pub unsafe extern "C" fn ClientDisconnect(mut clientNum: libc::c_int) {
         tent = crate::src::game::g_utils::G_TempEntity(
             (*(*ent).client).ps.origin.as_mut_ptr(),
             crate::bg_public_h::EV_PLAYER_TELEPORT_OUT as libc::c_int,
-        );
+        ) as *mut crate::g_local_h::gentity_s;
         (*tent).s.clientNum = (*ent).s.clientNum;
         // They don't get to take powerups with them!
         // Especially important for stuff like CTF flags
-        crate::src::game::g_combat::TossClientItems(ent);
+        crate::src::game::g_combat::TossClientItems(ent as *mut crate::g_local_h::gentity_s);
     }
     crate::src::game::g_main::G_LogPrintf(
         b"ClientDisconnect: %i\n\x00" as *const u8 as *const libc::c_char,
@@ -2432,7 +2445,7 @@ pub unsafe extern "C" fn ClientDisconnect(mut clientNum: libc::c_int) {
         crate::src::game::g_main::level.changemap = 0 as *mut libc::c_char;
         crate::src::game::g_main::level.intermissiontime = 0 as libc::c_int
     }
-    crate::src::game::g_syscalls::trap_UnlinkEntity(ent);
+    crate::src::game::g_syscalls::trap_UnlinkEntity(ent as *mut crate::g_local_h::gentity_s);
     (*ent).s.modelindex = 0 as libc::c_int;
     (*ent).inuse = crate::src::qcommon::q_shared::qfalse;
     (*ent).classname = b"disconnected\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;

@@ -1,5 +1,10 @@
-pub type gclient_t = crate::g_local_h::gclient_s;
 pub type moverState_t = libc::c_uint;
+pub const MOVER_POS1: crate::g_local_h::moverState_t = 0;
+pub const MOVER_POS2: crate::g_local_h::moverState_t = 1;
+pub const MOVER_1TO2: crate::g_local_h::moverState_t = 2;
+pub const MOVER_2TO1: crate::g_local_h::moverState_t = 3;
+pub type gentity_t = crate::g_local_h::gentity_s;
+pub type gclient_t = crate::g_local_h::gclient_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct gentity_s {
@@ -103,7 +108,62 @@ pub struct gentity_s {
     pub random: libc::c_float,
     pub item: *mut crate::bg_public_h::gitem_t,
 }
-pub type gentity_t = crate::g_local_h::gentity_s;
+pub type clientConnected_t = libc::c_uint;
+pub const CON_DISCONNECTED: crate::g_local_h::clientConnected_t = 0;
+pub const CON_CONNECTING: crate::g_local_h::clientConnected_t = 1;
+pub const CON_CONNECTED: crate::g_local_h::clientConnected_t = 2;
+pub type spectatorState_t = libc::c_uint;
+pub const SPECTATOR_NOT: crate::g_local_h::spectatorState_t = 0;
+pub const SPECTATOR_FREE: crate::g_local_h::spectatorState_t = 1;
+pub const SPECTATOR_FOLLOW: crate::g_local_h::spectatorState_t = 2;
+pub const SPECTATOR_SCOREBOARD: crate::g_local_h::spectatorState_t = 3;
+pub type playerTeamStateState_t = libc::c_uint;
+pub const TEAM_BEGIN: crate::g_local_h::playerTeamStateState_t = 0;
+pub const TEAM_ACTIVE: crate::g_local_h::playerTeamStateState_t = 1;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct playerTeamState_t {
+    pub state: crate::g_local_h::playerTeamStateState_t,
+    pub location: libc::c_int,
+    pub captures: libc::c_int,
+    pub basedefense: libc::c_int,
+    pub carrierdefense: libc::c_int,
+    pub flagrecovery: libc::c_int,
+    pub fragcarrier: libc::c_int,
+    pub assists: libc::c_int,
+    pub lasthurtcarrier: libc::c_float,
+    pub lastreturnedflag: libc::c_float,
+    pub flagsince: libc::c_float,
+    pub lastfraggedcarrier: libc::c_float,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct clientSession_t {
+    pub sessionTeam: crate::bg_public_h::team_t,
+    pub spectatorNum: libc::c_int,
+    pub spectatorState: crate::g_local_h::spectatorState_t,
+    pub spectatorClient: libc::c_int,
+    pub wins: libc::c_int,
+    pub losses: libc::c_int,
+    pub teamLeader: crate::src::qcommon::q_shared::qboolean,
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct clientPersistant_t {
+    pub connected: crate::g_local_h::clientConnected_t,
+    pub cmd: crate::src::qcommon::q_shared::usercmd_t,
+    pub localClient: crate::src::qcommon::q_shared::qboolean,
+    pub initialSpawn: crate::src::qcommon::q_shared::qboolean,
+    pub predictItemPickup: crate::src::qcommon::q_shared::qboolean,
+    pub pmoveFixed: crate::src::qcommon::q_shared::qboolean,
+    pub netname: [libc::c_char; 36],
+    pub maxHealth: libc::c_int,
+    pub enterTime: libc::c_int,
+    pub teamState: crate::g_local_h::playerTeamState_t,
+    pub voteCount: libc::c_int,
+    pub teamVoteCount: libc::c_int,
+    pub teamInfo: crate::src::qcommon::q_shared::qboolean,
+}
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct gclient_s {
@@ -140,53 +200,6 @@ pub struct gclient_s {
     pub timeResidual: libc::c_int,
     pub areabits: *mut libc::c_char,
 }
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct clientSession_t {
-    pub sessionTeam: crate::bg_public_h::team_t,
-    pub spectatorNum: libc::c_int,
-    pub spectatorState: crate::g_local_h::spectatorState_t,
-    pub spectatorClient: libc::c_int,
-    pub wins: libc::c_int,
-    pub losses: libc::c_int,
-    pub teamLeader: crate::src::qcommon::q_shared::qboolean,
-}
-pub type spectatorState_t = libc::c_uint;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct clientPersistant_t {
-    pub connected: crate::g_local_h::clientConnected_t,
-    pub cmd: crate::src::qcommon::q_shared::usercmd_t,
-    pub localClient: crate::src::qcommon::q_shared::qboolean,
-    pub initialSpawn: crate::src::qcommon::q_shared::qboolean,
-    pub predictItemPickup: crate::src::qcommon::q_shared::qboolean,
-    pub pmoveFixed: crate::src::qcommon::q_shared::qboolean,
-    pub netname: [libc::c_char; 36],
-    pub maxHealth: libc::c_int,
-    pub enterTime: libc::c_int,
-    pub teamState: crate::g_local_h::playerTeamState_t,
-    pub voteCount: libc::c_int,
-    pub teamVoteCount: libc::c_int,
-    pub teamInfo: crate::src::qcommon::q_shared::qboolean,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct playerTeamState_t {
-    pub state: crate::g_local_h::playerTeamStateState_t,
-    pub location: libc::c_int,
-    pub captures: libc::c_int,
-    pub basedefense: libc::c_int,
-    pub carrierdefense: libc::c_int,
-    pub flagrecovery: libc::c_int,
-    pub fragcarrier: libc::c_int,
-    pub assists: libc::c_int,
-    pub lasthurtcarrier: libc::c_float,
-    pub lastreturnedflag: libc::c_float,
-    pub flagsince: libc::c_float,
-    pub lastfraggedcarrier: libc::c_float,
-}
-pub type playerTeamStateState_t = libc::c_uint;
-pub type clientConnected_t = libc::c_uint;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct level_locals_t {
@@ -242,23 +255,10 @@ pub struct level_locals_t {
     pub bodyQueIndex: libc::c_int,
     pub bodyQue: [*mut crate::g_local_h::gentity_t; 8],
 }
+pub type bot_settings_t = crate::g_local_h::bot_settings_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct bot_settings_s {
     pub characterfile: [libc::c_char; 144],
     pub skill: libc::c_float,
 }
-pub type bot_settings_t = crate::g_local_h::bot_settings_s;
-pub const MOVER_2TO1: crate::g_local_h::moverState_t = 3;
-pub const MOVER_1TO2: crate::g_local_h::moverState_t = 2;
-pub const MOVER_POS2: crate::g_local_h::moverState_t = 1;
-pub const MOVER_POS1: crate::g_local_h::moverState_t = 0;
-pub const SPECTATOR_SCOREBOARD: crate::g_local_h::spectatorState_t = 3;
-pub const SPECTATOR_FOLLOW: crate::g_local_h::spectatorState_t = 2;
-pub const SPECTATOR_FREE: crate::g_local_h::spectatorState_t = 1;
-pub const SPECTATOR_NOT: crate::g_local_h::spectatorState_t = 0;
-pub const TEAM_ACTIVE: crate::g_local_h::playerTeamStateState_t = 1;
-pub const TEAM_BEGIN: crate::g_local_h::playerTeamStateState_t = 0;
-pub const CON_CONNECTED: crate::g_local_h::clientConnected_t = 2;
-pub const CON_CONNECTING: crate::g_local_h::clientConnected_t = 1;
-pub const CON_DISCONNECTED: crate::g_local_h::clientConnected_t = 0;

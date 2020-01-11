@@ -476,39 +476,39 @@ unsafe extern "C" fn UI_NetworkOptionsMenu_Init() {
     networkOptionsInfo.back.focuspic =
         b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut networkOptionsInfo.menu,
+        &mut networkOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut networkOptionsInfo.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut networkOptionsInfo.menu,
+        &mut networkOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut networkOptionsInfo.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut networkOptionsInfo.menu,
+        &mut networkOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut networkOptionsInfo.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut networkOptionsInfo.menu,
+        &mut networkOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut networkOptionsInfo.graphics as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut networkOptionsInfo.menu,
+        &mut networkOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut networkOptionsInfo.display as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut networkOptionsInfo.menu,
+        &mut networkOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut networkOptionsInfo.sound as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut networkOptionsInfo.menu,
+        &mut networkOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut networkOptionsInfo.network as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut networkOptionsInfo.menu,
+        &mut networkOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut networkOptionsInfo.rate as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut networkOptionsInfo.menu,
+        &mut networkOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut networkOptionsInfo.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     rate = crate::src::ui::ui_syscalls::trap_Cvar_VariableValue(
@@ -717,9 +717,11 @@ UI_NetworkOptionsMenu
 
 pub unsafe extern "C" fn UI_NetworkOptionsMenu() {
     UI_NetworkOptionsMenu_Init();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut networkOptionsInfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut networkOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     crate::src::q3_ui::ui_qmenu::Menu_SetCursorToItem(
-        &mut networkOptionsInfo.menu,
+        &mut networkOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut networkOptionsInfo.network as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
 }

@@ -405,9 +405,9 @@ pub use crate::src::cgame::cg_weapons::CG_MissileHitWall;
 pub use crate::src::cgame::cg_weapons::CG_OutOfAmmoChange;
 pub use crate::src::cgame::cg_weapons::CG_RailTrail;
 pub use crate::src::cgame::cg_weapons::CG_ShotgunFire;
-use crate::stdlib::rand;
-use crate::stdlib::strcat;
-use crate::stdlib::strcpy;
+use ::libc::rand;
+use ::libc::strcat;
+use ::libc::strcpy;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -550,7 +550,7 @@ unsafe extern "C" fn CG_Obituary(mut ent: *mut crate::src::qcommon::q_shared::en
         (::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)
             .wrapping_sub(2 as libc::c_int as libc::c_ulong) as libc::c_int,
     );
-    crate::stdlib::strcat(
+    ::libc::strcat(
         targetName.as_mut_ptr(),
         b"^7\x00" as *const u8 as *const libc::c_char,
     );
@@ -695,7 +695,7 @@ unsafe extern "C" fn CG_Obituary(mut ent: *mut crate::src::qcommon::q_shared::en
     // check for double client messages
     if attackerInfo.is_null() {
         attacker = ((1 as libc::c_int) << 10 as libc::c_int) - 2 as libc::c_int;
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             attackerName.as_mut_ptr(),
             b"noname\x00" as *const u8 as *const libc::c_char,
         );
@@ -709,7 +709,7 @@ unsafe extern "C" fn CG_Obituary(mut ent: *mut crate::src::qcommon::q_shared::en
             (::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)
                 .wrapping_sub(2 as libc::c_int as libc::c_ulong) as libc::c_int,
         );
-        crate::stdlib::strcat(
+        ::libc::strcat(
             attackerName.as_mut_ptr(),
             b"^7\x00" as *const u8 as *const libc::c_char,
         );
@@ -846,7 +846,7 @@ unsafe extern "C" fn CG_UseItem(mut cent: *mut crate::cg_local_h::centity_t) {
         } else {
             item = crate::src::game::bg_misc::BG_FindItemForHoldable(
                 itemNum as crate::bg_public_h::holdable_t,
-            );
+            ) as *mut crate::bg_public_h::gitem_s;
             crate::src::cgame::cg_draw::CG_CenterPrint(
                 crate::src::qcommon::q_shared::va(
                     b"Use %s\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
@@ -1015,7 +1015,7 @@ pub unsafe extern "C" fn CG_PainEvent(
     }
     // play a gurp sound instead of a normal pain sound
     if CG_WaterLevel(cent) == 3 as libc::c_int {
-        if crate::stdlib::rand() & 1 as libc::c_int != 0 {
+        if ::libc::rand() & 1 as libc::c_int != 0 {
             crate::src::cgame::cg_syscalls::trap_S_StartSound(
                 0 as *mut crate::src::qcommon::q_shared::vec_t,
                 (*cent).currentState.number,
@@ -1110,7 +1110,7 @@ pub unsafe extern "C" fn CG_EntityEvent(
                     (*es).number,
                     crate::src::qcommon::q_shared::CHAN_BODY as libc::c_int,
                     crate::src::cgame::cg_main::cgs.media.footsteps[(*ci).footsteps as usize]
-                        [(crate::stdlib::rand() & 3 as libc::c_int) as usize],
+                        [(::libc::rand() & 3 as libc::c_int) as usize],
                 );
             }
         }
@@ -1127,7 +1127,7 @@ pub unsafe extern "C" fn CG_EntityEvent(
                     crate::src::qcommon::q_shared::CHAN_BODY as libc::c_int,
                     crate::src::cgame::cg_main::cgs.media.footsteps
                         [crate::cg_local_h::FOOTSTEP_METAL as libc::c_int as usize]
-                        [(crate::stdlib::rand() & 3 as libc::c_int) as usize],
+                        [(::libc::rand() & 3 as libc::c_int) as usize],
                 );
             }
         }
@@ -1144,7 +1144,7 @@ pub unsafe extern "C" fn CG_EntityEvent(
                     crate::src::qcommon::q_shared::CHAN_BODY as libc::c_int,
                     crate::src::cgame::cg_main::cgs.media.footsteps
                         [crate::cg_local_h::FOOTSTEP_SPLASH as libc::c_int as usize]
-                        [(crate::stdlib::rand() & 3 as libc::c_int) as usize],
+                        [(::libc::rand() & 3 as libc::c_int) as usize],
                 );
             }
         }
@@ -1161,7 +1161,7 @@ pub unsafe extern "C" fn CG_EntityEvent(
                     crate::src::qcommon::q_shared::CHAN_BODY as libc::c_int,
                     crate::src::cgame::cg_main::cgs.media.footsteps
                         [crate::cg_local_h::FOOTSTEP_SPLASH as libc::c_int as usize]
-                        [(crate::stdlib::rand() & 3 as libc::c_int) as usize],
+                        [(::libc::rand() & 3 as libc::c_int) as usize],
                 );
             }
         }
@@ -1178,7 +1178,7 @@ pub unsafe extern "C" fn CG_EntityEvent(
                     crate::src::qcommon::q_shared::CHAN_BODY as libc::c_int,
                     crate::src::cgame::cg_main::cgs.media.footsteps
                         [crate::cg_local_h::FOOTSTEP_SPLASH as libc::c_int as usize]
-                        [(crate::stdlib::rand() & 3 as libc::c_int) as usize],
+                        [(::libc::rand() & 3 as libc::c_int) as usize],
                 );
             }
         }
@@ -1314,6 +1314,7 @@ pub unsafe extern "C" fn CG_EntityEvent(
                 0 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
                 1 as libc::c_int as crate::src::qcommon::q_shared::vec_t,
             ];
+
             crate::src::cgame::cg_effects::CG_SmokePuff(
                 (*cent).lerpOrigin.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                 up.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -1327,7 +1328,7 @@ pub unsafe extern "C" fn CG_EntityEvent(
                 0 as libc::c_int,
                 crate::cg_local_h::LEF_PUFF_DONT_SCALE as libc::c_int,
                 crate::src::cgame::cg_main::cgs.media.smokePuffShader,
-            );
+            ) as *mut crate::cg_local_h::localEntity_s;
             // boing sound at origin, jump sound on player
             crate::src::cgame::cg_syscalls::trap_S_StartSound(
                 (*cent).lerpOrigin.as_mut_ptr(),
@@ -1544,7 +1545,7 @@ pub unsafe extern "C" fn CG_EntityEvent(
                     b"EV_FIRE_WEAPON\n\x00" as *const u8 as *const libc::c_char,
                 );
             }
-            crate::src::cgame::cg_weapons::CG_FireWeapon(cent);
+            crate::src::cgame::cg_weapons::CG_FireWeapon(cent as *mut crate::cg_local_h::centity_s);
         }
         24 => {
             if crate::src::cgame::cg_main::cg_debugEvents.integer != 0 {
@@ -1739,7 +1740,7 @@ pub unsafe extern "C" fn CG_EntityEvent(
                     b"EV_GRENADE_BOUNCE\n\x00" as *const u8 as *const libc::c_char,
                 );
             }
-            if crate::stdlib::rand() & 1 as libc::c_int != 0 {
+            if ::libc::rand() & 1 as libc::c_int != 0 {
                 crate::src::cgame::cg_syscalls::trap_S_StartSound(
                     0 as *mut crate::src::qcommon::q_shared::vec_t,
                     (*es).number,
@@ -1859,7 +1860,7 @@ pub unsafe extern "C" fn CG_EntityEvent(
                 }
             }
             crate::src::cgame::cg_weapons::CG_RailTrail(
-                ci,
+                ci as *mut crate::cg_local_h::clientInfo_t,
                 (*es).origin2.as_mut_ptr(),
                 (*es).pos.trBase.as_mut_ptr(),
             );
@@ -1910,7 +1911,9 @@ pub unsafe extern "C" fn CG_EntityEvent(
                     b"EV_SHOTGUN\n\x00" as *const u8 as *const libc::c_char,
                 );
             }
-            crate::src::cgame::cg_weapons::CG_ShotgunFire(es);
+            crate::src::cgame::cg_weapons::CG_ShotgunFire(
+                es as *mut crate::src::qcommon::q_shared::entityState_s,
+            );
         }
         45 => {
             if crate::src::cgame::cg_main::cg_debugEvents.integer != 0 {
@@ -2268,7 +2271,7 @@ pub unsafe extern "C" fn CG_EntityEvent(
                     b"EV_DEBUG_LINE\n\x00" as *const u8 as *const libc::c_char,
                 );
             }
-            crate::src::cgame::cg_ents::CG_Beam(cent);
+            crate::src::cgame::cg_ents::CG_Beam(cent as *mut crate::cg_local_h::centity_s);
         }
         _ => {
             if crate::src::cgame::cg_main::cg_debugEvents.integer != 0 {
@@ -2539,10 +2542,13 @@ pub unsafe extern "C" fn CG_CheckEvents(mut cent: *mut crate::cg_local_h::centit
     }
     // calculate the position at exactly the frame time
     crate::src::game::bg_misc::BG_EvaluateTrajectory(
-        &mut (*cent).currentState.pos,
+        &mut (*cent).currentState.pos as *mut _
+            as *const crate::src::qcommon::q_shared::trajectory_t,
         (*crate::src::cgame::cg_main::cg.snap).serverTime,
         (*cent).lerpOrigin.as_mut_ptr(),
     );
-    crate::src::cgame::cg_ents::CG_SetEntitySoundPosition(cent);
+    crate::src::cgame::cg_ents::CG_SetEntitySoundPosition(
+        cent as *mut crate::cg_local_h::centity_s,
+    );
     CG_EntityEvent(cent, (*cent).lerpOrigin.as_mut_ptr());
 }

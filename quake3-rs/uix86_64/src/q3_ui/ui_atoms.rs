@@ -472,7 +472,10 @@ pub unsafe extern "C" fn UI_PushMenu(mut menu: *mut crate::ui_local_h::menuframe
             == 0
         {
             (*menu).cursor_prev = -(1 as libc::c_int);
-            crate::src::q3_ui::ui_qmenu::Menu_SetCursor(menu, i);
+            crate::src::q3_ui::ui_qmenu::Menu_SetCursor(
+                menu as *mut crate::ui_local_h::_tag_menuframework,
+                i,
+            );
             break;
         } else {
             i += 1
@@ -1371,7 +1374,10 @@ pub unsafe extern "C" fn UI_KeyEvent(mut key: libc::c_int, mut down: libc::c_int
     if (*uis.activemenu).key.is_some() {
         s = (*uis.activemenu).key.expect("non-null function pointer")(key)
     } else {
-        s = crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(uis.activemenu, key)
+        s = crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(
+            uis.activemenu as *mut crate::ui_local_h::_tag_menuframework,
+            key,
+        )
     }
     if s > 0 as libc::c_int && s != crate::src::q3_ui::ui_qmenu::menu_null_sound {
         crate::src::ui::ui_syscalls::trap_S_StartLocalSound(
@@ -1424,7 +1430,10 @@ pub unsafe extern "C" fn UI_MouseEvent(mut dx: libc::c_int, mut dy: libc::c_int)
             {
                 // set focus to item at cursor
                 if (*uis.activemenu).cursor != i {
-                    crate::src::q3_ui::ui_qmenu::Menu_SetCursor(uis.activemenu, i);
+                    crate::src::q3_ui::ui_qmenu::Menu_SetCursor(
+                        uis.activemenu as *mut crate::ui_local_h::_tag_menuframework,
+                        i,
+                    );
                     (*((*uis.activemenu).items[(*uis.activemenu).cursor_prev as usize]
                         as *mut crate::ui_local_h::menucommon_s))
                         .flags &= !(0x200 as libc::c_int as libc::c_uint);
@@ -1621,7 +1630,9 @@ pub unsafe extern "C" fn UI_Init() {
     crate::src::q3_ui::ui_main::UI_RegisterCvars();
     crate::src::q3_ui::ui_gameinfo::UI_InitGameinfo();
     // cache redundant calulations
-    crate::src::ui::ui_syscalls::trap_GetGlconfig(&mut uis.glconfig);
+    crate::src::ui::ui_syscalls::trap_GetGlconfig(
+        &mut uis.glconfig as *mut _ as *mut crate::tr_types_h::glconfig_t,
+    );
     // for 640x480 virtualized screen
     uis.xscale = (uis.glconfig.vidWidth as libc::c_double * (1.0f64 / 640.0f64)) as libc::c_float;
     uis.yscale = (uis.glconfig.vidHeight as libc::c_double * (1.0f64 / 480.0f64)) as libc::c_float;
@@ -1863,7 +1874,9 @@ pub unsafe extern "C" fn UI_Refresh(mut realtime: libc::c_int) {
         if (*uis.activemenu).draw.is_some() {
             (*uis.activemenu).draw.expect("non-null function pointer")();
         } else {
-            crate::src::q3_ui::ui_qmenu::Menu_Draw(uis.activemenu);
+            crate::src::q3_ui::ui_qmenu::Menu_Draw(
+                uis.activemenu as *mut crate::ui_local_h::_tag_menuframework,
+            );
         }
         if uis.firstdraw as u64 != 0 {
             UI_MouseEvent(0 as libc::c_int, 0 as libc::c_int);

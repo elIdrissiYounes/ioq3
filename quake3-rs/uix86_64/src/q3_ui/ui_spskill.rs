@@ -671,7 +671,10 @@ unsafe extern "C" fn UI_SPSkillMenu_Key(
             crate::src::qcommon::q_shared::CHAN_ANNOUNCER as libc::c_int,
         );
     }
-    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(&mut skillMenuInfo.menu, key);
+    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(
+        &mut skillMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        key,
+    );
 }
 /*
 =================
@@ -871,45 +874,45 @@ unsafe extern "C" fn UI_SPSkillMenu_Init() {
     skillMenuInfo.item_fight.focuspic =
         b"menu/art/fight_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut skillMenuInfo.menu,
+        &mut skillMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut skillMenuInfo.art_frame as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut skillMenuInfo.menu,
+        &mut skillMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut skillMenuInfo.art_banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut skillMenuInfo.menu,
+        &mut skillMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut skillMenuInfo.item_baby as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut skillMenuInfo.menu,
+        &mut skillMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut skillMenuInfo.item_easy as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut skillMenuInfo.menu,
+        &mut skillMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut skillMenuInfo.item_medium as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut skillMenuInfo.menu,
+        &mut skillMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut skillMenuInfo.item_hard as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut skillMenuInfo.menu,
+        &mut skillMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut skillMenuInfo.item_nightmare as *mut crate::ui_local_h::menutext_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut skillMenuInfo.menu,
+        &mut skillMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut skillMenuInfo.art_skillPic as *mut crate::ui_local_h::menubitmap_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut skillMenuInfo.menu,
+        &mut skillMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut skillMenuInfo.item_back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut skillMenuInfo.menu,
+        &mut skillMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut skillMenuInfo.item_fight as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     skill = crate::src::qcommon::q_shared::Com_Clamp(
@@ -1066,9 +1069,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 pub unsafe extern "C" fn UI_SPSkillMenu(mut arenaInfo: *const libc::c_char) {
     UI_SPSkillMenu_Init();
     skillMenuInfo.arenaInfo = arenaInfo;
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut skillMenuInfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut skillMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     crate::src::q3_ui::ui_qmenu::Menu_SetCursorToItem(
-        &mut skillMenuInfo.menu,
+        &mut skillMenuInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut skillMenuInfo.item_fight as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
 }

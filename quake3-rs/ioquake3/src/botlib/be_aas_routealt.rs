@@ -131,9 +131,9 @@ pub use crate::src::qcommon::q_shared::qfalse;
 pub use crate::src::qcommon::q_shared::qtrue;
 pub use crate::src::qcommon::q_shared::vec3_t;
 pub use crate::src::qcommon::q_shared::vec_t;
-use crate::stdlib::abs;
 use crate::stdlib::memset;
 use crate::stdlib::sqrt;
+use ::libc::abs;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -212,7 +212,7 @@ pub unsafe extern "C" fn AAS_AltRoutingFloodCluster_r(mut areanum: libc::c_int) 
         face = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(
                     *crate::src::botlib::be_aas_main::aasworld
                         .faceindex
                         .offset(((*area).firstface + i) as isize),

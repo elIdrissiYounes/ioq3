@@ -261,8 +261,8 @@ pub use crate::src::game::g_utils::G_AddEvent;
 pub use crate::src::game::g_utils::G_ModelIndex;
 pub use crate::src::game::g_utils::G_SetOrigin;
 pub use crate::src::game::g_utils::G_Spawn;
-use crate::stdlib::strcat;
 use crate::stdlib::strlen;
+use ::libc::strcat;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -412,7 +412,7 @@ pub unsafe extern "C" fn UpdateTournamentInfo() {
         {
             break;
         }
-        crate::stdlib::strcat(msg.as_mut_ptr(), buf.as_mut_ptr());
+        ::libc::strcat(msg.as_mut_ptr(), buf.as_mut_ptr());
         i += 1
     }
     crate::src::game::g_syscalls::trap_SendConsoleCommand(
@@ -432,7 +432,7 @@ unsafe extern "C" fn SpawnModelOnVictoryPad(
     let mut f: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut r: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut u: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    body = crate::src::game::g_utils::G_Spawn();
+    body = crate::src::game::g_utils::G_Spawn() as *mut crate::g_local_h::gentity_s;
     if body.is_null() {
         crate::src::game::g_main::G_Printf(
             b"^1ERROR: out of gentities\n\x00" as *const u8 as *const libc::c_char,
@@ -521,8 +521,11 @@ unsafe extern "C" fn SpawnModelOnVictoryPad(
         + u[1 as libc::c_int as usize] * *offset.offset(2 as libc::c_int as isize);
     vec[2 as libc::c_int as usize] = vec[2 as libc::c_int as usize]
         + u[2 as libc::c_int as usize] * *offset.offset(2 as libc::c_int as isize);
-    crate::src::game::g_utils::G_SetOrigin(body, vec.as_mut_ptr());
-    crate::src::game::g_syscalls::trap_LinkEntity(body);
+    crate::src::game::g_utils::G_SetOrigin(
+        body as *mut crate::g_local_h::gentity_s,
+        vec.as_mut_ptr(),
+    );
+    crate::src::game::g_syscalls::trap_LinkEntity(body as *mut crate::g_local_h::gentity_s);
     (*body).count = place;
     return body;
 }
@@ -550,7 +553,7 @@ unsafe extern "C" fn CelebrateStart(mut player: *mut crate::g_local_h::gentity_t
     player->client->ps.eventSequence++;
     */
     crate::src::game::g_utils::G_AddEvent(
-        player,
+        player as *mut crate::g_local_h::gentity_s,
         crate::bg_public_h::EV_TAUNT as libc::c_int,
         0 as libc::c_int,
     );
@@ -611,7 +614,10 @@ unsafe extern "C" fn PodiumPlacementThink(mut podium: *mut crate::g_local_h::gen
         crate::src::game::g_syscalls::trap_Cvar_VariableIntegerValue(
             b"g_podiumDrop\x00" as *const u8 as *const libc::c_char,
         ) as libc::c_float;
-    crate::src::game::g_utils::G_SetOrigin(podium, origin.as_mut_ptr());
+    crate::src::game::g_utils::G_SetOrigin(
+        podium as *mut crate::g_local_h::gentity_s,
+        origin.as_mut_ptr(),
+    );
     if !podium1.is_null() {
         vec[0 as libc::c_int as usize] = crate::src::game::g_main::level.intermission_origin
             [0 as libc::c_int as usize]
@@ -654,7 +660,10 @@ unsafe extern "C" fn PodiumPlacementThink(mut podium: *mut crate::g_local_h::gen
             + u[1 as libc::c_int as usize] * offsetFirst[2 as libc::c_int as usize];
         vec[2 as libc::c_int as usize] = vec[2 as libc::c_int as usize]
             + u[2 as libc::c_int as usize] * offsetFirst[2 as libc::c_int as usize];
-        crate::src::game::g_utils::G_SetOrigin(podium1, vec.as_mut_ptr());
+        crate::src::game::g_utils::G_SetOrigin(
+            podium1 as *mut crate::g_local_h::gentity_s,
+            vec.as_mut_ptr(),
+        );
     }
     if !podium2.is_null() {
         vec[0 as libc::c_int as usize] = crate::src::game::g_main::level.intermission_origin
@@ -698,7 +707,10 @@ unsafe extern "C" fn PodiumPlacementThink(mut podium: *mut crate::g_local_h::gen
             + u[1 as libc::c_int as usize] * offsetSecond[2 as libc::c_int as usize];
         vec[2 as libc::c_int as usize] = vec[2 as libc::c_int as usize]
             + u[2 as libc::c_int as usize] * offsetSecond[2 as libc::c_int as usize];
-        crate::src::game::g_utils::G_SetOrigin(podium2, vec.as_mut_ptr());
+        crate::src::game::g_utils::G_SetOrigin(
+            podium2 as *mut crate::g_local_h::gentity_s,
+            vec.as_mut_ptr(),
+        );
     }
     if !podium3.is_null() {
         vec[0 as libc::c_int as usize] = crate::src::game::g_main::level.intermission_origin
@@ -742,7 +754,10 @@ unsafe extern "C" fn PodiumPlacementThink(mut podium: *mut crate::g_local_h::gen
             + u[1 as libc::c_int as usize] * offsetThird[2 as libc::c_int as usize];
         vec[2 as libc::c_int as usize] = vec[2 as libc::c_int as usize]
             + u[2 as libc::c_int as usize] * offsetThird[2 as libc::c_int as usize];
-        crate::src::game::g_utils::G_SetOrigin(podium3, vec.as_mut_ptr());
+        crate::src::game::g_utils::G_SetOrigin(
+            podium3 as *mut crate::g_local_h::gentity_s,
+            vec.as_mut_ptr(),
+        );
     };
 }
 
@@ -750,7 +765,7 @@ unsafe extern "C" fn SpawnPodium() -> *mut crate::g_local_h::gentity_t {
     let mut podium: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     let mut vec: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut origin: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    podium = crate::src::game::g_utils::G_Spawn();
+    podium = crate::src::game::g_utils::G_Spawn() as *mut crate::g_local_h::gentity_s;
     if podium.is_null() {
         return 0 as *mut crate::g_local_h::gentity_t;
     }
@@ -795,7 +810,10 @@ unsafe extern "C" fn SpawnPodium() -> *mut crate::g_local_h::gentity_t {
         crate::src::game::g_syscalls::trap_Cvar_VariableIntegerValue(
             b"g_podiumDrop\x00" as *const u8 as *const libc::c_char,
         ) as libc::c_float;
-    crate::src::game::g_utils::G_SetOrigin(podium, origin.as_mut_ptr());
+    crate::src::game::g_utils::G_SetOrigin(
+        podium as *mut crate::g_local_h::gentity_s,
+        origin.as_mut_ptr(),
+    );
     vec[0 as libc::c_int as usize] = crate::src::game::g_main::level.intermission_origin
         [0 as libc::c_int as usize]
         - (*podium).r.currentOrigin[0 as libc::c_int as usize];
@@ -808,7 +826,7 @@ unsafe extern "C" fn SpawnPodium() -> *mut crate::g_local_h::gentity_t {
     (*podium).s.apos.trBase[1 as libc::c_int as usize] = crate::src::game::g_utils::vectoyaw(
         vec.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
     );
-    crate::src::game::g_syscalls::trap_LinkEntity(podium);
+    crate::src::game::g_syscalls::trap_LinkEntity(podium as *mut crate::g_local_h::gentity_s);
     (*podium).think = Some(
         PodiumPlacementThink as unsafe extern "C" fn(_: *mut crate::g_local_h::gentity_t) -> (),
     );

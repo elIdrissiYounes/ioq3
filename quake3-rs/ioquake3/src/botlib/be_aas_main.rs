@@ -611,7 +611,7 @@ pub unsafe extern "C" fn AAS_Setup() -> libc::c_int {
     saveroutingcache = crate::src::botlib::l_libvar::LibVar(
         b"saveroutingcache\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::src::botlib::l_libvar::libvar_s;
     //allocate memory for the entities
     if !aasworld.entities.is_null() {
         crate::src::botlib::l_memory::FreeMemory(aasworld.entities as *mut libc::c_void);

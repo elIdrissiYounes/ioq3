@@ -152,7 +152,7 @@ pub mod os_support_h {
     #[inline]
 
     pub unsafe extern "C" fn opus_free(mut ptr: *mut libc::c_void) {
-        crate::stdlib::free(ptr);
+        ::libc::free(ptr);
     }
     #[inline]
 
@@ -160,8 +160,8 @@ pub mod os_support_h {
         return crate::stdlib::malloc(size);
     }
 
-    use crate::stdlib::free;
     use crate::stdlib::malloc;
+    use ::libc::free;
     /* OS_SUPPORT_H */
     /*#ifdef __GNUC__
     #pragma GCC poison printf sprintf
@@ -209,8 +209,8 @@ pub use crate::src::opus_1_2_1::src::opus_multistream_decoder::float_cast_h::flo
 pub use crate::src::opus_1_2_1::src::opus_multistream_decoder::float_cast_h::FLOAT2INT16;
 pub use crate::src::opus_1_2_1::src::opus_multistream_decoder::os_support_h::opus_alloc;
 pub use crate::src::opus_1_2_1::src::opus_multistream_decoder::os_support_h::opus_free;
-use crate::stdlib::free;
 use crate::stdlib::malloc;
+use ::libc::free;
 /* Copyright (c) 2011 Xiph.Org Foundation
 Written by Jean-Marc Valin */
 /*
@@ -309,7 +309,10 @@ pub unsafe extern "C" fn opus_multistream_decoder_init(
         (*st).layout.mapping[i as usize] = *mapping.offset(i as isize);
         i += 1
     }
-    if crate::src::opus_1_2_1::src::opus_multistream::validate_layout(&mut (*st).layout) == 0 {
+    if crate::src::opus_1_2_1::src::opus_multistream::validate_layout(
+        &mut (*st).layout as *mut _ as *const crate::opus_private_h::ChannelLayout,
+    ) == 0
+    {
         return -(1 as libc::c_int);
     }
     ptr = (st as *mut libc::c_char).offset(align(
@@ -542,7 +545,7 @@ unsafe extern "C" fn opus_multistream_decode_native(
             /* Copy "left" audio to the channel(s) where it belongs */
             {
                 chan = crate::src::opus_1_2_1::src::opus_multistream::get_left_channel(
-                    &mut (*st).layout,
+                    &mut (*st).layout as *mut _ as *const crate::opus_private_h::ChannelLayout,
                     s,
                     prev,
                 );
@@ -565,7 +568,7 @@ unsafe extern "C" fn opus_multistream_decode_native(
             /* Copy "right" audio to the channel(s) where it belongs */
             {
                 chan = crate::src::opus_1_2_1::src::opus_multistream::get_right_channel(
-                    &mut (*st).layout,
+                    &mut (*st).layout as *mut _ as *const crate::opus_private_h::ChannelLayout,
                     s,
                     prev,
                 );
@@ -591,7 +594,7 @@ unsafe extern "C" fn opus_multistream_decode_native(
             /* Copy audio to the channel(s) where it belongs */
             {
                 chan_0 = crate::src::opus_1_2_1::src::opus_multistream::get_mono_channel(
-                    &mut (*st).layout,
+                    &mut (*st).layout as *mut _ as *const crate::opus_private_h::ChannelLayout,
                     s,
                     prev_0,
                 );

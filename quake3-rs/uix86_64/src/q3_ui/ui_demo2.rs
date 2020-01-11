@@ -580,13 +580,13 @@ unsafe extern "C" fn Demos_MenuEvent(mut ptr: *mut libc::c_void, mut event: libc
         }
         14 => {
             crate::src::q3_ui::ui_qmenu::ScrollList_Key(
-                &mut s_demos.list,
+                &mut s_demos.list as *mut _ as *mut crate::ui_local_h::menulist_s,
                 crate::keycodes_h::K_LEFTARROW as libc::c_int,
             );
         }
         13 => {
             crate::src::q3_ui::ui_qmenu::ScrollList_Key(
-                &mut s_demos.list,
+                &mut s_demos.list as *mut _ as *mut crate::ui_local_h::menulist_s,
                 crate::keycodes_h::K_RIGHTARROW as libc::c_int,
             );
         }
@@ -781,39 +781,39 @@ unsafe extern "C" fn Demos_MenuInit() {
             0x4000 as libc::c_int as libc::c_uint | 0x1000 as libc::c_int as libc::c_uint
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_demos.menu,
+        &mut s_demos.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_demos.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_demos.menu,
+        &mut s_demos.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_demos.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_demos.menu,
+        &mut s_demos.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_demos.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_demos.menu,
+        &mut s_demos.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_demos.list as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_demos.menu,
+        &mut s_demos.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_demos.arrows as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_demos.menu,
+        &mut s_demos.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_demos.left as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_demos.menu,
+        &mut s_demos.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_demos.right as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_demos.menu,
+        &mut s_demos.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_demos.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_demos.menu,
+        &mut s_demos.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_demos.go as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
 }
@@ -930,5 +930,7 @@ UI_DemosMenu
 
 pub unsafe extern "C" fn UI_DemosMenu() {
     Demos_MenuInit();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_demos.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_demos.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

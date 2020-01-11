@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -70,11 +70,11 @@ pub use crate::src::qcommon::q_shared::ERR_SERVERDISCONNECT;
 pub use crate::src::sys::sys_unix::Sys_Milliseconds;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
-pub use crate::stdlib::strtol;
 use crate::stdlib::vsnprintf;
+use ::libc::strchr;
+use ::libc::strcmp;
+pub use ::libc::strtol;
 //=============================================================================
 
 pub type packetQueue_t = packetQueue_s;
@@ -134,12 +134,12 @@ pub unsafe extern "C" fn Netchan_Init(mut port: libc::c_int) {
         b"showpackets\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x100 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     showdrop = crate::src::qcommon::cvar::Cvar_Get(
         b"showdrop\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0x100 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     qport = crate::src::qcommon::cvar::Cvar_Get(
         b"net_qport\x00" as *const u8 as *const libc::c_char,
         crate::src::qcommon::q_shared::va(
@@ -147,7 +147,7 @@ pub unsafe extern "C" fn Netchan_Init(mut port: libc::c_int) {
             port,
         ),
         0x10 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
 }
 /*
 ==============
@@ -204,21 +204,27 @@ pub unsafe extern "C" fn Netchan_TransmitNextFragment(mut chan: *mut crate::qcom
     let mut outgoingSequence: libc::c_int = 0;
     // write the packet header
     crate::src::qcommon::msg::MSG_InitOOB(
-        &mut send,
+        &mut send as *mut _ as *mut crate::qcommon_h::msg_t,
         send_buf.as_mut_ptr(),
         ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 1400]>() as libc::c_ulong
             as libc::c_int,
     ); // <-- only do the oob here
     outgoingSequence = ((*chan).outgoingSequence as libc::c_uint
         | (1 as libc::c_uint) << 31 as libc::c_int) as libc::c_int;
-    crate::src::qcommon::msg::MSG_WriteLong(&mut send, outgoingSequence);
+    crate::src::qcommon::msg::MSG_WriteLong(
+        &mut send as *mut _ as *mut crate::qcommon_h::msg_t,
+        outgoingSequence,
+    );
     // send the qport if we are a client
     if (*chan).sock as libc::c_uint == crate::qcommon_h::NS_CLIENT as libc::c_int as libc::c_uint {
-        crate::src::qcommon::msg::MSG_WriteShort(&mut send, (*qport).integer);
+        crate::src::qcommon::msg::MSG_WriteShort(
+            &mut send as *mut _ as *mut crate::qcommon_h::msg_t,
+            (*qport).integer,
+        );
     }
     if (*chan).compat as u64 == 0 {
         crate::src::qcommon::msg::MSG_WriteLong(
-            &mut send,
+            &mut send as *mut _ as *mut crate::qcommon_h::msg_t,
             (*chan).challenge ^ (*chan).outgoingSequence * (*chan).challenge,
         );
     }
@@ -227,10 +233,16 @@ pub unsafe extern "C" fn Netchan_TransmitNextFragment(mut chan: *mut crate::qcom
     if (*chan).unsentFragmentStart + fragmentLength > (*chan).unsentLength {
         fragmentLength = (*chan).unsentLength - (*chan).unsentFragmentStart
     }
-    crate::src::qcommon::msg::MSG_WriteShort(&mut send, (*chan).unsentFragmentStart);
-    crate::src::qcommon::msg::MSG_WriteShort(&mut send, fragmentLength);
+    crate::src::qcommon::msg::MSG_WriteShort(
+        &mut send as *mut _ as *mut crate::qcommon_h::msg_t,
+        (*chan).unsentFragmentStart,
+    );
+    crate::src::qcommon::msg::MSG_WriteShort(
+        &mut send as *mut _ as *mut crate::qcommon_h::msg_t,
+        fragmentLength,
+    );
     crate::src::qcommon::msg::MSG_WriteData(
-        &mut send,
+        &mut send as *mut _ as *mut crate::qcommon_h::msg_t,
         (*chan)
             .unsentBuffer
             .as_mut_ptr()
@@ -318,24 +330,34 @@ pub unsafe extern "C" fn Netchan_Transmit(
     }
     // write the packet header
     crate::src::qcommon::msg::MSG_InitOOB(
-        &mut send,
+        &mut send as *mut _ as *mut crate::qcommon_h::msg_t,
         send_buf.as_mut_ptr(),
         ::std::mem::size_of::<[crate::src::qcommon::q_shared::byte; 1400]>() as libc::c_ulong
             as libc::c_int,
     );
-    crate::src::qcommon::msg::MSG_WriteLong(&mut send, (*chan).outgoingSequence);
+    crate::src::qcommon::msg::MSG_WriteLong(
+        &mut send as *mut _ as *mut crate::qcommon_h::msg_t,
+        (*chan).outgoingSequence,
+    );
     // send the qport if we are a client
     if (*chan).sock as libc::c_uint == crate::qcommon_h::NS_CLIENT as libc::c_int as libc::c_uint {
-        crate::src::qcommon::msg::MSG_WriteShort(&mut send, (*qport).integer);
+        crate::src::qcommon::msg::MSG_WriteShort(
+            &mut send as *mut _ as *mut crate::qcommon_h::msg_t,
+            (*qport).integer,
+        );
     }
     if (*chan).compat as u64 == 0 {
         crate::src::qcommon::msg::MSG_WriteLong(
-            &mut send,
+            &mut send as *mut _ as *mut crate::qcommon_h::msg_t,
             (*chan).challenge ^ (*chan).outgoingSequence * (*chan).challenge,
         );
     }
     (*chan).outgoingSequence += 1;
-    crate::src::qcommon::msg::MSG_WriteData(&mut send, data as *const libc::c_void, length);
+    crate::src::qcommon::msg::MSG_WriteData(
+        &mut send as *mut _ as *mut crate::qcommon_h::msg_t,
+        data as *const libc::c_void,
+        length,
+    );
     // send the datagram
     NET_SendPacket(
         (*chan).sock,
@@ -382,8 +404,8 @@ pub unsafe extern "C" fn Netchan_Process(
     // XOR unscramble all data in the packet after the header
     //	Netchan_UnScramblePacket( msg );
     // get sequence numbers
-    crate::src::qcommon::msg::MSG_BeginReadingOOB(msg);
-    sequence = crate::src::qcommon::msg::MSG_ReadLong(msg);
+    crate::src::qcommon::msg::MSG_BeginReadingOOB(msg as *mut crate::qcommon_h::msg_t);
+    sequence = crate::src::qcommon::msg::MSG_ReadLong(msg as *mut crate::qcommon_h::msg_t);
     // check for fragment information
     if sequence as libc::c_uint & (1 as libc::c_uint) << 31 as libc::c_int != 0 {
         sequence =
@@ -394,10 +416,11 @@ pub unsafe extern "C" fn Netchan_Process(
     }
     // read the qport if we are a server
     if (*chan).sock as libc::c_uint == crate::qcommon_h::NS_SERVER as libc::c_int as libc::c_uint {
-        crate::src::qcommon::msg::MSG_ReadShort(msg);
+        crate::src::qcommon::msg::MSG_ReadShort(msg as *mut crate::qcommon_h::msg_t);
     }
     if (*chan).compat as u64 == 0 {
-        let mut checksum: libc::c_int = crate::src::qcommon::msg::MSG_ReadLong(msg);
+        let mut checksum: libc::c_int =
+            crate::src::qcommon::msg::MSG_ReadLong(msg as *mut crate::qcommon_h::msg_t);
         // UDP spoofing protection
         if (*chan).challenge ^ sequence * (*chan).challenge != checksum {
             return crate::src::qcommon::q_shared::qfalse;
@@ -405,8 +428,10 @@ pub unsafe extern "C" fn Netchan_Process(
     }
     // read the fragment information
     if fragmented as u64 != 0 {
-        fragmentStart = crate::src::qcommon::msg::MSG_ReadShort(msg); // stop warning message
-        fragmentLength = crate::src::qcommon::msg::MSG_ReadShort(msg)
+        fragmentStart =
+            crate::src::qcommon::msg::MSG_ReadShort(msg as *mut crate::qcommon_h::msg_t); // stop warning message
+        fragmentLength =
+            crate::src::qcommon::msg::MSG_ReadShort(msg as *mut crate::qcommon_h::msg_t)
     } else {
         fragmentStart = 0 as libc::c_int;
         fragmentLength = 0 as libc::c_int
@@ -437,7 +462,9 @@ pub unsafe extern "C" fn Netchan_Process(
         if (*showdrop).integer != 0 || (*showpackets).integer != 0 {
             crate::src::qcommon::common::Com_Printf(
                 b"%s:Out of order packet %i at %i\n\x00" as *const u8 as *const libc::c_char,
-                crate::src::qcommon::net_ip::NET_AdrToString((*chan).remoteAddress),
+                crate::src::qcommon::net_ip::NET_AdrToString(
+                    (*chan).remoteAddress as crate::qcommon_h::netadr_t,
+                ),
                 sequence,
                 (*chan).incomingSequence,
             );
@@ -452,7 +479,9 @@ pub unsafe extern "C" fn Netchan_Process(
         if (*showdrop).integer != 0 || (*showpackets).integer != 0 {
             crate::src::qcommon::common::Com_Printf(
                 b"%s:Dropped %i packets at %i\n\x00" as *const u8 as *const libc::c_char,
-                crate::src::qcommon::net_ip::NET_AdrToString((*chan).remoteAddress),
+                crate::src::qcommon::net_ip::NET_AdrToString(
+                    (*chan).remoteAddress as crate::qcommon_h::netadr_t,
+                ),
                 (*chan).dropped,
                 sequence,
             );
@@ -477,7 +506,9 @@ pub unsafe extern "C" fn Netchan_Process(
             if (*showdrop).integer != 0 || (*showpackets).integer != 0 {
                 crate::src::qcommon::common::Com_Printf(
                     b"%s:Dropped a message fragment\n\x00" as *const u8 as *const libc::c_char,
-                    crate::src::qcommon::net_ip::NET_AdrToString((*chan).remoteAddress),
+                    crate::src::qcommon::net_ip::NET_AdrToString(
+                        (*chan).remoteAddress as crate::qcommon_h::netadr_t,
+                    ),
                 );
             }
             // we can still keep the part that we have so far,
@@ -494,7 +525,9 @@ pub unsafe extern "C" fn Netchan_Process(
             if (*showdrop).integer != 0 || (*showpackets).integer != 0 {
                 crate::src::qcommon::common::Com_Printf(
                     b"%s:illegal fragment length\n\x00" as *const u8 as *const libc::c_char,
-                    crate::src::qcommon::net_ip::NET_AdrToString((*chan).remoteAddress),
+                    crate::src::qcommon::net_ip::NET_AdrToString(
+                        (*chan).remoteAddress as crate::qcommon_h::netadr_t,
+                    ),
                 );
             }
             return crate::src::qcommon::q_shared::qfalse;
@@ -515,7 +548,9 @@ pub unsafe extern "C" fn Netchan_Process(
         if (*chan).fragmentLength > (*msg).maxsize {
             crate::src::qcommon::common::Com_Printf(
                 b"%s:fragmentLength %i > msg->maxsize\n\x00" as *const u8 as *const libc::c_char,
-                crate::src::qcommon::net_ip::NET_AdrToString((*chan).remoteAddress),
+                crate::src::qcommon::net_ip::NET_AdrToString(
+                    (*chan).remoteAddress as crate::qcommon_h::netadr_t,
+                ),
                 (*chan).fragmentLength,
             );
             return crate::src::qcommon::q_shared::qfalse;
@@ -664,7 +699,7 @@ pub unsafe extern "C" fn NET_FlushPacketQueue() {
         crate::src::qcommon::net_ip::Sys_SendPacket(
             (*packetQueue).length,
             (*packetQueue).data as *const libc::c_void,
-            (*packetQueue).to,
+            (*packetQueue).to as crate::qcommon_h::netadr_t,
         );
         last = packetQueue;
         packetQueue = (*packetQueue).next;
@@ -716,7 +751,7 @@ pub unsafe extern "C" fn NET_SendPacket(
             (*crate::src::qcommon::common::sv_packetdelay).integer,
         );
     } else {
-        crate::src::qcommon::net_ip::Sys_SendPacket(length, data, to);
+        crate::src::qcommon::net_ip::Sys_SendPacket(length, data, to as crate::qcommon_h::netadr_t);
     };
 }
 /*
@@ -796,7 +831,10 @@ pub unsafe extern "C" fn NET_OutOfBandData(
     }
     mbuf.data = string.as_mut_ptr();
     mbuf.cursize = len + 4 as libc::c_int;
-    crate::src::qcommon::huffman::Huff_Compress(&mut mbuf, 12 as libc::c_int);
+    crate::src::qcommon::huffman::Huff_Compress(
+        &mut mbuf as *mut _ as *mut crate::qcommon_h::msg_t,
+        12 as libc::c_int,
+    );
     // send the datagram
     NET_SendPacket(sock, mbuf.cursize, mbuf.data as *const libc::c_void, adr);
 }
@@ -818,7 +856,7 @@ pub unsafe extern "C" fn NET_StringToAdr(
     let mut base: [libc::c_char; 1024] = [0; 1024];
     let mut search: *mut libc::c_char = 0 as *mut libc::c_char;
     let mut port: *mut libc::c_char = 0 as *mut libc::c_char;
-    if crate::stdlib::strcmp(s, b"localhost\x00" as *const u8 as *const libc::c_char) == 0 {
+    if ::libc::strcmp(s, b"localhost\x00" as *const u8 as *const libc::c_char) == 0 {
         crate::stdlib::memset(
             a as *mut libc::c_void,
             0 as libc::c_int,
@@ -838,7 +876,7 @@ pub unsafe extern "C" fn NET_StringToAdr(
             > 1 as libc::c_int
     {
         // This is an ipv6 address, handle it specially.
-        search = crate::stdlib::strchr(base.as_mut_ptr(), ']' as i32);
+        search = ::libc::strchr(base.as_mut_ptr(), ']' as i32);
         if !search.is_null() {
             *search = '\u{0}' as i32 as libc::c_char;
             search = search.offset(1);
@@ -853,14 +891,20 @@ pub unsafe extern "C" fn NET_StringToAdr(
         }
     } else {
         // look for a port number
-        port = crate::stdlib::strchr(base.as_mut_ptr(), ':' as i32);
+        port = ::libc::strchr(base.as_mut_ptr(), ':' as i32);
         if !port.is_null() {
             *port = '\u{0}' as i32 as libc::c_char;
             port = port.offset(1)
         }
         search = base.as_mut_ptr()
     }
-    if crate::src::qcommon::net_ip::Sys_StringToAdr(search, a, family) as u64 == 0 {
+    if crate::src::qcommon::net_ip::Sys_StringToAdr(
+        search,
+        a as *mut crate::qcommon_h::netadr_t,
+        family,
+    ) as u64
+        == 0
+    {
         (*a).type_0 = crate::qcommon_h::NA_BAD;
         return 0 as libc::c_int;
     }

@@ -169,8 +169,8 @@ pub use crate::src::jpeg_8c::jmemnobs::jpeg_mem_init;
 pub use crate::src::jpeg_8c::jmemnobs::jpeg_mem_term;
 pub use crate::src::jpeg_8c::jmemnobs::jpeg_open_backing_store;
 use crate::src::jpeg_8c::jutils::jzero_far;
-use crate::stdlib::getenv;
-use crate::stdlib::sscanf;
+use ::libc::getenv;
+use ::libc::sscanf;
 /* System-dependent control info */
 
 #[repr(C)]
@@ -452,7 +452,7 @@ unsafe extern "C" fn alloc_small(
         /* Try to get space, if fail reduce slop and try again */
         {
             hdr_ptr = crate::src::jpeg_8c::jmemnobs::jpeg_get_small(
-                cinfo,
+                cinfo as *mut crate::jpeglib_h::jpeg_common_struct,
                 min_request.wrapping_add(slop),
             ) as small_pool_ptr;
             if !hdr_ptr.is_null() {
@@ -539,7 +539,7 @@ unsafe extern "C" fn alloc_large(
         .expect("non-null function pointer")(cinfo);
     }
     hdr_ptr = crate::src::jpeg_8c::jmemnobs::jpeg_get_large(
-        cinfo,
+        cinfo as *mut crate::jpeglib_h::jpeg_common_struct,
         sizeofobject.wrapping_add(::std::mem::size_of::<large_pool_hdr>() as libc::c_ulong),
     ) as large_pool_ptr;
     if hdr_ptr.is_null() {
@@ -895,7 +895,7 @@ unsafe extern "C" fn realize_virt_arrays(mut cinfo: crate::jpeglib_h::j_common_p
     }
     /* Determine amount of memory to actually use; this is system-dependent. */
     avail_mem = crate::src::jpeg_8c::jmemnobs::jpeg_mem_available(
-        cinfo,
+        cinfo as *mut crate::jpeglib_h::jpeg_common_struct,
         space_per_minheight,
         maximum_space,
         (*mem).total_space_allocated,
@@ -931,8 +931,8 @@ unsafe extern "C" fn realize_virt_arrays(mut cinfo: crate::jpeglib_h::j_common_p
                 (*sptr).rows_in_mem = (max_minheights * (*sptr).maxaccess as libc::c_long)
                     as crate::jmorecfg_h::JDIMENSION;
                 crate::src::jpeg_8c::jmemnobs::jpeg_open_backing_store(
-                    cinfo,
-                    &mut (*sptr).b_s_info,
+                    cinfo as *mut crate::jpeglib_h::jpeg_common_struct,
+                    &mut (*sptr).b_s_info as *mut _ as *mut crate::jmemsys_h::backing_store_struct,
                     (*sptr).rows_in_array as libc::c_long
                         * (*sptr).samplesperrow as libc::c_long
                         * ::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>() as libc::c_ulong
@@ -968,8 +968,8 @@ unsafe extern "C" fn realize_virt_arrays(mut cinfo: crate::jpeglib_h::j_common_p
                 (*bptr).rows_in_mem = (max_minheights * (*bptr).maxaccess as libc::c_long)
                     as crate::jmorecfg_h::JDIMENSION;
                 crate::src::jpeg_8c::jmemnobs::jpeg_open_backing_store(
-                    cinfo,
-                    &mut (*bptr).b_s_info,
+                    cinfo as *mut crate::jpeglib_h::jpeg_common_struct,
+                    &mut (*bptr).b_s_info as *mut _ as *mut crate::jmemsys_h::backing_store_struct,
                     (*bptr).rows_in_array as libc::c_long
                         * (*bptr).blocksperrow as libc::c_long
                         * ::std::mem::size_of::<crate::jpeglib_h::JBLOCK>() as libc::c_ulong
@@ -1475,7 +1475,7 @@ unsafe extern "C" fn free_pool(
             .wrapping_add((*lhdr_ptr).hdr.bytes_left)
             .wrapping_add(::std::mem::size_of::<large_pool_hdr>() as libc::c_ulong);
         crate::src::jpeg_8c::jmemnobs::jpeg_free_large(
-            cinfo,
+            cinfo as *mut crate::jpeglib_h::jpeg_common_struct,
             lhdr_ptr as *mut libc::c_void,
             space_freed,
         );
@@ -1495,7 +1495,7 @@ unsafe extern "C" fn free_pool(
             .wrapping_add((*shdr_ptr).hdr.bytes_left)
             .wrapping_add(::std::mem::size_of::<small_pool_hdr>() as libc::c_ulong);
         crate::src::jpeg_8c::jmemnobs::jpeg_free_small(
-            cinfo,
+            cinfo as *mut crate::jpeglib_h::jpeg_common_struct,
             shdr_ptr as *mut libc::c_void,
             space_freed,
         );
@@ -1523,12 +1523,14 @@ unsafe extern "C" fn self_destruct(mut cinfo: crate::jpeglib_h::j_common_ptr) {
     }
     /* Release the memory manager control block too. */
     crate::src::jpeg_8c::jmemnobs::jpeg_free_small(
-        cinfo,
+        cinfo as *mut crate::jpeglib_h::jpeg_common_struct,
         (*cinfo).mem as *mut libc::c_void,
         ::std::mem::size_of::<my_memory_mgr>() as libc::c_ulong,
     ); /* ensures I will be called only once */
     (*cinfo).mem = 0 as *mut crate::jpeglib_h::jpeg_memory_mgr;
-    crate::src::jpeg_8c::jmemnobs::jpeg_mem_term(cinfo);
+    crate::src::jpeg_8c::jmemnobs::jpeg_mem_term(
+        cinfo as *mut crate::jpeglib_h::jpeg_common_struct,
+    );
     /* system-dependent cleanup */
 }
 /*
@@ -1582,14 +1584,18 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
         )
         .expect("non-null function pointer")(cinfo);
     }
-    max_to_use = crate::src::jpeg_8c::jmemnobs::jpeg_mem_init(cinfo);
+    max_to_use = crate::src::jpeg_8c::jmemnobs::jpeg_mem_init(
+        cinfo as *mut crate::jpeglib_h::jpeg_common_struct,
+    );
     /* Attempt to allocate memory manager's control block */
     mem = crate::src::jpeg_8c::jmemnobs::jpeg_get_small(
-        cinfo,
+        cinfo as *mut crate::jpeglib_h::jpeg_common_struct,
         ::std::mem::size_of::<my_memory_mgr>() as libc::c_ulong,
     ) as my_mem_ptr; /* system-dependent cleanup */
     if mem.is_null() {
-        crate::src::jpeg_8c::jmemnobs::jpeg_mem_term(cinfo);
+        crate::src::jpeg_8c::jmemnobs::jpeg_mem_term(
+            cinfo as *mut crate::jpeglib_h::jpeg_common_struct,
+        );
         (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_OUT_OF_MEMORY as libc::c_int;
         (*(*cinfo).err).msg_parm.i[0 as libc::c_int as usize] = 0 as libc::c_int;
         Some(
@@ -1706,10 +1712,10 @@ pub unsafe extern "C" fn jinit_memory_mgr(mut cinfo: crate::jpeglib_h::j_common_
      * this feature.
      */
     let mut memenv: *mut libc::c_char = 0 as *mut libc::c_char;
-    memenv = crate::stdlib::getenv(b"JPEGMEM\x00" as *const u8 as *const libc::c_char);
+    memenv = ::libc::getenv(b"JPEGMEM\x00" as *const u8 as *const libc::c_char);
     if !memenv.is_null() {
         let mut ch: libc::c_char = 'x' as i32 as libc::c_char;
-        if crate::stdlib::sscanf(
+        if ::libc::sscanf(
             memenv,
             b"%ld%c\x00" as *const u8 as *const libc::c_char,
             &mut max_to_use as *mut libc::c_long,

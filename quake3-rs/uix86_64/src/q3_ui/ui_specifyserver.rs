@@ -20,7 +20,6 @@ pub use crate::src::qcommon::q_shared::EXEC_NOW;
 pub use crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 use crate::stdlib::memset;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
@@ -29,6 +28,7 @@ pub use crate::ui_local_h::menufield_s;
 pub use crate::ui_local_h::menuframework_s;
 pub use crate::ui_local_h::menutext_s;
 pub use crate::ui_local_h::mfield_t;
+use ::libc::strcpy;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -263,7 +263,7 @@ unsafe extern "C" fn SpecifyServer_Event(mut ptr: *mut libc::c_void, mut event: 
         103 => {
             if !(event != 3 as libc::c_int) {
                 if s_specifyserver.domain.field.buffer[0 as libc::c_int as usize] != 0 {
-                    crate::stdlib::strcpy(
+                    ::libc::strcpy(
                         buff.as_mut_ptr(),
                         s_specifyserver.domain.field.buffer.as_mut_ptr(),
                     );
@@ -381,31 +381,31 @@ pub unsafe extern "C" fn SpecifyServer_MenuInit() {
     s_specifyserver.back.focuspic =
         b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_specifyserver.menu,
+        &mut s_specifyserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_specifyserver.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_specifyserver.menu,
+        &mut s_specifyserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_specifyserver.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_specifyserver.menu,
+        &mut s_specifyserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_specifyserver.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_specifyserver.menu,
+        &mut s_specifyserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_specifyserver.domain as *mut crate::ui_local_h::menufield_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_specifyserver.menu,
+        &mut s_specifyserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_specifyserver.port as *mut crate::ui_local_h::menufield_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_specifyserver.menu,
+        &mut s_specifyserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_specifyserver.go as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_specifyserver.menu,
+        &mut s_specifyserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_specifyserver.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::qcommon::q_shared::Com_sprintf(
@@ -443,5 +443,7 @@ UI_SpecifyServerMenu
 
 pub unsafe extern "C" fn UI_SpecifyServerMenu() {
     SpecifyServer_MenuInit();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_specifyserver.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_specifyserver.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

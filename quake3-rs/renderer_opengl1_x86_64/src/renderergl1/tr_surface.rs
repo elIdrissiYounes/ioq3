@@ -589,7 +589,7 @@ pub unsafe extern "C" fn RB_CheckOverflow(mut verts: libc::c_int, mut indexes: l
         );
     }
     crate::src::renderergl1::tr_shade::RB_BeginSurface(
-        crate::src::renderergl1::tr_shade::tess.shader,
+        crate::src::renderergl1::tr_shade::tess.shader as *mut crate::tr_local_h::shader_s,
         crate::src::renderergl1::tr_shade::tess.fogNum,
     );
 }
@@ -1213,7 +1213,9 @@ unsafe extern "C" fn RB_SurfaceBeam() {
             + direction[2 as libc::c_int as usize];
         i += 1
     }
-    crate::src::renderergl1::tr_backend::GL_Bind(crate::src::renderergl1::tr_main::tr.whiteImage);
+    crate::src::renderergl1::tr_backend::GL_Bind(
+        crate::src::renderergl1::tr_main::tr.whiteImage as *mut crate::tr_common_h::image_s,
+    );
     crate::src::renderergl1::tr_backend::GL_State(
         (0x2 as libc::c_int | 0x20 as libc::c_int) as libc::c_ulong,
     );
@@ -2767,7 +2769,7 @@ unsafe extern "C" fn RB_SurfaceGrid(mut cv: *mut crate::tr_local_h::srfGridMesh_
             }
             crate::src::renderergl1::tr_shade::RB_EndSurface();
             crate::src::renderergl1::tr_shade::RB_BeginSurface(
-                crate::src::renderergl1::tr_shade::tess.shader,
+                crate::src::renderergl1::tr_shade::tess.shader as *mut crate::tr_local_h::shader_s,
                 crate::src::renderergl1::tr_shade::tess.fogNum,
             );
         }
@@ -2890,7 +2892,9 @@ Draws x/y/z lines from the origin for orientation debugging
 */
 
 unsafe extern "C" fn RB_SurfaceAxis() {
-    crate::src::renderergl1::tr_backend::GL_Bind(crate::src::renderergl1::tr_main::tr.whiteImage);
+    crate::src::renderergl1::tr_backend::GL_Bind(
+        crate::src::renderergl1::tr_main::tr.whiteImage as *mut crate::tr_common_h::image_s,
+    );
     crate::src::renderergl1::tr_backend::GL_State(0x100 as libc::c_int as libc::c_ulong);
     crate::src::sdl::sdl_glimp::qglLineWidth.expect("non-null function pointer")(
         3 as libc::c_int as crate::stdlib::GLfloat,

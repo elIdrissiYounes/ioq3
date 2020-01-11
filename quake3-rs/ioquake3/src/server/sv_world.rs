@@ -298,7 +298,9 @@ pub unsafe extern "C" fn SV_UnlinkEntity(mut gEnt: *mut crate::g_public_h::share
     let mut ent: *mut crate::server_h::svEntity_t = 0 as *mut crate::server_h::svEntity_t;
     let mut scan: *mut crate::server_h::svEntity_t = 0 as *mut crate::server_h::svEntity_t;
     let mut ws: *mut worldSector_t = 0 as *mut worldSector_t;
-    ent = crate::src::server::sv_game::SV_SvEntityForGentity(gEnt);
+    ent = crate::src::server::sv_game::SV_SvEntityForGentity(
+        gEnt as *mut crate::g_public_h::sharedEntity_t,
+    ) as *mut crate::server_h::svEntity_s;
     (*gEnt).r.linked = crate::src::qcommon::q_shared::qfalse;
     ws = (*ent).worldSector;
     if ws.is_null() {
@@ -338,7 +340,9 @@ pub unsafe extern "C" fn SV_LinkEntity(mut gEnt: *mut crate::g_public_h::sharedE
     let mut origin: *mut libc::c_float = 0 as *mut libc::c_float;
     let mut angles: *mut libc::c_float = 0 as *mut libc::c_float;
     let mut ent: *mut crate::server_h::svEntity_t = 0 as *mut crate::server_h::svEntity_t;
-    ent = crate::src::server::sv_game::SV_SvEntityForGentity(gEnt);
+    ent = crate::src::server::sv_game::SV_SvEntityForGentity(
+        gEnt as *mut crate::g_public_h::sharedEntity_t,
+    ) as *mut crate::server_h::svEntity_s;
     if !(*ent).worldSector.is_null() {
         SV_UnlinkEntity(gEnt);
         // unlink from old position
@@ -522,7 +526,9 @@ unsafe extern "C" fn SV_AreaEntities_r(mut node: *mut worldSector_t, mut ap: *mu
     check = (*node).entities;
     while !check.is_null() {
         next = (*check).nextEntityInWorldSector;
-        gcheck = crate::src::server::sv_game::SV_GEntityForSvEntity(check);
+        gcheck = crate::src::server::sv_game::SV_GEntityForSvEntity(
+            check as *mut crate::server_h::svEntity_s,
+        ) as *mut crate::g_public_h::sharedEntity_t;
         if !((*gcheck).r.absmin[0 as libc::c_int as usize]
             > *(*ap).maxs.offset(0 as libc::c_int as isize)
             || (*gcheck).r.absmin[1 as libc::c_int as usize]
@@ -618,7 +624,8 @@ pub unsafe extern "C" fn SV_ClipToEntity(
     let mut clipHandle: crate::src::qcommon::q_shared::clipHandle_t = 0;
     let mut origin: *mut libc::c_float = 0 as *mut libc::c_float;
     let mut angles: *mut libc::c_float = 0 as *mut libc::c_float;
-    touch = crate::src::server::sv_game::SV_GentityNum(entityNum);
+    touch = crate::src::server::sv_game::SV_GentityNum(entityNum)
+        as *mut crate::g_public_h::sharedEntity_t;
     crate::stdlib::memset(
         trace as *mut libc::c_void,
         0 as libc::c_int,
@@ -639,7 +646,7 @@ pub unsafe extern "C" fn SV_ClipToEntity(
         // boxes don't rotate
     }
     crate::src::qcommon::cm_trace::CM_TransformedBoxTrace(
-        trace,
+        trace as *mut crate::src::qcommon::q_shared::trace_t,
         start as *mut libc::c_float as *const crate::src::qcommon::q_shared::vec_t,
         end as *mut libc::c_float as *const crate::src::qcommon::q_shared::vec_t,
         mins as *mut libc::c_float,
@@ -695,7 +702,8 @@ unsafe extern "C" fn SV_ClipMoveToEntities(mut clip: *mut moveclip_t) {
         (1 as libc::c_int) << 10 as libc::c_int,
     );
     if (*clip).passEntityNum != ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int {
-        passOwnerNum = (*crate::src::server::sv_game::SV_GentityNum((*clip).passEntityNum))
+        passOwnerNum = (*(crate::src::server::sv_game::SV_GentityNum((*clip).passEntityNum)
+            as *mut crate::g_public_h::sharedEntity_t))
             .r
             .ownerNum;
         if passOwnerNum == ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int {
@@ -710,7 +718,8 @@ unsafe extern "C" fn SV_ClipMoveToEntities(mut clip: *mut moveclip_t) {
         if (*clip).trace.allsolid as u64 != 0 {
             return;
         }
-        touch = crate::src::server::sv_game::SV_GentityNum(touchlist[i as usize]);
+        touch = crate::src::server::sv_game::SV_GentityNum(touchlist[i as usize])
+            as *mut crate::g_public_h::sharedEntity_t;
         // see if we should ignore this entity
         if (*clip).passEntityNum != ((1 as libc::c_int) << 10 as libc::c_int) - 1 as libc::c_int {
             if touchlist[i as usize] == (*clip).passEntityNum {
@@ -742,7 +751,7 @@ unsafe extern "C" fn SV_ClipMoveToEntities(mut clip: *mut moveclip_t) {
                         // boxes don't rotate
                     }
                     crate::src::qcommon::cm_trace::CM_TransformedBoxTrace(
-                        &mut trace,
+                        &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
                         (*clip).start as *mut libc::c_float
                             as *const crate::src::qcommon::q_shared::vec_t,
                         (*clip).end.as_mut_ptr() as *mut libc::c_float
@@ -846,7 +855,7 @@ pub unsafe extern "C" fn SV_Trace(
     );
     // clip to world
     crate::src::qcommon::cm_trace::CM_BoxTrace(
-        &mut clip.trace,
+        &mut clip.trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         start,
         end,
         mins,
@@ -1096,7 +1105,8 @@ pub unsafe extern "C" fn SV_PointContents(
     i = 0 as libc::c_int;
     while i < num {
         if !(touch[i as usize] == passEntityNum) {
-            hit = crate::src::server::sv_game::SV_GentityNum(touch[i as usize]);
+            hit = crate::src::server::sv_game::SV_GentityNum(touch[i as usize])
+                as *mut crate::g_public_h::sharedEntity_t;
             // might intersect, so do an exact clip
             clipHandle = SV_ClipHandleForEntity(hit);
             angles = (*hit).r.currentAngles.as_mut_ptr();

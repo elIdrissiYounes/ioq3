@@ -5,7 +5,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -330,10 +330,7 @@ pub use crate::stdlib::__compar_fn_t;
 use crate::stdlib::memcpy;
 use crate::stdlib::memset;
 pub use crate::stdlib::qsort;
-use crate::stdlib::strcat;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
-pub use crate::stdlib::strtol;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -357,6 +354,9 @@ pub use crate::ui_local_h::menulist_s;
 pub use crate::ui_local_h::menuradiobutton_s;
 pub use crate::ui_local_h::menutext_s;
 pub use crate::ui_local_h::uiStatic_t;
+use ::libc::strcat;
+use ::libc::strcpy;
+pub use ::libc::strtol;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -1361,7 +1361,7 @@ unsafe extern "C" fn ArenaServers_UpdateMenu() {
     } else {
         // no servers found
         if g_arenaservers.refreshservers as u64 != 0 {
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 g_arenaservers.status.string,
                 b"Scanning For Servers.\x00" as *const u8 as *const libc::c_char,
             );
@@ -1378,12 +1378,12 @@ unsafe extern "C" fn ArenaServers_UpdateMenu() {
             g_arenaservers.punkbuster.generic.flags |= 0x2000 as libc::c_int as libc::c_uint
         } else {
             if g_arenaservers.numqueriedservers < 0 as libc::c_int {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     g_arenaservers.status.string,
                     b"No Response From Master Server.\x00" as *const u8 as *const libc::c_char,
                 );
             } else {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     g_arenaservers.status.string,
                     b"No Servers Found.\x00" as *const u8 as *const libc::c_char,
                 );
@@ -1810,7 +1810,7 @@ pub unsafe extern "C" fn ArenaServers_LoadFavorites() {
             // favorite server addresses must be maintained outside refresh list
             // this mimics local and global netadr's stored in client
             // these can be fetched to fill ping list
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 g_arenaservers.favoriteaddresses[g_numfavoriteservers as usize].as_mut_ptr(),
                 adrstr.as_mut_ptr(),
             );
@@ -2055,7 +2055,7 @@ unsafe extern "C" fn ArenaServers_DoRefresh() {
             }
             // get an address to ping
             if g_servertype == 7 as libc::c_int {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     adrstr.as_mut_ptr(),
                     g_arenaservers.favoriteaddresses[g_arenaservers.currentping as usize]
                         .as_mut_ptr(),
@@ -2068,7 +2068,7 @@ unsafe extern "C" fn ArenaServers_DoRefresh() {
                     64 as libc::c_int,
                 );
             }
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 g_arenaservers.pinglist[j as usize].adrstr.as_mut_ptr(),
                 adrstr.as_mut_ptr(),
             );
@@ -2135,25 +2135,25 @@ unsafe extern "C" fn ArenaServers_StartRefresh() {
     if g_servertype >= 1 as libc::c_int && g_servertype <= 6 as libc::c_int {
         match g_arenaservers.gametype.curvalue {
             1 => {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     myargs.as_mut_ptr(),
                     b" ffa\x00" as *const u8 as *const libc::c_char,
                 );
             }
             2 => {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     myargs.as_mut_ptr(),
                     b" team\x00" as *const u8 as *const libc::c_char,
                 );
             }
             3 => {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     myargs.as_mut_ptr(),
                     b" tourney\x00" as *const u8 as *const libc::c_char,
                 );
             }
             4 => {
-                crate::stdlib::strcpy(
+                ::libc::strcpy(
                     myargs.as_mut_ptr(),
                     b" ctf\x00" as *const u8 as *const libc::c_char,
                 );
@@ -2161,13 +2161,13 @@ unsafe extern "C" fn ArenaServers_StartRefresh() {
             0 | _ => myargs[0 as libc::c_int as usize] = 0 as libc::c_int as libc::c_char,
         }
         if g_emptyservers != 0 {
-            crate::stdlib::strcat(
+            ::libc::strcat(
                 myargs.as_mut_ptr(),
                 b" empty\x00" as *const u8 as *const libc::c_char,
             );
         }
         if g_fullservers != 0 {
-            crate::stdlib::strcat(
+            ::libc::strcat(
                 myargs.as_mut_ptr(),
                 b" full\x00" as *const u8 as *const libc::c_char,
             );
@@ -2333,7 +2333,7 @@ pub unsafe extern "C" fn ArenaServers_SetType(mut type_0: libc::c_int) -> libc::
         g_arenaservers.currentping = *g_arenaservers.numservers;
         g_arenaservers.numqueriedservers = *g_arenaservers.numservers;
         ArenaServers_UpdateMenu();
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             g_arenaservers.status.string,
             b"hit refresh to update\x00" as *const u8 as *const libc::c_char,
         );
@@ -2433,13 +2433,13 @@ unsafe extern "C" fn ArenaServers_Event(mut ptr: *mut libc::c_void, mut event: l
         }
         16 => {
             crate::src::q3_ui::ui_qmenu::ScrollList_Key(
-                &mut g_arenaservers.list,
+                &mut g_arenaservers.list as *mut _ as *mut crate::ui_local_h::menulist_s,
                 crate::keycodes_h::K_UPARROW as libc::c_int,
             );
         }
         17 => {
             crate::src::q3_ui::ui_qmenu::ScrollList_Key(
-                &mut g_arenaservers.list,
+                &mut g_arenaservers.list as *mut _ as *mut crate::ui_local_h::menulist_s,
                 crate::keycodes_h::K_DOWNARROW as libc::c_int,
             );
         }
@@ -2506,7 +2506,9 @@ unsafe extern "C" fn ArenaServers_MenuDraw() {
     if g_arenaservers.refreshservers as u64 != 0 {
         ArenaServers_DoRefresh();
     }
-    crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut g_arenaservers.menu);
+    crate::src::q3_ui::ui_qmenu::Menu_Draw(
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }
 /*
 =================
@@ -2526,8 +2528,9 @@ unsafe extern "C" fn ArenaServers_MenuKey(
     if (key == crate::keycodes_h::K_DEL as libc::c_int
         || key == crate::keycodes_h::K_KP_DEL as libc::c_int)
         && g_servertype == 7 as libc::c_int
-        && crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(&mut g_arenaservers.menu)
-            == &mut g_arenaservers.list as *mut crate::ui_local_h::menulist_s as *mut libc::c_void
+        && crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(
+            &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        ) == &mut g_arenaservers.list as *mut crate::ui_local_h::menulist_s as *mut libc::c_void
     {
         ArenaServers_Remove();
         ArenaServers_UpdateMenu();
@@ -2539,7 +2542,10 @@ unsafe extern "C" fn ArenaServers_MenuKey(
         ArenaServers_StopRefresh();
         ArenaServers_SaveChanges();
     }
-    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(&mut g_arenaservers.menu, key);
+    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        key,
+    );
 }
 /*
 =================
@@ -2822,89 +2828,89 @@ unsafe extern "C" fn ArenaServers_MenuInit() {
     g_arenaservers.pblogo.errorpic =
         b"menu/art/unknownmap\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.master as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.gametype as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.sortkey as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.showfull as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.showempty as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.mappic as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.status as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.statusbar as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.arrows as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.up as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.down as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.list as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.remove as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.specify as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.refresh as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.create as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.go as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.punkbuster as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut g_arenaservers.menu,
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut g_arenaservers.pblogo as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     ArenaServers_LoadFavorites();
@@ -2949,7 +2955,8 @@ unsafe extern "C" fn ArenaServers_MenuInit() {
     g_servertype = ArenaServers_SetType(g_servertype);
     g_arenaservers.master.curvalue = g_servertype;
     crate::src::ui::ui_syscalls::trap_Cvar_Register(
-        0 as *mut crate::src::qcommon::q_shared::vmCvar_t,
+        0 as *mut crate::src::qcommon::q_shared::vmCvar_t
+            as *mut crate::src::qcommon::q_shared::vmCvar_t,
         b"debug_protocol\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
@@ -3018,5 +3025,7 @@ UI_ArenaServersMenu
 
 pub unsafe extern "C" fn UI_ArenaServersMenu() {
     ArenaServers_MenuInit();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut g_arenaservers.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut g_arenaservers.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

@@ -363,9 +363,6 @@ pub use crate::src::ui::ui_syscalls::trap_R_RegisterModel;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 use crate::stdlib::fabs;
 use crate::stdlib::memset;
-use crate::stdlib::strcat;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -392,6 +389,9 @@ pub use crate::ui_local_h::menuslider_s;
 pub use crate::ui_local_h::menutext_s;
 pub use crate::ui_local_h::playerInfo_t;
 pub use crate::ui_local_h::uiStatic_t;
+use ::libc::strcat;
+use ::libc::strcmp;
+use ::libc::strcpy;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -2315,7 +2315,7 @@ unsafe extern "C" fn Controls_GetCvarDefault(mut name: *mut libc::c_char) -> lib
         if (*cvarptr).name.is_null() {
             return 0 as libc::c_int as libc::c_float;
         }
-        if crate::stdlib::strcmp((*cvarptr).name, name) == 0 {
+        if ::libc::strcmp((*cvarptr).name, name) == 0 {
             break;
         }
         i += 1;
@@ -2338,7 +2338,7 @@ unsafe extern "C" fn Controls_GetCvarValue(mut name: *mut libc::c_char) -> libc:
         if (*cvarptr).name.is_null() {
             return 0 as libc::c_int as libc::c_float;
         }
-        if crate::stdlib::strcmp((*cvarptr).name, name) == 0 {
+        if ::libc::strcmp((*cvarptr).name, name) == 0 {
             break;
         }
         i += 1;
@@ -2428,7 +2428,7 @@ unsafe extern "C" fn Controls_UpdateModel(mut anim: libc::c_int) {
         _ => {}
     }
     crate::src::q3_ui::ui_players::UI_PlayerInfo_SetInfo(
-        &mut s_controls.playerinfo,
+        &mut s_controls.playerinfo as *mut _ as *mut crate::ui_local_h::playerInfo_t,
         s_controls.playerLegs,
         s_controls.playerTorso,
         s_controls.playerViewangles.as_mut_ptr(),
@@ -2580,12 +2580,12 @@ unsafe extern "C" fn Controls_DrawKeyBinding(mut self_0: *mut libc::c_void) {
     a = self_0 as *mut crate::ui_local_h::menuaction_s;
     x = (*a).generic.x;
     y = (*a).generic.y;
-    c = (crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor((*a).generic.parent)
-        == a as *mut libc::c_void) as libc::c_int
-        as crate::src::qcommon::q_shared::qboolean;
+    c = (crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(
+        (*a).generic.parent as *mut crate::ui_local_h::_tag_menuframework,
+    ) == a as *mut libc::c_void) as libc::c_int as crate::src::qcommon::q_shared::qboolean;
     b1 = g_bindings[(*a).generic.id as usize].bind1;
     if b1 == -(1 as libc::c_int) {
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             name.as_mut_ptr(),
             b"???\x00" as *const u8 as *const libc::c_char,
         );
@@ -2604,11 +2604,11 @@ unsafe extern "C" fn Controls_DrawKeyBinding(mut self_0: *mut libc::c_void) {
                 32 as libc::c_int,
             );
             crate::src::qcommon::q_shared::Q_strupr(name2.as_mut_ptr());
-            crate::stdlib::strcat(
+            ::libc::strcat(
                 name.as_mut_ptr(),
                 b" or \x00" as *const u8 as *const libc::c_char,
             );
-            crate::stdlib::strcat(name.as_mut_ptr(), name2.as_mut_ptr());
+            ::libc::strcat(name.as_mut_ptr(), name2.as_mut_ptr());
         }
     }
     if c as u64 != 0 {
@@ -2732,14 +2732,12 @@ unsafe extern "C" fn Controls_DrawPlayer(mut self_0: *mut libc::c_void) {
         buf.as_mut_ptr(),
         ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong as libc::c_int,
     );
-    if crate::stdlib::strcmp(buf.as_mut_ptr(), s_controls.playerModel.as_mut_ptr())
-        != 0 as libc::c_int
-    {
+    if ::libc::strcmp(buf.as_mut_ptr(), s_controls.playerModel.as_mut_ptr()) != 0 as libc::c_int {
         crate::src::q3_ui::ui_players::UI_PlayerInfo_SetModel(
-            &mut s_controls.playerinfo,
+            &mut s_controls.playerinfo as *mut _ as *mut crate::ui_local_h::playerInfo_t,
             buf.as_mut_ptr(),
         );
-        crate::stdlib::strcpy(s_controls.playerModel.as_mut_ptr(), buf.as_mut_ptr());
+        ::libc::strcpy(s_controls.playerModel.as_mut_ptr(), buf.as_mut_ptr());
         Controls_UpdateModel(0 as libc::c_int);
     }
     b = self_0 as *mut crate::ui_local_h::menubitmap_s;
@@ -2748,7 +2746,7 @@ unsafe extern "C" fn Controls_DrawPlayer(mut self_0: *mut libc::c_void) {
         (*b).generic.y as libc::c_float,
         (*b).width as libc::c_float,
         (*b).height as libc::c_float,
-        &mut s_controls.playerinfo,
+        &mut s_controls.playerinfo as *mut _ as *mut crate::ui_local_h::playerInfo_t,
         crate::src::q3_ui::ui_atoms::uis.realtime / 2 as libc::c_int,
     );
 }
@@ -3117,7 +3115,10 @@ unsafe extern "C" fn Controls_MenuKey(
         }
         _ => {}
     }
-    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(&mut s_controls.menu, key);
+    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        key,
+    );
 }
 /*
 =================
@@ -3261,7 +3262,7 @@ unsafe extern "C" fn Controls_InitModel() {
         ::std::mem::size_of::<crate::ui_local_h::playerInfo_t>() as libc::c_ulong,
     );
     crate::src::q3_ui::ui_players::UI_PlayerInfo_SetModel(
-        &mut s_controls.playerinfo,
+        &mut s_controls.playerinfo as *mut _ as *mut crate::ui_local_h::playerInfo_t,
         crate::src::q3_ui::ui_atoms::UI_Cvar_VariableString(
             b"model\x00" as *const u8 as *const libc::c_char,
         ),
@@ -3888,219 +3889,219 @@ unsafe extern "C" fn Controls_MenuInit() {
     s_controls.name.style = 0x1 as libc::c_int;
     s_controls.name.color = crate::src::q3_ui::ui_qmenu::text_color_normal.as_mut_ptr();
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.player as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.name as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.looking as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.movement as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.weapons as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.misc as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.sensitivity as *mut crate::ui_local_h::menuslider_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.smoothmouse as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.invertmouse as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.lookup as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.lookdown as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.mouselook as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.freelook as *mut crate::ui_local_h::menuradiobutton_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.centerview as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.zoomview as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.joyenable as *mut crate::ui_local_h::menuradiobutton_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.joythreshold as *mut crate::ui_local_h::menuslider_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.alwaysrun as *mut crate::ui_local_h::menuradiobutton_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.run as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.walkforward as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.backpedal as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.stepleft as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.stepright as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.moveup as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.movedown as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.turnleft as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.turnright as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.sidestep as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.attack as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.nextweapon as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.prevweapon as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.autoswitch as *mut crate::ui_local_h::menuradiobutton_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.chainsaw as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.machinegun as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.shotgun as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.grenadelauncher as *mut crate::ui_local_h::menuaction_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.rocketlauncher as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.lightning as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.railgun as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.plasma as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.bfg as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.showscores as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.useitem as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.gesture as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.chat as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.chat2 as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.chat3 as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.chat4 as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.togglemenu as *mut crate::ui_local_h::menuaction_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_controls.menu,
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_controls.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer(
@@ -4152,7 +4153,9 @@ UI_ControlsMenu
 
 pub unsafe extern "C" fn UI_ControlsMenu() {
     Controls_MenuInit();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_controls.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_controls.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }
 unsafe extern "C" fn run_static_initializers() {
     g_movement_controls = [

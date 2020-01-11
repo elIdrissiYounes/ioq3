@@ -124,9 +124,9 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::abs;
 use crate::stdlib::memset;
 use crate::stdlib::sqrt;
+use ::libc::abs;
 
 pub type aas_tracestack_t = aas_tracestack_s;
 
@@ -776,7 +776,7 @@ pub unsafe extern "C" fn AAS_AreaEntityCollision(
                 boxmaxs.as_mut_ptr(),
                 end,
                 1 as libc::c_int | 0x10000 as libc::c_int,
-                &mut bsptrace,
+                &mut bsptrace as *mut _ as *mut crate::botlib_h::bsp_trace_s,
             ) as u64
                 != 0
             {
@@ -1558,7 +1558,7 @@ pub unsafe extern "C" fn AAS_InsideFace(
         edge = &mut *crate::src::botlib::be_aas_main::aasworld
             .edges
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum)
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum)
                     as isize,
             ) as *mut crate::aasfile_h::aas_edge_t;
         //get the first vertex of the edge
@@ -1672,7 +1672,7 @@ pub unsafe extern "C" fn AAS_PointInsideFace(
         edge = &mut *crate::src::botlib::be_aas_main::aasworld
             .edges
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum)
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(edgenum)
                     as isize,
             ) as *mut crate::aasfile_h::aas_edge_t;
         //get the first vertex of the edge
@@ -1755,7 +1755,7 @@ pub unsafe extern "C" fn AAS_AreaGroundFace(
         face = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(facenum)
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(facenum)
                     as isize,
             ) as *mut crate::aasfile_h::aas_face_t;
         //end if
@@ -1856,7 +1856,7 @@ pub unsafe extern "C" fn AAS_TraceEndFace(
         face = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(facenum)
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(facenum)
                     as isize,
             ) as *mut crate::aasfile_h::aas_face_t;
         //end if

@@ -198,7 +198,10 @@ pub unsafe extern "C" fn clt_mdct_forward_c(
         i += 1
     }
     /* N/4 complex FFT, does not downscale anymore */
-    crate::src::opus_1_2_1::celt::kiss_fft::opus_fft_impl(st, f2);
+    crate::src::opus_1_2_1::celt::kiss_fft::opus_fft_impl(
+        st as *const crate::src::opus_1_2_1::celt::kiss_fft::kiss_fft_state,
+        f2 as *mut crate::src::opus_1_2_1::celt::kiss_fft::kiss_fft_cpx,
+    );
     /* Post-rotate */
     /* Temp pointers to make it really clear to the compiler what we're doing */
     let mut fp: *const crate::src::opus_1_2_1::celt::kiss_fft::kiss_fft_cpx = f2;
@@ -318,8 +321,9 @@ pub unsafe extern "C" fn clt_mdct_backward_c(
         i += 1
     }
     crate::src::opus_1_2_1::celt::kiss_fft::opus_fft_impl(
-        (*l).kfft[shift as usize],
+        (*l).kfft[shift as usize] as *const crate::src::opus_1_2_1::celt::kiss_fft::kiss_fft_state,
         out.offset((overlap >> 1 as libc::c_int) as isize)
+            as *mut crate::src::opus_1_2_1::celt::kiss_fft::kiss_fft_cpx
             as *mut crate::src::opus_1_2_1::celt::kiss_fft::kiss_fft_cpx,
     );
     /* Post-rotate and de-shuffle from both ends of the buffer at once to make

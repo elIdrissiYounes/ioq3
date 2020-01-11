@@ -20,7 +20,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -431,8 +431,8 @@ use crate::stdlib::memset;
 use crate::stdlib::sin;
 use crate::stdlib::sqrt;
 use crate::stdlib::strncpy;
-pub use crate::stdlib::strtol;
 pub use crate::vm_local_h::vm_s;
+pub use ::libc::strtol;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -541,7 +541,7 @@ pub unsafe extern "C" fn SV_GameSendServerCommand(
 ) {
     if clientNum == -(1 as libc::c_int) {
         crate::src::server::sv_main::SV_SendServerCommand(
-            0 as *mut crate::server_h::client_t,
+            0 as *mut crate::server_h::client_t as *mut crate::server_h::client_s,
             b"%s\x00" as *const u8 as *const libc::c_char,
             text,
         );
@@ -554,7 +554,7 @@ pub unsafe extern "C" fn SV_GameSendServerCommand(
         crate::src::server::sv_main::SV_SendServerCommand(
             crate::src::server::sv_main::svs
                 .clients
-                .offset(clientNum as isize),
+                .offset(clientNum as isize) as *mut crate::server_h::client_s,
             b"%s\x00" as *const u8 as *const libc::c_char,
             text,
         );
@@ -581,7 +581,7 @@ pub unsafe extern "C" fn SV_GameDropClient(
     crate::src::server::sv_client::SV_DropClient(
         crate::src::server::sv_main::svs
             .clients
-            .offset(clientNum as isize),
+            .offset(clientNum as isize) as *mut crate::server_h::client_s,
         reason,
     );
 }
@@ -625,7 +625,7 @@ pub unsafe extern "C" fn SV_SetBrushModel(
     (*ent).r.maxs[2 as libc::c_int as usize] = maxs[2 as libc::c_int as usize];
     (*ent).r.bmodel = crate::src::qcommon::q_shared::qtrue;
     (*ent).r.contents = -(1 as libc::c_int);
-    crate::src::server::sv_world::SV_LinkEntity(ent);
+    crate::src::server::sv_world::SV_LinkEntity(ent as *mut crate::g_public_h::sharedEntity_t);
     // FIXME: remove
 }
 /*
@@ -755,9 +755,11 @@ pub unsafe extern "C" fn SV_EntityContact(
     // check for exact collision
     origin = (*gEnt).r.currentOrigin.as_ptr();
     angles = (*gEnt).r.currentAngles.as_ptr();
-    ch = crate::src::server::sv_world::SV_ClipHandleForEntity(gEnt);
+    ch = crate::src::server::sv_world::SV_ClipHandleForEntity(
+        gEnt as *const crate::g_public_h::sharedEntity_t,
+    );
     crate::src::qcommon::cm_trace::CM_TransformedBoxTrace(
-        &mut trace,
+        &mut trace as *mut _ as *mut crate::src::qcommon::q_shared::trace_t,
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
             as *const crate::src::qcommon::q_shared::vec_t,
         crate::src::qcommon::q_math::vec3_origin.as_mut_ptr()
@@ -885,6 +887,7 @@ pub unsafe extern "C" fn SV_GameSystemCalls(
         3 => {
             crate::src::qcommon::cvar::Cvar_Register(
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
+                    as *mut crate::src::qcommon::q_shared::vmCvar_t
                     as *mut crate::src::qcommon::q_shared::vmCvar_t,
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
                     as *const libc::c_char,
@@ -898,6 +901,7 @@ pub unsafe extern "C" fn SV_GameSystemCalls(
             crate::src::qcommon::cvar::Cvar_Update(crate::src::qcommon::vm::VM_ArgPtr(
                 *args.offset(1 as libc::c_int as isize),
             )
+                as *mut crate::src::qcommon::q_shared::vmCvar_t
                 as *mut crate::src::qcommon::q_shared::vmCvar_t);
             return 0 as libc::c_int as crate::stdlib::intptr_t;
         }
@@ -1027,6 +1031,7 @@ pub unsafe extern "C" fn SV_GameSystemCalls(
             crate::src::server::sv_world::SV_LinkEntity(crate::src::qcommon::vm::VM_ArgPtr(
                 *args.offset(1 as libc::c_int as isize),
             )
+                as *mut crate::g_public_h::sharedEntity_t
                 as *mut crate::g_public_h::sharedEntity_t);
             return 0 as libc::c_int as crate::stdlib::intptr_t;
         }
@@ -1034,6 +1039,7 @@ pub unsafe extern "C" fn SV_GameSystemCalls(
             crate::src::server::sv_world::SV_UnlinkEntity(crate::src::qcommon::vm::VM_ArgPtr(
                 *args.offset(1 as libc::c_int as isize),
             )
+                as *mut crate::g_public_h::sharedEntity_t
                 as *mut crate::g_public_h::sharedEntity_t);
             return 0 as libc::c_int as crate::stdlib::intptr_t;
         }
@@ -1073,6 +1079,7 @@ pub unsafe extern "C" fn SV_GameSystemCalls(
         24 => {
             crate::src::server::sv_world::SV_Trace(
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
+                    as *mut crate::src::qcommon::q_shared::trace_t
                     as *mut crate::src::qcommon::q_shared::trace_t,
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
                     as *const crate::src::qcommon::q_shared::vec_t,
@@ -1091,6 +1098,7 @@ pub unsafe extern "C" fn SV_GameSystemCalls(
         43 => {
             crate::src::server::sv_world::SV_Trace(
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(1 as libc::c_int as isize))
+                    as *mut crate::src::qcommon::q_shared::trace_t
                     as *mut crate::src::qcommon::q_shared::trace_t,
                 crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
                     as *const crate::src::qcommon::q_shared::vec_t,
@@ -1248,7 +1256,8 @@ pub unsafe extern "C" fn SV_GameSystemCalls(
             return crate::src::qcommon::common::Com_RealTime(crate::src::qcommon::vm::VM_ArgPtr(
                 *args.offset(1 as libc::c_int as isize),
             )
-                as *mut crate::src::qcommon::q_shared::qtime_t)
+                as *mut crate::src::qcommon::q_shared::qtime_t
+                as *mut crate::src::qcommon::q_shared::qtime_s)
                 as crate::stdlib::intptr_t
         }
         42 => {
@@ -1384,9 +1393,11 @@ pub unsafe extern "C" fn SV_GameSystemCalls(
                 crate::src::server::sv_client::SV_ClientThink(
                     &mut *crate::src::server::sv_main::svs
                         .clients
-                        .offset(clientNum as isize),
+                        .offset(clientNum as isize) as *mut _
+                        as *mut crate::server_h::client_s,
                     crate::src::qcommon::vm::VM_ArgPtr(*args.offset(2 as libc::c_int as isize))
-                        as *mut crate::src::qcommon::q_shared::usercmd_t,
+                        as *mut crate::src::qcommon::q_shared::usercmd_t
+                        as *mut crate::src::qcommon::q_shared::usercmd_s,
                 );
             }
             return 0 as libc::c_int as crate::stdlib::intptr_t;
@@ -3054,7 +3065,7 @@ pub unsafe extern "C" fn SV_InitGameProgs() {
         b"bot_enable\x00" as *const u8 as *const libc::c_char,
         b"1\x00" as *const u8 as *const libc::c_char,
         0x20 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     if !var.is_null() {
         bot_enable = (*var).integer
     } else {

@@ -5,7 +5,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -153,20 +153,20 @@ use crate::stdlib::memmove;
 use crate::stdlib::memset;
 pub use crate::stdlib::off_t;
 pub use crate::stdlib::qsort;
-pub use crate::stdlib::remove;
-pub use crate::stdlib::rename;
 pub use crate::stdlib::setvbuf;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
-use crate::stdlib::strrchr;
-use crate::stdlib::strstr;
-pub use crate::stdlib::strtol;
 pub use crate::stdlib::vsnprintf;
 pub use crate::zconf_h::uInt;
 pub use crate::zconf_h::uLong;
 pub use crate::zconf_h::voidp;
+pub use ::libc::remove;
+pub use ::libc::rename;
+use ::libc::strchr;
+use ::libc::strcmp;
+use ::libc::strcpy;
+use ::libc::strrchr;
+use ::libc::strstr;
+pub use ::libc::strtol;
 extern "C" {
     #[no_mangle]
     pub fn Com_AppendCDKey(filename: *const libc::c_char);
@@ -648,8 +648,8 @@ pub unsafe extern "C" fn FS_CreatePath(
     let mut path: [libc::c_char; 4096] = [0; 4096];
     // make absolutely sure that it can't back up the path
     // FIXME: is c: allowed???
-    if !crate::stdlib::strstr(OSPath, b"..\x00" as *const u8 as *const libc::c_char).is_null()
-        || !crate::stdlib::strstr(OSPath, b"::\x00" as *const u8 as *const libc::c_char).is_null()
+    if !::libc::strstr(OSPath, b"..\x00" as *const u8 as *const libc::c_char).is_null()
+        || !::libc::strstr(OSPath, b"::\x00" as *const u8 as *const libc::c_char).is_null()
     {
         crate::src::qcommon::common::Com_Printf(
             b"WARNING: refusing to create relative path \"%s\"\n\x00" as *const u8
@@ -665,7 +665,7 @@ pub unsafe extern "C" fn FS_CreatePath(
     );
     FS_ReplaceSeparators(path.as_mut_ptr());
     // Skip creation of the root directory as it will always be there
-    ofs = crate::stdlib::strchr(path.as_mut_ptr(), '/' as i32);
+    ofs = ::libc::strchr(path.as_mut_ptr(), '/' as i32);
     if !ofs.is_null() {
         ofs = ofs.offset(1)
     }
@@ -735,7 +735,7 @@ pub unsafe extern "C" fn FS_Remove(mut osPath: *const libc::c_char) {
         osPath,
         (*::std::mem::transmute::<&[u8; 10], &[libc::c_char; 10]>(b"FS_Remove\x00")).as_ptr(),
     );
-    crate::stdlib::remove(osPath);
+    ::libc::remove(osPath);
 }
 /*
 ===========
@@ -750,7 +750,7 @@ pub unsafe extern "C" fn FS_HomeRemove(mut homePath: *const libc::c_char) {
         homePath,
         (*::std::mem::transmute::<&[u8; 14], &[libc::c_char; 14]>(b"FS_HomeRemove\x00")).as_ptr(),
     );
-    crate::stdlib::remove(FS_BuildOSPath(
+    ::libc::remove(FS_BuildOSPath(
         (*fs_homepath).string,
         fs_gamedir.as_mut_ptr(),
         homePath,
@@ -772,7 +772,7 @@ pub unsafe extern "C" fn FS_FileInPathExists(
     filep = crate::src::sys::sys_unix::Sys_FOpen(
         testpath,
         b"rb\x00" as *const u8 as *const libc::c_char,
-    );
+    ) as *mut crate::stdlib::_IO_FILE;
     if !filep.is_null() {
         crate::stdlib::fclose(filep);
         return crate::src::qcommon::q_shared::qtrue;
@@ -871,7 +871,8 @@ pub unsafe extern "C" fn FS_SV_FOpenFileWrite(
         ospath,
     );
     fsh[f as usize].handleFiles.file.o =
-        crate::src::sys::sys_unix::Sys_FOpen(ospath, b"wb\x00" as *const u8 as *const libc::c_char);
+        crate::src::sys::sys_unix::Sys_FOpen(ospath, b"wb\x00" as *const u8 as *const libc::c_char)
+            as *mut crate::stdlib::_IO_FILE;
     crate::src::qcommon::q_shared::Q_strncpyz(
         fsh[f as usize].name.as_mut_ptr(),
         filename,
@@ -931,7 +932,8 @@ pub unsafe extern "C" fn FS_SV_FOpenFileRead(
         );
     }
     fsh[f as usize].handleFiles.file.o =
-        crate::src::sys::sys_unix::Sys_FOpen(ospath, b"rb\x00" as *const u8 as *const libc::c_char);
+        crate::src::sys::sys_unix::Sys_FOpen(ospath, b"rb\x00" as *const u8 as *const libc::c_char)
+            as *mut crate::stdlib::_IO_FILE;
     fsh[f as usize].handleSync = crate::src::qcommon::q_shared::qfalse;
     if fsh[f as usize].handleFiles.file.o.is_null() {
         // If fs_homepath == fs_basepath, don't bother
@@ -958,7 +960,7 @@ pub unsafe extern "C" fn FS_SV_FOpenFileRead(
             fsh[f as usize].handleFiles.file.o = crate::src::sys::sys_unix::Sys_FOpen(
                 ospath,
                 b"rb\x00" as *const u8 as *const libc::c_char,
-            );
+            ) as *mut crate::stdlib::_IO_FILE;
             fsh[f as usize].handleSync = crate::src::qcommon::q_shared::qfalse
         }
         // Check fs_steampath
@@ -984,7 +986,7 @@ pub unsafe extern "C" fn FS_SV_FOpenFileRead(
             fsh[f as usize].handleFiles.file.o = crate::src::sys::sys_unix::Sys_FOpen(
                 ospath,
                 b"rb\x00" as *const u8 as *const libc::c_char,
-            );
+            ) as *mut crate::stdlib::_IO_FILE;
             fsh[f as usize].handleSync = crate::src::qcommon::q_shared::qfalse
         }
         // Check fs_gogpath
@@ -1010,7 +1012,7 @@ pub unsafe extern "C" fn FS_SV_FOpenFileRead(
             fsh[f as usize].handleFiles.file.o = crate::src::sys::sys_unix::Sys_FOpen(
                 ospath,
                 b"rb\x00" as *const u8 as *const libc::c_char,
-            );
+            ) as *mut crate::stdlib::_IO_FILE;
             fsh[f as usize].handleSync = crate::src::qcommon::q_shared::qfalse
         }
         if fsh[f as usize].handleFiles.file.o.is_null() {
@@ -1076,7 +1078,7 @@ pub unsafe extern "C" fn FS_SV_Rename(
                 .as_ptr(),
         );
     }
-    crate::stdlib::rename(from_ospath, to_ospath);
+    ::libc::rename(from_ospath, to_ospath);
 }
 /*
 ===========
@@ -1110,7 +1112,7 @@ pub unsafe extern "C" fn FS_Rename(mut from: *const libc::c_char, mut to: *const
         to_ospath,
         (*::std::mem::transmute::<&[u8; 10], &[libc::c_char; 10]>(b"FS_Rename\x00")).as_ptr(),
     );
-    crate::stdlib::rename(from_ospath, to_ospath);
+    ::libc::rename(from_ospath, to_ospath);
 }
 /*
 ==============
@@ -1195,7 +1197,8 @@ pub unsafe extern "C" fn FS_FOpenFileWrite(
     // when running with +set logfile 1 +set developer 1
     //Com_DPrintf( "writing to: %s\n", ospath );
     fsh[f as usize].handleFiles.file.o =
-        crate::src::sys::sys_unix::Sys_FOpen(ospath, b"wb\x00" as *const u8 as *const libc::c_char);
+        crate::src::sys::sys_unix::Sys_FOpen(ospath, b"wb\x00" as *const u8 as *const libc::c_char)
+            as *mut crate::stdlib::_IO_FILE;
     crate::src::qcommon::q_shared::Q_strncpyz(
         fsh[f as usize].name.as_mut_ptr(),
         filename,
@@ -1251,7 +1254,8 @@ pub unsafe extern "C" fn FS_FOpenFileAppend(
         return 0 as libc::c_int;
     }
     fsh[f as usize].handleFiles.file.o =
-        crate::src::sys::sys_unix::Sys_FOpen(ospath, b"ab\x00" as *const u8 as *const libc::c_char);
+        crate::src::sys::sys_unix::Sys_FOpen(ospath, b"ab\x00" as *const u8 as *const libc::c_char)
+            as *mut crate::stdlib::_IO_FILE;
     fsh[f as usize].handleSync = crate::src::qcommon::q_shared::qfalse;
     if fsh[f as usize].handleFiles.file.o.is_null() {
         f = 0 as libc::c_int
@@ -1299,7 +1303,7 @@ pub unsafe extern "C" fn FS_FCreateOpenPipeFile(
         (*::std::mem::transmute::<&[u8; 23], &[libc::c_char; 23]>(b"FS_FCreateOpenPipeFile\x00"))
             .as_ptr(),
     );
-    fifo = crate::src::sys::sys_unix::Sys_Mkfifo(ospath);
+    fifo = crate::src::sys::sys_unix::Sys_Mkfifo(ospath) as *mut crate::stdlib::_IO_FILE;
     if !fifo.is_null() {
         fsh[f as usize].handleFiles.file.o = fifo;
         fsh[f as usize].handleSync = crate::src::qcommon::q_shared::qfalse
@@ -1394,7 +1398,7 @@ pub unsafe extern "C" fn FS_IsDemoExt(
     let mut ext_test: *mut libc::c_char = 0 as *mut libc::c_char;
     let mut index: libc::c_int = 0;
     let mut protocol: libc::c_int = 0;
-    ext_test = crate::stdlib::strrchr(filename, '.' as i32);
+    ext_test = ::libc::strrchr(filename, '.' as i32);
     if !ext_test.is_null()
         && crate::src::qcommon::q_shared::Q_stricmpn(
             ext_test.offset(1 as libc::c_int as isize),
@@ -1475,8 +1479,8 @@ pub unsafe extern "C" fn FS_FOpenFileReadDir(
     // make absolutely sure that it can't back up the path.
     // The searchpaths do guarantee that something will always
     // be prepended, so we don't need to worry about "c:" or "//limbo"
-    if !crate::stdlib::strstr(filename, b"..\x00" as *const u8 as *const libc::c_char).is_null()
-        || !crate::stdlib::strstr(filename, b"::\x00" as *const u8 as *const libc::c_char).is_null()
+    if !::libc::strstr(filename, b"..\x00" as *const u8 as *const libc::c_char).is_null()
+        || !::libc::strstr(filename, b"::\x00" as *const u8 as *const libc::c_char).is_null()
     {
         if file.is_null() {
             return crate::src::qcommon::q_shared::qfalse as libc::c_int as libc::c_long;
@@ -1487,8 +1491,7 @@ pub unsafe extern "C" fn FS_FOpenFileReadDir(
     // make sure the q3key file is only readable by the quake3.exe at initialization
     // any other time the key should only be accessed in memory using the provided functions
     if crate::src::qcommon::common::com_fullyInitialized as libc::c_uint != 0
-        && !crate::stdlib::strstr(filename, b"q3key\x00" as *const u8 as *const libc::c_char)
-            .is_null()
+        && !::libc::strstr(filename, b"q3key\x00" as *const u8 as *const libc::c_char).is_null()
     {
         if file.is_null() {
             return crate::src::qcommon::q_shared::qfalse as libc::c_int as libc::c_long;
@@ -1534,7 +1537,7 @@ pub unsafe extern "C" fn FS_FOpenFileReadDir(
             filep = crate::src::sys::sys_unix::Sys_FOpen(
                 netpath,
                 b"rb\x00" as *const u8 as *const libc::c_char,
-            );
+            ) as *mut crate::stdlib::_IO_FILE;
             if !filep.is_null() {
                 len = FS_fplength(filep) as libc::c_int;
                 crate::stdlib::fclose(filep);
@@ -1617,7 +1620,7 @@ pub unsafe extern "C" fn FS_FOpenFileReadDir(
                                 filename,
                                 b"vm/qagame.qvm\x00" as *const u8 as *const libc::c_char,
                             ) != 0 as libc::c_int
-                            && crate::stdlib::strstr(
+                            && ::libc::strstr(
                                 filename,
                                 b"levelshots\x00" as *const u8 as *const libc::c_char,
                             )
@@ -1626,7 +1629,7 @@ pub unsafe extern "C" fn FS_FOpenFileReadDir(
                             (*pak).referenced |= 0x1 as libc::c_int
                         }
                     }
-                    if !crate::stdlib::strstr(
+                    if !::libc::strstr(
                         filename,
                         b"cgame.qvm\x00" as *const u8 as *const libc::c_char,
                     )
@@ -1634,11 +1637,8 @@ pub unsafe extern "C" fn FS_FOpenFileReadDir(
                     {
                         (*pak).referenced |= 0x4 as libc::c_int
                     }
-                    if !crate::stdlib::strstr(
-                        filename,
-                        b"ui.qvm\x00" as *const u8 as *const libc::c_char,
-                    )
-                    .is_null()
+                    if !::libc::strstr(filename, b"ui.qvm\x00" as *const u8 as *const libc::c_char)
+                        .is_null()
                     {
                         (*pak).referenced |= 0x2 as libc::c_int
                     }
@@ -1741,7 +1741,7 @@ pub unsafe extern "C" fn FS_FOpenFileReadDir(
         filep = crate::src::sys::sys_unix::Sys_FOpen(
             netpath,
             b"rb\x00" as *const u8 as *const libc::c_char,
-        );
+        ) as *mut crate::stdlib::_IO_FILE;
         if filep.is_null() {
             *file = 0 as libc::c_int;
             return -(1 as libc::c_int) as libc::c_long;
@@ -1795,11 +1795,11 @@ pub unsafe extern "C" fn FS_FOpenFileRead(
             b"Filesystem call made without initialization\x00" as *const u8 as *const libc::c_char,
         );
     }
-    isLocalConfig = (crate::stdlib::strcmp(
+    isLocalConfig = (::libc::strcmp(
         filename,
         b"autoexec.cfg\x00" as *const u8 as *const libc::c_char,
     ) == 0
-        || crate::stdlib::strcmp(
+        || ::libc::strcmp(
             filename,
             b"q3config.cfg\x00" as *const u8 as *const libc::c_char,
         ) == 0) as libc::c_int as crate::src::qcommon::q_shared::qboolean;
@@ -2241,8 +2241,8 @@ pub unsafe extern "C" fn FS_FileIsInPAK(
     // make absolutely sure that it can't back up the path.
     // The searchpaths do guarantee that something will always
     // be prepended, so we don't need to worry about "c:" or "//limbo"
-    if !crate::stdlib::strstr(filename, b"..\x00" as *const u8 as *const libc::c_char).is_null()
-        || !crate::stdlib::strstr(filename, b"::\x00" as *const u8 as *const libc::c_char).is_null()
+    if !::libc::strstr(filename, b"..\x00" as *const u8 as *const libc::c_char).is_null()
+        || !::libc::strstr(filename, b"::\x00" as *const u8 as *const libc::c_char).is_null()
     {
         return -(1 as libc::c_int);
     }
@@ -2322,7 +2322,7 @@ pub unsafe extern "C" fn FS_ReadFileDir(
     buf = 0 as *mut crate::src::qcommon::q_shared::byte;
     // if this is a .cfg file and we are playing back a journal, read
     // it from the journal file
-    if !crate::stdlib::strstr(qpath, b".cfg\x00" as *const u8 as *const libc::c_char).is_null() {
+    if !::libc::strstr(qpath, b".cfg\x00" as *const u8 as *const libc::c_char).is_null() {
         isConfig = crate::src::qcommon::q_shared::qtrue;
         if !crate::src::qcommon::common::com_journal.is_null()
             && (*crate::src::qcommon::common::com_journal).integer == 2 as libc::c_int
@@ -2617,7 +2617,10 @@ unsafe extern "C" fn FS_LoadZipFile(
     let mut namePtr: *mut libc::c_char = 0 as *mut libc::c_char;
     fs_numHeaderLongs = 0 as libc::c_int;
     uf = crate::src::qcommon::unzip::unzOpen(zipfile);
-    err = crate::src::qcommon::unzip::unzGetGlobalInfo(uf, &mut gi);
+    err = crate::src::qcommon::unzip::unzGetGlobalInfo(
+        uf,
+        &mut gi as *mut _ as *mut crate::src::qcommon::unzip::unz_global_info_s,
+    );
     if err != 0 as libc::c_int {
         return 0 as *mut pack_t;
     }
@@ -2627,7 +2630,7 @@ unsafe extern "C" fn FS_LoadZipFile(
     while (i as libc::c_ulong) < gi.number_entry {
         err = crate::src::qcommon::unzip::unzGetCurrentFileInfo(
             uf,
-            &mut file_info,
+            &mut file_info as *mut _ as *mut crate::src::qcommon::unzip::unz_file_info_s,
             filename_inzip.as_mut_ptr(),
             ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong,
             0 as *mut libc::c_void,
@@ -2720,7 +2723,7 @@ unsafe extern "C" fn FS_LoadZipFile(
     while (i as libc::c_ulong) < gi.number_entry {
         err = crate::src::qcommon::unzip::unzGetCurrentFileInfo(
             uf,
-            &mut file_info,
+            &mut file_info as *mut _ as *mut crate::src::qcommon::unzip::unz_file_info_s,
             filename_inzip.as_mut_ptr(),
             ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong,
             0 as *mut libc::c_void,
@@ -2740,7 +2743,7 @@ unsafe extern "C" fn FS_LoadZipFile(
         hash = FS_HashFileName(filename_inzip.as_mut_ptr(), (*pack).hashSize);
         let ref mut fresh5 = (*buildBuffer.offset(i as isize)).name;
         *fresh5 = namePtr;
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             (*buildBuffer.offset(i as isize)).name,
             filename_inzip.as_mut_ptr(),
         );
@@ -2841,7 +2844,7 @@ unsafe extern "C" fn FS_ReturnPath(
         }
         at += 1
     }
-    crate::stdlib::strcpy(zpath, zname);
+    ::libc::strcpy(zpath, zname);
     *zpath.offset(len as isize) = 0 as libc::c_int as libc::c_char;
     *depth = newdep;
     return len;
@@ -3123,7 +3126,7 @@ pub unsafe extern "C" fn FS_GetFileList(
         nLen = crate::stdlib::strlen(*pFiles.offset(i as isize))
             .wrapping_add(1 as libc::c_int as libc::c_ulong) as libc::c_int;
         if (nTotal + nLen + 1 as libc::c_int) < bufsize {
-            crate::stdlib::strcpy(listbuf, *pFiles.offset(i as isize));
+            ::libc::strcpy(listbuf, *pFiles.offset(i as isize));
             listbuf = listbuf.offset(nLen as isize);
             nTotal += nLen;
             i += 1
@@ -3415,9 +3418,9 @@ pub unsafe extern "C" fn FS_GetModList(
                 if !((nTotal + nLen + 1 as libc::c_int + nDescLen + 1 as libc::c_int) < bufsize) {
                     break;
                 }
-                crate::stdlib::strcpy(listbuf, name);
+                ::libc::strcpy(listbuf, name);
                 listbuf = listbuf.offset(nLen as isize);
-                crate::stdlib::strcpy(listbuf, description.as_mut_ptr());
+                ::libc::strcpy(listbuf, description.as_mut_ptr());
                 listbuf = listbuf.offset(nDescLen as isize);
                 nTotal += nLen + nDescLen;
                 nMods += 1
@@ -4079,9 +4082,8 @@ and return qtrue if it does.
 pub unsafe extern "C" fn FS_CheckDirTraversal(
     mut checkdir: *const libc::c_char,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    if !crate::stdlib::strstr(checkdir, b"../\x00" as *const u8 as *const libc::c_char).is_null()
-        || !crate::stdlib::strstr(checkdir, b"..\\\x00" as *const u8 as *const libc::c_char)
-            .is_null()
+    if !::libc::strstr(checkdir, b"../\x00" as *const u8 as *const libc::c_char).is_null()
+        || !::libc::strstr(checkdir, b"..\\\x00" as *const u8 as *const libc::c_char).is_null()
     {
         return crate::src::qcommon::q_shared::qtrue;
     }
@@ -4100,10 +4102,10 @@ or a sub-directory
 pub unsafe extern "C" fn FS_InvalidGameDir(
     mut gamedir: *const libc::c_char,
 ) -> crate::src::qcommon::q_shared::qboolean {
-    if crate::stdlib::strcmp(gamedir, b".\x00" as *const u8 as *const libc::c_char) == 0
-        || crate::stdlib::strcmp(gamedir, b"..\x00" as *const u8 as *const libc::c_char) == 0
-        || !crate::stdlib::strchr(gamedir, '/' as i32).is_null()
-        || !crate::stdlib::strchr(gamedir, '\\' as i32).is_null()
+    if ::libc::strcmp(gamedir, b".\x00" as *const u8 as *const libc::c_char) == 0
+        || ::libc::strcmp(gamedir, b"..\x00" as *const u8 as *const libc::c_char) == 0
+        || !::libc::strchr(gamedir, '/' as i32).is_null()
+        || !::libc::strchr(gamedir, '\\' as i32).is_null()
     {
         return crate::src::qcommon::q_shared::qtrue;
     }
@@ -4408,17 +4410,17 @@ unsafe extern "C" fn FS_Startup(mut gameName: *const libc::c_char) {
         b"fs_debug\x00" as *const u8 as *const libc::c_char,
         b"0\x00" as *const u8 as *const libc::c_char,
         0 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     fs_basepath = crate::src::qcommon::cvar::Cvar_Get(
         b"fs_basepath\x00" as *const u8 as *const libc::c_char,
         crate::src::sys::sys_main::Sys_DefaultInstallPath(),
         0x10 as libc::c_int | 0x2000 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     fs_basegame = crate::src::qcommon::cvar::Cvar_Get(
         b"fs_basegame\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x10 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     homePath = crate::src::sys::sys_unix::Sys_DefaultHomePath();
     if homePath.is_null() || *homePath.offset(0 as libc::c_int as isize) == 0 {
         homePath = (*fs_basepath).string
@@ -4427,12 +4429,12 @@ unsafe extern "C" fn FS_Startup(mut gameName: *const libc::c_char) {
         b"fs_homepath\x00" as *const u8 as *const libc::c_char,
         homePath,
         0x10 as libc::c_int | 0x2000 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     fs_gamedirvar = crate::src::qcommon::cvar::Cvar_Get(
         b"fs_game\x00" as *const u8 as *const libc::c_char,
         b"\x00" as *const u8 as *const libc::c_char,
         0x10 as libc::c_int | 0x8 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     if *gameName.offset(0 as libc::c_int as isize) == 0 {
         crate::src::qcommon::cvar::Cvar_ForceReset(
             b"com_basegame\x00" as *const u8 as *const libc::c_char,
@@ -4472,7 +4474,7 @@ unsafe extern "C" fn FS_Startup(mut gameName: *const libc::c_char) {
         b"fs_gogpath\x00" as *const u8 as *const libc::c_char,
         crate::src::sys::sys_unix::Sys_GogPath(),
         0x10 as libc::c_int | 0x2000 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     if *(*fs_gogpath).string.offset(0 as libc::c_int as isize) != 0 {
         FS_AddGameDirectory((*fs_gogpath).string, gameName);
     }
@@ -4480,7 +4482,7 @@ unsafe extern "C" fn FS_Startup(mut gameName: *const libc::c_char) {
         b"fs_steampath\x00" as *const u8 as *const libc::c_char,
         crate::src::sys::sys_unix::Sys_SteamPath(),
         0x10 as libc::c_int | 0x2000 as libc::c_int,
-    );
+    ) as *mut crate::src::qcommon::q_shared::cvar_s;
     if *(*fs_steampath).string.offset(0 as libc::c_int as isize) != 0 {
         FS_AddGameDirectory((*fs_steampath).string, gameName);
     }

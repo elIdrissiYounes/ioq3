@@ -71,8 +71,8 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::abs;
 use crate::stdlib::memset;
+use ::libc::abs;
 extern "C" {
     /*
     ===========================================================================
@@ -384,7 +384,7 @@ pub unsafe extern "C" fn AAS_FloodClusterAreas_r(
     if nofaceflood == 0 {
         i = 0 as libc::c_int; //end if
         while i < (*area).numfaces {
-            facenum = crate::stdlib::abs(
+            facenum = ::libc::abs(
                 *crate::src::botlib::be_aas_main::aasworld
                     .faceindex
                     .offset(((*area).firstface + i) as isize),
@@ -1114,7 +1114,7 @@ pub unsafe extern "C" fn AAS_ConnectedAreas_r(
         as *mut crate::aasfile_h::aas_area_t;
     i = 0 as libc::c_int;
     while i < (*area).numfaces {
-        facenum = crate::stdlib::abs(
+        facenum = ::libc::abs(
             *crate::src::botlib::be_aas_main::aasworld
                 .faceindex
                 .offset(((*area).firstface + i) as isize),
@@ -1227,7 +1227,7 @@ pub unsafe extern "C" fn AAS_GetAdjacentAreasWithLessPresenceTypes_r(
     .presencetype;
     i = 0 as libc::c_int;
     while i < (*area).numfaces {
-        facenum = crate::stdlib::abs(
+        facenum = ::libc::abs(
             *crate::src::botlib::be_aas_main::aasworld
                 .faceindex
                 .offset(((*area).firstface + i) as isize),
@@ -1371,7 +1371,7 @@ pub unsafe extern "C" fn AAS_CheckAreaForPossiblePortals(mut areanum: libc::c_in
             as *mut crate::aasfile_h::aas_area_t;
         j = 0 as libc::c_int;
         while j < (*area).numfaces {
-            facenum = crate::stdlib::abs(
+            facenum = ::libc::abs(
                 *crate::src::botlib::be_aas_main::aasworld
                     .faceindex
                     .offset(((*area).firstface + j) as isize),
@@ -1486,7 +1486,7 @@ pub unsafe extern "C" fn AAS_CheckAreaForPossiblePortals(mut areanum: libc::c_in
             as *mut crate::aasfile_h::aas_face_t; //end for
         fen = 0 as libc::c_int; //end for
         while fen < (*frontface).numedges {
-            frontedgenum = crate::stdlib::abs(
+            frontedgenum = ::libc::abs(
                 *crate::src::botlib::be_aas_main::aasworld
                     .edgeindex
                     .offset(((*frontface).firstedge + fen) as isize),
@@ -1499,7 +1499,7 @@ pub unsafe extern "C" fn AAS_CheckAreaForPossiblePortals(mut areanum: libc::c_in
                     as *mut crate::aasfile_h::aas_face_t;
                 ben = 0 as libc::c_int;
                 while ben < (*backface).numedges {
-                    backedgenum = crate::stdlib::abs(
+                    backedgenum = ::libc::abs(
                         *crate::src::botlib::be_aas_main::aasworld
                             .edgeindex
                             .offset(((*backface).firstedge + ben) as isize),

@@ -348,8 +348,12 @@ pub unsafe extern "C" fn silk_init_decoder(
     (*psDec).prev_gain_Q16 = 65536 as libc::c_int;
     (*psDec).arch = opus_select_arch();
     /* Reset CNG state */
-    crate::src::opus_1_2_1::silk::CNG::silk_CNG_Reset(psDec);
+    crate::src::opus_1_2_1::silk::CNG::silk_CNG_Reset(
+        psDec as *mut crate::structs_h::silk_decoder_state,
+    );
     /* Reset PLC state */
-    crate::src::opus_1_2_1::silk::PLC::silk_PLC_Reset(psDec);
+    crate::src::opus_1_2_1::silk::PLC::silk_PLC_Reset(
+        psDec as *mut crate::structs_h::silk_decoder_state,
+    );
     return 0 as libc::c_int;
 }

@@ -4,7 +4,7 @@ pub mod stdlib_h {
     #[inline]
 
     pub unsafe extern "C" fn atoi(mut __nptr: *const libc::c_char) -> libc::c_int {
-        return crate::stdlib::strtol(
+        return ::libc::strtol(
             __nptr,
             0 as *mut libc::c_void as *mut *mut libc::c_char,
             10 as libc::c_int,
@@ -123,9 +123,9 @@ pub use crate::src::game::g_syscalls::trap_Argv;
 pub use crate::src::game::g_syscalls::trap_Cvar_Set;
 pub use crate::src::game::g_syscalls::trap_SendConsoleCommand;
 pub use crate::src::game::g_syscalls::trap_SendServerCommand;
-use crate::stdlib::strchr;
 use crate::stdlib::strlen;
-pub use crate::stdlib::strtol;
+use ::libc::strchr;
+pub use ::libc::strtol;
 extern "C" {
     #[no_mangle]
     pub fn ConcatArgs(start: libc::c_int) -> *mut libc::c_char;
@@ -764,7 +764,7 @@ pub unsafe extern "C" fn G_ProcessIPBans() {
     t = s;
     while *t != 0 {
         /* */
-        s = crate::stdlib::strchr(s, ' ' as i32);
+        s = ::libc::strchr(s, ' ' as i32);
         if s.is_null() {
             break;
         }
@@ -1033,7 +1033,7 @@ pub unsafe extern "C" fn Svcmd_ForceTeam_f() {
         &mut *crate::src::game::g_main::g_entities.as_mut_ptr().offset(
             cl.wrapping_offset_from(crate::src::game::g_main::level.clients) as libc::c_long
                 as isize,
-        ),
+        ) as *mut _ as *mut crate::g_local_h::gentity_s,
         str.as_mut_ptr(),
     );
 }

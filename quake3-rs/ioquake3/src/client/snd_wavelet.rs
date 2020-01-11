@@ -4860,7 +4860,8 @@ pub unsafe extern "C" fn encodeWavelet(
         if size < 4 as libc::c_int {
             size = 4 as libc::c_int
         }
-        newchunk = crate::src::client::snd_mem::SND_malloc();
+        newchunk =
+            crate::src::client::snd_mem::SND_malloc() as *mut crate::snd_local_h::sndBuffer_s;
         if (*sfx).soundData.is_null() {
             (*sfx).soundData = newchunk
         } else if !chunk.is_null() {
@@ -9112,7 +9113,8 @@ pub unsafe extern "C" fn encodeMuLaw(
         if size > 1024 as libc::c_int * 2 as libc::c_int {
             size = 1024 as libc::c_int * 2 as libc::c_int
         }
-        newchunk = crate::src::client::snd_mem::SND_malloc();
+        newchunk =
+            crate::src::client::snd_mem::SND_malloc() as *mut crate::snd_local_h::sndBuffer_s;
         if (*sfx).soundData.is_null() {
             (*sfx).soundData = newchunk
         } else if !chunk.is_null() {

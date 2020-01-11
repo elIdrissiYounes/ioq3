@@ -483,9 +483,9 @@ pub use crate::src::qcommon::q_shared::TR_SINE;
 pub use crate::src::qcommon::q_shared::TR_STATIONARY;
 use crate::stdlib::atan2;
 use crate::stdlib::memset;
-use crate::stdlib::rand;
-use crate::stdlib::strcmp;
-use crate::stdlib::strcpy;
+use ::libc::rand;
+use ::libc::strcmp;
+use ::libc::strcpy;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -520,7 +520,7 @@ pub unsafe extern "C" fn AddRemap(
         ) == 0 as libc::c_int
         {
             // found it, just update this one
-            crate::stdlib::strcpy(
+            ::libc::strcpy(
                 remappedShaders[i as usize].newShader.as_mut_ptr(),
                 newShader,
             );
@@ -530,11 +530,11 @@ pub unsafe extern "C" fn AddRemap(
         i += 1
     }
     if remapCount < 128 as libc::c_int {
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             remappedShaders[remapCount as usize].newShader.as_mut_ptr(),
             newShader,
         );
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             remappedShaders[remapCount as usize].oldShader.as_mut_ptr(),
             oldShader,
         );
@@ -608,7 +608,7 @@ pub unsafe extern "C" fn G_FindConfigstringIndex(
         if s[0 as libc::c_int as usize] == 0 {
             break;
         }
-        if crate::stdlib::strcmp(s.as_mut_ptr(), name) == 0 {
+        if ::libc::strcmp(s.as_mut_ptr(), name) == 0 {
             return i;
         }
         i += 1
@@ -766,7 +766,7 @@ pub unsafe extern "C" fn G_PickTarget(
         );
         return 0 as *mut crate::g_local_h::gentity_t;
     }
-    return choice[(crate::stdlib::rand() % num_choices) as usize];
+    return choice[(::libc::rand() % num_choices) as usize];
 }
 /*
 ==============================
@@ -1060,13 +1060,13 @@ pub unsafe extern "C" fn G_Spawn() -> *mut crate::g_local_h::gentity_t {
     crate::src::game::g_main::level.num_entities += 1;
     // let the server system know that there are more entities
     crate::src::game::g_syscalls::trap_LocateGameData(
-        crate::src::game::g_main::level.gentities,
+        crate::src::game::g_main::level.gentities as *mut crate::g_local_h::gentity_s,
         crate::src::game::g_main::level.num_entities,
         ::std::mem::size_of::<crate::g_local_h::gentity_t>() as libc::c_ulong as libc::c_int,
         &mut (*crate::src::game::g_main::level
             .clients
             .offset(0 as libc::c_int as isize))
-        .ps,
+        .ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
         ::std::mem::size_of::<crate::g_local_h::gclient_s>() as libc::c_ulong as libc::c_int,
     );
     G_InitGentity(e);
@@ -1113,7 +1113,7 @@ Marks the entity as free
 #[no_mangle]
 
 pub unsafe extern "C" fn G_FreeEntity(mut ed: *mut crate::g_local_h::gentity_t) {
-    crate::src::game::g_syscalls::trap_UnlinkEntity(ed); // unlink from world
+    crate::src::game::g_syscalls::trap_UnlinkEntity(ed as *mut crate::g_local_h::gentity_s); // unlink from world
     if (*ed).neverFree as u64 != 0 {
         return;
     }
@@ -1160,7 +1160,7 @@ pub unsafe extern "C" fn G_TempEntity(
     // save network bandwidth
     G_SetOrigin(e, snapped.as_mut_ptr());
     // find cluster for PVS
-    crate::src::game::g_syscalls::trap_LinkEntity(e);
+    crate::src::game::g_syscalls::trap_LinkEntity(e as *mut crate::g_local_h::gentity_s);
     return e;
 }
 /*
@@ -1214,9 +1214,9 @@ pub unsafe extern "C" fn G_KillBox(mut ent: *mut crate::g_local_h::gentity_t) {
         if !(*hit).client.is_null() {
             // nail it
             crate::src::game::g_combat::G_Damage(
-                hit,
-                ent,
-                ent,
+                hit as *mut crate::g_local_h::gentity_s,
+                ent as *mut crate::g_local_h::gentity_s,
+                ent as *mut crate::g_local_h::gentity_s,
                 0 as *mut crate::src::qcommon::q_shared::vec_t,
                 0 as *mut crate::src::qcommon::q_shared::vec_t,
                 100000 as libc::c_int,
@@ -1250,7 +1250,7 @@ pub unsafe extern "C" fn G_AddPredictableEvent(
     crate::src::game::bg_misc::BG_AddPredictableEventToPlayerstate(
         event,
         eventParm,
-        &mut (*(*ent).client).ps,
+        &mut (*(*ent).client).ps as *mut _ as *mut crate::src::qcommon::q_shared::playerState_s,
     );
 }
 /*

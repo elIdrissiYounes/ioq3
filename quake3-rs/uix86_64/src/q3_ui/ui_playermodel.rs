@@ -342,11 +342,7 @@ pub use crate::src::ui::ui_syscalls::trap_MemoryRemaining;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 pub use crate::src::ui::ui_syscalls::trap_S_RegisterSound;
 use crate::stdlib::memset;
-use crate::stdlib::strcat;
-use crate::stdlib::strchr;
-use crate::stdlib::strcmp;
 use crate::stdlib::strlen;
-use crate::stdlib::strstr;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -370,6 +366,10 @@ pub use crate::ui_local_h::menuframework_s;
 pub use crate::ui_local_h::menutext_s;
 pub use crate::ui_local_h::playerInfo_t;
 pub use crate::ui_local_h::uiStatic_t;
+use ::libc::strcat;
+use ::libc::strchr;
+use ::libc::strcmp;
+use ::libc::strstr;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -949,11 +949,11 @@ unsafe extern "C" fn PlayerModel_UpdateModel() {
     moveangles[1 as libc::c_int as usize] = moveangles[2 as libc::c_int as usize];
     moveangles[0 as libc::c_int as usize] = moveangles[1 as libc::c_int as usize];
     crate::src::q3_ui::ui_players::UI_PlayerInfo_SetModel(
-        &mut s_playermodel.playerinfo,
+        &mut s_playermodel.playerinfo as *mut _ as *mut crate::ui_local_h::playerInfo_t,
         s_playermodel.modelskin.as_mut_ptr(),
     );
     crate::src::q3_ui::ui_players::UI_PlayerInfo_SetInfo(
-        &mut s_playermodel.playerinfo,
+        &mut s_playermodel.playerinfo as *mut _ as *mut crate::ui_local_h::playerInfo_t,
         crate::bg_public_h::LEGS_IDLE as libc::c_int,
         crate::bg_public_h::TORSO_STAND as libc::c_int,
         viewangles.as_mut_ptr(),
@@ -1029,20 +1029,23 @@ unsafe extern "C" fn PlayerModel_MenuKey(
     let mut picnum: libc::c_int = 0;
     match key {
         163 | 134 => {
-            m = crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(&mut s_playermodel.menu)
-                as *mut crate::ui_local_h::menucommon_s;
+            m = crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(
+                &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+            ) as *mut crate::ui_local_h::menucommon_s;
             picnum = (*m).id - 0 as libc::c_int;
             if picnum >= 0 as libc::c_int && picnum <= 15 as libc::c_int {
                 if picnum > 0 as libc::c_int {
                     crate::src::q3_ui::ui_qmenu::Menu_SetCursor(
-                        &mut s_playermodel.menu,
+                        &mut s_playermodel.menu as *mut _
+                            as *mut crate::ui_local_h::_tag_menuframework,
                         s_playermodel.menu.cursor - 1 as libc::c_int,
                     );
                     return crate::src::q3_ui::ui_qmenu::menu_move_sound;
                 } else if s_playermodel.modelpage > 0 as libc::c_int {
                     s_playermodel.modelpage -= 1;
                     crate::src::q3_ui::ui_qmenu::Menu_SetCursor(
-                        &mut s_playermodel.menu,
+                        &mut s_playermodel.menu as *mut _
+                            as *mut crate::ui_local_h::_tag_menuframework,
                         s_playermodel.menu.cursor + 15 as libc::c_int,
                     );
                     PlayerModel_UpdateGrid();
@@ -1053,8 +1056,9 @@ unsafe extern "C" fn PlayerModel_MenuKey(
             }
         }
         165 | 135 => {
-            m = crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(&mut s_playermodel.menu)
-                as *mut crate::ui_local_h::menucommon_s;
+            m = crate::src::q3_ui::ui_qmenu::Menu_ItemAtCursor(
+                &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+            ) as *mut crate::ui_local_h::menucommon_s;
             picnum = (*m).id - 0 as libc::c_int;
             if picnum >= 0 as libc::c_int && picnum <= 15 as libc::c_int {
                 if picnum < 15 as libc::c_int
@@ -1064,7 +1068,8 @@ unsafe extern "C" fn PlayerModel_MenuKey(
                         < s_playermodel.nummodels
                 {
                     crate::src::q3_ui::ui_qmenu::Menu_SetCursor(
-                        &mut s_playermodel.menu,
+                        &mut s_playermodel.menu as *mut _
+                            as *mut crate::ui_local_h::_tag_menuframework,
                         s_playermodel.menu.cursor + 1 as libc::c_int,
                     );
                     return crate::src::q3_ui::ui_qmenu::menu_move_sound;
@@ -1073,7 +1078,8 @@ unsafe extern "C" fn PlayerModel_MenuKey(
                 {
                     s_playermodel.modelpage += 1;
                     crate::src::q3_ui::ui_qmenu::Menu_SetCursor(
-                        &mut s_playermodel.menu,
+                        &mut s_playermodel.menu as *mut _
+                            as *mut crate::ui_local_h::_tag_menuframework,
                         s_playermodel.menu.cursor - 15 as libc::c_int,
                     );
                     PlayerModel_UpdateGrid();
@@ -1088,7 +1094,10 @@ unsafe extern "C" fn PlayerModel_MenuKey(
         }
         _ => {}
     }
-    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(&mut s_playermodel.menu, key);
+    return crate::src::q3_ui::ui_qmenu::Menu_DefaultKey(
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+        key,
+    );
 }
 /*
 =================
@@ -1124,7 +1133,7 @@ unsafe extern "C" fn PlayerModel_PicEvent(mut ptr: *mut libc::c_void, mut event:
             crate::stdlib::strlen(b"models/players/\x00" as *const u8 as *const libc::c_char)
                 as isize,
         );
-    pdest = crate::stdlib::strstr(buffptr, b"icon_\x00" as *const u8 as *const libc::c_char);
+    pdest = ::libc::strstr(buffptr, b"icon_\x00" as *const u8 as *const libc::c_char);
     if !pdest.is_null() {
         // track the whole model/skin name
         crate::src::qcommon::q_shared::Q_strncpyz(
@@ -1133,7 +1142,7 @@ unsafe extern "C" fn PlayerModel_PicEvent(mut ptr: *mut libc::c_void, mut event:
             (pdest.wrapping_offset_from(buffptr) as libc::c_long + 1 as libc::c_int as libc::c_long)
                 as libc::c_int,
         );
-        crate::stdlib::strcat(
+        ::libc::strcat(
             s_playermodel.modelskin.as_mut_ptr(),
             pdest.offset(5 as libc::c_int as isize),
         );
@@ -1190,7 +1199,7 @@ unsafe extern "C" fn PlayerModel_DrawPlayer(mut self_0: *mut libc::c_void) {
         (*b).generic.y as libc::c_float,
         (*b).width as libc::c_float,
         (*b).height as libc::c_float,
-        &mut s_playermodel.playerinfo,
+        &mut s_playermodel.playerinfo as *mut _ as *mut crate::ui_local_h::playerInfo_t,
         crate::src::q3_ui::ui_atoms::uis.realtime / 2 as libc::c_int,
     );
 }
@@ -1235,8 +1244,8 @@ unsafe extern "C" fn PlayerModel_BuildList() {
         {
             *dirptr.offset((dirlen - 1 as libc::c_int) as isize) = '\u{0}' as i32 as libc::c_char
         }
-        if !(crate::stdlib::strcmp(dirptr, b".\x00" as *const u8 as *const libc::c_char) == 0
-            || crate::stdlib::strcmp(dirptr, b"..\x00" as *const u8 as *const libc::c_char) == 0)
+        if !(::libc::strcmp(dirptr, b".\x00" as *const u8 as *const libc::c_char) == 0
+            || ::libc::strcmp(dirptr, b"..\x00" as *const u8 as *const libc::c_char) == 0)
         {
             // iterate all skin files in directory
             numfiles = crate::src::ui::ui_syscalls::trap_FS_GetFileList(
@@ -1328,7 +1337,7 @@ unsafe extern "C" fn PlayerModel_SetMenuItems() {
         64 as libc::c_int,
     );
     // use default skin if none is set
-    if crate::stdlib::strchr(s_playermodel.modelskin.as_mut_ptr(), '/' as i32).is_null() {
+    if ::libc::strchr(s_playermodel.modelskin.as_mut_ptr(), '/' as i32).is_null() {
         crate::src::qcommon::q_shared::Q_strcat(
             s_playermodel.modelskin.as_mut_ptr(),
             64 as libc::c_int,
@@ -1344,7 +1353,7 @@ unsafe extern "C" fn PlayerModel_SetMenuItems() {
             .offset(crate::stdlib::strlen(
                 b"models/players/\x00" as *const u8 as *const libc::c_char,
             ) as isize);
-        pdest = crate::stdlib::strstr(buffptr, b"icon_\x00" as *const u8 as *const libc::c_char);
+        pdest = ::libc::strstr(buffptr, b"icon_\x00" as *const u8 as *const libc::c_char);
         if !pdest.is_null() {
             crate::src::qcommon::q_shared::Q_strncpyz(
                 modelskin.as_mut_ptr(),
@@ -1352,7 +1361,7 @@ unsafe extern "C" fn PlayerModel_SetMenuItems() {
                 (pdest.wrapping_offset_from(buffptr) as libc::c_long
                     + 1 as libc::c_int as libc::c_long) as libc::c_int,
             );
-            crate::stdlib::strcat(
+            ::libc::strcat(
                 modelskin.as_mut_ptr(),
                 pdest.offset(5 as libc::c_int as isize),
             );
@@ -1585,65 +1594,65 @@ unsafe extern "C" fn PlayerModel_MenuInit() {
     s_playermodel.back.focuspic =
         b"menu/art/back_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playermodel.menu,
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playermodel.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playermodel.menu,
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playermodel.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playermodel.menu,
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playermodel.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playermodel.menu,
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playermodel.ports as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playermodel.menu,
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playermodel.playername as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playermodel.menu,
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playermodel.modelname as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playermodel.menu,
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playermodel.skinname as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     i = 0 as libc::c_int;
     while i < 4 as libc::c_int * 4 as libc::c_int {
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut s_playermodel.menu,
+            &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut *s_playermodel.pics.as_mut_ptr().offset(i as isize)
                 as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
         );
         crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-            &mut s_playermodel.menu,
+            &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
             &mut *s_playermodel.picbuttons.as_mut_ptr().offset(i as isize)
                 as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
         );
         i += 1
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playermodel.menu,
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playermodel.player as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playermodel.menu,
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playermodel.arrows as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playermodel.menu,
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playermodel.left as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playermodel.menu,
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playermodel.right as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_playermodel.menu,
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_playermodel.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     // find all available models
@@ -1761,9 +1770,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 pub unsafe extern "C" fn UI_PlayerModelMenu() {
     PlayerModel_MenuInit();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_playermodel.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     crate::src::q3_ui::ui_qmenu::Menu_SetCursorToItem(
-        &mut s_playermodel.menu,
+        &mut s_playermodel.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut *s_playermodel
             .pics
             .as_mut_ptr()

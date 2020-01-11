@@ -1,6 +1,66 @@
 // =============== BEGIN inflate_h ================
 pub type inflate_mode = libc::c_uint;
 
+pub const HEAD: crate::src::zlib::inflate::inflate_mode = 0;
+
+pub const FLAGS: crate::src::zlib::inflate::inflate_mode = 1;
+
+pub const TIME: crate::src::zlib::inflate::inflate_mode = 2;
+
+pub const OS: crate::src::zlib::inflate::inflate_mode = 3;
+
+pub const EXLEN: crate::src::zlib::inflate::inflate_mode = 4;
+
+pub const EXTRA: crate::src::zlib::inflate::inflate_mode = 5;
+
+pub const NAME: crate::src::zlib::inflate::inflate_mode = 6;
+
+pub const COMMENT: crate::src::zlib::inflate::inflate_mode = 7;
+
+pub const HCRC: crate::src::zlib::inflate::inflate_mode = 8;
+
+pub const DICTID: crate::src::zlib::inflate::inflate_mode = 9;
+
+pub const DICT: crate::src::zlib::inflate::inflate_mode = 10;
+
+pub const TYPE: crate::src::zlib::inflate::inflate_mode = 11;
+
+pub const TYPEDO: crate::src::zlib::inflate::inflate_mode = 12;
+
+pub const STORED: crate::src::zlib::inflate::inflate_mode = 13;
+
+pub const COPY: crate::src::zlib::inflate::inflate_mode = 14;
+
+pub const TABLE: crate::src::zlib::inflate::inflate_mode = 15;
+
+pub const LENLENS: crate::src::zlib::inflate::inflate_mode = 16;
+
+pub const CODELENS: crate::src::zlib::inflate::inflate_mode = 17;
+
+pub const LEN: crate::src::zlib::inflate::inflate_mode = 18;
+
+pub const LENEXT: crate::src::zlib::inflate::inflate_mode = 19;
+
+pub const DIST: crate::src::zlib::inflate::inflate_mode = 20;
+
+pub const DISTEXT: crate::src::zlib::inflate::inflate_mode = 21;
+
+pub const MATCH: crate::src::zlib::inflate::inflate_mode = 22;
+
+pub const LIT: crate::src::zlib::inflate::inflate_mode = 23;
+
+pub const CHECK: crate::src::zlib::inflate::inflate_mode = 24;
+
+pub const LENGTH: crate::src::zlib::inflate::inflate_mode = 25;
+
+pub const DONE: crate::src::zlib::inflate::inflate_mode = 26;
+
+pub const BAD: crate::src::zlib::inflate::inflate_mode = 27;
+
+pub const MEM: crate::src::zlib::inflate::inflate_mode = 28;
+
+pub const SYNC: crate::src::zlib::inflate::inflate_mode = 29;
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct inflate_state {
@@ -36,66 +96,6 @@ pub struct inflate_state {
     pub work: [libc::c_ushort; 288],
     pub codes: [crate::src::zlib::inftrees::code; 2048],
 }
-
-pub const SYNC: crate::src::zlib::inflate::inflate_mode = 29;
-
-pub const MEM: crate::src::zlib::inflate::inflate_mode = 28;
-
-pub const BAD: crate::src::zlib::inflate::inflate_mode = 27;
-
-pub const DONE: crate::src::zlib::inflate::inflate_mode = 26;
-
-pub const LENGTH: crate::src::zlib::inflate::inflate_mode = 25;
-
-pub const CHECK: crate::src::zlib::inflate::inflate_mode = 24;
-
-pub const LIT: crate::src::zlib::inflate::inflate_mode = 23;
-
-pub const MATCH: crate::src::zlib::inflate::inflate_mode = 22;
-
-pub const DISTEXT: crate::src::zlib::inflate::inflate_mode = 21;
-
-pub const DIST: crate::src::zlib::inflate::inflate_mode = 20;
-
-pub const LENEXT: crate::src::zlib::inflate::inflate_mode = 19;
-
-pub const LEN: crate::src::zlib::inflate::inflate_mode = 18;
-
-pub const CODELENS: crate::src::zlib::inflate::inflate_mode = 17;
-
-pub const LENLENS: crate::src::zlib::inflate::inflate_mode = 16;
-
-pub const TABLE: crate::src::zlib::inflate::inflate_mode = 15;
-
-pub const COPY: crate::src::zlib::inflate::inflate_mode = 14;
-
-pub const STORED: crate::src::zlib::inflate::inflate_mode = 13;
-
-pub const TYPEDO: crate::src::zlib::inflate::inflate_mode = 12;
-
-pub const TYPE: crate::src::zlib::inflate::inflate_mode = 11;
-
-pub const DICT: crate::src::zlib::inflate::inflate_mode = 10;
-
-pub const DICTID: crate::src::zlib::inflate::inflate_mode = 9;
-
-pub const HCRC: crate::src::zlib::inflate::inflate_mode = 8;
-
-pub const COMMENT: crate::src::zlib::inflate::inflate_mode = 7;
-
-pub const NAME: crate::src::zlib::inflate::inflate_mode = 6;
-
-pub const EXTRA: crate::src::zlib::inflate::inflate_mode = 5;
-
-pub const EXLEN: crate::src::zlib::inflate::inflate_mode = 4;
-
-pub const OS: crate::src::zlib::inflate::inflate_mode = 3;
-
-pub const TIME: crate::src::zlib::inflate::inflate_mode = 2;
-
-pub const FLAGS: crate::src::zlib::inflate::inflate_mode = 1;
-
-pub const HEAD: crate::src::zlib::inflate::inflate_mode = 0;
 use ::libc;
 
 pub use crate::src::zlib::adler32::adler32;
@@ -5285,7 +5285,7 @@ pub unsafe extern "C" fn inflate(
                     crate::src::zlib::inftrees::CODES,
                     (*state).lens.as_mut_ptr(),
                     19 as libc::c_int as libc::c_uint,
-                    &mut (*state).next,
+                    &mut (*state).next as *mut _ as *mut *mut crate::src::zlib::inftrees::code,
                     &mut (*state).lenbits,
                     (*state).work.as_mut_ptr(),
                 );
@@ -5510,7 +5510,7 @@ pub unsafe extern "C" fn inflate(
                     crate::src::zlib::inftrees::LENS,
                     (*state).lens.as_mut_ptr(),
                     (*state).nlen,
-                    &mut (*state).next,
+                    &mut (*state).next as *mut _ as *mut *mut crate::src::zlib::inftrees::code,
                     &mut (*state).lenbits,
                     (*state).work.as_mut_ptr(),
                 );
@@ -5527,7 +5527,7 @@ pub unsafe extern "C" fn inflate(
                         crate::src::zlib::inftrees::DISTS,
                         (*state).lens.as_mut_ptr().offset((*state).nlen as isize),
                         (*state).ndist,
-                        &mut (*state).next,
+                        &mut (*state).next as *mut _ as *mut *mut crate::src::zlib::inftrees::code,
                         &mut (*state).distbits,
                         (*state).work.as_mut_ptr(),
                     );
@@ -5562,7 +5562,10 @@ pub unsafe extern "C" fn inflate(
                     (*strm).avail_in = have;
                     (*state).hold = hold;
                     (*state).bits = bits;
-                    crate::src::zlib::inffast::inflate_fast(strm, out);
+                    crate::src::zlib::inffast::inflate_fast(
+                        strm as *mut crate::zlib_h::z_stream_s,
+                        out,
+                    );
                     put = (*strm).next_out;
                     left = (*strm).avail_out;
                     next = (*strm).next_in;

@@ -1220,8 +1220,9 @@ unsafe extern "C" fn compute_theta(
         2) they are orthogonal. */
         itheta = crate::src::opus_1_2_1::celt::vq::stereo_itheta(X, Y, stereo, N, (*ctx).arch)
     }
-    tell =
-        crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(ec) as crate::opus_types_h::opus_int32;
+    tell = crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(
+        ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+    ) as crate::opus_types_h::opus_int32;
     if qn != 1 as libc::c_int {
         if encode != 0 {
             if stereo == 0 || (*ctx).theta_round == 0 as libc::c_int {
@@ -1295,7 +1296,7 @@ unsafe extern "C" fn compute_theta(
             /* Use a probability of p0 up to itheta=8192 and then use 1 after */
             if encode != 0 {
                 crate::src::opus_1_2_1::celt::entenc::ec_encode(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     if x <= x0 {
                         (p0) * x
                     } else {
@@ -1310,15 +1311,17 @@ unsafe extern "C" fn compute_theta(
                 );
             } else {
                 let mut fs: libc::c_int = 0;
-                fs = crate::src::opus_1_2_1::celt::entdec::ec_decode(ec, ft as libc::c_uint)
-                    as libc::c_int;
+                fs = crate::src::opus_1_2_1::celt::entdec::ec_decode(
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+                    ft as libc::c_uint,
+                ) as libc::c_int;
                 if fs < (x0 + 1 as libc::c_int) * p0 {
                     x = fs / p0
                 } else {
                     x = x0 + 1 as libc::c_int + (fs - (x0 + 1 as libc::c_int) * p0)
                 }
                 crate::src::opus_1_2_1::celt::entdec::ec_dec_update(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     if x <= x0 {
                         (p0) * x
                     } else {
@@ -1337,13 +1340,13 @@ unsafe extern "C" fn compute_theta(
             /* Uniform pdf */
             if encode != 0 {
                 crate::src::opus_1_2_1::celt::entenc::ec_enc_uint(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     itheta as crate::opus_types_h::opus_uint32,
                     (qn + 1 as libc::c_int) as crate::opus_types_h::opus_uint32,
                 );
             } else {
                 itheta = crate::src::opus_1_2_1::celt::entdec::ec_dec_uint(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     (qn + 1 as libc::c_int) as crate::opus_types_h::opus_uint32,
                 ) as libc::c_int
             }
@@ -1367,7 +1370,7 @@ unsafe extern "C" fn compute_theta(
                             >> 1 as libc::c_int)
                 };
                 crate::src::opus_1_2_1::celt::entenc::ec_encode(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     fl as libc::c_uint,
                     (fl + fs_0) as libc::c_uint,
                     ft_0 as libc::c_uint,
@@ -1376,8 +1379,10 @@ unsafe extern "C" fn compute_theta(
                 /* Triangular pdf */
                 let mut fl_0: libc::c_int = 0 as libc::c_int;
                 let mut fm: libc::c_int = 0;
-                fm = crate::src::opus_1_2_1::celt::entdec::ec_decode(ec, ft_0 as libc::c_uint)
-                    as libc::c_int;
+                fm = crate::src::opus_1_2_1::celt::entdec::ec_decode(
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+                    ft_0 as libc::c_uint,
+                ) as libc::c_int;
                 if fm
                     < (qn >> 1 as libc::c_int) * ((qn >> 1 as libc::c_int) + 1 as libc::c_int)
                         >> 1 as libc::c_int
@@ -1408,7 +1413,7 @@ unsafe extern "C" fn compute_theta(
                             >> 1 as libc::c_int)
                 }
                 crate::src::opus_1_2_1::celt::entdec::ec_dec_update(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     fl_0 as libc::c_uint,
                     (fl_0 + fs_0) as libc::c_uint,
                     ft_0 as libc::c_uint,
@@ -1444,13 +1449,13 @@ unsafe extern "C" fn compute_theta(
         {
             if encode != 0 {
                 crate::src::opus_1_2_1::celt::entenc::ec_enc_bit_logp(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     inv,
                     2 as libc::c_int as libc::c_uint,
                 );
             } else {
                 inv = crate::src::opus_1_2_1::celt::entdec::ec_dec_bit_logp(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     2 as libc::c_int as libc::c_uint,
                 )
             }
@@ -1463,8 +1468,10 @@ unsafe extern "C" fn compute_theta(
         }
         itheta = 0 as libc::c_int
     }
-    qalloc = crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(ec)
-        .wrapping_sub(tell as libc::c_uint) as libc::c_int;
+    qalloc = crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(
+        ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+    )
+    .wrapping_sub(tell as libc::c_uint) as libc::c_int;
     *b -= qalloc;
     if itheta == 0 as libc::c_int {
         imid = 32767 as libc::c_int;
@@ -1520,13 +1527,13 @@ unsafe extern "C" fn quant_band_n1(
                 sign = (*x.offset(0 as libc::c_int as isize) < 0 as libc::c_int as libc::c_float)
                     as libc::c_int;
                 crate::src::opus_1_2_1::celt::entenc::ec_enc_bits(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     sign as crate::opus_types_h::opus_uint32,
                     1 as libc::c_int as libc::c_uint,
                 );
             } else {
                 sign = crate::src::opus_1_2_1::celt::entdec::ec_dec_bits(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     1 as libc::c_int as libc::c_uint,
                 ) as libc::c_int
             }
@@ -1732,13 +1739,21 @@ unsafe extern "C" fn quant_partition(
                     K,
                     spread,
                     B,
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     gain,
                     (*ctx).resynth,
                     (*ctx).arch,
                 )
             } else {
-                cm = crate::src::opus_1_2_1::celt::vq::alg_unquant(X, N, K, spread, B, ec, gain)
+                cm = crate::src::opus_1_2_1::celt::vq::alg_unquant(
+                    X,
+                    N,
+                    K,
+                    spread,
+                    B,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+                    gain,
+                )
             }
         } else {
             /* If there's no pulse, fill the band anyway */
@@ -2065,13 +2080,13 @@ unsafe extern "C" fn quant_band_stereo(
                     - *x2.offset(1 as libc::c_int as isize) * *y2.offset(0 as libc::c_int as isize)
                     < 0 as libc::c_int as libc::c_float) as libc::c_int;
                 crate::src::opus_1_2_1::celt::entenc::ec_enc_bits(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     sign as crate::opus_types_h::opus_uint32,
                     1 as libc::c_int as libc::c_uint,
                 );
             } else {
                 sign = crate::src::opus_1_2_1::celt::entdec::ec_dec_bits(
-                    ec,
+                    ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
                     1 as libc::c_int as libc::c_uint,
                 ) as libc::c_int
             }
@@ -2524,8 +2539,9 @@ pub unsafe extern "C" fn quant_all_bands(
         }
         N = M * *eBands.offset((i + 1 as libc::c_int) as isize) as libc::c_int
             - M * *eBands.offset(i as isize) as libc::c_int;
-        tell = crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(ec)
-            as crate::opus_types_h::opus_int32;
+        tell = crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(
+            ec as *mut crate::src::opus_1_2_1::celt::entcode::ec_ctx,
+        ) as crate::opus_types_h::opus_int32;
         /* Compute how many bits we want to allocate to this band */
         if i != start {
             balance -= tell

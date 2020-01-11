@@ -262,7 +262,10 @@ pub unsafe extern "C" fn jpeg_write_coefficients(
         .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr);
     }
     /* Mark all tables to be written */
-    crate::src::jpeg_8c::jcapimin::jpeg_suppress_tables(cinfo, 0 as libc::c_int);
+    crate::src::jpeg_8c::jcapimin::jpeg_suppress_tables(
+        cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+        0 as libc::c_int,
+    );
     /* (Re)initialize error mgr and destination modules */
     Some(
         (*(*cinfo).err)
@@ -326,11 +329,16 @@ pub unsafe extern "C" fn jpeg_copy_critical_parameters(
     (*dstinfo).min_DCT_h_scaled_size = (*srcinfo).min_DCT_h_scaled_size;
     (*dstinfo).min_DCT_v_scaled_size = (*srcinfo).min_DCT_v_scaled_size;
     /* Initialize all parameters to default values */
-    crate::src::jpeg_8c::jcparam::jpeg_set_defaults(dstinfo);
+    crate::src::jpeg_8c::jcparam::jpeg_set_defaults(
+        dstinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+    );
     /* jpeg_set_defaults may choose wrong colorspace, eg YCbCr if input is RGB.
      * Fix it to get the right header markers for the image colorspace.
      */
-    crate::src::jpeg_8c::jcparam::jpeg_set_colorspace(dstinfo, (*srcinfo).jpeg_color_space);
+    crate::src::jpeg_8c::jcparam::jpeg_set_colorspace(
+        dstinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+        (*srcinfo).jpeg_color_space,
+    );
     (*dstinfo).data_precision = (*srcinfo).data_precision;
     (*dstinfo).CCIR601_sampling = (*srcinfo).CCIR601_sampling;
     /* Copy the source's quantization tables. */
@@ -344,8 +352,9 @@ pub unsafe extern "C" fn jpeg_copy_critical_parameters(
                 as *mut *mut crate::jpeglib_h::JQUANT_TBL;
             if (*qtblptr).is_null() {
                 *qtblptr = crate::src::jpeg_8c::jcomapi::jpeg_alloc_quant_table(
-                    dstinfo as crate::jpeglib_h::j_common_ptr,
-                )
+                    dstinfo as crate::jpeglib_h::j_common_ptr
+                        as *mut crate::jpeglib_h::jpeg_common_struct,
+                ) as *mut crate::jpeglib_h::JQUANT_TBL
             }
             crate::stdlib::memcpy(
                 (**qtblptr).quantval.as_mut_ptr() as *mut libc::c_void,
@@ -475,16 +484,25 @@ unsafe extern "C" fn transencode_master_selection(
     mut coef_arrays: *mut crate::jpeglib_h::jvirt_barray_ptr,
 ) {
     /* Initialize master control (includes parameter checking/processing) */
-    crate::src::jpeg_8c::jcmaster::jinit_c_master_control(cinfo, 1 as libc::c_int);
+    crate::src::jpeg_8c::jcmaster::jinit_c_master_control(
+        cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+        1 as libc::c_int,
+    );
     /* Entropy encoding: either Huffman or arithmetic coding. */
     if (*cinfo).arith_code != 0 {
-        crate::src::jpeg_8c::jcarith::jinit_arith_encoder(cinfo);
+        crate::src::jpeg_8c::jcarith::jinit_arith_encoder(
+            cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+        );
     } else {
-        crate::src::jpeg_8c::jchuff::jinit_huff_encoder(cinfo);
+        crate::src::jpeg_8c::jchuff::jinit_huff_encoder(
+            cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+        );
     }
     /* We need a special coefficient buffer controller. */
     transencode_coef_controller(cinfo, coef_arrays);
-    crate::src::jpeg_8c::jcmarker::jinit_marker_writer(cinfo);
+    crate::src::jpeg_8c::jcmarker::jinit_marker_writer(
+        cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+    );
     /* We can now tell the memory manager to allocate virtual arrays. */
     Some(
         (*(*cinfo).mem)

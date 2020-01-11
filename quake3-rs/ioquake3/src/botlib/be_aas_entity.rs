@@ -195,9 +195,13 @@ pub unsafe extern "C" fn AAS_UpdateEntity(
         .offset(entnum as isize) as *mut crate::be_aas_def_h::aas_entity_t;
     if state.is_null() {
         //unlink the entity
-        crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas((*ent).areas);
+        crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(
+            (*ent).areas as *mut crate::be_aas_def_h::aas_link_s,
+        );
         //unlink the entity from the BSP leaves
-        crate::src::botlib::be_aas_bspq3::AAS_UnlinkFromBSPLeaves((*ent).leaves);
+        crate::src::botlib::be_aas_bspq3::AAS_UnlinkFromBSPLeaves(
+            (*ent).leaves as *mut crate::be_aas_def_h::bsp_link_s,
+        );
         //
         (*ent).areas = 0 as *mut crate::be_aas_def_h::aas_link_t;
         //
@@ -312,23 +316,27 @@ pub unsafe extern "C" fn AAS_UpdateEntity(
             absmaxs[2 as libc::c_int as usize] = (*ent).i.maxs[2 as libc::c_int as usize]
                 + (*ent).i.origin[2 as libc::c_int as usize];
             //unlink the entity
-            crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas((*ent).areas);
+            crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(
+                (*ent).areas as *mut crate::be_aas_def_h::aas_link_s,
+            );
             //relink the entity to the AAS areas (use the larges bbox)
             (*ent).areas = crate::src::botlib::be_aas_sample::AAS_LinkEntityClientBBox(
                 absmins.as_mut_ptr(),
                 absmaxs.as_mut_ptr(),
                 entnum,
                 2 as libc::c_int,
-            );
+            ) as *mut crate::be_aas_def_h::aas_link_s;
             //unlink the entity from the BSP leaves
-            crate::src::botlib::be_aas_bspq3::AAS_UnlinkFromBSPLeaves((*ent).leaves);
+            crate::src::botlib::be_aas_bspq3::AAS_UnlinkFromBSPLeaves(
+                (*ent).leaves as *mut crate::be_aas_def_h::bsp_link_s,
+            );
             //link the entity to the world BSP tree
             (*ent).leaves = crate::src::botlib::be_aas_bspq3::AAS_BSPLinkEntity(
                 absmins.as_mut_ptr(),
                 absmaxs.as_mut_ptr(),
                 entnum,
                 0 as libc::c_int,
-            )
+            ) as *mut crate::be_aas_def_h::bsp_link_s
         }
         //end if
     }
@@ -798,9 +806,13 @@ pub unsafe extern "C" fn AAS_UnlinkInvalidEntities() {
             .entities
             .offset(i as isize) as *mut crate::be_aas_def_h::aas_entity_t;
         if (*ent).i.valid == 0 {
-            crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas((*ent).areas);
+            crate::src::botlib::be_aas_sample::AAS_UnlinkFromAreas(
+                (*ent).areas as *mut crate::be_aas_def_h::aas_link_s,
+            );
             (*ent).areas = 0 as *mut crate::be_aas_def_h::aas_link_t;
-            crate::src::botlib::be_aas_bspq3::AAS_UnlinkFromBSPLeaves((*ent).leaves);
+            crate::src::botlib::be_aas_bspq3::AAS_UnlinkFromBSPLeaves(
+                (*ent).leaves as *mut crate::be_aas_def_h::bsp_link_s,
+            );
             (*ent).leaves = 0 as *mut crate::be_aas_def_h::bsp_link_t
         }
         i += 1
@@ -880,7 +892,9 @@ pub unsafe extern "C" fn AAS_BestReachableEntityArea(mut entnum: libc::c_int) ->
     ent = &mut *crate::src::botlib::be_aas_main::aasworld
         .entities
         .offset(entnum as isize) as *mut crate::be_aas_def_h::aas_entity_t;
-    return crate::src::botlib::be_aas_reach::AAS_BestReachableLinkArea((*ent).areas);
+    return crate::src::botlib::be_aas_reach::AAS_BestReachableLinkArea(
+        (*ent).areas as *mut crate::be_aas_def_h::aas_link_s,
+    );
 }
 //end of the function AAS_BestReachableEntityArea
 //===========================================================================

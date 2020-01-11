@@ -25,12 +25,12 @@ use crate::stdlib::fdopen;
 use crate::stdlib::feof;
 use crate::stdlib::fopen;
 use crate::stdlib::fread;
-use crate::stdlib::free;
 use crate::stdlib::freopen;
 use crate::stdlib::fseeko;
 use crate::stdlib::ftello;
 use crate::stdlib::malloc;
 use crate::stdlib::memcpy;
+use ::libc::free;
 /*The context information needed to read from a block of memory as if it were a
 file.*/
 
@@ -258,7 +258,7 @@ unsafe extern "C" fn op_mem_tell(mut _stream: *mut libc::c_void) -> libc::c_long
 }
 
 unsafe extern "C" fn op_mem_close(mut _stream: *mut libc::c_void) -> libc::c_int {
-    crate::stdlib::free(_stream);
+    ::libc::free(_stream);
     return 0 as libc::c_int;
 }
 

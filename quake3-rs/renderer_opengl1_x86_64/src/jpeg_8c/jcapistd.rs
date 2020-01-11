@@ -251,7 +251,10 @@ pub unsafe extern "C" fn jpeg_start_compress(
         .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr);
     }
     if write_all_tables != 0 {
-        crate::src::jpeg_8c::jcapimin::jpeg_suppress_tables(cinfo, 0 as libc::c_int);
+        crate::src::jpeg_8c::jcapimin::jpeg_suppress_tables(
+            cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+            0 as libc::c_int,
+        );
     }
     /* (Re)initialize error mgr and destination modules */
     Some(
@@ -267,7 +270,9 @@ pub unsafe extern "C" fn jpeg_start_compress(
     )
     .expect("non-null function pointer")(cinfo);
     /* Perform master selection of active modules */
-    crate::src::jpeg_8c::jcinit::jinit_compress_master(cinfo);
+    crate::src::jpeg_8c::jcinit::jinit_compress_master(
+        cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+    );
     /* Set up for the first pass */
     Some(
         (*(*cinfo).master)

@@ -267,7 +267,6 @@ pub use crate::src::ui::ui_syscalls::trap_Cmd_ExecuteText;
 pub use crate::src::ui::ui_syscalls::trap_FS_GetFileList;
 pub use crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip;
 use crate::stdlib::memset;
-use crate::stdlib::strcpy;
 use crate::stdlib::strlen;
 pub use crate::ui_local_h::_tag_menuframework;
 pub use crate::ui_local_h::menubitmap_s;
@@ -275,6 +274,7 @@ pub use crate::ui_local_h::menucommon_s;
 pub use crate::ui_local_h::menuframework_s;
 pub use crate::ui_local_h::menulist_s;
 pub use crate::ui_local_h::menutext_s;
+use ::libc::strcpy;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -578,13 +578,13 @@ unsafe extern "C" fn LoadConfig_MenuEvent(mut ptr: *mut libc::c_void, mut event:
         }
         13 => {
             crate::src::q3_ui::ui_qmenu::ScrollList_Key(
-                &mut s_configs.list,
+                &mut s_configs.list as *mut _ as *mut crate::ui_local_h::menulist_s,
                 crate::keycodes_h::K_LEFTARROW as libc::c_int,
             );
         }
         14 => {
             crate::src::q3_ui::ui_qmenu::ScrollList_Key(
-                &mut s_configs.list,
+                &mut s_configs.list as *mut _ as *mut crate::ui_local_h::menulist_s,
                 crate::keycodes_h::K_RIGHTARROW as libc::c_int,
             );
         }
@@ -714,7 +714,7 @@ unsafe extern "C" fn LoadConfig_MenuInit() {
     s_configs.list.itemnames = s_configs.configlist.as_mut_ptr() as *mut *const libc::c_char;
     s_configs.list.columns = 3 as libc::c_int;
     if s_configs.list.numitems == 0 {
-        crate::stdlib::strcpy(
+        ::libc::strcpy(
             s_configs.names.as_mut_ptr(),
             b"No Files Found.\x00" as *const u8 as *const libc::c_char,
         );
@@ -746,39 +746,39 @@ unsafe extern "C" fn LoadConfig_MenuInit() {
         i += 1
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_configs.menu,
+        &mut s_configs.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_configs.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_configs.menu,
+        &mut s_configs.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_configs.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_configs.menu,
+        &mut s_configs.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_configs.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_configs.menu,
+        &mut s_configs.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_configs.list as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_configs.menu,
+        &mut s_configs.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_configs.arrows as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_configs.menu,
+        &mut s_configs.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_configs.left as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_configs.menu,
+        &mut s_configs.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_configs.right as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_configs.menu,
+        &mut s_configs.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_configs.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut s_configs.menu,
+        &mut s_configs.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut s_configs.go as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
 }
@@ -976,5 +976,7 @@ UI_LoadConfigMenu
 
 pub unsafe extern "C" fn UI_LoadConfigMenu() {
     LoadConfig_MenuInit();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut s_configs.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut s_configs.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }

@@ -540,7 +540,9 @@ SoundOptions_MenuDraw
 pub unsafe extern "C" fn SoundOptions_MenuDraw() {
     //APSFIX - rework this
     SoundOptions_UpdateMenuItems();
-    crate::src::q3_ui::ui_qmenu::Menu_Draw(&mut soundOptionsInfo.menu);
+    crate::src::q3_ui::ui_qmenu::Menu_Draw(
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
 }
 /*
 ===============
@@ -741,59 +743,59 @@ unsafe extern "C" fn UI_SoundOptionsMenu_Init() {
     soundOptionsInfo.apply.focuspic =
         b"menu/art/accept_1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.banner as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.framel as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.framer as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.graphics as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.display as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.sound as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.network as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.sfxvolume as *mut crate::ui_local_h::menuslider_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.musicvolume as *mut crate::ui_local_h::menuslider_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.soundSystem as *mut crate::ui_local_h::menulist_s
             as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.quality as *mut crate::ui_local_h::menulist_s as *mut libc::c_void,
     );
     //	Menu_AddItem( &soundOptionsInfo.menu, ( void * ) &soundOptionsInfo.a3d );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.back as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.apply as *mut crate::ui_local_h::menubitmap_s as *mut libc::c_void,
     );
     soundOptionsInfo.sfxvolume_original = crate::src::ui::ui_syscalls::trap_Cvar_VariableValue(
@@ -1025,9 +1027,11 @@ UI_SoundOptionsMenu
 
 pub unsafe extern "C" fn UI_SoundOptionsMenu() {
     UI_SoundOptionsMenu_Init();
-    crate::src::q3_ui::ui_atoms::UI_PushMenu(&mut soundOptionsInfo.menu);
+    crate::src::q3_ui::ui_atoms::UI_PushMenu(
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
+    );
     crate::src::q3_ui::ui_qmenu::Menu_SetCursorToItem(
-        &mut soundOptionsInfo.menu,
+        &mut soundOptionsInfo.menu as *mut _ as *mut crate::ui_local_h::_tag_menuframework,
         &mut soundOptionsInfo.sound as *mut crate::ui_local_h::menutext_s as *mut libc::c_void,
     );
 }

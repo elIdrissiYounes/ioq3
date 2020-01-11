@@ -109,10 +109,10 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::abs;
 use crate::stdlib::fabsf;
 use crate::stdlib::memset;
 use crate::stdlib::sqrt;
+use ::libc::abs;
 
 use crate::src::botlib::be_aas_bspq3::AAS_PointContents;
 use crate::src::botlib::be_aas_bspq3::AAS_Trace;
@@ -331,7 +331,7 @@ pub unsafe extern "C" fn AAS_DropToFloor(
         end.as_mut_ptr(),
         0 as libc::c_int,
         1 as libc::c_int,
-    );
+    ) as crate::botlib_h::bsp_trace_s;
     if trace.startsolid as u64 != 0 {
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
     }
@@ -584,7 +584,7 @@ pub unsafe extern "C" fn AAS_AgainstLadder(
         face = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(
-                (crate::stdlib::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(facenum)
+                (::libc::abs as unsafe extern "C" fn(_: libc::c_int) -> libc::c_int)(facenum)
                     as isize,
             ) as *mut crate::aasfile_h::aas_face_t;
         //end if
@@ -607,7 +607,7 @@ pub unsafe extern "C" fn AAS_AgainstLadder(
             ) < 3 as libc::c_int as libc::c_float
             {
                 if crate::src::botlib::be_aas_sample::AAS_PointInsideFace(
-                    crate::stdlib::abs(facenum),
+                    ::libc::abs(facenum),
                     origin,
                     0.1f32,
                 ) as u64
@@ -661,7 +661,7 @@ pub unsafe extern "C" fn AAS_OnGround(
         end.as_mut_ptr(),
         presencetype,
         passent,
-    );
+    ) as crate::be_aas_h::aas_trace_s;
     //if in solid
     if trace.startsolid as u64 != 0 {
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
@@ -677,7 +677,8 @@ pub unsafe extern "C" fn AAS_OnGround(
         return crate::src::qcommon::q_shared::qfalse as libc::c_int;
     }
     //check if the plane isn't too steep
-    plane = crate::src::botlib::be_aas_sample::AAS_PlaneFromNum(trace.planenum);
+    plane = crate::src::botlib::be_aas_sample::AAS_PlaneFromNum(trace.planenum)
+        as *mut crate::aasfile_h::aas_plane_s;
     if (*plane).normal[0 as libc::c_int as usize] * up[0 as libc::c_int as usize]
         + (*plane).normal[1 as libc::c_int as usize] * up[1 as libc::c_int as usize]
         + (*plane).normal[2 as libc::c_int as usize] * up[2 as libc::c_int as usize]
@@ -967,7 +968,7 @@ pub unsafe extern "C" fn AAS_WeaponJumpZVelocity(
         end.as_mut_ptr(),
         1 as libc::c_int,
         1 as libc::c_int,
-    );
+    ) as crate::botlib_h::bsp_trace_s;
     //calculate the damage the bot will get from the rocket impact
     v[0 as libc::c_int as usize] =
         botmins[0 as libc::c_int as usize] + botmaxs[0 as libc::c_int as usize];
@@ -1578,7 +1579,7 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
                 end.as_mut_ptr(),
                 presencetype,
                 entnum,
-            );
+            ) as crate::be_aas_h::aas_trace_s;
             if visualize != 0 {
                 if trace.startsolid as u64 != 0 {
                     botimport.Print.expect("non-null function pointer")(
@@ -1801,7 +1802,8 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
                 //if there was a collision
                 //end if
                 //get the plane the bounding box collided with
-                plane = crate::src::botlib::be_aas_sample::AAS_PlaneFromNum(trace.planenum);
+                plane = crate::src::botlib::be_aas_sample::AAS_PlaneFromNum(trace.planenum)
+                    as *mut crate::aasfile_h::aas_plane_s;
                 //end if
                 if stopevent & 1024 as libc::c_int != 0 {
                     if (*plane).normal[0 as libc::c_int as usize] * up[0 as libc::c_int as usize]
@@ -1877,11 +1879,12 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
                         stepend.as_mut_ptr(),
                         presencetype,
                         entnum,
-                    );
+                    ) as crate::be_aas_h::aas_trace_s;
                     //end if
                     if steptrace.startsolid as u64 == 0 {
                         plane2 =
-                            crate::src::botlib::be_aas_sample::AAS_PlaneFromNum(steptrace.planenum);
+                            crate::src::botlib::be_aas_sample::AAS_PlaneFromNum(steptrace.planenum)
+                                as *mut crate::aasfile_h::aas_plane_s;
                         if (*plane2).normal[0 as libc::c_int as usize]
                             * up[0 as libc::c_int as usize]
                             + (*plane2).normal[1 as libc::c_int as usize]
@@ -2226,7 +2229,7 @@ pub unsafe extern "C" fn AAS_ClientMovementPrediction(
                     end.as_mut_ptr(),
                     4 as libc::c_int,
                     -(1 as libc::c_int),
-                );
+                ) as crate::be_aas_h::aas_trace_s;
                 //end if
                 if gaptrace.startsolid as u64 == 0 {
                     //if solid is found the bot cannot walk any further and will not fall into a gap

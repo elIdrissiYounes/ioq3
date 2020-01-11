@@ -2,127 +2,6 @@ use ::libc;
 
 pub mod q_shared_h {
 
-    //=============================================
-    //int		COM_ParseInfos( char *buf, int max, char infos[][MAX_INFO_STRING] );
-    //token types
-    // string
-    // literal
-    // number
-    // name
-    // punctuation
-    // data is an in/out parm, returns a parsed out token
-    // mode parm for FS_FOpenFile
-    //=============================================
-    // portable case insensitive compare
-    // buffer size safe library replacements
-    // strlen that discounts Quake color sequences
-    // removes color sequences from string
-    // Count the number of char tocount encountered in string
-    //=============================================
-    // 64-bit integers for global rankings interface
-    // implemented as a struct for qvm compatibility
-    //=============================================
-    /*
-    short	BigShort(short l);
-    short	LittleShort(short l);
-    int		BigLong (int l);
-    int		LittleLong (int l);
-    qint64  BigLong64 (qint64 l);
-    qint64  LittleLong64 (qint64 l);
-    float	BigFloat (const float *l);
-    float	LittleFloat (const float *l);
-
-    void	Swap_Init (void);
-    */
-    //=============================================
-    //
-    // key / value info strings
-    //
-    // this is only here so the functions in q_shared.c and bg_*.c can link
-    /*
-    ==========================================================
-
-    CVARS (console variables)
-
-    Many variables can be used for cheating purposes, so when
-    cheats is zero, force all unspecified variables to their
-    default values.
-    ==========================================================
-    */
-    // set to cause it to be saved to vars.rc
-    // used for system variables, not for player
-    // specific configurations
-    // sent to server on connect or change
-    // sent in response to front end requests
-    // these cvars will be duplicated on all clients
-    // don't allow change from console at all,
-    // but can be set from the command line
-    // will only change when C code next does
-    // a Cvar_Get(), so it can't be changed
-    // without proper initialization.  modified
-    // will be set, even though the value hasn't
-    // changed yet
-    // display only, cannot be set by user at all
-    // created by a set command
-    // can be set even when cheats are disabled, but is not archived
-    // can not be changed if cheats are disabled
-    // do not clear when a cvar_restart is issued
-    // cvar was created by a server the client connected to.
-    // cvar was created exclusively in one of the VMs.
-    // prevent modifying this var from VMs or the server
-    // These flags are only returned by the Cvar_Flags() function
-    // Cvar was modified
-    // Cvar doesn't exist.
-    // nothing outside the Cvar_*() functions should modify these fields!
-    // cvar_restart will reset to this value
-    // for CVAR_LATCH vars
-    // set each time the cvar is changed
-    // incremented each time the cvar is changed
-    // atof( string )
-    // atoi( string )
-    // the modules that run in the virtual machine can't access the cvar_t directly,
-    // so they must ask for structured updates
-    /*
-    ==============================================================
-
-    VoIP
-
-    ==============================================================
-    */
-    // if you change the count of flags be sure to also change VOIP_FLAGNUM
-    // spatialized voip message
-    // non-spatialized voip message
-    // number of flags voip knows. You will have to bump protocol version number if you
-    // change this.
-    /*
-    ==============================================================
-
-    COLLISION DETECTION
-
-    ==============================================================
-    */
-    // plane types are used to speed some tests
-    // 0-2 are axial planes
-    /*
-    =================
-    PlaneTypeForNormal
-    =================
-    */
-    // plane_t structure
-    // !!! if this is changed, it must be changed in asm code too !!!
-
-    #[inline]
-
-    pub unsafe extern "C" fn VectorLength(
-        mut v: *const crate::src::qcommon::q_shared::vec_t,
-    ) -> crate::src::qcommon::q_shared::vec_t {
-        return crate::stdlib::sqrt(
-            (*v.offset(0 as libc::c_int as isize) * *v.offset(0 as libc::c_int as isize)
-                + *v.offset(1 as libc::c_int as isize) * *v.offset(1 as libc::c_int as isize)
-                + *v.offset(2 as libc::c_int as isize) * *v.offset(2 as libc::c_int as isize))
-                as libc::c_double,
-        ) as crate::src::qcommon::q_shared::vec_t;
-    }
     #[inline]
 
     pub unsafe extern "C" fn CrossProduct(
@@ -139,6 +18,18 @@ pub mod q_shared_h {
         *cross.offset(2 as libc::c_int as isize) = *v1.offset(0 as libc::c_int as isize)
             * *v2.offset(1 as libc::c_int as isize)
             - *v1.offset(1 as libc::c_int as isize) * *v2.offset(0 as libc::c_int as isize);
+    }
+    #[inline]
+
+    pub unsafe extern "C" fn VectorLength(
+        mut v: *const crate::src::qcommon::q_shared::vec_t,
+    ) -> crate::src::qcommon::q_shared::vec_t {
+        return crate::stdlib::sqrt(
+            (*v.offset(0 as libc::c_int as isize) * *v.offset(0 as libc::c_int as isize)
+                + *v.offset(1 as libc::c_int as isize) * *v.offset(1 as libc::c_int as isize)
+                + *v.offset(2 as libc::c_int as isize) * *v.offset(2 as libc::c_int as isize))
+                as libc::c_double,
+        ) as crate::src::qcommon::q_shared::vec_t;
     }
     use crate::stdlib::sqrt;
     // __Q_SHARED_H

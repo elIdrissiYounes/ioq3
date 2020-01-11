@@ -47,7 +47,6 @@ pub use crate::src::qcommon::q_shared::FS_APPEND;
 pub use crate::src::qcommon::q_shared::FS_APPEND_SYNC;
 pub use crate::src::qcommon::q_shared::FS_READ;
 pub use crate::src::qcommon::q_shared::FS_WRITE;
-use crate::stdlib::exit;
 pub use crate::tr_types_h::glDriverType_t;
 pub use crate::tr_types_h::glHardwareType_t;
 pub use crate::tr_types_h::glconfig_t;
@@ -174,6 +173,7 @@ pub use crate::ui_public_h::UI_S_STARTLOCALSOUND;
 pub use crate::ui_public_h::UI_S_STOPBACKGROUNDTRACK;
 pub use crate::ui_public_h::UI_UPDATESCREEN;
 pub use crate::ui_public_h::UI_VERIFY_CDKEY;
+use ::libc::exit;
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
@@ -236,7 +236,7 @@ pub unsafe extern "C" fn trap_Error(mut string: *const libc::c_char) -> ! {
         string,
     );
     // shut up GCC warning about returning functions, because we know better
-    crate::stdlib::exit(1 as libc::c_int);
+    ::libc::exit(1 as libc::c_int);
 }
 #[no_mangle]
 

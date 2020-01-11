@@ -96,28 +96,49 @@ pub use crate::src::jpeg_8c::jcsample::jinit_downsampler;
 
 pub unsafe extern "C" fn jinit_compress_master(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
     /* Initialize master control (includes parameter checking/processing) */
-    crate::src::jpeg_8c::jcmaster::jinit_c_master_control(cinfo, 0 as libc::c_int);
+    crate::src::jpeg_8c::jcmaster::jinit_c_master_control(
+        cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+        0 as libc::c_int,
+    );
     /* Preprocessing */
     if (*cinfo).raw_data_in == 0 {
-        crate::src::jpeg_8c::jccolor::jinit_color_converter(cinfo);
-        crate::src::jpeg_8c::jcsample::jinit_downsampler(cinfo);
-        crate::src::jpeg_8c::jcprepct::jinit_c_prep_controller(cinfo, 0 as libc::c_int);
+        crate::src::jpeg_8c::jccolor::jinit_color_converter(
+            cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+        );
+        crate::src::jpeg_8c::jcsample::jinit_downsampler(
+            cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+        );
+        crate::src::jpeg_8c::jcprepct::jinit_c_prep_controller(
+            cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+            0 as libc::c_int,
+        );
     }
     /* Forward DCT */
-    crate::src::jpeg_8c::jcdctmgr::jinit_forward_dct(cinfo);
+    crate::src::jpeg_8c::jcdctmgr::jinit_forward_dct(
+        cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+    );
     /* Entropy encoding: either Huffman or arithmetic coding. */
     if (*cinfo).arith_code != 0 {
-        crate::src::jpeg_8c::jcarith::jinit_arith_encoder(cinfo);
+        crate::src::jpeg_8c::jcarith::jinit_arith_encoder(
+            cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+        );
     } else {
-        crate::src::jpeg_8c::jchuff::jinit_huff_encoder(cinfo);
+        crate::src::jpeg_8c::jchuff::jinit_huff_encoder(
+            cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+        );
     }
     /* Need a full-image coefficient buffer in any multi-pass mode. */
     crate::src::jpeg_8c::jccoefct::jinit_c_coef_controller(
-        cinfo,
+        cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
         ((*cinfo).num_scans > 1 as libc::c_int || (*cinfo).optimize_coding != 0) as libc::c_int,
     );
-    crate::src::jpeg_8c::jcmainct::jinit_c_main_controller(cinfo, 0 as libc::c_int);
-    crate::src::jpeg_8c::jcmarker::jinit_marker_writer(cinfo);
+    crate::src::jpeg_8c::jcmainct::jinit_c_main_controller(
+        cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+        0 as libc::c_int,
+    );
+    crate::src::jpeg_8c::jcmarker::jinit_marker_writer(
+        cinfo as *mut crate::jpeglib_h::jpeg_compress_struct,
+    );
     /* We can now tell the memory manager to allocate virtual arrays. */
     Some(
         (*(*cinfo).mem)

@@ -1,3 +1,23 @@
+pub type projectileinfo_t = crate::be_ai_weap_h::projectileinfo_s;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct projectileinfo_s {
+    pub name: [libc::c_char; 80],
+    pub model: [libc::c_char; 80],
+    pub flags: libc::c_int,
+    pub gravity: libc::c_float,
+    pub damage: libc::c_int,
+    pub radius: libc::c_float,
+    pub visdamage: libc::c_int,
+    pub damagetype: libc::c_int,
+    pub healthinc: libc::c_int,
+    pub push: libc::c_float,
+    pub detonation: libc::c_float,
+    pub bounce: libc::c_float,
+    pub bouncefric: libc::c_float,
+    pub bouncestop: libc::c_float,
+}
+pub type weaponinfo_t = crate::be_ai_weap_h::weaponinfo_s;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct weaponinfo_s {
@@ -26,44 +46,3 @@ pub struct weaponinfo_s {
     pub spindown: libc::c_float,
     pub proj: crate::be_ai_weap_h::projectileinfo_t,
 }
-//true if movement failed all together
-
-//failure or blocked type
-
-//true if blocked by an entity
-
-//entity blocking the bot
-
-//last executed travel type
-
-//result flags
-
-//weapon used for movement
-
-//movement direction
-
-//ideal viewangles for the movement
-
-//radial damage
-
-//damage to all entities visible to the projectile
-pub type projectileinfo_t = crate::be_ai_weap_h::projectileinfo_s;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct projectileinfo_s {
-    pub name: [libc::c_char; 80],
-    pub model: [libc::c_char; 80],
-    pub flags: libc::c_int,
-    pub gravity: libc::c_float,
-    pub damage: libc::c_int,
-    pub radius: libc::c_float,
-    pub visdamage: libc::c_int,
-    pub damagetype: libc::c_int,
-    pub healthinc: libc::c_int,
-    pub push: libc::c_float,
-    pub detonation: libc::c_float,
-    pub bounce: libc::c_float,
-    pub bouncefric: libc::c_float,
-    pub bouncestop: libc::c_float,
-}
-pub type weaponinfo_t = crate::be_ai_weap_h::weaponinfo_s;

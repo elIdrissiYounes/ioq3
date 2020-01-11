@@ -1480,7 +1480,8 @@ pub unsafe extern "C" fn R_SetupFrustum(
             + ofsorigin[2 as libc::c_int as usize]
                 * (*dest).frustum[i as usize].normal[2 as libc::c_int as usize];
         crate::src::qcommon::q_math::SetPlaneSignbits(
-            &mut *(*dest).frustum.as_mut_ptr().offset(i as isize),
+            &mut *(*dest).frustum.as_mut_ptr().offset(i as isize) as *mut _
+                as *mut crate::src::qcommon::q_shared::cplane_s,
         );
         i += 1
     }
@@ -2163,7 +2164,10 @@ unsafe extern "C" fn SurfIsOffscreen(
         &mut fogNum,
         &mut dlighted,
     );
-    crate::src::renderergl1::tr_shade::RB_BeginSurface(shader, fogNum);
+    crate::src::renderergl1::tr_shade::RB_BeginSurface(
+        shader as *mut crate::tr_local_h::shader_s,
+        fogNum,
+    );
     crate::src::renderergl1::tr_surface::rb_surfaceTable[*(*drawSurf).surface as usize]
         .expect("non-null function pointer")((*drawSurf).surface as *mut libc::c_void);
     i = 0 as libc::c_int;
@@ -2902,7 +2906,10 @@ pub unsafe extern "C" fn R_SortDrawSurfs(
     // it is possible for some views to not have any surfaces
     if numDrawSurfs < 1 as libc::c_int {
         // we still need to add it for hyperspace cases
-        crate::src::renderergl1::tr_cmds::R_AddDrawSurfCmd(drawSurfs, numDrawSurfs);
+        crate::src::renderergl1::tr_cmds::R_AddDrawSurfCmd(
+            drawSurfs as *mut crate::tr_local_h::drawSurf_s,
+            numDrawSurfs,
+        );
         return;
     }
     // sort the drawsurfs by sort type, then orientation, then shader
@@ -2941,7 +2948,10 @@ pub unsafe extern "C" fn R_SortDrawSurfs(
             i += 1
         }
     }
-    crate::src::renderergl1::tr_cmds::R_AddDrawSurfCmd(drawSurfs, numDrawSurfs);
+    crate::src::renderergl1::tr_cmds::R_AddDrawSurfCmd(
+        drawSurfs as *mut crate::tr_local_h::drawSurf_s,
+        numDrawSurfs,
+    );
 }
 /*
 =============
@@ -2991,7 +3001,8 @@ pub unsafe extern "C" fn R_AddEntitySurfaces() {
                             R_RotateForEntity(ent, &mut tr.viewParms, &mut tr.or);
                             tr.currentModel = crate::src::renderergl1::tr_model::R_GetModelByHandle(
                                 (*ent).e.hModel,
-                            );
+                            )
+                                as *mut crate::tr_local_h::model_s;
                             if tr.currentModel.is_null() {
                                 R_AddDrawSurf(
                                     &mut entitySurface,
@@ -3002,21 +3013,23 @@ pub unsafe extern "C" fn R_AddEntitySurfaces() {
                             } else {
                                 match (*tr.currentModel).type_0 as libc::c_uint {
                                     2 => {
-                                        crate::src::renderergl1::tr_mesh::R_AddMD3Surfaces(ent);
+                                        crate::src::renderergl1::tr_mesh::R_AddMD3Surfaces(
+                                            ent as *mut crate::tr_local_h::trRefEntity_t,
+                                        );
                                     }
                                     3 => {
                                         crate::src::renderergl1::tr_animation::R_MDRAddAnimSurfaces(
-                                            ent,
+                                            ent as *mut crate::tr_local_h::trRefEntity_t,
                                         );
                                     }
                                     4 => {
                                         crate::src::renderergl1::tr_model_iqm::R_AddIQMSurfaces(
-                                            ent,
+                                            ent as *mut crate::tr_local_h::trRefEntity_t,
                                         );
                                     }
                                     1 => {
                                         crate::src::renderergl1::tr_world::R_AddBrushModelSurfaces(
-                                            ent,
+                                            ent as *mut crate::tr_local_h::trRefEntity_t,
                                         );
                                     }
                                     0 => {
@@ -3052,7 +3065,8 @@ pub unsafe extern "C" fn R_AddEntitySurfaces() {
                             {
                                 shader = crate::src::renderergl1::tr_shader::R_GetShaderByHandle(
                                     (*ent).e.customShader,
-                                ); // don't draw anything
+                                )
+                                    as *mut crate::tr_local_h::shader_s; // don't draw anything
                                 R_AddDrawSurf(
                                     &mut entitySurface,
                                     shader,
@@ -3077,7 +3091,8 @@ pub unsafe extern "C" fn R_AddEntitySurfaces() {
                             R_RotateForEntity(ent, &mut tr.viewParms, &mut tr.or);
                             tr.currentModel = crate::src::renderergl1::tr_model::R_GetModelByHandle(
                                 (*ent).e.hModel,
-                            );
+                            )
+                                as *mut crate::tr_local_h::model_s;
                             if tr.currentModel.is_null() {
                                 R_AddDrawSurf(
                                     &mut entitySurface,
@@ -3088,21 +3103,23 @@ pub unsafe extern "C" fn R_AddEntitySurfaces() {
                             } else {
                                 match (*tr.currentModel).type_0 as libc::c_uint {
                                     2 => {
-                                        crate::src::renderergl1::tr_mesh::R_AddMD3Surfaces(ent);
+                                        crate::src::renderergl1::tr_mesh::R_AddMD3Surfaces(
+                                            ent as *mut crate::tr_local_h::trRefEntity_t,
+                                        );
                                     }
                                     3 => {
                                         crate::src::renderergl1::tr_animation::R_MDRAddAnimSurfaces(
-                                            ent,
+                                            ent as *mut crate::tr_local_h::trRefEntity_t,
                                         );
                                     }
                                     4 => {
                                         crate::src::renderergl1::tr_model_iqm::R_AddIQMSurfaces(
-                                            ent,
+                                            ent as *mut crate::tr_local_h::trRefEntity_t,
                                         );
                                     }
                                     1 => {
                                         crate::src::renderergl1::tr_world::R_AddBrushModelSurfaces(
-                                            ent,
+                                            ent as *mut crate::tr_local_h::trRefEntity_t,
                                         );
                                     }
                                     0 => {
@@ -3133,7 +3150,8 @@ pub unsafe extern "C" fn R_AddEntitySurfaces() {
                             {
                                 shader = crate::src::renderergl1::tr_shader::R_GetShaderByHandle(
                                     (*ent).e.customShader,
-                                );
+                                )
+                                    as *mut crate::tr_local_h::shader_s;
                                 R_AddDrawSurf(
                                     &mut entitySurface,
                                     shader,
@@ -3158,7 +3176,8 @@ pub unsafe extern "C" fn R_AddEntitySurfaces() {
                             R_RotateForEntity(ent, &mut tr.viewParms, &mut tr.or);
                             tr.currentModel = crate::src::renderergl1::tr_model::R_GetModelByHandle(
                                 (*ent).e.hModel,
-                            );
+                            )
+                                as *mut crate::tr_local_h::model_s;
                             if tr.currentModel.is_null() {
                                 R_AddDrawSurf(
                                     &mut entitySurface,
@@ -3169,21 +3188,23 @@ pub unsafe extern "C" fn R_AddEntitySurfaces() {
                             } else {
                                 match (*tr.currentModel).type_0 as libc::c_uint {
                                     2 => {
-                                        crate::src::renderergl1::tr_mesh::R_AddMD3Surfaces(ent);
+                                        crate::src::renderergl1::tr_mesh::R_AddMD3Surfaces(
+                                            ent as *mut crate::tr_local_h::trRefEntity_t,
+                                        );
                                     }
                                     3 => {
                                         crate::src::renderergl1::tr_animation::R_MDRAddAnimSurfaces(
-                                            ent,
+                                            ent as *mut crate::tr_local_h::trRefEntity_t,
                                         );
                                     }
                                     4 => {
                                         crate::src::renderergl1::tr_model_iqm::R_AddIQMSurfaces(
-                                            ent,
+                                            ent as *mut crate::tr_local_h::trRefEntity_t,
                                         );
                                     }
                                     1 => {
                                         crate::src::renderergl1::tr_world::R_AddBrushModelSurfaces(
-                                            ent,
+                                            ent as *mut crate::tr_local_h::trRefEntity_t,
                                         );
                                     }
                                     0 => {
@@ -3214,7 +3235,8 @@ pub unsafe extern "C" fn R_AddEntitySurfaces() {
                             {
                                 shader = crate::src::renderergl1::tr_shader::R_GetShaderByHandle(
                                     (*ent).e.customShader,
-                                );
+                                )
+                                    as *mut crate::tr_local_h::shader_s;
                                 R_AddDrawSurf(
                                     &mut entitySurface,
                                     shader,
@@ -3331,7 +3353,7 @@ pub unsafe extern "C" fn R_DebugGraphics() {
         return;
     }
     crate::src::renderergl1::tr_cmds::R_IssuePendingRenderCommands();
-    crate::src::renderergl1::tr_backend::GL_Bind(tr.whiteImage);
+    crate::src::renderergl1::tr_backend::GL_Bind(tr.whiteImage as *mut crate::tr_common_h::image_s);
     crate::src::renderergl1::tr_backend::GL_Cull(crate::tr_local_h::CT_FRONT_SIDED as libc::c_int);
     ri.CM_DrawDebugSurface.expect("non-null function pointer")(Some(
         R_DebugPolygon

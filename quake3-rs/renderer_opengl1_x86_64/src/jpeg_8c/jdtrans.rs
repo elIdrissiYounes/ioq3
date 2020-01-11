@@ -338,15 +338,24 @@ unsafe extern "C" fn transdecode_master_selection(mut cinfo: crate::jpeglib_h::j
     /* This is effectively a buffered-image operation. */
     (*cinfo).buffered_image = 1 as libc::c_int;
     /* Compute output image dimensions and related values. */
-    crate::src::jpeg_8c::jdinput::jpeg_core_output_dimensions(cinfo);
+    crate::src::jpeg_8c::jdinput::jpeg_core_output_dimensions(
+        cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+    );
     /* Entropy decoding: either Huffman or arithmetic coding. */
     if (*cinfo).arith_code != 0 {
-        crate::src::jpeg_8c::jdarith::jinit_arith_decoder(cinfo);
+        crate::src::jpeg_8c::jdarith::jinit_arith_decoder(
+            cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+        );
     } else {
-        crate::src::jpeg_8c::jdhuff::jinit_huff_decoder(cinfo);
+        crate::src::jpeg_8c::jdhuff::jinit_huff_decoder(
+            cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+        );
     }
     /* Always get a full-image coefficient buffer. */
-    crate::src::jpeg_8c::jdcoefct::jinit_d_coef_controller(cinfo, 1 as libc::c_int);
+    crate::src::jpeg_8c::jdcoefct::jinit_d_coef_controller(
+        cinfo as *mut crate::jpeglib_h::jpeg_decompress_struct,
+        1 as libc::c_int,
+    );
     /* We can now tell the memory manager to allocate virtual arrays. */
     Some(
         (*(*cinfo).mem)

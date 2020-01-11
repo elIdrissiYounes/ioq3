@@ -110,9 +110,11 @@ unsafe extern "C" fn CL_Netchan_Encode(mut msg: *mut crate::qcommon_h::msg_t) {
     (*msg).bit = 0 as libc::c_int;
     (*msg).readcount = 0 as libc::c_int;
     (*msg).oob = crate::src::qcommon::q_shared::qfalse;
-    serverId = crate::src::qcommon::msg::MSG_ReadLong(msg);
-    messageAcknowledge = crate::src::qcommon::msg::MSG_ReadLong(msg);
-    reliableAcknowledge = crate::src::qcommon::msg::MSG_ReadLong(msg);
+    serverId = crate::src::qcommon::msg::MSG_ReadLong(msg as *mut crate::qcommon_h::msg_t);
+    messageAcknowledge =
+        crate::src::qcommon::msg::MSG_ReadLong(msg as *mut crate::qcommon_h::msg_t);
+    reliableAcknowledge =
+        crate::src::qcommon::msg::MSG_ReadLong(msg as *mut crate::qcommon_h::msg_t);
     (*msg).oob = soob as crate::src::qcommon::q_shared::qboolean;
     (*msg).bit = sbit;
     (*msg).readcount = srdc;
@@ -171,7 +173,8 @@ unsafe extern "C" fn CL_Netchan_Decode(mut msg: *mut crate::qcommon_h::msg_t) {
     sbit = (*msg).bit;
     soob = (*msg).oob as libc::c_int;
     (*msg).oob = crate::src::qcommon::q_shared::qfalse;
-    reliableAcknowledge = crate::src::qcommon::msg::MSG_ReadLong(msg) as libc::c_long;
+    reliableAcknowledge =
+        crate::src::qcommon::msg::MSG_ReadLong(msg as *mut crate::qcommon_h::msg_t) as libc::c_long;
     (*msg).oob = soob as crate::src::qcommon::q_shared::qboolean;
     (*msg).bit = sbit;
     (*msg).readcount = srdc;
@@ -218,7 +221,9 @@ pub unsafe extern "C" fn CL_Netchan_TransmitNextFragment(
     mut chan: *mut crate::qcommon_h::netchan_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
     if (*chan).unsentFragments as u64 != 0 {
-        crate::src::qcommon::net_chan::Netchan_TransmitNextFragment(chan);
+        crate::src::qcommon::net_chan::Netchan_TransmitNextFragment(
+            chan as *mut crate::qcommon_h::netchan_t,
+        );
         return crate::src::qcommon::q_shared::qtrue;
     }
     return crate::src::qcommon::q_shared::qfalse;
@@ -234,11 +239,18 @@ pub unsafe extern "C" fn CL_Netchan_Transmit(
     mut chan: *mut crate::qcommon_h::netchan_t,
     mut msg: *mut crate::qcommon_h::msg_t,
 ) {
-    crate::src::qcommon::msg::MSG_WriteByte(msg, crate::qcommon_h::clc_EOF as libc::c_int);
+    crate::src::qcommon::msg::MSG_WriteByte(
+        msg as *mut crate::qcommon_h::msg_t,
+        crate::qcommon_h::clc_EOF as libc::c_int,
+    );
     if (*chan).compat as u64 != 0 {
         CL_Netchan_Encode(msg);
     }
-    crate::src::qcommon::net_chan::Netchan_Transmit(chan, (*msg).cursize, (*msg).data);
+    crate::src::qcommon::net_chan::Netchan_Transmit(
+        chan as *mut crate::qcommon_h::netchan_t,
+        (*msg).cursize,
+        (*msg).data,
+    );
     // Transmit all fragments without delay
     while CL_Netchan_TransmitNextFragment(chan) as u64 != 0 {
         crate::src::qcommon::common::Com_DPrintf(
@@ -465,7 +477,10 @@ pub unsafe extern "C" fn CL_Netchan_Process(
     mut msg: *mut crate::qcommon_h::msg_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut ret: libc::c_int = 0;
-    ret = crate::src::qcommon::net_chan::Netchan_Process(chan, msg) as libc::c_int;
+    ret = crate::src::qcommon::net_chan::Netchan_Process(
+        chan as *mut crate::qcommon_h::netchan_t,
+        msg as *mut crate::qcommon_h::msg_t,
+    ) as libc::c_int;
     if ret == 0 {
         return crate::src::qcommon::q_shared::qfalse;
     }

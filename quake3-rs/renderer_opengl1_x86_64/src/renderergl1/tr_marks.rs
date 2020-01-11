@@ -701,7 +701,11 @@ pub unsafe extern "C" fn R_BoxSurfaces_r(
         0 as *mut *mut crate::tr_local_h::msurface_t;
     // do the tail recursion in a loop
     while (*node).contents == -(1 as libc::c_int) {
-        s = crate::src::qcommon::q_math::BoxOnPlaneSide(mins, maxs, (*node).plane);
+        s = crate::src::qcommon::q_math::BoxOnPlaneSide(
+            mins,
+            maxs,
+            (*node).plane as *mut crate::src::qcommon::q_shared::cplane_s,
+        );
         if s == 1 as libc::c_int {
             node = (*node).children[0 as libc::c_int as usize]
         } else if s == 2 as libc::c_int {
@@ -747,7 +751,8 @@ pub unsafe extern "C" fn R_BoxSurfaces_r(
             s = crate::src::qcommon::q_math::BoxOnPlaneSide(
                 mins,
                 maxs,
-                &mut (*((*surf).data as *mut crate::tr_local_h::srfSurfaceFace_t)).plane,
+                &mut (*((*surf).data as *mut crate::tr_local_h::srfSurfaceFace_t)).plane as *mut _
+                    as *mut crate::src::qcommon::q_shared::cplane_s,
             );
             if s == 1 as libc::c_int || s == 2 as libc::c_int {
                 (*surf).viewCount = crate::src::renderergl1::tr_main::tr.viewCount

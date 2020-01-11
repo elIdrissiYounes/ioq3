@@ -1,261 +1,261 @@
 // =============== BEGIN jerror_h ================
 pub type C2RustUnnamed_1 = libc::c_uint;
 
-pub const JERR_BAD_STRUCT_SIZE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 22;
-
-pub const JERR_BAD_LIB_VERSION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 13;
-
-pub const JERR_CANT_SUSPEND: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 25;
-
-pub const JERR_BAD_STATE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 21;
-
-pub const JERR_TOO_LITTLE_DATA: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 69;
-
-pub const JMSG_LASTMSGCODE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 127;
-
-pub const JWRN_TOO_MUCH_DATA: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 126;
-
-pub const JWRN_NOT_SEQUENTIAL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 125;
-
-pub const JWRN_MUST_RESYNC: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 124;
-
-pub const JWRN_JPEG_EOF: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 123;
-
-pub const JWRN_JFIF_MAJOR: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 122;
-
-pub const JWRN_HUFF_BAD_CODE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 121;
-
-pub const JWRN_HIT_MARKER: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 120;
-
-pub const JWRN_EXTRANEOUS_DATA: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 119;
-
-pub const JWRN_BOGUS_PROGRESSION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 118;
-
-pub const JWRN_ARITH_BAD_CODE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 117;
-
-pub const JWRN_ADOBE_XFORM: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 116;
-
-pub const JTRC_XMS_OPEN: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 115;
-
-pub const JTRC_XMS_CLOSE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 114;
-
-pub const JTRC_UNKNOWN_IDS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 113;
-
-pub const JTRC_THUMB_RGB: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 112;
-
-pub const JTRC_THUMB_PALETTE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 111;
-
-pub const JTRC_THUMB_JPEG: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 110;
-
-pub const JTRC_TFILE_OPEN: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 109;
-
-pub const JTRC_TFILE_CLOSE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 108;
-
-pub const JTRC_SOS_PARAMS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 107;
-
-pub const JTRC_SOS_COMPONENT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 106;
-
-pub const JTRC_SOS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 105;
-
-pub const JTRC_SOI: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 104;
-
-pub const JTRC_SOF_COMPONENT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 103;
-
-pub const JTRC_SOF: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 102;
-
-pub const JTRC_SMOOTH_NOTIMPL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 101;
-
-pub const JTRC_RST: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 100;
-
-pub const JTRC_RECOVERY_ACTION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 99;
-
-pub const JTRC_QUANT_SELECTED: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 98;
-
-pub const JTRC_QUANT_NCOLORS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 97;
-
-pub const JTRC_QUANT_3_NCOLORS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 96;
-
-pub const JTRC_QUANTVALS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 95;
-
-pub const JTRC_PARMLESS_MARKER: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 94;
-
-pub const JTRC_MISC_MARKER: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 93;
-
-pub const JTRC_JFIF_THUMBNAIL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 92;
-
-pub const JTRC_JFIF_EXTENSION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 91;
-
-pub const JTRC_JFIF_BADTHUMBNAILSIZE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 90;
-
-pub const JTRC_JFIF: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 89;
-
-pub const JTRC_HUFFBITS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 88;
-
-pub const JTRC_EOI: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 87;
-
-pub const JTRC_EMS_OPEN: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 86;
-
-pub const JTRC_EMS_CLOSE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 85;
-
-pub const JTRC_DRI: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 84;
-
-pub const JTRC_DQT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 83;
-
-pub const JTRC_DHT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 82;
-
-pub const JTRC_DAC: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 81;
-
-pub const JTRC_APP14: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 80;
-
-pub const JTRC_APP0: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 79;
-
-pub const JTRC_ADOBE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 78;
-
-pub const JTRC_16BIT_TABLES: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 77;
-
-pub const JMSG_VERSION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 76;
-
-pub const JMSG_COPYRIGHT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 75;
-
-pub const JERR_XMS_WRITE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 74;
-
-pub const JERR_XMS_READ: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 73;
-
-pub const JERR_WIDTH_OVERFLOW: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 72;
-
-pub const JERR_VIRTUAL_BUG: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 71;
-
-pub const JERR_UNKNOWN_MARKER: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 70;
-
-pub const JERR_TFILE_WRITE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 68;
-
-pub const JERR_TFILE_SEEK: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 67;
-
-pub const JERR_TFILE_READ: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 66;
-
-pub const JERR_TFILE_CREATE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 65;
-
-pub const JERR_SOS_NO_SOF: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 64;
-
-pub const JERR_SOI_DUPLICATE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 63;
-
-pub const JERR_SOF_UNSUPPORTED: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 62;
-
-pub const JERR_SOF_NO_SOS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 61;
-
-pub const JERR_SOF_DUPLICATE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 60;
-
-pub const JERR_QUANT_MANY_COLORS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 59;
-
-pub const JERR_QUANT_FEW_COLORS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 58;
-
-pub const JERR_QUANT_COMPONENTS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 57;
-
-pub const JERR_OUT_OF_MEMORY: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 56;
-
-pub const JERR_NO_SOI: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 55;
-
-pub const JERR_NO_QUANT_TABLE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 54;
-
-pub const JERR_NO_IMAGE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 53;
-
-pub const JERR_NO_HUFF_TABLE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 52;
-
-pub const JERR_NO_BACKING_STORE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 51;
-
-pub const JERR_NO_ARITH_TABLE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 50;
-
-pub const JERR_NOT_COMPILED: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 49;
-
-pub const JERR_NOTIMPL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 48;
-
-pub const JERR_MODE_CHANGE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 47;
-
-pub const JERR_MISSING_DATA: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 46;
-
-pub const JERR_MISMATCHED_QUANT_TABLE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 45;
-
-pub const JERR_INPUT_EOF: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 44;
-
-pub const JERR_INPUT_EMPTY: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 43;
-
-pub const JERR_IMAGE_TOO_BIG: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 42;
-
-pub const JERR_HUFF_MISSING_CODE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 41;
-
-pub const JERR_HUFF_CLEN_OVERFLOW: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 40;
-
-pub const JERR_FRACT_SAMPLE_NOTIMPL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 39;
-
-pub const JERR_FILE_WRITE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 38;
-
-pub const JERR_FILE_READ: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 37;
-
-pub const JERR_EOI_EXPECTED: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 36;
-
-pub const JERR_EMS_WRITE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 35;
-
-pub const JERR_EMS_READ: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 34;
-
-pub const JERR_EMPTY_IMAGE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 33;
-
-pub const JERR_DQT_INDEX: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 32;
-
-pub const JERR_DHT_INDEX: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 31;
-
-pub const JERR_DAC_VALUE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 30;
-
-pub const JERR_DAC_INDEX: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 29;
-
-pub const JERR_CONVERSION_NOTIMPL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 28;
-
-pub const JERR_COMPONENT_COUNT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 27;
-
-pub const JERR_CCIR601_NOTIMPL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 26;
-
-pub const JERR_BUFFER_SIZE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 24;
-
-pub const JERR_BAD_VIRTUAL_ACCESS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 23;
-
-pub const JERR_BAD_SCAN_SCRIPT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 20;
-
-pub const JERR_BAD_SAMPLING: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 19;
-
-pub const JERR_BAD_PROG_SCRIPT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 18;
-
-pub const JERR_BAD_PROGRESSION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 17;
-
-pub const JERR_BAD_PRECISION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 16;
-
-pub const JERR_BAD_POOL_ID: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 15;
-
-pub const JERR_BAD_MCU_SIZE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 14;
-
-pub const JERR_BAD_LENGTH: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 12;
-
-pub const JERR_BAD_J_COLORSPACE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 11;
-
-pub const JERR_BAD_IN_COLORSPACE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 10;
-
-pub const JERR_BAD_HUFF_TABLE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 9;
-
-pub const JERR_BAD_DROP_SAMPLING: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 8;
-
-pub const JERR_BAD_DCTSIZE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 7;
-
-pub const JERR_BAD_DCT_COEF: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 6;
-
-pub const JERR_BAD_CROP_SPEC: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 5;
-
-pub const JERR_BAD_COMPONENT_ID: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 4;
-
-pub const JERR_BAD_BUFFER_MODE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 3;
-
-pub const JERR_BAD_ALLOC_CHUNK: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 2;
+pub const JMSG_NOMESSAGE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 0;
 
 pub const JERR_BAD_ALIGN_TYPE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 1;
 
-pub const JMSG_NOMESSAGE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 0;
+pub const JERR_BAD_ALLOC_CHUNK: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 2;
+
+pub const JERR_BAD_BUFFER_MODE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 3;
+
+pub const JERR_BAD_COMPONENT_ID: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 4;
+
+pub const JERR_BAD_CROP_SPEC: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 5;
+
+pub const JERR_BAD_DCT_COEF: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 6;
+
+pub const JERR_BAD_DCTSIZE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 7;
+
+pub const JERR_BAD_DROP_SAMPLING: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 8;
+
+pub const JERR_BAD_HUFF_TABLE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 9;
+
+pub const JERR_BAD_IN_COLORSPACE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 10;
+
+pub const JERR_BAD_J_COLORSPACE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 11;
+
+pub const JERR_BAD_LENGTH: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 12;
+
+pub const JERR_BAD_LIB_VERSION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 13;
+
+pub const JERR_BAD_MCU_SIZE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 14;
+
+pub const JERR_BAD_POOL_ID: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 15;
+
+pub const JERR_BAD_PRECISION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 16;
+
+pub const JERR_BAD_PROGRESSION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 17;
+
+pub const JERR_BAD_PROG_SCRIPT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 18;
+
+pub const JERR_BAD_SAMPLING: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 19;
+
+pub const JERR_BAD_SCAN_SCRIPT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 20;
+
+pub const JERR_BAD_STATE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 21;
+
+pub const JERR_BAD_STRUCT_SIZE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 22;
+
+pub const JERR_BAD_VIRTUAL_ACCESS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 23;
+
+pub const JERR_BUFFER_SIZE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 24;
+
+pub const JERR_CANT_SUSPEND: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 25;
+
+pub const JERR_CCIR601_NOTIMPL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 26;
+
+pub const JERR_COMPONENT_COUNT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 27;
+
+pub const JERR_CONVERSION_NOTIMPL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 28;
+
+pub const JERR_DAC_INDEX: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 29;
+
+pub const JERR_DAC_VALUE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 30;
+
+pub const JERR_DHT_INDEX: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 31;
+
+pub const JERR_DQT_INDEX: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 32;
+
+pub const JERR_EMPTY_IMAGE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 33;
+
+pub const JERR_EMS_READ: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 34;
+
+pub const JERR_EMS_WRITE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 35;
+
+pub const JERR_EOI_EXPECTED: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 36;
+
+pub const JERR_FILE_READ: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 37;
+
+pub const JERR_FILE_WRITE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 38;
+
+pub const JERR_FRACT_SAMPLE_NOTIMPL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 39;
+
+pub const JERR_HUFF_CLEN_OVERFLOW: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 40;
+
+pub const JERR_HUFF_MISSING_CODE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 41;
+
+pub const JERR_IMAGE_TOO_BIG: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 42;
+
+pub const JERR_INPUT_EMPTY: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 43;
+
+pub const JERR_INPUT_EOF: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 44;
+
+pub const JERR_MISMATCHED_QUANT_TABLE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 45;
+
+pub const JERR_MISSING_DATA: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 46;
+
+pub const JERR_MODE_CHANGE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 47;
+
+pub const JERR_NOTIMPL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 48;
+
+pub const JERR_NOT_COMPILED: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 49;
+
+pub const JERR_NO_ARITH_TABLE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 50;
+
+pub const JERR_NO_BACKING_STORE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 51;
+
+pub const JERR_NO_HUFF_TABLE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 52;
+
+pub const JERR_NO_IMAGE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 53;
+
+pub const JERR_NO_QUANT_TABLE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 54;
+
+pub const JERR_NO_SOI: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 55;
+
+pub const JERR_OUT_OF_MEMORY: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 56;
+
+pub const JERR_QUANT_COMPONENTS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 57;
+
+pub const JERR_QUANT_FEW_COLORS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 58;
+
+pub const JERR_QUANT_MANY_COLORS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 59;
+
+pub const JERR_SOF_DUPLICATE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 60;
+
+pub const JERR_SOF_NO_SOS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 61;
+
+pub const JERR_SOF_UNSUPPORTED: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 62;
+
+pub const JERR_SOI_DUPLICATE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 63;
+
+pub const JERR_SOS_NO_SOF: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 64;
+
+pub const JERR_TFILE_CREATE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 65;
+
+pub const JERR_TFILE_READ: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 66;
+
+pub const JERR_TFILE_SEEK: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 67;
+
+pub const JERR_TFILE_WRITE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 68;
+
+pub const JERR_TOO_LITTLE_DATA: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 69;
+
+pub const JERR_UNKNOWN_MARKER: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 70;
+
+pub const JERR_VIRTUAL_BUG: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 71;
+
+pub const JERR_WIDTH_OVERFLOW: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 72;
+
+pub const JERR_XMS_READ: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 73;
+
+pub const JERR_XMS_WRITE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 74;
+
+pub const JMSG_COPYRIGHT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 75;
+
+pub const JMSG_VERSION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 76;
+
+pub const JTRC_16BIT_TABLES: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 77;
+
+pub const JTRC_ADOBE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 78;
+
+pub const JTRC_APP0: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 79;
+
+pub const JTRC_APP14: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 80;
+
+pub const JTRC_DAC: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 81;
+
+pub const JTRC_DHT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 82;
+
+pub const JTRC_DQT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 83;
+
+pub const JTRC_DRI: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 84;
+
+pub const JTRC_EMS_CLOSE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 85;
+
+pub const JTRC_EMS_OPEN: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 86;
+
+pub const JTRC_EOI: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 87;
+
+pub const JTRC_HUFFBITS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 88;
+
+pub const JTRC_JFIF: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 89;
+
+pub const JTRC_JFIF_BADTHUMBNAILSIZE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 90;
+
+pub const JTRC_JFIF_EXTENSION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 91;
+
+pub const JTRC_JFIF_THUMBNAIL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 92;
+
+pub const JTRC_MISC_MARKER: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 93;
+
+pub const JTRC_PARMLESS_MARKER: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 94;
+
+pub const JTRC_QUANTVALS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 95;
+
+pub const JTRC_QUANT_3_NCOLORS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 96;
+
+pub const JTRC_QUANT_NCOLORS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 97;
+
+pub const JTRC_QUANT_SELECTED: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 98;
+
+pub const JTRC_RECOVERY_ACTION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 99;
+
+pub const JTRC_RST: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 100;
+
+pub const JTRC_SMOOTH_NOTIMPL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 101;
+
+pub const JTRC_SOF: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 102;
+
+pub const JTRC_SOF_COMPONENT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 103;
+
+pub const JTRC_SOI: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 104;
+
+pub const JTRC_SOS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 105;
+
+pub const JTRC_SOS_COMPONENT: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 106;
+
+pub const JTRC_SOS_PARAMS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 107;
+
+pub const JTRC_TFILE_CLOSE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 108;
+
+pub const JTRC_TFILE_OPEN: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 109;
+
+pub const JTRC_THUMB_JPEG: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 110;
+
+pub const JTRC_THUMB_PALETTE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 111;
+
+pub const JTRC_THUMB_RGB: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 112;
+
+pub const JTRC_UNKNOWN_IDS: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 113;
+
+pub const JTRC_XMS_CLOSE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 114;
+
+pub const JTRC_XMS_OPEN: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 115;
+
+pub const JWRN_ADOBE_XFORM: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 116;
+
+pub const JWRN_ARITH_BAD_CODE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 117;
+
+pub const JWRN_BOGUS_PROGRESSION: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 118;
+
+pub const JWRN_EXTRANEOUS_DATA: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 119;
+
+pub const JWRN_HIT_MARKER: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 120;
+
+pub const JWRN_HUFF_BAD_CODE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 121;
+
+pub const JWRN_JFIF_MAJOR: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 122;
+
+pub const JWRN_JPEG_EOF: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 123;
+
+pub const JWRN_MUST_RESYNC: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 124;
+
+pub const JWRN_NOT_SEQUENTIAL: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 125;
+
+pub const JWRN_TOO_MUCH_DATA: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 126;
+
+pub const JMSG_LASTMSGCODE: crate::src::jpeg_8c::jerror::C2RustUnnamed_1 = 127;
 use ::libc;
 
 pub use crate::stddef_h::size_t;
@@ -289,10 +289,10 @@ pub use crate::jpeglib_h::JBLOCKROW;
 pub use crate::jpeglib_h::JSAMPARRAY;
 pub use crate::jpeglib_h::JSAMPROW;
 pub use crate::src::jpeg_8c::jcomapi::jpeg_destroy;
-use crate::stdlib::exit;
 use crate::stdlib::fprintf;
-use crate::stdlib::sprintf;
 use crate::stdlib::stderr;
+use ::libc::exit;
+use ::libc::sprintf;
 /*
  * jerror.c
  *
@@ -493,8 +493,8 @@ unsafe extern "C" fn error_exit(mut cinfo: crate::jpeglib_h::j_common_ptr) {
     )
     .expect("non-null function pointer")(cinfo);
     /* Let the memory manager delete any temp files before we die */
-    crate::src::jpeg_8c::jcomapi::jpeg_destroy(cinfo);
-    crate::stdlib::exit(1 as libc::c_int);
+    crate::src::jpeg_8c::jcomapi::jpeg_destroy(cinfo as *mut crate::jpeglib_h::jpeg_common_struct);
+    ::libc::exit(1 as libc::c_int);
 }
 /*
  * Actual output of an error or trace message.
@@ -615,9 +615,9 @@ unsafe extern "C" fn format_message(
     }
     /* Format the message into the passed buffer */
     if isstring != 0 {
-        crate::stdlib::sprintf(buffer, msgtext, (*err).msg_parm.s.as_mut_ptr());
+        ::libc::sprintf(buffer, msgtext, (*err).msg_parm.s.as_mut_ptr());
     } else {
-        crate::stdlib::sprintf(
+        ::libc::sprintf(
             buffer,
             msgtext,
             (*err).msg_parm.i[0 as libc::c_int as usize],
