@@ -604,11 +604,12 @@ pub unsafe extern "C" fn AAS_OriginOfMoverWithModelNum(
     let mut i: i32 = 0; //end for
     let mut ent: *mut crate::be_aas_def_h::aas_entity_t =
         0 as *mut crate::be_aas_def_h::aas_entity_t;
-    i = 0;
-    while i < crate::src::botlib::be_aas_main::aasworld.maxentities {
+
+    for i in 0..crate::src::botlib::be_aas_main::aasworld.maxentities {
         ent = &mut *crate::src::botlib::be_aas_main::aasworld
             .entities
             .offset(i as isize) as *mut crate::be_aas_def_h::aas_entity_t;
+
         if (*ent).i.type_0 == ET_MOVER as i32 {
             if (*ent).i.modelindex == modelnum {
                 *origin.offset(0) = (*ent).i.origin[0];
@@ -619,7 +620,6 @@ pub unsafe extern "C" fn AAS_OriginOfMoverWithModelNum(
             //end if
             //end if
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qfalse as i32;
 }
@@ -800,11 +800,12 @@ pub unsafe extern "C" fn AAS_NearestEntity(
     let mut dir: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     bestentnum = 0;
     bestdist = 99999f32;
-    i = 0;
-    while i < crate::src::botlib::be_aas_main::aasworld.maxentities {
+
+    for i in 0..crate::src::botlib::be_aas_main::aasworld.maxentities {
         ent = &mut *crate::src::botlib::be_aas_main::aasworld
             .entities
             .offset(i as isize) as *mut crate::be_aas_def_h::aas_entity_t;
+
         if !((*ent).i.modelindex != modelindex) {
             dir[0] = (*ent).i.origin[0] - *origin.offset(0);
             dir[1] = (*ent).i.origin[1] - *origin.offset(1);
@@ -824,7 +825,6 @@ pub unsafe extern "C" fn AAS_NearestEntity(
                 //end if
             }
         }
-        i += 1
     }
     return bestentnum;
 }

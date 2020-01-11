@@ -276,9 +276,7 @@ pub unsafe extern "C" fn jpeg_start_decompress(
                     break;
                 }
                 /* Advance progress counter if appropriate */
-                if !(*cinfo).progress.is_null()
-                    && (retcode == 3 || retcode == 1)
-                {
+                if !(*cinfo).progress.is_null() && (retcode == 3 || retcode == 1) {
                     (*(*cinfo).progress).pass_counter += 1;
                     if (*(*cinfo).progress).pass_counter >= (*(*cinfo).progress).pass_limit {
                         /* jdmaster underestimated number of scans; ratchet up one scan */
@@ -366,7 +364,6 @@ unsafe extern "C" fn output_pass_setup(
             )
             .expect("non-null function pointer")(
                 cinfo,
-                
                 0 as crate::jpeglib_h::JSAMPARRAY,
                 &mut (*cinfo).output_scanline,
                 0u32,
@@ -396,11 +393,7 @@ unsafe extern "C" fn output_pass_setup(
     /* Ready for application to drive output pass through
      * jpeg_read_scanlines or jpeg_read_raw_data.
      */
-    (*cinfo).global_state = if (*cinfo).raw_data_out != 0 {
-        206
-    } else {
-        205
-    };
+    (*cinfo).global_state = if (*cinfo).raw_data_out != 0 { 206 } else { 205 };
     return 1;
 }
 /*
@@ -440,10 +433,7 @@ pub unsafe extern "C" fn jpeg_read_scanlines(
                 .emit_message
                 .expect("non-null function pointer"),
         )
-        .expect("non-null function pointer")(
-            cinfo as crate::jpeglib_h::j_common_ptr,
-            -(1),
-        );
+        .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr, -(1));
         return 0u32;
     }
     /* Call progress monitor hook if present */
@@ -465,7 +455,7 @@ pub unsafe extern "C" fn jpeg_read_scanlines(
             .expect("non-null function pointer"),
     )
     .expect("non-null function pointer")(cinfo, scanlines, &mut row_ctr, max_lines);
-    (*cinfo).output_scanline =  ((*cinfo).output_scanline).wrapping_add(row_ctr);
+    (*cinfo).output_scanline = ((*cinfo).output_scanline).wrapping_add(row_ctr);
     return row_ctr;
 }
 /* Replaces jpeg_read_scanlines when reading raw downsampled data. */
@@ -498,10 +488,7 @@ pub unsafe extern "C" fn jpeg_read_raw_data(
                 .emit_message
                 .expect("non-null function pointer"),
         )
-        .expect("non-null function pointer")(
-            cinfo as crate::jpeglib_h::j_common_ptr,
-            -(1),
-        );
+        .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr, -(1));
         return 0u32;
     }
     /* Call progress monitor hook if present */
@@ -539,9 +526,7 @@ pub unsafe extern "C" fn jpeg_read_raw_data(
         return 0u32;
     } /* suspension forced, can do nothing more */
     /* OK, we processed one iMCU row. */
-    (*cinfo).output_scanline =
-        
-        ((*cinfo).output_scanline).wrapping_add(lines_per_iMCU_row);
+    (*cinfo).output_scanline = ((*cinfo).output_scanline).wrapping_add(lines_per_iMCU_row);
     return lines_per_iMCU_row;
 }
 /* Additional entry points for buffered-image mode. */

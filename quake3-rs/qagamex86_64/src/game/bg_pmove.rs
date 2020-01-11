@@ -383,13 +383,11 @@ pub unsafe extern "C" fn PM_AddTouchEnt(mut entityNum: i32) {
     if (*pm).numtouch == 32 {
         return;
     }
-    // see if it is already added
-    i = 0;
-    while i < (*pm).numtouch {
+
+    for i in 0..(*pm).numtouch {
         if (*pm).touchents[i as usize] == entityNum {
             return;
         }
-        i += 1
     }
     // add it
     (*pm).touchents[(*pm).numtouch as usize] = entityNum;
@@ -782,12 +780,10 @@ unsafe extern "C" fn PM_WaterMove() {
         wishvel[2] = -60f32
     // sink towards bottom
     } else {
-        i = 0;
-        while i < 3 {
+        for i in 0..3 {
             wishvel[i as usize] =
                 scale * pml.forward[i as usize] * (*pm).cmd.forwardmove as i32 as f32
                     + scale * pml.right[i as usize] * (*pm).cmd.rightmove as i32 as f32;
-            i += 1
         }
         wishvel[2] += scale * (*pm).cmd.upmove as i32 as f32
     }
@@ -848,12 +844,10 @@ unsafe extern "C" fn PM_FlyMove() {
         wishvel[1] = 0f32;
         wishvel[2] = 0f32
     } else {
-        i = 0;
-        while i < 3 {
+        for i in 0..3 {
             wishvel[i as usize] =
                 scale * pml.forward[i as usize] * (*pm).cmd.forwardmove as i32 as f32
                     + scale * pml.right[i as usize] * (*pm).cmd.rightmove as i32 as f32;
-            i += 1
         }
         wishvel[2] += scale * (*pm).cmd.upmove as i32 as f32
     }
@@ -901,10 +895,9 @@ unsafe extern "C" fn PM_AirMove() {
     pml.right[2] = 0f32;
     crate::src::qcommon::q_math::VectorNormalize(pml.forward.as_mut_ptr());
     crate::src::qcommon::q_math::VectorNormalize(pml.right.as_mut_ptr());
-    i = 0;
-    while i < 2 {
+
+    for i in 0..2 {
         wishvel[i as usize] = pml.forward[i as usize] * fmove + pml.right[i as usize] * smove;
-        i += 1
     }
     wishvel[2] = 0f32;
     wishdir[0] = wishvel[0];
@@ -1035,10 +1028,9 @@ unsafe extern "C" fn PM_WalkMove() {
     //
     crate::src::qcommon::q_math::VectorNormalize(pml.forward.as_mut_ptr());
     crate::src::qcommon::q_math::VectorNormalize(pml.right.as_mut_ptr());
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         wishvel[i as usize] = pml.forward[i as usize] * fmove + pml.right[i as usize] * smove;
-        i += 1
     }
     // when going up or down slopes the wish velocity should Not be zero
     //	wishvel[2] = 0;
@@ -1175,10 +1167,9 @@ unsafe extern "C" fn PM_NoclipMove() {
     scale = PM_CmdScale(&mut (*pm).cmd);
     fmove = (*pm).cmd.forwardmove as f32;
     smove = (*pm).cmd.rightmove as f32;
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         wishvel[i as usize] = pml.forward[i as usize] * fmove + pml.right[i as usize] * smove;
-        i += 1
     }
     wishvel[2] += (*pm).cmd.upmove as i32 as f32;
     wishdir[0] = wishvel[0];
@@ -1322,18 +1313,22 @@ unsafe extern "C" fn PM_CorrectAllSolid(
         );
     }
     // jitter around
-    i = -(1);
-    while i <= 1 {
-        j = -(1);
-        while j <= 1 {
-            k = -(1);
-            while k <= 1 {
+
+    for i in -(1)..=1 {
+        for j in -(1)..=1 {
+            for k in -(1)..=1 {
                 point[0] = (*(*pm).ps).origin[0];
+
                 point[1] = (*(*pm).ps).origin[1];
+
                 point[2] = (*(*pm).ps).origin[2];
+
                 point[0] += i as f32;
+
                 point[1] += j as f32;
+
                 point[2] += k as f32;
+
                 (*pm).trace.expect("non-null function pointer")(
                     trace,
                     point.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -1343,6 +1338,7 @@ unsafe extern "C" fn PM_CorrectAllSolid(
                     (*(*pm).ps).clientNum,
                     (*pm).tracemask,
                 );
+
                 if (*trace).allsolid as u64 == 0 {
                     point[0] = (*(*pm).ps).origin[0];
                     point[1] = (*(*pm).ps).origin[1];
@@ -1361,11 +1357,8 @@ unsafe extern "C" fn PM_CorrectAllSolid(
                     pml.groundTrace = *trace;
                     return crate::src::qcommon::q_shared::qtrue as i32;
                 }
-                k += 1
             }
-            j += 1
         }
-        i += 1
     }
     (*(*pm).ps).groundEntityNum = ((1) << 10) - 1;
     pml.groundPlane = crate::src::qcommon::q_shared::qfalse;

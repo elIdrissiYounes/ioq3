@@ -366,12 +366,11 @@ pub unsafe extern "C" fn CIN_CloseAllVideos() {
 
 unsafe extern "C" fn CIN_HandleForVideo() -> i32 {
     let mut i: i32 = 0;
-    i = 0;
-    while i < 16 {
+
+    for i in 0..16 {
         if cinTable[i as usize].fileName[0] as i32 == 0 {
             return i;
         }
-        i += 1
     }
     crate::src::qcommon::common::Com_Error(
         crate::src::qcommon::q_shared::ERR_DROP as i32,
@@ -2200,14 +2199,11 @@ unsafe extern "C" fn setupQuad(mut xOff: isize, mut yOff: isize) {
     numQuadCels += numQuadCels / 4;
     numQuadCels += 64;
     cinTable[currentHandle as usize].onQuad = 0;
-    y = 0;
-    while y < cinTable[currentHandle as usize].ysize as isize {
-        x = 0;
-        while x < cinTable[currentHandle as usize].xsize as isize {
+
+    for y in (0..cinTable[currentHandle as usize].ysize as isize).step_by(16 as usize) {
+        for x in (0..cinTable[currentHandle as usize].xsize as isize).step_by(16 as usize) {
             recurseQuad(x, y, 16, xOff, yOff);
-            x += 16
         }
-        y += 16
     }
     temp = 0 as *mut crate::src::qcommon::q_shared::byte;
     i = numQuadCels - 64;
@@ -2301,12 +2297,12 @@ unsafe extern "C" fn RoQPrepMcomp(mut xoff: isize, mut yoff: isize) {
     y = 0;
     while y < 16 {
         temp2 = (y + yoff - 8) * i;
-        x = 0;
-        while x < 16 {
+
+        for x in 0..16 {
             temp = (x + xoff - 8) * j;
+
             cin.mcomp[(x * 16 + y) as usize] =
                 (cinTable[currentHandle as usize].normalBuffer0 - (temp2 + temp)) as i32;
-            x += 1
         }
         y += 1
     }
@@ -3021,15 +3017,14 @@ pub unsafe extern "C" fn CIN_ResampleCinematic(mut handle: i32, mut buf2: *mut i
             iiy = iy << 12;
             ix = 0;
             while ix < 2048 {
-                ic = ix;
-                while ic < ix + 4 {
+                for ic in ix..ix + 4 {
                     *bc2 = (*bc3.offset((iiy + ic) as isize) as i32
                         + *bc3.offset((iiy + 4 + ic) as isize) as i32
                         + *bc3.offset((iiy + 2048 + ic) as isize) as i32
                         + *bc3.offset((iiy + 2048 + 4 + ic) as isize) as i32
                         >> 2) as crate::src::qcommon::q_shared::byte;
+
                     bc2 = bc2.offset(1);
-                    ic += 1
                 }
                 ix += 8
             }
@@ -3049,13 +3044,12 @@ pub unsafe extern "C" fn CIN_ResampleCinematic(mut handle: i32, mut buf2: *mut i
             iiy_0 = iy << 11;
             ix = 0;
             while ix < 2048 {
-                ic_0 = ix;
-                while ic_0 < ix + 4 {
+                for ic_0 in ix..ix + 4 {
                     *bc2_0 = (*bc3_0.offset((iiy_0 + ic_0) as isize) as i32
                         + *bc3_0.offset((iiy_0 + 4 + ic_0) as isize) as i32
                         >> 1) as crate::src::qcommon::q_shared::byte;
+
                     bc2_0 = bc2_0.offset(1);
-                    ic_0 += 1
                 }
                 ix += 8
             }

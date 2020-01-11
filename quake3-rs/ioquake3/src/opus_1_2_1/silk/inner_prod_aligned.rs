@@ -279,13 +279,12 @@ pub unsafe extern "C" fn silk_inner_prod_aligned_scale(
 /*    I vector lengths                                              */ {
     let mut i: i32 = 0;
     let mut sum: crate::opus_types_h::opus_int32 = 0;
-    i = 0;
-    while i < len {
+
+    for i in 0..len {
         sum = sum
             + (*inVec1.offset(i as isize) as crate::opus_types_h::opus_int32
                 * *inVec2.offset(i as isize) as crate::opus_types_h::opus_int32
                 >> scale);
-        i += 1
     }
     return sum;
 }

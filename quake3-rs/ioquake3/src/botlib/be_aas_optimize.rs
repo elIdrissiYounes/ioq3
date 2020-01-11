@@ -177,8 +177,8 @@ pub unsafe extern "C" fn AAS_OptimizeEdge(
     } //end for
     optedge = &mut *(*optimized).edges.offset((*optimized).numedges as isize)
         as *mut crate::aasfile_h::aas_edge_t; //end if
-    i = 0;
-    while i < 2 {
+
+    for i in 0..2 {
         if *(*optimized)
             .vertexoptimizeindex
             .offset((*edge).v[i as usize] as isize)
@@ -212,8 +212,6 @@ pub unsafe extern "C" fn AAS_OptimizeEdge(
                 .offset((*edge).v[i as usize] as isize) = (*optimized).numvertexes;
             (*optimized).numvertexes += 1
         }
-        i += 1
-        //end else
     }
     *(*optimized)
         .edgeoptimizeindex
@@ -289,12 +287,14 @@ pub unsafe extern "C" fn AAS_OptimizeFace(
     );
     (*optface).numedges = 0;
     (*optface).firstedge = (*optimized).edgeindexsize;
-    i = 0;
-    while i < (*face).numedges {
+
+    for i in 0..(*face).numedges {
         edgenum = *crate::src::botlib::be_aas_main::aasworld
             .edgeindex
             .offset(((*face).firstedge + i) as isize);
+
         optedgenum = AAS_OptimizeEdge(optimized, edgenum);
+
         if optedgenum != 0 {
             *(*optimized)
                 .edgeindex
@@ -302,8 +302,6 @@ pub unsafe extern "C" fn AAS_OptimizeFace(
             (*optface).numedges += 1;
             (*optimized).edgeindexsize += 1
         }
-        i += 1
-        //end if
     }
     *(*optimized)
         .faceoptimizeindex

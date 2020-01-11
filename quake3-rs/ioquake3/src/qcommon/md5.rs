@@ -718,8 +718,8 @@ pub unsafe extern "C" fn Com_MD5File(
     crate::src::qcommon::files::FS_FCloseFile(f);
     MD5Final(&mut md5, digest.as_mut_ptr());
     final_0[0] = '\u{0}' as i8;
-    i = 0;
-    while i < 16 {
+
+    for i in 0..16 {
         crate::src::qcommon::q_shared::Q_strcat(
             final_0.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 33]>() as i32,
@@ -728,7 +728,6 @@ pub unsafe extern "C" fn Com_MD5File(
                 digest[i as usize] as i32,
             ),
         );
-        i += 1
     }
     return final_0.as_mut_ptr();
 }

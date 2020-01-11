@@ -408,12 +408,11 @@ unsafe extern "C" fn CM_SignbitsForNormal(
     let mut bits: i32 = 0;
     let mut j: i32 = 0;
     bits = 0;
-    j = 0;
-    while j < 3 {
+
+    for j in 0..3 {
         if *normal.offset(j as isize) < 0f32 {
             bits |= (1) << j
         }
-        j += 1
     }
     return bits;
 }
@@ -812,15 +811,16 @@ unsafe extern "C" fn CM_RemoveDegenerateColumns(
             j = 0;
             while j < (*grid).height {
                 // remove the column
-                k = i + 2;
-                while k < (*grid).width {
+
+                for k in i + 2..(*grid).width {
                     (*grid).points[(k - 1) as usize][j as usize][0] =
                         (*grid).points[k as usize][j as usize][0];
+
                     (*grid).points[(k - 1) as usize][j as usize][1] =
                         (*grid).points[k as usize][j as usize][1];
+
                     (*grid).points[(k - 1) as usize][j as usize][2] =
                         (*grid).points[k as usize][j as usize][2];
-                    k += 1
                 }
                 j += 1
             }
@@ -935,12 +935,11 @@ CM_FindPlane2
 pub unsafe extern "C" fn CM_FindPlane2(mut plane: *mut f32, mut flipped: *mut i32) -> i32 {
     let mut i: i32 = 0;
     // see if the points are close enough to an existing plane
-    i = 0;
-    while i < numPlanes {
+
+    for i in 0..numPlanes {
         if CM_PlaneEqual(&mut *planes.as_mut_ptr().offset(i as isize), plane, flipped) != 0 {
             return i;
         }
-        i += 1
     }
     // add a new plane
     if numPlanes == 2048 {
@@ -972,8 +971,8 @@ unsafe extern "C" fn CM_FindPlane(mut p1: *mut f32, mut p2: *mut f32, mut p3: *m
         return -(1i32);
     }
     // see if the points are close enough to an existing plane
-    i = 0;
-    while i < numPlanes {
+
+    for i in 0..numPlanes {
         if !(plane[0] * planes[i as usize].plane[0]
             + plane[1] * planes[i as usize].plane[1]
             + plane[2] * planes[i as usize].plane[2]
@@ -1000,8 +999,6 @@ unsafe extern "C" fn CM_FindPlane(mut p1: *mut f32, mut p2: *mut f32, mut p3: *m
                 }
             }
         }
-        i += 1
-        // allow backwards planes?
     }
     // add a new plane
     if numPlanes == 2048 {
@@ -1224,17 +1221,19 @@ unsafe extern "C" fn CM_SetBorderInward(
         let mut back: i32 = 0;
         front = 0;
         back = 0;
-        l = 0;
-        while l < numPoints {
+
+        for l in 0..numPoints {
             let mut side: i32 = 0;
+
             side = CM_PointOnPlaneSide(points[l as usize], (*facet).borderPlanes[k as usize]);
+
             if side == 0 {
                 front += 1
             }
+
             if side == 1 {
                 back += 1
             }
-            l += 1
         }
         if front != 0 && back == 0 {
             (*facet).borderInward[k as usize] = crate::src::qcommon::q_shared::qtrue as i32
@@ -2641,9 +2640,7 @@ pub unsafe extern "C" fn CM_DrawDebugSurface(
     i = 0;
     facet = (*pc).facets;
     while i < (*pc).numFacets {
-        k = 0;
-        while k < (*facet).numBorders + 1 {
-            //
+        for k in 0..(*facet).numBorders + 1 {
             if k < (*facet).numBorders {
                 planenum = (*facet).borderPlanes[k as usize];
                 inward = (*facet).borderInward[k as usize]
@@ -2652,20 +2649,26 @@ pub unsafe extern "C" fn CM_DrawDebugSurface(
                 inward = crate::src::qcommon::q_shared::qfalse as i32
                 //continue;
             }
+
             plane[0] = (*(*pc).planes.offset(planenum as isize)).plane[0];
+
             plane[1] = (*(*pc).planes.offset(planenum as isize)).plane[1];
+
             plane[2] = (*(*pc).planes.offset(planenum as isize)).plane[2];
+
             plane[3] = (*(*pc).planes.offset(planenum as isize)).plane[3];
-            //planenum = facet->surfacePlane;
+
             if inward != 0 {
                 plane[0] = crate::src::qcommon::q_math::vec3_origin[0] - plane[0];
                 plane[1] = crate::src::qcommon::q_math::vec3_origin[1] - plane[1];
                 plane[2] = crate::src::qcommon::q_math::vec3_origin[2] - plane[2];
                 plane[3] = -plane[3]
             }
+
             plane[3] += (*cv).value;
-            //*
-            n = 0; //end for
+
+            n = 0;
+
             while n < 3 {
                 if plane[n as usize] > 0f32 {
                     v1[n as usize] = maxs[n as usize]
@@ -2674,15 +2677,21 @@ pub unsafe extern "C" fn CM_DrawDebugSurface(
                 }
                 n += 1
             }
+
             v2[0] = -plane[0];
+
             v2[1] = -plane[1];
+
             v2[2] = -plane[2];
+
             plane[3] = (plane[3] as f64
                 + crate::stdlib::fabs((v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2]) as f64))
                 as f32;
-            //*/
+
             w = crate::src::qcommon::cm_polylib::BaseWindingForPlane(plane.as_mut_ptr(), plane[3]);
+
             j = 0;
+
             while j < (*facet).numBorders + 1 && !w.is_null() {
                 //
                 if j < (*facet).numBorders {
@@ -2733,6 +2742,7 @@ pub unsafe extern "C" fn CM_DrawDebugSurface(
                 }
                 j += 1
             }
+
             if !w.is_null() {
                 if facet == debugFacet as *mut crate::src::qcommon::cm_patch::facet_t {
                     drawPoly.expect("non-null function pointer")(
@@ -2754,7 +2764,6 @@ pub unsafe extern "C" fn CM_DrawDebugSurface(
                     b"winding chopped away by border planes\n\x00" as *const u8 as *const i8,
                 );
             }
-            k += 1
         }
         i += 1;
         facet = facet.offset(1)

@@ -699,12 +699,14 @@ unsafe extern "C" fn LoadConfig_MenuInit() {
         s_configs.list.numitems = 128
     }
     configname = s_configs.names.as_mut_ptr();
-    i = 0;
-    while i < s_configs.list.numitems {
+
+    for i in 0..s_configs.list.numitems {
         let ref mut fresh0 = *s_configs.list.itemnames.offset(i as isize);
+
         *fresh0 = configname;
         // strip extension
         len = crate::stdlib::strlen(configname) as i32;
+
         if crate::src::qcommon::q_shared::Q_stricmp(
             configname.offset(len as isize).offset(-(4)),
             b".cfg\x00" as *const u8 as *const i8,
@@ -712,9 +714,10 @@ unsafe extern "C" fn LoadConfig_MenuInit() {
         {
             *configname.offset((len - 4) as isize) = '\u{0}' as i8
         }
+
         crate::src::qcommon::q_shared::Q_strupr(configname);
+
         configname = configname.offset((len + 1) as isize);
-        i += 1
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
         &mut s_configs.menu,

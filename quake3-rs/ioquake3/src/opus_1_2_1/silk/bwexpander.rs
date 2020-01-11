@@ -132,20 +132,20 @@ pub unsafe extern "C" fn silk_bwexpander(
     let mut chirp_minus_one_Q16: crate::opus_types_h::opus_int32 = chirp_Q16 - 65536;
     /* NB: Dont use silk_SMULWB, instead of silk_RSHIFT_ROUND( silk_MUL(), 16 ), below.  */
     /* Bias in silk_SMULWB can lead to unstable filters                                */
-    i = 0;
-    while i < d - 1 {
+
+    for i in 0..d - 1 {
         *ar.offset(i as isize) = if 16 == 1 {
             (chirp_Q16 * *ar.offset(i as isize) as i32 >> 1)
                 + (chirp_Q16 * *ar.offset(i as isize) as i32 & 1)
         } else {
             ((chirp_Q16 * *ar.offset(i as isize) as i32 >> 16 - 1) + 1) >> 1
         } as crate::opus_types_h::opus_int16;
+
         chirp_Q16 += if 16 == 1 {
             (chirp_Q16 * chirp_minus_one_Q16 >> 1) + (chirp_Q16 * chirp_minus_one_Q16 & 1)
         } else {
             ((chirp_Q16 * chirp_minus_one_Q16 >> 16 - 1) + 1) >> 1
         };
-        i += 1
     }
     *ar.offset((d - 1i32) as isize) = if 16 == 1 {
         (chirp_Q16 * *ar.offset((d - 1i32) as isize) as i32 >> 1)

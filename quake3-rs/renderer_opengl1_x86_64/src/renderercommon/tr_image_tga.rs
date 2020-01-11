@@ -197,8 +197,7 @@ pub unsafe extern "C" fn R_LoadTGA(
     //
     length = crate::src::renderergl1::tr_main::ri
         .FS_ReadFile
-        .expect("non-null function pointer")(name as *mut i8, &mut buffer.v)
-        as i32;
+        .expect("non-null function pointer")(name as *mut i8, &mut buffer.v) as i32;
     if buffer.b.is_null() || length < 0 {
         return;
     }
@@ -218,39 +217,33 @@ pub unsafe extern "C" fn R_LoadTGA(
     targa_header.image_type = *buf_p.offset(2);
     crate::stdlib::memcpy(
         &mut targa_header.colormap_index as *mut u16 as *mut libc::c_void,
-        &mut *buf_p.offset(3) as *mut crate::src::qcommon::q_shared::byte
-            as *const libc::c_void,
+        &mut *buf_p.offset(3) as *mut crate::src::qcommon::q_shared::byte as *const libc::c_void,
         2,
     );
     crate::stdlib::memcpy(
         &mut targa_header.colormap_length as *mut u16 as *mut libc::c_void,
-        &mut *buf_p.offset(5) as *mut crate::src::qcommon::q_shared::byte
-            as *const libc::c_void,
+        &mut *buf_p.offset(5) as *mut crate::src::qcommon::q_shared::byte as *const libc::c_void,
         2,
     );
     targa_header.colormap_size = *buf_p.offset(7);
     crate::stdlib::memcpy(
         &mut targa_header.x_origin as *mut u16 as *mut libc::c_void,
-        &mut *buf_p.offset(8) as *mut crate::src::qcommon::q_shared::byte
-            as *const libc::c_void,
+        &mut *buf_p.offset(8) as *mut crate::src::qcommon::q_shared::byte as *const libc::c_void,
         2,
     );
     crate::stdlib::memcpy(
         &mut targa_header.y_origin as *mut u16 as *mut libc::c_void,
-        &mut *buf_p.offset(10) as *mut crate::src::qcommon::q_shared::byte
-            as *const libc::c_void,
+        &mut *buf_p.offset(10) as *mut crate::src::qcommon::q_shared::byte as *const libc::c_void,
         2,
     );
     crate::stdlib::memcpy(
         &mut targa_header.width as *mut u16 as *mut libc::c_void,
-        &mut *buf_p.offset(12) as *mut crate::src::qcommon::q_shared::byte
-            as *const libc::c_void,
+        &mut *buf_p.offset(12) as *mut crate::src::qcommon::q_shared::byte as *const libc::c_void,
         2,
     );
     crate::stdlib::memcpy(
         &mut targa_header.height as *mut u16 as *mut libc::c_void,
-        &mut *buf_p.offset(14) as *mut crate::src::qcommon::q_shared::byte
-            as *const libc::c_void,
+        &mut *buf_p.offset(14) as *mut crate::src::qcommon::q_shared::byte as *const libc::c_void,
         2,
     );
     targa_header.pixel_size = *buf_p.offset(16);
@@ -296,16 +289,11 @@ pub unsafe extern "C" fn R_LoadTGA(
     }
     columns = targa_header.width as u32;
     rows = targa_header.height as u32;
-    numPixels = columns
-        .wrapping_mul(rows)
-        .wrapping_mul(4u32);
+    numPixels = columns.wrapping_mul(rows).wrapping_mul(4u32);
     if columns == 0
         || rows == 0
         || numPixels > 0x7fffffff
-        || numPixels
-            .wrapping_div(columns)
-            .wrapping_div(4u32)
-            != rows
+        || numPixels.wrapping_div(columns).wrapping_div(4u32) != rows
     {
         crate::src::renderergl1::tr_main::ri
             .Error
@@ -332,9 +320,7 @@ pub unsafe extern "C" fn R_LoadTGA(
         buf_p = buf_p.offset(targa_header.id_length as i32 as isize)
         // skip TARGA image comment
     }
-    if targa_header.image_type as i32 == 2
-        || targa_header.image_type as i32 == 3
-    {
+    if targa_header.image_type as i32 == 2 || targa_header.image_type as i32 == 3 {
         if buf_p.offset(
             columns
                 .wrapping_mul(rows)
@@ -353,11 +339,8 @@ pub unsafe extern "C" fn R_LoadTGA(
         // Uncompressed RGB or gray scale image
         row = rows.wrapping_sub(1u32) as i32;
         while row >= 0 {
-            pixbuf = targa_rgba.offset(
-                (row as u32)
-                    .wrapping_mul(columns)
-                    .wrapping_mul(4u32) as isize,
-            );
+            pixbuf =
+                targa_rgba.offset((row as u32).wrapping_mul(columns).wrapping_mul(4u32) as isize);
             column = 0;
             while (column as u32) < columns {
                 let mut red: u8 = 0;
@@ -460,11 +443,8 @@ pub unsafe extern "C" fn R_LoadTGA(
         let mut j: u8 = 0;
         row = rows.wrapping_sub(1u32) as i32;
         while row >= 0 {
-            pixbuf = targa_rgba.offset(
-                (row as u32)
-                    .wrapping_mul(columns)
-                    .wrapping_mul(4u32) as isize,
-            );
+            pixbuf =
+                targa_rgba.offset((row as u32).wrapping_mul(columns).wrapping_mul(4u32) as isize);
             column = 0;
             's_458: while (column as u32) < columns {
                 if buf_p.offset(1) > end {
@@ -479,15 +459,10 @@ pub unsafe extern "C" fn R_LoadTGA(
                 let fresh20 = buf_p;
                 buf_p = buf_p.offset(1);
                 packetHeader = *fresh20;
-                packetSize = (1
-                    + (packetHeader as i32 & 0x7f))
-                    as u8;
+                packetSize = (1 + (packetHeader as i32 & 0x7f)) as u8;
                 if packetHeader as i32 & 0x80 != 0 {
                     // run-length packet
-                    if buf_p.offset(
-                        (targa_header.pixel_size as i32 / 8) as isize,
-                    ) > end
-                    {
+                    if buf_p.offset((targa_header.pixel_size as i32 / 8) as isize) > end {
                         crate::src::renderergl1::tr_main::ri
                             .Error
                             .expect("non-null function pointer")(
@@ -529,8 +504,7 @@ pub unsafe extern "C" fn R_LoadTGA(
                                 .expect("non-null function pointer")(
                                 crate::src::qcommon::q_shared::ERR_DROP as i32,
                                 b"LoadTGA: illegal pixel_size \'%d\' in file \'%s\'\x00"
-                                    as *const u8
-                                    as *const i8,
+                                    as *const u8 as *const i8,
                                 targa_header.pixel_size as i32,
                                 name,
                             );
@@ -558,21 +532,18 @@ pub unsafe extern "C" fn R_LoadTGA(
                                 break 's_458;
                             }
                             row -= 1;
-                            pixbuf = targa_rgba.offset(
-                                (row as u32)
-                                    .wrapping_mul(columns)
-                                    .wrapping_mul(4u32)
-                                    as isize,
-                            )
+                            pixbuf =
+                                targa_rgba
+                                    .offset((row as u32).wrapping_mul(columns).wrapping_mul(4u32)
+                                        as isize)
                         }
                         j = j.wrapping_add(1)
                     }
                 } else {
                     // non run-length packet
-                    if buf_p.offset(
-                        (targa_header.pixel_size as i32 / 8
-                            * packetSize as i32) as isize,
-                    ) > end
+                    if buf_p
+                        .offset((targa_header.pixel_size as i32 / 8 * packetSize as i32) as isize)
+                        > end
                     {
                         crate::src::renderergl1::tr_main::ri
                             .Error
@@ -655,12 +626,10 @@ pub unsafe extern "C" fn R_LoadTGA(
                                 break 's_458;
                             }
                             row -= 1;
-                            pixbuf = targa_rgba.offset(
-                                (row as u32)
-                                    .wrapping_mul(columns)
-                                    .wrapping_mul(4u32)
-                                    as isize,
-                            )
+                            pixbuf =
+                                targa_rgba
+                                    .offset((row as u32).wrapping_mul(columns).wrapping_mul(4u32)
+                                        as isize)
                         }
                         j = j.wrapping_add(1)
                     }

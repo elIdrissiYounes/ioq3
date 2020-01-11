@@ -3075,11 +3075,10 @@ pub unsafe extern "C" fn crc32_combine(
     /* put operator for one zero bit in odd */
     odd[0] = 0xedb88320 as usize; /* CRC-32 polynomial */
     row = 1;
-    n = 1;
-    while n < 32 {
+
+    for n in 1..32 {
         odd[n as usize] = row;
         row <<= 1;
-        n += 1
     }
     /* put operator for two zero bits in even */
     gf2_matrix_square(even.as_mut_ptr(), odd.as_mut_ptr());

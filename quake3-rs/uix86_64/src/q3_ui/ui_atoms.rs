@@ -1350,10 +1350,10 @@ pub unsafe extern "C" fn UI_MouseEvent(mut dx: i32, mut dy: i32) {
     } else if uis.cursory > 480 {
         uis.cursory = 480
     }
-    // region test the active menu items
-    i = 0;
-    while i < (*uis.activemenu).nitems {
+
+    for i in 0..(*uis.activemenu).nitems {
         m = (*uis.activemenu).items[i as usize] as *mut crate::ui_local_h::menucommon_s;
+
         if !((*m).flags & (0x2000 | 0x4000) != 0) {
             if !(uis.cursorx < (*m).left
                 || uis.cursorx > (*m).right
@@ -1384,8 +1384,6 @@ pub unsafe extern "C" fn UI_MouseEvent(mut dx: i32, mut dy: i32) {
                 return;
             }
         }
-        // cursor out of item bounds
-        i += 1
     }
     if (*uis.activemenu).nitems > 0 {
         // out of any region

@@ -126,12 +126,16 @@ unsafe extern "C" fn interp_bits2pulses(
     logM = LM << 3;
     lo = 0;
     hi = (1) << 6;
-    i = 0;
-    while i < 6 {
+
+    for i in 0..6 {
         let mut mid: i32 = lo + hi >> 1;
+
         psum = 0;
+
         done = 0;
+
         j = end;
+
         loop {
             let fresh0 = j;
             j = j - 1;
@@ -151,12 +155,12 @@ unsafe extern "C" fn interp_bits2pulses(
                 psum += alloc_floor
             }
         }
+
         if psum > total {
             hi = mid
         } else {
             lo = mid
         }
-        i += 1
     }
     psum = 0;
     /*printf ("interp bisection gave %d\n", lo);*/

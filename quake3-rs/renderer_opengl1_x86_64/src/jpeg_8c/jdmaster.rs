@@ -236,11 +236,9 @@ unsafe extern "C" fn use_merged_upsample(
         return 0i32;
     }
     /* jdmerge.c only supports YCC=>RGB color conversion */
-    if  (*cinfo).jpeg_color_space
-        !=  crate::jpeglib_h::JCS_YCbCr
+    if (*cinfo).jpeg_color_space != crate::jpeglib_h::JCS_YCbCr
         || (*cinfo).num_components != 3
-        ||  (*cinfo).out_color_space
-            !=  crate::jpeglib_h::JCS_RGB
+        || (*cinfo).out_color_space != crate::jpeglib_h::JCS_RGB
         || (*cinfo).out_color_components != 3
     {
         return 0i32;
@@ -256,18 +254,12 @@ unsafe extern "C" fn use_merged_upsample(
         return 0i32;
     }
     /* furthermore, it doesn't work if we've scaled the IDCTs differently */
-    if (*(*cinfo).comp_info.offset(0)).DCT_h_scaled_size
-        != (*cinfo).min_DCT_h_scaled_size
-        || (*(*cinfo).comp_info.offset(1)).DCT_h_scaled_size
-            != (*cinfo).min_DCT_h_scaled_size
-        || (*(*cinfo).comp_info.offset(2)).DCT_h_scaled_size
-            != (*cinfo).min_DCT_h_scaled_size
-        || (*(*cinfo).comp_info.offset(0)).DCT_v_scaled_size
-            != (*cinfo).min_DCT_v_scaled_size
-        || (*(*cinfo).comp_info.offset(1)).DCT_v_scaled_size
-            != (*cinfo).min_DCT_v_scaled_size
-        || (*(*cinfo).comp_info.offset(2)).DCT_v_scaled_size
-            != (*cinfo).min_DCT_v_scaled_size
+    if (*(*cinfo).comp_info.offset(0)).DCT_h_scaled_size != (*cinfo).min_DCT_h_scaled_size
+        || (*(*cinfo).comp_info.offset(1)).DCT_h_scaled_size != (*cinfo).min_DCT_h_scaled_size
+        || (*(*cinfo).comp_info.offset(2)).DCT_h_scaled_size != (*cinfo).min_DCT_h_scaled_size
+        || (*(*cinfo).comp_info.offset(0)).DCT_v_scaled_size != (*cinfo).min_DCT_v_scaled_size
+        || (*(*cinfo).comp_info.offset(1)).DCT_v_scaled_size != (*cinfo).min_DCT_v_scaled_size
+        || (*(*cinfo).comp_info.offset(2)).DCT_v_scaled_size != (*cinfo).min_DCT_v_scaled_size
     {
         return 0i32;
     }
@@ -321,8 +313,7 @@ pub unsafe extern "C" fn jpeg_calc_output_dimensions(
             } else {
                 (8) / 2
             })
-            && (*cinfo).max_h_samp_factor % ((*compptr).h_samp_factor * ssize * 2)
-                == 0
+            && (*cinfo).max_h_samp_factor % ((*compptr).h_samp_factor * ssize * 2) == 0
         {
             ssize = ssize * 2
         }
@@ -334,8 +325,7 @@ pub unsafe extern "C" fn jpeg_calc_output_dimensions(
             } else {
                 (8) / 2
             })
-            && (*cinfo).max_v_samp_factor % ((*compptr).v_samp_factor * ssize * 2)
-                == 0
+            && (*cinfo).max_v_samp_factor % ((*compptr).v_samp_factor * ssize * 2) == 0
         {
             ssize = ssize * 2
         }
@@ -372,7 +362,7 @@ pub unsafe extern "C" fn jpeg_calc_output_dimensions(
     /* IDCT_SCALING_SUPPORTED */
     /* Report number of components in selected colorspace. */
     /* Probably this should be in the color conversion module... */
-    match  (*cinfo).out_color_space {
+    match (*cinfo).out_color_space {
         1 => (*cinfo).out_color_components = 1,
         2 | 3 => {
             /* else share code with YCbCr */
@@ -452,8 +442,7 @@ unsafe extern "C" fn prepare_range_limit_table(mut cinfo: crate::jpeglib_h::j_de
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        ((5i32 * (255 + 1) + 128)
-            as usize)
+        ((5i32 * (255 + 1) + 128) as usize)
             .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()),
     ) as *mut crate::jmorecfg_h::JSAMPLE;
     table = table.offset((255i32 + 1) as isize);
@@ -462,8 +451,7 @@ unsafe extern "C" fn prepare_range_limit_table(mut cinfo: crate::jpeglib_h::j_de
     crate::stdlib::memset(
         table.offset(-((255i32 + 1) as isize)) as *mut libc::c_void,
         0,
-        ((255i32 + 1) as usize)
-            .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()),
+        ((255i32 + 1) as usize).wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()),
     );
     /* Main part of "simple" table: limit[x] = x */
     i = 0; /* Point to where post-IDCT table starts */
@@ -480,21 +468,15 @@ unsafe extern "C" fn prepare_range_limit_table(mut cinfo: crate::jpeglib_h::j_de
     }
     /* Second half of post-IDCT table */
     crate::stdlib::memset(
-        table.offset((2i32 * (255 + 1)) as isize)
-            as *mut libc::c_void,
+        table.offset((2i32 * (255 + 1)) as isize) as *mut libc::c_void,
         0,
-        ((2i32 * (255 + 1) - 128)
-            as usize)
+        ((2i32 * (255 + 1) - 128) as usize)
             .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()),
     );
     crate::stdlib::memcpy(
-        table.offset(
-            (4i32 * (255 + 1) - 128)
-                as isize,
-        ) as *mut libc::c_void,
+        table.offset((4i32 * (255 + 1) - 128) as isize) as *mut libc::c_void,
         (*cinfo).sample_range_limit as *const libc::c_void,
-        (128usize)
-            .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()),
+        (128usize).wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()),
     );
 }
 /*
@@ -517,8 +499,7 @@ unsafe extern "C" fn master_selection(mut cinfo: crate::jpeglib_h::j_decompress_
     jpeg_calc_output_dimensions(cinfo);
     prepare_range_limit_table(cinfo);
     /* Width of an output scanline must be representable as JDIMENSION. */
-    samplesperrow =
-        (*cinfo).output_width as isize * (*cinfo).out_color_components as isize;
+    samplesperrow = (*cinfo).output_width as isize * (*cinfo).out_color_components as isize;
     jd_samplesperrow = samplesperrow as crate::jmorecfg_h::JDIMENSION;
     if jd_samplesperrow as isize != samplesperrow {
         (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_WIDTH_OVERFLOW as i32;
@@ -599,8 +580,8 @@ unsafe extern "C" fn master_selection(mut cinfo: crate::jpeglib_h::j_decompress_
         crate::src::jpeg_8c::jdhuff::jinit_huff_decoder(cinfo);
     }
     /* Initialize principal buffer controllers. */
-    use_c_buffer = ((*(*cinfo).inputctl).has_multiple_scans != 0 || (*cinfo).buffered_image != 0)
-        as i32;
+    use_c_buffer =
+        ((*(*cinfo).inputctl).has_multiple_scans != 0 || (*cinfo).buffered_image != 0) as i32;
     crate::src::jpeg_8c::jdcoefct::jinit_d_coef_controller(cinfo, use_c_buffer);
     if (*cinfo).raw_data_out == 0 {
         crate::src::jpeg_8c::jdmainct::jinit_d_main_controller(cinfo, 0i32);
@@ -637,8 +618,7 @@ unsafe extern "C" fn master_selection(mut cinfo: crate::jpeglib_h::j_decompress_
             nscans = (*cinfo).num_components
         }
         (*(*cinfo).progress).pass_counter = 0isize;
-        (*(*cinfo).progress).pass_limit =
-            (*cinfo).total_iMCU_rows as isize * nscans as isize;
+        (*(*cinfo).progress).pass_limit = (*cinfo).total_iMCU_rows as isize * nscans as isize;
         (*(*cinfo).progress).completed_passes = 0;
         (*(*cinfo).progress).total_passes = if (*cinfo).enable_2pass_quant != 0 {
             3
@@ -692,8 +672,7 @@ unsafe extern "C" fn prepare_for_output_pass(mut cinfo: crate::jpeglib_h::j_deco
             } else if (*cinfo).enable_1pass_quant != 0 {
                 (*cinfo).cquantize = (*master).quantizer_1pass
             } else {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_MODE_CHANGE as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_MODE_CHANGE as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -862,7 +841,6 @@ pub unsafe extern "C" fn jinit_master_decompress(mut cinfo: crate::jpeglib_h::j_
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<my_decomp_master>(),
     ) as my_master_ptr;
     (*cinfo).master = master as *mut crate::jpegint_h::jpeg_decomp_master;

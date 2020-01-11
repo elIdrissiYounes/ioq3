@@ -264,15 +264,16 @@ pub unsafe extern "C" fn CG_PositionEntityOnTag(
     (*entity).origin[0] = (*parent).origin[0];
     (*entity).origin[1] = (*parent).origin[1];
     (*entity).origin[2] = (*parent).origin[2];
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         (*entity).origin[0] =
             (*entity).origin[0] + (*parent).axis[i as usize][0] * lerped.origin[i as usize];
+
         (*entity).origin[1] =
             (*entity).origin[1] + (*parent).axis[i as usize][1] * lerped.origin[i as usize];
+
         (*entity).origin[2] =
             (*entity).origin[2] + (*parent).axis[i as usize][2] * lerped.origin[i as usize];
-        i += 1
     }
     // had to cast away the const to avoid compiler problems...
     crate::src::qcommon::q_math::MatrixMultiply(
@@ -321,15 +322,16 @@ pub unsafe extern "C" fn CG_PositionRotatedEntityOnTag(
     (*entity).origin[0] = (*parent).origin[0];
     (*entity).origin[1] = (*parent).origin[1];
     (*entity).origin[2] = (*parent).origin[2];
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         (*entity).origin[0] =
             (*entity).origin[0] + (*parent).axis[i as usize][0] * lerped.origin[i as usize];
+
         (*entity).origin[1] =
             (*entity).origin[1] + (*parent).axis[i as usize][1] * lerped.origin[i as usize];
+
         (*entity).origin[2] =
             (*entity).origin[2] + (*parent).axis[i as usize][2] * lerped.origin[i as usize];
-        i += 1
     }
     // had to cast away the const to avoid compiler problems...
     crate::src::qcommon::q_math::MatrixMultiply(
@@ -1239,10 +1241,8 @@ pub unsafe extern "C" fn CG_TransposeMatrix(
     let mut j: i32 = 0;
     i = 0;
     while i < 3 {
-        j = 0;
-        while j < 3 {
+        for j in 0..3 {
             (*transpose.offset(i as isize))[j as usize] = (*matrix.offset(j as isize))[i as usize];
-            j += 1
         }
         i += 1
     }

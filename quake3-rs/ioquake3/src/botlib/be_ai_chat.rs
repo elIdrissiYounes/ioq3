@@ -404,15 +404,17 @@ pub unsafe extern "C" fn InitConsoleMessageHeap() {
     let ref mut fresh1 = (*consolemessageheap.offset(0)).next;
     *fresh1 = &mut *consolemessageheap.offset(1)
         as *mut crate::src::botlib::be_ai_chat::bot_consolemessage_t;
-    i = 1;
-    while i < max_messages - 1 {
+
+    for i in 1..max_messages - 1 {
         let ref mut fresh2 = (*consolemessageheap.offset(i as isize)).prev;
+
         *fresh2 = &mut *consolemessageheap.offset((i - 1) as isize)
             as *mut crate::src::botlib::be_ai_chat::bot_consolemessage_t;
+
         let ref mut fresh3 = (*consolemessageheap.offset(i as isize)).next;
+
         *fresh3 = &mut *consolemessageheap.offset((i + 1) as isize)
             as *mut crate::src::botlib::be_ai_chat::bot_consolemessage_t;
-        i += 1
     }
     let ref mut fresh4 = (*consolemessageheap.offset((max_messages - 1) as isize)).prev;
     *fresh4 = &mut *consolemessageheap.offset((max_messages - 2) as isize)
@@ -1053,15 +1055,16 @@ pub unsafe extern "C" fn BotLoadSynonyms(mut filename: *mut i8) -> *mut bot_syno
     syn = 0 as *mut bot_synonymlist_t;
     synonym = 0 as *mut bot_synonym_t;
     //the synonyms are parsed in two phases
-    pass = 0; //end for
-    while pass < 2 {
-        //
+    //end for
+    for pass in 0..2 {
         if pass != 0 && size != 0 {
             ptr = crate::src::botlib::l_memory::GetClearedHunkMemory(size as usize) as *mut i8
         }
-        //end if
+
         crate::src::botlib::l_precomp::PC_SetBaseFolder(b"botfiles\x00" as *const u8 as *mut i8);
+
         source = crate::src::botlib::l_precomp::LoadSourceFile(filename);
+
         if source.is_null() {
             crate::src::botlib::be_interface::botimport
                 .Print
@@ -1072,10 +1075,15 @@ pub unsafe extern "C" fn BotLoadSynonyms(mut filename: *mut i8) -> *mut bot_syno
             );
             return 0 as *mut bot_synonymlist_t;
         }
+
         context = 0;
+
         contextlevel = 0;
+
         synlist = 0 as *mut bot_synonymlist_t;
+
         lastsyn = 0 as *mut bot_synonymlist_t;
+
         while crate::src::botlib::l_precomp::PC_ReadToken(source, &mut token) != 0
         //
         //end if
@@ -1245,7 +1253,9 @@ pub unsafe extern "C" fn BotLoadSynonyms(mut filename: *mut i8) -> *mut bot_syno
             }
             //end else if
         }
+
         crate::src::botlib::l_precomp::FreeSource(source);
+
         if contextlevel > 0 {
             crate::src::botlib::l_precomp::SourceError(
                 source,
@@ -1253,7 +1263,6 @@ pub unsafe extern "C" fn BotLoadSynonyms(mut filename: *mut i8) -> *mut bot_syno
             );
             return 0 as *mut bot_synonymlist_t;
         }
-        pass += 1
     }
     crate::src::botlib::be_interface::botimport
         .Print
@@ -1619,15 +1628,16 @@ pub unsafe extern "C" fn BotLoadRandomStrings(mut filename: *mut i8) -> *mut bot
     randomlist = 0 as *mut bot_randomlist_t;
     random = 0 as *mut bot_randomlist_t;
     //the synonyms are parsed in two phases
-    pass = 0; //end for
-    while pass < 2 {
-        //
+    //end for
+    for pass in 0..2 {
         if pass != 0 && size != 0 {
             ptr = crate::src::botlib::l_memory::GetClearedHunkMemory(size as usize) as *mut i8
         }
-        //
-        crate::src::botlib::l_precomp::PC_SetBaseFolder(b"botfiles\x00" as *const u8 as *mut i8); //end if
+
+        crate::src::botlib::l_precomp::PC_SetBaseFolder(b"botfiles\x00" as *const u8 as *mut i8);
+
         source = crate::src::botlib::l_precomp::LoadSourceFile(filename);
+
         if source.is_null() {
             crate::src::botlib::be_interface::botimport
                 .Print
@@ -1638,10 +1648,11 @@ pub unsafe extern "C" fn BotLoadRandomStrings(mut filename: *mut i8) -> *mut bot
             );
             return 0 as *mut bot_randomlist_t;
         }
-        //
-        randomlist = 0 as *mut bot_randomlist_t; //list
-        lastrandom = 0 as *mut bot_randomlist_t; //last
-                                                 //
+
+        randomlist = 0 as *mut bot_randomlist_t;
+
+        lastrandom = 0 as *mut bot_randomlist_t;
+
         while crate::src::botlib::l_precomp::PC_ReadToken(source, &mut token) != 0 {
             let mut len: crate::stddef_h::size_t = 0; //end while
                                                       //end while
@@ -1721,9 +1732,8 @@ pub unsafe extern "C" fn BotLoadRandomStrings(mut filename: *mut i8) -> *mut bot
                 }
             }
         }
-        //free the source after one pass
+
         crate::src::botlib::l_precomp::FreeSource(source);
-        pass += 1
     }
     crate::src::botlib::be_interface::botimport
         .Print
@@ -2327,10 +2337,9 @@ pub unsafe extern "C" fn BotFindMatch(
     while !ms.is_null() {
         if !((*ms).context & context == 0) {
             //reset the match variable offsets
-            i = 0;
-            while i < 8 {
+
+            for i in 0..8 {
                 (*match_0).variables[i as usize].offset = -1i8;
-                i += 1
             }
             //
             if StringsMatch((*ms).first, match_0) != 0 {
@@ -3237,15 +3246,16 @@ pub unsafe extern "C" fn BotLoadInitialChat(
     size = 0;
     foundchat = crate::src::qcommon::q_shared::qfalse as i32;
     //a bot chat is parsed in two phases
-    pass = 0; //end for
-    while pass < 2 {
-        //allocate memory
+    //end for
+    for pass in 0..2 {
         if pass != 0 && size != 0 {
             ptr = crate::src::botlib::l_memory::GetClearedMemory(size as usize) as *mut i8
         }
-        //end if
+
         crate::src::botlib::l_precomp::PC_SetBaseFolder(b"botfiles\x00" as *const u8 as *mut i8);
+
         source = crate::src::botlib::l_precomp::LoadSourceFile(chatfile);
+
         if source.is_null() {
             crate::src::botlib::be_interface::botimport
                 .Print
@@ -3256,11 +3266,14 @@ pub unsafe extern "C" fn BotLoadInitialChat(
             );
             return 0 as *mut bot_chat_t;
         }
+
         if pass != 0 {
             chat = ptr as *mut bot_chat_t;
             ptr = ptr.offset(::std::mem::size_of::<bot_chat_t>() as isize)
         }
+
         size = ::std::mem::size_of::<bot_chat_t>() as i32;
+
         while crate::src::botlib::l_precomp::PC_ReadToken(source, &mut token) != 0
         //load the source file
         //end if
@@ -3430,7 +3443,9 @@ pub unsafe extern "C" fn BotLoadInitialChat(
             }
             //end else
         }
+
         crate::src::botlib::l_precomp::FreeSource(source);
+
         if foundchat == 0 {
             crate::src::botlib::be_interface::botimport
                 .Print
@@ -3442,7 +3457,6 @@ pub unsafe extern "C" fn BotLoadInitialChat(
             );
             return 0 as *mut bot_chat_t;
         }
-        pass += 1
     }
     //free the source
     //if the requested character is not found
@@ -3512,8 +3526,8 @@ pub unsafe extern "C" fn BotLoadChatFile(
     ) == 0.
     {
         avail = -(1);
-        n = 0;
-        while n < 64 {
+
+        for n in 0..64 {
             if ichatdata[n as usize].is_null() {
                 if avail == -(1) {
                     avail = n
@@ -3532,8 +3546,7 @@ pub unsafe extern "C" fn BotLoadChatFile(
                     //		botimport.Print( PRT_MESSAGE, "retained %s from %s\n", chatname, chatfile );
                     return 0i32;
                 }
-            } //end if
-            n += 1
+            }
         } //end if
         if avail == -(1) {
             crate::src::botlib::be_interface::botimport
@@ -4641,16 +4654,14 @@ pub unsafe extern "C" fn BotResetChatAI() {
 
 pub unsafe extern "C" fn BotAllocChatState() -> i32 {
     let mut i: i32 = 0; //end for
-    i = 1;
-    while i <= 64 {
+
+    for i in 1..=64 {
         if botchatstates[i as usize].is_null() {
             botchatstates[i as usize] = crate::src::botlib::l_memory::GetClearedMemory(
                 ::std::mem::size_of::<bot_chatstate_t>(),
             ) as *mut bot_chatstate_t;
             return i;
         }
-        i += 1
-        //end if
     }
     return 0;
 }

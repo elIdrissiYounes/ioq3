@@ -49,10 +49,9 @@ pub unsafe extern "C" fn vorbis_analysis(
     (*vb).floor_bits = 0isize;
     (*vb).res_bits = 0isize;
     /* first things first.  Make sure encode is ready */
-    i = 0;
-    while i < 15 {
+
+    for i in 0..15 {
         crate::src::libogg_1_3_3::src::bitwise::oggpack_reset((*vbi).packetblob[i as usize]);
-        i += 1
     }
     /* we only have one mapping type (0), and we let the mapping code
     itself figure out what soft mode to use.  This allows easier

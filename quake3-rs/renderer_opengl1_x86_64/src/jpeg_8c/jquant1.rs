@@ -255,292 +255,52 @@ pub type ODITHER_MATRIX = [[i32; 16]; 16];
 
 static mut base_dither_matrix: [[crate::jmorecfg_h::UINT8; 16]; 16] = [
     [
-        0,
-        192,
-        48,
-        240,
-        12,
-        204,
-        60,
-        252,
-        3,
-        195,
-        51,
-        243,
-        15,
-        207,
-        63,
-        255,
+        0, 192, 48, 240, 12, 204, 60, 252, 3, 195, 51, 243, 15, 207, 63, 255,
     ],
     [
-        128,
-        64,
-        176,
-        112,
-        140,
-        76,
-        188,
-        124,
-        131,
-        67,
-        179,
-        115,
-        143,
-        79,
-        191,
-        127,
+        128, 64, 176, 112, 140, 76, 188, 124, 131, 67, 179, 115, 143, 79, 191, 127,
     ],
     [
-        32,
-        224,
-        16,
-        208,
-        44,
-        236,
-        28,
-        220,
-        35,
-        227,
-        19,
-        211,
-        47,
-        239,
-        31,
-        223,
+        32, 224, 16, 208, 44, 236, 28, 220, 35, 227, 19, 211, 47, 239, 31, 223,
     ],
     [
-        160,
-        96,
-        144,
-        80,
-        172,
-        108,
-        156,
-        92,
-        163,
-        99,
-        147,
-        83,
-        175,
-        111,
-        159,
-        95,
+        160, 96, 144, 80, 172, 108, 156, 92, 163, 99, 147, 83, 175, 111, 159, 95,
     ],
     [
-        8,
-        200,
-        56,
-        248,
-        4,
-        196,
-        52,
-        244,
-        11,
-        203,
-        59,
-        251,
-        7,
-        199,
-        55,
-        247,
+        8, 200, 56, 248, 4, 196, 52, 244, 11, 203, 59, 251, 7, 199, 55, 247,
     ],
     [
-        136,
-        72,
-        184,
-        120,
-        132,
-        68,
-        180,
-        116,
-        139,
-        75,
-        187,
-        123,
-        135,
-        71,
-        183,
-        119,
+        136, 72, 184, 120, 132, 68, 180, 116, 139, 75, 187, 123, 135, 71, 183, 119,
     ],
     [
-        40,
-        232,
-        24,
-        216,
-        36,
-        228,
-        20,
-        212,
-        43,
-        235,
-        27,
-        219,
-        39,
-        231,
-        23,
-        215,
+        40, 232, 24, 216, 36, 228, 20, 212, 43, 235, 27, 219, 39, 231, 23, 215,
     ],
     [
-        168,
-        104,
-        152,
-        88,
-        164,
-        100,
-        148,
-        84,
-        171,
-        107,
-        155,
-        91,
-        167,
-        103,
-        151,
-        87,
+        168, 104, 152, 88, 164, 100, 148, 84, 171, 107, 155, 91, 167, 103, 151, 87,
     ],
     [
-        2,
-        194,
-        50,
-        242,
-        14,
-        206,
-        62,
-        254,
-        1,
-        193,
-        49,
-        241,
-        13,
-        205,
-        61,
-        253,
+        2, 194, 50, 242, 14, 206, 62, 254, 1, 193, 49, 241, 13, 205, 61, 253,
     ],
     [
-        130,
-        66,
-        178,
-        114,
-        142,
-        78,
-        190,
-        126,
-        129,
-        65,
-        177,
-        113,
-        141,
-        77,
-        189,
-        125,
+        130, 66, 178, 114, 142, 78, 190, 126, 129, 65, 177, 113, 141, 77, 189, 125,
     ],
     [
-        34,
-        226,
-        18,
-        210,
-        46,
-        238,
-        30,
-        222,
-        33,
-        225,
-        17,
-        209,
-        45,
-        237,
-        29,
-        221,
+        34, 226, 18, 210, 46, 238, 30, 222, 33, 225, 17, 209, 45, 237, 29, 221,
     ],
     [
-        162,
-        98,
-        146,
-        82,
-        174,
-        110,
-        158,
-        94,
-        161,
-        97,
-        145,
-        81,
-        173,
-        109,
-        157,
-        93,
+        162, 98, 146, 82, 174, 110, 158, 94, 161, 97, 145, 81, 173, 109, 157, 93,
     ],
     [
-        10,
-        202,
-        58,
-        250,
-        6,
-        198,
-        54,
-        246,
-        9,
-        201,
-        57,
-        249,
-        5,
-        197,
-        53,
-        245,
+        10, 202, 58, 250, 6, 198, 54, 246, 9, 201, 57, 249, 5, 197, 53, 245,
     ],
     [
-        138,
-        74,
-        186,
-        122,
-        134,
-        70,
-        182,
-        118,
-        137,
-        73,
-        185,
-        121,
-        133,
-        69,
-        181,
-        117,
+        138, 74, 186, 122, 134, 70, 182, 118, 137, 73, 185, 121, 133, 69, 181, 117,
     ],
     [
-        42,
-        234,
-        26,
-        218,
-        38,
-        230,
-        22,
-        214,
-        41,
-        233,
-        25,
-        217,
-        37,
-        229,
-        21,
-        213,
+        42, 234, 26, 218, 38, 230, 22, 214, 41, 233, 25, 217, 37, 229, 21, 213,
     ],
     [
-        170,
-        106,
-        154,
-        90,
-        166,
-        102,
-        150,
-        86,
-        169,
-        105,
-        153,
-        89,
-        165,
-        101,
-        149,
-        85,
+        170, 106, 154, 90, 166, 102, 150, 86, 169, 105, 153, 89, 165, 101, 149, 85,
     ],
 ];
 /*
@@ -591,8 +351,7 @@ unsafe extern "C" fn select_ncolors(
     iroot -= 1;
     /* Must have at least 2 color values per component */
     if iroot < 2 {
-        (*(*cinfo).err).msg_code =
-            crate::src::jpeg_8c::jerror::JERR_QUANT_FEW_COLORS as i32;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_QUANT_FEW_COLORS as i32;
         (*(*cinfo).err).msg_parm.i[0] = temp as i32;
         Some(
             (*(*cinfo).err)
@@ -620,9 +379,7 @@ unsafe extern "C" fn select_ncolors(
         changed = 0;
         i = 0;
         while i < nc {
-            j = if  (*cinfo).out_color_space
-                ==  crate::jpeglib_h::JCS_RGB
-            {
+            j = if (*cinfo).out_color_space == crate::jpeglib_h::JCS_RGB {
                 RGB_order[i as usize]
             } else {
                 i
@@ -659,9 +416,7 @@ unsafe extern "C" fn output_value(
      * (Forcing the upper and lower values to the limits ensures that
      * dithering can't produce a color outside the selected gamut.)
      */
-    return ((j as crate::jmorecfg_h::INT32 * 255
-        + (maxj / 2i32) as isize)
-        / maxj as isize) as i32;
+    return ((j as crate::jmorecfg_h::INT32 * 255 + (maxj / 2i32) as isize) / maxj as isize) as i32;
 }
 
 unsafe extern "C" fn largest_input_value(
@@ -673,9 +428,7 @@ unsafe extern "C" fn largest_input_value(
 /* Return largest input value that should map to j'th output value */
 /* Must have largest(j=0) >= 0, and largest(j=maxj) >= MAXJSAMPLE */ {
     /* Breakpoints are halfway between values returned by output_value */
-    return (((2i32 * j + 1) as crate::jmorecfg_h::INT32
-        * 255
-        + maxj as isize)
+    return (((2i32 * j + 1) as crate::jmorecfg_h::INT32 * 255 + maxj as isize)
         / (2i32 * maxj) as isize) as i32;
 }
 /*
@@ -709,10 +462,7 @@ unsafe extern "C" fn create_colormap(mut cinfo: crate::jpeglib_h::j_decompress_p
                 .emit_message
                 .expect("non-null function pointer"),
         )
-        .expect("non-null function pointer")(
-            cinfo as crate::jpeglib_h::j_common_ptr,
-            1i32,
-        );
+        .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr, 1i32);
     } else {
         (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JTRC_QUANT_NCOLORS as i32;
         (*(*cinfo).err).msg_parm.i[0] = total_colors;
@@ -721,10 +471,7 @@ unsafe extern "C" fn create_colormap(mut cinfo: crate::jpeglib_h::j_decompress_p
                 .emit_message
                 .expect("non-null function pointer"),
         )
-        .expect("non-null function pointer")(
-            cinfo as crate::jpeglib_h::j_common_ptr,
-            1i32,
-        );
+        .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr, 1i32);
     }
     /* Allocate and fill in the colormap. */
     /* The colors are ordered in the map in standard row-major order, */
@@ -743,33 +490,22 @@ unsafe extern "C" fn create_colormap(mut cinfo: crate::jpeglib_h::j_decompress_p
     /* blksize is number of adjacent repeated entries for a component */
     /* blkdist is distance between groups of identical entries for a component */
     blkdist = total_colors;
-    i = 0;
-    while i < (*cinfo).out_color_components {
-        /* fill in colormap entries for i'th color component */
+
+    for i in 0..(*cinfo).out_color_components {
         nci = (*cquantize).Ncolors[i as usize];
+
         blksize = blkdist / nci;
-        j = 0;
-        while j < nci {
-            /* # of distinct values for this color */
-            /* blksize of this color is blkdist of next */
-            /* Compute j'th output value (out of nci) for component */
+        for j in 0..nci {
             val = output_value(cinfo, i, j, nci - 1);
-            /* Fill in all colormap entries that have this value of this component */
-            ptr = j * blksize;
-            while ptr < total_colors {
-                /* fill in blksize entries beginning at ptr */
-                k = 0;
-                while k < blksize {
+            for ptr in (j * blksize..total_colors).step_by(blkdist as usize) {
+                for k in 0..blksize {
                     *(*colormap.offset(i as isize)).offset((ptr + k) as isize) =
                         val as crate::jmorecfg_h::JSAMPLE;
-                    k += 1
                 }
-                ptr += blkdist
             }
-            j += 1
         }
+
         blkdist = blksize;
-        i += 1
     }
     /* Save the colormap in private storage,
      * where it will survive color quantization mode changes.
@@ -796,9 +532,7 @@ unsafe extern "C" fn create_colorindex(mut cinfo: crate::jpeglib_h::j_decompress
      * This is not necessary in the other dithering modes.  However, we
      * flag whether it was done in case user changes dithering mode.
      */
-    if  (*cinfo).dither_mode
-        ==  crate::jpeglib_h::JDITHER_ORDERED
-    {
+    if (*cinfo).dither_mode == crate::jpeglib_h::JDITHER_ORDERED {
         pad = 255 * 2;
         (*cquantize).is_padded = 1
     } else {
@@ -849,8 +583,7 @@ unsafe extern "C" fn create_colorindex(mut cinfo: crate::jpeglib_h::j_decompress
             j = 1;
             while j <= 255 {
                 *indexptr.offset(-j as isize) = *indexptr.offset(0);
-                *indexptr.offset((255 + j) as isize) =
-                    *indexptr.offset(255);
+                *indexptr.offset((255 + j) as isize) = *indexptr.offset(255);
                 j += 1
             }
         }
@@ -879,7 +612,6 @@ unsafe extern "C" fn make_odither_array(
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<ODITHER_MATRIX>(),
     ) as ODITHER_MATRIX_PTR;
     /* The inter-value distance for this color is MAXJSAMPLE/(ncolors-1).
@@ -887,28 +619,17 @@ unsafe extern "C" fn make_odither_array(
      * (f=0..N-1) should be (N-1-2*f)/(2*N) * MAXJSAMPLE/(ncolors-1).
      * On 16-bit-int machine, be careful to avoid overflow.
      */
-    den = (2i32 * (16 * 16)) as isize
-        * (ncolors - 1i32) as crate::jmorecfg_h::INT32;
-    j = 0;
-    while j < 16 {
-        k = 0;
-        while k < 16 {
-            num = (16 * 16
-                - 1
-                - 2 * base_dither_matrix[j as usize][k as usize] as i32)
+    den = (2i32 * (16 * 16)) as isize * (ncolors - 1i32) as crate::jmorecfg_h::INT32;
+
+    for j in 0..16 {
+        for k in 0..16 {
+            num = (16 * 16 - 1 - 2 * base_dither_matrix[j as usize][k as usize] as i32)
                 as crate::jmorecfg_h::INT32
                 * 255;
-            /* Ensure round towards zero despite C's lack of consistency
-             * about rounding negative values in integer division...
-             */
-            (*odither.offset(j as isize))[k as usize] = if num < 0 {
-                -(-num / den)
-            } else {
-                (num) / den
-            } as i32;
-            k += 1
+
+            (*odither.offset(j as isize))[k as usize] =
+                if num < 0 { -(-num / den) } else { (num) / den } as i32;
         }
-        j += 1
     }
     return odither;
 }
@@ -974,14 +695,14 @@ unsafe extern "C" fn color_quantize(
         col = width;
         while col > 0 {
             pixcode = 0;
-            ci = 0;
-            while ci < nc {
+
+            for ci in 0..nc {
                 let fresh2 = ptrin;
+
                 ptrin = ptrin.offset(1);
-                pixcode += *(*colorindex.offset(ci as isize))
-                    .offset(*fresh2 as i32 as isize)
-                    as i32;
-                ci += 1
+
+                pixcode +=
+                    *(*colorindex.offset(ci as isize)).offset(*fresh2 as i32 as isize) as i32;
             }
             let fresh3 = ptrout;
             ptrout = ptrout.offset(1);
@@ -1004,12 +725,9 @@ unsafe extern "C" fn color_quantize3(
     let mut pixcode: i32 = 0;
     let mut ptrin: crate::jpeglib_h::JSAMPROW = 0 as *mut crate::jmorecfg_h::JSAMPLE;
     let mut ptrout: crate::jpeglib_h::JSAMPROW = 0 as *mut crate::jmorecfg_h::JSAMPLE;
-    let mut colorindex0: crate::jpeglib_h::JSAMPROW =
-        *(*cquantize).colorindex.offset(0);
-    let mut colorindex1: crate::jpeglib_h::JSAMPROW =
-        *(*cquantize).colorindex.offset(1);
-    let mut colorindex2: crate::jpeglib_h::JSAMPROW =
-        *(*cquantize).colorindex.offset(2);
+    let mut colorindex0: crate::jpeglib_h::JSAMPROW = *(*cquantize).colorindex.offset(0);
+    let mut colorindex1: crate::jpeglib_h::JSAMPROW = *(*cquantize).colorindex.offset(1);
+    let mut colorindex2: crate::jpeglib_h::JSAMPROW = *(*cquantize).colorindex.offset(2);
     let mut row: i32 = 0;
     let mut col: crate::jmorecfg_h::JDIMENSION = 0;
     let mut width: crate::jmorecfg_h::JDIMENSION = (*cinfo).output_width;
@@ -1062,18 +780,23 @@ unsafe extern "C" fn quantize_ord_dither(
         /* Initialize output values to 0 so can process components separately */
         crate::src::jpeg_8c::jutils::jzero_far(
             *output_buf.offset(row as isize) as *mut libc::c_void,
-            (width as usize)
-                .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()),
+            (width as usize).wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()),
         );
         row_index = (*cquantize).row_index;
-        ci = 0;
-        while ci < nc {
+
+        for ci in 0..nc {
             input_ptr = (*input_buf.offset(row as isize)).offset(ci as isize);
+
             output_ptr = *output_buf.offset(row as isize);
+
             colorindex_ci = *(*cquantize).colorindex.offset(ci as isize);
+
             dither = (*(*cquantize).odither[ci as usize].offset(row_index as isize)).as_mut_ptr();
+
             col_index = 0;
+
             col = width;
+
             while col > 0 {
                 /* Form pixel value + dither, range-limit to 0..MAXJSAMPLE,
                  * select output value, accumulate into output code for this pixel.
@@ -1083,15 +806,14 @@ unsafe extern "C" fn quantize_ord_dither(
                  * required amount of padding.
                  */
                 *output_ptr = (*output_ptr as i32
-                    + *colorindex_ci.offset(
-                        (*input_ptr as i32 + *dither.offset(col_index as isize)) as isize,
-                    ) as i32) as crate::jmorecfg_h::JSAMPLE;
+                    + *colorindex_ci
+                        .offset((*input_ptr as i32 + *dither.offset(col_index as isize)) as isize)
+                        as i32) as crate::jmorecfg_h::JSAMPLE;
                 input_ptr = input_ptr.offset(nc as isize);
                 output_ptr = output_ptr.offset(1);
                 col_index = col_index + 1 & 16 - 1;
                 col = col.wrapping_sub(1)
             }
-            ci += 1
         }
         /* Advance row index for next row */
         row_index = row_index + 1 & 16 - 1;
@@ -1112,12 +834,9 @@ unsafe extern "C" fn quantize3_ord_dither(
     let mut pixcode: i32 = 0; /* current indexes into dither matrix */
     let mut input_ptr: crate::jpeglib_h::JSAMPROW = 0 as *mut crate::jmorecfg_h::JSAMPLE;
     let mut output_ptr: crate::jpeglib_h::JSAMPROW = 0 as *mut crate::jmorecfg_h::JSAMPLE;
-    let mut colorindex0: crate::jpeglib_h::JSAMPROW =
-        *(*cquantize).colorindex.offset(0);
-    let mut colorindex1: crate::jpeglib_h::JSAMPROW =
-        *(*cquantize).colorindex.offset(1);
-    let mut colorindex2: crate::jpeglib_h::JSAMPROW =
-        *(*cquantize).colorindex.offset(2);
+    let mut colorindex0: crate::jpeglib_h::JSAMPROW = *(*cquantize).colorindex.offset(0);
+    let mut colorindex1: crate::jpeglib_h::JSAMPROW = *(*cquantize).colorindex.offset(1);
+    let mut colorindex2: crate::jpeglib_h::JSAMPROW = *(*cquantize).colorindex.offset(2);
     let mut dither0: *mut i32 = 0 as *mut i32;
     let mut dither1: *mut i32 = 0 as *mut i32;
     let mut dither2: *mut i32 = 0 as *mut i32;
@@ -1131,12 +850,9 @@ unsafe extern "C" fn quantize3_ord_dither(
         row_index = (*cquantize).row_index;
         input_ptr = *input_buf.offset(row as isize);
         output_ptr = *output_buf.offset(row as isize);
-        dither0 = (*(*cquantize).odither[0].offset(row_index as isize))
-            .as_mut_ptr();
-        dither1 = (*(*cquantize).odither[1].offset(row_index as isize))
-            .as_mut_ptr();
-        dither2 = (*(*cquantize).odither[2].offset(row_index as isize))
-            .as_mut_ptr();
+        dither0 = (*(*cquantize).odither[0].offset(row_index as isize)).as_mut_ptr();
+        dither1 = (*(*cquantize).odither[1].offset(row_index as isize)).as_mut_ptr();
+        dither2 = (*(*cquantize).odither[2].offset(row_index as isize)).as_mut_ptr();
         col_index = 0;
         col = width;
         while col > 0 {
@@ -1200,27 +916,24 @@ unsafe extern "C" fn quantize_fs_dither(
         /* Initialize output values to 0 so can process components separately */
         crate::src::jpeg_8c::jutils::jzero_far(
             *output_buf.offset(row as isize) as *mut libc::c_void,
-            (width as usize)
-                .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()),
+            (width as usize).wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JSAMPLE>()),
         );
-        ci = 0;
-        while ci < nc {
+
+        for ci in 0..nc {
             input_ptr = (*input_buf.offset(row as isize)).offset(ci as isize);
+
             output_ptr = *output_buf.offset(row as isize);
+
             if (*cquantize).on_odd_row != 0 {
                 /* unload prev err into array */
                 /* work right to left in this row */
-                input_ptr = input_ptr.offset(
-                    width
-                        .wrapping_sub(1u32)
-                        .wrapping_mul(nc as u32) as isize,
-                );
-                output_ptr = output_ptr
-                    .offset(width.wrapping_sub(1u32) as isize);
+                input_ptr =
+                    input_ptr.offset(width.wrapping_sub(1u32).wrapping_mul(nc as u32) as isize);
+                output_ptr = output_ptr.offset(width.wrapping_sub(1u32) as isize);
                 dir = -(1);
                 dirnc = -nc;
-                errorptr = (*cquantize).fserrors[ci as usize]
-                    .offset(width.wrapping_add(1u32) as isize)
+                errorptr =
+                    (*cquantize).fserrors[ci as usize].offset(width.wrapping_add(1u32) as isize)
             /* so point to rightmost pixel */
             /* => entry after last column */
             } else {
@@ -1230,12 +943,19 @@ unsafe extern "C" fn quantize_fs_dither(
                 errorptr = (*cquantize).fserrors[ci as usize]
                 /* => entry before first column */
             }
+
             colorindex_ci = *(*cquantize).colorindex.offset(ci as isize);
+
             colormap_ci = *(*cquantize).sv_colormap.offset(ci as isize);
+
             cur = 0;
+
             bpreverr = 0;
+
             belowerr = bpreverr;
+
             col = width;
+
             while col > 0 {
                 /* Preset error values: no error propagated to first pixel from left */
                 /* and no error propagated to row below yet */
@@ -1247,14 +967,12 @@ unsafe extern "C" fn quantize_fs_dither(
                  * for either sign of the error value.
                  * Note: errorptr points to *previous* column's array entry.
                  */
-                cur = cur + *errorptr.offset(dir as isize) as i32 + 8
-                    >> 4;
+                cur = cur + *errorptr.offset(dir as isize) as i32 + 8 >> 4;
                 /* advance errorptr to current column */
                 cur += *input_ptr as i32;
                 cur = *range_limit.offset(cur as isize) as i32;
                 pixcode = *colorindex_ci.offset(cur as isize) as i32;
-                *output_ptr = (*output_ptr as i32
-                    + pixcode as crate::jmorecfg_h::JSAMPLE as i32)
+                *output_ptr = (*output_ptr as i32 + pixcode as crate::jmorecfg_h::JSAMPLE as i32)
                     as crate::jmorecfg_h::JSAMPLE;
                 cur -= *colormap_ci.offset(pixcode as isize) as i32;
                 bnexterr = cur;
@@ -1270,14 +988,10 @@ unsafe extern "C" fn quantize_fs_dither(
                 errorptr = errorptr.offset(dir as isize);
                 col = col.wrapping_sub(1)
             }
+
             *errorptr.offset(0) = bpreverr as FSERROR;
-            ci += 1
         }
-        (*cquantize).on_odd_row = if (*cquantize).on_odd_row != 0 {
-            0
-        } else {
-            1
-        };
+        (*cquantize).on_odd_row = if (*cquantize).on_odd_row != 0 { 0 } else { 1 };
         row += 1
     }
 }
@@ -1314,9 +1028,7 @@ unsafe extern "C" fn alloc_fs_workspace(mut cinfo: crate::jpeglib_h::j_decompres
     let mut cquantize: my_cquantize_ptr = (*cinfo).cquantize as my_cquantize_ptr;
     let mut arraysize: crate::stddef_h::size_t = 0;
     let mut i: i32 = 0;
-    arraysize = ((*cinfo)
-        .output_width
-        .wrapping_add(2u32) as usize)
+    arraysize = ((*cinfo).output_width.wrapping_add(2u32) as usize)
         .wrapping_mul(::std::mem::size_of::<FSERROR>());
     i = 0;
     while i < (*cinfo).out_color_components {
@@ -1326,9 +1038,7 @@ unsafe extern "C" fn alloc_fs_workspace(mut cinfo: crate::jpeglib_h::j_decompres
                 .expect("non-null function pointer"),
         )
         .expect("non-null function pointer")(
-            cinfo as crate::jpeglib_h::j_common_ptr,
-            1,
-            arraysize,
+            cinfo as crate::jpeglib_h::j_common_ptr, 1, arraysize
         ) as FSERRPTR;
         i += 1
     }
@@ -1348,7 +1058,7 @@ unsafe extern "C" fn start_pass_1_quant(
     (*cinfo).colormap = (*cquantize).sv_colormap;
     (*cinfo).actual_number_of_colors = (*cquantize).sv_actual;
     /* Initialize for desired dithering mode. */
-    match  (*cinfo).dither_mode {
+    match (*cinfo).dither_mode {
         0 => {
             if (*cinfo).out_color_components == 3 {
                 (*cquantize).pub_0.color_quantize = Some(
@@ -1423,10 +1133,7 @@ unsafe extern "C" fn start_pass_1_quant(
                 alloc_fs_workspace(cinfo);
             }
             /* Initialize the propagated errors to zero. */
-            arraysize = ((*cinfo)
-                .output_width
-                .wrapping_add(2u32)
-                as usize)
+            arraysize = ((*cinfo).output_width.wrapping_add(2u32) as usize)
                 .wrapping_mul(::std::mem::size_of::<FSERROR>());
             i = 0;
             while i < (*cinfo).out_color_components {
@@ -1438,8 +1145,7 @@ unsafe extern "C" fn start_pass_1_quant(
             }
         }
         _ => {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_NOT_COMPILED as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_NOT_COMPILED as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -1487,7 +1193,6 @@ pub unsafe extern "C" fn jinit_1pass_quantizer(mut cinfo: crate::jpeglib_h::j_de
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<my_cquantizer>(),
     ) as my_cquantize_ptr; /* Also flag odither arrays not allocated */
     (*cinfo).cquantize = cquantize as *mut crate::jpegint_h::jpeg_color_quantizer;
@@ -1508,8 +1213,7 @@ pub unsafe extern "C" fn jinit_1pass_quantizer(mut cinfo: crate::jpeglib_h::j_de
     (*cquantize).odither[0] = 0 as ODITHER_MATRIX_PTR;
     /* Make sure my internal arrays won't overflow */
     if (*cinfo).out_color_components > 4 {
-        (*(*cinfo).err).msg_code =
-            crate::src::jpeg_8c::jerror::JERR_QUANT_COMPONENTS as i32;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_QUANT_COMPONENTS as i32;
         (*(*cinfo).err).msg_parm.i[0] = 4;
         Some(
             (*(*cinfo).err)
@@ -1520,10 +1224,8 @@ pub unsafe extern "C" fn jinit_1pass_quantizer(mut cinfo: crate::jpeglib_h::j_de
     }
     /* Make sure colormap indexes can be represented by JSAMPLEs */
     if (*cinfo).desired_number_of_colors > 255 + 1 {
-        (*(*cinfo).err).msg_code =
-            crate::src::jpeg_8c::jerror::JERR_QUANT_MANY_COLORS as i32;
-        (*(*cinfo).err).msg_parm.i[0] =
-            255 + 1;
+        (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_QUANT_MANY_COLORS as i32;
+        (*(*cinfo).err).msg_parm.i[0] = 255 + 1;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -1540,9 +1242,7 @@ pub unsafe extern "C" fn jinit_1pass_quantizer(mut cinfo: crate::jpeglib_h::j_de
      * mode in a later pass, we will allocate the space then, and will
      * possibly overrun the max_memory_to_use setting.
      */
-    if  (*cinfo).dither_mode
-        ==  crate::jpeglib_h::JDITHER_FS
-    {
+    if (*cinfo).dither_mode == crate::jpeglib_h::JDITHER_FS {
         alloc_fs_workspace(cinfo);
     };
 }

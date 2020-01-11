@@ -172,41 +172,65 @@ unsafe extern "C" fn kf_bfly4(
             tw2 = tw1;
             tw3 = tw2;
             /* m is guaranteed to be a multiple of 4. */
-            j = 0;
-            while j < m {
+
+            for j in 0..m {
                 scratch[0].r = (*Fout.offset(m as isize)).r * (*tw1).r
                     - (*Fout.offset(m as isize)).i * (*tw1).i;
+
                 scratch[0].i = (*Fout.offset(m as isize)).r * (*tw1).i
                     + (*Fout.offset(m as isize)).i * (*tw1).r;
+
                 scratch[1].r = (*Fout.offset(m2 as isize)).r * (*tw2).r
                     - (*Fout.offset(m2 as isize)).i * (*tw2).i;
+
                 scratch[1].i = (*Fout.offset(m2 as isize)).r * (*tw2).i
                     + (*Fout.offset(m2 as isize)).i * (*tw2).r;
+
                 scratch[2].r = (*Fout.offset(m3 as isize)).r * (*tw3).r
                     - (*Fout.offset(m3 as isize)).i * (*tw3).i;
+
                 scratch[2].i = (*Fout.offset(m3 as isize)).r * (*tw3).i
                     + (*Fout.offset(m3 as isize)).i * (*tw3).r;
+
                 scratch[5].r = (*Fout).r - scratch[1].r;
+
                 scratch[5].i = (*Fout).i - scratch[1].i;
+
                 (*Fout).r += scratch[1].r;
+
                 (*Fout).i += scratch[1].i;
+
                 scratch[3].r = scratch[0].r + scratch[2].r;
+
                 scratch[3].i = scratch[0].i + scratch[2].i;
+
                 scratch[4].r = scratch[0].r - scratch[2].r;
+
                 scratch[4].i = scratch[0].i - scratch[2].i;
+
                 (*Fout.offset(m2 as isize)).r = (*Fout).r - scratch[3].r;
+
                 (*Fout.offset(m2 as isize)).i = (*Fout).i - scratch[3].i;
+
                 tw1 = tw1.offset(fstride as isize);
+
                 tw2 = tw2.offset(fstride.wrapping_mul(2usize) as isize);
+
                 tw3 = tw3.offset(fstride.wrapping_mul(3usize) as isize);
+
                 (*Fout).r += scratch[3].r;
+
                 (*Fout).i += scratch[3].i;
+
                 (*Fout.offset(m as isize)).r = scratch[5].r + scratch[4].i;
+
                 (*Fout.offset(m as isize)).i = scratch[5].i - scratch[4].r;
+
                 (*Fout.offset(m3 as isize)).r = scratch[5].r - scratch[4].i;
+
                 (*Fout.offset(m3 as isize)).i = scratch[5].i + scratch[4].r;
+
                 Fout = Fout.offset(1);
-                j += 1
             }
             i += 1
         }
@@ -323,63 +347,101 @@ unsafe extern "C" fn kf_bfly5(
         Fout3 = Fout0.offset((3i32 * m) as isize);
         Fout4 = Fout0.offset((4i32 * m) as isize);
         /* For non-custom modes, m is guaranteed to be a multiple of 4. */
-        u = 0;
-        while u < m {
+
+        for u in 0..m {
             scratch[0] = *Fout0;
+
             scratch[1].r = (*Fout1).r * (*tw.offset((u as usize).wrapping_mul(fstride) as isize)).r
                 - (*Fout1).i * (*tw.offset((u as usize).wrapping_mul(fstride) as isize)).i;
+
             scratch[1].i = (*Fout1).r * (*tw.offset((u as usize).wrapping_mul(fstride) as isize)).i
                 + (*Fout1).i * (*tw.offset((u as usize).wrapping_mul(fstride) as isize)).r;
+
             scratch[2].r = (*Fout2).r
                 * (*tw.offset(((2 * u) as usize).wrapping_mul(fstride) as isize)).r
                 - (*Fout2).i * (*tw.offset(((2 * u) as usize).wrapping_mul(fstride) as isize)).i;
+
             scratch[2].i = (*Fout2).r
                 * (*tw.offset(((2 * u) as usize).wrapping_mul(fstride) as isize)).i
                 + (*Fout2).i * (*tw.offset(((2 * u) as usize).wrapping_mul(fstride) as isize)).r;
+
             scratch[3].r = (*Fout3).r
                 * (*tw.offset(((3 * u) as usize).wrapping_mul(fstride) as isize)).r
                 - (*Fout3).i * (*tw.offset(((3 * u) as usize).wrapping_mul(fstride) as isize)).i;
+
             scratch[3].i = (*Fout3).r
                 * (*tw.offset(((3 * u) as usize).wrapping_mul(fstride) as isize)).i
                 + (*Fout3).i * (*tw.offset(((3 * u) as usize).wrapping_mul(fstride) as isize)).r;
+
             scratch[4].r = (*Fout4).r
                 * (*tw.offset(((4 * u) as usize).wrapping_mul(fstride) as isize)).r
                 - (*Fout4).i * (*tw.offset(((4 * u) as usize).wrapping_mul(fstride) as isize)).i;
+
             scratch[4].i = (*Fout4).r
                 * (*tw.offset(((4 * u) as usize).wrapping_mul(fstride) as isize)).i
                 + (*Fout4).i * (*tw.offset(((4 * u) as usize).wrapping_mul(fstride) as isize)).r;
+
             scratch[7].r = scratch[1].r + scratch[4].r;
+
             scratch[7].i = scratch[1].i + scratch[4].i;
+
             scratch[10].r = scratch[1].r - scratch[4].r;
+
             scratch[10].i = scratch[1].i - scratch[4].i;
+
             scratch[8].r = scratch[2].r + scratch[3].r;
+
             scratch[8].i = scratch[2].i + scratch[3].i;
+
             scratch[9].r = scratch[2].r - scratch[3].r;
+
             scratch[9].i = scratch[2].i - scratch[3].i;
+
             (*Fout0).r = (*Fout0).r + (scratch[7].r + scratch[8].r);
+
             (*Fout0).i = (*Fout0).i + (scratch[7].i + scratch[8].i);
+
             scratch[5].r = scratch[0].r + (scratch[7].r * ya.r + scratch[8].r * yb.r);
+
             scratch[5].i = scratch[0].i + (scratch[7].i * ya.r + scratch[8].i * yb.r);
+
             scratch[6].r = scratch[10].i * ya.i + scratch[9].i * yb.i;
+
             scratch[6].i = -(scratch[10].r * ya.i + scratch[9].r * yb.i);
+
             (*Fout1).r = scratch[5].r - scratch[6].r;
+
             (*Fout1).i = scratch[5].i - scratch[6].i;
+
             (*Fout4).r = scratch[5].r + scratch[6].r;
+
             (*Fout4).i = scratch[5].i + scratch[6].i;
+
             scratch[11].r = scratch[0].r + (scratch[7].r * yb.r + scratch[8].r * ya.r);
+
             scratch[11].i = scratch[0].i + (scratch[7].i * yb.r + scratch[8].i * ya.r);
+
             scratch[12].r = scratch[9].i * ya.i - scratch[10].i * yb.i;
+
             scratch[12].i = scratch[10].r * yb.i - scratch[9].r * ya.i;
+
             (*Fout2).r = scratch[11].r + scratch[12].r;
+
             (*Fout2).i = scratch[11].i + scratch[12].i;
+
             (*Fout3).r = scratch[11].r - scratch[12].r;
+
             (*Fout3).i = scratch[11].i - scratch[12].i;
+
             Fout0 = Fout0.offset(1);
+
             Fout1 = Fout1.offset(1);
+
             Fout2 = Fout2.offset(1);
+
             Fout3 = Fout3.offset(1);
+
             Fout4 = Fout4.offset(1);
-            u += 1
         }
         i += 1
     }
@@ -471,12 +533,13 @@ pub unsafe extern "C" fn opus_fft_c(
     let mut scale: crate::arch_h::opus_val16 = 0.;
     scale = (*st).scale;
     /* Bit-reverse the input */
-    i = 0;
-    while i < (*st).nfft {
+
+    for i in 0..(*st).nfft {
         let mut x: crate::src::opus_1_2_1::celt::kiss_fft::kiss_fft_cpx = *fin.offset(i as isize);
+
         (*fout.offset(*(*st).bitrev.offset(i as isize) as isize)).r = scale * x.r;
+
         (*fout.offset(*(*st).bitrev.offset(i as isize) as isize)).i = scale * x.i;
-        i += 1
     }
     opus_fft_impl(st, fout);
 }

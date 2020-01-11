@@ -143,19 +143,19 @@ pub mod mathops_h {
         let mut i: i32 = 0;
         let mut maxval: crate::arch_h::opus_val16 = 0f32;
         let mut minval: crate::arch_h::opus_val16 = 0f32;
-        i = 0;
-        while i < len {
+
+        for i in 0..len {
             maxval = if maxval > *x.offset(i as isize) {
                 maxval
             } else {
                 *x.offset(i as isize)
             };
+
             minval = if minval < *x.offset(i as isize) {
                 minval
             } else {
                 *x.offset(i as isize)
             };
-            i += 1
         }
         return if maxval > -minval { maxval } else { -minval };
     }
@@ -305,10 +305,9 @@ pub mod pitch_h {
     ) -> crate::arch_h::opus_val32 {
         let mut i: i32 = 0;
         let mut xy: crate::arch_h::opus_val32 = 0f32;
-        i = 0;
-        while i < N {
+
+        for i in 0..N {
             xy = xy + *x.offset(i as isize) * *y.offset(i as isize);
-            i += 1
         }
         return xy;
     }
@@ -1233,37 +1232,63 @@ pub unsafe extern "C" fn compute_stereo_width(
     /* Unroll by 4. The frame size is always a multiple of 4 *except* for
     2.5 ms frames at 12 kHz. Since this setting is very rare (and very
     stupid), we just discard the last two samples. */
-    i = 0;
-    while i < frame_size - 3 {
+
+    for i in (0..frame_size - 3).step_by(4 as usize) {
         let mut pxx: crate::arch_h::opus_val32 = 0f32;
+
         let mut pxy: crate::arch_h::opus_val32 = 0f32;
+
         let mut pyy: crate::arch_h::opus_val32 = 0f32;
+
         let mut x: crate::arch_h::opus_val16 = 0.;
+
         let mut y: crate::arch_h::opus_val16 = 0.;
+
         x = *pcm.offset((2 * i) as isize);
+
         y = *pcm.offset((2 * i + 1) as isize);
+
         pxx = x * x;
+
         pxy = x * y;
+
         pyy = y * y;
+
         x = *pcm.offset((2 * i + 2) as isize);
+
         y = *pcm.offset((2 * i + 3) as isize);
+
         pxx += x * x;
+
         pxy += x * y;
+
         pyy += y * y;
+
         x = *pcm.offset((2 * i + 4) as isize);
+
         y = *pcm.offset((2 * i + 5) as isize);
+
         pxx += x * x;
+
         pxy += x * y;
+
         pyy += y * y;
+
         x = *pcm.offset((2 * i + 6) as isize);
+
         y = *pcm.offset((2 * i + 7) as isize);
+
         pxx += x * x;
+
         pxy += x * y;
+
         pyy += y * y;
+
         xx += pxx;
+
         xy += pxy;
+
         yy += pyy;
-        i += 4
     }
     (*mem).XX += short_alpha * (xx - (*mem).XX);
     (*mem).XY += short_alpha * (xy - (*mem).XY);
@@ -1594,14 +1619,16 @@ unsafe extern "C" fn encode_multiframe_packet(
     } else {
         (*st).prev_channels = (*st).stream_channels
     }
-    i = 0;
-    while i < nb_frames {
+
+    for i in 0..nb_frames {
         (*st).silk_mode.toMono = 0;
+
         (*st).nonfinal_frame = (i < nb_frames - 1) as i32;
-        /* When switching from SILK/Hybrid to CELT, only ask for a switch at the last frame */
+
         if to_celt != 0 && i == nb_frames - 1 {
             (*st).user_forced_mode = 1002
         }
+
         tmp_len = opus_encode_native(
             st,
             pcm.offset((i * ((*st).channels * frame_size)) as isize),
@@ -1617,18 +1644,20 @@ unsafe extern "C" fn encode_multiframe_packet(
             None,
             float_api,
         );
+
         if tmp_len < 0 {
             return -(3i32);
         }
+
         ret = crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_cat(
             rp,
             tmp_data.offset((i * bytes_per_frame) as isize),
             tmp_len,
         );
+
         if ret < 0 {
             return -(3i32);
         }
-        i += 1
     }
     ret = crate::src::opus_1_2_1::src::repacketizer::opus_repacketizer_out_range_impl(
         rp,
@@ -2483,9 +2512,10 @@ pub unsafe extern "C" fn opus_encode_native(
                 end = 15;
                 srate = 12000
             }
-            c = 0;
-            while c < (*st).channels {
+
+            for c in 0..(*st).channels {
                 i = 0;
+
                 while i < end {
                     let mut mask: crate::arch_h::opus_val16 = 0.;
                     mask = if (if *(*st).energy_masking.offset((21 * c + i) as isize) < 0.5f32 {
@@ -2508,7 +2538,6 @@ pub unsafe extern "C" fn opus_encode_native(
                     mask_sum += mask;
                     i += 1
                 }
-                c += 1
             }
             /* Conservative rate reduction, we cut the masking in half */
             masking_depth = mask_sum / end as f32 * (*st).channels as f32;
@@ -3274,10 +3303,9 @@ pub unsafe extern "C" fn opus_encode(
         (::std::mem::size_of::<f32>()).wrapping_mul((frame_size * (*st).channels) as usize),
     );
     in_0 = fresh10.as_mut_ptr() as *mut f32;
-    i = 0;
-    while i < frame_size * (*st).channels {
+
+    for i in 0..frame_size * (*st).channels {
         *in_0.offset(i as isize) = 1.0 / 32768f32 * *pcm.offset(i as isize) as i32 as f32;
-        i += 1
     }
     ret = opus_encode_native(
         st,

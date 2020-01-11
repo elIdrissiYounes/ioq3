@@ -228,12 +228,11 @@ unsafe extern "C" fn loss_distortion(
     let mut dist: crate::arch_h::opus_val32 = 0f32;
     c = 0;
     loop {
-        i = start;
-        while i < end {
+        for i in start..end {
             let mut d: crate::arch_h::opus_val16 =
                 *eBands.offset((i + c * len) as isize) - *oldEBands.offset((i + c * len) as isize);
+
             dist = dist + d * d;
-            i += 1
         }
         c += 1;
         if !(c < C) {
@@ -277,9 +276,10 @@ unsafe extern "C" fn quant_coarse_energy_impl(
         coef = pred_coef[LM as usize]
     }
     /* Encode at a fixed coarse resolution */
-    i = start;
-    while i < end {
+
+    for i in start..end {
         c = 0;
+
         loop {
             let mut bits_left: i32 = 0;
             let mut qi: i32 = 0;
@@ -368,7 +368,6 @@ unsafe extern "C" fn quant_coarse_energy_impl(
                 break;
             }
         }
-        i += 1
     }
     return if lfe != 0 { 0 } else { badness };
 }

@@ -352,7 +352,6 @@ pub unsafe extern "C" fn jpeg_copy_critical_parameters(
                 (*(*srcinfo).quant_tbl_ptrs[tblno as usize])
                     .quantval
                     .as_mut_ptr() as *const libc::c_void,
-                
                 ::std::mem::size_of::<[crate::jmorecfg_h::UINT16; 64]>(),
             );
             (**qtblptr).sent_table = 0
@@ -363,10 +362,8 @@ pub unsafe extern "C" fn jpeg_copy_critical_parameters(
      * Note we assume jpeg_set_defaults has allocated the dest comp_info array.
      */
     (*dstinfo).num_components = (*srcinfo).num_components;
-    if (*dstinfo).num_components < 1 || (*dstinfo).num_components > 10
-    {
-        (*(*dstinfo).err).msg_code =
-            crate::src::jpeg_8c::jerror::JERR_COMPONENT_COUNT as i32;
+    if (*dstinfo).num_components < 1 || (*dstinfo).num_components > 10 {
+        (*(*dstinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_COMPONENT_COUNT as i32;
         (*(*dstinfo).err).msg_parm.i[0] = (*dstinfo).num_components;
         (*(*dstinfo).err).msg_parm.i[1] = 10;
         Some(
@@ -388,12 +385,8 @@ pub unsafe extern "C" fn jpeg_copy_critical_parameters(
          * instead we rely on jpeg_set_colorspace to have made a suitable choice.
          */
         tblno = (*outcomp).quant_tbl_no;
-        if tblno < 0
-            || tblno >= 4
-            || (*srcinfo).quant_tbl_ptrs[tblno as usize].is_null()
-        {
-            (*(*dstinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_NO_QUANT_TABLE as i32;
+        if tblno < 0 || tblno >= 4 || (*srcinfo).quant_tbl_ptrs[tblno as usize].is_null() {
+            (*(*dstinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_NO_QUANT_TABLE as i32;
             (*(*dstinfo).err).msg_parm.i[0] = tblno;
             Some(
                 (*(*dstinfo).err)
@@ -515,16 +508,10 @@ unsafe extern "C" fn start_iMCU_row(mut cinfo: crate::jpeglib_h::j_compress_ptr)
      */
     if (*cinfo).comps_in_scan > 1 {
         (*coef).MCU_rows_per_iMCU_row = 1
-    } else if (*coef).iMCU_row_num
-        < (*cinfo)
-            .total_iMCU_rows
-            .wrapping_sub(1u32)
-    {
-        (*coef).MCU_rows_per_iMCU_row =
-            (*(*cinfo).cur_comp_info[0]).v_samp_factor
+    } else if (*coef).iMCU_row_num < (*cinfo).total_iMCU_rows.wrapping_sub(1u32) {
+        (*coef).MCU_rows_per_iMCU_row = (*(*cinfo).cur_comp_info[0]).v_samp_factor
     } else {
-        (*coef).MCU_rows_per_iMCU_row =
-            (*(*cinfo).cur_comp_info[0]).last_row_height
+        (*coef).MCU_rows_per_iMCU_row = (*(*cinfo).cur_comp_info[0]).last_row_height
     }
     (*coef).mcu_ctr = 0;
     (*coef).MCU_vert_offset = 0;
@@ -538,8 +525,7 @@ unsafe extern "C" fn start_pass_coef(
     mut pass_mode: crate::jpegint_h::J_BUF_MODE,
 ) {
     let mut coef: my_coef_ptr = (*cinfo).coef as my_coef_ptr;
-    if  pass_mode !=  crate::jpegint_h::JBUF_CRANK_DEST
-    {
+    if pass_mode != crate::jpegint_h::JBUF_CRANK_DEST {
         (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as i32;
         Some(
             (*(*cinfo).err)
@@ -567,12 +553,9 @@ unsafe extern "C" fn compress_output(
 ) -> crate::jmorecfg_h::boolean {
     let mut coef: my_coef_ptr = (*cinfo).coef as my_coef_ptr; /* index of current MCU within row */
     let mut MCU_col_num: crate::jmorecfg_h::JDIMENSION = 0;
-    let mut last_MCU_col: crate::jmorecfg_h::JDIMENSION = (*cinfo)
-        .MCUs_per_row
-        .wrapping_sub(1u32);
-    let mut last_iMCU_row: crate::jmorecfg_h::JDIMENSION = (*cinfo)
-        .total_iMCU_rows
-        .wrapping_sub(1u32);
+    let mut last_MCU_col: crate::jmorecfg_h::JDIMENSION = (*cinfo).MCUs_per_row.wrapping_sub(1u32);
+    let mut last_iMCU_row: crate::jmorecfg_h::JDIMENSION =
+        (*cinfo).total_iMCU_rows.wrapping_sub(1u32);
     let mut blkn: i32 = 0;
     let mut ci: i32 = 0;
     let mut xindex: i32 = 0;
@@ -608,10 +591,10 @@ unsafe extern "C" fn compress_output(
         );
         ci += 1
     }
-    /* Loop to process one whole iMCU row */
-    yoffset = (*coef).MCU_vert_offset;
-    while yoffset < (*coef).MCU_rows_per_iMCU_row {
+
+    for yoffset in (*coef).MCU_vert_offset..(*coef).MCU_rows_per_iMCU_row {
         MCU_col_num = (*coef).mcu_ctr;
+
         while MCU_col_num < (*cinfo).MCUs_per_row {
             /* Construct list of pointers to DCT blocks belonging to this MCU */
             blkn = 0; /* index of current DCT block within MCU */
@@ -624,8 +607,8 @@ unsafe extern "C" fn compress_output(
                 } else {
                     (*compptr).last_col_width
                 };
-                yindex = 0;
-                while yindex < (*compptr).MCU_height {
+
+                for yindex in 0..(*compptr).MCU_height {
                     if (*coef).iMCU_row_num < last_iMCU_row
                         || yindex + yoffset < (*compptr).last_row_height
                     {
@@ -645,23 +628,14 @@ unsafe extern "C" fn compress_output(
                         /* At bottom of image, need a whole row of dummy blocks */
                         xindex = 0
                     }
-                    /* Fill in any dummy blocks needed in this row.
-                     * Dummy blocks are filled in the same way as in jccoefct.c:
-                     * all zeroes in the AC entries, DC entries equal to previous
-                     * block's DC value.  The init routine has already zeroed the
-                     * AC entries, so we need only set the DC entries correctly.
-                     */
+
                     while xindex < (*compptr).MCU_width {
                         MCU_buffer[blkn as usize] = (*coef).dummy_buffer[blkn as usize];
-                        (*MCU_buffer[blkn as usize].offset(0))
-                            [0] = (*MCU_buffer
-                            [(blkn - 1) as usize]
-                            .offset(0))
-                            [0];
+                        (*MCU_buffer[blkn as usize].offset(0))[0] =
+                            (*MCU_buffer[(blkn - 1) as usize].offset(0))[0];
                         blkn += 1;
                         xindex += 1
                     }
-                    yindex += 1
                 }
                 ci += 1
             }
@@ -683,7 +657,6 @@ unsafe extern "C" fn compress_output(
         }
         /* Completed an MCU row, but perhaps not an iMCU row */
         (*coef).mcu_ctr = 0;
-        yoffset += 1
     }
     /* Completed the iMCU row, advance counters for next one */
     (*coef).iMCU_row_num = (*coef).iMCU_row_num.wrapping_add(1);
@@ -713,7 +686,6 @@ unsafe extern "C" fn transencode_coef_controller(
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<my_coef_controller>(),
     ) as my_coef_ptr;
     (*cinfo).coef = coef as *mut crate::jpegint_h::jpeg_c_coef_controller;
@@ -742,13 +714,11 @@ unsafe extern "C" fn transencode_coef_controller(
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        (10usize)
-            .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>()),
+        (10usize).wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>()),
     ) as crate::jpeglib_h::JBLOCKROW;
     crate::src::jpeg_8c::jutils::jzero_far(
         buffer as *mut libc::c_void,
-        (10usize)
-            .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>()),
+        (10usize).wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>()),
     );
     i = 0;
     while i < 10 {

@@ -434,22 +434,21 @@ pub unsafe extern "C" fn silk_decode_pulses(
                 (i as crate::opus_types_h::opus_int16 as crate::opus_types_h::opus_int32 * 16)
                     as isize,
             ) as *mut crate::opus_types_h::opus_int16;
-            k = 0;
-            while k < 16 {
+
+            for k in 0..16 {
                 abs_q = *pulses_ptr.offset(k as isize) as i32;
-                j = 0;
-                while j < nLS {
+                for j in 0..nLS {
                     abs_q = ((abs_q as crate::opus_types_h::opus_uint32) << 1)
                         as crate::opus_types_h::opus_int32;
+
                     abs_q += crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
                         psRangeDec,
                         crate::src::opus_1_2_1::silk::tables_other::silk_lsb_iCDF.as_ptr(),
                         8,
                     );
-                    j += 1
                 }
+
                 *pulses_ptr.offset(k as isize) = abs_q as crate::opus_types_h::opus_int16;
-                k += 1
             }
             /* Mark the number of pulses non-zero for sign decoding. */
             sum_pulses[i as usize] |= nLS << 5

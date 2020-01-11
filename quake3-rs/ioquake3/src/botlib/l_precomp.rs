@@ -551,11 +551,11 @@ pub unsafe extern "C" fn PC_ReadDefineParms(
         return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
-    i = 0;
-    while i < (*define).numparms {
+
+    for i in 0..(*define).numparms {
         let ref mut fresh0 = *parms.offset(i as isize);
+
         *fresh0 = 0 as *mut crate::src::botlib::l_script::token_t;
-        i += 1
     }
     //if no leading "("
     if crate::stdlib::strcmp(
@@ -1426,16 +1426,15 @@ pub unsafe extern "C" fn PC_ExpandDefine(
     *firsttoken = first;
     *lasttoken = last;
     //free all the parameter tokens
-    i = 0; //end for
-    while i < (*define).numparms {
+    //end for
+    for i in 0..(*define).numparms {
         pt = parms[i as usize];
+
         while !pt.is_null() {
             nextpt = (*pt).next;
             PC_FreeToken(pt);
             pt = nextpt
         }
-        i += 1
-        //end for
     }
     //
     return crate::src::qcommon::q_shared::qtrue as i32;
@@ -4736,16 +4735,14 @@ pub unsafe extern "C" fn FreeSource(mut source: *mut crate::src::botlib::l_preco
         (*source).tokens = (*(*source).tokens).next; //end for
         PC_FreeToken(token);
     }
-    i = 0;
-    while i < 1024 {
+
+    for i in 0..1024 {
         while !(*(*source).definehash.offset(i as isize)).is_null() {
             define = *(*source).definehash.offset(i as isize);
             let ref mut fresh8 = *(*source).definehash.offset(i as isize);
             *fresh8 = (**(*source).definehash.offset(i as isize)).hashnext;
             PC_FreeDefine(define);
         }
-        i += 1
-        //end while
     }
     //DEFINEHASHING
     //DEFINEHASHING

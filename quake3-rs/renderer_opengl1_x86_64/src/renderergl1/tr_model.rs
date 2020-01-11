@@ -304,9 +304,7 @@ pub unsafe extern "C" fn R_RegisterMD3(
     mut name: *const i8,
     mut mod_0: *mut crate::tr_local_h::model_t,
 ) -> crate::src::qcommon::q_shared::qhandle_t {
-    let mut buf: C2RustUnnamed_120 = C2RustUnnamed_120 {
-        u: 0 as *mut u32,
-    };
+    let mut buf: C2RustUnnamed_120 = C2RustUnnamed_120 { u: 0 as *mut u32 };
     let mut lod: i32 = 0;
     let mut ident: i32 = 0;
     let mut loaded: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
@@ -314,15 +312,14 @@ pub unsafe extern "C" fn R_RegisterMD3(
     let mut filename: [i8; 64] = [0; 64];
     let mut namebuf: [i8; 84] = [0; 84];
     let mut fext: *mut i8 = 0 as *mut i8;
-    let mut defex: [i8; 4] =
-        *::std::mem::transmute::<&[u8; 4], &mut [i8; 4]>(b"md3\x00");
+    let mut defex: [i8; 4] = *::std::mem::transmute::<&[u8; 4], &mut [i8; 4]>(b"md3\x00");
     numLoaded = 0;
     crate::stdlib::strcpy(filename.as_mut_ptr(), name);
     fext = crate::stdlib::strchr(filename.as_mut_ptr(), '.' as i32);
     if fext.is_null() {
         fext = defex.as_mut_ptr()
     } else {
-        *fext =  '\u{0}' as i8;
+        *fext = '\u{0}' as i8;
         fext = fext.offset(1)
     }
     lod = 3 - 1;
@@ -330,7 +327,6 @@ pub unsafe extern "C" fn R_RegisterMD3(
         if lod != 0 {
             crate::src::qcommon::q_shared::Com_sprintf(
                 namebuf.as_mut_ptr(),
-                
                 ::std::mem::size_of::<[i8; 84]>() as i32,
                 b"%s_%d.%s\x00" as *const u8 as *const i8,
                 filename.as_mut_ptr(),
@@ -340,7 +336,6 @@ pub unsafe extern "C" fn R_RegisterMD3(
         } else {
             crate::src::qcommon::q_shared::Com_sprintf(
                 namebuf.as_mut_ptr(),
-                
                 ::std::mem::size_of::<[i8; 84]>() as i32,
                 b"%s.%s\x00" as *const u8 as *const i8,
                 filename.as_mut_ptr(),
@@ -353,10 +348,7 @@ pub unsafe extern "C" fn R_RegisterMD3(
         if !buf.u.is_null() {
             ident = *buf.u as i32;
             if ident
-                == (('3' as i32) << 24)
-                    + (('P' as i32) << 16)
-                    + (('D' as i32) << 8)
-                    + 'I' as i32
+                == (('3' as i32) << 24) + (('P' as i32) << 16) + (('D' as i32) << 8) + 'I' as i32
             {
                 loaded = R_LoadMD3(mod_0, lod, buf.u as *mut libc::c_void, name)
             } else {
@@ -364,8 +356,7 @@ pub unsafe extern "C" fn R_RegisterMD3(
                     .Printf
                     .expect("non-null function pointer")(
                     crate::src::qcommon::q_shared::PRINT_WARNING as i32,
-                    b"R_RegisterMD3: unknown fileid for %s\n\x00" as *const u8
-                        as *const i8,
+                    b"R_RegisterMD3: unknown fileid for %s\n\x00" as *const u8 as *const i8,
                     name,
                 );
             }
@@ -405,9 +396,7 @@ pub unsafe extern "C" fn R_RegisterMDR(
     mut name: *const i8,
     mut mod_0: *mut crate::tr_local_h::model_t,
 ) -> crate::src::qcommon::q_shared::qhandle_t {
-    let mut buf: C2RustUnnamed_121 = C2RustUnnamed_121 {
-        u: 0 as *mut u32,
-    };
+    let mut buf: C2RustUnnamed_121 = C2RustUnnamed_121 { u: 0 as *mut u32 };
     let mut ident: i32 = 0;
     let mut loaded: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
     let mut filesize: i32 = 0;
@@ -421,12 +410,7 @@ pub unsafe extern "C" fn R_RegisterMDR(
         return 0i32;
     }
     ident = *buf.u as i32;
-    if ident
-        == (('5' as i32) << 24)
-            + (('M' as i32) << 16)
-            + (('D' as i32) << 8)
-            + 'R' as i32
-    {
+    if ident == (('5' as i32) << 24) + (('M' as i32) << 16) + (('D' as i32) << 8) + 'R' as i32 {
         loaded = R_LoadMDR(mod_0, buf.u as *mut libc::c_void, filesize, name)
     }
     crate::src::renderergl1::tr_main::ri
@@ -456,9 +440,7 @@ pub unsafe extern "C" fn R_RegisterIQM(
     mut name: *const i8,
     mut mod_0: *mut crate::tr_local_h::model_t,
 ) -> crate::src::qcommon::q_shared::qhandle_t {
-    let mut buf: C2RustUnnamed_122 = C2RustUnnamed_122 {
-        u: 0 as *mut u32,
-    };
+    let mut buf: C2RustUnnamed_122 = C2RustUnnamed_122 { u: 0 as *mut u32 };
     let mut loaded: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
     let mut filesize: i32 = 0;
     filesize = crate::src::renderergl1::tr_main::ri
@@ -499,7 +481,7 @@ static mut modelLoaders: [modelExtToLoaderMap_t; 3] = unsafe {
     [
         {
             let mut init = modelExtToLoaderMap_t {
-                ext:  b"iqm\x00" as *const  u8 as *mut i8,
+                ext: b"iqm\x00" as *const u8 as *mut i8,
                 ModelLoader: Some(
                     R_RegisterIQM
                         as unsafe extern "C" fn(
@@ -513,7 +495,7 @@ static mut modelLoaders: [modelExtToLoaderMap_t; 3] = unsafe {
         },
         {
             let mut init = modelExtToLoaderMap_t {
-                ext:  b"mdr\x00" as *const  u8 as *mut i8,
+                ext: b"mdr\x00" as *const u8 as *mut i8,
                 ModelLoader: Some(
                     R_RegisterMDR
                         as unsafe extern "C" fn(
@@ -527,7 +509,7 @@ static mut modelLoaders: [modelExtToLoaderMap_t; 3] = unsafe {
         },
         {
             let mut init = modelExtToLoaderMap_t {
-                ext:  b"md3\x00" as *const  u8 as *mut i8,
+                ext: b"md3\x00" as *const u8 as *mut i8,
                 ModelLoader: Some(
                     R_RegisterMD3
                         as unsafe extern "C" fn(
@@ -575,7 +557,6 @@ pub unsafe extern "C" fn R_AllocModel() -> *mut crate::tr_local_h::model_t {
     mod_0 = crate::src::renderergl1::tr_main::ri
         .Hunk_Alloc
         .expect("non-null function pointer")(
-        
         ::std::mem::size_of::<crate::tr_local_h::model_t>() as i32,
         crate::src::qcommon::q_shared::h_low,
     ) as *mut crate::tr_local_h::model_t;
@@ -636,9 +617,7 @@ pub unsafe extern "C" fn RE_RegisterModel(
     while hModel < crate::src::renderergl1::tr_main::tr.numModels {
         mod_0 = crate::src::renderergl1::tr_main::tr.models[hModel as usize];
         if crate::stdlib::strcmp((*mod_0).name.as_mut_ptr(), name) == 0 {
-            if  (*mod_0).type_0
-                ==  crate::tr_local_h::MOD_BAD
-            {
+            if (*mod_0).type_0 == crate::tr_local_h::MOD_BAD {
                 return 0i32;
             }
             return hModel;
@@ -652,8 +631,7 @@ pub unsafe extern "C" fn RE_RegisterModel(
             .Printf
             .expect("non-null function pointer")(
             crate::src::qcommon::q_shared::PRINT_WARNING as i32,
-            b"RE_RegisterModel: R_AllocModel() failed for \'%s\'\n\x00" as *const u8
-                as *const i8,
+            b"RE_RegisterModel: R_AllocModel() failed for \'%s\'\n\x00" as *const u8 as *const i8,
             name,
         );
         return 0i32;
@@ -662,7 +640,6 @@ pub unsafe extern "C" fn RE_RegisterModel(
     crate::src::qcommon::q_shared::Q_strncpyz(
         (*mod_0).name.as_mut_ptr(),
         name,
-        
         ::std::mem::size_of::<[i8; 64]>() as i32,
     );
     crate::src::renderergl1::tr_cmds::R_IssuePendingRenderCommands();
@@ -714,7 +691,6 @@ pub unsafe extern "C" fn RE_RegisterModel(
         if !(i == orgLoader) {
             crate::src::qcommon::q_shared::Com_sprintf(
                 altName.as_mut_ptr(),
-                
                 ::std::mem::size_of::<[i8; 64]>() as i32,
                 b"%s.%s\x00" as *const u8 as *const i8,
                 localName.as_mut_ptr(),
@@ -798,8 +774,7 @@ unsafe extern "C" fn R_LoadMD3(
             .Printf
             .expect("non-null function pointer")(
             crate::src::qcommon::q_shared::PRINT_WARNING as i32,
-            b"R_LoadMD3: %s has wrong version (%i should be %i)\n\x00" as *const u8
-                as *const i8,
+            b"R_LoadMD3: %s has wrong version (%i should be %i)\n\x00" as *const u8 as *const i8,
             mod_name,
             version,
             15i32,
@@ -847,10 +822,8 @@ unsafe extern "C" fn R_LoadMD3(
         (*frame).radius = (*frame).radius;
         j = 0;
         while j < 3 {
-            (*frame).bounds[0][j as usize] =
-                (*frame).bounds[0][j as usize];
-            (*frame).bounds[1][j as usize] =
-                (*frame).bounds[1][j as usize];
+            (*frame).bounds[0][j as usize] = (*frame).bounds[0][j as usize];
+            (*frame).bounds[1][j as usize] = (*frame).bounds[1][j as usize];
             (*frame).localOrigin[j as usize] = (*frame).localOrigin[j as usize];
             j += 1
         }
@@ -866,12 +839,9 @@ unsafe extern "C" fn R_LoadMD3(
         j = 0;
         while j < 3 {
             (*tag).origin[j as usize] = (*tag).origin[j as usize];
-            (*tag).axis[0][j as usize] =
-                (*tag).axis[0][j as usize];
-            (*tag).axis[1][j as usize] =
-                (*tag).axis[1][j as usize];
-            (*tag).axis[2][j as usize] =
-                (*tag).axis[2][j as usize];
+            (*tag).axis[0][j as usize] = (*tag).axis[0][j as usize];
+            (*tag).axis[1][j as usize] = (*tag).axis[1][j as usize];
+            (*tag).axis[2][j as usize] = (*tag).axis[2][j as usize];
             j += 1
         }
         i += 1;
@@ -899,8 +869,7 @@ unsafe extern "C" fn R_LoadMD3(
                 .Printf
                 .expect("non-null function pointer")(
                 crate::src::qcommon::q_shared::PRINT_WARNING as i32,
-                b"R_LoadMD3: %s has more than %i verts on %s (%i).\n\x00" as *const u8
-                    as *const i8,
+                b"R_LoadMD3: %s has more than %i verts on %s (%i).\n\x00" as *const u8 as *const i8,
                 mod_name,
                 1000i32 - 1i32,
                 if (*surf).name[0usize] as i32 != 0 {
@@ -937,9 +906,7 @@ unsafe extern "C" fn R_LoadMD3(
         // strip off a trailing _1 or _2
         // this is a crutch for q3data being a mess
         j = crate::stdlib::strlen((*surf).name.as_mut_ptr()) as i32;
-        if j > 2
-            && (*surf).name[(j - 2) as usize] as i32 == '_' as i32
-        {
+        if j > 2 && (*surf).name[(j - 2) as usize] as i32 == '_' as i32 {
             (*surf).name[(j - 2) as usize] = 0
         }
         // register the shaders
@@ -1044,8 +1011,7 @@ unsafe extern "C" fn R_LoadMDR(
             .Printf
             .expect("non-null function pointer")(
             crate::src::qcommon::q_shared::PRINT_WARNING as i32,
-            b"R_LoadMDR: %s has wrong version (%i should be %i)\n\x00" as *const u8
-                as *const i8,
+            b"R_LoadMDR: %s has wrong version (%i should be %i)\n\x00" as *const u8 as *const i8,
             mod_name,
             (*pinmodel).version,
             2i32,
@@ -1072,18 +1038,14 @@ unsafe extern "C" fn R_LoadMDR(
     // over and over again, we'll uncompress it in this function already, so we must adjust the size of the target mdr.
     if (*pinmodel).ofsFrames < 0 {
         // mdrFrame_t is larger than mdrCompFrame_t:
-        size =  (size as usize).wrapping_add(
-            ((*pinmodel).numFrames as usize)
-                .wrapping_mul(::std::mem::size_of::<[i8; 16]>()),
+        size = (size as usize).wrapping_add(
+            ((*pinmodel).numFrames as usize).wrapping_mul(::std::mem::size_of::<[i8; 16]>()),
         ) as i32;
         // now add enough space for the uncompressed bones.
-        size =  (size as usize).wrapping_add(
+        size = (size as usize).wrapping_add(
             (((*pinmodel).numFrames * (*pinmodel).numBones) as usize).wrapping_mul(
                 (::std::mem::size_of::<crate::qfiles_h::mdrBone_t>())
-                    .wrapping_sub(
-                        
-                        ::std::mem::size_of::<crate::qfiles_h::mdrCompBone_t>()
-                    ),
+                    .wrapping_sub(::std::mem::size_of::<crate::qfiles_h::mdrCompBone_t>()),
             ),
         ) as i32
     }
@@ -1091,11 +1053,10 @@ unsafe extern "C" fn R_LoadMDR(
     if (*pinmodel).numBones < 0
         || (::std::mem::size_of::<crate::qfiles_h::mdrHeader_t>()).wrapping_add(
             ((*pinmodel).numFrames as usize).wrapping_mul(
-                (::std::mem::size_of::<crate::qfiles_h::mdrFrame_t>())
-                    .wrapping_add(
-                        (((*pinmodel).numBones - 1) as usize)
-                            .wrapping_mul(::std::mem::size_of::<crate::qfiles_h::mdrBone_t>()),
-                    ),
+                (::std::mem::size_of::<crate::qfiles_h::mdrFrame_t>()).wrapping_add(
+                    (((*pinmodel).numBones - 1) as usize)
+                        .wrapping_mul(::std::mem::size_of::<crate::qfiles_h::mdrBone_t>()),
+                ),
             ),
         ) > size as usize
     {
@@ -1120,7 +1081,6 @@ unsafe extern "C" fn R_LoadMDR(
     crate::src::qcommon::q_shared::Q_strncpyz(
         (*mdr).name.as_mut_ptr(),
         (*pinmodel).name.as_mut_ptr(),
-        
         ::std::mem::size_of::<[i8; 64]>() as i32,
     );
     (*mdr).numFrames = (*pinmodel).numFrames;
@@ -1141,8 +1101,9 @@ unsafe extern "C" fn R_LoadMDR(
     }
     /* The first frame will be put into the first free space after the header */
     frame = mdr.offset(1) as *mut crate::qfiles_h::mdrFrame_t;
-    (*mdr).ofsFrames =  (frame as *mut crate::src::qcommon::q_shared::byte)
-        .wrapping_offset_from(mdr as *mut crate::src::qcommon::q_shared::byte) as i32;
+    (*mdr).ofsFrames = (frame as *mut crate::src::qcommon::q_shared::byte)
+        .wrapping_offset_from(mdr as *mut crate::src::qcommon::q_shared::byte)
+        as i32;
     if (*pinmodel).ofsFrames < 0 {
         let mut cframe: *mut crate::qfiles_h::mdrCompFrame_t =
             0 as *mut crate::qfiles_h::mdrCompFrame_t;
@@ -1154,22 +1115,17 @@ unsafe extern "C" fn R_LoadMDR(
         while i < (*mdr).numFrames {
             j = 0;
             while j < 3 {
-                (*frame).bounds[0][j as usize] =
-                    (*cframe).bounds[0][j as usize];
-                (*frame).bounds[1][j as usize] =
-                    (*cframe).bounds[1][j as usize];
+                (*frame).bounds[0][j as usize] = (*cframe).bounds[0][j as usize];
+                (*frame).bounds[1][j as usize] = (*cframe).bounds[1][j as usize];
                 (*frame).localOrigin[j as usize] = (*cframe).localOrigin[j as usize];
                 j += 1
             }
             (*frame).radius = (*cframe).radius;
-            (*frame).name[0] =  '\u{0}' as i8;
+            (*frame).name[0] = '\u{0}' as i8;
             j = 0;
             while j < (*mdr).numBones {
                 k = 0;
-                while (k as usize)
-                    < (::std::mem::size_of::<[u8; 24]>())
-                        .wrapping_div(2usize)
-                {
+                while (k as usize) < (::std::mem::size_of::<[u8; 24]>()).wrapping_div(2usize) {
                     // Do swapping for the uncompressing functions. They seem to use shorts
                     // values only, so I assume this will work. Never tested it on other
                     // platforms, though.
@@ -1178,8 +1134,7 @@ unsafe extern "C" fn R_LoadMDR(
                         .as_mut_ptr() as *mut u16)
                         .offset(k as isize) = *((*(*cframe).bones.as_mut_ptr().offset(j as isize))
                         .Comp
-                        .as_mut_ptr()
-                        as *mut u16)
+                        .as_mut_ptr() as *mut u16)
                         .offset(k as isize);
                     k += 1
                 }
@@ -1215,10 +1170,8 @@ unsafe extern "C" fn R_LoadMDR(
         while i < (*mdr).numFrames {
             j = 0;
             while j < 3 {
-                (*frame).bounds[0][j as usize] =
-                    (*curframe).bounds[0][j as usize];
-                (*frame).bounds[1][j as usize] =
-                    (*curframe).bounds[1][j as usize];
+                (*frame).bounds[0][j as usize] = (*curframe).bounds[0][j as usize];
+                (*frame).bounds[1][j as usize] = (*curframe).bounds[1][j as usize];
                 (*frame).localOrigin[j as usize] = (*curframe).localOrigin[j as usize];
                 j += 1
             }
@@ -1226,18 +1179,13 @@ unsafe extern "C" fn R_LoadMDR(
             crate::src::qcommon::q_shared::Q_strncpyz(
                 (*frame).name.as_mut_ptr(),
                 (*curframe).name.as_mut_ptr(),
-                
                 ::std::mem::size_of::<[i8; 16]>() as i32,
             );
             j = 0;
             while j
                 < ((*mdr).numBones as usize)
-                    .wrapping_mul(
-                        
-                        ::std::mem::size_of::<crate::qfiles_h::mdrBone_t>()
-                    )
-                    .wrapping_div(4usize)
-                    as i32
+                    .wrapping_mul(::std::mem::size_of::<crate::qfiles_h::mdrBone_t>())
+                    .wrapping_div(4usize) as i32
             {
                 *((*frame).bones.as_mut_ptr() as *mut f32).offset(j as isize) =
                     *((*curframe).bones.as_mut_ptr() as *mut f32).offset(j as isize);
@@ -1257,14 +1205,14 @@ unsafe extern "C" fn R_LoadMDR(
     }
     // frame should now point to the first free address after all frames.
     lod = frame as *mut crate::qfiles_h::mdrLOD_t;
-    (*mdr).ofsLODs =  (lod as *mut crate::src::qcommon::q_shared::byte)
-        .wrapping_offset_from(mdr as *mut crate::src::qcommon::q_shared::byte) as i32;
+    (*mdr).ofsLODs = (lod as *mut crate::src::qcommon::q_shared::byte)
+        .wrapping_offset_from(mdr as *mut crate::src::qcommon::q_shared::byte)
+        as i32;
     curlod = (pinmodel as *mut crate::src::qcommon::q_shared::byte)
         .offset((*pinmodel).ofsLODs as isize) as *mut crate::qfiles_h::mdrLOD_t;
     // swap all the LOD's
-    l = 0;
-    while l < (*mdr).numLODs {
-        // simple bounds check
+
+    for l in 0..(*mdr).numLODs {
         if lod.offset(1) as *mut crate::src::qcommon::q_shared::byte
             > (mdr as *mut crate::src::qcommon::q_shared::byte).offset(size as isize)
         {
@@ -1277,15 +1225,21 @@ unsafe extern "C" fn R_LoadMDR(
             );
             return crate::src::qcommon::q_shared::qfalse;
         }
+
         (*lod).numSurfaces = (*curlod).numSurfaces;
-        // swap all the surfaces
+
         surf = lod.offset(1) as *mut crate::qfiles_h::mdrSurface_t;
-        (*lod).ofsSurfaces =  (surf as *mut crate::src::qcommon::q_shared::byte)
-            .wrapping_offset_from(lod as *mut crate::src::qcommon::q_shared::byte) as i32;
+
+        (*lod).ofsSurfaces = (surf as *mut crate::src::qcommon::q_shared::byte)
+            .wrapping_offset_from(lod as *mut crate::src::qcommon::q_shared::byte)
+            as i32;
+
         cursurf = (curlod as *mut crate::src::qcommon::q_shared::byte)
             .offset((*curlod).ofsSurfaces as isize)
             as *mut crate::qfiles_h::mdrSurface_t;
+
         i = 0;
+
         while i < (*lod).numSurfaces {
             // simple bounds check
             if surf.offset(1) as *mut crate::src::qcommon::q_shared::byte
@@ -1295,8 +1249,7 @@ unsafe extern "C" fn R_LoadMDR(
                     .Printf
                     .expect("non-null function pointer")(
                     crate::src::qcommon::q_shared::PRINT_WARNING as i32,
-                    b"R_LoadMDR: %s has broken structure.\n\x00" as *const u8
-                        as *const i8,
+                    b"R_LoadMDR: %s has broken structure.\n\x00" as *const u8 as *const i8,
                     mod_name,
                 );
                 return crate::src::qcommon::q_shared::qfalse;
@@ -1306,17 +1259,16 @@ unsafe extern "C" fn R_LoadMDR(
             crate::src::qcommon::q_shared::Q_strncpyz(
                 (*surf).name.as_mut_ptr(),
                 (*cursurf).name.as_mut_ptr(),
-                
                 ::std::mem::size_of::<[i8; 64]>() as i32,
             );
             crate::src::qcommon::q_shared::Q_strncpyz(
                 (*surf).shader.as_mut_ptr(),
                 (*cursurf).shader.as_mut_ptr(),
-                
                 ::std::mem::size_of::<[i8; 64]>() as i32,
             );
-            (*surf).ofsHeader =  (mdr as *mut crate::src::qcommon::q_shared::byte)
-                .wrapping_offset_from(surf as *mut crate::src::qcommon::q_shared::byte) as i32;
+            (*surf).ofsHeader = (mdr as *mut crate::src::qcommon::q_shared::byte)
+                .wrapping_offset_from(surf as *mut crate::src::qcommon::q_shared::byte)
+                as i32;
             (*surf).numVerts = (*cursurf).numVerts;
             (*surf).numTriangles = (*cursurf).numTriangles;
             // numBoneReferences and BoneReferences generally seem to be unused
@@ -1372,8 +1324,9 @@ unsafe extern "C" fn R_LoadMDR(
             }
             // now copy the vertexes.
             v = surf.offset(1) as *mut crate::qfiles_h::mdrVertex_t;
-            (*surf).ofsVerts =  (v as *mut crate::src::qcommon::q_shared::byte)
-                .wrapping_offset_from(surf as *mut crate::src::qcommon::q_shared::byte) as i32;
+            (*surf).ofsVerts = (v as *mut crate::src::qcommon::q_shared::byte)
+                .wrapping_offset_from(surf as *mut crate::src::qcommon::q_shared::byte)
+                as i32;
             curv = (cursurf as *mut crate::src::qcommon::q_shared::byte)
                 .offset((*cursurf).ofsVerts as isize)
                 as *mut crate::qfiles_h::mdrVertex_t;
@@ -1382,20 +1335,17 @@ unsafe extern "C" fn R_LoadMDR(
                 (*curv).numWeights = (*curv).numWeights;
                 // simple bounds check
                 if (*curv).numWeights < 0
-                    || (v.offset(1)
-                        as *mut crate::src::qcommon::q_shared::byte)
-                        .offset(
-                            (((*curv).numWeights - 1) as usize)
-                                .wrapping_mul(::std::mem::size_of::<crate::qfiles_h::mdrWeight_t>()) as isize,
-                        )
-                        > (mdr as *mut crate::src::qcommon::q_shared::byte).offset(size as isize)
+                    || (v.offset(1) as *mut crate::src::qcommon::q_shared::byte).offset(
+                        (((*curv).numWeights - 1) as usize)
+                            .wrapping_mul(::std::mem::size_of::<crate::qfiles_h::mdrWeight_t>())
+                            as isize,
+                    ) > (mdr as *mut crate::src::qcommon::q_shared::byte).offset(size as isize)
                 {
                     crate::src::renderergl1::tr_main::ri
                         .Printf
                         .expect("non-null function pointer")(
                         crate::src::qcommon::q_shared::PRINT_WARNING as i32,
-                        b"R_LoadMDR: %s has broken structure.\n\x00" as *const u8
-                            as *const i8,
+                        b"R_LoadMDR: %s has broken structure.\n\x00" as *const u8 as *const i8,
                         mod_name,
                     );
                     return crate::src::qcommon::q_shared::qfalse;
@@ -1403,29 +1353,21 @@ unsafe extern "C" fn R_LoadMDR(
                 (*v).normal[0] = (*curv).normal[0];
                 (*v).normal[1] = (*curv).normal[1];
                 (*v).normal[2] = (*curv).normal[2];
-                (*v).texCoords[0] =
-                    (*curv).texCoords[0];
-                (*v).texCoords[1] =
-                    (*curv).texCoords[1];
+                (*v).texCoords[0] = (*curv).texCoords[0];
+                (*v).texCoords[1] = (*curv).texCoords[1];
                 (*v).numWeights = (*curv).numWeights;
-                weight = &mut *(*v).weights.as_mut_ptr().offset(0)
-                    as *mut crate::qfiles_h::mdrWeight_t;
-                curweight = &mut *(*curv)
-                    .weights
-                    .as_mut_ptr()
-                    .offset(0)
+                weight =
+                    &mut *(*v).weights.as_mut_ptr().offset(0) as *mut crate::qfiles_h::mdrWeight_t;
+                curweight = &mut *(*curv).weights.as_mut_ptr().offset(0)
                     as *mut crate::qfiles_h::mdrWeight_t;
                 // Now copy all the weights
                 k = 0;
                 while k < (*v).numWeights {
                     (*weight).boneIndex = (*curweight).boneIndex;
                     (*weight).boneWeight = (*curweight).boneWeight;
-                    (*weight).offset[0] =
-                        (*curweight).offset[0];
-                    (*weight).offset[1] =
-                        (*curweight).offset[1];
-                    (*weight).offset[2] =
-                        (*curweight).offset[2];
+                    (*weight).offset[0] = (*curweight).offset[0];
+                    (*weight).offset[1] = (*curweight).offset[1];
+                    (*weight).offset[2] = (*curweight).offset[2];
                     weight = weight.offset(1);
                     curweight = curweight.offset(1);
                     k += 1
@@ -1436,8 +1378,9 @@ unsafe extern "C" fn R_LoadMDR(
             }
             // we know the offset to the triangles now:
             tri = v as *mut crate::qfiles_h::mdrTriangle_t;
-            (*surf).ofsTriangles =  (tri as *mut crate::src::qcommon::q_shared::byte)
-                .wrapping_offset_from(surf as *mut crate::src::qcommon::q_shared::byte) as i32;
+            (*surf).ofsTriangles = (tri as *mut crate::src::qcommon::q_shared::byte)
+                .wrapping_offset_from(surf as *mut crate::src::qcommon::q_shared::byte)
+                as i32;
             curtri = (cursurf as *mut crate::src::qcommon::q_shared::byte)
                 .offset((*cursurf).ofsTriangles as isize)
                 as *mut crate::qfiles_h::mdrTriangle_t;
@@ -1451,27 +1394,24 @@ unsafe extern "C" fn R_LoadMDR(
                     .Printf
                     .expect("non-null function pointer")(
                     crate::src::qcommon::q_shared::PRINT_WARNING as i32,
-                    b"R_LoadMDR: %s has broken structure.\n\x00" as *const u8
-                        as *const i8,
+                    b"R_LoadMDR: %s has broken structure.\n\x00" as *const u8 as *const i8,
                     mod_name,
                 );
                 return crate::src::qcommon::q_shared::qfalse;
             }
             j = 0;
             while j < (*surf).numTriangles {
-                (*tri).indexes[0] =
-                    (*curtri).indexes[0];
-                (*tri).indexes[1] =
-                    (*curtri).indexes[1];
-                (*tri).indexes[2] =
-                    (*curtri).indexes[2];
+                (*tri).indexes[0] = (*curtri).indexes[0];
+                (*tri).indexes[1] = (*curtri).indexes[1];
+                (*tri).indexes[2] = (*curtri).indexes[2];
                 tri = tri.offset(1);
                 curtri = curtri.offset(1);
                 j += 1
             }
             // tri now points to the end of the surface.
-            (*surf).ofsEnd =  (tri as *mut crate::src::qcommon::q_shared::byte)
-                .wrapping_offset_from(surf as *mut crate::src::qcommon::q_shared::byte) as i32;
+            (*surf).ofsEnd = (tri as *mut crate::src::qcommon::q_shared::byte)
+                .wrapping_offset_from(surf as *mut crate::src::qcommon::q_shared::byte)
+                as i32;
             surf = tri as *mut crate::qfiles_h::mdrSurface_t;
             // find the next surface.
             cursurf = (cursurf as *mut crate::src::qcommon::q_shared::byte)
@@ -1479,19 +1419,21 @@ unsafe extern "C" fn R_LoadMDR(
                 as *mut crate::qfiles_h::mdrSurface_t;
             i += 1
         }
-        // surf points to the next lod now.
-        (*lod).ofsEnd =  (surf as *mut crate::src::qcommon::q_shared::byte)
-            .wrapping_offset_from(lod as *mut crate::src::qcommon::q_shared::byte) as i32;
+
+        (*lod).ofsEnd = (surf as *mut crate::src::qcommon::q_shared::byte)
+            .wrapping_offset_from(lod as *mut crate::src::qcommon::q_shared::byte)
+            as i32;
+
         lod = surf as *mut crate::qfiles_h::mdrLOD_t;
-        // find the next LOD.
+
         curlod = (curlod as *mut crate::src::qcommon::q_shared::byte)
             .offset((*curlod).ofsEnd as isize) as *mut crate::qfiles_h::mdrLOD_t;
-        l += 1
     }
     // lod points to the first tag now, so update the offset too.
     tag = lod as *mut crate::qfiles_h::mdrTag_t;
-    (*mdr).ofsTags =  (tag as *mut crate::src::qcommon::q_shared::byte)
-        .wrapping_offset_from(mdr as *mut crate::src::qcommon::q_shared::byte) as i32;
+    (*mdr).ofsTags = (tag as *mut crate::src::qcommon::q_shared::byte)
+        .wrapping_offset_from(mdr as *mut crate::src::qcommon::q_shared::byte)
+        as i32;
     curtag = (pinmodel as *mut crate::src::qcommon::q_shared::byte)
         .offset((*pinmodel).ofsTags as isize) as *mut crate::qfiles_h::mdrTag_t;
     // simple bounds check
@@ -1514,7 +1456,6 @@ unsafe extern "C" fn R_LoadMDR(
         crate::src::qcommon::q_shared::Q_strncpyz(
             (*tag).name.as_mut_ptr(),
             (*curtag).name.as_mut_ptr(),
-            
             ::std::mem::size_of::<[i8; 32]>() as i32,
         );
         tag = tag.offset(1);
@@ -1522,8 +1463,9 @@ unsafe extern "C" fn R_LoadMDR(
         i += 1
     }
     // And finally we know the real offset to the end.
-    (*mdr).ofsEnd =  (tag as *mut crate::src::qcommon::q_shared::byte)
-        .wrapping_offset_from(mdr as *mut crate::src::qcommon::q_shared::byte) as i32;
+    (*mdr).ofsEnd = (tag as *mut crate::src::qcommon::q_shared::byte)
+        .wrapping_offset_from(mdr as *mut crate::src::qcommon::q_shared::byte)
+        as i32;
     // phew! we're done.
     return crate::src::qcommon::q_shared::qtrue;
 }
@@ -1688,19 +1630,19 @@ pub unsafe extern "C" fn R_Modellist_f() {
     let mut total: i32 = 0;
     let mut lods: i32 = 0;
     total = 0;
-    i = 1;
-    while i < crate::src::renderergl1::tr_main::tr.numModels {
+
+    for i in 1..crate::src::renderergl1::tr_main::tr.numModels {
         mod_0 = crate::src::renderergl1::tr_main::tr.models[i as usize];
+
         lods = 1;
-        j = 1;
-        while j < 3 {
+        for j in 1..3 {
             if !(*mod_0).md3[j as usize].is_null()
                 && (*mod_0).md3[j as usize] != (*mod_0).md3[(j - 1) as usize]
             {
                 lods += 1
             }
-            j += 1
         }
+
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
@@ -1710,8 +1652,8 @@ pub unsafe extern "C" fn R_Modellist_f() {
             lods,
             (*mod_0).name.as_mut_ptr(),
         );
+
         total += (*mod_0).dataSize;
-        i += 1
     }
     crate::src::renderergl1::tr_main::ri
         .Printf
@@ -1780,7 +1722,6 @@ pub unsafe extern "C" fn R_GetAnimTag(
             crate::src::qcommon::q_shared::Q_strncpyz(
                 (*dest).name.as_mut_ptr(),
                 (*tag).name.as_mut_ptr(),
-                
                 ::std::mem::size_of::<[i8; 64]>() as i32,
             );
             // uncompressed model...
@@ -1795,18 +1736,15 @@ pub unsafe extern "C" fn R_GetAnimTag(
                 .offset((*mod_0).ofsFrames as isize)
                 .offset((framenum * frameSize) as isize)
                 as *mut crate::qfiles_h::mdrFrame_t;
-            j = 0;
-            while j < 3 {
-                k = 0;
-                while k < 3 {
+
+            for j in 0..3 {
+                for k in 0..3 {
                     (*dest).axis[j as usize][k as usize] = (*(*frame)
                         .bones
                         .as_mut_ptr()
                         .offset((*tag).boneIndex as isize))
                     .matrix[k as usize][j as usize];
-                    k += 1
                 }
-                j += 1
             }
             (*dest).origin[0] = (*(*frame)
                 .bones
@@ -1863,9 +1801,7 @@ pub unsafe extern "C" fn R_LerpTag(
     let mut model: *mut crate::tr_local_h::model_t = 0 as *mut crate::tr_local_h::model_t;
     model = R_GetModelByHandle(handle);
     if (*model).md3[0].is_null() {
-        if  (*model).type_0
-            ==  crate::tr_local_h::MOD_MDR
-        {
+        if (*model).type_0 == crate::tr_local_h::MOD_MDR {
             start = R_GetAnimTag(
                 (*model).modelData as *mut crate::qfiles_h::mdrHeader_t,
                 startFrame,
@@ -1878,9 +1814,7 @@ pub unsafe extern "C" fn R_LerpTag(
                 tagName,
                 &mut end_space,
             )
-        } else if  (*model).type_0
-            ==  crate::tr_local_h::MOD_IQM
-        {
+        } else if (*model).type_0 == crate::tr_local_h::MOD_IQM {
             return crate::src::renderergl1::tr_model_iqm::R_IQMLerpTag(
                 tag,
                 (*model).modelData as *mut crate::tr_local_h::iqmData_t,
@@ -1899,38 +1833,30 @@ pub unsafe extern "C" fn R_LerpTag(
     }
     if start.is_null() || end.is_null() {
         crate::src::qcommon::q_math::AxisClear((*tag).axis.as_mut_ptr());
-        (*tag).origin[2] =
-            0f32;
+        (*tag).origin[2] = 0f32;
         (*tag).origin[1] = (*tag).origin[2];
         (*tag).origin[0] = (*tag).origin[1];
         return crate::src::qcommon::q_shared::qfalse as i32;
     }
     frontLerp = frac;
     backLerp = 1.0 - frac;
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         (*tag).origin[i as usize] =
             (*start).origin[i as usize] * backLerp + (*end).origin[i as usize] * frontLerp;
+
         (*tag).axis[0][i as usize] =
-            (*start).axis[0][i as usize] * backLerp
-                + (*end).axis[0][i as usize] * frontLerp;
+            (*start).axis[0][i as usize] * backLerp + (*end).axis[0][i as usize] * frontLerp;
+
         (*tag).axis[1][i as usize] =
-            (*start).axis[1][i as usize] * backLerp
-                + (*end).axis[1][i as usize] * frontLerp;
+            (*start).axis[1][i as usize] * backLerp + (*end).axis[1][i as usize] * frontLerp;
+
         (*tag).axis[2][i as usize] =
-            (*start).axis[2][i as usize] * backLerp
-                + (*end).axis[2][i as usize] * frontLerp;
-        i += 1
+            (*start).axis[2][i as usize] * backLerp + (*end).axis[2][i as usize] * frontLerp;
     }
-    crate::src::qcommon::q_math::VectorNormalize(
-        (*tag).axis[0].as_mut_ptr(),
-    );
-    crate::src::qcommon::q_math::VectorNormalize(
-        (*tag).axis[1].as_mut_ptr(),
-    );
-    crate::src::qcommon::q_math::VectorNormalize(
-        (*tag).axis[2].as_mut_ptr(),
-    );
+    crate::src::qcommon::q_math::VectorNormalize((*tag).axis[0].as_mut_ptr());
+    crate::src::qcommon::q_math::VectorNormalize((*tag).axis[1].as_mut_ptr());
+    crate::src::qcommon::q_math::VectorNormalize((*tag).axis[2].as_mut_ptr());
     return crate::src::qcommon::q_shared::qtrue as i32;
 }
 /*
@@ -2148,26 +2074,16 @@ pub unsafe extern "C" fn R_ModelBounds(
 ) {
     let mut model: *mut crate::tr_local_h::model_t = 0 as *mut crate::tr_local_h::model_t;
     model = R_GetModelByHandle(handle);
-    if  (*model).type_0
-        ==  crate::tr_local_h::MOD_BRUSH
-    {
-        *mins.offset(0) =
-            (*(*model).bmodel).bounds[0][0];
-        *mins.offset(1) =
-            (*(*model).bmodel).bounds[0][1];
-        *mins.offset(2) =
-            (*(*model).bmodel).bounds[0][2];
-        *maxs.offset(0) =
-            (*(*model).bmodel).bounds[1][0];
-        *maxs.offset(1) =
-            (*(*model).bmodel).bounds[1][1];
-        *maxs.offset(2) =
-            (*(*model).bmodel).bounds[1][2];
+    if (*model).type_0 == crate::tr_local_h::MOD_BRUSH {
+        *mins.offset(0) = (*(*model).bmodel).bounds[0][0];
+        *mins.offset(1) = (*(*model).bmodel).bounds[0][1];
+        *mins.offset(2) = (*(*model).bmodel).bounds[0][2];
+        *maxs.offset(0) = (*(*model).bmodel).bounds[1][0];
+        *maxs.offset(1) = (*(*model).bmodel).bounds[1][1];
+        *maxs.offset(2) = (*(*model).bmodel).bounds[1][2];
         return;
     } else {
-        if  (*model).type_0
-            ==  crate::tr_local_h::MOD_MESH
-        {
+        if (*model).type_0 == crate::tr_local_h::MOD_MESH {
             let mut header: *mut crate::qfiles_h::md3Header_t =
                 0 as *mut crate::qfiles_h::md3Header_t;
             let mut frame: *mut crate::qfiles_h::md3Frame_t = 0 as *mut crate::qfiles_h::md3Frame_t;
@@ -2175,23 +2091,15 @@ pub unsafe extern "C" fn R_ModelBounds(
             frame = (header as *mut crate::src::qcommon::q_shared::byte)
                 .offset((*header).ofsFrames as isize)
                 as *mut crate::qfiles_h::md3Frame_t;
-            *mins.offset(0) =
-                (*frame).bounds[0][0];
-            *mins.offset(1) =
-                (*frame).bounds[0][1];
-            *mins.offset(2) =
-                (*frame).bounds[0][2];
-            *maxs.offset(0) =
-                (*frame).bounds[1][0];
-            *maxs.offset(1) =
-                (*frame).bounds[1][1];
-            *maxs.offset(2) =
-                (*frame).bounds[1][2];
+            *mins.offset(0) = (*frame).bounds[0][0];
+            *mins.offset(1) = (*frame).bounds[0][1];
+            *mins.offset(2) = (*frame).bounds[0][2];
+            *maxs.offset(0) = (*frame).bounds[1][0];
+            *maxs.offset(1) = (*frame).bounds[1][1];
+            *maxs.offset(2) = (*frame).bounds[1][2];
             return;
         } else {
-            if  (*model).type_0
-                ==  crate::tr_local_h::MOD_MDR
-            {
+            if (*model).type_0 == crate::tr_local_h::MOD_MDR {
                 let mut header_0: *mut crate::qfiles_h::mdrHeader_t =
                     0 as *mut crate::qfiles_h::mdrHeader_t;
                 let mut frame_0: *mut crate::qfiles_h::mdrFrame_t =
@@ -2200,45 +2108,25 @@ pub unsafe extern "C" fn R_ModelBounds(
                 frame_0 = (header_0 as *mut crate::src::qcommon::q_shared::byte)
                     .offset((*header_0).ofsFrames as isize)
                     as *mut crate::qfiles_h::mdrFrame_t;
-                *mins.offset(0) =
-                    (*frame_0).bounds[0][0];
-                *mins.offset(1) =
-                    (*frame_0).bounds[0][1];
-                *mins.offset(2) =
-                    (*frame_0).bounds[0][2];
-                *maxs.offset(0) =
-                    (*frame_0).bounds[1][0];
-                *maxs.offset(1) =
-                    (*frame_0).bounds[1][1];
-                *maxs.offset(2) =
-                    (*frame_0).bounds[1][2];
+                *mins.offset(0) = (*frame_0).bounds[0][0];
+                *mins.offset(1) = (*frame_0).bounds[0][1];
+                *mins.offset(2) = (*frame_0).bounds[0][2];
+                *maxs.offset(0) = (*frame_0).bounds[1][0];
+                *maxs.offset(1) = (*frame_0).bounds[1][1];
+                *maxs.offset(2) = (*frame_0).bounds[1][2];
                 return;
             } else {
-                if  (*model).type_0
-                    ==  crate::tr_local_h::MOD_IQM
-                {
+                if (*model).type_0 == crate::tr_local_h::MOD_IQM {
                     let mut iqmData: *mut crate::tr_local_h::iqmData_t =
                         0 as *mut crate::tr_local_h::iqmData_t;
                     iqmData = (*model).modelData as *mut crate::tr_local_h::iqmData_t;
                     if !(*iqmData).bounds.is_null() {
-                        *mins.offset(0) =
-                            *(*iqmData).bounds.offset(0);
-                        *mins.offset(1) =
-                            *(*iqmData).bounds.offset(1);
-                        *mins.offset(2) =
-                            *(*iqmData).bounds.offset(2);
-                        *maxs.offset(0) = *(*iqmData)
-                            .bounds
-                            .offset(3)
-                            .offset(0);
-                        *maxs.offset(1) = *(*iqmData)
-                            .bounds
-                            .offset(3)
-                            .offset(1);
-                        *maxs.offset(2) = *(*iqmData)
-                            .bounds
-                            .offset(3)
-                            .offset(2);
+                        *mins.offset(0) = *(*iqmData).bounds.offset(0);
+                        *mins.offset(1) = *(*iqmData).bounds.offset(1);
+                        *mins.offset(2) = *(*iqmData).bounds.offset(2);
+                        *maxs.offset(0) = *(*iqmData).bounds.offset(3).offset(0);
+                        *maxs.offset(1) = *(*iqmData).bounds.offset(3).offset(1);
+                        *maxs.offset(2) = *(*iqmData).bounds.offset(3).offset(2);
                         return;
                     }
                 }
@@ -2258,8 +2146,7 @@ pub unsafe extern "C" fn R_ModelBounds(
 }
 unsafe extern "C" fn run_static_initializers() {
     numModelLoaders = (::std::mem::size_of::<[modelExtToLoaderMap_t; 3]>())
-        .wrapping_div(::std::mem::size_of::<modelExtToLoaderMap_t>())
-        as i32
+        .wrapping_div(::std::mem::size_of::<modelExtToLoaderMap_t>()) as i32
 }
 #[used]
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]

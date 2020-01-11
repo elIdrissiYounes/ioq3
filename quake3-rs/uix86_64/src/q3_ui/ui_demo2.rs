@@ -715,11 +715,12 @@ unsafe extern "C" fn Demos_MenuInit() {
     );
     demoname = s_demos.names.as_mut_ptr();
     i = 0;
-    j = 0;
-    while j < 2 {
+
+    for j in 0..2 {
         if s_demos.numDemos > 1024 {
             s_demos.numDemos = 1024
         }
+
         while i < s_demos.numDemos {
             let ref mut fresh0 = *s_demos.list.itemnames.offset(i as isize);
             *fresh0 = demoname;
@@ -727,6 +728,7 @@ unsafe extern "C" fn Demos_MenuInit() {
             demoname = demoname.offset((len + 1) as isize);
             i += 1
         }
+
         if j == 0 {
             if !(protocolLegacy > 0 && s_demos.numDemos < 1024) {
                 break;
@@ -750,7 +752,6 @@ unsafe extern "C" fn Demos_MenuInit() {
                         ) as i32,
                 )
         }
-        j += 1
     }
     s_demos.list.numitems = s_demos.numDemos;
     if s_demos.numDemos == 0 {

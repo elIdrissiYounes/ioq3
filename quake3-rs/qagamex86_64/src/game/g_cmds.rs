@@ -424,28 +424,32 @@ pub unsafe extern "C" fn ConcatArgs(mut start: i32) -> *mut i8 {
     let mut arg: [i8; 1024] = [0; 1024];
     len = 0;
     c = crate::src::game::g_syscalls::trap_Argc();
-    i = start;
-    while i < c {
+
+    for i in start..c {
         crate::src::game::g_syscalls::trap_Argv(
             i,
             arg.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 1024]>() as i32,
         );
+
         tlen = crate::stdlib::strlen(arg.as_mut_ptr()) as i32;
+
         if len + tlen >= 1024 - 1 {
             break;
         }
+
         crate::stdlib::memcpy(
             line.as_mut_ptr().offset(len as isize) as *mut libc::c_void,
             arg.as_mut_ptr() as *const libc::c_void,
             tlen as usize,
         );
+
         len += tlen;
+
         if i != c - 1 {
             line[len as usize] = ' ' as i8;
             len += 1
         }
-        i += 1
     }
     line[len as usize] = 0;
     return line.as_mut_ptr();
@@ -466,16 +470,16 @@ pub unsafe extern "C" fn StringIsInteger(
         crate::src::qcommon::q_shared::qfalse;
     len = crate::stdlib::strlen(s) as i32;
     foundDigit = crate::src::qcommon::q_shared::qfalse;
-    i = 0;
-    while i < len {
+
+    for i in 0..len {
         if *(*crate::stdlib::__ctype_b_loc()).offset(*s.offset(i as isize) as i32 as isize) as i32
             & crate::stdlib::_ISdigit as u16 as i32
             == 0
         {
             return crate::src::qcommon::q_shared::qfalse;
         }
+
         foundDigit = crate::src::qcommon::q_shared::qtrue;
-        i += 1
     }
     return foundDigit;
 }
@@ -610,10 +614,8 @@ pub unsafe extern "C" fn Cmd_Give_f(mut ent: *mut crate::g_local_h::gentity_t) {
         || crate::src::qcommon::q_shared::Q_stricmp(name, b"ammo\x00" as *const u8 as *const i8)
             == 0
     {
-        i = 0;
-        while i < 16 {
+        for i in 0..16 {
             (*(*ent).client).ps.ammo[i as usize] = 999;
-            i += 1
         }
         if give_all as u64 == 0 {
             return;
@@ -2591,15 +2593,15 @@ pub unsafe extern "C" fn Cmd_SetViewpos_f(mut ent: *mut crate::g_local_h::gentit
     angles[2] = 0f32;
     angles[1] = angles[2];
     angles[0] = angles[1];
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         crate::src::game::g_syscalls::trap_Argv(
             i + 1,
             buffer.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 1024]>() as i32,
         );
+
         origin[i as usize] = atof(buffer.as_mut_ptr()) as crate::src::qcommon::q_shared::vec_t;
-        i += 1
     }
     crate::src::game::g_syscalls::trap_Argv(
         4,

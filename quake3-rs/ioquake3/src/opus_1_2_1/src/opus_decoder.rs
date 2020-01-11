@@ -478,13 +478,12 @@ unsafe extern "C" fn smooth_fade(
     let mut inc: i32 = 48000 / Fs;
     c = 0;
     while c < channels {
-        i = 0;
-        while i < overlap {
+        for i in 0..overlap {
             let mut w: crate::arch_h::opus_val16 =
                 *window.offset((i * inc) as isize) * *window.offset((i * inc) as isize);
+
             *out.offset((i * channels + c) as isize) = w * *in2.offset((i * channels + c) as isize)
                 + (1.0 - w) * *in1.offset((i * channels + c) as isize);
-            i += 1
         }
         c += 1
     }
@@ -972,15 +971,14 @@ unsafe extern "C" fn opus_decode_frame(
         );
     }
     if redundancy != 0 && celt_to_silk != 0 {
-        c = 0;
-        while c < (*st).channels {
+        for c in 0..(*st).channels {
             i = 0;
+
             while i < F2_5 {
                 *pcm.offset(((*st).channels * i + c) as isize) =
                     *redundant_audio.offset(((*st).channels * i + c) as isize);
                 i += 1
             }
-            c += 1
         }
         smooth_fade(
             redundant_audio.offset(((*st).channels * F2_5) as isize),
@@ -1192,9 +1190,10 @@ pub unsafe extern "C" fn opus_decode_native(
     (*st).frame_size = packet_frame_size;
     (*st).stream_channels = packet_stream_channels;
     nb_samples = 0;
-    i = 0;
-    while i < count {
+
+    for i in 0..count {
         let mut ret_1: i32 = 0;
+
         ret_1 = opus_decode_frame(
             st,
             data,
@@ -1203,12 +1202,14 @@ pub unsafe extern "C" fn opus_decode_native(
             frame_size - nb_samples,
             0,
         );
+
         if ret_1 < 0 {
             return ret_1;
         }
+
         data = data.offset(size[i as usize] as i32 as isize);
+
         nb_samples += ret_1;
-        i += 1
     }
     (*st).last_packet_duration = nb_samples;
     (_opus_false()) != 0;

@@ -239,8 +239,7 @@ unsafe extern "C" fn alloc_funny_pointers(mut cinfo: crate::jpeglib_h::j_decompr
         (((*cinfo).num_components * 2i32) as usize)
             .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JSAMPARRAY>()),
     ) as crate::jpeglib_h::JSAMPIMAGE; /* height of a row group of component */
-    (*main_ptr).xbuffer[1] =
-        (*main_ptr).xbuffer[0].offset((*cinfo).num_components as isize);
+    (*main_ptr).xbuffer[1] = (*main_ptr).xbuffer[0].offset((*cinfo).num_components as isize);
     ci = 0;
     compptr = (*cinfo).comp_info;
     while ci < (*cinfo).num_components {
@@ -352,17 +351,23 @@ unsafe extern "C" fn set_wraparound_pointers(mut cinfo: crate::jpeglib_h::j_deco
             / (*cinfo).min_DCT_v_scaled_size;
         xbuf0 = *(*main_ptr).xbuffer[0].offset(ci as isize);
         xbuf1 = *(*main_ptr).xbuffer[1].offset(ci as isize);
-        i = 0;
-        while i < rgroup {
+
+        for i in 0..rgroup {
             let ref mut fresh7 = *xbuf0.offset((i - rgroup) as isize);
+
             *fresh7 = *xbuf0.offset((rgroup * (M + 1) + i) as isize);
+
             let ref mut fresh8 = *xbuf1.offset((i - rgroup) as isize);
+
             *fresh8 = *xbuf1.offset((rgroup * (M + 1) + i) as isize);
+
             let ref mut fresh9 = *xbuf0.offset((rgroup * (M + 2) + i) as isize);
+
             *fresh9 = *xbuf0.offset(i as isize);
+
             let ref mut fresh10 = *xbuf1.offset((rgroup * (M + 2) + i) as isize);
+
             *fresh10 = *xbuf1.offset(i as isize);
-            i += 1
         }
         ci += 1;
         compptr = compptr.offset(1)
@@ -393,8 +398,7 @@ unsafe extern "C" fn set_bottom_pointers(mut cinfo: crate::jpeglib_h::j_decompre
         /* Count nondummy sample rows remaining for this component */
         rows_left = (*compptr)
             .downsampled_height
-            .wrapping_rem(iMCUheight as crate::jmorecfg_h::JDIMENSION)
-            as i32;
+            .wrapping_rem(iMCUheight as crate::jmorecfg_h::JDIMENSION) as i32;
         if rows_left == 0 {
             rows_left = iMCUheight
         }
@@ -402,19 +406,18 @@ unsafe extern "C" fn set_bottom_pointers(mut cinfo: crate::jpeglib_h::j_decompre
          * so we need only do it once.
          */
         if ci == 0 {
-            (*main_ptr).rowgroups_avail = ((rows_left - 1) / rgroup
-                + 1)
-                as crate::jmorecfg_h::JDIMENSION
+            (*main_ptr).rowgroups_avail =
+                ((rows_left - 1) / rgroup + 1) as crate::jmorecfg_h::JDIMENSION
         }
         /* Duplicate the last real sample row rgroup*2 times; this pads out the
          * last partial rowgroup and ensures at least one full rowgroup of context.
          */
         xbuf = *(*main_ptr).xbuffer[(*main_ptr).whichptr as usize].offset(ci as isize);
-        i = 0;
-        while i < rgroup * 2 {
+
+        for i in 0..rgroup * 2 {
             let ref mut fresh11 = *xbuf.offset((rows_left + i) as isize);
+
             *fresh11 = *xbuf.offset((rows_left - 1) as isize);
-            i += 1
         }
         ci += 1;
         compptr = compptr.offset(1)
@@ -429,7 +432,7 @@ unsafe extern "C" fn start_pass_main(
     mut pass_mode: crate::jpegint_h::J_BUF_MODE,
 ) {
     let mut main_ptr: my_main_ptr = (*cinfo).main as my_main_ptr; /* Create the xbuffer[] lists */
-    match  pass_mode {
+    match pass_mode {
         0 => {
             if (*(*cinfo).upsample).need_context_rows != 0 {
                 (*main_ptr).pub_0.process_data = Some(
@@ -473,8 +476,7 @@ unsafe extern "C" fn start_pass_main(
             )
         }
         _ => {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -621,8 +623,8 @@ unsafe extern "C" fn process_data_context_main(
         /* Prepare to process first M-1 row groups of this iMCU row */
         {
             (*main_ptr).rowgroup_ctr = 0;
-            (*main_ptr).rowgroups_avail = ((*cinfo).min_DCT_v_scaled_size - 1i32)
-                as crate::jmorecfg_h::JDIMENSION;
+            (*main_ptr).rowgroups_avail =
+                ((*cinfo).min_DCT_v_scaled_size - 1i32) as crate::jmorecfg_h::JDIMENSION;
             /* Check for bottom of image: if so, tweak pointers to "duplicate"
              * the last sample row, and adjust rowgroups_avail to ignore padding rows.
              */
@@ -665,10 +667,10 @@ unsafe extern "C" fn process_data_context_main(
             (*main_ptr).buffer_full = 0;
             /* Still need to process last row group of this iMCU row, */
             /* which is saved at index M+1 of the other xbuffer */
-            (*main_ptr).rowgroup_ctr = ((*cinfo).min_DCT_v_scaled_size + 1i32)
-                as crate::jmorecfg_h::JDIMENSION;
-            (*main_ptr).rowgroups_avail = ((*cinfo).min_DCT_v_scaled_size + 2i32)
-                as crate::jmorecfg_h::JDIMENSION;
+            (*main_ptr).rowgroup_ctr =
+                ((*cinfo).min_DCT_v_scaled_size + 1i32) as crate::jmorecfg_h::JDIMENSION;
+            (*main_ptr).rowgroups_avail =
+                ((*cinfo).min_DCT_v_scaled_size + 2i32) as crate::jmorecfg_h::JDIMENSION;
             (*main_ptr).context_state = 2
         }
         _ => {}
@@ -693,9 +695,7 @@ unsafe extern "C" fn process_data_crank_post(
     )
     .expect("non-null function pointer")(
         cinfo,
-        
         0 as crate::jpeglib_h::JSAMPIMAGE,
-        
         0 as *mut crate::jmorecfg_h::JDIMENSION,
         0,
         output_buf,
@@ -746,7 +746,6 @@ pub unsafe extern "C" fn jinit_d_main_controller(
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<my_main_controller>(),
     ) as my_main_ptr;
     (*cinfo).main = main_ptr as *mut crate::jpegint_h::jpeg_d_main_controller;

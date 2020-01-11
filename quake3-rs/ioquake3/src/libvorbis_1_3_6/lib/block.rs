@@ -198,15 +198,14 @@ pub unsafe extern "C" fn vorbis_block_clear(mut vb: *mut crate::codec_h::vorbis_
         crate::stdlib::free((*vb).localstore);
     }
     if !vbi.is_null() {
-        i = 0;
-        while i < 15 {
+        for i in 0..15 {
             crate::src::libogg_1_3_3::src::bitwise::oggpack_writeclear(
                 (*vbi).packetblob[i as usize],
             );
+
             if i != 15 / 2 {
                 crate::stdlib::free((*vbi).packetblob[i as usize] as *mut libc::c_void);
             }
-            i += 1
         }
         crate::stdlib::free(vbi as *mut libc::c_void);
     }
@@ -395,12 +394,12 @@ unsafe extern "C" fn _vds_shared_init(
         ((*vi).channels as usize).wrapping_mul(::std::mem::size_of::<*mut f32>()),
     ) as *mut *mut f32;
     let mut i_0: i32 = 0;
-    i_0 = 0;
-    while i_0 < (*vi).channels {
+
+    for i_0 in 0..(*vi).channels {
         let ref mut fresh2 = *(*v).pcm.offset(i_0 as isize);
+
         *fresh2 = crate::stdlib::calloc((*v).pcm_storage as usize, ::std::mem::size_of::<f32>())
             as *mut f32;
-        i_0 += 1
     }
     /* all 1 (large block) or 0 (small block) */
     /* explicitly set for the sake of clarity */
@@ -1034,9 +1033,8 @@ pub unsafe extern "C" fn vorbis_synthesis_blockin(
         /* v->pcm is now used like a two-stage double buffer.  We don't want
         to have to constantly shift *or* adjust memory usage.  Don't
         accept a new block until the old is shifted out */
-        j = 0;
-        while j < (*vi).channels {
-            /* the overlap/add section */
+
+        for j in 0..(*vi).channels {
             if (*v).lW != 0 {
                 if (*v).W != 0 {
                     /* large/large */
@@ -1112,15 +1110,17 @@ pub unsafe extern "C" fn vorbis_synthesis_blockin(
                     i += 1
                 }
             }
-            /* the copy section */
+
             let mut pcm_3: *mut f32 = (*(*v).pcm.offset(j as isize)).offset(thisCenter as isize);
+
             let mut p_3: *mut f32 = (*(*vb).pcm.offset(j as isize)).offset(n as isize);
+
             i = 0;
+
             while i < n {
                 *pcm_3.offset(i as isize) = *p_3.offset(i as isize);
                 i += 1
             }
-            j += 1
         }
         if (*v).centerW != 0 {
             (*v).centerW = 0isize
@@ -1243,11 +1243,11 @@ pub unsafe extern "C" fn vorbis_synthesis_pcmout(
     if (*v).pcm_returned > -(1) && (*v).pcm_returned < (*v).pcm_current {
         if !pcm.is_null() {
             let mut i: i32 = 0;
-            i = 0;
-            while i < (*vi).channels {
+
+            for i in 0..(*vi).channels {
                 let ref mut fresh13 = *(*v).pcmret.offset(i as isize);
+
                 *fresh13 = (*(*v).pcm.offset(i as isize)).offset((*v).pcm_returned as isize);
-                i += 1
             }
             *pcm = (*v).pcmret
         }
@@ -1354,11 +1354,11 @@ pub unsafe extern "C" fn vorbis_synthesis_lapout(
     }
     if !pcm.is_null() {
         let mut i_0: i32 = 0;
-        i_0 = 0;
-        while i_0 < (*vi).channels {
+
+        for i_0 in 0..(*vi).channels {
             let ref mut fresh14 = *(*v).pcmret.offset(i_0 as isize);
+
             *fresh14 = (*(*v).pcm.offset(i_0 as isize)).offset((*v).pcm_returned as isize);
-            i_0 += 1
         }
         *pcm = (*v).pcmret
     }

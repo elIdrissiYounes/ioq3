@@ -254,23 +254,23 @@ pub unsafe extern "C" fn jpeg_add_quant_table(
             cinfo as crate::jpeglib_h::j_common_ptr,
         )
     }
-    i = 0;
-    while i < 64 {
-        temp = (*basic_table.offset(i as isize) as isize * scale_factor as isize
-            + 50)
-            / 100;
-        /* limit the values to the valid range */
+
+    for i in 0..64 {
+        temp = (*basic_table.offset(i as isize) as isize * scale_factor as isize + 50) / 100;
+
         if temp <= 0 {
             temp = 1
-        } /* max quantizer needed for 12 bits */
+        }
+
         if temp > 32767 {
             temp = 32767
-        } /* limit to baseline range if requested */
+        }
+
         if force_baseline != 0 && temp > 255 {
             temp = 255
         }
+
         (**qtblptr).quantval[i as usize] = temp as crate::jmorecfg_h::UINT16;
-        i += 1
     }
     /* Initialize sent_table FALSE so table will be written to JPEG file. */
     (**qtblptr).sent_table = 0;
@@ -281,137 +281,15 @@ pub unsafe extern "C" fn jpeg_add_quant_table(
  */
 
 static mut std_luminance_quant_tbl: [u32; 64] = [
-    16,
-    11,
-    10,
-    16,
-    24,
-    40,
-    51,
-    61,
-    12,
-    12,
-    14,
-    19,
-    26,
-    58,
-    60,
-    55,
-    14,
-    13,
-    16,
-    24,
-    40,
-    57,
-    69,
-    56,
-    14,
-    17,
-    22,
-    29,
-    51,
-    87,
-    80,
-    62,
-    18,
-    22,
-    37,
-    56,
-    68,
-    109,
-    103,
-    77,
-    24,
-    35,
-    55,
-    64,
-    81,
-    104,
-    113,
-    92,
-    49,
-    64,
-    78,
-    87,
-    103,
-    121,
-    120,
-    101,
-    72,
-    92,
-    95,
-    98,
-    112,
-    100,
-    103,
-    99,
+    16, 11, 10, 16, 24, 40, 51, 61, 12, 12, 14, 19, 26, 58, 60, 55, 14, 13, 16, 24, 40, 57, 69, 56,
+    14, 17, 22, 29, 51, 87, 80, 62, 18, 22, 37, 56, 68, 109, 103, 77, 24, 35, 55, 64, 81, 104, 113,
+    92, 49, 64, 78, 87, 103, 121, 120, 101, 72, 92, 95, 98, 112, 100, 103, 99,
 ];
 
 static mut std_chrominance_quant_tbl: [u32; 64] = [
-    17,
-    18,
-    24,
-    47,
-    99,
-    99,
-    99,
-    99,
-    18,
-    21,
-    26,
-    66,
-    99,
-    99,
-    99,
-    99,
-    24,
-    26,
-    56,
-    99,
-    99,
-    99,
-    99,
-    99,
-    47,
-    66,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
-    99,
+    17, 18, 24, 47, 99, 99, 99, 99, 18, 21, 26, 66, 99, 99, 99, 99, 24, 26, 56, 99, 99, 99, 99, 99,
+    47, 66, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
+    99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
 ];
 #[no_mangle]
 
@@ -537,7 +415,6 @@ unsafe extern "C" fn add_huff_table(
     crate::stdlib::memcpy(
         (**htblptr).bits.as_mut_ptr() as *mut libc::c_void,
         bits as *const libc::c_void,
-        
         ::std::mem::size_of::<[crate::jmorecfg_h::UINT8; 17]>(),
     );
     /* Validate the counts.  We do this here mainly so we can copy the right
@@ -545,10 +422,9 @@ unsafe extern "C" fn add_huff_table(
      * the end of memory.  jchuff.c will do a more thorough test later.
      */
     nsymbols = 0;
-    len = 1;
-    while len <= 16 {
+
+    for len in 1..=16 {
         nsymbols += *bits.offset(len as isize) as i32;
-        len += 1
     }
     if nsymbols < 1 || nsymbols > 256 {
         (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_HUFF_TABLE as i32;
@@ -562,8 +438,7 @@ unsafe extern "C" fn add_huff_table(
     crate::stdlib::memcpy(
         (**htblptr).huffval.as_mut_ptr() as *mut libc::c_void,
         val as *const libc::c_void,
-        (nsymbols as usize)
-            .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::UINT8>()),
+        (nsymbols as usize).wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::UINT8>()),
     );
     /* Initialize sent_table FALSE so table will be written to JPEG file. */
     (**htblptr).sent_table = 0;
@@ -573,471 +448,65 @@ unsafe extern "C" fn std_huff_tables(mut cinfo: crate::jpeglib_h::j_compress_ptr
 /* Set up the standard Huffman tables (cf. JPEG standard section K.3) */
 /* IMPORTANT: these are only valid for 8-bit data precision! */
 {
-    static mut bits_dc_luminance: [crate::jmorecfg_h::UINT8; 17] = [
-        0,
-        0,
-        1,
-        5,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-    ];
-    static mut val_dc_luminance: [crate::jmorecfg_h::UINT8; 12] = [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-    ];
-    static mut bits_dc_chrominance: [crate::jmorecfg_h::UINT8; 17] = [
-        0,
-        0,
-        3,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-    ];
-    static mut val_dc_chrominance: [crate::jmorecfg_h::UINT8; 12] = [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-    ];
-    static mut bits_ac_luminance: [crate::jmorecfg_h::UINT8; 17] = [
-        0,
-        0,
-        2,
-        1,
-        3,
-        3,
-        2,
-        4,
-        3,
-        5,
-        5,
-        4,
-        4,
-        0,
-        0,
-        1,
-        0x7d,
-    ];
+    static mut bits_dc_luminance: [crate::jmorecfg_h::UINT8; 17] =
+        [0, 0, 1, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0];
+    static mut val_dc_luminance: [crate::jmorecfg_h::UINT8; 12] =
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    static mut bits_dc_chrominance: [crate::jmorecfg_h::UINT8; 17] =
+        [0, 0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0];
+    static mut val_dc_chrominance: [crate::jmorecfg_h::UINT8; 12] =
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    static mut bits_ac_luminance: [crate::jmorecfg_h::UINT8; 17] =
+        [0, 0, 2, 1, 3, 3, 2, 4, 3, 5, 5, 4, 4, 0, 0, 1, 0x7d];
     static mut val_ac_luminance: [crate::jmorecfg_h::UINT8; 162] = [
-        0x1,
-        0x2,
-        0x3,
-        0,
-        0x4,
-        0x11,
-        0x5,
-        0x12,
-        0x21,
-        0x31,
-        0x41,
-        0x6,
-        0x13,
-        0x51,
-        0x61,
-        0x7,
-        0x22,
-        0x71,
-        0x14,
-        0x32,
-        0x81,
-        0x91,
-        0xa1,
-        0x8,
-        0x23,
-        0x42,
-        0xb1,
-        0xc1,
-        0x15,
-        0x52,
-        0xd1,
-        0xf0,
-        0x24,
-        0x33,
-        0x62,
-        0x72,
-        0x82,
-        0x9,
-        0xa,
-        0x16,
-        0x17,
-        0x18,
-        0x19,
-        0x1a,
-        0x25,
-        0x26,
-        0x27,
-        0x28,
-        0x29,
-        0x2a,
-        0x34,
-        0x35,
-        0x36,
-        0x37,
-        0x38,
-        0x39,
-        0x3a,
-        0x43,
-        0x44,
-        0x45,
-        0x46,
-        0x47,
-        0x48,
-        0x49,
-        0x4a,
-        0x53,
-        0x54,
-        0x55,
-        0x56,
-        0x57,
-        0x58,
-        0x59,
-        0x5a,
-        0x63,
-        0x64,
-        0x65,
-        0x66,
-        0x67,
-        0x68,
-        0x69,
-        0x6a,
-        0x73,
-        0x74,
-        0x75,
-        0x76,
-        0x77,
-        0x78,
-        0x79,
-        0x7a,
-        0x83,
-        0x84,
-        0x85,
-        0x86,
-        0x87,
-        0x88,
-        0x89,
-        0x8a,
-        0x92,
-        0x93,
-        0x94,
-        0x95,
-        0x96,
-        0x97,
-        0x98,
-        0x99,
-        0x9a,
-        0xa2,
-        0xa3,
-        0xa4,
-        0xa5,
-        0xa6,
-        0xa7,
-        0xa8,
-        0xa9,
-        0xaa,
-        0xb2,
-        0xb3,
-        0xb4,
-        0xb5,
-        0xb6,
-        0xb7,
-        0xb8,
-        0xb9,
-        0xba,
-        0xc2,
-        0xc3,
-        0xc4,
-        0xc5,
-        0xc6,
-        0xc7,
-        0xc8,
-        0xc9,
-        0xca,
-        0xd2,
-        0xd3,
-        0xd4,
-        0xd5,
-        0xd6,
-        0xd7,
-        0xd8,
-        0xd9,
-        0xda,
-        0xe1,
-        0xe2,
-        0xe3,
-        0xe4,
-        0xe5,
-        0xe6,
-        0xe7,
-        0xe8,
-        0xe9,
-        0xea,
-        0xf1,
-        0xf2,
-        0xf3,
-        0xf4,
-        0xf5,
-        0xf6,
-        0xf7,
-        0xf8,
-        0xf9,
-        0xfa,
+        0x1, 0x2, 0x3, 0, 0x4, 0x11, 0x5, 0x12, 0x21, 0x31, 0x41, 0x6, 0x13, 0x51, 0x61, 0x7, 0x22,
+        0x71, 0x14, 0x32, 0x81, 0x91, 0xa1, 0x8, 0x23, 0x42, 0xb1, 0xc1, 0x15, 0x52, 0xd1, 0xf0,
+        0x24, 0x33, 0x62, 0x72, 0x82, 0x9, 0xa, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x25, 0x26, 0x27,
+        0x28, 0x29, 0x2a, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x43, 0x44, 0x45, 0x46, 0x47,
+        0x48, 0x49, 0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x63, 0x64, 0x65, 0x66,
+        0x67, 0x68, 0x69, 0x6a, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x83, 0x84, 0x85,
+        0x86, 0x87, 0x88, 0x89, 0x8a, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 0x9a, 0xa2,
+        0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6, 0xb7, 0xb8,
+        0xb9, 0xba, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xd2, 0xd3, 0xd4, 0xd5,
+        0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea,
+        0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa,
     ];
-    static mut bits_ac_chrominance: [crate::jmorecfg_h::UINT8; 17] = [
-        0,
-        0,
-        2,
-        1,
-        2,
-        4,
-        4,
-        3,
-        4,
-        7,
-        5,
-        4,
-        4,
-        0,
-        1,
-        2,
-        0x77,
-    ];
+    static mut bits_ac_chrominance: [crate::jmorecfg_h::UINT8; 17] =
+        [0, 0, 2, 1, 2, 4, 4, 3, 4, 7, 5, 4, 4, 0, 1, 2, 0x77];
     static mut val_ac_chrominance: [crate::jmorecfg_h::UINT8; 162] = [
-        0,
-        0x1,
-        0x2,
-        0x3,
-        0x11,
-        0x4,
-        0x5,
-        0x21,
-        0x31,
-        0x6,
-        0x12,
-        0x41,
-        0x51,
-        0x7,
-        0x61,
-        0x71,
-        0x13,
-        0x22,
-        0x32,
-        0x81,
-        0x8,
-        0x14,
-        0x42,
-        0x91,
-        0xa1,
-        0xb1,
-        0xc1,
-        0x9,
-        0x23,
-        0x33,
-        0x52,
-        0xf0,
-        0x15,
-        0x62,
-        0x72,
-        0xd1,
-        0xa,
-        0x16,
-        0x24,
-        0x34,
-        0xe1,
-        0x25,
-        0xf1,
-        0x17,
-        0x18,
-        0x19,
-        0x1a,
-        0x26,
-        0x27,
-        0x28,
-        0x29,
-        0x2a,
-        0x35,
-        0x36,
-        0x37,
-        0x38,
-        0x39,
-        0x3a,
-        0x43,
-        0x44,
-        0x45,
-        0x46,
-        0x47,
-        0x48,
-        0x49,
-        0x4a,
-        0x53,
-        0x54,
-        0x55,
-        0x56,
-        0x57,
-        0x58,
-        0x59,
-        0x5a,
-        0x63,
-        0x64,
-        0x65,
-        0x66,
-        0x67,
-        0x68,
-        0x69,
-        0x6a,
-        0x73,
-        0x74,
-        0x75,
-        0x76,
-        0x77,
-        0x78,
-        0x79,
-        0x7a,
-        0x82,
-        0x83,
-        0x84,
-        0x85,
-        0x86,
-        0x87,
-        0x88,
-        0x89,
-        0x8a,
-        0x92,
-        0x93,
-        0x94,
-        0x95,
-        0x96,
-        0x97,
-        0x98,
-        0x99,
-        0x9a,
-        0xa2,
-        0xa3,
-        0xa4,
-        0xa5,
-        0xa6,
-        0xa7,
-        0xa8,
-        0xa9,
-        0xaa,
-        0xb2,
-        0xb3,
-        0xb4,
-        0xb5,
-        0xb6,
-        0xb7,
-        0xb8,
-        0xb9,
-        0xba,
-        0xc2,
-        0xc3,
-        0xc4,
-        0xc5,
-        0xc6,
-        0xc7,
-        0xc8,
-        0xc9,
-        0xca,
-        0xd2,
-        0xd3,
-        0xd4,
-        0xd5,
-        0xd6,
-        0xd7,
-        0xd8,
-        0xd9,
-        0xda,
-        0xe2,
-        0xe3,
-        0xe4,
-        0xe5,
-        0xe6,
-        0xe7,
-        0xe8,
-        0xe9,
-        0xea,
-        0xf2,
-        0xf3,
-        0xf4,
-        0xf5,
-        0xf6,
-        0xf7,
-        0xf8,
-        0xf9,
-        0xfa,
+        0, 0x1, 0x2, 0x3, 0x11, 0x4, 0x5, 0x21, 0x31, 0x6, 0x12, 0x41, 0x51, 0x7, 0x61, 0x71, 0x13,
+        0x22, 0x32, 0x81, 0x8, 0x14, 0x42, 0x91, 0xa1, 0xb1, 0xc1, 0x9, 0x23, 0x33, 0x52, 0xf0,
+        0x15, 0x62, 0x72, 0xd1, 0xa, 0x16, 0x24, 0x34, 0xe1, 0x25, 0xf1, 0x17, 0x18, 0x19, 0x1a,
+        0x26, 0x27, 0x28, 0x29, 0x2a, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x43, 0x44, 0x45, 0x46,
+        0x47, 0x48, 0x49, 0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x63, 0x64, 0x65,
+        0x66, 0x67, 0x68, 0x69, 0x6a, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x82, 0x83,
+        0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99,
+        0x9a, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6,
+        0xb7, 0xb8, 0xb9, 0xba, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xd2, 0xd3,
+        0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9,
+        0xea, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa,
     ];
     add_huff_table(
         cinfo,
-        &mut *(*cinfo)
-            .dc_huff_tbl_ptrs
-            .as_mut_ptr()
-            .offset(0),
+        &mut *(*cinfo).dc_huff_tbl_ptrs.as_mut_ptr().offset(0),
         bits_dc_luminance.as_ptr(),
         val_dc_luminance.as_ptr(),
     );
     add_huff_table(
         cinfo,
-        &mut *(*cinfo)
-            .ac_huff_tbl_ptrs
-            .as_mut_ptr()
-            .offset(0),
+        &mut *(*cinfo).ac_huff_tbl_ptrs.as_mut_ptr().offset(0),
         bits_ac_luminance.as_ptr(),
         val_ac_luminance.as_ptr(),
     );
     add_huff_table(
         cinfo,
-        &mut *(*cinfo)
-            .dc_huff_tbl_ptrs
-            .as_mut_ptr()
-            .offset(1),
+        &mut *(*cinfo).dc_huff_tbl_ptrs.as_mut_ptr().offset(1),
         bits_dc_chrominance.as_ptr(),
         val_dc_chrominance.as_ptr(),
     );
     add_huff_table(
         cinfo,
-        &mut *(*cinfo)
-            .ac_huff_tbl_ptrs
-            .as_mut_ptr()
-            .offset(1),
+        &mut *(*cinfo).ac_huff_tbl_ptrs.as_mut_ptr().offset(1),
         bits_ac_chrominance.as_ptr(),
         val_ac_chrominance.as_ptr(),
     );
@@ -1079,9 +548,7 @@ pub unsafe extern "C" fn jpeg_set_defaults(mut cinfo: crate::jpeglib_h::j_compre
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
             0,
-            (10usize).wrapping_mul(::std::mem::size_of::<
-                crate::jpeglib_h::jpeg_component_info,
-            >()),
+            (10usize).wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::jpeg_component_info>()),
         ) as *mut crate::jpeglib_h::jpeg_component_info
     }
     /* Initialize everything not dependent on the color space */
@@ -1092,13 +559,13 @@ pub unsafe extern "C" fn jpeg_set_defaults(mut cinfo: crate::jpeglib_h::j_compre
     jpeg_set_quality(cinfo, 75, 1);
     /* Set up two Huffman tables */
     std_huff_tables(cinfo);
-    /* Initialize default arithmetic coding conditioning */
-    i = 0;
-    while i < 16 {
+
+    for i in 0..16 {
         (*cinfo).arith_dc_L[i as usize] = 0u8;
+
         (*cinfo).arith_dc_U[i as usize] = 1u8;
+
         (*cinfo).arith_ac_K[i as usize] = 5u8;
-        i += 1
     }
     /* Default is no multiple-scan output */
     (*cinfo).scan_info = 0 as *const crate::jpeglib_h::jpeg_scan_info;
@@ -1151,7 +618,7 @@ pub unsafe extern "C" fn jpeg_set_defaults(mut cinfo: crate::jpeglib_h::j_compre
 #[no_mangle]
 
 pub unsafe extern "C" fn jpeg_default_colorspace(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
-    match  (*cinfo).in_color_space {
+    match (*cinfo).in_color_space {
         1 => {
             jpeg_set_colorspace(cinfo, crate::jpeglib_h::JCS_GRAYSCALE); /* By default, no translation */
         }
@@ -1171,8 +638,7 @@ pub unsafe extern "C" fn jpeg_default_colorspace(mut cinfo: crate::jpeglib_h::j_
             jpeg_set_colorspace(cinfo, crate::jpeglib_h::JCS_UNKNOWN);
         }
         _ => {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_BAD_IN_COLORSPACE as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_IN_COLORSPACE as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -1213,13 +679,13 @@ pub unsafe extern "C" fn jpeg_set_colorspace(
     (*cinfo).jpeg_color_space = colorspace; /* No marker for non-JFIF colorspaces */
     (*cinfo).write_JFIF_header = 0; /* write no Adobe marker by default */
     (*cinfo).write_Adobe_marker = 0; /* Write a JFIF marker */
-    match  colorspace {
+    match colorspace {
         1 => {
             (*cinfo).write_JFIF_header = 1;
             (*cinfo).num_components = 1;
             /* JFIF specifies component ID 1 */
-            compptr = &mut *(*cinfo).comp_info.offset(0)
-                as *mut crate::jpeglib_h::jpeg_component_info; /* write Adobe marker to flag RGB */
+            compptr =
+                &mut *(*cinfo).comp_info.offset(0) as *mut crate::jpeglib_h::jpeg_component_info; /* write Adobe marker to flag RGB */
             (*compptr).component_id = 1; /* Write a JFIF marker */
             (*compptr).h_samp_factor = 1;
             (*compptr).v_samp_factor = 1;
@@ -1230,24 +696,24 @@ pub unsafe extern "C" fn jpeg_set_colorspace(
         2 => {
             (*cinfo).write_Adobe_marker = 1;
             (*cinfo).num_components = 3;
-            compptr = &mut *(*cinfo).comp_info.offset(0)
-                as *mut crate::jpeglib_h::jpeg_component_info;
+            compptr =
+                &mut *(*cinfo).comp_info.offset(0) as *mut crate::jpeglib_h::jpeg_component_info;
             (*compptr).component_id = 0x52;
             (*compptr).h_samp_factor = 1;
             (*compptr).v_samp_factor = 1;
             (*compptr).quant_tbl_no = 0;
             (*compptr).dc_tbl_no = 0;
             (*compptr).ac_tbl_no = 0;
-            compptr = &mut *(*cinfo).comp_info.offset(1)
-                as *mut crate::jpeglib_h::jpeg_component_info;
+            compptr =
+                &mut *(*cinfo).comp_info.offset(1) as *mut crate::jpeglib_h::jpeg_component_info;
             (*compptr).component_id = 0x47;
             (*compptr).h_samp_factor = 1;
             (*compptr).v_samp_factor = 1;
             (*compptr).quant_tbl_no = 0;
             (*compptr).dc_tbl_no = 0;
             (*compptr).ac_tbl_no = 0;
-            compptr = &mut *(*cinfo).comp_info.offset(2)
-                as *mut crate::jpeglib_h::jpeg_component_info;
+            compptr =
+                &mut *(*cinfo).comp_info.offset(2) as *mut crate::jpeglib_h::jpeg_component_info;
             (*compptr).component_id = 0x42;
             (*compptr).h_samp_factor = 1;
             (*compptr).v_samp_factor = 1;
@@ -1260,24 +726,24 @@ pub unsafe extern "C" fn jpeg_set_colorspace(
             (*cinfo).num_components = 3;
             /* JFIF specifies component IDs 1,2,3 */
             /* We default to 2x2 subsamples of chrominance */
-            compptr = &mut *(*cinfo).comp_info.offset(0)
-                as *mut crate::jpeglib_h::jpeg_component_info; /* write Adobe marker to flag CMYK */
+            compptr =
+                &mut *(*cinfo).comp_info.offset(0) as *mut crate::jpeglib_h::jpeg_component_info; /* write Adobe marker to flag CMYK */
             (*compptr).component_id = 1; /* write Adobe marker to flag YCCK */
             (*compptr).h_samp_factor = 2;
             (*compptr).v_samp_factor = 2;
             (*compptr).quant_tbl_no = 0;
             (*compptr).dc_tbl_no = 0;
             (*compptr).ac_tbl_no = 0;
-            compptr = &mut *(*cinfo).comp_info.offset(1)
-                as *mut crate::jpeglib_h::jpeg_component_info;
+            compptr =
+                &mut *(*cinfo).comp_info.offset(1) as *mut crate::jpeglib_h::jpeg_component_info;
             (*compptr).component_id = 2;
             (*compptr).h_samp_factor = 1;
             (*compptr).v_samp_factor = 1;
             (*compptr).quant_tbl_no = 1;
             (*compptr).dc_tbl_no = 1;
             (*compptr).ac_tbl_no = 1;
-            compptr = &mut *(*cinfo).comp_info.offset(2)
-                as *mut crate::jpeglib_h::jpeg_component_info;
+            compptr =
+                &mut *(*cinfo).comp_info.offset(2) as *mut crate::jpeglib_h::jpeg_component_info;
             (*compptr).component_id = 3;
             (*compptr).h_samp_factor = 1;
             (*compptr).v_samp_factor = 1;
@@ -1288,32 +754,32 @@ pub unsafe extern "C" fn jpeg_set_colorspace(
         4 => {
             (*cinfo).write_Adobe_marker = 1;
             (*cinfo).num_components = 4;
-            compptr = &mut *(*cinfo).comp_info.offset(0)
-                as *mut crate::jpeglib_h::jpeg_component_info;
+            compptr =
+                &mut *(*cinfo).comp_info.offset(0) as *mut crate::jpeglib_h::jpeg_component_info;
             (*compptr).component_id = 0x43;
             (*compptr).h_samp_factor = 1;
             (*compptr).v_samp_factor = 1;
             (*compptr).quant_tbl_no = 0;
             (*compptr).dc_tbl_no = 0;
             (*compptr).ac_tbl_no = 0;
-            compptr = &mut *(*cinfo).comp_info.offset(1)
-                as *mut crate::jpeglib_h::jpeg_component_info;
+            compptr =
+                &mut *(*cinfo).comp_info.offset(1) as *mut crate::jpeglib_h::jpeg_component_info;
             (*compptr).component_id = 0x4d;
             (*compptr).h_samp_factor = 1;
             (*compptr).v_samp_factor = 1;
             (*compptr).quant_tbl_no = 0;
             (*compptr).dc_tbl_no = 0;
             (*compptr).ac_tbl_no = 0;
-            compptr = &mut *(*cinfo).comp_info.offset(2)
-                as *mut crate::jpeglib_h::jpeg_component_info;
+            compptr =
+                &mut *(*cinfo).comp_info.offset(2) as *mut crate::jpeglib_h::jpeg_component_info;
             (*compptr).component_id = 0x59;
             (*compptr).h_samp_factor = 1;
             (*compptr).v_samp_factor = 1;
             (*compptr).quant_tbl_no = 0;
             (*compptr).dc_tbl_no = 0;
             (*compptr).ac_tbl_no = 0;
-            compptr = &mut *(*cinfo).comp_info.offset(3)
-                as *mut crate::jpeglib_h::jpeg_component_info;
+            compptr =
+                &mut *(*cinfo).comp_info.offset(3) as *mut crate::jpeglib_h::jpeg_component_info;
             (*compptr).component_id = 0x4b;
             (*compptr).h_samp_factor = 1;
             (*compptr).v_samp_factor = 1;
@@ -1324,32 +790,32 @@ pub unsafe extern "C" fn jpeg_set_colorspace(
         5 => {
             (*cinfo).write_Adobe_marker = 1;
             (*cinfo).num_components = 4;
-            compptr = &mut *(*cinfo).comp_info.offset(0)
-                as *mut crate::jpeglib_h::jpeg_component_info;
+            compptr =
+                &mut *(*cinfo).comp_info.offset(0) as *mut crate::jpeglib_h::jpeg_component_info;
             (*compptr).component_id = 1;
             (*compptr).h_samp_factor = 2;
             (*compptr).v_samp_factor = 2;
             (*compptr).quant_tbl_no = 0;
             (*compptr).dc_tbl_no = 0;
             (*compptr).ac_tbl_no = 0;
-            compptr = &mut *(*cinfo).comp_info.offset(1)
-                as *mut crate::jpeglib_h::jpeg_component_info;
+            compptr =
+                &mut *(*cinfo).comp_info.offset(1) as *mut crate::jpeglib_h::jpeg_component_info;
             (*compptr).component_id = 2;
             (*compptr).h_samp_factor = 1;
             (*compptr).v_samp_factor = 1;
             (*compptr).quant_tbl_no = 1;
             (*compptr).dc_tbl_no = 1;
             (*compptr).ac_tbl_no = 1;
-            compptr = &mut *(*cinfo).comp_info.offset(2)
-                as *mut crate::jpeglib_h::jpeg_component_info;
+            compptr =
+                &mut *(*cinfo).comp_info.offset(2) as *mut crate::jpeglib_h::jpeg_component_info;
             (*compptr).component_id = 3;
             (*compptr).h_samp_factor = 1;
             (*compptr).v_samp_factor = 1;
             (*compptr).quant_tbl_no = 1;
             (*compptr).dc_tbl_no = 1;
             (*compptr).ac_tbl_no = 1;
-            compptr = &mut *(*cinfo).comp_info.offset(3)
-                as *mut crate::jpeglib_h::jpeg_component_info;
+            compptr =
+                &mut *(*cinfo).comp_info.offset(3) as *mut crate::jpeglib_h::jpeg_component_info;
             (*compptr).component_id = 4;
             (*compptr).h_samp_factor = 2;
             (*compptr).v_samp_factor = 2;
@@ -1359,11 +825,8 @@ pub unsafe extern "C" fn jpeg_set_colorspace(
         }
         0 => {
             (*cinfo).num_components = (*cinfo).input_components;
-            if (*cinfo).num_components < 1
-                || (*cinfo).num_components > 10
-            {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_COMPONENT_COUNT as i32;
+            if (*cinfo).num_components < 1 || (*cinfo).num_components > 10 {
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_COMPONENT_COUNT as i32;
                 (*(*cinfo).err).msg_parm.i[0] = (*cinfo).num_components;
                 (*(*cinfo).err).msg_parm.i[1] = 10;
                 Some(
@@ -1389,8 +852,7 @@ pub unsafe extern "C" fn jpeg_set_colorspace(
             }
         }
         _ => {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_BAD_J_COLORSPACE as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_J_COLORSPACE as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -1432,16 +894,21 @@ unsafe extern "C" fn fill_scans(
 ) -> *mut crate::jpeglib_h::jpeg_scan_info
 /* Support routine: generate one scan for each component */ {
     let mut ci: i32 = 0;
-    ci = 0;
-    while ci < ncomps {
+
+    for ci in 0..ncomps {
         (*scanptr).comps_in_scan = 1;
+
         (*scanptr).component_index[0] = ci;
+
         (*scanptr).Ss = Ss;
+
         (*scanptr).Se = Se;
+
         (*scanptr).Ah = Ah;
+
         (*scanptr).Al = Al;
+
         scanptr = scanptr.offset(1);
-        ci += 1
     }
     return scanptr;
 }
@@ -1457,10 +924,9 @@ unsafe extern "C" fn fill_dc_scans(
     if ncomps <= 4 {
         /* Single interleaved DC scan */
         (*scanptr).comps_in_scan = ncomps;
-        ci = 0;
-        while ci < ncomps {
+
+        for ci in 0..ncomps {
             (*scanptr).component_index[ci as usize] = ci;
-            ci += 1
         }
         (*scanptr).Se = 0;
         (*scanptr).Ss = (*scanptr).Se;
@@ -1496,10 +962,7 @@ pub unsafe extern "C" fn jpeg_simple_progression(mut cinfo: crate::jpeglib_h::j_
         .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr);
     }
     /* Figure space needed for script.  Calculation must match code below! */
-    if ncomps == 3
-        &&  (*cinfo).jpeg_color_space
-            ==  crate::jpeglib_h::JCS_YCbCr
-    {
+    if ncomps == 3 && (*cinfo).jpeg_color_space == crate::jpeglib_h::JCS_YCbCr {
         /* Custom script for YCbCr color images. */
         nscans = 10
     } else if ncomps > 4 {
@@ -1517,11 +980,7 @@ pub unsafe extern "C" fn jpeg_simple_progression(mut cinfo: crate::jpeglib_h::j_
      * enough space to handle YCbCr even if initially asked for grayscale.
      */
     if (*cinfo).script_space.is_null() || (*cinfo).script_space_size < nscans {
-        (*cinfo).script_space_size = if nscans > 10 {
-            nscans
-        } else {
-            10
-        };
+        (*cinfo).script_space_size = if nscans > 10 { nscans } else { 10 };
         (*cinfo).script_space = Some(
             (*(*cinfo).mem)
                 .alloc_small
@@ -1531,133 +990,43 @@ pub unsafe extern "C" fn jpeg_simple_progression(mut cinfo: crate::jpeglib_h::j_
             cinfo as crate::jpeglib_h::j_common_ptr,
             0,
             ((*cinfo).script_space_size as usize)
-                .wrapping_mul(
-                    
-                    ::std::mem::size_of::<crate::jpeglib_h::jpeg_scan_info>()
-                ),
+                .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::jpeg_scan_info>()),
         ) as *mut crate::jpeglib_h::jpeg_scan_info
     }
     scanptr = (*cinfo).script_space;
     (*cinfo).scan_info = scanptr;
     (*cinfo).num_scans = nscans;
-    if ncomps == 3
-        &&  (*cinfo).jpeg_color_space
-            ==  crate::jpeglib_h::JCS_YCbCr
-    {
+    if ncomps == 3 && (*cinfo).jpeg_color_space == crate::jpeglib_h::JCS_YCbCr {
         /* Custom script for YCbCr color images. */
         /* Initial DC scan */
         scanptr = fill_dc_scans(scanptr, ncomps, 0, 1);
         /* Initial AC scan: get some luma data out in a hurry */
-        scanptr = fill_a_scan(
-            scanptr,
-            0,
-            1,
-            5,
-            0,
-            2,
-        );
+        scanptr = fill_a_scan(scanptr, 0, 1, 5, 0, 2);
         /* Chroma data is too small to be worth expending many scans on */
-        scanptr = fill_a_scan(
-            scanptr,
-            2,
-            1,
-            63,
-            0,
-            1,
-        );
-        scanptr = fill_a_scan(
-            scanptr,
-            1,
-            1,
-            63,
-            0,
-            1,
-        );
+        scanptr = fill_a_scan(scanptr, 2, 1, 63, 0, 1);
+        scanptr = fill_a_scan(scanptr, 1, 1, 63, 0, 1);
         /* Complete spectral selection for luma AC */
-        scanptr = fill_a_scan(
-            scanptr,
-            0,
-            6,
-            63,
-            0,
-            2,
-        );
+        scanptr = fill_a_scan(scanptr, 0, 6, 63, 0, 2);
         /* Refine next bit of luma AC */
-        scanptr = fill_a_scan(
-            scanptr,
-            0,
-            1,
-            63,
-            2,
-            1,
-        );
+        scanptr = fill_a_scan(scanptr, 0, 1, 63, 2, 1);
         /* Finish DC successive approximation */
         scanptr = fill_dc_scans(scanptr, ncomps, 1, 0);
         /* Finish AC successive approximation */
-        scanptr = fill_a_scan(
-            scanptr,
-            2,
-            1,
-            63,
-            1,
-            0,
-        );
-        scanptr = fill_a_scan(
-            scanptr,
-            1,
-            1,
-            63,
-            1,
-            0,
-        );
+        scanptr = fill_a_scan(scanptr, 2, 1, 63, 1, 0);
+        scanptr = fill_a_scan(scanptr, 1, 1, 63, 1, 0);
         /* Luma bottom bit comes last since it's usually largest scan */
-        scanptr = fill_a_scan(
-            scanptr,
-            0,
-            1,
-            63,
-            1,
-            0,
-        )
+        scanptr = fill_a_scan(scanptr, 0, 1, 63, 1, 0)
     } else {
         /* All-purpose script for other color spaces. */
         /* Successive approximation first pass */
         scanptr = fill_dc_scans(scanptr, ncomps, 0, 1);
-        scanptr = fill_scans(
-            scanptr,
-            ncomps,
-            1,
-            5,
-            0,
-            2,
-        );
-        scanptr = fill_scans(
-            scanptr,
-            ncomps,
-            6,
-            63,
-            0,
-            2,
-        );
+        scanptr = fill_scans(scanptr, ncomps, 1, 5, 0, 2);
+        scanptr = fill_scans(scanptr, ncomps, 6, 63, 0, 2);
         /* Successive approximation second pass */
-        scanptr = fill_scans(
-            scanptr,
-            ncomps,
-            1,
-            63,
-            2,
-            1,
-        );
+        scanptr = fill_scans(scanptr, ncomps, 1, 63, 2, 1);
         /* Successive approximation final pass */
         scanptr = fill_dc_scans(scanptr, ncomps, 1, 0);
-        scanptr = fill_scans(
-            scanptr,
-            ncomps,
-            1,
-            63,
-            1,
-            0,
-        )
+        scanptr = fill_scans(scanptr, ncomps, 1, 63, 1, 0)
     };
 }
 /* C_PROGRESSIVE_SUPPORTED */

@@ -286,13 +286,9 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
      * but image_width and image_height can come from arbitrary data,
      * and we need some space for multiplication by block_size.
      */
-    if (*cinfo).image_width as isize >> 24 != 0
-        || (*cinfo).image_height as isize >> 24 != 0
-    {
+    if (*cinfo).image_width as isize >> 24 != 0 || (*cinfo).image_height as isize >> 24 != 0 {
         (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_IMAGE_TOO_BIG as i32;
-        (*(*cinfo).err).msg_parm.i[0] =
-            
-            65500 as i32;
+        (*(*cinfo).err).msg_parm.i[0] = 65500 as i32;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -315,9 +311,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
             .wrapping_mul((*cinfo).block_size as u32);
         (*cinfo).min_DCT_h_scaled_size = 1;
         (*cinfo).min_DCT_v_scaled_size = 1
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(2u32)
+    } else if (*cinfo).scale_num.wrapping_mul(2u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -333,9 +327,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
         ) as crate::jmorecfg_h::JDIMENSION;
         (*cinfo).min_DCT_h_scaled_size = 2;
         (*cinfo).min_DCT_v_scaled_size = 2
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(3u32)
+    } else if (*cinfo).scale_num.wrapping_mul(3u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -351,9 +343,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
         ) as crate::jmorecfg_h::JDIMENSION;
         (*cinfo).min_DCT_h_scaled_size = 3;
         (*cinfo).min_DCT_v_scaled_size = 3
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(4u32)
+    } else if (*cinfo).scale_num.wrapping_mul(4u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -369,9 +359,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
         ) as crate::jmorecfg_h::JDIMENSION;
         (*cinfo).min_DCT_h_scaled_size = 4;
         (*cinfo).min_DCT_v_scaled_size = 4
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(5u32)
+    } else if (*cinfo).scale_num.wrapping_mul(5u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -387,9 +375,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
         ) as crate::jmorecfg_h::JDIMENSION;
         (*cinfo).min_DCT_h_scaled_size = 5;
         (*cinfo).min_DCT_v_scaled_size = 5
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(6u32)
+    } else if (*cinfo).scale_num.wrapping_mul(6u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -405,9 +391,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
         ) as crate::jmorecfg_h::JDIMENSION;
         (*cinfo).min_DCT_h_scaled_size = 6;
         (*cinfo).min_DCT_v_scaled_size = 6
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(7u32)
+    } else if (*cinfo).scale_num.wrapping_mul(7u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -423,9 +407,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
         ) as crate::jmorecfg_h::JDIMENSION;
         (*cinfo).min_DCT_h_scaled_size = 7;
         (*cinfo).min_DCT_v_scaled_size = 7
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(8u32)
+    } else if (*cinfo).scale_num.wrapping_mul(8u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -441,9 +423,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
         ) as crate::jmorecfg_h::JDIMENSION;
         (*cinfo).min_DCT_h_scaled_size = 8;
         (*cinfo).min_DCT_v_scaled_size = 8
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(9u32)
+    } else if (*cinfo).scale_num.wrapping_mul(9u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -459,9 +439,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
         ) as crate::jmorecfg_h::JDIMENSION;
         (*cinfo).min_DCT_h_scaled_size = 9;
         (*cinfo).min_DCT_v_scaled_size = 9
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(10u32)
+    } else if (*cinfo).scale_num.wrapping_mul(10u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -477,9 +455,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
         ) as crate::jmorecfg_h::JDIMENSION;
         (*cinfo).min_DCT_h_scaled_size = 10;
         (*cinfo).min_DCT_v_scaled_size = 10
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(11u32)
+    } else if (*cinfo).scale_num.wrapping_mul(11u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -495,9 +471,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
         ) as crate::jmorecfg_h::JDIMENSION;
         (*cinfo).min_DCT_h_scaled_size = 11;
         (*cinfo).min_DCT_v_scaled_size = 11
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(12u32)
+    } else if (*cinfo).scale_num.wrapping_mul(12u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -513,9 +487,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
         ) as crate::jmorecfg_h::JDIMENSION;
         (*cinfo).min_DCT_h_scaled_size = 12;
         (*cinfo).min_DCT_v_scaled_size = 12
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(13u32)
+    } else if (*cinfo).scale_num.wrapping_mul(13u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -531,9 +503,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
         ) as crate::jmorecfg_h::JDIMENSION;
         (*cinfo).min_DCT_h_scaled_size = 13;
         (*cinfo).min_DCT_v_scaled_size = 13
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(14u32)
+    } else if (*cinfo).scale_num.wrapping_mul(14u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -549,9 +519,7 @@ pub unsafe extern "C" fn jpeg_calc_jpeg_dimensions(mut cinfo: crate::jpeglib_h::
         ) as crate::jmorecfg_h::JDIMENSION;
         (*cinfo).min_DCT_h_scaled_size = 14;
         (*cinfo).min_DCT_v_scaled_size = 14
-    } else if (*cinfo)
-        .scale_num
-        .wrapping_mul(15u32)
+    } else if (*cinfo).scale_num.wrapping_mul(15u32)
         >= (*cinfo)
             .scale_denom
             .wrapping_mul((*cinfo).block_size as u32)
@@ -663,9 +631,7 @@ unsafe extern "C" fn initial_setup(
         || (*cinfo).jpeg_width as isize > 65500 as isize
     {
         (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_IMAGE_TOO_BIG as i32;
-        (*(*cinfo).err).msg_parm.i[0] =
-            
-            65500 as i32;
+        (*(*cinfo).err).msg_parm.i[0] = 65500 as i32;
         Some(
             (*(*cinfo).err)
                 .error_exit
@@ -674,8 +640,7 @@ unsafe extern "C" fn initial_setup(
         .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr);
     }
     /* Width of an input scanline must be representable as JDIMENSION. */
-    samplesperrow =
-        (*cinfo).image_width as isize * (*cinfo).input_components as isize;
+    samplesperrow = (*cinfo).image_width as isize * (*cinfo).input_components as isize;
     jd_samplesperrow = samplesperrow as crate::jmorecfg_h::JDIMENSION;
     if jd_samplesperrow as isize != samplesperrow {
         (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_WIDTH_OVERFLOW as i32;
@@ -720,8 +685,7 @@ unsafe extern "C" fn initial_setup(
             || (*compptr).v_samp_factor <= 0
             || (*compptr).v_samp_factor > 4
         {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_BAD_SAMPLING as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_SAMPLING as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -762,8 +726,7 @@ unsafe extern "C" fn initial_setup(
             } else {
                 (8) / 2
             })
-            && (*cinfo).max_h_samp_factor % ((*compptr).h_samp_factor * ssize * 2)
-                == 0
+            && (*cinfo).max_h_samp_factor % ((*compptr).h_samp_factor * ssize * 2) == 0
         {
             ssize = ssize * 2
         }
@@ -775,8 +738,7 @@ unsafe extern "C" fn initial_setup(
             } else {
                 (8) / 2
             })
-            && (*cinfo).max_v_samp_factor % ((*compptr).v_samp_factor * ssize * 2)
-                == 0
+            && (*cinfo).max_v_samp_factor % ((*compptr).v_samp_factor * ssize * 2) == 0
         {
             ssize = ssize * 2
         }
@@ -857,9 +819,8 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
     scanptr = (*cinfo).scan_info;
     if (*scanptr).Ss != 0 || (*scanptr).Se != 64 - 1 {
         (*cinfo).progressive_mode = 1;
-        last_bitpos_ptr = &mut *(*last_bitpos.as_mut_ptr().offset(0))
-            .as_mut_ptr()
-            .offset(0) as *mut i32;
+        last_bitpos_ptr =
+            &mut *(*last_bitpos.as_mut_ptr().offset(0)).as_mut_ptr().offset(0) as *mut i32;
         ci = 0;
         while ci < (*cinfo).num_components {
             coefi = 0;
@@ -879,13 +840,13 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
             ci += 1
         }
     }
-    scanno = 1;
-    while scanno <= (*cinfo).num_scans {
+
+    for scanno in 1..=(*cinfo).num_scans {
         /* Validate component indexes */
         ncomps = (*scanptr).comps_in_scan;
+
         if ncomps <= 0 || ncomps > 4 {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_COMPONENT_COUNT as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_COMPONENT_COUNT as i32;
             (*(*cinfo).err).msg_parm.i[0] = ncomps;
             (*(*cinfo).err).msg_parm.i[1] = 4;
             Some(
@@ -897,12 +858,13 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
                 cinfo as crate::jpeglib_h::j_common_ptr
             );
         }
+
         ci = 0;
+
         while ci < ncomps {
             thisi = (*scanptr).component_index[ci as usize];
             if thisi < 0 || thisi >= (*cinfo).num_components {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_SCAN_SCRIPT as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_SCAN_SCRIPT as i32;
                 (*(*cinfo).err).msg_parm.i[0] = scanno;
                 Some(
                     (*(*cinfo).err)
@@ -914,11 +876,8 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
                 );
             }
             /* Components must appear in SOF order within each scan */
-            if ci > 0
-                && thisi <= (*scanptr).component_index[(ci - 1) as usize]
-            {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_SCAN_SCRIPT as i32;
+            if ci > 0 && thisi <= (*scanptr).component_index[(ci - 1) as usize] {
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_SCAN_SCRIPT as i32;
                 (*(*cinfo).err).msg_parm.i[0] = scanno;
                 Some(
                     (*(*cinfo).err)
@@ -933,9 +892,13 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
         }
         /* Validate progression parameters */
         Ss = (*scanptr).Ss;
+
         Se = (*scanptr).Se;
+
         Ah = (*scanptr).Ah;
+
         Al = (*scanptr).Al;
+
         if (*cinfo).progressive_mode != 0 {
             /* The JPEG spec simply gives the ranges 0..13 for Ah and Al, but that
              * seems wrong: the upper bound ought to depend on data precision.
@@ -944,17 +907,8 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
              * out-of-range reconstructed DC values during the first DC scan,
              * which might cause problems for some decoders.
              */
-            if Ss < 0
-                || Ss >= 64
-                || Se < Ss
-                || Se >= 64
-                || Ah < 0
-                || Ah > 10
-                || Al < 0
-                || Al > 10
-            {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_PROG_SCRIPT as i32;
+            if Ss < 0 || Ss >= 64 || Se < Ss || Se >= 64 || Ah < 0 || Ah > 10 || Al < 0 || Al > 10 {
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_PROG_SCRIPT as i32;
                 (*(*cinfo).err).msg_parm.i[0] = scanno;
                 Some(
                     (*(*cinfo).err)
@@ -982,8 +936,7 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
                 }
             } else if ncomps != 1 {
                 /* AC scans must be for only one component */
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_PROG_SCRIPT as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_PROG_SCRIPT as i32;
                 (*(*cinfo).err).msg_parm.i[0] = scanno;
                 Some(
                     (*(*cinfo).err)
@@ -1000,11 +953,8 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
                     .as_mut_ptr()
                     .offset(*(*scanptr).component_index.as_ptr().offset(ci as isize) as isize))
                 .as_mut_ptr()
-                .offset(0)
-                    as *mut i32;
-                if Ss != 0
-                    && *last_bitpos_ptr.offset(0) < 0
-                {
+                .offset(0) as *mut i32;
+                if Ss != 0 && *last_bitpos_ptr.offset(0) < 0 {
                     /* AC without prior DC scan */
                     (*(*cinfo).err).msg_code =
                         crate::src::jpeg_8c::jerror::JERR_BAD_PROG_SCRIPT as i32;
@@ -1035,9 +985,7 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
                                 cinfo as crate::jpeglib_h::j_common_ptr,
                             );
                         }
-                    } else if Ah != *last_bitpos_ptr.offset(coefi as isize)
-                        || Al != Ah - 1
-                    {
+                    } else if Ah != *last_bitpos_ptr.offset(coefi as isize) || Al != Ah - 1 {
                         (*(*cinfo).err).msg_code =
                             crate::src::jpeg_8c::jerror::JERR_BAD_PROG_SCRIPT as i32;
                         (*(*cinfo).err).msg_parm.i[0] = scanno;
@@ -1058,13 +1006,8 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
         } else {
             /* not first scan */
             /* For sequential JPEG, all progression parameters must be these: */
-            if Ss != 0
-                || Se != 64 - 1
-                || Ah != 0
-                || Al != 0
-            {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_PROG_SCRIPT as i32;
+            if Ss != 0 || Se != 64 - 1 || Ah != 0 || Al != 0 {
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_PROG_SCRIPT as i32;
                 (*(*cinfo).err).msg_parm.i[0] = scanno;
                 Some(
                     (*(*cinfo).err)
@@ -1096,8 +1039,8 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
                 ci += 1
             }
         }
+
         scanptr = scanptr.offset(1);
-        scanno += 1
     }
     /* Now verify that everything got sent. */
     if (*cinfo).progressive_mode != 0 {
@@ -1109,8 +1052,7 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
         ci = 0;
         while ci < (*cinfo).num_components {
             if last_bitpos[ci as usize][0] < 0 {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_MISSING_DATA as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_MISSING_DATA as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -1126,8 +1068,7 @@ unsafe extern "C" fn validate_script(mut cinfo: crate::jpeglib_h::j_compress_ptr
         ci = 0;
         while ci < (*cinfo).num_components {
             if component_sent[ci as usize] == 0 {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_MISSING_DATA as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_MISSING_DATA as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -1154,8 +1095,8 @@ unsafe extern "C" fn reduce_script(mut cinfo: crate::jpeglib_h::j_compress_ptr)
     /* Circumvent const declaration for this function */
     scanptr = (*cinfo).scan_info as *mut crate::jpeglib_h::jpeg_scan_info;
     idxout = 0;
-    idxin = 0;
-    while idxin < (*cinfo).num_scans {
+
+    for idxin in 0..(*cinfo).num_scans {
         /* After skipping, idxout becomes smaller than idxin */
         if idxin != idxout {
             /* Copy rest of data;
@@ -1163,6 +1104,7 @@ unsafe extern "C" fn reduce_script(mut cinfo: crate::jpeglib_h::j_compress_ptr)
              */
             *scanptr.offset(idxout as isize) = *scanptr.offset(idxin as isize)
         }
+
         if !((*scanptr.offset(idxout as isize)).Ss > (*cinfo).lim_Se) {
             if (*scanptr.offset(idxout as isize)).Se > (*cinfo).lim_Se {
                 /* Limit scan to end of block */
@@ -1170,8 +1112,6 @@ unsafe extern "C" fn reduce_script(mut cinfo: crate::jpeglib_h::j_compress_ptr)
             }
             idxout += 1
         }
-        /* Entire scan out of range - skip this entry */
-        idxin += 1
     }
     (*cinfo).num_scans = idxout;
 }
@@ -1205,8 +1145,7 @@ unsafe extern "C" fn select_scan_parameters(mut cinfo: crate::jpeglib_h::j_compr
     } else {
         /* Prepare for single sequential-JPEG scan containing all components */
         if (*cinfo).num_components > 4 {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_COMPONENT_COUNT as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_COMPONENT_COUNT as i32;
             (*(*cinfo).err).msg_parm.i[0] = (*cinfo).num_components;
             (*(*cinfo).err).msg_parm.i[1] = 4;
             Some(
@@ -1269,8 +1208,7 @@ unsafe extern "C" fn per_scan_setup(mut cinfo: crate::jpeglib_h::j_compress_ptr)
     } else {
         /* Interleaved (multi-component) scan */
         if (*cinfo).comps_in_scan <= 0 || (*cinfo).comps_in_scan > 4 {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_COMPONENT_COUNT as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_COMPONENT_COUNT as i32;
             (*(*cinfo).err).msg_parm.i[0] = (*cinfo).comps_in_scan;
             (*(*cinfo).err).msg_parm.i[1] = 4;
             Some(
@@ -1303,16 +1241,14 @@ unsafe extern "C" fn per_scan_setup(mut cinfo: crate::jpeglib_h::j_compress_ptr)
             /* Figure number of non-dummy blocks in last MCU column & row */
             tmp = (*compptr)
                 .width_in_blocks
-                .wrapping_rem((*compptr).MCU_width as u32)
-                as i32;
+                .wrapping_rem((*compptr).MCU_width as u32) as i32;
             if tmp == 0 {
                 tmp = (*compptr).MCU_width
             }
             (*compptr).last_col_width = tmp;
             tmp = (*compptr)
                 .height_in_blocks
-                .wrapping_rem((*compptr).MCU_height as u32)
-                as i32;
+                .wrapping_rem((*compptr).MCU_height as u32) as i32;
             if tmp == 0 {
                 tmp = (*compptr).MCU_height
             }
@@ -1320,8 +1256,7 @@ unsafe extern "C" fn per_scan_setup(mut cinfo: crate::jpeglib_h::j_compress_ptr)
             /* Prepare array describing MCU composition */
             mcublks = (*compptr).MCU_blocks;
             if (*cinfo).blocks_in_MCU + mcublks > 10 {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_MCU_SIZE as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_MCU_SIZE as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -1347,8 +1282,7 @@ unsafe extern "C" fn per_scan_setup(mut cinfo: crate::jpeglib_h::j_compress_ptr)
     /* Convert restart specified in rows to actual MCU count. */
     /* Note that count must fit in 16 bits, so we provide limiting. */
     if (*cinfo).restart_in_rows > 0 {
-        let mut nominal: isize =
-            (*cinfo).restart_in_rows as isize * (*cinfo).MCUs_per_row as isize;
+        let mut nominal: isize = (*cinfo).restart_in_rows as isize * (*cinfo).MCUs_per_row as isize;
         (*cinfo).restart_interval = if nominal < 65535 as isize {
             nominal
         } else {
@@ -1367,7 +1301,7 @@ unsafe extern "C" fn per_scan_setup(mut cinfo: crate::jpeglib_h::j_compress_ptr)
 unsafe extern "C" fn prepare_for_pass(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
     let mut master: my_master_ptr = (*cinfo).master as my_master_ptr;
     let mut current_block_33: u64;
-    match  (*master).pass_type {
+    match (*master).pass_type {
         0 => {
             /* Initial pass: will collect input data, and do either Huffman
              * optimization or data output for the first scan.
@@ -1472,8 +1406,7 @@ unsafe extern "C" fn prepare_for_pass(mut cinfo: crate::jpeglib_h::j_compress_pt
             current_block_33 = 9439872330697556915;
         }
         _ => {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_NOT_COMPILED as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_NOT_COMPILED as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -1528,8 +1461,7 @@ unsafe extern "C" fn prepare_for_pass(mut cinfo: crate::jpeglib_h::j_compress_pt
         }
         _ => {}
     }
-    (*master).pub_0.is_last_pass =
-        ((*master).pass_number == (*master).total_passes - 1) as i32;
+    (*master).pub_0.is_last_pass = ((*master).pass_number == (*master).total_passes - 1) as i32;
     /* Set up progress monitor's pass info if present */
     if !(*cinfo).progress.is_null() {
         (*(*cinfo).progress).completed_passes = (*master).pass_number;
@@ -1577,7 +1509,7 @@ unsafe extern "C" fn finish_pass_master(mut cinfo: crate::jpeglib_h::j_compress_
     )
     .expect("non-null function pointer")(cinfo);
     /* Update state for next pass */
-    match  (*master).pass_type {
+    match (*master).pass_type {
         0 => {
             /* next pass is either output of scan 0 (after optimization)
              * or output of scan 1 (if no optimization).
@@ -1620,7 +1552,6 @@ pub unsafe extern "C" fn jinit_c_master_control(
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<my_comp_master>(),
     ) as my_master_ptr;
     (*cinfo).master = master as *mut crate::jpegint_h::jpeg_comp_master;
@@ -1642,9 +1573,7 @@ pub unsafe extern "C" fn jinit_c_master_control(
         (*cinfo).progressive_mode = 0;
         (*cinfo).num_scans = 1
     }
-    if ((*cinfo).progressive_mode != 0 || (*cinfo).block_size < 8)
-        && (*cinfo).arith_code == 0
-    {
+    if ((*cinfo).progressive_mode != 0 || (*cinfo).block_size < 8) && (*cinfo).arith_code == 0 {
         /*  TEMPORARY HACK ??? */
         /* assume default tables no good for progressive or downscale mode */
         (*cinfo).optimize_coding = 1

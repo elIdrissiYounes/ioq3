@@ -2295,9 +2295,10 @@ pub unsafe extern "C" fn AddTournamentPlayer() {
         return;
     }
     nextInLine = 0 as *mut crate::g_local_h::gclient_t;
-    i = 0;
-    while i < level.maxclients {
+
+    for i in 0..level.maxclients {
         client = &mut *level.clients.offset(i as isize) as *mut crate::g_local_h::gclient_s;
+
         if !((*client).pers.connected != crate::g_local_h::CON_CONNECTED) {
             if !((*client).sess.sessionTeam != crate::bg_public_h::TEAM_SPECTATOR) {
                 // never select the dedicated follow or scoreboard clients
@@ -2312,7 +2313,6 @@ pub unsafe extern "C" fn AddTournamentPlayer() {
                 }
             }
         }
-        i += 1
     }
     if nextInLine.is_null() {
         return;
@@ -2832,9 +2832,10 @@ pub unsafe extern "C" fn BeginIntermission() {
     }
     level.intermissiontime = level.time;
     // move all clients to the intermission point
-    i = 0;
-    while i < level.maxclients {
+
+    for i in 0..level.maxclients {
         client = g_entities.as_mut_ptr().offset(i as isize);
+
         if !((*client).inuse as u64 == 0) {
             // respawn if dead
             if (*client).health <= 0 {
@@ -2842,7 +2843,6 @@ pub unsafe extern "C" fn BeginIntermission() {
             }
             MoveClientToIntermission(client);
         }
-        i += 1
     }
     // if single player game
     if g_gametype.integer == crate::bg_public_h::GT_SINGLE_PLAYER as i32 {
@@ -3551,8 +3551,8 @@ pub unsafe extern "C" fn SetLeader(mut team: i32, mut client: i32) {
         );
         return;
     }
-    i = 0;
-    while i < level.maxclients {
+
+    for i in 0..level.maxclients {
         if !((*level.clients.offset(i as isize)).sess.sessionTeam != team as u32) {
             if (*level.clients.offset(i as isize)).sess.teamLeader as u64 != 0 {
                 (*level.clients.offset(i as isize)).sess.teamLeader =
@@ -3560,7 +3560,6 @@ pub unsafe extern "C" fn SetLeader(mut team: i32, mut client: i32) {
                 crate::src::game::g_client::ClientUserinfoChanged(i);
             }
         }
-        i += 1
     }
     (*level.clients.offset(client as isize)).sess.teamLeader = crate::src::qcommon::q_shared::qtrue;
     crate::src::game::g_client::ClientUserinfoChanged(client);

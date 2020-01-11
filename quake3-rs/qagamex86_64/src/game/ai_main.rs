@@ -849,14 +849,15 @@ pub unsafe extern "C" fn BotAI_BotInitialChat(
     );
     ap = args.clone();
     p = ap.as_va_list().arg::<*mut i8>();
-    i = 0;
-    while i < 8 {
+
+    for i in 0..8 {
         if p.is_null() {
             break;
         }
+
         vars[i as usize] = p;
+
         p = ap.as_va_list().arg::<*mut i8>();
-        i += 1
     }
     mcontext = crate::src::game::ai_dmq3::BotSynonymContext(bs);
     crate::src::game::g_syscalls::trap_BotInitialChat(
@@ -1474,20 +1475,19 @@ pub unsafe extern "C" fn BotWriteInterbreeded(mut filename: *mut i8) {
     let mut bestbot: i32 = 0;
     bestrank = 0f32;
     bestbot = -(1);
-    // get the best bot
-    i = 0;
-    while i < 64 {
+
+    for i in 0..64 {
         if !botstates[i as usize].is_null() && (*botstates[i as usize]).inuse != 0 {
             rank = ((*botstates[i as usize]).num_kills * 2 - (*botstates[i as usize]).num_deaths)
                 as f32
         } else {
             rank = -1f32
         }
+
         if rank > bestrank {
             bestrank = rank;
             bestbot = i
         }
-        i += 1
     }
     if bestbot >= 0 {
         //write out the new goal fuzzy logic
@@ -1727,8 +1727,8 @@ pub unsafe extern "C" fn BotChangeViewAngles(
         maxchange = 240f32
     }
     maxchange *= thinktime;
-    i = 0;
-    while i < 2 {
+
+    for i in 0..2 {
         //
         if crate::src::game::ai_dmq3::bot_challenge.integer != 0 {
             //smooth slowdown view model
@@ -1778,9 +1778,6 @@ pub unsafe extern "C" fn BotChangeViewAngles(
                 * (0.45 * (1f32 - factor) as f64))
                 as crate::src::qcommon::q_shared::vec_t
         }
-        i += 1
-        //BotAI_Print(PRT_MESSAGE, "ideal_angles %f %f\n", bs->ideal_viewangles[0], bs->ideal_viewangles[1], bs->ideal_viewangles[2]);`
-        //bs->viewangles[i] = bs->ideal_viewangles[i];
     }
     //bs->viewangles[PITCH] = 0;
     if (*bs).viewangles[0] > 180f32 {
@@ -1868,19 +1865,11 @@ pub unsafe extern "C" fn BotInputToUserCommand(
     (*ucmd).angles[0] = ((*bi).viewangles[0] * 65536f32 / 360f32) as i32 & 65535;
     (*ucmd).angles[1] = ((*bi).viewangles[1] * 65536f32 / 360f32) as i32 & 65535;
     (*ucmd).angles[2] = ((*bi).viewangles[2] * 65536f32 / 360f32) as i32 & 65535;
-    //subtract the delta angles
-    j = 0;
-    while j < 3 {
+
+    for j in 0..3 {
         temp = ((*ucmd).angles[j as usize] - *delta_angles.offset(j as isize)) as i16;
-        /*NOTE: disabled because temp should be mod first
-        if ( j == PITCH ) {
-            // don't let the player look up or down more than 90 degrees
-            if ( temp > 16000 ) temp = 16000;
-            else if ( temp < -16000 ) temp = -16000;
-        }
-        */
+
         (*ucmd).angles[j as usize] = temp as i32;
-        j += 1
     }
     //NOTE: movement is relative to the REAL view angles
     //get the horizontal forward and right vector
@@ -2688,13 +2677,12 @@ pub unsafe extern "C" fn BotAILoadMap(mut restart: i32) -> i32 {
         );
         crate::src::game::g_syscalls::trap_BotLibLoadMap(mapname.string.as_mut_ptr());
     }
-    i = 0;
-    while i < 64 {
+
+    for i in 0..64 {
         if !botstates[i as usize].is_null() && (*botstates[i as usize]).inuse != 0 {
             BotResetState(botstates[i as usize]);
             (*botstates[i as usize]).setupcount = 4
         }
-        i += 1
     }
     crate::src::game::ai_dmq3::BotSetupDeathmatchAI();
     return crate::src::qcommon::q_shared::qtrue as i32;

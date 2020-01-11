@@ -1290,11 +1290,12 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8) -> i32 {
     Sys_SetBinaryPath(crate::src::sys::sys_unix::Sys_Dirname(*argv.offset(0)));
     Sys_SetDefaultInstallPath(Sys_BinaryPath());
     // Concatenate the command line for passing to Com_Init
-    i = 1;
-    while i < argc {
+
+    for i in 1..argc {
         let containsSpaces: crate::src::qcommon::q_shared::qboolean =
             (crate::stdlib::strchr(*argv.offset(i as isize), ' ' as i32) != 0 as *mut i8)
                 as crate::src::qcommon::q_shared::qboolean;
+
         if containsSpaces as u64 != 0 {
             crate::src::qcommon::q_shared::Q_strcat(
                 commandLine.as_mut_ptr(),
@@ -1302,11 +1303,13 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8) -> i32 {
                 b"\"\x00" as *const u8 as *const i8,
             );
         }
+
         crate::src::qcommon::q_shared::Q_strcat(
             commandLine.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 1024]>() as i32,
             *argv.offset(i as isize),
         );
+
         if containsSpaces as u64 != 0 {
             crate::src::qcommon::q_shared::Q_strcat(
                 commandLine.as_mut_ptr(),
@@ -1314,12 +1317,12 @@ unsafe fn main_0(mut argc: i32, mut argv: *mut *mut i8) -> i32 {
                 b"\"\x00" as *const u8 as *const i8,
             );
         }
+
         crate::src::qcommon::q_shared::Q_strcat(
             commandLine.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 1024]>() as i32,
             b" \x00" as *const u8 as *const i8,
         );
-        i += 1
     }
     crate::src::sys::con_tty::CON_Init();
     crate::src::qcommon::common::Com_Init(commandLine.as_mut_ptr());

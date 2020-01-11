@@ -1084,12 +1084,11 @@ pub unsafe extern "C" fn CG_RegisterWeapon(mut weaponNum: i32) {
         mins.as_mut_ptr(),
         maxs.as_mut_ptr(),
     );
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         (*weaponInfo).weaponMidpoint[i as usize] = (mins[i as usize] as f64
             + 0.5 * (maxs[i as usize] - mins[i as usize]) as f64)
             as crate::src::qcommon::q_shared::vec_t;
-        i += 1
     }
     (*weaponInfo).weaponIcon = crate::src::cgame::cg_syscalls::trap_R_RegisterShader((*item).icon);
     (*weaponInfo).ammoIcon = crate::src::cgame::cg_syscalls::trap_R_RegisterShader((*item).icon);
@@ -1655,26 +1654,30 @@ unsafe extern "C" fn CG_LightningBolt(
     {
         let mut angle: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
         let mut i: i32 = 0;
-        i = 0;
-        while i < 3 {
+
+        for i in 0..3 {
             let mut a: f32 = (*cent).lerpAngles[i as usize]
                 - crate::src::cgame::cg_main::cg.refdefViewAngles[i as usize];
+
             if a > 180f32 {
                 a -= 360f32
             }
+
             if a < -180f32 {
                 a += 360f32
             }
+
             angle[i as usize] = (crate::src::cgame::cg_main::cg.refdefViewAngles[i as usize] as f64
                 + a as f64 * (1.0 - crate::src::cgame::cg_main::cg_trueLightning.value as f64))
                 as crate::src::qcommon::q_shared::vec_t;
+
             if angle[i as usize] < 0f32 {
                 angle[i as usize] += 360f32
             }
+
             if angle[i as usize] > 360f32 {
                 angle[i as usize] -= 360f32
             }
-            i += 1
         }
         crate::src::qcommon::q_math::AngleVectors(
             angle.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,

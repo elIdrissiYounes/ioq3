@@ -501,11 +501,9 @@ unsafe extern "C" fn UI_AddBotsMenu_SortCompare(
 
 unsafe extern "C" fn UI_AddBotsMenu_GetSortedBotNums() {
     let mut n: i32 = 0;
-    // initialize the array
-    n = 0;
-    while n < addBotsMenuInfo.numBots {
+
+    for n in 0..addBotsMenuInfo.numBots {
         addBotsMenuInfo.sortedBotNums[n as usize] = n;
-        n += 1
     }
     crate::stdlib::qsort(
         addBotsMenuInfo.sortedBotNums.as_mut_ptr() as *mut libc::c_void,

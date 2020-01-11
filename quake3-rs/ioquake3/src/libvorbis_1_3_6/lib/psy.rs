@@ -1328,21 +1328,23 @@ unsafe extern "C" fn setup_tone_curves(
         if hi_curve >= 17 {
             hi_curve = 17 - 1
         }
-        m = 0;
-        while m < 8 {
+
+        for m in 0..8 {
             let ref mut fresh2 = *(*ret.offset(i as isize)).offset(m as isize);
+
             *fresh2 = crate::stdlib::malloc(
                 (::std::mem::size_of::<f32>()).wrapping_mul((56i32 + 2) as usize),
             ) as *mut f32;
+
             j = 0;
+
             while j < n {
                 *brute_buffer.offset(j as isize) = 999f32;
                 j += 1
             }
-            /* render the curve into bins, then pull values back into curve.
-            The point is that any inherent subsampling aliasing results in
-            a safe minimum */
+
             k = lo_curve;
+
             while k <= hi_curve {
                 let mut l: i32 = 0;
                 j = 0;
@@ -1393,7 +1395,7 @@ unsafe extern "C" fn setup_tone_curves(
                 }
                 k += 1
             }
-            /* be equally paranoid about being valid up to next half ocatve */
+
             if (i + 1) < 17 {
                 let mut l_0: i32 = 0;
                 k = i + 1;
@@ -1444,7 +1446,9 @@ unsafe extern "C" fn setup_tone_curves(
                     l_0 += 1
                 }
             }
+
             j = 0;
+
             while j < 56 {
                 let mut bin_0: i32 = (crate::stdlib::exp(
                     (j as f64 * 0.125 + i as f64 * 0.5 - 2.0 + 5.965784f32 as f64)
@@ -1462,8 +1466,9 @@ unsafe extern "C" fn setup_tone_curves(
                 }
                 j += 1
             }
-            /* add fenceposts */
+
             j = 0;
+
             while j < 16 {
                 if *(*(*ret.offset(i as isize)).offset(m as isize)).offset((j + 2) as isize)
                     > -200.0f32
@@ -1472,8 +1477,11 @@ unsafe extern "C" fn setup_tone_curves(
                 }
                 j += 1
             }
+
             *(*(*ret.offset(i as isize)).offset(m as isize)).offset(0) = j as f32;
+
             j = 56 - 1;
+
             while j > 16 + 1 {
                 if *(*(*ret.offset(i as isize)).offset(m as isize)).offset((j + 2) as isize)
                     > -200.0f32
@@ -1482,8 +1490,8 @@ unsafe extern "C" fn setup_tone_curves(
                 }
                 j -= 1
             }
+
             *(*(*ret.offset(i as isize)).offset(m as isize)).offset(1) = j as f32;
-            m += 1
         }
         i += 1
     }
@@ -1689,11 +1697,9 @@ pub unsafe extern "C" fn _vp_psy_clear(
         if !(*p).tonecurves.is_null() {
             i = 0;
             while i < 17 {
-                j = 0;
-                while j < 8 {
+                for j in 0..8 {
                     crate::stdlib::free(*(*(*p).tonecurves.offset(i as isize)).offset(j as isize)
                         as *mut libc::c_void);
-                    j += 1
                 }
                 crate::stdlib::free(*(*p).tonecurves.offset(i as isize) as *mut libc::c_void);
                 i += 1
@@ -2837,10 +2843,13 @@ pub unsafe extern "C" fn _vp_couple_quantize_normalize(
             0,
             ((ch * partition) as usize).wrapping_mul(::std::mem::size_of::<i32>()),
         );
-        k = 0;
-        while k < ch {
+
+        /* coupling */
+
+        for k in 0..ch {
             let mut iout: *mut i32 =
                 &mut *(*iwork.offset(k as isize)).offset(i as isize) as *mut i32;
+
             if *nz.offset(k as isize) != 0 {
                 j = 0;
                 while j < jn {
@@ -2895,26 +2904,36 @@ pub unsafe extern "C" fn _vp_couple_quantize_normalize(
                 }
                 *acc.offset(track as isize) = 0.0f32
             }
+
             track += 1;
-            k += 1
         }
-        /* coupling */
-        step = 0;
-        while step < (*vi).coupling_steps {
+        for step in 0..(*vi).coupling_steps {
             let mut Mi: i32 = (*vi).coupling_mag[step as usize];
+
             let mut Ai: i32 = (*vi).coupling_ang[step as usize];
+
             let mut iM: *mut i32 =
                 &mut *(*iwork.offset(Mi as isize)).offset(i as isize) as *mut i32;
+
             let mut iA: *mut i32 =
                 &mut *(*iwork.offset(Ai as isize)).offset(i as isize) as *mut i32;
+
             let mut reM: *mut f32 = *raw.offset(Mi as isize);
+
             let mut reA: *mut f32 = *raw.offset(Ai as isize);
+
             let mut qeM: *mut f32 = *quant.offset(Mi as isize);
+
             let mut qeA: *mut f32 = *quant.offset(Ai as isize);
+
             let mut floorM: *mut f32 = *floor_0.offset(Mi as isize);
+
             let mut floorA: *mut f32 = *floor_0.offset(Ai as isize);
+
             let mut fM: *mut i32 = *flag.offset(Mi as isize);
+
             let mut fA: *mut i32 = *flag.offset(Ai as isize);
+
             if *nz.offset(Mi as isize) != 0 || *nz.offset(Ai as isize) != 0 {
                 let ref mut fresh38 = *nz.offset(Ai as isize);
                 *fresh38 = 1;
@@ -2997,7 +3016,6 @@ pub unsafe extern "C" fn _vp_couple_quantize_normalize(
                 );
                 track += 1
             }
-            step += 1
         }
         i += partition
     }

@@ -765,10 +765,9 @@ pub unsafe extern "C" fn NET_OutOfBandData(
     string[1] = 0xff;
     string[2] = 0xff;
     string[3] = 0xff;
-    i = 0;
-    while i < len {
+
+    for i in 0..len {
         string[(i + 4) as usize] = *format.offset(i as isize);
-        i += 1
     }
     mbuf.data = string.as_mut_ptr();
     mbuf.cursize = len + 4;

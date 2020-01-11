@@ -366,14 +366,15 @@ unsafe extern "C" fn CG_SetNextSnap(mut snap: *mut crate::cg_public_h::snapshot_
     crate::src::cgame::cg_main::cg_entities
         [(*crate::src::cgame::cg_main::cg.snap).ps.clientNum as usize]
         .interpolate = crate::src::qcommon::q_shared::qtrue;
-    // check for extrapolation errors
-    num = 0;
-    while num < (*snap).numEntities {
+
+    for num in 0..(*snap).numEntities {
         es = &mut *(*snap).entities.as_mut_ptr().offset(num as isize)
             as *mut crate::src::qcommon::q_shared::entityState_t;
+
         cent = &mut *crate::src::cgame::cg_main::cg_entities
             .as_mut_ptr()
             .offset((*es).number as isize) as *mut crate::cg_local_h::centity_t;
+
         crate::stdlib::memcpy(
             &mut (*cent).nextState as *mut crate::src::qcommon::q_shared::entityState_t
                 as *mut libc::c_void,
@@ -390,7 +391,6 @@ unsafe extern "C" fn CG_SetNextSnap(mut snap: *mut crate::cg_public_h::snapshot_
         } else {
             (*cent).interpolate = crate::src::qcommon::q_shared::qtrue
         }
-        num += 1
     }
     // if the next frame is a teleport for the playerstate, we
     // can't interpolate during demos

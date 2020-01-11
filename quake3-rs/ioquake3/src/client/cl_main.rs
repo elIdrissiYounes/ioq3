@@ -1822,13 +1822,15 @@ unsafe extern "C" fn CL_CaptureVoip() {
                 sampbuffer.as_mut_ptr() as *mut crate::src::qcommon::q_shared::byte,
             );
             // check the "power" of this packet...
-            i = 0;
-            while i < samples {
+
+            for i in 0..samples {
                 let flsamp: f32 = sampbuffer[i as usize] as f32;
+
                 let s: f32 = crate::stdlib::fabs(flsamp as f64) as f32;
+
                 voipPower += s * s;
+
                 sampbuffer[i as usize] = (flsamp * audioMult) as crate::stdlib::int16_t;
-                i += 1
             }
             // encode raw audio samples into Opus data...
             bytes = crate::src::opus_1_2_1::src::opus_encoder::opus_encode(
@@ -2395,14 +2397,13 @@ pub unsafe extern "C" fn CL_DemoCompleted() {
                         b"# %s\x00" as *const u8 as *const i8,
                         buffer.as_mut_ptr(),
                     );
-                    i = 0;
-                    while i < numFrames {
+
+                    for i in 0..numFrames {
                         crate::src::qcommon::files::FS_Printf(
                             f,
                             b"%d\n\x00" as *const u8 as *const i8,
                             clc.timeDemoDurations[i as usize] as i32,
                         );
-                        i += 1
                     }
                     crate::src::qcommon::files::FS_FCloseFile(f);
                     crate::src::qcommon::common::Com_Printf(
@@ -3093,12 +3094,11 @@ pub unsafe extern "C" fn CL_Disconnect(mut showMainMenu: crate::src::qcommon::q_
     if clc.voipCodecInitialized as u64 != 0 {
         let mut i: i32 = 0;
         crate::src::opus_1_2_1::src::opus_encoder::opus_encoder_destroy(clc.opusEncoder);
-        i = 0;
-        while i < 64 {
+
+        for i in 0..64 {
             crate::src::opus_1_2_1::src::opus_decoder::opus_decoder_destroy(
                 clc.opusDecoder[i as usize],
             );
-            i += 1
         }
         clc.voipCodecInitialized = crate::src::qcommon::q_shared::qfalse
     }
@@ -3353,8 +3353,8 @@ pub unsafe extern "C" fn CL_RequestAuthorization() {
     if l > 32 {
         l = 32
     }
-    i = 0;
-    while i < l {
+
+    for i in 0..l {
         if crate::src::qcommon::common::cl_cdkey[i as usize] as i32 >= '0' as i32
             && crate::src::qcommon::common::cl_cdkey[i as usize] as i32 <= '9' as i32
             || crate::src::qcommon::common::cl_cdkey[i as usize] as i32 >= 'a' as i32
@@ -3365,7 +3365,6 @@ pub unsafe extern "C" fn CL_RequestAuthorization() {
             nums[j as usize] = crate::src::qcommon::common::cl_cdkey[i as usize];
             j += 1
         }
-        i += 1
     }
     nums[j as usize] = 0;
     fs = crate::src::qcommon::cvar::Cvar_Get(
@@ -3635,8 +3634,8 @@ unsafe extern "C" fn CL_CompletePlayerName(mut args: *mut i8, mut argNum: i32) {
             b"sv_maxclients\x00" as *const u8 as *const i8,
         ));
         nameCount = 0;
-        i = 0;
-        while i < clientCount {
+
+        for i in 0..clientCount {
             if !(i == clc.clientNum) {
                 info = cl
                     .gameState
@@ -3660,7 +3659,6 @@ unsafe extern "C" fn CL_CompletePlayerName(mut args: *mut i8, mut argNum: i32) {
                     nameCount += 1
                 }
             }
-            i += 1
         }
         crate::stdlib::qsort(
             namesPtr.as_mut_ptr() as *mut libc::c_void,
@@ -7000,11 +6998,10 @@ pub unsafe extern "C" fn CL_ServerStatus(
     let mut serverStatus: *mut serverStatus_t = 0 as *mut serverStatus_t;
     // if no server address then reset all server status requests
     if serverAddress.is_null() {
-        i = 0;
-        while i < 16 {
+        for i in 0..16 {
             cl_serverStatusList[i as usize].address.port = 0;
+
             cl_serverStatusList[i as usize].retrieved = crate::src::qcommon::q_shared::qtrue;
-            i += 1
         }
         return crate::src::qcommon::q_shared::qfalse as i32;
     }
@@ -7273,24 +7270,27 @@ pub unsafe extern "C" fn CL_LocalServers_f() {
         // send a broadcast packet on each server port
         // we support multiple server ports so a single machine
         // can nicely run multiple servers
-        j = 0;
-        while j < 4 {
+
+        for j in 0..4 {
             to.port = crate::src::qcommon::q_shared::ShortSwap((27960 + j) as i16) as u16;
+
             to.type_0 = crate::qcommon_h::NA_BROADCAST;
+
             crate::src::qcommon::net_chan::NET_SendPacket(
                 crate::qcommon_h::NS_CLIENT,
                 crate::stdlib::strlen(message) as i32,
                 message as *const libc::c_void,
                 to,
             );
+
             to.type_0 = crate::qcommon_h::NA_MULTICAST6;
+
             crate::src::qcommon::net_chan::NET_SendPacket(
                 crate::qcommon_h::NS_CLIENT,
                 crate::stdlib::strlen(message) as i32,
                 message as *const libc::c_void,
                 to,
             );
-            j += 1
         }
         i += 1
     }

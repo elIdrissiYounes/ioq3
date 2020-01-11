@@ -81,36 +81,19 @@ pub unsafe extern "C" fn jpeg_fdct_float(
     while ctr < 8 {
         elemptr = (*sample_data.offset(ctr as isize)).offset(start_col as isize);
         /* advance pointer to next row */
-        tmp0 = (*elemptr.offset(0) as i32
-            + *elemptr.offset(7) as i32)
-            as f32;
-        tmp7 = (*elemptr.offset(0) as i32
-            - *elemptr.offset(7) as i32)
-            as f32;
-        tmp1 = (*elemptr.offset(1) as i32
-            + *elemptr.offset(6) as i32)
-            as f32;
-        tmp6 = (*elemptr.offset(1) as i32
-            - *elemptr.offset(6) as i32)
-            as f32;
-        tmp2 = (*elemptr.offset(2) as i32
-            + *elemptr.offset(5) as i32)
-            as f32;
-        tmp5 = (*elemptr.offset(2) as i32
-            - *elemptr.offset(5) as i32)
-            as f32;
-        tmp3 = (*elemptr.offset(3) as i32
-            + *elemptr.offset(4) as i32)
-            as f32;
-        tmp4 = (*elemptr.offset(3) as i32
-            - *elemptr.offset(4) as i32)
-            as f32;
+        tmp0 = (*elemptr.offset(0) as i32 + *elemptr.offset(7) as i32) as f32;
+        tmp7 = (*elemptr.offset(0) as i32 - *elemptr.offset(7) as i32) as f32;
+        tmp1 = (*elemptr.offset(1) as i32 + *elemptr.offset(6) as i32) as f32;
+        tmp6 = (*elemptr.offset(1) as i32 - *elemptr.offset(6) as i32) as f32;
+        tmp2 = (*elemptr.offset(2) as i32 + *elemptr.offset(5) as i32) as f32;
+        tmp5 = (*elemptr.offset(2) as i32 - *elemptr.offset(5) as i32) as f32;
+        tmp3 = (*elemptr.offset(3) as i32 + *elemptr.offset(4) as i32) as f32;
+        tmp4 = (*elemptr.offset(3) as i32 - *elemptr.offset(4) as i32) as f32;
         tmp10 = tmp0 + tmp3;
         tmp13 = tmp0 - tmp3;
         tmp11 = tmp1 + tmp2;
         tmp12 = tmp1 - tmp2;
-        *dataptr.offset(0) =
-            tmp10 + tmp11 - (8i32 * 128) as f32;
+        *dataptr.offset(0) = tmp10 + tmp11 - (8i32 * 128) as f32;
         *dataptr.offset(4) = tmp10 - tmp11;
         z1 = (tmp12 + tmp13) * 0.707106781;
         *dataptr.offset(2) = tmp13 + z1;
@@ -151,22 +134,14 @@ pub unsafe extern "C" fn jpeg_fdct_float(
     dataptr = data;
     ctr = 8 - 1;
     while ctr >= 0 {
-        tmp0 = *dataptr.offset((8i32 * 0) as isize)
-            + *dataptr.offset((8i32 * 7) as isize);
-        tmp7 = *dataptr.offset((8i32 * 0) as isize)
-            - *dataptr.offset((8i32 * 7) as isize);
-        tmp1 = *dataptr.offset((8i32 * 1) as isize)
-            + *dataptr.offset((8i32 * 6) as isize);
-        tmp6 = *dataptr.offset((8i32 * 1) as isize)
-            - *dataptr.offset((8i32 * 6) as isize);
-        tmp2 = *dataptr.offset((8i32 * 2) as isize)
-            + *dataptr.offset((8i32 * 5) as isize);
-        tmp5 = *dataptr.offset((8i32 * 2) as isize)
-            - *dataptr.offset((8i32 * 5) as isize);
-        tmp3 = *dataptr.offset((8i32 * 3) as isize)
-            + *dataptr.offset((8i32 * 4) as isize);
-        tmp4 = *dataptr.offset((8i32 * 3) as isize)
-            - *dataptr.offset((8i32 * 4) as isize);
+        tmp0 = *dataptr.offset((8i32 * 0) as isize) + *dataptr.offset((8i32 * 7) as isize);
+        tmp7 = *dataptr.offset((8i32 * 0) as isize) - *dataptr.offset((8i32 * 7) as isize);
+        tmp1 = *dataptr.offset((8i32 * 1) as isize) + *dataptr.offset((8i32 * 6) as isize);
+        tmp6 = *dataptr.offset((8i32 * 1) as isize) - *dataptr.offset((8i32 * 6) as isize);
+        tmp2 = *dataptr.offset((8i32 * 2) as isize) + *dataptr.offset((8i32 * 5) as isize);
+        tmp5 = *dataptr.offset((8i32 * 2) as isize) - *dataptr.offset((8i32 * 5) as isize);
+        tmp3 = *dataptr.offset((8i32 * 3) as isize) + *dataptr.offset((8i32 * 4) as isize);
+        tmp4 = *dataptr.offset((8i32 * 3) as isize) - *dataptr.offset((8i32 * 4) as isize);
         /* advance pointer to next column */
         tmp10 = tmp0 + tmp3;
         tmp13 = tmp0 - tmp3;

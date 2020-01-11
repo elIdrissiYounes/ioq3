@@ -299,22 +299,12 @@ unsafe extern "C" fn forward_DCT(
         let mut i: i32 = 0;
         let mut output_ptr: crate::jpeglib_h::JCOEFPTR =
             (*coef_blocks.offset(bi as isize)).as_mut_ptr();
-        i = 0;
-        while i < 64 {
+
+        for i in 0..64 {
             qval = *divisors.offset(i as isize);
+
             temp = workspace[i as usize];
-            /* Divide the coefficient value by qval, ensuring proper rounding.
-             * Since C does not specify the direction of rounding for negative
-             * quotients, we have to force the dividend positive for portability.
-             *
-             * In most files, at least half of the output values will be zero
-             * (at default quantization settings, more like three-quarters...)
-             * so we should ensure that this case is fast.  On many machines,
-             * a comparison is enough cheaper than a divide to make a special test
-             * a win.  Since both inputs will be nonnegative, we need only test
-             * for a < b to discover whether a/b is 0.
-             * If your machine's division is fast enough, define FAST_DIVIDE.
-             */
+
             if temp < 0 {
                 temp = -temp; /* for rounding */
                 temp += qval >> 1; /* for rounding */
@@ -332,12 +322,11 @@ unsafe extern "C" fn forward_DCT(
                     temp = 0
                 }
             }
+
             *output_ptr.offset(i as isize) = temp as crate::jmorecfg_h::JCOEF;
-            i += 1
         }
         bi = bi.wrapping_add(1);
-        start_col =  (start_col)
-            .wrapping_add((*compptr).DCT_h_scaled_size as u32)
+        start_col = (start_col).wrapping_add((*compptr).DCT_h_scaled_size as u32)
     }
 }
 
@@ -373,24 +362,16 @@ unsafe extern "C" fn forward_DCT_float(
         let mut i: i32 = 0;
         let mut output_ptr: crate::jpeglib_h::JCOEFPTR =
             (*coef_blocks.offset(bi as isize)).as_mut_ptr();
-        i = 0;
-        while i < 64 {
+
+        for i in 0..64 {
             /* Apply the quantization and scaling factor */
             temp = workspace[i as usize] * *divisors.offset(i as isize);
-            /* Round to nearest integer.
-             * Since C does not specify the direction of rounding for negative
-             * quotients, we have to force the dividend positive for portability.
-             * The maximum coefficient size is +-16K (for 12-bit data), so this
-             * code should work for either 16-bit or 32-bit ints.
-             */
-            *output_ptr.offset(i as isize) = ((temp + 16384.5) as i32
-                - 16384)
-                as crate::jmorecfg_h::JCOEF;
-            i += 1
+
+            *output_ptr.offset(i as isize) =
+                ((temp + 16384.5) as i32 - 16384) as crate::jmorecfg_h::JCOEF;
         }
         bi = bi.wrapping_add(1);
-        start_col =  (start_col)
-            .wrapping_add((*compptr).DCT_h_scaled_size as u32)
+        start_col = (start_col).wrapping_add((*compptr).DCT_h_scaled_size as u32)
     }
 }
 /* DCT_FLOAT_SUPPORTED */
@@ -759,7 +740,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                 ); /* jfdctint uses islow-style table */
                 method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
-            2056 => match  (*cinfo).dct_method {
+            2056 => match (*cinfo).dct_method {
                 0 => {
                     (*fdct).do_dct[ci as usize] = Some(
                         crate::src::jpeg_8c::jfdctint::jpeg_fdct_islow
@@ -807,12 +788,9 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                 }
             },
             _ => {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_DCTSIZE as i32;
-                (*(*cinfo).err).msg_parm.i[0] =
-                    (*compptr).DCT_h_scaled_size;
-                (*(*cinfo).err).msg_parm.i[1] =
-                    (*compptr).DCT_v_scaled_size;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_DCTSIZE as i32;
+                (*(*cinfo).err).msg_parm.i[0] = (*compptr).DCT_h_scaled_size;
+                (*(*cinfo).err).msg_parm.i[1] = (*compptr).DCT_v_scaled_size;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -825,12 +803,8 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
         }
         qtblno = (*compptr).quant_tbl_no;
         /* Make sure specified quantization table is present */
-        if qtblno < 0
-            || qtblno >= 4
-            || (*cinfo).quant_tbl_ptrs[qtblno as usize].is_null()
-        {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_NO_QUANT_TABLE as i32;
+        if qtblno < 0 || qtblno >= 4 || (*cinfo).quant_tbl_ptrs[qtblno as usize].is_null() {
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_NO_QUANT_TABLE as i32;
             (*(*cinfo).err).msg_parm.i[0] = qtblno;
             Some(
                 (*(*cinfo).err)
@@ -850,25 +824,23 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                  * coefficients multiplied by 8 (to counteract scaling).
                  */
                 if (*fdct).divisors[qtblno as usize].is_null() {
-                    (*fdct).divisors[qtblno as usize] =
-                        Some(
-                            (*(*cinfo).mem)
-                                .alloc_small
-                                .expect("non-null function pointer"),
-                        )
-                        .expect("non-null function pointer")(
-                            cinfo as crate::jpeglib_h::j_common_ptr,
-                            1,
-                            (64usize)
-                                .wrapping_mul(::std::mem::size_of::<crate::jdct_h::DCTELEM>()),
-                        ) as *mut crate::jdct_h::DCTELEM
+                    (*fdct).divisors[qtblno as usize] = Some(
+                        (*(*cinfo).mem)
+                            .alloc_small
+                            .expect("non-null function pointer"),
+                    )
+                    .expect("non-null function pointer")(
+                        cinfo as crate::jpeglib_h::j_common_ptr,
+                        1,
+                        (64usize).wrapping_mul(::std::mem::size_of::<crate::jdct_h::DCTELEM>()),
+                    )
+                        as *mut crate::jdct_h::DCTELEM
                 }
                 dtbl = (*fdct).divisors[qtblno as usize];
                 i = 0;
                 while i < 64 {
-                    *dtbl.offset(i as isize) = ((*qtbl).quantval[i as usize]
-                        as crate::jdct_h::DCTELEM)
-                        << 3;
+                    *dtbl.offset(i as isize) =
+                        ((*qtbl).quantval[i as usize] as crate::jdct_h::DCTELEM) << 3;
                     i += 1
                 }
                 (*fdct).pub_0.forward_DCT[ci as usize] = Some(
@@ -892,95 +864,34 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                  * We apply a further scale factor of 8.
                  */
                 static mut aanscales: [crate::jmorecfg_h::INT16; 64] = [
-                    16384,
-                    22725,
-                    21407,
-                    19266,
-                    16384,
-                    12873,
-                    8867,
-                    4520,
-                    22725,
-                    31521,
-                    29692,
-                    26722,
-                    22725,
-                    17855,
-                    12299,
-                    6270,
-                    21407,
-                    29692,
-                    27969,
-                    25172,
-                    21407,
-                    16819,
-                    11585,
-                    5906,
-                    19266,
-                    26722,
-                    25172,
-                    22654,
-                    19266,
-                    15137,
-                    10426,
-                    5315,
-                    16384,
-                    22725,
-                    21407,
-                    19266,
-                    16384,
-                    12873,
-                    8867,
-                    4520,
-                    12873,
-                    17855,
-                    16819,
-                    15137,
-                    12873,
-                    10114,
-                    6967,
-                    3552,
-                    8867,
-                    12299,
-                    11585,
-                    10426,
-                    8867,
-                    6967,
-                    4799,
-                    2446,
-                    4520,
-                    6270,
-                    5906,
-                    5315,
-                    4520,
-                    3552,
-                    2446,
-                    1247,
+                    16384, 22725, 21407, 19266, 16384, 12873, 8867, 4520, 22725, 31521, 29692,
+                    26722, 22725, 17855, 12299, 6270, 21407, 29692, 27969, 25172, 21407, 16819,
+                    11585, 5906, 19266, 26722, 25172, 22654, 19266, 15137, 10426, 5315, 16384,
+                    22725, 21407, 19266, 16384, 12873, 8867, 4520, 12873, 17855, 16819, 15137,
+                    12873, 10114, 6967, 3552, 8867, 12299, 11585, 10426, 8867, 6967, 4799, 2446,
+                    4520, 6270, 5906, 5315, 4520, 3552, 2446, 1247,
                 ];
                 if (*fdct).divisors[qtblno as usize].is_null() {
-                    (*fdct).divisors[qtblno as usize] =
-                        Some(
-                            (*(*cinfo).mem)
-                                .alloc_small
-                                .expect("non-null function pointer"),
-                        )
-                        .expect("non-null function pointer")(
-                            cinfo as crate::jpeglib_h::j_common_ptr,
-                            1,
-                            (64usize)
-                                .wrapping_mul(::std::mem::size_of::<crate::jdct_h::DCTELEM>()),
-                        ) as *mut crate::jdct_h::DCTELEM
+                    (*fdct).divisors[qtblno as usize] = Some(
+                        (*(*cinfo).mem)
+                            .alloc_small
+                            .expect("non-null function pointer"),
+                    )
+                    .expect("non-null function pointer")(
+                        cinfo as crate::jpeglib_h::j_common_ptr,
+                        1,
+                        (64usize).wrapping_mul(::std::mem::size_of::<crate::jdct_h::DCTELEM>()),
+                    )
+                        as *mut crate::jdct_h::DCTELEM
                 }
                 dtbl = (*fdct).divisors[qtblno as usize];
                 i = 0;
                 while i < 64 {
-                    *dtbl.offset(i as isize) = ((*qtbl).quantval[i as usize]
-                        as crate::jmorecfg_h::INT32
-                        * aanscales[i as usize] as crate::jmorecfg_h::INT32
-                        + ((1)
-                            << 14 - 3 - 1)
-                        >> 14 - 3)
-                        as crate::jdct_h::DCTELEM;
+                    *dtbl.offset(i as isize) =
+                        ((*qtbl).quantval[i as usize] as crate::jmorecfg_h::INT32
+                            * aanscales[i as usize] as crate::jmorecfg_h::INT32
+                            + ((1) << 14 - 3 - 1)
+                            >> 14 - 3) as crate::jdct_h::DCTELEM;
                     i += 1
                 }
                 (*fdct).pub_0.forward_DCT[ci as usize] = Some(
@@ -1019,37 +930,30 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                     0.275899379,
                 ];
                 if (*fdct).float_divisors[qtblno as usize].is_null() {
-                    (*fdct).float_divisors[qtblno as usize] =
-                        Some(
-                            (*(*cinfo).mem)
-                                .alloc_small
-                                .expect("non-null function pointer"),
-                        )
-                        .expect("non-null function pointer")(
-                            cinfo as crate::jpeglib_h::j_common_ptr,
-                            1,
-                            (64usize).wrapping_mul(
-                                
-                                ::std::mem::size_of::<f32>(),
-                            ),
-                        ) as *mut f32
+                    (*fdct).float_divisors[qtblno as usize] = Some(
+                        (*(*cinfo).mem)
+                            .alloc_small
+                            .expect("non-null function pointer"),
+                    )
+                    .expect("non-null function pointer")(
+                        cinfo as crate::jpeglib_h::j_common_ptr,
+                        1,
+                        (64usize).wrapping_mul(::std::mem::size_of::<f32>()),
+                    ) as *mut f32
                 }
                 fdtbl = (*fdct).float_divisors[qtblno as usize];
                 i = 0;
-                row = 0;
-                while row < 8 {
-                    col = 0;
-                    while col < 8 {
+
+                for row in 0..8 {
+                    for col in 0..8 {
                         *fdtbl.offset(i as isize) = (1.0
                             / ((*qtbl).quantval[i as usize] as f64
                                 * aanscalefactor[row as usize]
                                 * aanscalefactor[col as usize]
-                                * 8.0))
-                            as f32;
+                                * 8.0)) as f32;
+
                         i += 1;
-                        col += 1
                     }
-                    row += 1
                 }
                 (*fdct).pub_0.forward_DCT[ci as usize] = Some(
                     forward_DCT_float
@@ -1065,8 +969,7 @@ unsafe extern "C" fn start_pass_fdctmgr(mut cinfo: crate::jpeglib_h::j_compress_
                 )
             }
             _ => {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_NOT_COMPILED as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_NOT_COMPILED as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -1097,7 +1000,6 @@ pub unsafe extern "C" fn jinit_forward_dct(mut cinfo: crate::jpeglib_h::j_compre
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<my_fdct_controller>(),
     ) as my_fdct_ptr;
     (*cinfo).fdct = fdct as *mut crate::jpegint_h::jpeg_forward_dct;

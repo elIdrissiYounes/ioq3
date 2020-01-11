@@ -846,8 +846,8 @@ pub unsafe extern "C" fn SV_Trace(
     // we can limit it to the part of the move not
     // already clipped off by the world, which can be
     // a significant savings for line of sight and shot traces
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         if *end.offset(i as isize) > *start.offset(i as isize) {
             clip.boxmins[i as usize] =
                 *clip.start.offset(i as isize) + *clip.mins.offset(i as isize) - 1f32;
@@ -857,7 +857,6 @@ pub unsafe extern "C" fn SV_Trace(
             clip.boxmaxs[i as usize] =
                 *clip.start.offset(i as isize) + *clip.maxs.offset(i as isize) + 1f32
         }
-        i += 1
     }
     // clip to other solid entities
     SV_ClipMoveToEntities(&mut clip);
@@ -1050,8 +1049,8 @@ pub unsafe extern "C" fn SV_PointContents(
     contents = crate::src::qcommon::cm_test::CM_PointContents(p, 0);
     // or in contents from all the other entities
     num = SV_AreaEntities(p, p, touch.as_mut_ptr(), (1) << 10);
-    i = 0;
-    while i < num {
+
+    for i in 0..num {
         if !(touch[i as usize] == passEntityNum) {
             hit = crate::src::server::sv_game::SV_GentityNum(touch[i as usize]);
             // might intersect, so do an exact clip
@@ -1069,7 +1068,6 @@ pub unsafe extern "C" fn SV_PointContents(
             );
             contents |= c2
         }
-        i += 1
     }
     return contents;
 }

@@ -136,12 +136,13 @@ pub unsafe extern "C" fn mlp_process(
         let fresh0 = W;
         W = W.offset(1);
         let mut sum: f32 = *fresh0;
-        k = 0;
-        while k < *(*m).topo.offset(0) {
+
+        for k in 0..*(*m).topo.offset(0) {
             let fresh1 = W;
+
             W = W.offset(1);
+
             sum = sum + *in_0.offset(k as isize) * *fresh1;
-            k += 1
         }
         hidden[j as usize] = tansig_approx(sum);
         j += 1
@@ -152,12 +153,13 @@ pub unsafe extern "C" fn mlp_process(
         let fresh2 = W;
         W = W.offset(1);
         let mut sum_0: f32 = *fresh2;
-        k_0 = 0;
-        while k_0 < *(*m).topo.offset(1) {
+
+        for k_0 in 0..*(*m).topo.offset(1) {
             let fresh3 = W;
+
             W = W.offset(1);
+
             sum_0 = sum_0 + hidden[k_0 as usize] * *fresh3;
-            k_0 += 1
         }
         *out.offset(j as isize) = tansig_approx(sum_0);
         j += 1

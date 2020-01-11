@@ -1008,8 +1008,8 @@ pub unsafe extern "C" fn BG_FindItemForPowerup(
     mut pw: crate::bg_public_h::powerup_t,
 ) -> *mut crate::bg_public_h::gitem_t {
     let mut i: i32 = 0;
-    i = 0;
-    while i < bg_numItems {
+
+    for i in 0..bg_numItems {
         if (bg_itemlist[i as usize].giType == crate::bg_public_h::IT_POWERUP
             || bg_itemlist[i as usize].giType == crate::bg_public_h::IT_TEAM
             || bg_itemlist[i as usize].giType == crate::bg_public_h::IT_PERSISTANT_POWERUP)
@@ -1018,7 +1018,6 @@ pub unsafe extern "C" fn BG_FindItemForPowerup(
             return &mut *bg_itemlist.as_mut_ptr().offset(i as isize)
                 as *mut crate::bg_public_h::gitem_t;
         }
-        i += 1
     }
     return 0 as *mut crate::bg_public_h::gitem_t;
 }
@@ -1033,15 +1032,14 @@ pub unsafe extern "C" fn BG_FindItemForHoldable(
     mut pw: crate::bg_public_h::holdable_t,
 ) -> *mut crate::bg_public_h::gitem_t {
     let mut i: i32 = 0;
-    i = 0;
-    while i < bg_numItems {
+
+    for i in 0..bg_numItems {
         if bg_itemlist[i as usize].giType == crate::bg_public_h::IT_HOLDABLE
             && bg_itemlist[i as usize].giTag as u32 == pw
         {
             return &mut *bg_itemlist.as_mut_ptr().offset(i as isize)
                 as *mut crate::bg_public_h::gitem_t;
         }
-        i += 1
     }
     crate::src::game::g_main::Com_Error(
         crate::src::qcommon::q_shared::ERR_DROP as i32,
@@ -1584,12 +1582,11 @@ pub unsafe extern "C" fn BG_PlayerStateToEntityState(
     (*s).weapon = (*ps).weapon;
     (*s).groundEntityNum = (*ps).groundEntityNum;
     (*s).powerups = 0;
-    i = 0;
-    while i < 16 {
+
+    for i in 0..16 {
         if (*ps).powerups[i as usize] != 0 {
             (*s).powerups |= (1) << i
         }
-        i += 1
     }
     (*s).loopSound = (*ps).loopSound;
     (*s).generic1 = (*ps).generic1;
@@ -1674,12 +1671,11 @@ pub unsafe extern "C" fn BG_PlayerStateToEntityStateExtraPolate(
     (*s).weapon = (*ps).weapon;
     (*s).groundEntityNum = (*ps).groundEntityNum;
     (*s).powerups = 0;
-    i = 0;
-    while i < 16 {
+
+    for i in 0..16 {
         if (*ps).powerups[i as usize] != 0 {
             (*s).powerups |= (1) << i
         }
-        i += 1
     }
     (*s).loopSound = (*ps).loopSound;
     (*s).generic1 = (*ps).generic1;

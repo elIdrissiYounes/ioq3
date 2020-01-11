@@ -517,8 +517,8 @@ pub unsafe extern "C" fn MSG_WriteString(mut sb: *mut crate::qcommon_h::msg_t, m
             ::std::mem::size_of::<[i8; 1024]>() as i32,
         );
         // get rid of 0x80+ and '%' chars, because old clients don't like them
-        i = 0;
-        while i < l {
+
+        for i in 0..l {
             if *(string.as_mut_ptr() as *mut crate::src::qcommon::q_shared::byte).offset(i as isize)
                 as i32
                 > 127
@@ -526,7 +526,6 @@ pub unsafe extern "C" fn MSG_WriteString(mut sb: *mut crate::qcommon_h::msg_t, m
             {
                 string[i as usize] = '.' as i8
             }
-            i += 1
         }
         MSG_WriteData(sb, string.as_mut_ptr() as *const libc::c_void, l + 1i32);
     };
@@ -557,8 +556,8 @@ pub unsafe extern "C" fn MSG_WriteBigString(
             ::std::mem::size_of::<[i8; 8192]>() as i32,
         );
         // get rid of 0x80+ and '%' chars, because old clients don't like them
-        i = 0;
-        while i < l {
+
+        for i in 0..l {
             if *(string.as_mut_ptr() as *mut crate::src::qcommon::q_shared::byte).offset(i as isize)
                 as i32
                 > 127
@@ -566,7 +565,6 @@ pub unsafe extern "C" fn MSG_WriteBigString(
             {
                 string[i as usize] = '.' as i8
             }
-            i += 1
         }
         MSG_WriteData(sb, string.as_mut_ptr() as *const libc::c_void, l + 1i32);
     };
@@ -1860,18 +1858,16 @@ pub unsafe extern "C" fn MSG_initHuffman() {
     crate::src::qcommon::huffman::Huff_Init(&mut msgHuff);
     i = 0;
     while i < 256 {
-        j = 0;
-        while j < msg_hData[i as usize] {
+        for j in 0..msg_hData[i as usize] {
             crate::src::qcommon::huffman::Huff_addRef(
                 &mut msgHuff.compressor,
                 i as crate::src::qcommon::q_shared::byte,
             );
+
             crate::src::qcommon::huffman::Huff_addRef(
                 &mut msgHuff.decompressor,
                 i as crate::src::qcommon::q_shared::byte,
             );
-            j += 1
-            // Do update
         }
         i += 1
     }

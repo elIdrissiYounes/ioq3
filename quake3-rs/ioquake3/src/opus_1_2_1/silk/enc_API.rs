@@ -93,14 +93,14 @@ pub unsafe extern "C" fn silk_InitEncoder(
         0,
         ::std::mem::size_of::<crate::structs_FLP_h::silk_encoder>(),
     );
-    n = 0;
-    while n < 2 {
+
+    for n in 0..2 {
         ret += crate::src::opus_1_2_1::silk::init_encoder::silk_init_encoder(
             &mut *(*psEnc).state_Fxx.as_mut_ptr().offset(n as isize),
             arch,
         );
+
         (ret) != 0;
-        n += 1
     }
     (*psEnc).nChannelsAPI = 1;
     (*psEnc).nChannelsInternal = 1;

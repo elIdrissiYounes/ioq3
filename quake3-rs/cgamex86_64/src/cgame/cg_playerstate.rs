@@ -232,8 +232,8 @@ pub unsafe extern "C" fn CG_CheckAmmo() {
     weapons =
         (*crate::src::cgame::cg_main::cg.snap).ps.stats[crate::bg_public_h::STAT_WEAPONS as usize];
     total = 0;
-    i = crate::bg_public_h::WP_MACHINEGUN as i32;
-    while i < crate::bg_public_h::WP_NUM_WEAPONS as i32 {
+
+    for i in crate::bg_public_h::WP_MACHINEGUN as i32..crate::bg_public_h::WP_NUM_WEAPONS as i32 {
         if !(weapons & (1) << i == 0) {
             if !((*crate::src::cgame::cg_main::cg.snap).ps.ammo[i as usize] < 0) {
                 match i {
@@ -248,7 +248,6 @@ pub unsafe extern "C" fn CG_CheckAmmo() {
                 }
             }
         }
-        i += 1
     }
     previous = crate::src::cgame::cg_main::cg.lowAmmoWarning;
     if total == 0 {

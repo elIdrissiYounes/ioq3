@@ -264,8 +264,7 @@ unsafe extern "C" fn emit_byte(mut val: i32, mut cinfo: crate::jpeglib_h::j_comp
         .expect("non-null function pointer")(cinfo)
             == 0
         {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_CANT_SUSPEND as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_CANT_SUSPEND as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -294,7 +293,7 @@ unsafe extern "C" fn finish_pass(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
         (*e).c = temp
     }
     /* Send remaining bytes to output */
-    (*e).c <<=  (*e).ct as isize;
+    (*e).c <<= (*e).ct as isize;
     if (*e).c & 0xf8000000 as isize != 0 {
         /* One final overflow has to be handled */
         if (*e).buffer >= 0 {
@@ -362,23 +361,13 @@ unsafe extern "C" fn finish_pass(mut cinfo: crate::jpeglib_h::j_compress_ptr) {
                 }
             }
         }
-        emit_byte(
-            ((*e).c >> 19 & 0xff) as i32,
-            cinfo,
-        );
-        if (*e).c >> 19 & 0xff
-            == 0xff
-        {
+        emit_byte(((*e).c >> 19 & 0xff) as i32, cinfo);
+        if (*e).c >> 19 & 0xff == 0xff {
             emit_byte(0i32, cinfo);
         }
         if (*e).c & 0x7f800 as isize != 0 {
-            emit_byte(
-                ((*e).c >> 11 & 0xff) as i32,
-                cinfo,
-            );
-            if (*e).c >> 11 & 0xff
-                == 0xff
-            {
+            emit_byte(((*e).c >> 11 & 0xff) as i32, cinfo);
+            if (*e).c >> 11 & 0xff == 0xff {
                 emit_byte(0i32, cinfo);
             }
         }
@@ -425,9 +414,9 @@ unsafe extern "C" fn arith_encode(
         .as_ptr()
         .offset((sv & 0x7f) as isize); /* Next_Index_LPS + Switch_MPS */
     nl = (qe & 0xff) as u8; /* Next_Index_MPS */
-    qe >>=  8isize;
+    qe >>= 8isize;
     nm = (qe & 0xff) as u8;
-    qe >>=  8isize;
+    qe >>= 8isize;
     /* Encode & estimation procedures per sections D.1.4 & D.1.5 */
     (*e).a -= qe;
     if val != sv >> 7 {
@@ -461,8 +450,8 @@ unsafe extern "C" fn arith_encode(
     loop
     /* Renormalization & data output per section D.1.6 */
     {
-        (*e).a <<=  1isize;
-        (*e).c <<=  1isize;
+        (*e).a <<= 1isize;
+        (*e).c <<= 1isize;
         (*e).ct -= 1;
         if (*e).ct == 0 {
             /* Another byte is ready for output */
@@ -555,9 +544,8 @@ unsafe extern "C" fn emit_restart(
     finish_pass(cinfo);
     emit_byte(0xff, cinfo);
     emit_byte(0xd0 + restart_num, cinfo);
-    /* Re-initialize statistics areas */
-    ci = 0;
-    while ci < (*cinfo).comps_in_scan {
+
+    for ci in 0..(*cinfo).comps_in_scan {
         compptr = (*cinfo).cur_comp_info[ci as usize];
         /* DC needs no table for refinement scan */
         if (*cinfo).Ss == 0 && (*cinfo).Ah == 0 {
@@ -578,7 +566,6 @@ unsafe extern "C" fn emit_restart(
                 256usize,
             );
         }
-        ci += 1
     }
     /* Reset arithmetic encoding variables */
     (*entropy).c = 0;
@@ -617,21 +604,21 @@ unsafe extern "C" fn encode_mcu_DC_first(
         }
         (*entropy).restarts_to_go = (*entropy).restarts_to_go.wrapping_sub(1)
     }
-    /* Encode the MCU data blocks */
-    blkn = 0;
-    while blkn < (*cinfo).blocks_in_MCU {
+
+    for blkn in 0..(*cinfo).blocks_in_MCU {
         block = *MCU_data.offset(blkn as isize);
+
         ci = (*cinfo).MCU_membership[blkn as usize];
+
         tbl = (*(*cinfo).cur_comp_info[ci as usize]).dc_tbl_no;
-        /* Compute the DC value after the required point transform by Al.
-         * This is simply an arithmetic right shift.
-         */
+
         m = (*block)[0] as i32 >> (*cinfo).Al;
         /* Sections F.1.4.1 & F.1.4.4.1: Encoding of DC coefficients */
         /* Table F.4: Point to statistics bin S0 for DC coefficient coding */
         st = (*entropy).dc_stats[tbl as usize].offset((*entropy).dc_context[ci as usize] as isize);
         /* Figure F.4: Encode_DC_DIFF */
         v = m - (*entropy).last_dc_val[ci as usize];
+
         if v == 0 {
             arith_encode(cinfo, st, 0);
             (*entropy).dc_context[ci as usize] = 0
@@ -642,22 +629,14 @@ unsafe extern "C" fn encode_mcu_DC_first(
             /* Figure F.6: Encoding nonzero value v */
             /* Figure F.7: Encoding the sign of v */
             if v > 0 {
-                arith_encode(
-                    cinfo,
-                    st.offset(1),
-                    0,
-                ); /* Table F.4: SS = S0 + 1 */
+                arith_encode(cinfo, st.offset(1), 0); /* Table F.4: SS = S0 + 1 */
                 /* small positive diff category */
                 st = st.offset(2); /* Table F.4: SP = S0 + 2 */
                 (*entropy).dc_context[ci as usize] = 4
             } else {
                 v = -v;
                 /* small negative diff category */
-                arith_encode(
-                    cinfo,
-                    st.offset(1),
-                    1,
-                ); /* Table F.4: SS = S0 + 1 */
+                arith_encode(cinfo, st.offset(1), 1); /* Table F.4: SS = S0 + 1 */
                 st = st.offset(3); /* Table F.4: SN = S0 + 3 */
                 (*entropy).dc_context[ci as usize] = 8
             }
@@ -681,15 +660,10 @@ unsafe extern "C" fn encode_mcu_DC_first(
             }
             arith_encode(cinfo, st, 0);
             /* Section F.1.4.4.1.2: Establish dc_context conditioning category */
-            if m < ((1isize) << (*cinfo).arith_dc_L[tbl as usize] as i32
-                >> 1) as i32
-            {
+            if m < ((1isize) << (*cinfo).arith_dc_L[tbl as usize] as i32 >> 1) as i32 {
                 /* large diff category */
                 (*entropy).dc_context[ci as usize] = 0
-            } else if m
-                > ((1isize) << (*cinfo).arith_dc_U[tbl as usize] as i32
-                    >> 1) as i32
-            {
+            } else if m > ((1isize) << (*cinfo).arith_dc_U[tbl as usize] as i32 >> 1) as i32 {
                 (*entropy).dc_context[ci as usize] += 8
             } /* zero diff category */
             /* Figure F.9: Encoding the magnitude bit pattern of v */
@@ -699,18 +673,9 @@ unsafe extern "C" fn encode_mcu_DC_first(
                 if !(m != 0) {
                     break;
                 }
-                arith_encode(
-                    cinfo,
-                    st,
-                    if m & v != 0 {
-                        1
-                    } else {
-                        0
-                    },
-                );
+                arith_encode(cinfo, st, if m & v != 0 { 1 } else { 0 });
             }
         }
-        blkn += 1
     }
     return 1;
 }
@@ -773,19 +738,14 @@ unsafe extern "C" fn encode_mcu_AC_first(
     /* Figure F.5: Encode_AC_Coefficients */
     k = (*cinfo).Ss; /* EOB decision */
     while k <= ke {
-        st = (*entropy).ac_stats[tbl as usize]
-            .offset((3 * (k - 1)) as isize);
+        st = (*entropy).ac_stats[tbl as usize].offset((3 * (k - 1)) as isize);
         arith_encode(cinfo, st, 0);
         loop {
             v = (*block)[*natural_order.offset(k as isize) as usize] as i32;
             if v >= 0 {
                 v >>= (*cinfo).Al;
                 if v != 0 {
-                    arith_encode(
-                        cinfo,
-                        st.offset(1),
-                        1,
-                    );
+                    arith_encode(cinfo, st.offset(1), 1);
                     arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 0);
                     break;
                 }
@@ -793,20 +753,12 @@ unsafe extern "C" fn encode_mcu_AC_first(
                 v = -v;
                 v >>= (*cinfo).Al;
                 if v != 0 {
-                    arith_encode(
-                        cinfo,
-                        st.offset(1),
-                        1,
-                    );
+                    arith_encode(cinfo, st.offset(1), 1);
                     arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 1);
                     break;
                 }
             }
-            arith_encode(
-                cinfo,
-                st.offset(1),
-                0,
-            );
+            arith_encode(cinfo, st.offset(1), 0);
             st = st.offset(3);
             k += 1
         }
@@ -848,22 +800,13 @@ unsafe extern "C" fn encode_mcu_AC_first(
             if !(m != 0) {
                 break;
             }
-            arith_encode(
-                cinfo,
-                st,
-                if m & v != 0 {
-                    1
-                } else {
-                    0
-                },
-            );
+            arith_encode(cinfo, st, if m & v != 0 { 1 } else { 0 });
         }
         k += 1
     }
     /* Encode EOB decision only if k <= cinfo->Se */
     if k <= (*cinfo).Se {
-        st = (*entropy).ac_stats[tbl as usize]
-            .offset((3 * (k - 1)) as isize);
+        st = (*entropy).ac_stats[tbl as usize].offset((3 * (k - 1)) as isize);
         arith_encode(cinfo, st, 1i32);
     }
     return 1;
@@ -892,19 +835,14 @@ unsafe extern "C" fn encode_mcu_DC_refine(
     }
     st = (*entropy).fixed_bin.as_mut_ptr();
     Al = (*cinfo).Al;
-    /* Encode the MCU data blocks */
-    blkn = 0;
-    while blkn < (*cinfo).blocks_in_MCU {
+
+    for blkn in 0..(*cinfo).blocks_in_MCU {
         /* We simply emit the Al'th bit of the DC coefficient value. */
         arith_encode(
             cinfo,
             st,
-            (*(*MCU_data.offset(blkn as isize)).offset(0))
-                [0] as i32
-                >> Al
-                & 1,
+            (*(*MCU_data.offset(blkn as isize)).offset(0))[0] as i32 >> Al & 1,
         );
-        blkn += 1
     }
     return 1;
 }
@@ -983,8 +921,7 @@ unsafe extern "C" fn encode_mcu_AC_refine(
     /* Figure G.10: Encode_AC_Coefficients_SA */
     k = (*cinfo).Ss; /* EOB decision */
     while k <= ke {
-        st = (*entropy).ac_stats[tbl as usize]
-            .offset((3 * (k - 1)) as isize);
+        st = (*entropy).ac_stats[tbl as usize].offset((3 * (k - 1)) as isize);
         if k > kex {
             arith_encode(cinfo, st, 0i32);
         }
@@ -995,18 +932,10 @@ unsafe extern "C" fn encode_mcu_AC_refine(
                 if v != 0 {
                     if v >> 1 != 0 {
                         /* previously nonzero coef */
-                        arith_encode(
-                            cinfo,
-                            st.offset(2isize),
-                            v & 1i32,
-                        );
+                        arith_encode(cinfo, st.offset(2isize), v & 1i32);
                     } else {
                         /* newly nonzero coef */
-                        arith_encode(
-                            cinfo,
-                            st.offset(1),
-                            1,
-                        );
+                        arith_encode(cinfo, st.offset(1), 1);
                         arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 0i32);
                     }
                     break;
@@ -1017,28 +946,16 @@ unsafe extern "C" fn encode_mcu_AC_refine(
                 if v != 0 {
                     if v >> 1 != 0 {
                         /* previously nonzero coef */
-                        arith_encode(
-                            cinfo,
-                            st.offset(2isize),
-                            v & 1i32,
-                        );
+                        arith_encode(cinfo, st.offset(2isize), v & 1i32);
                     } else {
                         /* newly nonzero coef */
-                        arith_encode(
-                            cinfo,
-                            st.offset(1),
-                            1,
-                        );
+                        arith_encode(cinfo, st.offset(1), 1);
                         arith_encode(cinfo, (*entropy).fixed_bin.as_mut_ptr(), 1i32);
                     }
                     break;
                 }
             }
-            arith_encode(
-                cinfo,
-                st.offset(1),
-                0,
-            );
+            arith_encode(cinfo, st.offset(1), 0);
             st = st.offset(3);
             k += 1
         }
@@ -1046,8 +963,7 @@ unsafe extern "C" fn encode_mcu_AC_refine(
     }
     /* Encode EOB decision only if k <= cinfo->Se */
     if k <= (*cinfo).Se {
-        st = (*entropy).ac_stats[tbl as usize]
-            .offset((3 * (k - 1)) as isize);
+        st = (*entropy).ac_stats[tbl as usize].offset((3 * (k - 1)) as isize);
         arith_encode(cinfo, st, 1i32);
     }
     return 1;
@@ -1085,46 +1001,38 @@ unsafe extern "C" fn encode_mcu(
         (*entropy).restarts_to_go = (*entropy).restarts_to_go.wrapping_sub(1)
     }
     natural_order = (*cinfo).natural_order;
-    /* Encode the MCU data blocks */
-    blkn = 0;
-    while blkn < (*cinfo).blocks_in_MCU {
+
+    for blkn in 0..(*cinfo).blocks_in_MCU {
         block = *MCU_data.offset(blkn as isize);
+
         ci = (*cinfo).MCU_membership[blkn as usize];
+
         compptr = (*cinfo).cur_comp_info[ci as usize];
         /* Sections F.1.4.1 & F.1.4.4.1: Encoding of DC coefficients */
         tbl = (*compptr).dc_tbl_no;
         /* Table F.4: Point to statistics bin S0 for DC coefficient coding */
         st = (*entropy).dc_stats[tbl as usize].offset((*entropy).dc_context[ci as usize] as isize);
         /* Figure F.4: Encode_DC_DIFF */
-        v = (*block)[0] as i32
-            - (*entropy).last_dc_val[ci as usize];
+        v = (*block)[0] as i32 - (*entropy).last_dc_val[ci as usize];
+
         if v == 0 {
             arith_encode(cinfo, st, 0);
             (*entropy).dc_context[ci as usize] = 0
         /* zero diff category */
         } else {
-            (*entropy).last_dc_val[ci as usize] =
-                (*block)[0] as i32;
+            (*entropy).last_dc_val[ci as usize] = (*block)[0] as i32;
             arith_encode(cinfo, st, 1);
             /* Figure F.6: Encoding nonzero value v */
             /* Figure F.7: Encoding the sign of v */
             if v > 0 {
-                arith_encode(
-                    cinfo,
-                    st.offset(1),
-                    0,
-                ); /* Table F.4: SS = S0 + 1 */
+                arith_encode(cinfo, st.offset(1), 0); /* Table F.4: SS = S0 + 1 */
                 /* small positive diff category */
                 st = st.offset(2); /* Table F.4: SP = S0 + 2 */
                 (*entropy).dc_context[ci as usize] = 4
             } else {
                 v = -v;
                 /* small negative diff category */
-                arith_encode(
-                    cinfo,
-                    st.offset(1),
-                    1,
-                ); /* Table F.4: SS = S0 + 1 */
+                arith_encode(cinfo, st.offset(1), 1); /* Table F.4: SS = S0 + 1 */
                 st = st.offset(3); /* Table F.4: SN = S0 + 3 */
                 (*entropy).dc_context[ci as usize] = 8
             }
@@ -1148,15 +1056,10 @@ unsafe extern "C" fn encode_mcu(
             }
             arith_encode(cinfo, st, 0);
             /* Section F.1.4.4.1.2: Establish dc_context conditioning category */
-            if m < ((1isize) << (*cinfo).arith_dc_L[tbl as usize] as i32
-                >> 1) as i32
-            {
+            if m < ((1isize) << (*cinfo).arith_dc_L[tbl as usize] as i32 >> 1) as i32 {
                 /* large diff category */
                 (*entropy).dc_context[ci as usize] = 0
-            } else if m
-                > ((1isize) << (*cinfo).arith_dc_U[tbl as usize] as i32
-                    >> 1) as i32
-            {
+            } else if m > ((1isize) << (*cinfo).arith_dc_U[tbl as usize] as i32 >> 1) as i32 {
                 (*entropy).dc_context[ci as usize] += 8
             } /* zero diff category */
             /* Figure F.9: Encoding the magnitude bit pattern of v */
@@ -1166,51 +1069,36 @@ unsafe extern "C" fn encode_mcu(
                 if !(m != 0) {
                     break;
                 }
-                arith_encode(
-                    cinfo,
-                    st,
-                    if m & v != 0 {
-                        1
-                    } else {
-                        0
-                    },
-                );
+                arith_encode(cinfo, st, if m & v != 0 { 1 } else { 0 });
             }
         }
         /* Sections F.1.4.2 & F.1.4.4.2: Encoding of AC coefficients */
         tbl = (*compptr).ac_tbl_no;
         /* Establish EOB (end-of-block) index */
         ke = (*cinfo).lim_Se;
+
         while ke > 0 {
             if (*block)[*natural_order.offset(ke as isize) as usize] != 0 {
                 break;
             }
             ke -= 1
         }
-        /* Figure F.5: Encode_AC_Coefficients */
-        k = 1; /* EOB decision */
+
+        k = 1;
+
         while k <= ke {
-            st = (*entropy).ac_stats[tbl as usize]
-                .offset((3 * (k - 1)) as isize);
+            st = (*entropy).ac_stats[tbl as usize].offset((3 * (k - 1)) as isize);
             arith_encode(cinfo, st, 0);
             loop {
                 v = (*block)[*natural_order.offset(k as isize) as usize] as i32;
                 if !(v == 0) {
                     break;
                 }
-                arith_encode(
-                    cinfo,
-                    st.offset(1),
-                    0,
-                );
+                arith_encode(cinfo, st.offset(1), 0);
                 st = st.offset(3);
                 k += 1
             }
-            arith_encode(
-                cinfo,
-                st.offset(1),
-                1,
-            );
+            arith_encode(cinfo, st.offset(1), 1);
             /* Figure F.6: Encoding nonzero value v */
             /* Figure F.7: Encoding the sign of v */
             if v > 0 {
@@ -1257,25 +1145,15 @@ unsafe extern "C" fn encode_mcu(
                 if !(m != 0) {
                     break;
                 }
-                arith_encode(
-                    cinfo,
-                    st,
-                    if m & v != 0 {
-                        1
-                    } else {
-                        0
-                    },
-                );
+                arith_encode(cinfo, st, if m & v != 0 { 1 } else { 0 });
             }
             k += 1
         }
         /* Encode EOB decision only if k <= cinfo->lim_Se */
         if k <= (*cinfo).lim_Se {
-            st = (*entropy).ac_stats[tbl as usize]
-                .offset((3 * (k - 1)) as isize);
+            st = (*entropy).ac_stats[tbl as usize].offset((3 * (k - 1)) as isize);
             arith_encode(cinfo, st, 1i32);
         }
-        blkn += 1
     }
     return 1;
 }
@@ -1354,16 +1232,14 @@ unsafe extern "C" fn start_pass(
                 ) -> crate::jmorecfg_h::boolean,
         )
     }
-    /* Allocate & initialize requested statistics areas */
-    ci = 0;
-    while ci < (*cinfo).comps_in_scan {
+
+    for ci in 0..(*cinfo).comps_in_scan {
         compptr = (*cinfo).cur_comp_info[ci as usize];
         /* DC needs no table for refinement scan */
         if (*cinfo).Ss == 0 && (*cinfo).Ah == 0 {
             tbl = (*compptr).dc_tbl_no;
             if tbl < 0 || tbl >= 16 {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_NO_ARITH_TABLE as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_NO_ARITH_TABLE as i32;
                 (*(*cinfo).err).msg_parm.i[0] = tbl;
                 Some(
                     (*(*cinfo).err)
@@ -1381,9 +1257,7 @@ unsafe extern "C" fn start_pass(
                         .expect("non-null function pointer"),
                 )
                 .expect("non-null function pointer")(
-                    cinfo as crate::jpeglib_h::j_common_ptr,
-                    1,
-                    64,
+                    cinfo as crate::jpeglib_h::j_common_ptr, 1, 64
                 ) as *mut u8
             }
             crate::stdlib::memset(
@@ -1399,8 +1273,7 @@ unsafe extern "C" fn start_pass(
         if (*cinfo).Se != 0 {
             tbl = (*compptr).ac_tbl_no;
             if tbl < 0 || tbl >= 16 {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_NO_ARITH_TABLE as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_NO_ARITH_TABLE as i32;
                 (*(*cinfo).err).msg_parm.i[0] = tbl;
                 Some(
                     (*(*cinfo).err)
@@ -1429,7 +1302,6 @@ unsafe extern "C" fn start_pass(
                 256usize,
             );
         }
-        ci += 1
     }
     /* Initialize arithmetic encoding variables */
     (*entropy).c = 0; /* empty */
@@ -1476,7 +1348,6 @@ pub unsafe extern "C" fn jinit_arith_encoder(mut cinfo: crate::jpeglib_h::j_comp
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<arith_entropy_encoder>(),
     ) as arith_entropy_ptr;
     (*cinfo).entropy = entropy as *mut crate::jpegint_h::jpeg_entropy_encoder;
@@ -1489,12 +1360,11 @@ pub unsafe extern "C" fn jinit_arith_encoder(mut cinfo: crate::jpeglib_h::j_comp
     );
     (*entropy).pub_0.finish_pass =
         Some(finish_pass as unsafe extern "C" fn(_: crate::jpeglib_h::j_compress_ptr) -> ());
-    /* Mark tables unallocated */
-    i = 0;
-    while i < 16 {
+
+    for i in 0..16 {
         (*entropy).dc_stats[i as usize] = 0 as *mut u8;
+
         (*entropy).ac_stats[i as usize] = 0 as *mut u8;
-        i += 1
     }
     /* Initialize index for fixed probability estimation */
     (*entropy).fixed_bin[0] = 113;

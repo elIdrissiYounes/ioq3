@@ -314,7 +314,7 @@ unsafe extern "C" fn sep_upsample(
         num_rows = (*upsample).rows_to_go
     }
     /* And not more than what the client can accept: */
-    out_rows_avail =  (out_rows_avail).wrapping_sub(*out_row_ctr);
+    out_rows_avail = (out_rows_avail).wrapping_sub(*out_row_ctr);
     if num_rows > out_rows_avail {
         num_rows = out_rows_avail
     }
@@ -331,9 +331,9 @@ unsafe extern "C" fn sep_upsample(
         num_rows as i32,
     );
     /* Adjust counts */
-    *out_row_ctr =  (((*out_row_ctr))).wrapping_add(num_rows);
-    (*upsample).rows_to_go =  ((*upsample).rows_to_go).wrapping_sub(num_rows);
-    (*upsample).next_row_out =  ((*upsample).next_row_out as u32).wrapping_add(num_rows) as i32;
+    *out_row_ctr = (*out_row_ctr).wrapping_add(num_rows);
+    (*upsample).rows_to_go = ((*upsample).rows_to_go).wrapping_sub(num_rows);
+    (*upsample).next_row_out = ((*upsample).next_row_out as u32).wrapping_add(num_rows) as i32;
     /* When the buffer is emptied, declare this input row group consumed */
     if (*upsample).next_row_out >= (*cinfo).max_v_samp_factor {
         *in_row_group_ctr = (*in_row_group_ctr).wrapping_add(1)
@@ -542,7 +542,6 @@ pub unsafe extern "C" fn jinit_upsampler(mut cinfo: crate::jpeglib_h::j_decompre
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<my_upsampler>(),
     ) as my_upsample_ptr;
     (*cinfo).upsample = upsample as *mut crate::jpegint_h::jpeg_upsampler;
@@ -624,9 +623,7 @@ pub unsafe extern "C" fn jinit_upsampler(mut cinfo: crate::jpeglib_h::j_decompre
                         _: *mut crate::jpeglib_h::JSAMPARRAY,
                     ) -> (),
             )
-        } else if h_in_group * 2 == h_out_group
-            && v_in_group * 2 == v_out_group
-        {
+        } else if h_in_group * 2 == h_out_group && v_in_group * 2 == v_out_group {
             /* Special case for 2h2v upsampling */
             (*upsample).methods[ci as usize] = Some(
                 h2v2_upsample
@@ -637,9 +634,7 @@ pub unsafe extern "C" fn jinit_upsampler(mut cinfo: crate::jpeglib_h::j_decompre
                         _: *mut crate::jpeglib_h::JSAMPARRAY,
                     ) -> (),
             )
-        } else if h_out_group % h_in_group == 0
-            && v_out_group % v_in_group == 0
-        {
+        } else if h_out_group % h_in_group == 0 && v_out_group % v_in_group == 0 {
             /* Generic integral-factors upsampling method */
             (*upsample).methods[ci as usize] = Some(
                 int_upsample

@@ -4165,12 +4165,11 @@ unsafe extern "C" fn CG_RegisterGraphics() {
             mins.as_mut_ptr(),
             maxs.as_mut_ptr(),
         );
-        j = 0;
-        while j < 3 {
+
+        for j in 0..3 {
             cgs.inlineModelMidpoints[i as usize][j as usize] = (mins[j as usize] as f64
                 + 0.5 * (maxs[j as usize] - mins[j as usize]) as f64)
                 as crate::src::qcommon::q_shared::vec_t;
-            j += 1
         }
         i += 1
     }
@@ -4243,9 +4242,10 @@ unsafe extern "C" fn CG_RegisterClients() {
     let mut i: i32 = 0;
     crate::src::cgame::cg_info::CG_LoadingClient(cg.clientNum);
     crate::src::cgame::cg_players::CG_NewClientInfo(cg.clientNum);
-    i = 0;
-    while i < 64 {
+
+    for i in 0..64 {
         let mut clientInfo: *const i8 = 0 as *const i8;
+
         if !(cg.clientNum == i) {
             clientInfo = CG_ConfigString(32 + 256 + 256 + i);
             if !(*clientInfo.offset(0) == 0) {
@@ -4253,7 +4253,6 @@ unsafe extern "C" fn CG_RegisterClients() {
                 crate::src::cgame::cg_players::CG_NewClientInfo(i);
             }
         }
-        i += 1
     }
     CG_BuildSpectatorString();
 }

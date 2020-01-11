@@ -1121,11 +1121,13 @@ pub unsafe extern "C" fn player_die(
     crate::src::game::g_cmds::Cmd_Score_f(self_0);
     // send updated scores to any clients that are following this one,
     // or they would get stale scoreboards
-    i = 0; // can still be gibbed
-    while i < crate::src::game::g_main::level.maxclients {
+    // can still be gibbed
+    for i in 0..crate::src::game::g_main::level.maxclients {
         let mut client: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
+
         client = &mut *crate::src::game::g_main::level.clients.offset(i as isize)
             as *mut crate::g_local_h::gclient_s;
+
         if !((*client).pers.connected != crate::g_local_h::CON_CONNECTED) {
             if !((*client).sess.sessionTeam != crate::bg_public_h::TEAM_SPECTATOR) {
                 if (*client).sess.spectatorClient == (*self_0).s.number {
@@ -1137,7 +1139,6 @@ pub unsafe extern "C" fn player_die(
                 }
             }
         }
-        i += 1
     }
     (*self_0).takedamage = crate::src::qcommon::q_shared::qtrue;
     (*self_0).s.weapon = crate::bg_public_h::WP_NONE as i32;
@@ -1987,12 +1988,13 @@ pub unsafe extern "C" fn G_RadiusDamage(
         entityList.as_mut_ptr(),
         (1) << 10,
     );
-    e = 0;
-    while e < numListedEntities {
+
+    for e in 0..numListedEntities {
         ent = &mut *crate::src::game::g_main::g_entities
             .as_mut_ptr()
             .offset(*entityList.as_mut_ptr().offset(e as isize) as isize)
             as *mut crate::g_local_h::gentity_t;
+
         if !(ent == ignore) {
             if !((*ent).takedamage as u64 == 0) {
                 // find the distance from the edge of the bounding box
@@ -2034,7 +2036,6 @@ pub unsafe extern "C" fn G_RadiusDamage(
                 }
             }
         }
-        e += 1
     }
     return hitClient;
 }

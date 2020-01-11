@@ -745,8 +745,7 @@ unsafe extern "C" fn CG_FindClientModelFile(
     }
     charactersFolder = b"\x00" as *const u8 as *mut i8;
     loop {
-        i = 0;
-        while i < 2 {
+        for i in 0..2 {
             if i == 0 && !teamName.is_null() && *teamName as i32 != 0 {
                 //								"models/players/characters/james/stroggs/lower_lily_red.skin"
                 crate::src::qcommon::q_shared::Com_sprintf(
@@ -775,9 +774,11 @@ unsafe extern "C" fn CG_FindClientModelFile(
                     ext,
                 );
             }
+
             if CG_FileExists(filename) as u64 != 0 {
                 return crate::src::qcommon::q_shared::qtrue;
             }
+
             if crate::src::cgame::cg_main::cgs.gametype >= crate::bg_public_h::GT_TEAM {
                 if i == 0 && !teamName.is_null() && *teamName as i32 != 0 {
                     //								"models/players/characters/james/stroggs/lower_red.skin"
@@ -831,13 +832,14 @@ unsafe extern "C" fn CG_FindClientModelFile(
                     ext,
                 );
             }
+
             if CG_FileExists(filename) as u64 != 0 {
                 return crate::src::qcommon::q_shared::qtrue;
             }
+
             if teamName.is_null() || *teamName == 0 {
                 break;
             }
-            i += 1
         }
         // if tried the heads folder first
         if *charactersFolder.offset(0) != 0 {
@@ -881,8 +883,7 @@ unsafe extern "C" fn CG_FindClientHeadFile(
         headsFolder = b"\x00" as *const u8 as *mut i8
     }
     loop {
-        i = 0;
-        while i < 2 {
+        for i in 0..2 {
             if i == 0 && !teamName.is_null() && *teamName as i32 != 0 {
                 crate::src::qcommon::q_shared::Com_sprintf(
                     filename,
@@ -909,9 +910,11 @@ unsafe extern "C" fn CG_FindClientHeadFile(
                     ext,
                 );
             }
+
             if CG_FileExists(filename) as u64 != 0 {
                 return crate::src::qcommon::q_shared::qtrue;
             }
+
             if crate::src::cgame::cg_main::cgs.gametype >= crate::bg_public_h::GT_TEAM {
                 if i == 0 && !teamName.is_null() && *teamName as i32 != 0 {
                     crate::src::qcommon::q_shared::Com_sprintf(
@@ -961,13 +964,14 @@ unsafe extern "C" fn CG_FindClientHeadFile(
                     ext,
                 );
             }
+
             if CG_FileExists(filename) as u64 != 0 {
                 return crate::src::qcommon::q_shared::qtrue;
             }
+
             if teamName.is_null() || *teamName == 0 {
                 break;
             }
-            i += 1
         }
         // if tried the heads folder first
         if *headsFolder.offset(0) != 0 {
@@ -1552,12 +1556,13 @@ unsafe extern "C" fn CG_ScanForExistingClientInfo(
     let mut i: i32 = 0;
     let mut match_0: *mut crate::cg_local_h::clientInfo_t =
         0 as *mut crate::cg_local_h::clientInfo_t;
-    i = 0;
-    while i < crate::src::cgame::cg_main::cgs.maxclients {
+
+    for i in 0..crate::src::cgame::cg_main::cgs.maxclients {
         match_0 = &mut *crate::src::cgame::cg_main::cgs
             .clientinfo
             .as_mut_ptr()
             .offset(i as isize) as *mut crate::cg_local_h::clientInfo_t;
+
         if !((*match_0).infoValid as u64 == 0) {
             if !((*match_0).deferred as u64 != 0) {
                 if crate::src::qcommon::q_shared::Q_stricmp(
@@ -1594,7 +1599,6 @@ unsafe extern "C" fn CG_ScanForExistingClientInfo(
                 }
             }
         }
-        i += 1
     }
     // nothing matches, so defer the load
     return crate::src::qcommon::q_shared::qfalse;
@@ -3381,11 +3385,12 @@ pub unsafe extern "C" fn CG_LightVerts(
         directedLight.as_mut_ptr(),
         lightDir.as_mut_ptr(),
     );
-    i = 0;
-    while i < numVerts {
+
+    for i in 0..numVerts {
         incoming = *normal.offset(0) * lightDir[0]
             + *normal.offset(1) * lightDir[1]
             + *normal.offset(2) * lightDir[2];
+
         if incoming <= 0f32 {
             (*verts.offset(i as isize)).modulate[0] =
                 ambientLight[0] as crate::src::qcommon::q_shared::byte;
@@ -3412,7 +3417,6 @@ pub unsafe extern "C" fn CG_LightVerts(
             (*verts.offset(i as isize)).modulate[2] = j as crate::src::qcommon::q_shared::byte;
             (*verts.offset(i as isize)).modulate[3] = 255u8
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qtrue as i32;
 }

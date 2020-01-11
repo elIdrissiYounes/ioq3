@@ -225,8 +225,7 @@ unsafe extern "C" fn get_byte(mut cinfo: crate::jpeglib_h::j_decompress_ptr) -> 
             .expect("non-null function pointer")(cinfo)
             == 0
         {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_CANT_SUSPEND as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_CANT_SUSPEND as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -326,7 +325,7 @@ unsafe extern "C" fn arith_decode(
                 }
             }
         }
-        (*e).a <<=  1isize
+        (*e).a <<= 1isize
     }
     /* Fetch values from our compact representation of Table D.2:
      * Qe values and probability estimation state machine
@@ -336,13 +335,13 @@ unsafe extern "C" fn arith_decode(
         .as_ptr()
         .offset((sv & 0x7f) as isize); /* Next_Index_LPS + Switch_MPS */
     nl = (qe & 0xff) as u8; /* Next_Index_MPS */
-    qe >>=  8isize;
+    qe >>= 8isize;
     nm = (qe & 0xff) as u8;
-    qe >>=  8isize;
+    qe >>= 8isize;
     /* Decode & estimation procedures per sections D.2.4 & D.2.5 */
     temp = (*e).a - qe;
     (*e).a = temp;
-    temp <<=  (*e).ct as isize;
+    temp <<= (*e).ct as isize;
     if (*e).c >= temp {
         (*e).c -= temp;
         /* Conditional LPS (less probable symbol) exchange */
@@ -395,13 +394,11 @@ unsafe extern "C" fn process_restart(mut cinfo: crate::jpeglib_h::j_decompress_p
         )
         .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr);
     }
-    /* Re-initialize statistics areas */
-    ci = 0;
-    while ci < (*cinfo).comps_in_scan {
+
+    for ci in 0..(*cinfo).comps_in_scan {
         compptr = (*cinfo).cur_comp_info[ci as usize];
-        if (*cinfo).progressive_mode == 0
-            || (*cinfo).Ss == 0 && (*cinfo).Ah == 0
-        {
+
+        if (*cinfo).progressive_mode == 0 || (*cinfo).Ss == 0 && (*cinfo).Ah == 0 {
             crate::stdlib::memset(
                 (*entropy).dc_stats[(*compptr).dc_tbl_no as usize] as *mut libc::c_void,
                 0,
@@ -411,6 +408,7 @@ unsafe extern "C" fn process_restart(mut cinfo: crate::jpeglib_h::j_decompress_p
             (*entropy).last_dc_val[ci as usize] = 0;
             (*entropy).dc_context[ci as usize] = 0
         }
+
         if (*cinfo).progressive_mode == 0 && (*cinfo).lim_Se != 0
             || (*cinfo).progressive_mode != 0 && (*cinfo).Ss != 0
         {
@@ -420,7 +418,6 @@ unsafe extern "C" fn process_restart(mut cinfo: crate::jpeglib_h::j_decompress_p
                 256usize,
             );
         }
-        ci += 1
     }
     /* Reset arithmetic decoding variables */
     (*entropy).c = 0; /* force reading 2 initial bytes to fill C */
@@ -467,11 +464,12 @@ unsafe extern "C" fn decode_mcu_DC_first(
     if (*entropy).ct == -(1) {
         return 1i32;
     }
-    /* Outer loop handles each block in the MCU */
-    blkn = 0;
-    while blkn < (*cinfo).blocks_in_MCU {
+
+    for blkn in 0..(*cinfo).blocks_in_MCU {
         block = *MCU_data.offset(blkn as isize);
+
         ci = (*cinfo).MCU_membership[blkn as usize];
+
         tbl = (*(*cinfo).cur_comp_info[ci as usize]).dc_tbl_no;
         /* Sections F.2.4.1 & F.1.4.4.1: Decoding of DC coefficients */
         /* Table F.4: Point to statistics bin S0 for DC coefficient coding */
@@ -510,15 +508,10 @@ unsafe extern "C" fn decode_mcu_DC_first(
                 }
             }
             /* Section F.1.4.4.1.2: Establish dc_context conditioning category */
-            if m < ((1isize) << (*cinfo).arith_dc_L[tbl as usize] as i32
-                >> 1) as i32
-            {
+            if m < ((1isize) << (*cinfo).arith_dc_L[tbl as usize] as i32 >> 1) as i32 {
                 /* small diff category */
                 (*entropy).dc_context[ci as usize] = 0
-            } else if m
-                > ((1isize) << (*cinfo).arith_dc_U[tbl as usize] as i32
-                    >> 1) as i32
-            {
+            } else if m > ((1isize) << (*cinfo).arith_dc_U[tbl as usize] as i32 >> 1) as i32 {
                 /* zero diff category */
                 (*entropy).dc_context[ci as usize] = 12 + sign * 4
             } else {
@@ -545,7 +538,6 @@ unsafe extern "C" fn decode_mcu_DC_first(
         /* Scale and output the DC coefficient (assumes jpeg_natural_order[0]=0) */
         (*block)[0] =
             ((*entropy).last_dc_val[ci as usize] << (*cinfo).Al) as crate::jmorecfg_h::JCOEF;
-        blkn += 1
     }
     return 1;
 }
@@ -585,8 +577,7 @@ unsafe extern "C" fn decode_mcu_AC_first(
     /* Figure F.20: Decode_AC_coefficients */
     k = (*cinfo).Ss; /* EOB flag */
     while k <= (*cinfo).Se {
-        st = (*entropy).ac_stats[tbl as usize]
-            .offset((3 * (k - 1)) as isize); /* spectral overflow */
+        st = (*entropy).ac_stats[tbl as usize].offset((3 * (k - 1)) as isize); /* spectral overflow */
         if arith_decode(cinfo, st) != 0 {
             break;
         }
@@ -594,16 +585,14 @@ unsafe extern "C" fn decode_mcu_AC_first(
             st = st.offset(3);
             k += 1;
             if k > (*cinfo).Se {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JWRN_ARITH_BAD_CODE as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JWRN_ARITH_BAD_CODE as i32;
                 Some(
                     (*(*cinfo).err)
                         .emit_message
                         .expect("non-null function pointer"),
                 )
                 .expect("non-null function pointer")(
-                    cinfo as crate::jpeglib_h::j_common_ptr,
-                    -(1),
+                    cinfo as crate::jpeglib_h::j_common_ptr, -(1)
                 );
                 (*entropy).ct = -(1);
                 return 1i32;
@@ -690,16 +679,13 @@ unsafe extern "C" fn decode_mcu_DC_refine(
     }
     st = (*entropy).fixed_bin.as_mut_ptr();
     p1 = (1) << (*cinfo).Al;
-    /* Outer loop handles each block in the MCU */
-    blkn = 0;
-    while blkn < (*cinfo).blocks_in_MCU {
+
+    for blkn in 0..(*cinfo).blocks_in_MCU {
         /* Encoded data is simply the next bit of the two's-complement DC value */
         if arith_decode(cinfo, st) != 0 {
-            let ref mut fresh1 = (*(*MCU_data.offset(blkn as isize))
-                .offset(0))[0];
+            let ref mut fresh1 = (*(*MCU_data.offset(blkn as isize)).offset(0))[0];
             *fresh1 = (*fresh1 as i32 | p1) as crate::jmorecfg_h::JCOEF
         }
-        blkn += 1
     }
     return 1;
 }
@@ -747,8 +733,7 @@ unsafe extern "C" fn decode_mcu_AC_refine(
     }
     k = (*cinfo).Ss;
     while k <= (*cinfo).Se {
-        st = (*entropy).ac_stats[tbl as usize]
-            .offset((3 * (k - 1)) as isize);
+        st = (*entropy).ac_stats[tbl as usize].offset((3 * (k - 1)) as isize);
         if k > kex {
             if arith_decode(cinfo, st) != 0 {
                 break;
@@ -832,11 +817,12 @@ unsafe extern "C" fn decode_mcu(
         return 1i32;
     }
     natural_order = (*cinfo).natural_order;
-    /* Outer loop handles each block in the MCU */
-    blkn = 0;
-    while blkn < (*cinfo).blocks_in_MCU {
+
+    for blkn in 0..(*cinfo).blocks_in_MCU {
         block = *MCU_data.offset(blkn as isize);
+
         ci = (*cinfo).MCU_membership[blkn as usize];
+
         compptr = (*cinfo).cur_comp_info[ci as usize];
         /* Sections F.2.4.1 & F.1.4.4.1: Decoding of DC coefficients */
         tbl = (*compptr).dc_tbl_no;
@@ -876,15 +862,10 @@ unsafe extern "C" fn decode_mcu(
                 }
             }
             /* Section F.1.4.4.1.2: Establish dc_context conditioning category */
-            if m < ((1isize) << (*cinfo).arith_dc_L[tbl as usize] as i32
-                >> 1) as i32
-            {
+            if m < ((1isize) << (*cinfo).arith_dc_L[tbl as usize] as i32 >> 1) as i32 {
                 /* small diff category */
                 (*entropy).dc_context[ci as usize] = 0
-            } else if m
-                > ((1isize) << (*cinfo).arith_dc_U[tbl as usize] as i32
-                    >> 1) as i32
-            {
+            } else if m > ((1isize) << (*cinfo).arith_dc_U[tbl as usize] as i32 >> 1) as i32 {
                 /* zero diff category */
                 (*entropy).dc_context[ci as usize] = 12 + sign * 4
             } else {
@@ -908,15 +889,15 @@ unsafe extern "C" fn decode_mcu(
             }
             (*entropy).last_dc_val[ci as usize] += v
         }
-        (*block)[0] =
-            (*entropy).last_dc_val[ci as usize] as crate::jmorecfg_h::JCOEF;
+
+        (*block)[0] = (*entropy).last_dc_val[ci as usize] as crate::jmorecfg_h::JCOEF;
         /* Sections F.2.4.2 & F.1.4.4.2: Decoding of AC coefficients */
         tbl = (*compptr).ac_tbl_no;
-        /* Figure F.20: Decode_AC_coefficients */
-        k = 1; /* EOB flag */
+
+        k = 1;
+
         while k <= (*cinfo).lim_Se {
-            st = (*entropy).ac_stats[tbl as usize]
-                .offset((3 * (k - 1)) as isize); /* spectral overflow */
+            st = (*entropy).ac_stats[tbl as usize].offset((3 * (k - 1)) as isize); /* spectral overflow */
             if arith_decode(cinfo, st) != 0 {
                 break;
             }
@@ -995,7 +976,6 @@ unsafe extern "C" fn decode_mcu(
             (*block)[*natural_order.offset(k as isize) as usize] = v as crate::jmorecfg_h::JCOEF;
             k += 1
         }
-        blkn += 1
     }
     return 1;
 }
@@ -1056,8 +1036,7 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
             1247655281935294708 =>
             /* need not check for < 0 */
             {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_PROGRESSION as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_PROGRESSION as i32;
                 (*(*cinfo).err).msg_parm.i[0] = (*cinfo).Ss;
                 (*(*cinfo).err).msg_parm.i[1] = (*cinfo).Se;
                 (*(*cinfo).err).msg_parm.i[2] = (*cinfo).Ah;
@@ -1081,13 +1060,10 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
         while ci < (*cinfo).comps_in_scan {
             let mut coefi: i32 = 0;
             let mut cindex: i32 = (*(*cinfo).cur_comp_info[ci as usize]).component_index;
-            let mut coef_bit_ptr: *mut i32 =
-                &mut *(*(*cinfo).coef_bits.offset(cindex as isize))
-                    .as_mut_ptr()
-                    .offset(0) as *mut i32;
-            if (*cinfo).Ss != 0
-                && *coef_bit_ptr.offset(0) < 0
-            {
+            let mut coef_bit_ptr: *mut i32 = &mut *(*(*cinfo).coef_bits.offset(cindex as isize))
+                .as_mut_ptr()
+                .offset(0) as *mut i32;
+            if (*cinfo).Ss != 0 && *coef_bit_ptr.offset(0) < 0 {
                 /* AC without prior DC scan */
                 (*(*cinfo).err).msg_code =
                     crate::src::jpeg_8c::jerror::JWRN_BOGUS_PROGRESSION as i32;
@@ -1103,14 +1079,14 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
                     -(1i32),
                 );
             }
-            coefi = (*cinfo).Ss;
-            while coefi <= (*cinfo).Se {
-                let mut expected: i32 =
-                    if *coef_bit_ptr.offset(coefi as isize) < 0 {
-                        0
-                    } else {
-                        *coef_bit_ptr.offset(coefi as isize)
-                    };
+
+            for coefi in (*cinfo).Ss..=(*cinfo).Se {
+                let mut expected: i32 = if *coef_bit_ptr.offset(coefi as isize) < 0 {
+                    0
+                } else {
+                    *coef_bit_ptr.offset(coefi as isize)
+                };
+
                 if (*cinfo).Ah != expected {
                     (*(*cinfo).err).msg_code =
                         crate::src::jpeg_8c::jerror::JWRN_BOGUS_PROGRESSION as i32;
@@ -1126,8 +1102,8 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
                         -(1i32),
                     );
                 }
+
                 *coef_bit_ptr.offset(coefi as isize) = (*cinfo).Al;
-                coefi += 1
             }
             ci += 1
         }
@@ -1178,16 +1154,14 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
             || (*cinfo).Al != 0
             || (*cinfo).Se < 64 && (*cinfo).Se != (*cinfo).lim_Se
         {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JWRN_NOT_SEQUENTIAL as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JWRN_NOT_SEQUENTIAL as i32;
             Some(
                 (*(*cinfo).err)
                     .emit_message
                     .expect("non-null function pointer"),
             )
             .expect("non-null function pointer")(
-                cinfo as crate::jpeglib_h::j_common_ptr,
-                -(1i32),
+                cinfo as crate::jpeglib_h::j_common_ptr, -(1i32)
             );
         }
         /* Select MCU decoding routine */
@@ -1203,13 +1177,10 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
     ci = 0;
     while ci < (*cinfo).comps_in_scan {
         compptr = (*cinfo).cur_comp_info[ci as usize];
-        if (*cinfo).progressive_mode == 0
-            || (*cinfo).Ss == 0 && (*cinfo).Ah == 0
-        {
+        if (*cinfo).progressive_mode == 0 || (*cinfo).Ss == 0 && (*cinfo).Ah == 0 {
             tbl = (*compptr).dc_tbl_no;
             if tbl < 0 || tbl >= 16 {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_NO_ARITH_TABLE as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_NO_ARITH_TABLE as i32;
                 (*(*cinfo).err).msg_parm.i[0] = tbl;
                 Some(
                     (*(*cinfo).err)
@@ -1227,9 +1198,7 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
                         .expect("non-null function pointer"),
                 )
                 .expect("non-null function pointer")(
-                    cinfo as crate::jpeglib_h::j_common_ptr,
-                    1,
-                    64,
+                    cinfo as crate::jpeglib_h::j_common_ptr, 1, 64
                 ) as *mut u8
             }
             crate::stdlib::memset(
@@ -1246,8 +1215,7 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
         {
             tbl = (*compptr).ac_tbl_no;
             if tbl < 0 || tbl >= 16 {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_NO_ARITH_TABLE as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_NO_ARITH_TABLE as i32;
                 (*(*cinfo).err).msg_parm.i[0] = tbl;
                 Some(
                     (*(*cinfo).err)
@@ -1320,7 +1288,6 @@ pub unsafe extern "C" fn jinit_arith_decoder(mut cinfo: crate::jpeglib_h::j_deco
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<arith_entropy_decoder>(),
     ) as arith_entropy_ptr;
     (*cinfo).entropy = entropy as *mut crate::jpegint_h::jpeg_entropy_decoder;
@@ -1347,12 +1314,9 @@ pub unsafe extern "C" fn jinit_arith_decoder(mut cinfo: crate::jpeglib_h::j_deco
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
             1,
-            (((*cinfo).num_components * 64i32) as usize)
-                .wrapping_mul(::std::mem::size_of::<i32>()),
+            (((*cinfo).num_components * 64i32) as usize).wrapping_mul(::std::mem::size_of::<i32>()),
         ) as *mut [i32; 64];
-        coef_bit_ptr = &mut *(*(*cinfo).coef_bits.offset(0))
-            .as_mut_ptr()
-            .offset(0) as *mut i32;
+        coef_bit_ptr = &mut *(*(*cinfo).coef_bits.offset(0)).as_mut_ptr().offset(0) as *mut i32;
         ci = 0;
         while ci < (*cinfo).num_components {
             i = 0;

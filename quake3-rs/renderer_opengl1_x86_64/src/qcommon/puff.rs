@@ -77,8 +77,7 @@ unsafe extern "C" fn bits(
     (*s).bitbuf = val >> need;
     (*s).bitcnt -= need;
     /* return need bits, zeroing the bits above that */
-    return (val as isize & ((1) << need) - 1)
-        as crate::stdlib::int32_t;
+    return (val as isize & ((1) << need) - 1) as crate::stdlib::int32_t;
 }
 /*
  * Process a stored block.
@@ -112,19 +111,14 @@ unsafe extern "C" fn stored(mut s: *mut state) -> crate::stdlib::int32_t {
     len = *(*s).in_0.offset(fresh1 as isize) as crate::stdlib::uint32_t;
     let fresh2 = (*s).incnt;
     (*s).incnt = (*s).incnt.wrapping_add(1);
-    len |=
-        ((*(*s).in_0.offset(fresh2 as isize) as i32) << 8) as u32;
+    len |= ((*(*s).in_0.offset(fresh2 as isize) as i32) << 8) as u32;
     let fresh3 = (*s).incnt;
     (*s).incnt = (*s).incnt.wrapping_add(1);
-    if *(*s).in_0.offset(fresh3 as isize) as u32
-        != !len & 0xff
-        || {
-            let fresh4 = (*s).incnt;
-            (*s).incnt = (*s).incnt.wrapping_add(1);
-            (*(*s).in_0.offset(fresh4 as isize) as u32)
-                != !len >> 8 & 0xff
-        }
-    {
+    if *(*s).in_0.offset(fresh3 as isize) as u32 != !len & 0xff || {
+        let fresh4 = (*s).incnt;
+        (*s).incnt = (*s).incnt.wrapping_add(1);
+        (*(*s).in_0.offset(fresh4 as isize) as u32) != !len >> 8 & 0xff
+    } {
         return -(2i32);
     }
     /* copy len bytes from in to out */
@@ -149,8 +143,8 @@ unsafe extern "C" fn stored(mut s: *mut state) -> crate::stdlib::int32_t {
         }
     } else {
         /* just scanning */
-        (*s).outcnt =  ((*s).outcnt).wrapping_add(len);
-        (*s).incnt =  ((*s).incnt).wrapping_add(len)
+        (*s).outcnt = ((*s).outcnt).wrapping_add(len);
+        (*s).incnt = ((*s).incnt).wrapping_add(len)
     }
     /* done with a valid stored block */
     return 0;
@@ -399,130 +393,19 @@ unsafe extern "C" fn codes(
     let mut len: crate::stdlib::int32_t = 0; /* length for copy */
     let mut dist: crate::stdlib::uint32_t = 0; /* distance for copy */
     static mut lens: [crate::stdlib::int16_t; 29] = [
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        13,
-        15,
-        17,
-        19,
-        23,
-        27,
-        31,
-        35,
-        43,
-        51,
-        59,
-        67,
-        83,
-        99,
-        115,
-        131,
-        163,
-        195,
-        227,
-        258,
+        3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115,
+        131, 163, 195, 227, 258,
     ];
     static mut lext: [crate::stdlib::int16_t; 29] = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        2,
-        2,
-        2,
-        2,
-        3,
-        3,
-        3,
-        3,
-        4,
-        4,
-        4,
-        4,
-        5,
-        5,
-        5,
-        5,
-        0,
+        0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0,
     ];
     static mut dists: [crate::stdlib::int16_t; 30] = [
-        1,
-        2,
-        3,
-        4,
-        5,
-        7,
-        9,
-        13,
-        17,
-        25,
-        33,
-        49,
-        65,
-        97,
-        129,
-        193,
-        257,
-        385,
-        513,
-        769,
-        1025,
-        1537,
-        2049,
-        3073,
-        4097,
-        6145,
-        8193,
-        12289,
-        16385,
-        24577,
+        1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537,
+        2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577,
     ];
     static mut dext: [crate::stdlib::int16_t; 30] = [
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        2,
-        2,
-        3,
-        3,
-        4,
-        4,
-        5,
-        5,
-        6,
-        6,
-        7,
-        7,
-        8,
-        8,
-        9,
-        9,
-        10,
-        10,
-        11,
-        11,
-        12,
-        12,
-        13,
-        13,
+        0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12,
+        13, 13,
     ];
     loop
     /* decode literals and length/distance pairs */
@@ -577,7 +460,7 @@ unsafe extern "C" fn codes(
                     (*s).outcnt = (*s).outcnt.wrapping_add(1)
                 }
             } else {
-                (*s).outcnt =  ((*s).outcnt).wrapping_add(len as u32)
+                (*s).outcnt = ((*s).outcnt).wrapping_add(len as u32)
             }
         }
         if !(symbol != 256) {
@@ -786,25 +669,7 @@ unsafe extern "C" fn dynamic(mut s: *mut state) -> crate::stdlib::int32_t {
         init
     };
     static mut order: [crate::stdlib::int16_t; 19] = [
-        16,
-        17,
-        18,
-        0,
-        8,
-        7,
-        9,
-        6,
-        10,
-        5,
-        11,
-        4,
-        12,
-        3,
-        13,
-        2,
-        14,
-        1,
-        15,
+        16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15,
     ];
     /* get number of lengths in each table, check lengths */
     nlen = bits(s, 5) + 257; /* bad counts */
@@ -816,8 +681,7 @@ unsafe extern "C" fn dynamic(mut s: *mut state) -> crate::stdlib::int32_t {
     /* read code length code lengths (really), missing lengths are zero */
     index = 0;
     while index < ncode {
-        lengths[order[index as usize] as usize] =
-            bits(s, 3) as crate::stdlib::int16_t;
+        lengths[order[index as usize] as usize] = bits(s, 3) as crate::stdlib::int16_t;
         index += 1
     }
     while index < 19 {
@@ -875,11 +739,7 @@ unsafe extern "C" fn dynamic(mut s: *mut state) -> crate::stdlib::int32_t {
     }
     /* build huffman table for literal/length codes */
     err = construct(&mut lencode, lengths.as_mut_ptr(), nlen); /* only allow incomplete codes if just one code */
-    if err < 0
-        || err > 0
-            && nlen - *lencode.count.offset(0) as i32
-                != 1
-    {
+    if err < 0 || err > 0 && nlen - *lencode.count.offset(0) as i32 != 1 {
         return -(7i32);
     }
     /* build huffman table for distance codes */
@@ -888,11 +748,7 @@ unsafe extern "C" fn dynamic(mut s: *mut state) -> crate::stdlib::int32_t {
         lengths.as_mut_ptr().offset(nlen as isize),
         ndist,
     ); /* only allow incomplete codes if just one code */
-    if err < 0
-        || err > 0
-            && ndist - *distcode.count.offset(0) as i32
-                != 1
-    {
+    if err < 0 || err > 0 && ndist - *distcode.count.offset(0) as i32 != 1 {
         return -(8i32);
     }
     /* decode data until end-of-block code */

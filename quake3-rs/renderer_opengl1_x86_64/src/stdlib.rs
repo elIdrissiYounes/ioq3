@@ -98,11 +98,7 @@ extern "C" {
     );
 
     #[no_mangle]
-    pub fn SDL_GetWindowPosition(
-        window: *mut crate::stdlib::SDL_Window,
-        x: *mut i32,
-        y: *mut i32,
-    );
+    pub fn SDL_GetWindowPosition(window: *mut crate::stdlib::SDL_Window, x: *mut i32, y: *mut i32);
 
     #[no_mangle]
     pub fn SDL_MinimizeWindow(window: *mut crate::stdlib::SDL_Window);
@@ -114,10 +110,7 @@ extern "C" {
     ) -> i32;
 
     #[no_mangle]
-    pub fn SDL_SetWindowBrightness(
-        window: *mut crate::stdlib::SDL_Window,
-        brightness: f32,
-    ) -> i32;
+    pub fn SDL_SetWindowBrightness(window: *mut crate::stdlib::SDL_Window, brightness: f32) -> i32;
 
     #[no_mangle]
     pub fn SDL_DestroyWindow(window: *mut crate::stdlib::SDL_Window);
@@ -132,10 +125,7 @@ extern "C" {
     pub fn SDL_GL_SetAttribute(attr: crate::stdlib::SDL_GLattr, value: i32) -> i32;
 
     #[no_mangle]
-    pub fn SDL_GL_GetAttribute(
-        attr: crate::stdlib::SDL_GLattr,
-        value: *mut i32,
-    ) -> i32;
+    pub fn SDL_GL_GetAttribute(attr: crate::stdlib::SDL_GLattr, value: *mut i32) -> i32;
 
     #[no_mangle]
     pub fn SDL_GL_CreateContext(
@@ -196,23 +186,14 @@ extern "C" {
     pub fn fflush(__stream: *mut crate::stdlib::FILE) -> i32;
 
     #[no_mangle]
-    pub fn fwrite(
-        _: *const libc::c_void,
-        _: usize,
-        _: usize,
-        _: *mut crate::stdlib::FILE,
-    ) -> usize;
+    pub fn fwrite(_: *const libc::c_void, _: usize, _: usize, _: *mut crate::stdlib::FILE)
+        -> usize;
 
     #[no_mangle]
     pub fn ferror(__stream: *mut crate::stdlib::FILE) -> i32;
 
     #[no_mangle]
-    pub fn fread(
-        _: *mut libc::c_void,
-        _: usize,
-        _: usize,
-        _: *mut crate::stdlib::FILE,
-    ) -> usize;
+    pub fn fread(_: *mut libc::c_void, _: usize, _: usize, _: *mut crate::stdlib::FILE) -> usize;
 
     #[no_mangle]
     pub static mut stderr: *mut crate::stdlib::FILE;
@@ -224,12 +205,7 @@ extern "C" {
     pub fn sprintf(_: *mut i8, _: *const i8, _: ...) -> i32;
 
     #[no_mangle]
-    pub fn vsnprintf(
-        _: *mut i8,
-        _: usize,
-        _: *const i8,
-        _: ::std::ffi::VaList,
-    ) -> i32;
+    pub fn vsnprintf(_: *mut i8, _: usize, _: *const i8, _: ::std::ffi::VaList) -> i32;
 
     #[no_mangle]
     pub fn sscanf(_: *const i8, _: *const i8, _: ...) -> i32;
@@ -268,35 +244,22 @@ extern "C" {
     pub fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: usize) -> i32;
 
     #[no_mangle]
-    pub fn strncmp(_: *const i8, _: *const i8, _: usize)
-        -> i32;
+    pub fn strncmp(_: *const i8, _: *const i8, _: usize) -> i32;
 
     #[no_mangle]
     pub fn strstr(_: *const i8, _: *const i8) -> *mut i8;
 
     #[no_mangle]
-    pub fn memcpy(
-        _: *mut libc::c_void,
-        _: *const libc::c_void,
-        _: usize,
-    ) -> *mut libc::c_void;
+    pub fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: usize) -> *mut libc::c_void;
 
     #[no_mangle]
-    pub fn memmove(
-        _: *mut libc::c_void,
-        _: *const libc::c_void,
-        _: usize,
-    ) -> *mut libc::c_void;
+    pub fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: usize) -> *mut libc::c_void;
 
     #[no_mangle]
     pub fn strcpy(_: *mut i8, _: *const i8) -> *mut i8;
 
     #[no_mangle]
-    pub fn strncpy(
-        _: *mut i8,
-        _: *const i8,
-        _: usize,
-    ) -> *mut i8;
+    pub fn strncpy(_: *mut i8, _: *const i8, _: usize) -> *mut i8;
 
     #[no_mangle]
     pub fn strcat(_: *mut i8, _: *const i8) -> *mut i8;

@@ -596,12 +596,13 @@ pub unsafe extern "C" fn ItemWeightIndex(
     index = crate::src::botlib::l_memory::GetClearedMemory(
         (::std::mem::size_of::<i32>()).wrapping_mul((*ic).numiteminfo as usize),
     ) as *mut i32; //end for
-    i = 0;
-    while i < (*ic).numiteminfo {
+
+    for i in 0..(*ic).numiteminfo {
         *index.offset(i as isize) = crate::src::botlib::be_ai_weight::FindFuzzyWeight(
             iwc,
             (*(*ic).iteminfo.offset(i as isize)).classname.as_mut_ptr(),
         );
+
         if *index.offset(i as isize) < 0 {
             crate::src::botlib::l_log::Log_Write(
                 b"item info %d \"%s\" has no fuzzy weight\r\n\x00" as *const u8 as *mut i8,
@@ -609,8 +610,6 @@ pub unsafe extern "C" fn ItemWeightIndex(
                 (*(*ic).iteminfo.offset(i as isize)).classname.as_mut_ptr(),
             );
         }
-        i += 1
-        //end if
     }
     return index;
 }
@@ -636,11 +635,11 @@ pub unsafe extern "C" fn InitLevelItemHeap() {
     levelitemheap = crate::src::botlib::l_memory::GetClearedMemory(
         (max_levelitems as usize).wrapping_mul(::std::mem::size_of::<levelitem_t>()),
     ) as *mut levelitem_t;
-    i = 0;
-    while i < max_levelitems - 1 {
+
+    for i in 0..max_levelitems - 1 {
         let ref mut fresh0 = (*levelitemheap.offset(i as isize)).next;
+
         *fresh0 = &mut *levelitemheap.offset((i + 1) as isize) as *mut levelitem_t;
-        i += 1
     }
     let ref mut fresh1 = (*levelitemheap.offset((max_levelitems - 1) as isize)).next;
     *fresh1 = 0 as *mut levelitem_s;
@@ -1383,15 +1382,13 @@ pub unsafe extern "C" fn BotAvoidGoalTime(mut goalstate: i32, mut number: i32) -
         return 0f32;
     }
     //don't use the goals the bot wants to avoid
-    i = 0; //end for
-    while i < 256 {
+    //end for
+    for i in 0..256 {
         if (*gs).avoidgoals[i as usize] == number
             && (*gs).avoidgoaltimes[i as usize] >= crate::src::botlib::be_aas_main::AAS_Time()
         {
             return (*gs).avoidgoaltimes[i as usize] - crate::src::botlib::be_aas_main::AAS_Time();
         }
-        i += 1
-        //end if
     }
     return 0f32;
 }
@@ -2648,14 +2645,13 @@ pub unsafe extern "C" fn BotTouchingGoal(
     absmins[0] = absmins[0] - safety_mins[0];
     absmins[1] = absmins[1] - safety_mins[1];
     absmins[2] = absmins[2] - safety_mins[2];
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         if *origin.offset(i as isize) < absmins[i as usize]
             || *origin.offset(i as isize) > absmaxs[i as usize]
         {
             return crate::src::qcommon::q_shared::qfalse as i32;
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qtrue as i32;
 }
@@ -2862,8 +2858,8 @@ pub unsafe extern "C" fn BotFreeItemWeights(mut goalstate: i32) {
 
 pub unsafe extern "C" fn BotAllocGoalState(mut client: i32) -> i32 {
     let mut i: i32 = 0; //end for
-    i = 1;
-    while i <= 64 {
+
+    for i in 1..=64 {
         if botgoalstates[i as usize].is_null() {
             botgoalstates[i as usize] = crate::src::botlib::l_memory::GetClearedMemory(
                 ::std::mem::size_of::<bot_goalstate_t>(),
@@ -2871,8 +2867,6 @@ pub unsafe extern "C" fn BotAllocGoalState(mut client: i32) -> i32 {
             (*botgoalstates[i as usize]).client = client;
             return i;
         }
-        i += 1
-        //end if
     }
     return 0;
 }

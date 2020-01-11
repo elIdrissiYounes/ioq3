@@ -150,10 +150,9 @@ pub unsafe extern "C" fn silk_A2NLSF_FLP(
 {
     let mut i: i32 = 0;
     let mut a_fix_Q16: [crate::opus_types_h::opus_int32; 16] = [0; 16];
-    i = 0;
-    while i < LPC_order {
+
+    for i in 0..LPC_order {
         a_fix_Q16[i as usize] = silk_float2int(*pAR.offset(i as isize) * 65536.0);
-        i += 1
     }
     crate::src::opus_1_2_1::silk::A2NLSF::silk_A2NLSF(NLSF_Q15, a_fix_Q16.as_mut_ptr(), LPC_order);
 }
@@ -206,11 +205,9 @@ pub unsafe extern "C" fn silk_process_NLSFs_FLP(
     );
     j = 0;
     while j < 2 {
-        i = 0;
-        while i < (*psEncC).predictLPCOrder {
+        for i in 0..(*psEncC).predictLPCOrder {
             (*PredCoef.offset(j as isize))[i as usize] =
                 PredCoef_Q12[j as usize][i as usize] as f32 * (1.0 / 4096.0);
-            i += 1
         }
         j += 1
     }

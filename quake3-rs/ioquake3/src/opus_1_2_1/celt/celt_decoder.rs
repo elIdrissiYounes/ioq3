@@ -346,18 +346,23 @@ unsafe extern "C" fn deemphasis_stereo_simple(
     x1 = *in_0.offset(1);
     m0 = *mem.offset(0);
     m1 = *mem.offset(1);
-    j = 0;
-    while j < N {
+
+    for j in 0..N {
         let mut tmp0: crate::arch_h::celt_sig = 0.;
+
         let mut tmp1: crate::arch_h::celt_sig = 0.;
-        /* Add VERY_SMALL to x[] first to reduce dependency chain. */
+
         tmp0 = *x0.offset(j as isize) + 1e-30 + m0;
+
         tmp1 = *x1.offset(j as isize) + 1e-30 + m1;
+
         m0 = coef0 * tmp0;
+
         m1 = coef0 * tmp1;
+
         *pcm.offset((2 * j) as isize) = tmp0 * (1f32 / 32768.0);
+
         *pcm.offset((2 * j + 1) as isize) = tmp1 * (1f32 / 32768.0);
-        j += 1
     }
     *mem.offset(0) = m0;
     *mem.offset(1) = m1;
@@ -795,12 +800,12 @@ unsafe extern "C" fn celt_decode_lost(mut st: *mut OpusCustomDecoder, mut N: i32
                 blen = (*eBands.offset((i + 1) as isize) as i32
                     - *eBands.offset(i as isize) as i32)
                     << LM;
-                j = 0;
-                while j < blen {
+
+                for j in 0..blen {
                     seed = crate::src::opus_1_2_1::celt::bands::celt_lcg_rand(seed);
+
                     *X.offset((boffs + j) as isize) =
                         (seed as crate::opus_types_h::opus_int32 >> 20) as crate::arch_h::celt_norm;
-                    j += 1
                 }
                 crate::src::opus_1_2_1::celt::vq::renormalise_vector(
                     X.offset(boffs as isize),
@@ -1840,12 +1845,13 @@ pub unsafe extern "C" fn opus_custom_decoder_ctl(
                         .wrapping_offset_from(st as *mut i8)) as usize)
                     .wrapping_mul(::std::mem::size_of::<i8>()),
             );
-            i = 0;
-            while i < 2 * (*(*st).mode).nbEBands {
+
+            for i in 0..2 * (*(*st).mode).nbEBands {
                 let ref mut fresh16 = *oldLogE2.offset(i as isize);
+
                 *fresh16 = -28.0f32;
+
                 *oldLogE.offset(i as isize) = *fresh16;
-                i += 1
             }
             (*st).skip_plc = 1;
             current_block = 1623252117315916725;

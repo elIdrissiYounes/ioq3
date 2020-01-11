@@ -100,13 +100,15 @@ pub unsafe extern "C" fn silk_LPC_inverse_pred_gain_FLP(
             return 0.0f32;
         }
         rc_mult2 = 1f64 / rc_mult1;
-        n = 0;
-        while n < k + 1 >> 1 {
+
+        for n in 0..k + 1 >> 1 {
             tmp1 = Atmp[n as usize] as f64;
+
             tmp2 = Atmp[(k - n - 1) as usize] as f64;
+
             Atmp[n as usize] = ((tmp1 - tmp2 * rc) * rc_mult2) as f32;
+
             Atmp[(k - n - 1) as usize] = ((tmp2 - tmp1 * rc) * rc_mult2) as f32;
-            n += 1
         }
         k -= 1
     }

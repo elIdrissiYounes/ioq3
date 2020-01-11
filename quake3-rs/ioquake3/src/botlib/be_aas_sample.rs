@@ -224,23 +224,25 @@ pub unsafe extern "C" fn AAS_InitAASLinkHeap() {
     let ref mut fresh1 = (*crate::src::botlib::be_aas_main::aasworld.linkheap.offset(0)).next_ent;
     *fresh1 = &mut *crate::src::botlib::be_aas_main::aasworld.linkheap.offset(1)
         as *mut crate::be_aas_def_h::aas_link_t;
-    i = 1;
-    while i < max_aaslinks - 1 {
+
+    for i in 1..max_aaslinks - 1 {
         let ref mut fresh2 = (*crate::src::botlib::be_aas_main::aasworld
             .linkheap
             .offset(i as isize))
         .prev_ent;
+
         *fresh2 = &mut *crate::src::botlib::be_aas_main::aasworld
             .linkheap
             .offset((i - 1) as isize) as *mut crate::be_aas_def_h::aas_link_t;
+
         let ref mut fresh3 = (*crate::src::botlib::be_aas_main::aasworld
             .linkheap
             .offset(i as isize))
         .next_ent;
+
         *fresh3 = &mut *crate::src::botlib::be_aas_main::aasworld
             .linkheap
             .offset((i + 1) as isize) as *mut crate::be_aas_def_h::aas_link_t;
-        i += 1
     }
     let ref mut fresh4 = (*crate::src::botlib::be_aas_main::aasworld
         .linkheap
@@ -1394,64 +1396,63 @@ pub unsafe extern "C" fn AAS_InsideFace(
     if crate::src::botlib::be_aas_main::aasworld.loaded == 0 {
         return crate::src::qcommon::q_shared::qfalse;
     } //end for
-    i = 0;
-    while i < (*face).numedges {
+
+    for i in 0..(*face).numedges {
         edgenum = *crate::src::botlib::be_aas_main::aasworld
             .edgeindex
             .offset(((*face).firstedge + i) as isize);
+
         edge = &mut *crate::src::botlib::be_aas_main::aasworld
             .edges
             .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(edgenum) as isize)
             as *mut crate::aasfile_h::aas_edge_t;
-        //get the first vertex of the edge
+
         firstvertex = (edgenum < 0) as i32;
+
         v0[0] = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[firstvertex as usize] as isize))[0];
+
         v0[1] = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[firstvertex as usize] as isize))[1];
+
         v0[2] = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[firstvertex as usize] as isize))[2];
-        //edge vector
+
         edgevec[0] = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[(firstvertex == 0) as i32 as usize] as isize))[0]
             - v0[0];
+
         edgevec[1] = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[(firstvertex == 0) as i32 as usize] as isize))[1]
             - v0[1];
+
         edgevec[2] = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[(firstvertex == 0) as i32 as usize] as isize))[2]
             - v0[2];
-        //
-        //AAS_SAMPLE_DEBUG
-        //vector from first edge point to point possible in face
+
         pointvec[0] = *point.offset(0) - v0[0];
+
         pointvec[1] = *point.offset(1) - v0[1];
+
         pointvec[2] = *point.offset(2) - v0[2];
-        //get a vector pointing inside the face orthogonal to both the
-        //edge vector and the normal vector of the plane the face is in
-        //this vector defines a plane through the origin (first vertex of
-        //edge) and through both the edge vector and the normal vector
-        //of the plane
+
         sepnormal[0] = edgevec[1] * *pnormal.offset(2) - edgevec[2] * *pnormal.offset(1);
+
         sepnormal[1] = edgevec[2] * *pnormal.offset(0) - edgevec[0] * *pnormal.offset(2);
+
         sepnormal[2] = edgevec[0] * *pnormal.offset(1) - edgevec[1] * *pnormal.offset(0);
-        //check on which side of the above plane the point is
-        //this is done by checking the sign of the dot product of the
-        //vector orthogonal vector from above and the vector from the
-        //origin (first vertex of edge) to the point
-        //if the dotproduct is smaller than zero the point is outside the face
+
         if pointvec[0] * sepnormal[0] + pointvec[1] * sepnormal[1] + pointvec[2] * sepnormal[2]
             < -epsilon
         {
             return crate::src::qcommon::q_shared::qfalse;
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qtrue;
 }
@@ -1492,46 +1493,52 @@ pub unsafe extern "C" fn AAS_PointInsideFace(
         .planes
         .offset((*face).planenum as isize) as *mut crate::aasfile_h::aas_plane_t;
     //
-    i = 0; //end for
-    while i < (*face).numedges {
+    //end for
+    for i in 0..(*face).numedges {
         edgenum = *crate::src::botlib::be_aas_main::aasworld
             .edgeindex
             .offset(((*face).firstedge + i) as isize);
+
         edge = &mut *crate::src::botlib::be_aas_main::aasworld
             .edges
             .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(edgenum) as isize)
             as *mut crate::aasfile_h::aas_edge_t;
-        //get the first vertex of the edge
+
         firstvertex = (edgenum < 0) as i32;
+
         v1 = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[firstvertex as usize] as isize))
         .as_mut_ptr();
+
         v2 = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[(firstvertex == 0) as i32 as usize] as isize))
         .as_mut_ptr();
-        //edge vector
+
         edgevec[0] = *v2.offset(0) - *v1.offset(0);
+
         edgevec[1] = *v2.offset(1) - *v1.offset(1);
+
         edgevec[2] = *v2.offset(2) - *v1.offset(2);
-        //vector from first edge point to point possible in face
+
         pointvec[0] = *point.offset(0) - *v1.offset(0);
+
         pointvec[1] = *point.offset(1) - *v1.offset(1);
+
         pointvec[2] = *point.offset(2) - *v1.offset(2);
-        //
+
         CrossProduct(
             edgevec.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             (*plane).normal.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             sepnormal.as_mut_ptr(),
         );
-        //
+
         if pointvec[0] * sepnormal[0] + pointvec[1] * sepnormal[1] + pointvec[2] * sepnormal[2]
             < -epsilon
         {
             return crate::src::qcommon::q_shared::qfalse;
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qtrue;
 }
@@ -1561,16 +1568,17 @@ pub unsafe extern "C" fn AAS_AreaGroundFace(
     area = &mut *crate::src::botlib::be_aas_main::aasworld
         .areas
         .offset(areanum as isize) as *mut crate::aasfile_h::aas_area_t;
-    i = 0;
-    while i < (*area).numfaces {
+
+    for i in 0..(*area).numfaces {
         facenum = *crate::src::botlib::be_aas_main::aasworld
             .faceindex
             .offset(((*area).firstface + i) as isize);
+
         face = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(facenum) as isize)
             as *mut crate::aasfile_h::aas_face_t;
-        //end if
+
         if (*face).faceflags & 4 != 0 {
             //if this is a ground face
             //get the up or down normal
@@ -1593,7 +1601,6 @@ pub unsafe extern "C" fn AAS_AreaGroundFace(
                 return face;
             }
         }
-        i += 1
     }
     return 0 as *mut crate::aasfile_h::aas_face_t;
 }
@@ -1660,16 +1667,17 @@ pub unsafe extern "C" fn AAS_TraceEndFace(
         .areas
         .offset((*trace).lastarea as isize) as *mut crate::aasfile_h::aas_area_t;
     //check which face the trace.endpos was in
-    i = 0; //end for
-    while i < (*area).numfaces {
+    //end for
+    for i in 0..(*area).numfaces {
         facenum = *crate::src::botlib::be_aas_main::aasworld
             .faceindex
             .offset(((*area).firstface + i) as isize);
+
         face = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(facenum) as isize)
             as *mut crate::aasfile_h::aas_face_t;
-        //end if
+
         if (*face).planenum & !(1) == (*trace).planenum & !(1) {
             //if the face is in the same plane as the trace end point
             //firstface is used for optimization, if theres only one
@@ -1715,7 +1723,6 @@ pub unsafe extern "C" fn AAS_TraceEndFace(
                 return face;
             }
         }
-        i += 1
     }
     return firstface;
 }
@@ -1738,8 +1745,8 @@ pub unsafe extern "C" fn AAS_BoxOnPlaneSide2(
     let mut dist1: f32 = 0.;
     let mut dist2: f32 = 0.;
     let mut corners: [crate::src::qcommon::q_shared::vec3_t; 2] = [[0.; 3]; 2];
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         if (*p).normal[i as usize] < 0f32 {
             corners[0][i as usize] = *absmins.offset(i as isize);
             corners[1][i as usize] = *absmaxs.offset(i as isize)
@@ -1747,8 +1754,6 @@ pub unsafe extern "C" fn AAS_BoxOnPlaneSide2(
             corners[1][i as usize] = *absmins.offset(i as isize);
             corners[0][i as usize] = *absmaxs.offset(i as isize)
         }
-        i += 1
-        //end else
     }
     dist1 = (*p).normal[0] * corners[0][0]
         + (*p).normal[1] * corners[0][1]

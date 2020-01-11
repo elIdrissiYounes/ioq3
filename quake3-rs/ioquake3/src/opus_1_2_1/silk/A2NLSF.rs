@@ -325,16 +325,16 @@ pub unsafe extern "C" fn silk_A2NLSF(
             }
             /* Binary division */
             ffrac = -(256);
-            m = 0;
-            while m < 3 {
-                /* Evaluate polynomial */
+
+            for m in 0..3 {
                 xmid = if 1 == 1 {
                     (xlo + xhi >> 1) + (xlo + xhi & 1)
                 } else {
                     ((xlo + xhi >> 1 - 1) + 1) >> 1
                 };
+
                 ymid = silk_A2NLSF_eval_poly(p, xmid, dd);
-                /* Detect zero crossing */
+
                 if ylo <= 0 && ymid >= 0 || ylo >= 0 && ymid <= 0 {
                     /* Reduce frequency */
                     xhi = xmid;
@@ -345,7 +345,6 @@ pub unsafe extern "C" fn silk_A2NLSF(
                     ylo = ymid;
                     ffrac = ffrac + (128 >> m)
                 }
-                m += 1
             }
             /* Interpolate */
             if (if ylo > 0 { ylo } else { -ylo }) < 65536 {

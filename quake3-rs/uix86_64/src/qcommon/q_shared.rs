@@ -1321,11 +1321,11 @@ pub unsafe extern "C" fn Parse1DMatrix(mut buf_p: *mut *mut i8, mut x: i32, mut 
     let mut token: *mut i8 = 0 as *mut i8;
     let mut i: i32 = 0;
     COM_MatchToken(buf_p, b"(\x00" as *const u8 as *mut i8);
-    i = 0;
-    while i < x {
+
+    for i in 0..x {
         token = COM_Parse(buf_p);
+
         *m.offset(i as isize) = atof(token) as f32;
-        i += 1
     }
     COM_MatchToken(buf_p, b")\x00" as *const u8 as *mut i8);
 }
@@ -1338,10 +1338,9 @@ pub unsafe extern "C" fn Parse2DMatrix(
 ) {
     let mut i: i32 = 0;
     COM_MatchToken(buf_p, b"(\x00" as *const u8 as *mut i8);
-    i = 0;
-    while i < y {
+
+    for i in 0..y {
         Parse1DMatrix(buf_p, x, m.offset((i * x) as isize));
-        i += 1
     }
     COM_MatchToken(buf_p, b")\x00" as *const u8 as *mut i8);
 }
@@ -1355,10 +1354,9 @@ pub unsafe extern "C" fn Parse3DMatrix(
 ) {
     let mut i: i32 = 0;
     COM_MatchToken(buf_p, b"(\x00" as *const u8 as *mut i8);
-    i = 0;
-    while i < z {
+
+    for i in 0..z {
         Parse2DMatrix(buf_p, y, x, m.offset((i * x * y) as isize));
-        i += 1
     }
     COM_MatchToken(buf_p, b")\x00" as *const u8 as *mut i8);
 }
@@ -1380,10 +1378,12 @@ pub unsafe extern "C" fn Com_HexStrToInt(mut str: *const i8) -> i32 {
         let mut i: i32 = 0;
         let mut n: i32 = 0;
         let mut len: i32 = crate::stdlib::strlen(str) as i32;
-        i = 2;
-        while i < len {
+
+        for i in 2..len {
             let mut digit: i8 = 0;
+
             n *= 16;
+
             digit = ({
                 let mut __res: i32 = 0;
                 if ::std::mem::size_of::<i8>() > 1 {
@@ -1403,6 +1403,7 @@ pub unsafe extern "C" fn Com_HexStrToInt(mut str: *const i8) -> i32 {
                 }
                 __res
             }) as i8;
+
             if digit as i32 >= '0' as i32 && digit as i32 <= '9' as i32 {
                 digit = (digit as i32 - '0' as i32) as i8
             } else if digit as i32 >= 'a' as i32 && digit as i32 <= 'f' as i32 {
@@ -1410,8 +1411,8 @@ pub unsafe extern "C" fn Com_HexStrToInt(mut str: *const i8) -> i32 {
             } else {
                 return -(1i32);
             }
+
             n += digit as i32;
-            i += 1
         }
         return n;
     }

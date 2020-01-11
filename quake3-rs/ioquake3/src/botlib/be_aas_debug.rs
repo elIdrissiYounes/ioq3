@@ -611,9 +611,8 @@ pub unsafe extern "C" fn AAS_ShowFace(mut facenum: i32) {
     face = &mut *crate::src::botlib::be_aas_main::aasworld
         .faces
         .offset(facenum as isize) as *mut crate::aasfile_h::aas_face_t;
-    //walk through the edges of the face
-    i = 0; //end for
-    while i < (*face).numedges {
+
+    for i in 0..(*face).numedges {
         //edge number
         edgenum = crate::stdlib::abs(
             *crate::src::botlib::be_aas_main::aasworld
@@ -630,9 +629,11 @@ pub unsafe extern "C" fn AAS_ShowFace(mut facenum: i32) {
                 edgenum,
             ); //end if
         }
+
         edge = &mut *crate::src::botlib::be_aas_main::aasworld
             .edges
             .offset(edgenum as isize) as *mut crate::aasfile_h::aas_edge_t;
+
         if color == 1 {
             color = 2
         } else if color == 2 {
@@ -642,6 +643,7 @@ pub unsafe extern "C" fn AAS_ShowFace(mut facenum: i32) {
         } else {
             color = 1
         }
+
         AAS_DebugLine(
             (*crate::src::botlib::be_aas_main::aasworld
                 .vertexes
@@ -653,7 +655,6 @@ pub unsafe extern "C" fn AAS_ShowFace(mut facenum: i32) {
             .as_mut_ptr(),
             color,
         );
-        i += 1
     }
     plane = &mut *crate::src::botlib::be_aas_main::aasworld
         .planes
@@ -805,9 +806,8 @@ pub unsafe extern "C" fn AAS_ShowArea(mut areanum: i32, mut groundfacesonly: i32
         .areas
         .offset(areanum as isize) as *mut crate::aasfile_h::aas_area_t;
     let mut current_block_23: u64;
-    //walk through the faces of the area
-    i = 0; //end for
-    while i < (*area).numfaces {
+
+    for i in 0..(*area).numfaces {
         facenum = crate::stdlib::abs(
             *crate::src::botlib::be_aas_main::aasworld
                 .faceindex
@@ -825,6 +825,7 @@ pub unsafe extern "C" fn AAS_ShowArea(mut areanum: i32, mut groundfacesonly: i32
                 facenum,
             ); //end if
         }
+
         face = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(facenum as isize) as *mut crate::aasfile_h::aas_face_t;
@@ -838,6 +839,7 @@ pub unsafe extern "C" fn AAS_ShowArea(mut areanum: i32, mut groundfacesonly: i32
         } else {
             current_block_23 = 15652330335145281839;
         }
+
         match current_block_23 {
             15652330335145281839 => {
                 //walk through the edges of the face
@@ -876,7 +878,6 @@ pub unsafe extern "C" fn AAS_ShowArea(mut areanum: i32, mut groundfacesonly: i32
             }
             _ => {}
         }
-        i += 1
     }
     //check if edge number is in range
     //end if

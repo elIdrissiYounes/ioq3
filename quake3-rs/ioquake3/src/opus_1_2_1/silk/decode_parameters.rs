@@ -431,10 +431,12 @@ pub unsafe extern "C" fn silk_decode_parameters(
         /* Decode Codebook Index */
         cbk_ptr_Q7 = crate::src::opus_1_2_1::silk::tables_LTP::silk_LTP_vq_ptrs_Q7
             [(*psDec).indices.PERIndex as usize]; /* set pointer to start of codebook */
-        k = 0;
-        while k < (*psDec).nb_subfr {
+
+        for k in 0..(*psDec).nb_subfr {
             Ix = (*psDec).indices.LTPIndex[k as usize] as i32;
+
             i = 0;
+
             while i < 5 {
                 (*psDecCtrl).LTPCoef_Q14[(k * 5 + i) as usize] =
                     ((*cbk_ptr_Q7.offset((Ix * 5 + i) as isize)
@@ -442,7 +444,6 @@ pub unsafe extern "C" fn silk_decode_parameters(
                         << 7) as crate::opus_types_h::opus_int16;
                 i += 1
             }
-            k += 1
         }
         /* *********************/
         /* Decode LTP scaling */

@@ -372,16 +372,11 @@ pub unsafe extern "C" fn FS_PakIsPure(
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut i: i32 = 0;
     if fs_numServerPaks != 0 {
-        i = 0;
-        while i < fs_numServerPaks {
-            // FIXME: also use hashed file names
-            // NOTE TTimo: a pk3 with same checksum but different name would be validated too
-            //   I don't see this as allowing for any exploit, it would only happen if the client does manips of its file names 'not a bug'
+        for i in 0..fs_numServerPaks {
             if (*pack).checksum == fs_serverPaks[i as usize] {
                 return crate::src::qcommon::q_shared::qtrue;
                 // on the aproved list
             }
-            i += 1
         }
         return crate::src::qcommon::q_shared::qfalse;
         // not on the pure server pak list
@@ -450,12 +445,11 @@ unsafe extern "C" fn FS_HashFileName(mut fname: *const i8, mut hashSize: i32) ->
 
 unsafe extern "C" fn FS_HandleForFile() -> crate::src::qcommon::q_shared::fileHandle_t {
     let mut i: i32 = 0;
-    i = 1;
-    while i < 64 {
+
+    for i in 1..64 {
         if fsh[i as usize].handleFiles.file.o.is_null() {
             return i;
         }
-        i += 1
     }
     crate::src::qcommon::common::Com_Error(
         crate::src::qcommon::q_shared::ERR_DROP as i32,
@@ -2628,12 +2622,11 @@ pub unsafe extern "C" fn FS_CompareZipChecksum(
     }
     checksum = (*thepak).checksum;
     FS_FreePak(thepak);
-    index = 0;
-    while index < fs_numServerReferencedPaks {
+
+    for index in 0..fs_numServerReferencedPaks {
         if checksum == fs_serverReferencedPaks[index as usize] {
             return crate::src::qcommon::q_shared::qtrue;
         }
-        index += 1
     }
     return crate::src::qcommon::q_shared::qfalse;
 }
@@ -2679,13 +2672,12 @@ unsafe extern "C" fn FS_AddFileToList(
     if nfiles == 0x1000 - 1 {
         return nfiles;
     }
-    i = 0;
-    while i < nfiles {
+
+    for i in 0..nfiles {
         if crate::src::qcommon::q_shared::Q_stricmp(name, *list.offset(i as isize)) == 0 {
             return nfiles;
             // already in list
         }
-        i += 1
     }
     let ref mut fresh8 = *list.offset(nfiles as isize);
     *fresh8 = crate::src::qcommon::common::CopyString(name);
@@ -3172,9 +3164,8 @@ pub unsafe extern "C" fn FS_GetModList(mut listbuf: *mut i8, mut bufsize: i32) -
                     &mut nDirs,
                     crate::src::qcommon::q_shared::qfalse,
                 );
-                k = 0;
-                while k < nDirs {
-                    // we only want to count directories ending with ".pk3dir"
+
+                for k in 0..nDirs {
                     if FS_IsExt(
                         *pDirs.offset(k as isize),
                         b".pk3dir\x00" as *const u8 as *const i8,
@@ -3184,7 +3175,6 @@ pub unsafe extern "C" fn FS_GetModList(mut listbuf: *mut i8, mut bufsize: i32) -
                     {
                         nPakDirs += 1
                     }
-                    k += 1
                 }
                 // we only use Sys_ListFiles to check whether files are present
                 crate::src::sys::sys_unix::Sys_FreeFileList(pPaks);
@@ -3255,13 +3245,12 @@ pub unsafe extern "C" fn FS_Dir_f() {
     );
     crate::src::qcommon::common::Com_Printf(b"---------------\n\x00" as *const u8 as *const i8);
     dirnames = FS_ListFiles(path, extension, &mut ndirs);
-    i = 0;
-    while i < ndirs {
+
+    for i in 0..ndirs {
         crate::src::qcommon::common::Com_Printf(
             b"%s\n\x00" as *const u8 as *const i8,
             *dirnames.offset(i as isize),
         );
-        i += 1
     }
     FS_FreeFileList(dirnames);
 }
@@ -3344,25 +3333,30 @@ pub unsafe extern "C" fn FS_SortFileList(mut filelist: *mut *mut i8, mut numfile
     let ref mut fresh13 = *sortedlist.offset(0);
     *fresh13 = 0 as *mut i8;
     numsortedfiles = 0;
-    i = 0;
-    while i < numfiles {
+
+    for i in 0..numfiles {
         j = 0;
+
         while j < numsortedfiles {
             if FS_PathCmp(*filelist.offset(i as isize), *sortedlist.offset(j as isize)) < 0 {
                 break;
             }
             j += 1
         }
+
         k = numsortedfiles;
+
         while k > j {
             let ref mut fresh14 = *sortedlist.offset(k as isize);
             *fresh14 = *sortedlist.offset((k - 1) as isize);
             k -= 1
         }
+
         let ref mut fresh15 = *sortedlist.offset(j as isize);
+
         *fresh15 = *filelist.offset(i as isize);
+
         numsortedfiles += 1;
-        i += 1
     }
     crate::stdlib::memcpy(
         filelist as *mut libc::c_void,
@@ -3402,14 +3396,14 @@ pub unsafe extern "C" fn FS_NewDir_f() {
         crate::src::qcommon::q_shared::qfalse,
     );
     FS_SortFileList(dirnames, ndirs);
-    i = 0;
-    while i < ndirs {
+
+    for i in 0..ndirs {
         FS_ConvertPath(*dirnames.offset(i as isize));
+
         crate::src::qcommon::common::Com_Printf(
             b"%s\n\x00" as *const u8 as *const i8,
             *dirnames.offset(i as isize),
         );
-        i += 1
     }
     crate::src::qcommon::common::Com_Printf(
         b"%d files listed\n\x00" as *const u8 as *const i8,
@@ -3902,11 +3896,10 @@ pub unsafe extern "C" fn FS_ComparePaks(
         return crate::src::qcommon::q_shared::qfalse;
     }
     *neededpaks = 0i8;
-    i = 0;
-    while i < fs_numServerReferencedPaks {
-        // Ok, see if we have this pak file
+
+    for i in 0..fs_numServerReferencedPaks {
         havepak = crate::src::qcommon::q_shared::qfalse;
-        // never autodownload any of the id paks
+
         if !(FS_idPak(
             fs_serverReferencedPakNames[i as usize],
             b"baseq3\x00" as *const u8 as *mut i8,
@@ -4045,7 +4038,6 @@ pub unsafe extern "C" fn FS_ComparePaks(
                 }
             }
         }
-        i += 1
     }
     if *neededpaks != 0 {
         return crate::src::qcommon::q_shared::qtrue;
@@ -4066,12 +4058,11 @@ pub unsafe extern "C" fn FS_Shutdown(mut closemfp: crate::src::qcommon::q_shared
     let mut p: *mut searchpath_t = 0 as *mut searchpath_t;
     let mut next: *mut searchpath_t = 0 as *mut searchpath_t;
     let mut i: i32 = 0;
-    i = 0;
-    while i < 64 {
+
+    for i in 0..64 {
         if fsh[i as usize].fileSize != 0 {
             FS_FCloseFile(i);
         }
-        i += 1
     }
     // free everything
     p = fs_searchpaths;
@@ -5242,14 +5233,16 @@ pub unsafe extern "C" fn FS_FilenameCompletion(
     let mut filename: [i8; 1024] = [0; 1024];
     filenames = FS_ListFilteredFiles(dir, ext, 0 as *mut i8, &mut nfiles, allowNonPureFilesOnDisk);
     FS_SortFileList(filenames, nfiles);
-    i = 0;
-    while i < nfiles {
+
+    for i in 0..nfiles {
         FS_ConvertPath(*filenames.offset(i as isize));
+
         crate::src::qcommon::q_shared::Q_strncpyz(
             filename.as_mut_ptr(),
             *filenames.offset(i as isize),
             1024,
         );
+
         if stripExt as u64 != 0 {
             crate::src::qcommon::q_shared::COM_StripExtension(
                 filename.as_mut_ptr(),
@@ -5257,8 +5250,8 @@ pub unsafe extern "C" fn FS_FilenameCompletion(
                 ::std::mem::size_of::<[i8; 1024]>() as i32,
             );
         }
+
         callback.expect("non-null function pointer")(filename.as_mut_ptr());
-        i += 1
     }
     FS_FreeFileList(filenames);
 }

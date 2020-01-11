@@ -149,11 +149,7 @@ GLimp_SetGamma
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn GLimp_SetGamma(
-    mut red: *mut u8,
-    mut green: *mut u8,
-    mut blue: *mut u8,
-) {
+pub unsafe extern "C" fn GLimp_SetGamma(mut red: *mut u8, mut green: *mut u8, mut blue: *mut u8) {
     let mut table: [[crate::stdlib::Uint16; 256]; 3] = [[0; 256]; 3];
     let mut i: i32 = 0;
     let mut j: i32 = 0;
@@ -164,31 +160,28 @@ pub unsafe extern "C" fn GLimp_SetGamma(
     }
     i = 0;
     while i < 256 {
-        table[0][i as usize] =
-            ((*red.offset(i as isize) as i32) << 8
-                | *red.offset(i as isize) as i32) as crate::stdlib::Uint16;
-        table[1][i as usize] =
-            ((*green.offset(i as isize) as i32)
-                << 8
-                | *green.offset(i as isize) as i32) as crate::stdlib::Uint16;
-        table[2][i as usize] =
-            ((*blue.offset(i as isize) as i32) << 8
-                | *blue.offset(i as isize) as i32) as crate::stdlib::Uint16;
+        table[0][i as usize] = ((*red.offset(i as isize) as i32) << 8
+            | *red.offset(i as isize) as i32)
+            as crate::stdlib::Uint16;
+        table[1][i as usize] = ((*green.offset(i as isize) as i32) << 8
+            | *green.offset(i as isize) as i32)
+            as crate::stdlib::Uint16;
+        table[2][i as usize] = ((*blue.offset(i as isize) as i32) << 8
+            | *blue.offset(i as isize) as i32)
+            as crate::stdlib::Uint16;
         i += 1
     }
     // enforce constantly increasing
-    j = 0;
-    while j < 3 {
+
+    for j in 0..3 {
         i = 1;
+
         while i < 256 {
-            if (table[j as usize][i as usize] as i32)
-                < table[j as usize][(i - 1) as usize] as i32
-            {
+            if (table[j as usize][i as usize] as i32) < table[j as usize][(i - 1) as usize] as i32 {
                 table[j as usize][i as usize] = table[j as usize][(i - 1) as usize]
             }
             i += 1
         }
-        j += 1
     }
     if crate::stdlib::SDL_SetWindowGammaRamp(
         SDL_window,

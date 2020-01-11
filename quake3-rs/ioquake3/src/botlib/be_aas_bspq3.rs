@@ -570,10 +570,12 @@ pub unsafe extern "C" fn AAS_FreeBSPEntities() {
     let mut ent: *mut bsp_entity_t = 0 as *mut bsp_entity_t;
     let mut epair: *mut bsp_epair_t = 0 as *mut bsp_epair_t;
     let mut nextepair: *mut bsp_epair_t = 0 as *mut bsp_epair_t;
-    i = 1;
-    while i < bspworld.numentities {
+
+    for i in 1..bspworld.numentities {
         ent = &mut *bspworld.entities.as_mut_ptr().offset(i as isize) as *mut bsp_entity_t;
+
         epair = (*ent).epairs;
+
         while !epair.is_null() {
             nextepair = (*epair).next;
             //end for
@@ -587,7 +589,6 @@ pub unsafe extern "C" fn AAS_FreeBSPEntities() {
             crate::src::botlib::l_memory::FreeMemory(epair as *mut libc::c_void);
             epair = nextepair
         }
-        i += 1
     }
     bspworld.numentities = 0;
 }

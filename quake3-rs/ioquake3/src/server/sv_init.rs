@@ -659,14 +659,13 @@ SV_ClearServer
 
 unsafe extern "C" fn SV_ClearServer() {
     let mut i: i32 = 0;
-    i = 0;
-    while i < 1024 {
+
+    for i in 0..1024 {
         if !crate::src::server::sv_main::sv.configstrings[i as usize].is_null() {
             crate::src::qcommon::common::Z_Free(
                 crate::src::server::sv_main::sv.configstrings[i as usize] as *mut libc::c_void,
             );
         }
-        i += 1
     }
     crate::stdlib::memset(
         &mut crate::src::server::sv_main::sv as *mut crate::server_h::server_t as *mut libc::c_void,
@@ -1177,8 +1176,8 @@ pub unsafe extern "C" fn SV_Init() {
         b"master.ioquake3.org\x00" as *const u8 as *const i8,
         0,
     );
-    index = 2;
-    while index < 5 {
+
+    for index in 2..5 {
         crate::src::server::sv_main::sv_master[index as usize] =
             crate::src::qcommon::cvar::Cvar_Get(
                 crate::src::qcommon::q_shared::va(
@@ -1188,7 +1187,6 @@ pub unsafe extern "C" fn SV_Init() {
                 b"\x00" as *const u8 as *const i8,
                 0x1,
             );
-        index += 1
     }
     crate::src::server::sv_main::sv_reconnectlimit = crate::src::qcommon::cvar::Cvar_Get(
         b"sv_reconnectlimit\x00" as *const u8 as *const i8,
@@ -1790,14 +1788,13 @@ pub unsafe extern "C" fn SV_Shutdown(mut finalmsg: *mut i8) {
     // free server static data
     if !crate::src::server::sv_main::svs.clients.is_null() {
         let mut index: i32 = 0;
-        index = 0;
-        while index < (*crate::src::server::sv_main::sv_maxclients).integer {
+
+        for index in 0..(*crate::src::server::sv_main::sv_maxclients).integer {
             crate::src::server::sv_client::SV_FreeClient(
                 &mut *crate::src::server::sv_main::svs
                     .clients
                     .offset(index as isize),
             );
-            index += 1
         }
         crate::src::qcommon::common::Z_Free(
             crate::src::server::sv_main::svs.clients as *mut libc::c_void,

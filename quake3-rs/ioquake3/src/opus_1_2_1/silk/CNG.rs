@@ -188,14 +188,15 @@ unsafe extern "C" fn silk_CNG_exc(
         exc_mask = exc_mask >> 1
     }
     seed = *rand_seed;
-    i = 0;
-    while i < length {
+
+    for i in 0..length {
         seed = (907633515u32)
             .wrapping_add((seed as crate::opus_types_h::opus_uint32).wrapping_mul(196314165u32))
             as crate::opus_types_h::opus_int32;
+
         idx = seed >> 24 & exc_mask;
+
         *exc_Q14.offset(i as isize) = *exc_buf_Q14.offset(idx as isize);
-        i += 1
     }
     *rand_seed = seed;
 }
@@ -209,12 +210,12 @@ pub unsafe extern "C" fn silk_CNG_Reset(mut psDec: *mut crate::structs_h::silk_d
     let mut NLSF_acc_Q15: i32 = 0;
     NLSF_step_Q15 = 0x7fff / ((*psDec).LPC_order + 1);
     NLSF_acc_Q15 = 0;
-    i = 0;
-    while i < (*psDec).LPC_order {
+
+    for i in 0..(*psDec).LPC_order {
         NLSF_acc_Q15 += NLSF_step_Q15;
+
         (*psDec).sCNG.CNG_smth_NLSF_Q15[i as usize] =
             NLSF_acc_Q15 as crate::opus_types_h::opus_int16;
-        i += 1
     }
     (*psDec).sCNG.CNG_smth_Gain_Q16 = 0;
     (*psDec).sCNG.rand_seed = 3176576;

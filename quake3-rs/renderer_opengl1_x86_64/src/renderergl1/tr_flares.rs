@@ -195,9 +195,7 @@ pub mod q_shared_h {
     pub unsafe extern "C" fn VectorNormalizeFast(mut v: *mut crate::src::qcommon::q_shared::vec_t) {
         let mut ilength: f32 = 0.;
         ilength = crate::src::qcommon::q_math::Q_rsqrt(
-            *v.offset(0) * *v.offset(0)
-                + *v.offset(1) * *v.offset(1)
-                + *v.offset(2) * *v.offset(2),
+            *v.offset(0) * *v.offset(0) + *v.offset(1) * *v.offset(1) + *v.offset(2) * *v.offset(2),
         );
         let ref mut fresh0 = *v.offset(0);
         *fresh0 *= ilength;
@@ -214,7 +212,7 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
-        return crate::stdlib::strtod(__nptr,  0 as *mut *mut i8);
+        return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
     use crate::stdlib::strtod;
 }
@@ -522,11 +520,11 @@ pub struct flare_s {
 #[no_mangle]
 
 pub static mut r_flareStructs: [flare_t; 256] = [flare_t {
-    next:  0 as *mut flare_s,
+    next: 0 as *mut flare_s,
     addedFrame: 0,
     inPortal: crate::src::qcommon::q_shared::qfalse,
     frameSceneNum: 0,
-    surface:  0 as *mut libc::c_void,
+    surface: 0 as *mut libc::c_void,
     fogNum: 0,
     fadeTime: 0,
     visible: crate::src::qcommon::q_shared::qfalse,
@@ -539,10 +537,10 @@ pub static mut r_flareStructs: [flare_t; 256] = [flare_t {
 }; 256];
 #[no_mangle]
 
-pub static mut r_activeFlares: *mut flare_t =  0 as *mut flare_t;
+pub static mut r_activeFlares: *mut flare_t = 0 as *mut flare_t;
 #[no_mangle]
 
-pub static mut r_inactiveFlares: *mut flare_t =  0 as *mut flare_t;
+pub static mut r_inactiveFlares: *mut flare_t = 0 as *mut flare_t;
 #[no_mangle]
 
 pub static mut flareCoeff: i32 = 0;
@@ -575,16 +573,15 @@ pub unsafe extern "C" fn R_ClearFlares() {
     crate::stdlib::memset(
         r_flareStructs.as_mut_ptr() as *mut libc::c_void,
         0,
-        
         ::std::mem::size_of::<[flare_t; 256]>(),
     );
     r_activeFlares = 0 as *mut flare_t;
     r_inactiveFlares = 0 as *mut flare_t;
-    i = 0;
-    while i < 256 {
+
+    for i in 0..256 {
         r_flareStructs[i as usize].next = r_inactiveFlares;
+
         r_inactiveFlares = &mut *r_flareStructs.as_mut_ptr().offset(i as isize) as *mut flare_t;
-        i += 1
     }
     R_SetFlareCoeff();
 }
@@ -614,9 +611,7 @@ pub unsafe extern "C" fn RB_AddFlare(
     let mut window: crate::src::qcommon::q_shared::vec4_t = [0.; 4];
     crate::src::renderergl1::tr_backend::backEnd.pc.c_flareAdds += 1;
     if !normal.is_null()
-        && (*normal.offset(0) != 0.
-            || *normal.offset(1) != 0.
-            || *normal.offset(2) != 0.)
+        && (*normal.offset(0) != 0. || *normal.offset(1) != 0. || *normal.offset(2) != 0.)
     {
         local[0] = crate::src::renderergl1::tr_backend::backEnd
             .viewParms
@@ -658,14 +653,11 @@ pub unsafe extern "C" fn RB_AddFlare(
         clip.as_mut_ptr(),
     );
     // check to see if the point is completely off screen
-    i = 0;
-    while i < 3 {
-        if clip[i as usize] >= clip[3]
-            || clip[i as usize] <= -clip[3]
-        {
+
+    for i in 0..3 {
+        if clip[i as usize] >= clip[3] || clip[i as usize] <= -clip[3] {
             return;
         }
-        i += 1
     }
     crate::src::renderergl1::tr_main::R_TransformClipToWindow(
         clip.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -695,8 +687,8 @@ pub unsafe extern "C" fn RB_AddFlare(
                 == crate::src::renderergl1::tr_backend::backEnd
                     .viewParms
                     .frameSceneNum
-            &&  (*f).inPortal
-                ==  crate::src::renderergl1::tr_backend::backEnd
+            && (*f).inPortal
+                == crate::src::renderergl1::tr_backend::backEnd
                     .viewParms
                     .isPortal
         {
@@ -730,8 +722,7 @@ pub unsafe extern "C" fn RB_AddFlare(
             - 1
     {
         (*f).visible = crate::src::qcommon::q_shared::qfalse;
-        (*f).fadeTime =
-            crate::src::renderergl1::tr_backend::backEnd.refdef.time - 2000
+        (*f).fadeTime = crate::src::renderergl1::tr_backend::backEnd.refdef.time - 2000
     }
     (*f).addedFrame = crate::src::renderergl1::tr_backend::backEnd
         .viewParms
@@ -793,10 +784,8 @@ pub unsafe extern "C" fn RB_AddDlightFlares() {
                     .offset(j as isize) as *mut crate::tr_local_h::fog_t;
                 k = 0;
                 while k < 3 {
-                    if (*l).origin[k as usize]
-                        < (*fog).bounds[0][k as usize]
-                        || (*l).origin[k as usize]
-                            > (*fog).bounds[1][k as usize]
+                    if (*l).origin[k as usize] < (*fog).bounds[0][k as usize]
+                        || (*l).origin[k as usize] > (*fog).bounds[1][k as usize]
                     {
                         break;
                     }
@@ -868,27 +857,22 @@ pub unsafe extern "C" fn RB_TestFlare(mut f: *mut flare_t) {
             - crate::src::renderergl1::tr_backend::backEnd
                 .viewParms
                 .projectionMatrix[10]);
-    visible = (((-(*f).eyeZ - -screenZ < 24f32)))
-        as crate::src::qcommon::q_shared::qboolean;
+    visible = (-(*f).eyeZ - -screenZ < 24f32) as crate::src::qcommon::q_shared::qboolean;
     if visible as u64 != 0 {
         if (*f).visible as u64 == 0 {
             (*f).visible = crate::src::qcommon::q_shared::qtrue;
-            (*f).fadeTime =
-                crate::src::renderergl1::tr_backend::backEnd.refdef.time - 1
+            (*f).fadeTime = crate::src::renderergl1::tr_backend::backEnd.refdef.time - 1
         }
-        fade = (crate::src::renderergl1::tr_backend::backEnd.refdef.time - (*f).fadeTime)
-            as f32
+        fade = (crate::src::renderergl1::tr_backend::backEnd.refdef.time - (*f).fadeTime) as f32
             / 1000.0
             * (*crate::src::renderergl1::tr_init::r_flareFade).value
     } else {
         if (*f).visible as u64 != 0 {
             (*f).visible = crate::src::qcommon::q_shared::qfalse;
-            (*f).fadeTime =
-                crate::src::renderergl1::tr_backend::backEnd.refdef.time - 1
+            (*f).fadeTime = crate::src::renderergl1::tr_backend::backEnd.refdef.time - 1
         }
         fade = 1.0
-            - (crate::src::renderergl1::tr_backend::backEnd.refdef.time - (*f).fadeTime)
-                as f32
+            - (crate::src::renderergl1::tr_backend::backEnd.refdef.time - (*f).fadeTime) as f32
                 / 1000.0
                 * (*crate::src::renderergl1::tr_init::r_flareFade).value
     }
@@ -914,11 +898,7 @@ pub unsafe extern "C" fn RB_RenderFlare(mut f: *mut flare_t) {
     let mut distance: f32 = 0.;
     let mut intensity: f32 = 0.;
     let mut factor: f32 = 0.;
-    let mut fogFactors: [crate::src::qcommon::q_shared::byte; 3] = [
-        255,
-        255,
-        255,
-    ];
+    let mut fogFactors: [crate::src::qcommon::q_shared::byte; 3] = [255, 255, 255];
     crate::src::renderergl1::tr_backend::backEnd
         .pc
         .c_flareRenders += 1;
@@ -932,8 +912,7 @@ pub unsafe extern "C" fn RB_RenderFlare(mut f: *mut flare_t) {
     size = crate::src::renderergl1::tr_backend::backEnd
         .viewParms
         .viewportWidth as f32
-        * ((*crate::src::renderergl1::tr_init::r_flareSize).value / 640.0
-            + 8f32 / distance);
+        * ((*crate::src::renderergl1::tr_init::r_flareSize).value / 640.0 + 8f32 / distance);
     /*
      * This is an alternative to intensity scaling. It changes the size of the flare on screen instead
      * with growing distance. See in the description at the top why this is not the way to go.
@@ -953,47 +932,30 @@ pub unsafe extern "C" fn RB_RenderFlare(mut f: *mut flare_t) {
      * As you can see, the intensity will have a max. of 1 when the distance is 0.
      * The coefficient flareCoeff will determine the falloff speed with increasing distance.
      */
-    factor = (distance as f64
-        + size as f64 * crate::stdlib::sqrt(flareCoeff as f64))
-        as f32;
+    factor = (distance as f64 + size as f64 * crate::stdlib::sqrt(flareCoeff as f64)) as f32;
     intensity = flareCoeff as f32 * size * size / (factor * factor);
-    color[0] =
-        (*f).color[0] * ((*f).drawIntensity * intensity);
-    color[1] =
-        (*f).color[1] * ((*f).drawIntensity * intensity);
-    color[2] =
-        (*f).color[2] * ((*f).drawIntensity * intensity);
+    color[0] = (*f).color[0] * ((*f).drawIntensity * intensity);
+    color[1] = (*f).color[1] * ((*f).drawIntensity * intensity);
+    color[2] = (*f).color[2] * ((*f).drawIntensity * intensity);
     // Calculations for fogging
     if !crate::src::renderergl1::tr_main::tr.world.is_null()
         && (*f).fogNum > 0
         && (*f).fogNum < (*crate::src::renderergl1::tr_main::tr.world).numfogs
     {
         crate::src::renderergl1::tr_shade::tess.numVertexes = 1;
-        crate::src::renderergl1::tr_shade::tess.xyz[0]
-            [0] = (*f).origin[0];
-        crate::src::renderergl1::tr_shade::tess.xyz[0]
-            [1] = (*f).origin[1];
-        crate::src::renderergl1::tr_shade::tess.xyz[0]
-            [2] = (*f).origin[2];
+        crate::src::renderergl1::tr_shade::tess.xyz[0][0] = (*f).origin[0];
+        crate::src::renderergl1::tr_shade::tess.xyz[0][1] = (*f).origin[1];
+        crate::src::renderergl1::tr_shade::tess.xyz[0][2] = (*f).origin[2];
         crate::src::renderergl1::tr_shade::tess.fogNum = (*f).fogNum;
         crate::src::renderergl1::tr_shade_calc::RB_CalcModulateColorsByFog(fogFactors.as_mut_ptr());
         // We don't need to render the flare if colors are 0 anyways.
-        if !(fogFactors[0] as i32 != 0
-            || fogFactors[1] as i32 != 0
-            || fogFactors[2] as i32 != 0)
-        {
+        if !(fogFactors[0] as i32 != 0 || fogFactors[1] as i32 != 0 || fogFactors[2] as i32 != 0) {
             return;
         }
     }
-    iColor[0] = (color[0]
-        * fogFactors[0] as i32 as f32)
-        as i32;
-    iColor[1] = (color[1]
-        * fogFactors[1] as i32 as f32)
-        as i32;
-    iColor[2] = (color[2]
-        * fogFactors[2] as i32 as f32)
-        as i32;
+    iColor[0] = (color[0] * fogFactors[0] as i32 as f32) as i32;
+    iColor[1] = (color[1] * fogFactors[1] as i32 as f32) as i32;
+    iColor[2] = (color[2] * fogFactors[2] as i32 as f32) as i32;
     crate::src::renderergl1::tr_shade::RB_BeginSurface(
         crate::src::renderergl1::tr_main::tr.flareShader,
         (*f).fogNum,
@@ -1006,11 +968,9 @@ pub unsafe extern "C" fn RB_RenderFlare(mut f: *mut flare_t) {
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][1] =
         (*f).windowY as f32 - size;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [0] = 0f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][0] = 0f32;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [1] = 0f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][1] = 0f32;
     crate::src::renderergl1::tr_shade::tess.vertexColors
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
         iColor[0] as crate::src::qcommon::q_shared::byte;
@@ -1021,8 +981,7 @@ pub unsafe extern "C" fn RB_RenderFlare(mut f: *mut flare_t) {
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][2] =
         iColor[2] as crate::src::qcommon::q_shared::byte;
     crate::src::renderergl1::tr_shade::tess.vertexColors
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][3] =
-        255;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][3] = 255;
     crate::src::renderergl1::tr_shade::tess.numVertexes += 1;
     crate::src::renderergl1::tr_shade::tess.xyz
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
@@ -1031,11 +990,9 @@ pub unsafe extern "C" fn RB_RenderFlare(mut f: *mut flare_t) {
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][1] =
         (*f).windowY as f32 + size;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [0] = 0f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][0] = 0f32;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [1] = 1f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][1] = 1f32;
     crate::src::renderergl1::tr_shade::tess.vertexColors
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
         iColor[0] as crate::src::qcommon::q_shared::byte;
@@ -1046,8 +1003,7 @@ pub unsafe extern "C" fn RB_RenderFlare(mut f: *mut flare_t) {
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][2] =
         iColor[2] as crate::src::qcommon::q_shared::byte;
     crate::src::renderergl1::tr_shade::tess.vertexColors
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][3] =
-        255;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][3] = 255;
     crate::src::renderergl1::tr_shade::tess.numVertexes += 1;
     crate::src::renderergl1::tr_shade::tess.xyz
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
@@ -1056,11 +1012,9 @@ pub unsafe extern "C" fn RB_RenderFlare(mut f: *mut flare_t) {
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][1] =
         (*f).windowY as f32 + size;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [0] = 1f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][0] = 1f32;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [1] = 1f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][1] = 1f32;
     crate::src::renderergl1::tr_shade::tess.vertexColors
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
         iColor[0] as crate::src::qcommon::q_shared::byte;
@@ -1071,8 +1025,7 @@ pub unsafe extern "C" fn RB_RenderFlare(mut f: *mut flare_t) {
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][2] =
         iColor[2] as crate::src::qcommon::q_shared::byte;
     crate::src::renderergl1::tr_shade::tess.vertexColors
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][3] =
-        255;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][3] = 255;
     crate::src::renderergl1::tr_shade::tess.numVertexes += 1;
     crate::src::renderergl1::tr_shade::tess.xyz
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
@@ -1081,11 +1034,9 @@ pub unsafe extern "C" fn RB_RenderFlare(mut f: *mut flare_t) {
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][1] =
         (*f).windowY as f32 - size;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [0] = 1f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][0] = 1f32;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [1] = 0f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][1] = 0f32;
     crate::src::renderergl1::tr_shade::tess.vertexColors
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
         iColor[0] as crate::src::qcommon::q_shared::byte;
@@ -1096,39 +1047,32 @@ pub unsafe extern "C" fn RB_RenderFlare(mut f: *mut flare_t) {
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][2] =
         iColor[2] as crate::src::qcommon::q_shared::byte;
     crate::src::renderergl1::tr_shade::tess.vertexColors
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][3] =
-        255;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][3] = 255;
     crate::src::renderergl1::tr_shade::tess.numVertexes += 1;
     let fresh3 = crate::src::renderergl1::tr_shade::tess.numIndexes;
     crate::src::renderergl1::tr_shade::tess.numIndexes =
         crate::src::renderergl1::tr_shade::tess.numIndexes + 1;
-    crate::src::renderergl1::tr_shade::tess.indexes[fresh3 as usize] =
-        0;
+    crate::src::renderergl1::tr_shade::tess.indexes[fresh3 as usize] = 0;
     let fresh4 = crate::src::renderergl1::tr_shade::tess.numIndexes;
     crate::src::renderergl1::tr_shade::tess.numIndexes =
         crate::src::renderergl1::tr_shade::tess.numIndexes + 1;
-    crate::src::renderergl1::tr_shade::tess.indexes[fresh4 as usize] =
-        1;
+    crate::src::renderergl1::tr_shade::tess.indexes[fresh4 as usize] = 1;
     let fresh5 = crate::src::renderergl1::tr_shade::tess.numIndexes;
     crate::src::renderergl1::tr_shade::tess.numIndexes =
         crate::src::renderergl1::tr_shade::tess.numIndexes + 1;
-    crate::src::renderergl1::tr_shade::tess.indexes[fresh5 as usize] =
-        2;
+    crate::src::renderergl1::tr_shade::tess.indexes[fresh5 as usize] = 2;
     let fresh6 = crate::src::renderergl1::tr_shade::tess.numIndexes;
     crate::src::renderergl1::tr_shade::tess.numIndexes =
         crate::src::renderergl1::tr_shade::tess.numIndexes + 1;
-    crate::src::renderergl1::tr_shade::tess.indexes[fresh6 as usize] =
-        0;
+    crate::src::renderergl1::tr_shade::tess.indexes[fresh6 as usize] = 0;
     let fresh7 = crate::src::renderergl1::tr_shade::tess.numIndexes;
     crate::src::renderergl1::tr_shade::tess.numIndexes =
         crate::src::renderergl1::tr_shade::tess.numIndexes + 1;
-    crate::src::renderergl1::tr_shade::tess.indexes[fresh7 as usize] =
-        2;
+    crate::src::renderergl1::tr_shade::tess.indexes[fresh7 as usize] = 2;
     let fresh8 = crate::src::renderergl1::tr_shade::tess.numIndexes;
     crate::src::renderergl1::tr_shade::tess.numIndexes =
         crate::src::renderergl1::tr_shade::tess.numIndexes + 1;
-    crate::src::renderergl1::tr_shade::tess.indexes[fresh8 as usize] =
-        3;
+    crate::src::renderergl1::tr_shade::tess.indexes[fresh8 as usize] = 3;
     crate::src::renderergl1::tr_shade::RB_EndSurface();
 }
 /*
@@ -1538,8 +1482,8 @@ pub unsafe extern "C" fn RB_RenderFlares() {
                 == crate::src::renderergl1::tr_backend::backEnd
                     .viewParms
                     .frameSceneNum
-                &&  (*f).inPortal
-                    ==  crate::src::renderergl1::tr_backend::backEnd
+                && (*f).inPortal
+                    == crate::src::renderergl1::tr_backend::backEnd
                         .viewParms
                         .isPortal
             {
@@ -1566,15 +1510,11 @@ pub unsafe extern "C" fn RB_RenderFlares() {
         .isPortal as u64
         != 0
     {
-        crate::src::sdl::sdl_glimp::qglDisable.expect("non-null function pointer")(
-            0x3000u32,
-        );
+        crate::src::sdl::sdl_glimp::qglDisable.expect("non-null function pointer")(0x3000u32);
     }
     crate::src::sdl::sdl_glimp::qglPushMatrix.expect("non-null function pointer")();
     crate::src::sdl::sdl_glimp::qglLoadIdentity.expect("non-null function pointer")();
-    crate::src::sdl::sdl_glimp::qglMatrixMode.expect("non-null function pointer")(
-        0x1701u32,
-    );
+    crate::src::sdl::sdl_glimp::qglMatrixMode.expect("non-null function pointer")(0x1701u32);
     crate::src::sdl::sdl_glimp::qglPushMatrix.expect("non-null function pointer")();
     crate::src::sdl::sdl_glimp::qglLoadIdentity.expect("non-null function pointer")();
     crate::src::sdl::sdl_glimp::qglOrtho.expect("non-null function pointer")(
@@ -1605,8 +1545,8 @@ pub unsafe extern "C" fn RB_RenderFlares() {
             == crate::src::renderergl1::tr_backend::backEnd
                 .viewParms
                 .frameSceneNum
-            &&  (*f).inPortal
-                ==  crate::src::renderergl1::tr_backend::backEnd
+            && (*f).inPortal
+                == crate::src::renderergl1::tr_backend::backEnd
                     .viewParms
                     .isPortal
             && (*f).drawIntensity != 0.
@@ -1616,8 +1556,6 @@ pub unsafe extern "C" fn RB_RenderFlares() {
         f = (*f).next
     }
     crate::src::sdl::sdl_glimp::qglPopMatrix.expect("non-null function pointer")();
-    crate::src::sdl::sdl_glimp::qglMatrixMode.expect("non-null function pointer")(
-        0x1700u32,
-    );
+    crate::src::sdl::sdl_glimp::qglMatrixMode.expect("non-null function pointer")(0x1700u32);
     crate::src::sdl::sdl_glimp::qglPopMatrix.expect("non-null function pointer")();
 }

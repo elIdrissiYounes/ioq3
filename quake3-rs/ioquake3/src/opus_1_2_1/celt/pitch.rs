@@ -26,11 +26,11 @@ pub mod pitch_h {
         let mut i: i32 = 0;
         let mut xy01: crate::arch_h::opus_val32 = 0f32;
         let mut xy02: crate::arch_h::opus_val32 = 0f32;
-        i = 0;
-        while i < N {
+
+        for i in 0..N {
             xy01 = xy01 + *x.offset(i as isize) * *y01.offset(i as isize);
+
             xy02 = xy02 + *x.offset(i as isize) * *y02.offset(i as isize);
-            i += 1
         }
         *xy1 = xy01;
         *xy2 = xy02;
@@ -153,10 +153,9 @@ pub mod pitch_h {
     ) -> crate::arch_h::opus_val32 {
         let mut i: i32 = 0;
         let mut xy: crate::arch_h::opus_val32 = 0f32;
-        i = 0;
-        while i < N {
+
+        for i in 0..N {
             xy = xy + *x.offset(i as isize) * *y.offset(i as isize);
-            i += 1
         }
         return xy;
     }
@@ -229,10 +228,9 @@ unsafe extern "C" fn find_best_pitch(
     best_den[1] = 0f32;
     *best_pitch.offset(0) = 0;
     *best_pitch.offset(1) = 1;
-    j = 0;
-    while j < len {
+
+    for j in 0..len {
         Syy = Syy + *y.offset(j as isize) * *y.offset(j as isize);
-        j += 1
     }
     i = 0;
     while i < max_pitch {
@@ -294,21 +292,31 @@ unsafe extern "C" fn celt_fir5(
     mem2 = *mem.offset(2);
     mem3 = *mem.offset(3);
     mem4 = *mem.offset(4);
-    i = 0;
-    while i < N {
+
+    for i in 0..N {
         let mut sum: crate::arch_h::opus_val32 = *x.offset(i as isize);
+
         sum = sum + num0 * mem0;
+
         sum = sum + num1 * mem1;
+
         sum = sum + num2 * mem2;
+
         sum = sum + num3 * mem3;
+
         sum = sum + num4 * mem4;
+
         mem4 = mem3;
+
         mem3 = mem2;
+
         mem2 = mem1;
+
         mem1 = mem0;
+
         mem0 = *x.offset(i as isize);
+
         *y.offset(i as isize) = sum;
-        i += 1
     }
     *mem.offset(0) = mem0;
     *mem.offset(1) = mem1;
@@ -487,17 +495,18 @@ pub unsafe extern "C" fn pitch_search(
         best_pitch.as_mut_ptr(),
     );
     /* Finer search with 2x decimation */
-    i = 0;
-    while i < max_pitch >> 1 {
+
+    for i in 0..max_pitch >> 1 {
         let mut sum: crate::arch_h::opus_val32 = 0.;
+
         *xcorr.offset(i as isize) = 0f32;
+
         if !(crate::stdlib::abs(i - 2 * best_pitch[0]) > 2
             && crate::stdlib::abs(i - 2 * best_pitch[1]) > 2)
         {
             sum = celt_inner_prod_c(x_lp, y.offset(i as isize), len >> 1);
             *xcorr.offset(i as isize) = if -1f32 > sum { -1f32 } else { sum }
         }
-        i += 1
     }
     find_best_pitch(xcorr, y, len >> 1, max_pitch >> 1, best_pitch.as_mut_ptr());
     /* Refine by pseudo-interpolation */
@@ -611,12 +620,12 @@ pub unsafe extern "C" fn remove_doubling(
     dual_inner_prod_c(x, x, x.offset(-(T0 as isize)), N, &mut xx, &mut xy);
     *yy_lookup.offset(0) = xx;
     yy = xx;
-    i = 1;
-    while i <= maxperiod {
+
+    for i in 1..=maxperiod {
         yy = yy + *x.offset(-i as isize) * *x.offset(-i as isize)
             - *x.offset((N - i) as isize) * *x.offset((N - i) as isize);
+
         *yy_lookup.offset(i as isize) = if 0f32 > yy { 0f32 } else { yy };
-        i += 1
     }
     yy = *yy_lookup.offset(T0 as isize);
     best_xy = xy;

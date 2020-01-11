@@ -229,8 +229,7 @@ pub mod q_shared_h {
         return crate::stdlib::sqrt(
             (*v.offset(0) * *v.offset(0)
                 + *v.offset(1) * *v.offset(1)
-                + *v.offset(2) * *v.offset(2))
-                as f64,
+                + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
     #[inline]
@@ -238,9 +237,7 @@ pub mod q_shared_h {
     pub unsafe extern "C" fn VectorNormalizeFast(mut v: *mut crate::src::qcommon::q_shared::vec_t) {
         let mut ilength: f32 = 0.;
         ilength = crate::src::qcommon::q_math::Q_rsqrt(
-            *v.offset(0) * *v.offset(0)
-                + *v.offset(1) * *v.offset(1)
-                + *v.offset(2) * *v.offset(2),
+            *v.offset(0) * *v.offset(0) + *v.offset(1) * *v.offset(1) + *v.offset(2) * *v.offset(2),
         );
         let ref mut fresh0 = *v.offset(0);
         *fresh0 *= ilength;
@@ -256,15 +253,9 @@ pub mod q_shared_h {
         mut v2: *const crate::src::qcommon::q_shared::vec_t,
         mut cross: *mut crate::src::qcommon::q_shared::vec_t,
     ) {
-        *cross.offset(0) = *v1.offset(1)
-            * *v2.offset(2)
-            - *v1.offset(2) * *v2.offset(1);
-        *cross.offset(1) = *v1.offset(2)
-            * *v2.offset(0)
-            - *v1.offset(0) * *v2.offset(2);
-        *cross.offset(2) = *v1.offset(0)
-            * *v2.offset(1)
-            - *v1.offset(1) * *v2.offset(0);
+        *cross.offset(0) = *v1.offset(1) * *v2.offset(2) - *v1.offset(2) * *v2.offset(1);
+        *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
+        *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
     use crate::stdlib::sqrt;
 
@@ -525,7 +516,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // tr_shade_calc.c
 
 unsafe extern "C" fn TableForFunc(mut func: crate::tr_local_h::genFunc_t) -> *mut f32 {
-    match  func {
+    match func {
         1 => return crate::src::renderergl1::tr_main::tr.sinTable.as_mut_ptr(),
         3 => {
             return crate::src::renderergl1::tr_main::tr
@@ -555,7 +546,6 @@ unsafe extern "C" fn TableForFunc(mut func: crate::tr_local_h::genFunc_t) -> *mu
         crate::src::qcommon::q_shared::ERR_DROP as i32,
         b"TableForFunc called with invalid function \'%d\' in shader \'%s\'\x00" as *const u8
             as *const i8,
-        
         func,
         (*crate::src::renderergl1::tr_shade::tess.shader)
             .name
@@ -575,16 +565,13 @@ unsafe extern "C" fn EvalWaveForm(mut wf: *const crate::tr_local_h::waveForm_t) 
     return (*wf).base
         + *table.offset(
             (((*wf).phase as f64
-                + crate::src::renderergl1::tr_shade::tess.shaderTime
-                    * (*wf).frequency as f64)
+                + crate::src::renderergl1::tr_shade::tess.shaderTime * (*wf).frequency as f64)
                 * 1024f64) as crate::stdlib::int64_t
                 & (1024i32 - 1) as isize,
         ) * (*wf).amplitude;
 }
 
-unsafe extern "C" fn EvalWaveFormClamped(
-    mut wf: *const crate::tr_local_h::waveForm_t,
-) -> f32 {
+unsafe extern "C" fn EvalWaveFormClamped(mut wf: *const crate::tr_local_h::waveForm_t) -> f32 {
     let mut glow: f32 = EvalWaveForm(wf);
     if glow < 0f32 {
         return 0f32;
@@ -621,11 +608,9 @@ pub unsafe extern "C" fn RB_CalcStretchTexCoords(
     };
     p = 1.0 / EvalWaveForm(wf);
     tmi.matrix[0][0] = p;
-    tmi.matrix[1][0] =
-        0f32;
+    tmi.matrix[1][0] = 0f32;
     tmi.translate[0] = 0.5 - 0.5 * p;
-    tmi.matrix[0][1] =
-        0f32;
+    tmi.matrix[0][1] = 0f32;
     tmi.matrix[1][1] = p;
     tmi.translate[1] = 0.5 - 0.5 * p;
     RB_CalcTransformTexCoords(&mut tmi, st);
@@ -649,8 +634,7 @@ pub unsafe extern "C" fn RB_CalcDeformVertexes(mut ds: *mut crate::tr_local_h::d
     let mut i: i32 = 0;
     let mut offset: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut scale: f32 = 0.;
-    let mut xyz: *mut f32 =
-        crate::src::renderergl1::tr_shade::tess.xyz.as_mut_ptr() as *mut f32;
+    let mut xyz: *mut f32 = crate::src::renderergl1::tr_shade::tess.xyz.as_mut_ptr() as *mut f32;
     let mut normal: *mut f32 =
         crate::src::renderergl1::tr_shade::tess.normal.as_mut_ptr() as *mut f32;
     let mut table: *mut f32 = 0 as *mut f32;
@@ -672,17 +656,14 @@ pub unsafe extern "C" fn RB_CalcDeformVertexes(mut ds: *mut crate::tr_local_h::d
         table = TableForFunc((*ds).deformationWave.func);
         i = 0;
         while i < crate::src::renderergl1::tr_shade::tess.numVertexes {
-            let mut off: f32 = (*xyz.offset(0)
-                + *xyz.offset(1)
-                + *xyz.offset(2))
-                * (*ds).deformationSpread;
+            let mut off: f32 =
+                (*xyz.offset(0) + *xyz.offset(1) + *xyz.offset(2)) * (*ds).deformationSpread;
             scale = (*ds).deformationWave.base
                 + *table.offset(
                     ((((*ds).deformationWave.phase + off) as f64
                         + crate::src::renderergl1::tr_shade::tess.shaderTime
                             * (*ds).deformationWave.frequency as f64)
-                        * 1024f64)
-                        as crate::stdlib::int64_t
+                        * 1024f64) as crate::stdlib::int64_t
                         & (1024i32 - 1) as isize,
                 ) * (*ds).deformationWave.amplitude;
             offset[0] = *normal.offset(0) * scale;
@@ -709,8 +690,7 @@ Wiggle the normals for wavy environment mapping
 pub unsafe extern "C" fn RB_CalcDeformNormals(mut ds: *mut crate::tr_local_h::deformStage_t) {
     let mut i: i32 = 0;
     let mut scale: f32 = 0.;
-    let mut xyz: *mut f32 =
-        crate::src::renderergl1::tr_shade::tess.xyz.as_mut_ptr() as *mut f32;
+    let mut xyz: *mut f32 = crate::src::renderergl1::tr_shade::tess.xyz.as_mut_ptr() as *mut f32;
     let mut normal: *mut f32 =
         crate::src::renderergl1::tr_shade::tess.normal.as_mut_ptr() as *mut f32;
     i = 0;
@@ -758,11 +738,9 @@ RB_CalcBulgeVertexes
 
 pub unsafe extern "C" fn RB_CalcBulgeVertexes(mut ds: *mut crate::tr_local_h::deformStage_t) {
     let mut i: i32 = 0;
-    let mut st: *const f32 = crate::src::renderergl1::tr_shade::tess.texCoords
-        [0]
-        .as_mut_ptr() as *const f32;
-    let mut xyz: *mut f32 =
-        crate::src::renderergl1::tr_shade::tess.xyz.as_mut_ptr() as *mut f32;
+    let mut st: *const f32 =
+        crate::src::renderergl1::tr_shade::tess.texCoords[0].as_mut_ptr() as *const f32;
+    let mut xyz: *mut f32 = crate::src::renderergl1::tr_shade::tess.xyz.as_mut_ptr() as *mut f32;
     let mut normal: *mut f32 =
         crate::src::renderergl1::tr_shade::tess.normal.as_mut_ptr() as *mut f32;
     let mut now: f64 = 0.;
@@ -773,9 +751,7 @@ pub unsafe extern "C" fn RB_CalcBulgeVertexes(mut ds: *mut crate::tr_local_h::de
     while i < crate::src::renderergl1::tr_shade::tess.numVertexes {
         let mut off: crate::stdlib::int64_t = 0;
         let mut scale: f32 = 0.;
-        off = ((1024f64
-            / (3.14159265358979323846 * 2f64))
-            as f32 as f64
+        off = ((1024f64 / (3.14159265358979323846 * 2f64)) as f32 as f64
             * ((*st.offset(0) * (*ds).bulgeWidth) as f64 + now))
             as crate::stdlib::int64_t;
         scale = crate::src::renderergl1::tr_main::tr.sinTable
@@ -820,12 +796,9 @@ pub unsafe extern "C" fn RB_CalcMoveVertexes(mut ds: *mut crate::tr_local_h::def
     xyz = crate::src::renderergl1::tr_shade::tess.xyz.as_mut_ptr() as *mut f32;
     i = 0;
     while i < crate::src::renderergl1::tr_shade::tess.numVertexes {
-        *xyz.offset(0) =
-            *xyz.offset(0) + offset[0];
-        *xyz.offset(1) =
-            *xyz.offset(1) + offset[1];
-        *xyz.offset(2) =
-            *xyz.offset(2) + offset[2];
+        *xyz.offset(0) = *xyz.offset(0) + offset[0];
+        *xyz.offset(1) = *xyz.offset(1) + offset[1];
+        *xyz.offset(2) = *xyz.offset(2) + offset[2];
         i += 1;
         xyz = xyz.offset(4)
     }
@@ -867,23 +840,13 @@ pub unsafe extern "C" fn DeformText(mut text: *const i8) {
     top = -999999f32;
     i = 0;
     while i < 4 {
-        mid[0] = crate::src::renderergl1::tr_shade::tess.xyz[i as usize]
-            [0]
-            + mid[0];
-        mid[1] = crate::src::renderergl1::tr_shade::tess.xyz[i as usize]
-            [1]
-            + mid[1];
-        mid[2] = crate::src::renderergl1::tr_shade::tess.xyz[i as usize]
-            [2]
-            + mid[2];
-        if crate::src::renderergl1::tr_shade::tess.xyz[i as usize][2]
-            < bottom
-        {
-            bottom =
-                crate::src::renderergl1::tr_shade::tess.xyz[i as usize][2]
+        mid[0] = crate::src::renderergl1::tr_shade::tess.xyz[i as usize][0] + mid[0];
+        mid[1] = crate::src::renderergl1::tr_shade::tess.xyz[i as usize][1] + mid[1];
+        mid[2] = crate::src::renderergl1::tr_shade::tess.xyz[i as usize][2] + mid[2];
+        if crate::src::renderergl1::tr_shade::tess.xyz[i as usize][2] < bottom {
+            bottom = crate::src::renderergl1::tr_shade::tess.xyz[i as usize][2]
         }
-        if crate::src::renderergl1::tr_shade::tess.xyz[i as usize][2] > top
-        {
+        if crate::src::renderergl1::tr_shade::tess.xyz[i as usize][2] > top {
             top = crate::src::renderergl1::tr_shade::tess.xyz[i as usize][2]
         }
         i += 1
@@ -895,20 +858,14 @@ pub unsafe extern "C" fn DeformText(mut text: *const i8) {
     height[0] = 0f32;
     height[1] = 0f32;
     height[2] = (top - bottom) * 0.5;
-    width[0] =
-        width[0] * (height[2] * -0.75);
-    width[1] =
-        width[1] * (height[2] * -0.75);
-    width[2] =
-        width[2] * (height[2] * -0.75);
+    width[0] = width[0] * (height[2] * -0.75);
+    width[1] = width[1] * (height[2] * -0.75);
+    width[2] = width[2] * (height[2] * -0.75);
     // determine the starting position
     len = crate::stdlib::strlen(text) as i32;
-    origin[0] = origin[0]
-        + width[0] * (len - 1) as f32;
-    origin[1] = origin[1]
-        + width[1] * (len - 1) as f32;
-    origin[2] = origin[2]
-        + width[2] * (len - 1) as f32;
+    origin[0] = origin[0] + width[0] * (len - 1) as f32;
+    origin[1] = origin[1] + width[1] * (len - 1) as f32;
+    origin[2] = origin[2] + width[2] * (len - 1) as f32;
     // clear the shader indexes
     crate::src::renderergl1::tr_shade::tess.numIndexes = 0;
     crate::src::renderergl1::tr_shade::tess.numVertexes = 0;
@@ -943,12 +900,9 @@ pub unsafe extern "C" fn DeformText(mut text: *const i8) {
                 frow + size,
             );
         }
-        origin[0] = origin[0]
-            + width[0] * -2f32;
-        origin[1] = origin[1]
-            + width[1] * -2f32;
-        origin[2] = origin[2]
-            + width[2] * -2f32;
+        origin[0] = origin[0] + width[0] * -2f32;
+        origin[1] = origin[1] + width[1] * -2f32;
+        origin[2] = origin[2] + width[2] * -2f32;
         i += 1
     }
 }
@@ -962,33 +916,15 @@ unsafe extern "C" fn GlobalVectorToLocal(
     mut in_0: *const crate::src::qcommon::q_shared::vec_t,
     mut out: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    *out.offset(0) = *in_0.offset(0)
-        * crate::src::renderergl1::tr_backend::backEnd.or.axis[0]
-            [0]
-        + *in_0.offset(1)
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[0]
-                [1]
-        + *in_0.offset(2)
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[0]
-                [2];
-    *out.offset(1) = *in_0.offset(0)
-        * crate::src::renderergl1::tr_backend::backEnd.or.axis[1]
-            [0]
-        + *in_0.offset(1)
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[1]
-                [1]
-        + *in_0.offset(2)
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[1]
-                [2];
-    *out.offset(2) = *in_0.offset(0)
-        * crate::src::renderergl1::tr_backend::backEnd.or.axis[2]
-            [0]
-        + *in_0.offset(1)
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[2]
-                [1]
-        + *in_0.offset(2)
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[2]
-                [2];
+    *out.offset(0) = *in_0.offset(0) * crate::src::renderergl1::tr_backend::backEnd.or.axis[0][0]
+        + *in_0.offset(1) * crate::src::renderergl1::tr_backend::backEnd.or.axis[0][1]
+        + *in_0.offset(2) * crate::src::renderergl1::tr_backend::backEnd.or.axis[0][2];
+    *out.offset(1) = *in_0.offset(0) * crate::src::renderergl1::tr_backend::backEnd.or.axis[1][0]
+        + *in_0.offset(1) * crate::src::renderergl1::tr_backend::backEnd.or.axis[1][1]
+        + *in_0.offset(2) * crate::src::renderergl1::tr_backend::backEnd.or.axis[1][2];
+    *out.offset(2) = *in_0.offset(0) * crate::src::renderergl1::tr_backend::backEnd.or.axis[2][0]
+        + *in_0.offset(1) * crate::src::renderergl1::tr_backend::backEnd.or.axis[2][1]
+        + *in_0.offset(2) * crate::src::renderergl1::tr_backend::backEnd.or.axis[2][2];
 }
 /*
 =====================
@@ -1022,8 +958,7 @@ unsafe extern "C" fn AutospriteDeform() {
         );
     }
     if crate::src::renderergl1::tr_shade::tess.numIndexes
-        != (crate::src::renderergl1::tr_shade::tess.numVertexes >> 2)
-            * 6
+        != (crate::src::renderergl1::tr_shade::tess.numVertexes >> 2) * 6
     {
         crate::src::renderergl1::tr_main::ri
             .Printf
@@ -1088,29 +1023,14 @@ unsafe extern "C" fn AutospriteDeform() {
     while i < oldVerts {
         // find the midpoint
         xyz = crate::src::renderergl1::tr_shade::tess.xyz[i as usize].as_mut_ptr(); // / sqrt(2)
-        mid[0] = 0.25
-            * (*xyz.offset(0)
-                + *xyz.offset(4)
-                + *xyz.offset(8)
-                + *xyz.offset(12));
-        mid[1] = 0.25
-            * (*xyz.offset(1)
-                + *xyz.offset(5)
-                + *xyz.offset(9)
-                + *xyz.offset(13));
-        mid[2] = 0.25
-            * (*xyz.offset(2)
-                + *xyz.offset(6)
-                + *xyz.offset(10)
-                + *xyz.offset(14));
-        delta[0] =
-            *xyz.offset(0) - mid[0];
-        delta[1] =
-            *xyz.offset(1) - mid[1];
-        delta[2] =
-            *xyz.offset(2) - mid[2];
-        radius = VectorLength(delta.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t)
-            * 0.707;
+        mid[0] = 0.25 * (*xyz.offset(0) + *xyz.offset(4) + *xyz.offset(8) + *xyz.offset(12));
+        mid[1] = 0.25 * (*xyz.offset(1) + *xyz.offset(5) + *xyz.offset(9) + *xyz.offset(13));
+        mid[2] = 0.25 * (*xyz.offset(2) + *xyz.offset(6) + *xyz.offset(10) + *xyz.offset(14));
+        delta[0] = *xyz.offset(0) - mid[0];
+        delta[1] = *xyz.offset(1) - mid[1];
+        delta[2] = *xyz.offset(2) - mid[2];
+        radius =
+            VectorLength(delta.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t) * 0.707;
         left[0] = leftDir[0] * radius;
         left[1] = leftDir[1] * radius;
         left[2] = leftDir[2] * radius;
@@ -1122,15 +1042,9 @@ unsafe extern "C" fn AutospriteDeform() {
             .isMirror as u64
             != 0
         {
-            left[0] = crate::src::qcommon::q_math::vec3_origin
-                [0]
-                - left[0];
-            left[1] = crate::src::qcommon::q_math::vec3_origin
-                [1]
-                - left[1];
-            left[2] = crate::src::qcommon::q_math::vec3_origin
-                [2]
-                - left[2]
+            left[0] = crate::src::qcommon::q_math::vec3_origin[0] - left[0];
+            left[1] = crate::src::qcommon::q_math::vec3_origin[1] - left[1];
+            left[2] = crate::src::qcommon::q_math::vec3_origin[2] - left[2]
         }
         // compensate for scale in the axes if necessary
         if (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
@@ -1175,14 +1089,7 @@ Autosprite2 will pivot a rectangular quad along the center of its long axis
 */
 #[no_mangle]
 
-pub static mut edgeVerts: [[i32; 2]; 6] = [
-    [0, 1],
-    [0, 2],
-    [0, 3],
-    [1, 2],
-    [1, 3],
-    [2, 3],
-];
+pub static mut edgeVerts: [[i32; 2]; 6] = [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]];
 
 unsafe extern "C" fn Autosprite2Deform() {
     let mut i: i32 = 0;
@@ -1203,8 +1110,7 @@ unsafe extern "C" fn Autosprite2Deform() {
         );
     }
     if crate::src::renderergl1::tr_shade::tess.numIndexes
-        != (crate::src::renderergl1::tr_shade::tess.numVertexes >> 2)
-            * 6
+        != (crate::src::renderergl1::tr_shade::tess.numVertexes >> 2) * 6
     {
         crate::src::renderergl1::tr_main::ri
             .Printf
@@ -1266,21 +1172,12 @@ unsafe extern "C" fn Autosprite2Deform() {
         while j < 6 {
             let mut l: f32 = 0.;
             let mut temp: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-            v1 = xyz.offset(
-                (4 * edgeVerts[j as usize][0]) as isize,
-            );
-            v2 = xyz.offset(
-                (4 * edgeVerts[j as usize][1]) as isize,
-            );
-            temp[0] =
-                *v1.offset(0) - *v2.offset(0);
-            temp[1] =
-                *v1.offset(1) - *v2.offset(1);
-            temp[2] =
-                *v1.offset(2) - *v2.offset(2);
-            l = temp[0] * temp[0]
-                + temp[1] * temp[1]
-                + temp[2] * temp[2];
+            v1 = xyz.offset((4 * edgeVerts[j as usize][0]) as isize);
+            v2 = xyz.offset((4 * edgeVerts[j as usize][1]) as isize);
+            temp[0] = *v1.offset(0) - *v2.offset(0);
+            temp[1] = *v1.offset(1) - *v2.offset(1);
+            temp[2] = *v1.offset(2) - *v2.offset(2);
+            l = temp[0] * temp[0] + temp[1] * temp[1] + temp[2] * temp[2];
             if l < lengths[0] {
                 nums[1] = nums[0];
                 lengths[1] = lengths[0];
@@ -1294,32 +1191,17 @@ unsafe extern "C" fn Autosprite2Deform() {
         }
         j = 0;
         while j < 2 {
-            v1 = xyz.offset(
-                (4 * edgeVerts[nums[j as usize] as usize][0])
-                    as isize,
-            );
-            v2 = xyz.offset(
-                (4 * edgeVerts[nums[j as usize] as usize][1])
-                    as isize,
-            );
-            mid[j as usize][0] = 0.5
-                * (*v1.offset(0) + *v2.offset(0));
-            mid[j as usize][1] = 0.5
-                * (*v1.offset(1) + *v2.offset(1));
-            mid[j as usize][2] = 0.5
-                * (*v1.offset(2) + *v2.offset(2));
+            v1 = xyz.offset((4 * edgeVerts[nums[j as usize] as usize][0]) as isize);
+            v2 = xyz.offset((4 * edgeVerts[nums[j as usize] as usize][1]) as isize);
+            mid[j as usize][0] = 0.5 * (*v1.offset(0) + *v2.offset(0));
+            mid[j as usize][1] = 0.5 * (*v1.offset(1) + *v2.offset(1));
+            mid[j as usize][2] = 0.5 * (*v1.offset(2) + *v2.offset(2));
             j += 1
         }
         // find the vector of the major axis
-        major[0] = mid[1]
-            [0]
-            - mid[0][0];
-        major[1] = mid[1]
-            [1]
-            - mid[0][1];
-        major[2] = mid[1]
-            [2]
-            - mid[0][2];
+        major[0] = mid[1][0] - mid[0][0];
+        major[1] = mid[1][1] - mid[0][1];
+        major[2] = mid[1][2] - mid[0][2];
         // cross this with the view direction to get minor axis
         CrossProduct(
             major.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -1331,58 +1213,36 @@ unsafe extern "C" fn Autosprite2Deform() {
         j = 0;
         while j < 2 {
             let mut l_0: f32 = 0.;
-            v1 = xyz.offset(
-                (4 * edgeVerts[nums[j as usize] as usize][0])
-                    as isize,
-            );
-            v2 = xyz.offset(
-                (4 * edgeVerts[nums[j as usize] as usize][1])
-                    as isize,
-            );
-            l_0 = (0.5 * crate::stdlib::sqrt(lengths[j as usize] as f64))
-                as f32;
+            v1 = xyz.offset((4 * edgeVerts[nums[j as usize] as usize][0]) as isize);
+            v2 = xyz.offset((4 * edgeVerts[nums[j as usize] as usize][1]) as isize);
+            l_0 = (0.5 * crate::stdlib::sqrt(lengths[j as usize] as f64)) as f32;
             // we need to see which direction this edge
             // is used to determine direction of projection
             k = 0;
             while k < 5 {
                 if crate::src::renderergl1::tr_shade::tess.indexes[(indexes + k) as usize]
-                    == (i + edgeVerts[nums[j as usize] as usize][0])
-                        as u32
-                    && crate::src::renderergl1::tr_shade::tess.indexes
-                        [(indexes + k + 1) as usize]
-                        == (i + edgeVerts[nums[j as usize] as usize][1])
-                            as u32
+                    == (i + edgeVerts[nums[j as usize] as usize][0]) as u32
+                    && crate::src::renderergl1::tr_shade::tess.indexes[(indexes + k + 1) as usize]
+                        == (i + edgeVerts[nums[j as usize] as usize][1]) as u32
                 {
                     break;
                 }
                 k += 1
             }
             if k == 5 {
-                *v1.offset(0) = mid[j as usize][0]
-                    + minor[0] * l_0;
-                *v1.offset(1) = mid[j as usize][1]
-                    + minor[1] * l_0;
-                *v1.offset(2) = mid[j as usize][2]
-                    + minor[2] * l_0;
-                *v2.offset(0) = mid[j as usize][0]
-                    + minor[0] * -l_0;
-                *v2.offset(1) = mid[j as usize][1]
-                    + minor[1] * -l_0;
-                *v2.offset(2) = mid[j as usize][2]
-                    + minor[2] * -l_0
+                *v1.offset(0) = mid[j as usize][0] + minor[0] * l_0;
+                *v1.offset(1) = mid[j as usize][1] + minor[1] * l_0;
+                *v1.offset(2) = mid[j as usize][2] + minor[2] * l_0;
+                *v2.offset(0) = mid[j as usize][0] + minor[0] * -l_0;
+                *v2.offset(1) = mid[j as usize][1] + minor[1] * -l_0;
+                *v2.offset(2) = mid[j as usize][2] + minor[2] * -l_0
             } else {
-                *v1.offset(0) = mid[j as usize][0]
-                    + minor[0] * -l_0;
-                *v1.offset(1) = mid[j as usize][1]
-                    + minor[1] * -l_0;
-                *v1.offset(2) = mid[j as usize][2]
-                    + minor[2] * -l_0;
-                *v2.offset(0) = mid[j as usize][0]
-                    + minor[0] * l_0;
-                *v2.offset(1) = mid[j as usize][1]
-                    + minor[1] * l_0;
-                *v2.offset(2) = mid[j as usize][2]
-                    + minor[2] * l_0
+                *v1.offset(0) = mid[j as usize][0] + minor[0] * -l_0;
+                *v1.offset(1) = mid[j as usize][1] + minor[1] * -l_0;
+                *v1.offset(2) = mid[j as usize][2] + minor[2] * -l_0;
+                *v2.offset(0) = mid[j as usize][0] + minor[0] * l_0;
+                *v2.offset(1) = mid[j as usize][1] + minor[1] * l_0;
+                *v2.offset(2) = mid[j as usize][2] + minor[2] * l_0
             }
             j += 1
         }
@@ -1407,7 +1267,7 @@ pub unsafe extern "C" fn RB_DeformTessGeometry() {
             .deforms
             .as_mut_ptr()
             .offset(i as isize) as *mut crate::tr_local_h::deformStage_t;
-        match  (*ds).deformation {
+        match (*ds).deformation {
             2 => {
                 RB_CalcDeformNormals(ds);
             }
@@ -1432,10 +1292,7 @@ pub unsafe extern "C" fn RB_DeformTessGeometry() {
             8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 => {
                 DeformText(
                     crate::src::renderergl1::tr_backend::backEnd.refdef.text[((*ds).deformation)
-                        .wrapping_sub(
-                            
-                            crate::tr_local_h::DEFORM_TEXT0,
-                        )
+                        .wrapping_sub(crate::tr_local_h::DEFORM_TEXT0)
                         as usize]
                         .as_mut_ptr(),
                 );
@@ -1497,23 +1354,19 @@ pub unsafe extern "C" fn RB_CalcColorFromOneMinusEntity(mut dstColors: *mut u8) 
     invModulate[0] = (255
         - (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
             .e
-            .shaderRGBA[0] as i32)
-        as u8;
+            .shaderRGBA[0] as i32) as u8;
     invModulate[1] = (255
         - (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
             .e
-            .shaderRGBA[1] as i32)
-        as u8;
+            .shaderRGBA[1] as i32) as u8;
     invModulate[2] = (255
         - (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
             .e
-            .shaderRGBA[2] as i32)
-        as u8;
+            .shaderRGBA[2] as i32) as u8;
     invModulate[3] = (255
         - (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
             .e
-            .shaderRGBA[3] as i32)
-        as u8;
+            .shaderRGBA[3] as i32) as u8;
     c = *(invModulate.as_mut_ptr() as *mut i32);
     i = 0;
     while i < crate::src::renderergl1::tr_shade::tess.numVertexes {
@@ -1564,8 +1417,7 @@ pub unsafe extern "C" fn RB_CalcAlphaFromOneMinusEntity(mut dstColors: *mut u8) 
         *dstColors = (0xff
             - (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
                 .e
-                .shaderRGBA[3] as i32)
-            as u8;
+                .shaderRGBA[3] as i32) as u8;
         i += 1;
         dstColors = dstColors.offset(4)
     }
@@ -1584,14 +1436,13 @@ pub unsafe extern "C" fn RB_CalcWaveColor(
     let mut glow: f32 = 0.;
     let mut colors: *mut i32 = dstColors as *mut i32;
     let mut color: [crate::src::qcommon::q_shared::byte; 4] = [0; 4];
-    if  (*wf).func ==  crate::tr_local_h::GF_NOISE {
+    if (*wf).func == crate::tr_local_h::GF_NOISE {
         glow = (*wf).base
             + crate::src::renderercommon::tr_noise::R_NoiseGet4f(
                 0f32,
                 0f32,
                 0f32,
-                (crate::src::renderergl1::tr_shade::tess.shaderTime
-                    + (*wf).phase as f64)
+                (crate::src::renderergl1::tr_shade::tess.shaderTime + (*wf).phase as f64)
                     * (*wf).frequency as f64,
             ) * (*wf).amplitude
     } else {
@@ -1604,8 +1455,7 @@ pub unsafe extern "C" fn RB_CalcWaveColor(
     }
     v = crate::src::renderergl1::tr_main::ri
         .ftol
-        .expect("non-null function pointer")(255f32 * glow)
-        as i32;
+        .expect("non-null function pointer")(255f32 * glow) as i32;
     color[2] = v as crate::src::qcommon::q_shared::byte;
     color[1] = color[2];
     color[0] = color[1];
@@ -2754,40 +2604,29 @@ pub unsafe extern "C" fn RB_CalcFogTexCoords(mut st: *mut f32) {
     let mut fog: *mut crate::tr_local_h::fog_t = 0 as *mut crate::tr_local_h::fog_t;
     let mut local: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut fogDistanceVector: crate::src::qcommon::q_shared::vec4_t = [0.; 4];
-    let mut fogDepthVector: crate::src::qcommon::q_shared::vec4_t = [
-        0f32,
-        0f32,
-        0f32,
-        0f32,
-    ];
+    let mut fogDepthVector: crate::src::qcommon::q_shared::vec4_t = [0f32, 0f32, 0f32, 0f32];
     fog = (*crate::src::renderergl1::tr_main::tr.world)
         .fogs
         .offset(crate::src::renderergl1::tr_shade::tess.fogNum as isize);
     // all fogging distance is based on world Z units
-    local[0] = crate::src::renderergl1::tr_backend::backEnd.or.origin
-        [0]
+    local[0] = crate::src::renderergl1::tr_backend::backEnd.or.origin[0]
         - crate::src::renderergl1::tr_backend::backEnd
             .viewParms
             .or
             .origin[0];
-    local[1] = crate::src::renderergl1::tr_backend::backEnd.or.origin
-        [1]
+    local[1] = crate::src::renderergl1::tr_backend::backEnd.or.origin[1]
         - crate::src::renderergl1::tr_backend::backEnd
             .viewParms
             .or
             .origin[1];
-    local[2] = crate::src::renderergl1::tr_backend::backEnd.or.origin
-        [2]
+    local[2] = crate::src::renderergl1::tr_backend::backEnd.or.origin[2]
         - crate::src::renderergl1::tr_backend::backEnd
             .viewParms
             .or
             .origin[2];
-    fogDistanceVector[0] =
-        -crate::src::renderergl1::tr_backend::backEnd.or.modelMatrix[2];
-    fogDistanceVector[1] =
-        -crate::src::renderergl1::tr_backend::backEnd.or.modelMatrix[6];
-    fogDistanceVector[2] =
-        -crate::src::renderergl1::tr_backend::backEnd.or.modelMatrix[10];
+    fogDistanceVector[0] = -crate::src::renderergl1::tr_backend::backEnd.or.modelMatrix[2];
+    fogDistanceVector[1] = -crate::src::renderergl1::tr_backend::backEnd.or.modelMatrix[6];
+    fogDistanceVector[2] = -crate::src::renderergl1::tr_backend::backEnd.or.modelMatrix[10];
     fogDistanceVector[3] = local[0]
         * crate::src::renderergl1::tr_backend::backEnd
             .viewParms
@@ -2811,47 +2650,24 @@ pub unsafe extern "C" fn RB_CalcFogTexCoords(mut st: *mut f32) {
     // rotate the gradient vector for this orientation
     if (*fog).hasSurface as u64 != 0 {
         fogDepthVector[0] = (*fog).surface[0]
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[0]
-                [0]
-            + (*fog).surface[1]
-                * crate::src::renderergl1::tr_backend::backEnd.or.axis[0]
-                    [1]
-            + (*fog).surface[2]
-                * crate::src::renderergl1::tr_backend::backEnd.or.axis[0]
-                    [2];
+            * crate::src::renderergl1::tr_backend::backEnd.or.axis[0][0]
+            + (*fog).surface[1] * crate::src::renderergl1::tr_backend::backEnd.or.axis[0][1]
+            + (*fog).surface[2] * crate::src::renderergl1::tr_backend::backEnd.or.axis[0][2];
         fogDepthVector[1] = (*fog).surface[0]
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[1]
-                [0]
-            + (*fog).surface[1]
-                * crate::src::renderergl1::tr_backend::backEnd.or.axis[1]
-                    [1]
-            + (*fog).surface[2]
-                * crate::src::renderergl1::tr_backend::backEnd.or.axis[1]
-                    [2];
+            * crate::src::renderergl1::tr_backend::backEnd.or.axis[1][0]
+            + (*fog).surface[1] * crate::src::renderergl1::tr_backend::backEnd.or.axis[1][1]
+            + (*fog).surface[2] * crate::src::renderergl1::tr_backend::backEnd.or.axis[1][2];
         fogDepthVector[2] = (*fog).surface[0]
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[2]
-                [0]
-            + (*fog).surface[1]
-                * crate::src::renderergl1::tr_backend::backEnd.or.axis[2]
-                    [1]
-            + (*fog).surface[2]
-                * crate::src::renderergl1::tr_backend::backEnd.or.axis[2]
-                    [2];
+            * crate::src::renderergl1::tr_backend::backEnd.or.axis[2][0]
+            + (*fog).surface[1] * crate::src::renderergl1::tr_backend::backEnd.or.axis[2][1]
+            + (*fog).surface[2] * crate::src::renderergl1::tr_backend::backEnd.or.axis[2][2];
         fogDepthVector[3] = -(*fog).surface[3]
-            + (crate::src::renderergl1::tr_backend::backEnd.or.origin[0]
-                * (*fog).surface[0]
-                + crate::src::renderergl1::tr_backend::backEnd.or.origin
-                    [1]
-                    * (*fog).surface[1]
-                + crate::src::renderergl1::tr_backend::backEnd.or.origin
-                    [2]
-                    * (*fog).surface[2]);
-        eyeT = crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[0]
-            * fogDepthVector[0]
-            + crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[1]
-                * fogDepthVector[1]
-            + crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[2]
-                * fogDepthVector[2]
+            + (crate::src::renderergl1::tr_backend::backEnd.or.origin[0] * (*fog).surface[0]
+                + crate::src::renderergl1::tr_backend::backEnd.or.origin[1] * (*fog).surface[1]
+                + crate::src::renderergl1::tr_backend::backEnd.or.origin[2] * (*fog).surface[2]);
+        eyeT = crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[0] * fogDepthVector[0]
+            + crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[1] * fogDepthVector[1]
+            + crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[2] * fogDepthVector[2]
             + fogDepthVector[3]
     } else {
         eyeT = 1f32
@@ -2864,10 +2680,8 @@ pub unsafe extern "C" fn RB_CalcFogTexCoords(mut st: *mut f32) {
     } else {
         eyeOutside = crate::src::qcommon::q_shared::qfalse
     }
-    fogDistanceVector[3] = (fogDistanceVector[3]
-        as f64
-        + 1.0 / 512f64)
-        as crate::src::qcommon::q_shared::vec_t;
+    fogDistanceVector[3] =
+        (fogDistanceVector[3] as f64 + 1.0 / 512f64) as crate::src::qcommon::q_shared::vec_t;
     // calculate density for each point
     i = 0;
     v = crate::src::renderergl1::tr_shade::tess.xyz[0].as_mut_ptr();
@@ -2887,9 +2701,7 @@ pub unsafe extern "C" fn RB_CalcFogTexCoords(mut st: *mut f32) {
                 t = (1.0f64 / 32f64) as f32
             // point is outside, so no fogging
             } else {
-                t = (1.0 / 32f64
-                    + 30.0 / 32f64 * t as f64
-                        / (t - eyeT) as f64) as f32
+                t = (1.0 / 32f64 + 30.0 / 32f64 * t as f64 / (t - eyeT) as f64) as f32
                 // cut the distance at the fog plane
             }
         } else if t < 0f32 {
@@ -2921,34 +2733,18 @@ pub unsafe extern "C" fn RB_CalcEnvironmentTexCoords(mut st: *mut f32) {
     normal = crate::src::renderergl1::tr_shade::tess.normal[0].as_mut_ptr();
     i = 0;
     while i < crate::src::renderergl1::tr_shade::tess.numVertexes {
-        viewer[0] =
-            crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[0]
-                - *v.offset(0);
-        viewer[1] =
-            crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[1]
-                - *v.offset(1);
-        viewer[2] =
-            crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[2]
-                - *v.offset(2);
+        viewer[0] = crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[0] - *v.offset(0);
+        viewer[1] = crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[1] - *v.offset(1);
+        viewer[2] = crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[2] - *v.offset(2);
         VectorNormalizeFast(viewer.as_mut_ptr());
         d = *normal.offset(0) * viewer[0]
             + *normal.offset(1) * viewer[1]
             + *normal.offset(2) * viewer[2];
-        reflected[0] =
-            *normal.offset(0) * 2f32 * d
-                - viewer[0];
-        reflected[1] =
-            *normal.offset(1) * 2f32 * d
-                - viewer[1];
-        reflected[2] =
-            *normal.offset(2) * 2f32 * d
-                - viewer[2];
-        *st.offset(0) = (0.5
-            + reflected[1] as f64 * 0.5)
-            as f32;
-        *st.offset(1) = (0.5
-            - reflected[2] as f64 * 0.5)
-            as f32;
+        reflected[0] = *normal.offset(0) * 2f32 * d - viewer[0];
+        reflected[1] = *normal.offset(1) * 2f32 * d - viewer[1];
+        reflected[2] = *normal.offset(2) * 2f32 * d - viewer[2];
+        *st.offset(0) = (0.5 + reflected[1] as f64 * 0.5) as f32;
+        *st.offset(1) = (0.5 - reflected[2] as f64 * 0.5) as f32;
         i += 1;
         v = v.offset(4);
         normal = normal.offset(4);
@@ -2974,8 +2770,8 @@ pub unsafe extern "C" fn RB_CalcTurbulentTexCoords(
         let mut t: f32 = *st.offset(1);
         *st.offset(0) = s + crate::src::renderergl1::tr_main::tr.sinTable
             [((((crate::src::renderergl1::tr_shade::tess.xyz[i as usize][0]
-                + crate::src::renderergl1::tr_shade::tess.xyz[i as usize]
-                    [2]) as f64
+                + crate::src::renderergl1::tr_shade::tess.xyz[i as usize][2])
+                as f64
                 * 1.0
                 / 128f64
                 * 0.125
@@ -2984,10 +2780,7 @@ pub unsafe extern "C" fn RB_CalcTurbulentTexCoords(
                 & (1024i32 - 1) as isize) as usize]
             * (*wf).amplitude;
         *st.offset(1) = t + crate::src::renderergl1::tr_main::tr.sinTable
-            [(((crate::src::renderergl1::tr_shade::tess.xyz[i as usize][1]
-                as f64
-                * 1.0
-                / 128f64
+            [(((crate::src::renderergl1::tr_shade::tess.xyz[i as usize][1] as f64 * 1.0 / 128f64
                 * 0.125
                 + now)
                 * 1024f64) as crate::stdlib::int64_t
@@ -3002,10 +2795,7 @@ pub unsafe extern "C" fn RB_CalcTurbulentTexCoords(
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn RB_CalcScaleTexCoords(
-    mut scale: *const f32,
-    mut st: *mut f32,
-) {
+pub unsafe extern "C" fn RB_CalcScaleTexCoords(mut scale: *const f32, mut st: *mut f32) {
     let mut i: i32 = 0;
     i = 0;
     while i < crate::src::renderergl1::tr_shade::tess.numVertexes {
@@ -3020,10 +2810,7 @@ pub unsafe extern "C" fn RB_CalcScaleTexCoords(
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn RB_CalcScrollTexCoords(
-    mut scrollSpeed: *const f32,
-    mut st: *mut f32,
-) {
+pub unsafe extern "C" fn RB_CalcScrollTexCoords(mut scrollSpeed: *const f32, mut st: *mut f32) {
     let mut i: i32 = 0;
     let mut timeScale: f64 = crate::src::renderergl1::tr_shade::tess.shaderTime;
     let mut adjustedScrollS: f64 = 0.;
@@ -3058,14 +2845,8 @@ pub unsafe extern "C" fn RB_CalcTransformTexCoords(
     while i < crate::src::renderergl1::tr_shade::tess.numVertexes {
         let mut s: f32 = *st.offset(0);
         let mut t: f32 = *st.offset(1);
-        *st.offset(0) = s
-            * (*tmi).matrix[0][0]
-            + t * (*tmi).matrix[1][0]
-            + (*tmi).translate[0];
-        *st.offset(1) = s
-            * (*tmi).matrix[0][1]
-            + t * (*tmi).matrix[1][1]
-            + (*tmi).translate[1];
+        *st.offset(0) = s * (*tmi).matrix[0][0] + t * (*tmi).matrix[1][0] + (*tmi).translate[0];
+        *st.offset(1) = s * (*tmi).matrix[0][1] + t * (*tmi).matrix[1][1] + (*tmi).translate[1];
         i += 1;
         st = st.offset(2)
     }
@@ -3075,10 +2856,7 @@ pub unsafe extern "C" fn RB_CalcTransformTexCoords(
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn RB_CalcRotateTexCoords(
-    mut degsPerSecond: f32,
-    mut st: *mut f32,
-) {
+pub unsafe extern "C" fn RB_CalcRotateTexCoords(mut degsPerSecond: f32, mut st: *mut f32) {
     let mut timeScale: f64 = crate::src::renderergl1::tr_shade::tess.shaderTime;
     let mut degs: f64 = 0.;
     let mut index: crate::stdlib::int64_t = 0;
@@ -3100,24 +2878,17 @@ pub unsafe extern "C" fn RB_CalcRotateTexCoords(
         rotateSpeed: 0.,
     };
     degs = -degsPerSecond as f64 * timeScale;
-    index = (degs * (1024f32 / 360.0) as f64)
-        as crate::stdlib::int64_t;
-    sinValue = crate::src::renderergl1::tr_main::tr.sinTable
-        [(index & (1024i32 - 1) as isize) as usize];
-    cosValue = crate::src::renderergl1::tr_main::tr.sinTable[(index
-        + (1024i32 / 4) as isize
-        & (1024i32 - 1) as isize)
-        as usize];
+    index = (degs * (1024f32 / 360.0) as f64) as crate::stdlib::int64_t;
+    sinValue =
+        crate::src::renderergl1::tr_main::tr.sinTable[(index & (1024i32 - 1) as isize) as usize];
+    cosValue = crate::src::renderergl1::tr_main::tr.sinTable
+        [(index + (1024i32 / 4) as isize & (1024i32 - 1) as isize) as usize];
     tmi.matrix[0][0] = cosValue;
     tmi.matrix[1][0] = -sinValue;
-    tmi.translate[0] = (0.5 - 0.5 * cosValue as f64
-        + 0.5 * sinValue as f64)
-        as f32;
+    tmi.translate[0] = (0.5 - 0.5 * cosValue as f64 + 0.5 * sinValue as f64) as f32;
     tmi.matrix[0][1] = sinValue;
     tmi.matrix[1][1] = cosValue;
-    tmi.translate[1] =
-        (0.5 - 0.5 * sinValue as f64 - 0.5 * cosValue as f64)
-            as f32;
+    tmi.translate[1] = (0.5 - 0.5 * sinValue as f64 - 0.5 * cosValue as f64) as f32;
     RB_CalcTransformTexCoords(&mut tmi, st);
 }
 /*
@@ -3127,11 +2898,7 @@ pub unsafe extern "C" fn RB_CalcRotateTexCoords(
 */
 #[no_mangle]
 
-pub static mut lightOrigin: crate::src::qcommon::q_shared::vec3_t = [
-    -960f32,
-    1980f32,
-    96f32,
-];
+pub static mut lightOrigin: crate::src::qcommon::q_shared::vec3_t = [-960f32, 1980f32, 96f32];
 // FIXME: track dynamically
 #[no_mangle]
 
@@ -3153,12 +2920,9 @@ pub unsafe extern "C" fn RB_CalcSpecularAlpha(mut alphas: *mut u8) {
     i = 0;
     while i < numVertexes {
         let mut ilength: f32 = 0.;
-        lightDir[0] =
-            lightOrigin[0] - *v.offset(0);
-        lightDir[1] =
-            lightOrigin[1] - *v.offset(1);
-        lightDir[2] =
-            lightOrigin[2] - *v.offset(2);
+        lightDir[0] = lightOrigin[0] - *v.offset(0);
+        lightDir[1] = lightOrigin[1] - *v.offset(1);
+        lightDir[2] = lightOrigin[2] - *v.offset(2);
         //		ilength = Q_rsqrt( DotProduct( lightDir, lightDir ) );
         VectorNormalizeFast(lightDir.as_mut_ptr());
         // calculate the specular color
@@ -3168,32 +2932,16 @@ pub unsafe extern "C" fn RB_CalcSpecularAlpha(mut alphas: *mut u8) {
         //		d *= ilength;
         // we don't optimize for the d < 0 case since this tends to
         // cause visual artifacts such as faceted "snapping"
-        reflected[0] =
-            *normal.offset(0) * 2f32 * d
-                - lightDir[0];
-        reflected[1] =
-            *normal.offset(1) * 2f32 * d
-                - lightDir[1];
-        reflected[2] =
-            *normal.offset(2) * 2f32 * d
-                - lightDir[2];
-        viewer[0] =
-            crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[0]
-                - *v.offset(0);
-        viewer[1] =
-            crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[1]
-                - *v.offset(1);
-        viewer[2] =
-            crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[2]
-                - *v.offset(2);
+        reflected[0] = *normal.offset(0) * 2f32 * d - lightDir[0];
+        reflected[1] = *normal.offset(1) * 2f32 * d - lightDir[1];
+        reflected[2] = *normal.offset(2) * 2f32 * d - lightDir[2];
+        viewer[0] = crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[0] - *v.offset(0);
+        viewer[1] = crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[1] - *v.offset(1);
+        viewer[2] = crate::src::renderergl1::tr_backend::backEnd.or.viewOrigin[2] - *v.offset(2);
         ilength = crate::src::qcommon::q_math::Q_rsqrt(
-            viewer[0] * viewer[0]
-                + viewer[1] * viewer[1]
-                + viewer[2] * viewer[2],
+            viewer[0] * viewer[0] + viewer[1] * viewer[1] + viewer[2] * viewer[2],
         );
-        l = reflected[0] * viewer[0]
-            + reflected[1] * viewer[1]
-            + reflected[2] * viewer[2];
+        l = reflected[0] * viewer[0] + reflected[1] * viewer[1] + reflected[2] * viewer[2];
         l *= ilength;
         if l < 0f32 {
             b = 0
@@ -3250,14 +2998,12 @@ unsafe extern "C" fn RB_CalcDiffuseColor_scalar(mut colors: *mut u8) {
             + *normal.offset(1) * lightDir[1]
             + *normal.offset(2) * lightDir[2];
         if incoming <= 0f32 {
-            *(&mut *colors.offset((i * 4) as isize) as *mut u8
-                as *mut i32) = ambientLightInt
+            *(&mut *colors.offset((i * 4) as isize) as *mut u8 as *mut i32) = ambientLightInt
         } else {
             j = crate::src::renderergl1::tr_main::ri
                 .ftol
                 .expect("non-null function pointer")(
-                ambientLight[0]
-                    + incoming * directedLight[0],
+                ambientLight[0] + incoming * directedLight[0]
             ) as i32;
             if j > 255 {
                 j = 255
@@ -3266,8 +3012,7 @@ unsafe extern "C" fn RB_CalcDiffuseColor_scalar(mut colors: *mut u8) {
             j = crate::src::renderergl1::tr_main::ri
                 .ftol
                 .expect("non-null function pointer")(
-                ambientLight[1]
-                    + incoming * directedLight[1],
+                ambientLight[1] + incoming * directedLight[1]
             ) as i32;
             if j > 255 {
                 j = 255
@@ -3276,15 +3021,13 @@ unsafe extern "C" fn RB_CalcDiffuseColor_scalar(mut colors: *mut u8) {
             j = crate::src::renderergl1::tr_main::ri
                 .ftol
                 .expect("non-null function pointer")(
-                ambientLight[2]
-                    + incoming * directedLight[2],
+                ambientLight[2] + incoming * directedLight[2]
             ) as i32;
             if j > 255 {
                 j = 255
             }
             *colors.offset((i * 4 + 2) as isize) = j as u8;
-            *colors.offset((i * 4 + 3) as isize) =
-                255u8
+            *colors.offset((i * 4 + 3) as isize) = 255u8
         }
         i += 1;
         v = v.offset(4);

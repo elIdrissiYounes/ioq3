@@ -106,49 +106,53 @@ pub unsafe extern "C" fn silk_stereo_quant_pred(
     let mut err_Q13: crate::opus_types_h::opus_int32 = 0;
     let mut quant_pred_Q13: crate::opus_types_h::opus_int32 = 0;
     /* Quantize */
-    n = 0;
-    while n < 2 {
-        /* Brute-force search over quantization levels */
+
+    for n in 0..2 {
         err_min_Q13 = 0x7fffffff;
-        i = 0;
-        's_23: while i < 16 - 1 {
+        's_23: for i in 0..16 - 1 {
             low_Q13 = crate::src::opus_1_2_1::silk::tables_other::silk_stereo_pred_quant_Q13
                 [i as usize] as crate::opus_types_h::opus_int32;
+
             step_Q13 = ((crate::src::opus_1_2_1::silk::tables_other::silk_stereo_pred_quant_Q13
                 [(i + 1) as usize] as i32
                 - low_Q13) as i64
                 * (0.5 / 5f64 * ((1i64) << 16) as f64 + 0.5) as crate::opus_types_h::opus_int16
                     as i64
                 >> 16) as crate::opus_types_h::opus_int32;
-            j = 0;
-            while j < 5 {
+            for j in 0..5 {
                 lvl_Q13 = low_Q13
                     + step_Q13 as crate::opus_types_h::opus_int16
                         as crate::opus_types_h::opus_int32
                         * (2 * j + 1) as crate::opus_types_h::opus_int16
                             as crate::opus_types_h::opus_int32;
+
                 err_Q13 = if *pred_Q13.offset(n as isize) - lvl_Q13 > 0 {
                     (*pred_Q13.offset(n as isize)) - lvl_Q13
                 } else {
                     -(*pred_Q13.offset(n as isize) - lvl_Q13)
                 };
+
                 if !(err_Q13 < err_min_Q13) {
                     break 's_23;
                 }
+
                 err_min_Q13 = err_Q13;
+
                 quant_pred_Q13 = lvl_Q13;
+
                 (*ix.offset(n as isize))[0] = i as i8;
+
                 (*ix.offset(n as isize))[1] = j as i8;
-                j += 1
             }
-            i += 1
         }
-        /* Error increasing, so we're past the optimum */
+
         (*ix.offset(n as isize))[2] = ((*ix.offset(n as isize))[0] as i32 / 3) as i8;
+
         let ref mut fresh0 = (*ix.offset(n as isize))[0];
+
         *fresh0 = (*fresh0 as i32 - (*ix.offset(n as isize))[2] as i32 * 3) as i8;
+
         *pred_Q13.offset(n as isize) = quant_pred_Q13;
-        n += 1
     }
     /* Subtract second from first predictor (helps when actually applying these) */
     let ref mut fresh1 = *pred_Q13.offset(0);

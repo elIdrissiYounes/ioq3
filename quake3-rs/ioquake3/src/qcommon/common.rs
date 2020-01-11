@@ -965,9 +965,10 @@ skip loading of q3config.cfg
 
 pub unsafe extern "C" fn Com_SafeMode() -> crate::src::qcommon::q_shared::qboolean {
     let mut i: i32 = 0;
-    i = 0;
-    while i < com_numConsoleLines {
+
+    for i in 0..com_numConsoleLines {
         crate::src::qcommon::cmd::Cmd_TokenizeString(com_consoleLines[i as usize]);
+
         if crate::src::qcommon::q_shared::Q_stricmp(
             crate::src::qcommon::cmd::Cmd_Argv(0),
             b"safe\x00" as *const u8 as *const i8,
@@ -980,7 +981,6 @@ pub unsafe extern "C" fn Com_SafeMode() -> crate::src::qcommon::q_shared::qboole
             *com_consoleLines[i as usize].offset(0) = 0i8;
             return crate::src::qcommon::q_shared::qtrue;
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qfalse;
 }
@@ -1046,8 +1046,8 @@ pub unsafe extern "C" fn Com_AddStartupCommands() -> crate::src::qcommon::q_shar
     let mut added: crate::src::qcommon::q_shared::qboolean = crate::src::qcommon::q_shared::qfalse;
     added = crate::src::qcommon::q_shared::qfalse;
     // quote every token, so args with semicolons can work
-    i = 0;
-    while i < com_numConsoleLines {
+
+    for i in 0..com_numConsoleLines {
         if !(com_consoleLines[i as usize].is_null() || *com_consoleLines[i as usize].offset(0) == 0)
         {
             // set commands already added with Com_StartupVariable
@@ -1062,7 +1062,6 @@ pub unsafe extern "C" fn Com_AddStartupCommands() -> crate::src::qcommon::q_shar
                 crate::src::qcommon::cmd::Cbuf_AddText(b"\n\x00" as *const u8 as *const i8);
             }
         }
-        i += 1
     }
     return added;
 }
@@ -3993,15 +3992,15 @@ pub unsafe extern "C" fn Com_ReadFromPipe() {
         }
         let mut brk: *mut i8 = 0 as *mut i8;
         let mut i: i32 = 0;
-        i = accu;
-        while i < accu + read {
+
+        for i in accu..accu + read {
             if buf[i as usize] as i32 == '\u{0}' as i32 {
                 buf[i as usize] = '\n' as i8
             }
+
             if buf[i as usize] as i32 == '\n' as i32 || buf[i as usize] as i32 == '\r' as i32 {
                 brk = &mut *buf.as_mut_ptr().offset((i + 1) as isize) as *mut i8
             }
-            i += 1
         }
         buf[(accu + read) as usize] = '\u{0}' as i8;
         accu += read;

@@ -649,10 +649,11 @@ pub unsafe extern "C" fn silk_encode_frame_FLP(
                     i = 0;
                     while i < (*psEnc).sCmn.nb_subfr {
                         let mut sum: i32 = 0;
-                        j = i * (*psEnc).sCmn.subfr_length;
-                        while j < (i + 1) * (*psEnc).sCmn.subfr_length {
+
+                        for j in
+                            i * (*psEnc).sCmn.subfr_length..(i + 1) * (*psEnc).sCmn.subfr_length
+                        {
                             sum += crate::stdlib::abs((*psEnc).sCmn.pulses[j as usize] as i32);
-                            j += 1
                         }
                         if iter == 0 || sum < best_sum[i as usize] && gain_lock[i as usize] == 0 {
                             best_sum[i as usize] = sum;
@@ -909,10 +910,9 @@ unsafe extern "C" fn silk_LBRR_encode_FLP(
             (*psEnc).sCmn.nb_subfr,
         );
         /* Overwrite unquantized gains with quantized gains and convert back to Q0 from Q16 */
-        k = 0;
-        while k < (*psEnc).sCmn.nb_subfr {
+
+        for k in 0..(*psEnc).sCmn.nb_subfr {
             (*psEncCtrl).Gains[k as usize] = Gains_Q16[k as usize] as f32 * (1.0 / 65536.0);
-            k += 1
         }
         /* ****************************************/
         /* Noise shaping quantization            */

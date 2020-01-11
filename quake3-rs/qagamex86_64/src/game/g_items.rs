@@ -282,11 +282,14 @@ pub unsafe extern "C" fn Pickup_Powerup(
     }
     (*(*other).client).ps.powerups[(*(*ent).item).giTag as usize] += quantity * 1000;
     // give any nearby players a "denied" anti-reward
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         let mut delta: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
+
         let mut len: f32 = 0.;
+
         let mut forward: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
+
         let mut tr: crate::src::qcommon::q_shared::trace_t =
             crate::src::qcommon::q_shared::trace_t {
                 allsolid: crate::src::qcommon::q_shared::qfalse,
@@ -304,8 +307,10 @@ pub unsafe extern "C" fn Pickup_Powerup(
                 contents: 0,
                 entityNum: 0,
             };
+
         client = &mut *crate::src::game::g_main::level.clients.offset(i as isize)
             as *mut crate::g_local_h::gclient_s;
+
         if !(client == (*other).client) {
             if !((*client).pers.connected == crate::g_local_h::CON_DISCONNECTED) {
                 if !((*client).ps.stats[crate::bg_public_h::STAT_HEALTH as usize] <= 0) {
@@ -357,7 +362,6 @@ pub unsafe extern "C" fn Pickup_Powerup(
                 }
             }
         }
-        i += 1
     }
     return 120;
 }
@@ -1055,15 +1059,14 @@ pub unsafe extern "C" fn SaveRegisteredItems() {
     let mut i: i32 = 0;
     let mut count: i32 = 0;
     count = 0;
-    i = 0;
-    while i < crate::src::game::bg_misc::bg_numItems {
+
+    for i in 0..crate::src::game::bg_misc::bg_numItems {
         if itemRegistered[i as usize] as u64 != 0 {
             count += 1;
             string[i as usize] = '1' as i8
         } else {
             string[i as usize] = '0' as i8
         }
-        i += 1
     }
     string[crate::src::game::bg_misc::bg_numItems as usize] = 0;
     crate::src::game::g_main::G_Printf(

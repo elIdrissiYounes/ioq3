@@ -26,8 +26,7 @@ pub mod q_shared_h {
         return crate::stdlib::sqrt(
             (*v.offset(0) * *v.offset(0)
                 + *v.offset(1) * *v.offset(1)
-                + *v.offset(2) * *v.offset(2))
-                as f64,
+                + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
     #[inline]
@@ -46,15 +45,9 @@ pub mod q_shared_h {
         mut v2: *const crate::src::qcommon::q_shared::vec_t,
         mut cross: *mut crate::src::qcommon::q_shared::vec_t,
     ) {
-        *cross.offset(0) = *v1.offset(1)
-            * *v2.offset(2)
-            - *v1.offset(2) * *v2.offset(1);
-        *cross.offset(1) = *v1.offset(2)
-            * *v2.offset(0)
-            - *v1.offset(0) * *v2.offset(2);
-        *cross.offset(2) = *v1.offset(0)
-            * *v2.offset(1)
-            - *v1.offset(1) * *v2.offset(0);
+        *cross.offset(0) = *v1.offset(1) * *v2.offset(2) - *v1.offset(2) * *v2.offset(1);
+        *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
+        *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
     use crate::stdlib::sqrt;
 
@@ -158,36 +151,21 @@ unsafe extern "C" fn LerpDrawVert(
     mut b: *mut crate::qfiles_h::drawVert_t,
     mut out: *mut crate::qfiles_h::drawVert_t,
 ) {
-    (*out).xyz[0] =
-        0.5f32 * ((*a).xyz[0] + (*b).xyz[0]);
-    (*out).xyz[1] =
-        0.5f32 * ((*a).xyz[1] + (*b).xyz[1]);
-    (*out).xyz[2] =
-        0.5f32 * ((*a).xyz[2] + (*b).xyz[2]);
-    (*out).st[0] =
-        0.5f32 * ((*a).st[0] + (*b).st[0]);
-    (*out).st[1] =
-        0.5f32 * ((*a).st[1] + (*b).st[1]);
-    (*out).lightmap[0] = 0.5f32
-        * ((*a).lightmap[0] + (*b).lightmap[0]);
-    (*out).lightmap[1] = 0.5f32
-        * ((*a).lightmap[1] + (*b).lightmap[1]);
-    (*out).color[0] = ((*a).color[0] as i32
-        + (*b).color[0] as i32
-        >> 1)
-        as crate::src::qcommon::q_shared::byte;
-    (*out).color[1] = ((*a).color[1] as i32
-        + (*b).color[1] as i32
-        >> 1)
-        as crate::src::qcommon::q_shared::byte;
-    (*out).color[2] = ((*a).color[2] as i32
-        + (*b).color[2] as i32
-        >> 1)
-        as crate::src::qcommon::q_shared::byte;
-    (*out).color[3] = ((*a).color[3] as i32
-        + (*b).color[3] as i32
-        >> 1)
-        as crate::src::qcommon::q_shared::byte;
+    (*out).xyz[0] = 0.5f32 * ((*a).xyz[0] + (*b).xyz[0]);
+    (*out).xyz[1] = 0.5f32 * ((*a).xyz[1] + (*b).xyz[1]);
+    (*out).xyz[2] = 0.5f32 * ((*a).xyz[2] + (*b).xyz[2]);
+    (*out).st[0] = 0.5f32 * ((*a).st[0] + (*b).st[0]);
+    (*out).st[1] = 0.5f32 * ((*a).st[1] + (*b).st[1]);
+    (*out).lightmap[0] = 0.5f32 * ((*a).lightmap[0] + (*b).lightmap[0]);
+    (*out).lightmap[1] = 0.5f32 * ((*a).lightmap[1] + (*b).lightmap[1]);
+    (*out).color[0] =
+        ((*a).color[0] as i32 + (*b).color[0] as i32 >> 1) as crate::src::qcommon::q_shared::byte;
+    (*out).color[1] =
+        ((*a).color[1] as i32 + (*b).color[1] as i32 >> 1) as crate::src::qcommon::q_shared::byte;
+    (*out).color[2] =
+        ((*a).color[2] as i32 + (*b).color[2] as i32 >> 1) as crate::src::qcommon::q_shared::byte;
+    (*out).color[3] =
+        ((*a).color[3] as i32 + (*b).color[3] as i32 >> 1) as crate::src::qcommon::q_shared::byte;
 }
 /*
 ============
@@ -294,18 +272,12 @@ unsafe extern "C" fn MakeMeshNormals(
     wrapWidth = crate::src::qcommon::q_shared::qfalse;
     i = 0;
     while i < height {
-        delta[0] = (*ctrl.offset(i as isize))[0]
-            .xyz[0]
-            - (*ctrl.offset(i as isize))[(width - 1i32) as usize].xyz
-                [0];
-        delta[1] = (*ctrl.offset(i as isize))[0]
-            .xyz[1]
-            - (*ctrl.offset(i as isize))[(width - 1i32) as usize].xyz
-                [1];
-        delta[2] = (*ctrl.offset(i as isize))[0]
-            .xyz[2]
-            - (*ctrl.offset(i as isize))[(width - 1i32) as usize].xyz
-                [2];
+        delta[0] = (*ctrl.offset(i as isize))[0].xyz[0]
+            - (*ctrl.offset(i as isize))[(width - 1i32) as usize].xyz[0];
+        delta[1] = (*ctrl.offset(i as isize))[0].xyz[1]
+            - (*ctrl.offset(i as isize))[(width - 1i32) as usize].xyz[1];
+        delta[2] = (*ctrl.offset(i as isize))[0].xyz[2]
+            - (*ctrl.offset(i as isize))[(width - 1i32) as usize].xyz[2];
         len =
             VectorLengthSquared(delta.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t);
         if len as f64 > 1.0 {
@@ -319,18 +291,12 @@ unsafe extern "C" fn MakeMeshNormals(
     wrapHeight = crate::src::qcommon::q_shared::qfalse;
     i = 0;
     while i < width {
-        delta[0] = (*ctrl.offset(0))[i as usize]
-            .xyz[0]
-            - (*ctrl.offset((height - 1i32) as isize))[i as usize].xyz
-                [0];
-        delta[1] = (*ctrl.offset(0))[i as usize]
-            .xyz[1]
-            - (*ctrl.offset((height - 1i32) as isize))[i as usize].xyz
-                [1];
-        delta[2] = (*ctrl.offset(0))[i as usize]
-            .xyz[2]
-            - (*ctrl.offset((height - 1i32) as isize))[i as usize].xyz
-                [2];
+        delta[0] = (*ctrl.offset(0))[i as usize].xyz[0]
+            - (*ctrl.offset((height - 1i32) as isize))[i as usize].xyz[0];
+        delta[1] = (*ctrl.offset(0))[i as usize].xyz[1]
+            - (*ctrl.offset((height - 1i32) as isize))[i as usize].xyz[1];
+        delta[2] = (*ctrl.offset(0))[i as usize].xyz[2]
+            - (*ctrl.offset((height - 1i32) as isize))[i as usize].xyz[2];
         len =
             VectorLengthSquared(delta.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t);
         if len as f64 > 1.0 {
@@ -343,22 +309,24 @@ unsafe extern "C" fn MakeMeshNormals(
     }
     i = 0;
     while i < width {
-        j = 0;
-        while j < height {
+        for j in 0..height {
             count = 0;
+
             dv = &mut *(*ctrl.offset(j as isize)).as_mut_ptr().offset(i as isize)
                 as *mut crate::qfiles_h::drawVert_t;
+
             base[0] = (*dv).xyz[0];
+
             base[1] = (*dv).xyz[1];
+
             base[2] = (*dv).xyz[2];
+
             k = 0;
+
             while k < 8 {
-                around[k as usize][2] =
-                    0f32;
-                around[k as usize][1] =
-                    around[k as usize][2];
-                around[k as usize][0] =
-                    around[k as usize][1];
+                around[k as usize][2] = 0f32;
+                around[k as usize][1] = around[k as usize][2];
+                around[k as usize][0] = around[k as usize][1];
                 good[k as usize] = crate::src::qcommon::q_shared::qfalse;
                 dist = 1;
                 while dist <= 3 {
@@ -381,15 +349,9 @@ unsafe extern "C" fn MakeMeshNormals(
                     if x < 0 || x >= width || y < 0 || y >= height {
                         break;
                     }
-                    temp[0] = (*ctrl.offset(y as isize))[x as usize].xyz
-                        [0]
-                        - base[0];
-                    temp[1] = (*ctrl.offset(y as isize))[x as usize].xyz
-                        [1]
-                        - base[1];
-                    temp[2] = (*ctrl.offset(y as isize))[x as usize].xyz
-                        [2]
-                        - base[2];
+                    temp[0] = (*ctrl.offset(y as isize))[x as usize].xyz[0] - base[0];
+                    temp[1] = (*ctrl.offset(y as isize))[x as usize].xyz[1] - base[1];
+                    temp[2] = (*ctrl.offset(y as isize))[x as usize].xyz[2] - base[2];
                     if crate::src::qcommon::q_math::VectorNormalize2(
                         temp.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                         temp.as_mut_ptr(),
@@ -399,27 +361,26 @@ unsafe extern "C" fn MakeMeshNormals(
                     // degenerate edge, get more dist
                     } else {
                         good[k as usize] = crate::src::qcommon::q_shared::qtrue;
-                        around[k as usize][0] =
-                            temp[0];
-                        around[k as usize][1] =
-                            temp[1];
-                        around[k as usize][2] =
-                            temp[2];
+                        around[k as usize][0] = temp[0];
+                        around[k as usize][1] = temp[1];
+                        around[k as usize][2] = temp[2];
                         break;
                         // good edge
                     }
                 }
                 k += 1
             }
-            sum[2] =
-                0f32;
+
+            sum[2] = 0f32;
+
             sum[1] = sum[2];
+
             sum[0] = sum[1];
+
             k = 0;
+
             while k < 8 {
-                if !(good[k as usize] as u64 == 0
-                    || good[(k + 1 & 7) as usize] as u64 == 0)
-                {
+                if !(good[k as usize] as u64 == 0 || good[(k + 1 & 7) as usize] as u64 == 0) {
                     CrossProduct(
                         around[(k + 1 & 7) as usize].as_mut_ptr()
                             as *const crate::src::qcommon::q_shared::vec_t,
@@ -432,26 +393,20 @@ unsafe extern "C" fn MakeMeshNormals(
                         normal.as_mut_ptr(),
                     ) == 0f32)
                     {
-                        sum[0] =
-                            normal[0] + sum[0];
-                        sum[1] =
-                            normal[1] + sum[1];
-                        sum[2] =
-                            normal[2] + sum[2];
+                        sum[0] = normal[0] + sum[0];
+                        sum[1] = normal[1] + sum[1];
+                        sum[2] = normal[2] + sum[2];
                         count += 1
                     }
                 }
                 k += 1
                 // didn't get two points
             }
-            //if ( count == 0 ) {
-            //	printf("bad normal\n");
-            //}
+
             crate::src::qcommon::q_math::VectorNormalize2(
                 sum.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                 (*dv).normal.as_mut_ptr(),
             );
-            j += 1
         }
         i += 1
     }
@@ -478,13 +433,13 @@ unsafe extern "C" fn InvertCtrl(
     };
     i = 0;
     while i < height {
-        j = 0;
-        while j < width / 2 {
+        for j in 0..width / 2 {
             temp = (*ctrl.offset(i as isize))[j as usize];
+
             (*ctrl.offset(i as isize))[j as usize] =
                 (*ctrl.offset(i as isize))[(width - 1 - j) as usize];
+
             (*ctrl.offset(i as isize))[(width - 1 - j) as usize] = temp;
-            j += 1
         }
         i += 1
     }
@@ -505,20 +460,17 @@ unsafe extern "C" fn InvertErrorTable(
     crate::stdlib::memcpy(
         copy.as_mut_ptr() as *mut libc::c_void,
         errorTable as *const libc::c_void,
-        
         ::std::mem::size_of::<[[f32; 65]; 2]>(),
     );
     i = 0;
     while i < width {
-        (*errorTable.offset(1))[i as usize] =
-            copy[0][i as usize];
+        (*errorTable.offset(1))[i as usize] = copy[0][i as usize];
         i += 1
         //[width-1-i];
     }
     i = 0;
     while i < height {
-        (*errorTable.offset(0))[i as usize] =
-            copy[1][(height - 1 - i) as usize];
+        (*errorTable.offset(0))[i as usize] = copy[1][(height - 1 - i) as usize];
         i += 1
     }
 }
@@ -627,21 +579,15 @@ pub unsafe extern "C" fn R_CreateSurfaceGridMesh(
     // copy the results out to a grid
     size = ((width * height - 1i32) as usize)
         .wrapping_mul(::std::mem::size_of::<crate::qfiles_h::drawVert_t>())
-        .wrapping_add(::std::mem::size_of::<crate::tr_local_h::srfGridMesh_t>())
-        as i32;
+        .wrapping_add(::std::mem::size_of::<crate::tr_local_h::srfGridMesh_t>()) as i32;
     grid = crate::src::renderergl1::tr_main::ri
         .Malloc
         .expect("non-null function pointer")(size)
         as *mut crate::tr_local_h::srfGridMesh_t;
-    crate::stdlib::memset(
-        grid as *mut libc::c_void,
-        0,
-        size as usize,
-    );
+    crate::stdlib::memset(grid as *mut libc::c_void, 0, size as usize);
     (*grid).widthLodError = crate::src::renderergl1::tr_main::ri
         .Malloc
-        .expect("non-null function pointer")(width * 4)
-        as *mut f32;
+        .expect("non-null function pointer")(width * 4) as *mut f32;
     crate::stdlib::memcpy(
         (*grid).widthLodError as *mut libc::c_void,
         (*errorTable.offset(0)).as_mut_ptr() as *const libc::c_void,
@@ -649,8 +595,7 @@ pub unsafe extern "C" fn R_CreateSurfaceGridMesh(
     );
     (*grid).heightLodError = crate::src::renderergl1::tr_main::ri
         .Malloc
-        .expect("non-null function pointer")(height * 4)
-        as *mut f32;
+        .expect("non-null function pointer")(height * 4) as *mut f32;
     crate::stdlib::memcpy(
         (*grid).heightLodError as *mut libc::c_void,
         (*errorTable.offset(1)).as_mut_ptr() as *const libc::c_void,
@@ -663,47 +608,31 @@ pub unsafe extern "C" fn R_CreateSurfaceGridMesh(
         (*grid).meshBounds[0].as_mut_ptr(),
         (*grid).meshBounds[1].as_mut_ptr(),
     );
-    i = 0;
-    while i < width {
-        j = 0;
-        while j < height {
+
+    for i in 0..width {
+        for j in 0..height {
             vert = &mut *(*grid).verts.as_mut_ptr().offset((j * width + i) as isize)
                 as *mut crate::qfiles_h::drawVert_t;
+
             *vert = (*ctrl.offset(j as isize))[i as usize];
+
             crate::src::qcommon::q_math::AddPointToBounds(
                 (*vert).xyz.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                 (*grid).meshBounds[0].as_mut_ptr(),
                 (*grid).meshBounds[1].as_mut_ptr(),
             );
-            j += 1
         }
-        i += 1
     }
     // compute local origin and bounds
-    (*grid).localOrigin[0] = (*grid).meshBounds[0]
-        [0]
-        + (*grid).meshBounds[1][0];
-    (*grid).localOrigin[1] = (*grid).meshBounds[0]
-        [1]
-        + (*grid).meshBounds[1][1];
-    (*grid).localOrigin[2] = (*grid).meshBounds[0]
-        [2]
-        + (*grid).meshBounds[1][2];
-    (*grid).localOrigin[0] =
-        (*grid).localOrigin[0] * 0.5;
-    (*grid).localOrigin[1] =
-        (*grid).localOrigin[1] * 0.5;
-    (*grid).localOrigin[2] =
-        (*grid).localOrigin[2] * 0.5;
-    tmpVec[0] = (*grid).meshBounds[0]
-        [0]
-        - (*grid).localOrigin[0];
-    tmpVec[1] = (*grid).meshBounds[0]
-        [1]
-        - (*grid).localOrigin[1];
-    tmpVec[2] = (*grid).meshBounds[0]
-        [2]
-        - (*grid).localOrigin[2];
+    (*grid).localOrigin[0] = (*grid).meshBounds[0][0] + (*grid).meshBounds[1][0];
+    (*grid).localOrigin[1] = (*grid).meshBounds[0][1] + (*grid).meshBounds[1][1];
+    (*grid).localOrigin[2] = (*grid).meshBounds[0][2] + (*grid).meshBounds[1][2];
+    (*grid).localOrigin[0] = (*grid).localOrigin[0] * 0.5;
+    (*grid).localOrigin[1] = (*grid).localOrigin[1] * 0.5;
+    (*grid).localOrigin[2] = (*grid).localOrigin[2] * 0.5;
+    tmpVec[0] = (*grid).meshBounds[0][0] - (*grid).localOrigin[0];
+    tmpVec[1] = (*grid).meshBounds[0][1] - (*grid).localOrigin[1];
+    tmpVec[2] = (*grid).meshBounds[0][2] - (*grid).localOrigin[2];
     (*grid).meshRadius =
         VectorLength(tmpVec.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t);
     (*grid).lodOrigin[0] = (*grid).localOrigin[0];
@@ -749,88 +678,31 @@ pub unsafe extern "C" fn R_SubdividePatchToGrid(
     let mut l: i32 = 0;
     let mut prev: crate::qfiles_h::drawVert_t = {
         let mut init = crate::qfiles_h::drawVert_t {
-            xyz: [
-                0f32,
-                0f32,
-                0f32,
-            ],
-            st: [
-                0f32,
-                0f32,
-            ],
-            lightmap: [
-                0f32,
-                0f32,
-            ],
-            normal: [
-                0f32,
-                0f32,
-                0f32,
-            ],
-            color: [
-                0u8,
-                0,
-                0,
-                0,
-            ],
+            xyz: [0f32, 0f32, 0f32],
+            st: [0f32, 0f32],
+            lightmap: [0f32, 0f32],
+            normal: [0f32, 0f32, 0f32],
+            color: [0u8, 0, 0, 0],
         };
         init
     };
     let mut next: crate::qfiles_h::drawVert_t = {
         let mut init = crate::qfiles_h::drawVert_t {
-            xyz: [
-                0f32,
-                0f32,
-                0f32,
-            ],
-            st: [
-                0f32,
-                0f32,
-            ],
-            lightmap: [
-                0f32,
-                0f32,
-            ],
-            normal: [
-                0f32,
-                0f32,
-                0f32,
-            ],
-            color: [
-                0u8,
-                0,
-                0,
-                0,
-            ],
+            xyz: [0f32, 0f32, 0f32],
+            st: [0f32, 0f32],
+            lightmap: [0f32, 0f32],
+            normal: [0f32, 0f32, 0f32],
+            color: [0u8, 0, 0, 0],
         };
         init
     };
     let mut mid: crate::qfiles_h::drawVert_t = {
         let mut init = crate::qfiles_h::drawVert_t {
-            xyz: [
-                0f32,
-                0f32,
-                0f32,
-            ],
-            st: [
-                0f32,
-                0f32,
-            ],
-            lightmap: [
-                0f32,
-                0f32,
-            ],
-            normal: [
-                0f32,
-                0f32,
-                0f32,
-            ],
-            color: [
-                0u8,
-                0,
-                0,
-                0,
-            ],
+            xyz: [0f32, 0f32, 0f32],
+            st: [0f32, 0f32],
+            lightmap: [0f32, 0f32],
+            normal: [0f32, 0f32, 0f32],
+            color: [0u8, 0, 0, 0],
         };
         init
     };
@@ -855,15 +727,17 @@ pub unsafe extern "C" fn R_SubdividePatchToGrid(
         }
         i += 1
     }
-    dir = 0;
-    while dir < 2 {
+
+    for dir in 0..2 {
         j = 0;
+
         while j < 65 {
             errorTable[dir as usize][j as usize] = 0f32;
             j += 1
         }
-        // horizontal subdivisions
+
         j = 0;
+
         while (j + 2) < width {
             // check subdivided midpoints against control points
             // FIXME: also check midpoints of adjacent patches against the control points
@@ -877,50 +751,34 @@ pub unsafe extern "C" fn R_SubdividePatchToGrid(
                 let mut projected: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
                 let mut d: f32 = 0.;
                 // calculate the point on the curve
-                l = 0;
-                while l < 3 {
+
+                for l in 0..3 {
                     midxyz[l as usize] = (ctrl[i as usize][j as usize].xyz[l as usize]
-                        + ctrl[i as usize][(j + 1) as usize].xyz[l as usize]
-                            * 2f32
+                        + ctrl[i as usize][(j + 1) as usize].xyz[l as usize] * 2f32
                         + ctrl[i as usize][(j + 2) as usize].xyz[l as usize])
                         * 0.25;
-                    l += 1
                 }
                 // see how far off the line it is
                 // using dist-from-line will not account for internal
                 // texture warping, but it gives a lot less polygons than
                 // dist-from-midpoint
-                midxyz[0] = midxyz[0]
-                    - ctrl[i as usize][j as usize].xyz[0]; // we will do the sqrt later
-                midxyz[1] = midxyz[1]
-                    - ctrl[i as usize][j as usize].xyz[1];
-                midxyz[2] = midxyz[2]
-                    - ctrl[i as usize][j as usize].xyz[2];
-                dir_0[0] = ctrl[i as usize]
-                    [(j + 2) as usize]
-                    .xyz[0]
-                    - ctrl[i as usize][j as usize].xyz[0];
-                dir_0[1] = ctrl[i as usize]
-                    [(j + 2) as usize]
-                    .xyz[1]
-                    - ctrl[i as usize][j as usize].xyz[1];
-                dir_0[2] = ctrl[i as usize]
-                    [(j + 2) as usize]
-                    .xyz[2]
-                    - ctrl[i as usize][j as usize].xyz[2];
+                midxyz[0] = midxyz[0] - ctrl[i as usize][j as usize].xyz[0]; // we will do the sqrt later
+                midxyz[1] = midxyz[1] - ctrl[i as usize][j as usize].xyz[1];
+                midxyz[2] = midxyz[2] - ctrl[i as usize][j as usize].xyz[2];
+                dir_0[0] =
+                    ctrl[i as usize][(j + 2) as usize].xyz[0] - ctrl[i as usize][j as usize].xyz[0];
+                dir_0[1] =
+                    ctrl[i as usize][(j + 2) as usize].xyz[1] - ctrl[i as usize][j as usize].xyz[1];
+                dir_0[2] =
+                    ctrl[i as usize][(j + 2) as usize].xyz[2] - ctrl[i as usize][j as usize].xyz[2];
                 crate::src::qcommon::q_math::VectorNormalize(dir_0.as_mut_ptr());
-                d = midxyz[0] * dir_0[0]
-                    + midxyz[1] * dir_0[1]
-                    + midxyz[2] * dir_0[2];
+                d = midxyz[0] * dir_0[0] + midxyz[1] * dir_0[1] + midxyz[2] * dir_0[2];
                 projected[0] = dir_0[0] * d;
                 projected[1] = dir_0[1] * d;
                 projected[2] = dir_0[2] * d;
-                midxyz2[0] =
-                    midxyz[0] - projected[0];
-                midxyz2[1] =
-                    midxyz[1] - projected[1];
-                midxyz2[2] =
-                    midxyz[2] - projected[2];
+                midxyz2[0] = midxyz[0] - projected[0];
+                midxyz2[1] = midxyz[1] - projected[1];
+                midxyz2[2] = midxyz[2] - projected[2];
                 len = VectorLengthSquared(
                     midxyz2.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t
                 );
@@ -932,8 +790,7 @@ pub unsafe extern "C" fn R_SubdividePatchToGrid(
             maxLen = crate::stdlib::sqrt(maxLen as f64) as f32;
             // if all the points are on the lines, remove the entire columns
             if maxLen < 0.1 {
-                errorTable[dir as usize][(j + 1) as usize] =
-                    999f32
+                errorTable[dir as usize][(j + 1) as usize] = 999f32
             } else if width + 2 > 65 {
                 errorTable[dir as usize][(j + 1) as usize] = 1.0 / maxLen
             // see if we want to insert subdivided columns
@@ -968,8 +825,7 @@ pub unsafe extern "C" fn R_SubdividePatchToGrid(
                     LerpDrawVert(&mut prev, &mut next, &mut mid);
                     k = width - 1;
                     while k > j + 3 {
-                        ctrl[i as usize][k as usize] =
-                            ctrl[i as usize][(k - 2) as usize];
+                        ctrl[i as usize][k as usize] = ctrl[i as usize][(k - 2) as usize];
                         k -= 1
                     }
                     ctrl[i as usize][(j + 1) as usize] = prev;
@@ -982,30 +838,29 @@ pub unsafe extern "C" fn R_SubdividePatchToGrid(
             }
             j += 2
         }
+
         Transpose(width, height, ctrl.as_mut_ptr());
+
         t = width;
+
         width = height;
+
         height = t;
-        dir += 1
     }
     // put all the aproximating points on the curve
     PutPointsOnCurve(ctrl.as_mut_ptr(), width, height);
     // cull out any rows or columns that are colinear
     i = 1;
     while i < width - 1 {
-        if !(errorTable[0][i as usize]
-            != 999f32)
-        {
+        if !(errorTable[0][i as usize] != 999f32) {
             j = i + 1;
             while j < width {
                 k = 0;
                 while k < height {
-                    ctrl[k as usize][(j - 1) as usize] =
-                        ctrl[k as usize][j as usize];
+                    ctrl[k as usize][(j - 1) as usize] = ctrl[k as usize][j as usize];
                     k += 1
                 }
-                errorTable[0][(j - 1) as usize] =
-                    errorTable[0][j as usize];
+                errorTable[0][(j - 1) as usize] = errorTable[0][j as usize];
                 j += 1
             }
             width -= 1
@@ -1014,19 +869,15 @@ pub unsafe extern "C" fn R_SubdividePatchToGrid(
     }
     i = 1;
     while i < height - 1 {
-        if !(errorTable[1][i as usize]
-            != 999f32)
-        {
+        if !(errorTable[1][i as usize] != 999f32) {
             j = i + 1;
             while j < height {
                 k = 0;
                 while k < width {
-                    ctrl[(j - 1) as usize][k as usize] =
-                        ctrl[j as usize][k as usize];
+                    ctrl[(j - 1) as usize][k as usize] = ctrl[j as usize][k as usize];
                     k += 1
                 }
-                errorTable[1][(j - 1) as usize] =
-                    errorTable[1][j as usize];
+                errorTable[1][(j - 1) as usize] = errorTable[1][j as usize];
                 j += 1
             }
             height -= 1
@@ -1083,8 +934,8 @@ pub unsafe extern "C" fn R_GridInsertColumn(
         return 0 as *mut crate::tr_local_h::srfGridMesh_t;
     }
     height = (*grid).height;
-    i = 0;
-    while i < width {
+
+    for i in 0..width {
         if i == column {
             //insert new column
             j = 0;
@@ -1103,19 +954,15 @@ pub unsafe extern "C" fn R_GridInsertColumn(
                         .offset(i as isize),
                 );
                 if j == row {
-                    ctrl[j as usize][i as usize].xyz[0] =
-                        *point.offset(0);
-                    ctrl[j as usize][i as usize].xyz[1] =
-                        *point.offset(1);
-                    ctrl[j as usize][i as usize].xyz[2] =
-                        *point.offset(2)
+                    ctrl[j as usize][i as usize].xyz[0] = *point.offset(0);
+                    ctrl[j as usize][i as usize].xyz[1] = *point.offset(1);
+                    ctrl[j as usize][i as usize].xyz[2] = *point.offset(2)
                 }
                 j += 1
             }
             errorTable[0][i as usize] = loderror
         } else {
-            errorTable[0][i as usize] =
-                *(*grid).widthLodError.offset(oldwidth as isize);
+            errorTable[0][i as usize] = *(*grid).widthLodError.offset(oldwidth as isize);
             j = 0;
             while j < (*grid).height {
                 ctrl[j as usize][i as usize] = *(*grid)
@@ -1126,12 +973,10 @@ pub unsafe extern "C" fn R_GridInsertColumn(
             }
             oldwidth += 1
         }
-        i += 1
     }
     j = 0;
     while j < (*grid).height {
-        errorTable[1][j as usize] =
-            *(*grid).heightLodError.offset(j as isize);
+        errorTable[1][j as usize] = *(*grid).heightLodError.offset(j as isize);
         j += 1
     }
     // put all the aproximating points on the curve
@@ -1560,8 +1405,8 @@ pub unsafe extern "C" fn R_GridInsertRow(
     if height > 65 {
         return 0 as *mut crate::tr_local_h::srfGridMesh_t;
     }
-    i = 0;
-    while i < height {
+
+    for i in 0..height {
         if i == row {
             //insert new row
             j = 0;
@@ -1580,19 +1425,15 @@ pub unsafe extern "C" fn R_GridInsertRow(
                         .offset(j as isize),
                 );
                 if j == column {
-                    ctrl[i as usize][j as usize].xyz[0] =
-                        *point.offset(0);
-                    ctrl[i as usize][j as usize].xyz[1] =
-                        *point.offset(1);
-                    ctrl[i as usize][j as usize].xyz[2] =
-                        *point.offset(2)
+                    ctrl[i as usize][j as usize].xyz[0] = *point.offset(0);
+                    ctrl[i as usize][j as usize].xyz[1] = *point.offset(1);
+                    ctrl[i as usize][j as usize].xyz[2] = *point.offset(2)
                 }
                 j += 1
             }
             errorTable[1][i as usize] = loderror
         } else {
-            errorTable[1][i as usize] =
-                *(*grid).heightLodError.offset(oldheight as isize);
+            errorTable[1][i as usize] = *(*grid).heightLodError.offset(oldheight as isize);
             j = 0;
             while j < (*grid).width {
                 ctrl[i as usize][j as usize] = *(*grid)
@@ -1603,12 +1444,10 @@ pub unsafe extern "C" fn R_GridInsertRow(
             }
             oldheight += 1
         }
-        i += 1
     }
     j = 0;
     while j < (*grid).width {
-        errorTable[0][j as usize] =
-            *(*grid).widthLodError.offset(j as isize);
+        errorTable[0][j as usize] = *(*grid).widthLodError.offset(j as isize);
         j += 1
     }
     // put all the aproximating points on the curve

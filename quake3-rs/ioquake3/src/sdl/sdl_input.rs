@@ -1279,10 +1279,11 @@ unsafe extern "C" fn IN_IsConsoleKey(
     if key == character as u32 {
         key = 0u32
     }
-    i = 0;
-    while i < numConsoleKeys {
+
+    for i in 0..numConsoleKeys {
         let mut c_0: *mut consoleKey_t =
             &mut *consoleKeys.as_mut_ptr().offset(i as isize) as *mut consoleKey_t;
+
         match (*c_0).type_0 {
             0 => {
                 if key != 0 && (*c_0).u.key == key {
@@ -1296,7 +1297,6 @@ unsafe extern "C" fn IN_IsConsoleKey(
             }
             _ => {}
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qfalse;
 }
@@ -1624,19 +1624,19 @@ unsafe extern "C" fn IN_InitJoystick() {
         total,
     );
     // Print list and build cvar to allow ui to select joystick.
-    i = 0;
-    while i < total {
+
+    for i in 0..total {
         crate::src::qcommon::q_shared::Q_strcat(
             buf.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 16384]>() as i32,
             crate::stdlib::SDL_JoystickNameForIndex(i),
         );
+
         crate::src::qcommon::q_shared::Q_strcat(
             buf.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 16384]>() as i32,
             b"\n\x00" as *const u8 as *const i8,
         );
-        i += 1
     }
     crate::src::qcommon::cvar::Cvar_Get(
         b"in_availableJoysticks\x00" as *const u8 as *const i8,

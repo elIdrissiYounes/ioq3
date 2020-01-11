@@ -1752,14 +1752,14 @@ pub unsafe extern "C" fn ArenaServers_LoadFavorites() {
         (::std::mem::size_of::<servernode_t>()).wrapping_mul(16usize),
     );
     g_numfavoriteservers = 0;
-    // resync existing results with new or deleted cvars
-    i = 0;
-    while i < 16 {
+
+    for i in 0..16 {
         crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer(
             crate::src::qcommon::q_shared::va(b"server%d\x00" as *const u8 as *mut i8, i + 1i32),
             adrstr.as_mut_ptr(),
             64,
         );
+
         if !(adrstr[0] == 0) {
             // favorite server addresses must be maintained outside refresh list
             // this mimics local and global netadr's stored in client
@@ -1806,7 +1806,6 @@ pub unsafe extern "C" fn ArenaServers_LoadFavorites() {
             }
             g_numfavoriteservers += 1
         }
-        i += 1
     }
     g_arenaservers.numfavoriteaddresses = g_numfavoriteservers;
     if found as u64 == 0 {
@@ -2051,11 +2050,11 @@ unsafe extern "C" fn ArenaServers_StartRefresh() {
         0,
         (g_arenaservers.maxservers as usize).wrapping_mul(::std::mem::size_of::<table_t>()),
     );
-    i = 0;
-    while i < 32 {
+
+    for i in 0..32 {
         g_arenaservers.pinglist[i as usize].adrstr[0] = '\u{0}' as i8;
+
         crate::src::ui::ui_syscalls::trap_LAN_ClearPing(i);
-        i += 1
     }
     g_arenaservers.refreshservers = crate::src::qcommon::q_shared::qtrue;
     g_arenaservers.currentping = 0;
@@ -2536,10 +2535,9 @@ unsafe extern "C" fn ArenaServers_MenuInit() {
     g_arenaservers.list.width = 68;
     g_arenaservers.list.height = 11;
     g_arenaservers.list.itemnames = g_arenaservers.items.as_mut_ptr() as *mut *const i8;
-    i = 0;
-    while i < 128 {
+
+    for i in 0..128 {
         g_arenaservers.items[i as usize] = g_arenaservers.table[i as usize].buff.as_mut_ptr();
-        i += 1
     }
     g_arenaservers.mappic.generic.type_0 = 6;
     g_arenaservers.mappic.generic.flags = 0x4 | 0x4000;

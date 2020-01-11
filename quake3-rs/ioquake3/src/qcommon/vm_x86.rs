@@ -1757,11 +1757,10 @@ pub unsafe extern "C" fn VM_CallCompiled(
     // set up the stack frame
     image = (*vm).dataBase; // return stack
     programStack -= 8 + 4 * 13; // will terminate the loop on return
-    arg = 0;
-    while arg < 13 {
+
+    for arg in 0..13 {
         *(&mut *image.offset((programStack + 8 + arg * 4) as isize)
             as *mut crate::src::qcommon::q_shared::byte as *mut i32) = *args.offset(arg as isize);
-        arg += 1
     }
     *(&mut *image.offset((programStack + 4) as isize) as *mut crate::src::qcommon::q_shared::byte
         as *mut i32) = 0;

@@ -396,12 +396,11 @@ pub unsafe extern "C" fn silk_gains_ID(
     let mut k: i32 = 0;
     let mut gainsID: crate::opus_types_h::opus_int32 = 0;
     gainsID = 0;
-    k = 0;
-    while k < nb_subfr {
+
+    for k in 0..nb_subfr {
         gainsID = *ind.offset(k as isize) as i32
             + ((gainsID as crate::opus_types_h::opus_uint32) << 8)
                 as crate::opus_types_h::opus_int32;
-        k += 1
     }
     return gainsID;
 }

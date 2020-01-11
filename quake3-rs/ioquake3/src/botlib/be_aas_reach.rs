@@ -349,50 +349,59 @@ pub unsafe extern "C" fn AAS_FaceArea(mut face: *mut crate::aasfile_h::aas_face_
         .offset((*edge).v[side as usize] as isize))
     .as_mut_ptr();
     total = 0f32;
-    i = 1;
-    while i < (*face).numedges - 1 {
+
+    for i in 1..(*face).numedges - 1 {
         edgenum = *crate::src::botlib::be_aas_main::aasworld
             .edgeindex
             .offset(((*face).firstedge + i) as isize);
+
         side = (edgenum < 0) as i32;
+
         edge = &mut *crate::src::botlib::be_aas_main::aasworld
             .edges
             .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(edgenum) as isize)
             as *mut crate::aasfile_h::aas_edge_t;
+
         d1[0] = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[side as usize] as isize))[0]
             - *v.offset(0);
+
         d1[1] = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[side as usize] as isize))[1]
             - *v.offset(1);
+
         d1[2] = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[side as usize] as isize))[2]
             - *v.offset(2);
+
         d2[0] = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[(side == 0) as i32 as usize] as isize))[0]
             - *v.offset(0);
+
         d2[1] = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[(side == 0) as i32 as usize] as isize))[1]
             - *v.offset(1);
+
         d2[2] = (*crate::src::botlib::be_aas_main::aasworld
             .vertexes
             .offset((*edge).v[(side == 0) as i32 as usize] as isize))[2]
             - *v.offset(2);
+
         CrossProduct(
             d1.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             d2.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             cross.as_mut_ptr(),
         );
+
         total = (total as f64
             + 0.5
                 * VectorLength(cross.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t)
                     as f64) as f32;
-        i += 1
     }
     return total;
 }
@@ -448,28 +457,33 @@ pub unsafe extern "C" fn AAS_AreaVolume(mut areanum: i32) -> f32 {
         .offset((*edge).v[0] as isize))[2];
     //make tetrahedrons to all other faces
     volume = 0f32; //end for
-    i = 0;
-    while i < (*area).numfaces {
+
+    for i in 0..(*area).numfaces {
         facenum = crate::stdlib::abs(
             *crate::src::botlib::be_aas_main::aasworld
                 .faceindex
                 .offset(((*area).firstface + i) as isize),
         );
+
         face = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(facenum as isize) as *mut crate::aasfile_h::aas_face_t;
+
         side = ((*face).backarea != areanum) as i32;
+
         plane = &mut *crate::src::botlib::be_aas_main::aasworld
             .planes
             .offset(((*face).planenum ^ side) as isize)
             as *mut crate::aasfile_h::aas_plane_t;
+
         d = -(corner[0] * (*plane).normal[0]
             + corner[1] * (*plane).normal[1]
             + corner[2] * (*plane).normal[2]
             - (*plane).dist);
+
         a = AAS_FaceArea(face);
+
         volume += d * a;
-        i += 1
     }
     volume /= 3f32;
     return volume;
@@ -996,11 +1010,11 @@ pub unsafe extern "C" fn AAS_SetupReachabilityHeap() {
     reachabilityheap = crate::src::botlib::l_memory::GetClearedMemory(
         (65536i32 as usize).wrapping_mul(::std::mem::size_of::<aas_lreachability_t>()),
     ) as *mut aas_lreachability_t;
-    i = 0;
-    while i < 65536 - 1 {
+
+    for i in 0..65536 - 1 {
         let ref mut fresh1 = (*reachabilityheap.offset(i as isize)).next;
+
         *fresh1 = &mut *reachabilityheap.offset((i + 1) as isize) as *mut aas_lreachability_t;
-        i += 1
     }
     let ref mut fresh2 = (*reachabilityheap.offset((65536i32 - 1) as isize)).next;
     *fresh2 = 0 as *mut aas_lreachability_s;
@@ -1109,8 +1123,8 @@ pub unsafe extern "C" fn AAS_AreaGroundFaceArea(mut areanum: i32) -> f32 {
     area = &mut *crate::src::botlib::be_aas_main::aasworld
         .areas
         .offset(areanum as isize) as *mut crate::aasfile_h::aas_area_t;
-    i = 0;
-    while i < (*area).numfaces {
+
+    for i in 0..(*area).numfaces {
         face = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(
@@ -1118,11 +1132,11 @@ pub unsafe extern "C" fn AAS_AreaGroundFaceArea(mut areanum: i32) -> f32 {
                     .faceindex
                     .offset(((*area).firstface + i) as isize),
             ) as isize) as *mut crate::aasfile_h::aas_face_t;
+
         if !((*face).faceflags & 4 == 0) {
             //
             total += AAS_FaceArea(face)
         }
-        i += 1
     }
     return total;
 }
@@ -1152,8 +1166,8 @@ pub unsafe extern "C" fn AAS_FaceCenter(
     let ref mut fresh4 = *center.offset(1);
     *fresh4 = *fresh3;
     *center.offset(0) = *fresh4;
-    i = 0;
-    while i < (*face).numedges {
+
+    for i in 0..(*face).numedges {
         edge = &mut *crate::src::botlib::be_aas_main::aasworld
             .edges
             .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(
@@ -1161,31 +1175,36 @@ pub unsafe extern "C" fn AAS_FaceCenter(
                     .edgeindex
                     .offset(((*face).firstedge + i) as isize),
             ) as isize) as *mut crate::aasfile_h::aas_edge_t;
+
         *center.offset(0) = *center.offset(0)
             + (*crate::src::botlib::be_aas_main::aasworld
                 .vertexes
                 .offset((*edge).v[0] as isize))[0];
+
         *center.offset(1) = *center.offset(1)
             + (*crate::src::botlib::be_aas_main::aasworld
                 .vertexes
                 .offset((*edge).v[0] as isize))[1];
+
         *center.offset(2) = *center.offset(2)
             + (*crate::src::botlib::be_aas_main::aasworld
                 .vertexes
                 .offset((*edge).v[0] as isize))[2];
+
         *center.offset(0) = *center.offset(0)
             + (*crate::src::botlib::be_aas_main::aasworld
                 .vertexes
                 .offset((*edge).v[1] as isize))[0];
+
         *center.offset(1) = *center.offset(1)
             + (*crate::src::botlib::be_aas_main::aasworld
                 .vertexes
                 .offset((*edge).v[1] as isize))[1];
+
         *center.offset(2) = *center.offset(2)
             + (*crate::src::botlib::be_aas_main::aasworld
                 .vertexes
                 .offset((*edge).v[1] as isize))[2];
-        i += 1
     }
     scale = (0.5 / (*face).numedges as f64) as f32;
     *center.offset(0) = *center.offset(0) * scale;
@@ -1650,15 +1669,14 @@ pub unsafe extern "C" fn AAS_Reachability_Swim(mut area1num: i32, mut area2num: 
         side1 = (face1num < 0) as i32;
         face1num = crate::stdlib::abs(face1num);
         //end for
-        j = 0;
-        while j < (*area2).numfaces {
+
+        for j in 0..(*area2).numfaces {
             face2num = crate::stdlib::abs(
                 *crate::src::botlib::be_aas_main::aasworld
                     .faceindex
                     .offset(((*area2).firstface + j) as isize),
             );
-            //
-            //end if
+
             if face1num == face2num {
                 AAS_FaceCenter(face1num, start.as_mut_ptr());
                 //
@@ -1706,7 +1724,6 @@ pub unsafe extern "C" fn AAS_Reachability_Swim(mut area1num: i32, mut area2num: 
                     return crate::src::qcommon::q_shared::qtrue as i32;
                 }
             }
-            j += 1
         }
         i += 1
     }
@@ -1829,8 +1846,7 @@ pub unsafe extern "C" fn AAS_Reachability_EqualFloorHeight(
                     //if there is a common edge
                     edgenum1 = 0;
                     while edgenum1 < (*face1).numedges {
-                        edgenum2 = 0;
-                        while edgenum2 < (*face2).numedges {
+                        for edgenum2 in 0..(*face2).numedges {
                             if !(crate::stdlib::abs(
                                 *crate::src::botlib::be_aas_main::aasworld
                                     .edgeindex
@@ -1980,8 +1996,6 @@ pub unsafe extern "C" fn AAS_Reachability_EqualFloorHeight(
                                     foundreach = crate::src::qcommon::q_shared::qtrue as i32
                                 }
                             }
-                            edgenum2 += 1
-                            //end if
                         }
                         edgenum1 += 1
                         //end for
@@ -2250,8 +2264,8 @@ pub unsafe extern "C" fn AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(
                     );
                     crate::src::qcommon::q_math::VectorNormalize(normal.as_mut_ptr());
                     dist = normal[0] * v1[0] + normal[1] * v1[1] + normal[2] * v1[2];
-                    j = 0;
-                    while j < (*area2).numfaces {
+
+                    for j in 0..(*area2).numfaces {
                         groundface2 = &mut *crate::src::botlib::be_aas_main::aasworld.faces.offset(
                             (crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(
                                 *crate::src::botlib::be_aas_main::aasworld
@@ -2260,16 +2274,7 @@ pub unsafe extern "C" fn AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(
                             ) as isize,
                         )
                             as *mut crate::aasfile_h::aas_face_t;
-                        //NOTE: for water faces we must take the side area 1 is
-                        // on into account because the face is shared and doesn't
-                        // have to be oriented correctly
-                        //vertexes of the edge
-                        //get a vertical plane through the edge
-                        //NOTE: normal is pointing into area 2 because the
-                        //face edges are stored counter clockwise
-                        //check the faces from the second area
-                        //end for
-                        //must be a ground face
+
                         if !((*groundface2).faceflags & 4 == 0) {
                             //check the edges of this ground face
                             l = 0;
@@ -2570,7 +2575,6 @@ pub unsafe extern "C" fn AAS_Reachability_Step_Barrier_WaterJump_WalkOffLedge(
                                 l += 1
                             }
                         }
-                        j += 1
                     }
                     k += 1
                 }
@@ -3779,45 +3783,49 @@ pub unsafe extern "C" fn AAS_Reachability_Jump(mut area1num: i32, mut area2num: 
                             .edges
                             .offset(edge1num as isize)
                             as *mut crate::aasfile_h::aas_edge_t;
-                        l = 0;
-                        while l < (*face2).numedges {
+
+                        for l in 0..(*face2).numedges {
                             edge2num = crate::stdlib::abs(
                                 *crate::src::botlib::be_aas_main::aasworld
                                     .edgeindex
                                     .offset(((*face2).firstedge + l) as isize),
                             );
+
                             edge2 = &mut *crate::src::botlib::be_aas_main::aasworld
                                 .edges
                                 .offset(edge2num as isize)
                                 as *mut crate::aasfile_h::aas_edge_t;
-                            //end for
-                            //calculate the minimum distance between the two edges
+
                             v1 = (*crate::src::botlib::be_aas_main::aasworld
                                 .vertexes
                                 .offset((*edge1).v[0] as isize))
                             .as_mut_ptr();
+
                             v2 = (*crate::src::botlib::be_aas_main::aasworld
                                 .vertexes
                                 .offset((*edge1).v[1] as isize))
                             .as_mut_ptr();
+
                             v3 = (*crate::src::botlib::be_aas_main::aasworld
                                 .vertexes
                                 .offset((*edge2).v[0] as isize))
                             .as_mut_ptr();
+
                             v4 = (*crate::src::botlib::be_aas_main::aasworld
                                 .vertexes
                                 .offset((*edge2).v[1] as isize))
                             .as_mut_ptr();
-                            //get the ground planes
+
                             plane1 = &mut *crate::src::botlib::be_aas_main::aasworld
                                 .planes
                                 .offset((*face1).planenum as isize)
                                 as *mut crate::aasfile_h::aas_plane_t;
+
                             plane2 = &mut *crate::src::botlib::be_aas_main::aasworld
                                 .planes
                                 .offset((*face2).planenum as isize)
                                 as *mut crate::aasfile_h::aas_plane_t;
-                            //
+
                             bestdist = AAS_ClosestEdgePoints(
                                 v1,
                                 v2,
@@ -3830,8 +3838,7 @@ pub unsafe extern "C" fn AAS_Reachability_Jump(mut area1num: i32, mut area2num: 
                                 beststart2.as_mut_ptr(),
                                 bestend2.as_mut_ptr(),
                                 bestdist,
-                            ); //end if
-                            l += 1
+                            );
                         }
                         k += 1
                     }
@@ -5505,19 +5512,21 @@ pub unsafe extern "C" fn AAS_Reachability_Elevator() {
                                         yvals_top[5] = maxs[1];
                                         yvals_top[6] = mins[1];
                                         yvals_top[7] = mins[1];
-                                        j = 0;
-                                        while j < 8 {
+
+                                        for j in 0..8 {
                                             toporg[0] = origin[0] + xvals_top[j as usize];
+
                                             toporg[1] = origin[1] + yvals_top[j as usize];
+
                                             toporg[2] = plattop[2] + 16f32;
-                                            //
-                                            //
-                                            //get a grounded or swim area near the plat in the top position
+
                                             area2num =
                                                 crate::src::botlib::be_aas_sample::AAS_PointAreaNum(
                                                     toporg.as_mut_ptr(),
-                                                ); //end if
-                                            l = 0; //end if
+                                                );
+
+                                            l = 0;
+
                                             while l < 16 {
                                                 if area2num != 0 {
                                                     if AAS_AreaGrounded(area2num) != 0
@@ -5547,7 +5556,7 @@ pub unsafe extern "C" fn AAS_Reachability_Elevator() {
                                                     crate::src::botlib::be_aas_sample::AAS_PointAreaNum(toporg.as_mut_ptr());
                                                 l += 1
                                             }
-                                            //if in solid
+
                                             if !(l >= 16) {
                                                 //never create a reachability in the same area
                                                 if !(area2num == area1num) {
@@ -5634,7 +5643,6 @@ pub unsafe extern "C" fn AAS_Reachability_Elevator() {
                                                     }
                                                 }
                                             }
-                                            j += 1
                                         }
                                         n += 1
                                     }
@@ -5705,26 +5713,24 @@ pub unsafe extern "C" fn AAS_FindFaceReachabilities(
     bestfaceplane = 0 as *mut crate::aasfile_h::aas_plane_t;
     let mut current_block_61: u64;
     //
-    i = 1; //end for
-    while i < crate::src::botlib::be_aas_main::aasworld.numareas {
+    //end for
+    for i in 1..crate::src::botlib::be_aas_main::aasworld.numareas {
         area = &mut *crate::src::botlib::be_aas_main::aasworld
             .areas
             .offset(i as isize) as *mut crate::aasfile_h::aas_area_t;
-        // get the shortest distance between one of the func_bob start edges and
-        // one of the face edges of area1
-        bestdist = 999999f32; //end for
-        j = 0;
-        while j < (*area).numfaces {
+
+        bestdist = 999999f32;
+        for j in 0..(*area).numfaces {
             facenum = *crate::src::botlib::be_aas_main::aasworld
                 .faceindex
                 .offset(((*area).firstface + j) as isize);
+
             face = &mut *crate::src::botlib::be_aas_main::aasworld
                 .faces
                 .offset(
                     (crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(facenum) as isize,
                 ) as *mut crate::aasfile_h::aas_face_t;
-            //end for
-            //if not a ground face
+
             if !((*face).faceflags & 4 == 0) {
                 //get the ground planes
                 faceplane = &mut *crate::src::botlib::be_aas_main::aasworld
@@ -5752,10 +5758,12 @@ pub unsafe extern "C" fn AAS_FindFaceReachabilities(
                         .vertexes
                         .offset((*edge).v[1] as isize))
                     .as_mut_ptr();
-                    l = 0;
-                    while l < numpoints {
+
+                    for l in 0..numpoints {
                         v3 = (*facepoints.offset(l as isize)).as_mut_ptr();
+
                         v4 = (*facepoints.offset(((l + 1) % numpoints) as isize)).as_mut_ptr();
+
                         dist = AAS_ClosestEdgePoints(
                             v1,
                             v2,
@@ -5769,22 +5777,18 @@ pub unsafe extern "C" fn AAS_FindFaceReachabilities(
                             bestend2.as_mut_ptr(),
                             bestdist,
                         );
+
                         if dist < bestdist {
                             bestfacenum = facenum;
                             bestfaceplane = faceplane;
                             bestdist = dist
                         }
-                        l += 1
-                        //calculate the minimum distance between the two edges
-                        //
-                        //end if
                     }
                     k += 1
                 }
             }
-            j += 1
         }
-        //
+
         if !(bestdist > 192f32) {
             //
             VectorMiddle(
@@ -5929,7 +5933,6 @@ pub unsafe extern "C" fn AAS_FindFaceReachabilities(
                 }
             }
         }
-        i += 1
     }
     return lreachabilities;
 }
@@ -7070,16 +7073,17 @@ pub unsafe extern "C" fn AAS_Reachability_Grapple(mut area1num: i32, mut area2nu
     //
     //start is now the start point
     //
-    i = 0; //end for
-    while i < (*area2).numfaces {
+    //end for
+    for i in 0..(*area2).numfaces {
         face2num = *crate::src::botlib::be_aas_main::aasworld
             .faceindex
             .offset(((*area2).firstface + i) as isize);
+
         face2 = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(face2num) as isize)
             as *mut crate::aasfile_h::aas_face_t;
-        //if it is not a solid face
+
         if !((*face2).faceflags & 1 == 0) {
             //direction towards the first vertex of the face
             v = (*crate::src::botlib::be_aas_main::aasworld.vertexes.offset(
@@ -7363,7 +7367,6 @@ pub unsafe extern "C" fn AAS_Reachability_Grapple(mut area1num: i32, mut area2nu
                 }
             }
         }
-        i += 1
     }
     //
     return crate::src::qcommon::q_shared::qfalse as i32;
@@ -7501,8 +7504,8 @@ pub unsafe extern "C" fn AAS_SetWeaponJumpAreaFlags() {
         ent = crate::src::botlib::be_aas_bspq3::AAS_NextBSPEntity(ent)
         //end if
     } //end for
-    i = 1;
-    while i < crate::src::botlib::be_aas_main::aasworld.numareas {
+
+    for i in 1..crate::src::botlib::be_aas_main::aasworld.numareas {
         if (*crate::src::botlib::be_aas_main::aasworld
             .areasettings
             .offset(i as isize))
@@ -7516,8 +7519,6 @@ pub unsafe extern "C" fn AAS_SetWeaponJumpAreaFlags() {
             .areaflags |= 8192;
             weaponjumpareas += 1
         }
-        i += 1
-        //end if
     }
     botimport.Print.expect("non-null function pointer")(
         1,
@@ -7661,17 +7662,17 @@ pub unsafe extern "C" fn AAS_Reachability_WeaponJump(mut area1num: i32, mut area
     //
     //areastart is now the start point
     //
-    i = 0; //end for
-    while i < (*area2).numfaces {
+    //end for
+    for i in 0..(*area2).numfaces {
         face2num = *crate::src::botlib::be_aas_main::aasworld
             .faceindex
             .offset(((*area2).firstface + i) as isize);
+
         face2 = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(face2num) as isize)
             as *mut crate::aasfile_h::aas_face_t;
-        //end for
-        //if it is not a solid face
+
         if !((*face2).faceflags & 4 == 0) {
             //get the center of the face
             AAS_FaceCenter(face2num, facecenter.as_mut_ptr());
@@ -7778,7 +7779,6 @@ pub unsafe extern "C" fn AAS_Reachability_WeaponJump(mut area1num: i32, mut area
                 }
             }
         }
-        i += 1
     }
     //if prediction time wasn't enough to fully predict the movement
     //don't enter slime or lava and don't fall from too high
@@ -7867,20 +7867,19 @@ pub unsafe extern "C" fn AAS_Reachability_WalkOffLedge(mut areanum: i32) {
                     .edgeindex
                     .offset(((*face1).firstedge + k) as isize);
                 //end for
-                j = 0;
-                while j < (*area).numfaces {
+
+                for j in 0..(*area).numfaces {
                     face2num = *crate::src::botlib::be_aas_main::aasworld
                         .faceindex
                         .offset(((*area).firstface + j) as isize);
+
                     face2 = &mut *crate::src::botlib::be_aas_main::aasworld
                         .faces
                         .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(
                             face2num,
                         ) as isize)
                         as *mut crate::aasfile_h::aas_face_t;
-                    //find another not ground face using this same edge
-                    //end for
-                    //face 2 may not be a ground face
+
                     if !((*face2).faceflags & 4 != 0) {
                         //compare all the edges
                         l = 0;
@@ -7912,12 +7911,12 @@ pub unsafe extern "C" fn AAS_Reachability_WalkOffLedge(mut areanum: i32) {
                                     //end if
                                     //check for a possible gap
                                     gap = crate::src::qcommon::q_shared::qfalse as i32; //end for
-                                    n = 0;
-                                    while n < (*area2).numfaces {
+
+                                    for n in 0..(*area2).numfaces {
                                         face3num = *crate::src::botlib::be_aas_main::aasworld
                                             .faceindex
                                             .offset(((*area2).firstface + n) as isize);
-                                        //may not be the shared face of the two areas
+
                                         if !(crate::stdlib::abs(face3num)
                                             == crate::stdlib::abs(face2num))
                                         {
@@ -7966,7 +7965,6 @@ pub unsafe extern "C" fn AAS_Reachability_WalkOffLedge(mut areanum: i32) {
                                                 break;
                                             }
                                         }
-                                        n += 1
                                     }
                                     if gap == 0 {
                                         break;
@@ -8157,7 +8155,6 @@ pub unsafe extern "C" fn AAS_Reachability_WalkOffLedge(mut areanum: i32) {
                             l += 1
                         }
                     }
-                    j += 1
                 }
                 k += 1
             }

@@ -99,16 +99,10 @@ unsafe extern "C" fn start_iMCU_row(mut cinfo: crate::jpeglib_h::j_decompress_pt
      */
     if (*cinfo).comps_in_scan > 1 {
         (*coef).MCU_rows_per_iMCU_row = 1
-    } else if (*cinfo).input_iMCU_row
-        < (*cinfo)
-            .total_iMCU_rows
-            .wrapping_sub(1u32)
-    {
-        (*coef).MCU_rows_per_iMCU_row =
-            (*(*cinfo).cur_comp_info[0]).v_samp_factor
+    } else if (*cinfo).input_iMCU_row < (*cinfo).total_iMCU_rows.wrapping_sub(1u32) {
+        (*coef).MCU_rows_per_iMCU_row = (*(*cinfo).cur_comp_info[0]).v_samp_factor
     } else {
-        (*coef).MCU_rows_per_iMCU_row =
-            (*(*cinfo).cur_comp_info[0]).last_row_height
+        (*coef).MCU_rows_per_iMCU_row = (*(*cinfo).cur_comp_info[0]).last_row_height
     }
     (*coef).MCU_ctr = 0;
     (*coef).MCU_vert_offset = 0;
@@ -166,12 +160,9 @@ unsafe extern "C" fn decompress_onepass(
 ) -> i32 {
     let mut coef: my_coef_ptr = (*cinfo).coef as my_coef_ptr; /* index of current MCU within row */
     let mut MCU_col_num: crate::jmorecfg_h::JDIMENSION = 0;
-    let mut last_MCU_col: crate::jmorecfg_h::JDIMENSION = (*cinfo)
-        .MCUs_per_row
-        .wrapping_sub(1u32);
-    let mut last_iMCU_row: crate::jmorecfg_h::JDIMENSION = (*cinfo)
-        .total_iMCU_rows
-        .wrapping_sub(1u32);
+    let mut last_MCU_col: crate::jmorecfg_h::JDIMENSION = (*cinfo).MCUs_per_row.wrapping_sub(1u32);
+    let mut last_iMCU_row: crate::jmorecfg_h::JDIMENSION =
+        (*cinfo).total_iMCU_rows.wrapping_sub(1u32);
     let mut blkn: i32 = 0;
     let mut ci: i32 = 0;
     let mut xindex: i32 = 0;
@@ -184,19 +175,16 @@ unsafe extern "C" fn decompress_onepass(
     let mut compptr: *mut crate::jpeglib_h::jpeg_component_info =
         0 as *mut crate::jpeglib_h::jpeg_component_info;
     let mut inverse_DCT: crate::jpegint_h::inverse_DCT_method_ptr = None;
-    /* Loop to process as much as one whole iMCU row */
-    yoffset = (*coef).MCU_vert_offset;
-    while yoffset < (*coef).MCU_rows_per_iMCU_row {
+
+    for yoffset in (*coef).MCU_vert_offset..(*coef).MCU_rows_per_iMCU_row {
         MCU_col_num = (*coef).MCU_ctr;
+
         while MCU_col_num <= last_MCU_col {
             /* Try to fetch an MCU.  Entropy decoder expects buffer to be zeroed. */
             crate::src::jpeg_8c::jutils::jzero_far(
                 (*coef).MCU_buffer[0] as *mut libc::c_void,
                 ((*cinfo).blocks_in_MCU as usize)
-                    .wrapping_mul(
-                        
-                        ::std::mem::size_of::<crate::jpeglib_h::JBLOCK>()
-                    ),
+                    .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>()),
             );
             if Some(
                 (*(*cinfo).entropy)
@@ -218,8 +206,8 @@ unsafe extern "C" fn decompress_onepass(
              * allocated the MCU_buffer[] blocks sequentially.
              */
             blkn = 0; /* index of current DCT block within MCU */
-            ci = 0;
-            while ci < (*cinfo).comps_in_scan {
+
+            for ci in 0..(*cinfo).comps_in_scan {
                 compptr = (*cinfo).cur_comp_info[ci as usize];
                 /* Don't bother to IDCT an uninteresting component. */
                 if (*compptr).component_needed == 0 {
@@ -233,8 +221,7 @@ unsafe extern "C" fn decompress_onepass(
                     };
                     output_ptr = (*output_buf.offset((*compptr).component_index as isize))
                         .offset((yoffset * (*compptr).DCT_v_scaled_size) as isize);
-                    start_col =
-                        MCU_col_num.wrapping_mul((*compptr).MCU_sample_width as u32);
+                    start_col = MCU_col_num.wrapping_mul((*compptr).MCU_sample_width as u32);
                     yindex = 0;
                     while yindex < (*compptr).MCU_height {
                         if (*cinfo).input_iMCU_row < last_iMCU_row
@@ -252,8 +239,8 @@ unsafe extern "C" fn decompress_onepass(
                                     output_ptr,
                                     output_col,
                                 );
-                                output_col =  (output_col)
-                                    .wrapping_add((*compptr).DCT_h_scaled_size as u32);
+                                output_col =
+                                    (output_col).wrapping_add((*compptr).DCT_h_scaled_size as u32);
                                 xindex += 1
                             }
                         }
@@ -262,13 +249,11 @@ unsafe extern "C" fn decompress_onepass(
                         yindex += 1
                     }
                 }
-                ci += 1
             }
             MCU_col_num = MCU_col_num.wrapping_add(1)
         }
         /* Completed an MCU row, but perhaps not an iMCU row */
         (*coef).MCU_ctr = 0;
-        yoffset += 1
     }
     /* Completed the iMCU row, advance counters for next one */
     (*cinfo).output_iMCU_row = (*cinfo).output_iMCU_row.wrapping_add(1);
@@ -290,9 +275,7 @@ unsafe extern "C" fn decompress_onepass(
  * Dummy consume-input routine for single-pass operation.
  */
 
-unsafe extern "C" fn dummy_consume_data(
-    mut cinfo: crate::jpeglib_h::j_decompress_ptr,
-) -> i32 {
+unsafe extern "C" fn dummy_consume_data(mut cinfo: crate::jpeglib_h::j_decompress_ptr) -> i32 {
     return 0;
     /* Always indicate nothing was done */
 }
@@ -340,10 +323,10 @@ unsafe extern "C" fn consume_data(mut cinfo: crate::jpeglib_h::j_decompress_ptr)
          * because we requested a pre-zeroed array.
          */
     }
-    /* Loop to process one whole iMCU row */
-    yoffset = (*coef).MCU_vert_offset;
-    while yoffset < (*coef).MCU_rows_per_iMCU_row {
+
+    for yoffset in (*coef).MCU_vert_offset..(*coef).MCU_rows_per_iMCU_row {
         MCU_col_num = (*coef).MCU_ctr;
+
         while MCU_col_num < (*cinfo).MCUs_per_row {
             /* Construct list of pointers to DCT blocks belonging to this MCU */
             blkn = 0; /* index of current DCT block within MCU */
@@ -351,20 +334,21 @@ unsafe extern "C" fn consume_data(mut cinfo: crate::jpeglib_h::j_decompress_ptr)
             while ci < (*cinfo).comps_in_scan {
                 compptr = (*cinfo).cur_comp_info[ci as usize];
                 start_col = MCU_col_num.wrapping_mul((*compptr).MCU_width as u32);
-                yindex = 0;
-                while yindex < (*compptr).MCU_height {
+
+                for yindex in 0..(*compptr).MCU_height {
                     buffer_ptr = (*buffer[ci as usize].offset((yindex + yoffset) as isize))
                         .offset(start_col as isize);
-                    xindex = 0;
-                    while xindex < (*compptr).MCU_width {
+                    for xindex in 0..(*compptr).MCU_width {
                         let fresh0 = buffer_ptr;
+
                         buffer_ptr = buffer_ptr.offset(1);
+
                         let fresh1 = blkn;
+
                         blkn = blkn + 1;
+
                         (*coef).MCU_buffer[fresh1 as usize] = fresh0;
-                        xindex += 1
                     }
-                    yindex += 1
                 }
                 ci += 1
             }
@@ -387,7 +371,6 @@ unsafe extern "C" fn consume_data(mut cinfo: crate::jpeglib_h::j_decompress_ptr)
         }
         /* Completed an MCU row, but perhaps not an iMCU row */
         (*coef).MCU_ctr = 0;
-        yoffset += 1
     }
     /* Completed the iMCU row, advance counters for next one */
     (*cinfo).input_iMCU_row = (*cinfo).input_iMCU_row.wrapping_add(1);
@@ -417,9 +400,8 @@ unsafe extern "C" fn decompress_data(
     mut output_buf: crate::jpeglib_h::JSAMPIMAGE,
 ) -> i32 {
     let mut coef: my_coef_ptr = (*cinfo).coef as my_coef_ptr;
-    let mut last_iMCU_row: crate::jmorecfg_h::JDIMENSION = (*cinfo)
-        .total_iMCU_rows
-        .wrapping_sub(1u32);
+    let mut last_iMCU_row: crate::jmorecfg_h::JDIMENSION =
+        (*cinfo).total_iMCU_rows.wrapping_sub(1u32);
     let mut block_num: crate::jmorecfg_h::JDIMENSION = 0;
     let mut ci: i32 = 0;
     let mut block_row: i32 = 0;
@@ -499,8 +481,7 @@ unsafe extern "C" fn decompress_data(
                         output_col,
                     );
                     buffer_ptr = buffer_ptr.offset(1);
-                    output_col =  (output_col)
-                        .wrapping_add((*compptr).DCT_h_scaled_size as u32);
+                    output_col = (output_col).wrapping_add((*compptr).DCT_h_scaled_size as u32);
                     block_num = block_num.wrapping_add(1)
                 }
                 output_ptr = output_ptr.offset((*compptr).DCT_v_scaled_size as isize);
@@ -549,10 +530,8 @@ unsafe extern "C" fn smoothing_ok(
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
             1,
-            ((*cinfo).num_components as usize).wrapping_mul(
-                (6usize)
-                    .wrapping_mul(::std::mem::size_of::<i32>()),
-            ),
+            ((*cinfo).num_components as usize)
+                .wrapping_mul((6usize).wrapping_mul(::std::mem::size_of::<i32>())),
         ) as *mut i32
     }
     coef_bits_latch = (*coef).coef_bits_latch;
@@ -579,14 +558,13 @@ unsafe extern "C" fn smoothing_ok(
         if *coef_bits.offset(0) < 0 {
             return 0i32;
         }
-        /* Block smoothing is helpful if some AC coefficients remain inaccurate. */
-        coefi = 1;
-        while coefi <= 5 {
+
+        for coefi in 1..=5 {
             *coef_bits_latch.offset(coefi as isize) = *coef_bits.offset(coefi as isize);
+
             if *coef_bits.offset(coefi as isize) != 0 {
                 smoothing_useful = 1
             }
-            coefi += 1
         }
         coef_bits_latch = coef_bits_latch.offset(6);
         ci += 1;
@@ -603,9 +581,8 @@ unsafe extern "C" fn decompress_smooth_data(
     mut output_buf: crate::jpeglib_h::JSAMPIMAGE,
 ) -> i32 {
     let mut coef: my_coef_ptr = (*cinfo).coef as my_coef_ptr;
-    let mut last_iMCU_row: crate::jmorecfg_h::JDIMENSION = (*cinfo)
-        .total_iMCU_rows
-        .wrapping_sub(1u32);
+    let mut last_iMCU_row: crate::jmorecfg_h::JDIMENSION =
+        (*cinfo).total_iMCU_rows.wrapping_sub(1u32);
     let mut block_num: crate::jmorecfg_h::JDIMENSION = 0;
     let mut last_block_column: crate::jmorecfg_h::JDIMENSION = 0;
     let mut ci: i32 = 0;
@@ -654,12 +631,8 @@ unsafe extern "C" fn decompress_smooth_data(
              * we want it to keep one row ahead so that next block row's DC
              * values are up to date.
              */
-            let mut delta: crate::jmorecfg_h::JDIMENSION = if (*cinfo).Ss == 0 {
-                1i32
-            } else {
-                0
-            }
-                as crate::jmorecfg_h::JDIMENSION;
+            let mut delta: crate::jmorecfg_h::JDIMENSION =
+                if (*cinfo).Ss == 0 { 1i32 } else { 0 } as crate::jmorecfg_h::JDIMENSION;
             if (*cinfo).input_iMCU_row > (*cinfo).output_iMCU_row.wrapping_add(delta) {
                 break;
             }
@@ -734,9 +707,7 @@ unsafe extern "C" fn decompress_smooth_data(
                 first_row = 1
             }
             /* Fetch component-dependent info */
-            coef_bits = (*coef)
-                .coef_bits_latch
-                .offset((ci * 6) as isize);
+            coef_bits = (*coef).coef_bits_latch.offset((ci * 6) as isize);
             quanttbl = (*compptr).quant_table;
             Q00 = (*quanttbl).quantval[0] as crate::jmorecfg_h::INT32;
             Q01 = (*quanttbl).quantval[1] as crate::jmorecfg_h::INT32;
@@ -763,22 +734,17 @@ unsafe extern "C" fn decompress_smooth_data(
                 /* We fetch the surrounding DC values using a sliding-register approach.
                  * Initialize all nine here so as to do the right thing on narrow pics.
                  */
-                DC3 = (*prev_block_row.offset(0))[0]
-                    as i32;
+                DC3 = (*prev_block_row.offset(0))[0] as i32;
                 DC2 = DC3;
                 DC1 = DC2;
-                DC6 = (*buffer_ptr.offset(0))[0]
-                    as i32;
+                DC6 = (*buffer_ptr.offset(0))[0] as i32;
                 DC5 = DC6;
                 DC4 = DC5;
-                DC9 = (*next_block_row.offset(0))[0]
-                    as i32;
+                DC9 = (*next_block_row.offset(0))[0] as i32;
                 DC8 = DC9;
                 DC7 = DC8;
                 output_col = 0;
-                last_block_column = (*compptr)
-                    .width_in_blocks
-                    .wrapping_sub(1u32);
+                last_block_column = (*compptr).width_in_blocks.wrapping_sub(1u32);
                 block_num = 0;
                 while block_num <= last_block_column {
                     /* Fetch current DCT block into workspace so we can modify it. */
@@ -789,14 +755,9 @@ unsafe extern "C" fn decompress_smooth_data(
                     );
                     /* Update DC values */
                     if block_num < last_block_column {
-                        DC3 = (*prev_block_row.offset(1))
-                            [0]
-                            as i32;
-                        DC6 = (*buffer_ptr.offset(1))
-                            [0]
-                            as i32;
-                        DC9 = (*next_block_row.offset(1))
-                            [0] as i32
+                        DC3 = (*prev_block_row.offset(1))[0] as i32;
+                        DC6 = (*buffer_ptr.offset(1))[0] as i32;
+                        DC9 = (*next_block_row.offset(1))[0] as i32
                     }
                     /* Compute coefficient estimates per K.8.
                      * An estimate is applied only if coefficient is still zero,
@@ -804,19 +765,15 @@ unsafe extern "C" fn decompress_smooth_data(
                      */
                     /* AC01 */
                     Al = *coef_bits.offset(1);
-                    if Al != 0
-                        && workspace[1] as i32 == 0
-                    {
+                    if Al != 0 && workspace[1] as i32 == 0 {
                         num = 36 * Q00 * (DC4 - DC6) as isize;
                         if num >= 0 {
-                            pred = (((Q01 << 7) + num) / (Q01 << 8))
-                                as i32;
+                            pred = (((Q01 << 7) + num) / (Q01 << 8)) as i32;
                             if Al > 0 && pred >= (1) << Al {
                                 pred = ((1) << Al) - 1
                             }
                         } else {
-                            pred = (((Q01 << 7) - num) / (Q01 << 8))
-                                as i32;
+                            pred = (((Q01 << 7) - num) / (Q01 << 8)) as i32;
                             if Al > 0 && pred >= (1) << Al {
                                 pred = ((1) << Al) - 1
                             }
@@ -826,19 +783,15 @@ unsafe extern "C" fn decompress_smooth_data(
                     }
                     /* AC10 */
                     Al = *coef_bits.offset(2);
-                    if Al != 0
-                        && workspace[8] as i32 == 0
-                    {
+                    if Al != 0 && workspace[8] as i32 == 0 {
                         num = 36 * Q00 * (DC2 - DC8) as isize;
                         if num >= 0 {
-                            pred = (((Q10 << 7) + num) / (Q10 << 8))
-                                as i32;
+                            pred = (((Q10 << 7) + num) / (Q10 << 8)) as i32;
                             if Al > 0 && pred >= (1) << Al {
                                 pred = ((1) << Al) - 1
                             }
                         } else {
-                            pred = (((Q10 << 7) - num) / (Q10 << 8))
-                                as i32;
+                            pred = (((Q10 << 7) - num) / (Q10 << 8)) as i32;
                             if Al > 0 && pred >= (1) << Al {
                                 pred = ((1) << Al) - 1
                             }
@@ -848,21 +801,15 @@ unsafe extern "C" fn decompress_smooth_data(
                     }
                     /* AC20 */
                     Al = *coef_bits.offset(3);
-                    if Al != 0
-                        && workspace[16] as i32 == 0
-                    {
-                        num = 9
-                            * Q00
-                            * (DC2 + DC8 - 2 * DC5) as isize;
+                    if Al != 0 && workspace[16] as i32 == 0 {
+                        num = 9 * Q00 * (DC2 + DC8 - 2 * DC5) as isize;
                         if num >= 0 {
-                            pred = (((Q20 << 7) + num) / (Q20 << 8))
-                                as i32;
+                            pred = (((Q20 << 7) + num) / (Q20 << 8)) as i32;
                             if Al > 0 && pred >= (1) << Al {
                                 pred = ((1) << Al) - 1
                             }
                         } else {
-                            pred = (((Q20 << 7) - num) / (Q20 << 8))
-                                as i32;
+                            pred = (((Q20 << 7) - num) / (Q20 << 8)) as i32;
                             if Al > 0 && pred >= (1) << Al {
                                 pred = ((1) << Al) - 1
                             }
@@ -872,21 +819,15 @@ unsafe extern "C" fn decompress_smooth_data(
                     }
                     /* AC11 */
                     Al = *coef_bits.offset(4);
-                    if Al != 0
-                        && workspace[9] as i32 == 0
-                    {
-                        num = 5
-                            * Q00
-                            * (DC1 - DC3 - DC7 + DC9) as isize;
+                    if Al != 0 && workspace[9] as i32 == 0 {
+                        num = 5 * Q00 * (DC1 - DC3 - DC7 + DC9) as isize;
                         if num >= 0 {
-                            pred = (((Q11 << 7) + num) / (Q11 << 8))
-                                as i32;
+                            pred = (((Q11 << 7) + num) / (Q11 << 8)) as i32;
                             if Al > 0 && pred >= (1) << Al {
                                 pred = ((1) << Al) - 1
                             }
                         } else {
-                            pred = (((Q11 << 7) - num) / (Q11 << 8))
-                                as i32;
+                            pred = (((Q11 << 7) - num) / (Q11 << 8)) as i32;
                             if Al > 0 && pred >= (1) << Al {
                                 pred = ((1) << Al) - 1
                             }
@@ -896,21 +837,15 @@ unsafe extern "C" fn decompress_smooth_data(
                     }
                     /* AC02 */
                     Al = *coef_bits.offset(5);
-                    if Al != 0
-                        && workspace[2] as i32 == 0
-                    {
-                        num = 9
-                            * Q00
-                            * (DC4 + DC6 - 2 * DC5) as isize;
+                    if Al != 0 && workspace[2] as i32 == 0 {
+                        num = 9 * Q00 * (DC4 + DC6 - 2 * DC5) as isize;
                         if num >= 0 {
-                            pred = (((Q02 << 7) + num) / (Q02 << 8))
-                                as i32;
+                            pred = (((Q02 << 7) + num) / (Q02 << 8)) as i32;
                             if Al > 0 && pred >= (1) << Al {
                                 pred = ((1) << Al) - 1
                             }
                         } else {
-                            pred = (((Q02 << 7) - num) / (Q02 << 8))
-                                as i32;
+                            pred = (((Q02 << 7) - num) / (Q02 << 8)) as i32;
                             if Al > 0 && pred >= (1) << Al {
                                 pred = ((1) << Al) - 1
                             }
@@ -937,8 +872,7 @@ unsafe extern "C" fn decompress_smooth_data(
                     buffer_ptr = buffer_ptr.offset(1);
                     prev_block_row = prev_block_row.offset(1);
                     next_block_row = next_block_row.offset(1);
-                    output_col =  (output_col)
-                        .wrapping_add((*compptr).DCT_h_scaled_size as u32);
+                    output_col = (output_col).wrapping_add((*compptr).DCT_h_scaled_size as u32);
                     block_num = block_num.wrapping_add(1)
                 }
                 output_ptr = output_ptr.offset((*compptr).DCT_v_scaled_size as isize);
@@ -973,7 +907,6 @@ pub unsafe extern "C" fn jinit_d_coef_controller(
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<my_coef_controller>(),
     ) as my_coef_ptr;
     (*cinfo).coef = coef as *mut crate::jpegint_h::jpeg_d_coef_controller;
@@ -1023,8 +956,7 @@ pub unsafe extern "C" fn jinit_d_coef_controller(
             compptr = compptr.offset(1)
         }
         (*coef).pub_0.consume_data = Some(
-            consume_data
-                as unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> i32,
+            consume_data as unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> i32,
         );
         (*coef).pub_0.decompress_data = Some(
             decompress_data
@@ -1046,13 +978,11 @@ pub unsafe extern "C" fn jinit_d_coef_controller(
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
             1,
-            (10usize)
-                .wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>()),
+            (10usize).wrapping_mul(::std::mem::size_of::<crate::jpeglib_h::JBLOCK>()),
         ) as crate::jpeglib_h::JBLOCKROW;
-        i = 0;
-        while i < 10 {
+
+        for i in 0..10 {
             (*coef).MCU_buffer[i as usize] = buffer.offset(i as isize);
-            i += 1
         }
         (*coef).pub_0.consume_data = Some(
             dummy_consume_data

@@ -119,8 +119,7 @@ pub mod q_shared_h {
         return crate::stdlib::sqrt(
             (*v.offset(0) * *v.offset(0)
                 + *v.offset(1) * *v.offset(1)
-                + *v.offset(2) * *v.offset(2))
-                as f64,
+                + *v.offset(2) * *v.offset(2)) as f64,
         ) as crate::src::qcommon::q_shared::vec_t;
     }
     #[inline]
@@ -130,15 +129,9 @@ pub mod q_shared_h {
         mut v2: *const crate::src::qcommon::q_shared::vec_t,
         mut cross: *mut crate::src::qcommon::q_shared::vec_t,
     ) {
-        *cross.offset(0) = *v1.offset(1)
-            * *v2.offset(2)
-            - *v1.offset(2) * *v2.offset(1);
-        *cross.offset(1) = *v1.offset(2)
-            * *v2.offset(0)
-            - *v1.offset(0) * *v2.offset(2);
-        *cross.offset(2) = *v1.offset(0)
-            * *v2.offset(1)
-            - *v1.offset(1) * *v2.offset(0);
+        *cross.offset(0) = *v1.offset(1) * *v2.offset(2) - *v1.offset(2) * *v2.offset(1);
+        *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
+        *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
     use crate::stdlib::sqrt;
     // __Q_SHARED_H
@@ -192,169 +185,55 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // one file. That's what this is about.
 #[no_mangle]
 
-pub static mut vec3_origin: crate::src::qcommon::q_shared::vec3_t = [
-    0f32,
-    0f32,
-    0f32,
-];
+pub static mut vec3_origin: crate::src::qcommon::q_shared::vec3_t = [0f32, 0f32, 0f32];
 #[no_mangle]
 
-pub static mut axisDefault: [crate::src::qcommon::q_shared::vec3_t; 3] = [
-    [
-        1f32,
-        0f32,
-        0f32,
-    ],
-    [
-        0f32,
-        1f32,
-        0f32,
-    ],
-    [
-        0f32,
-        0f32,
-        1f32,
-    ],
-];
+pub static mut axisDefault: [crate::src::qcommon::q_shared::vec3_t; 3] =
+    [[1f32, 0f32, 0f32], [0f32, 1f32, 0f32], [0f32, 0f32, 1f32]];
 #[no_mangle]
 
-pub static mut colorBlack: crate::src::qcommon::q_shared::vec4_t = [
-    0f32,
-    0f32,
-    0f32,
-    1f32,
-];
+pub static mut colorBlack: crate::src::qcommon::q_shared::vec4_t = [0f32, 0f32, 0f32, 1f32];
 #[no_mangle]
 
-pub static mut colorRed: crate::src::qcommon::q_shared::vec4_t = [
-    1f32,
-    0f32,
-    0f32,
-    1f32,
-];
+pub static mut colorRed: crate::src::qcommon::q_shared::vec4_t = [1f32, 0f32, 0f32, 1f32];
 #[no_mangle]
 
-pub static mut colorGreen: crate::src::qcommon::q_shared::vec4_t = [
-    0f32,
-    1f32,
-    0f32,
-    1f32,
-];
+pub static mut colorGreen: crate::src::qcommon::q_shared::vec4_t = [0f32, 1f32, 0f32, 1f32];
 #[no_mangle]
 
-pub static mut colorBlue: crate::src::qcommon::q_shared::vec4_t = [
-    0f32,
-    0f32,
-    1f32,
-    1f32,
-];
+pub static mut colorBlue: crate::src::qcommon::q_shared::vec4_t = [0f32, 0f32, 1f32, 1f32];
 #[no_mangle]
 
-pub static mut colorYellow: crate::src::qcommon::q_shared::vec4_t = [
-    1f32,
-    1f32,
-    0f32,
-    1f32,
-];
+pub static mut colorYellow: crate::src::qcommon::q_shared::vec4_t = [1f32, 1f32, 0f32, 1f32];
 #[no_mangle]
 
-pub static mut colorMagenta: crate::src::qcommon::q_shared::vec4_t = [
-    1f32,
-    0f32,
-    1f32,
-    1f32,
-];
+pub static mut colorMagenta: crate::src::qcommon::q_shared::vec4_t = [1f32, 0f32, 1f32, 1f32];
 #[no_mangle]
 
-pub static mut colorCyan: crate::src::qcommon::q_shared::vec4_t = [
-    0f32,
-    1f32,
-    1f32,
-    1f32,
-];
+pub static mut colorCyan: crate::src::qcommon::q_shared::vec4_t = [0f32, 1f32, 1f32, 1f32];
 #[no_mangle]
 
-pub static mut colorWhite: crate::src::qcommon::q_shared::vec4_t = [
-    1f32,
-    1f32,
-    1f32,
-    1f32,
-];
+pub static mut colorWhite: crate::src::qcommon::q_shared::vec4_t = [1f32, 1f32, 1f32, 1f32];
 #[no_mangle]
 
-pub static mut colorLtGrey: crate::src::qcommon::q_shared::vec4_t = [
-    0.75,
-    0.75,
-    0.75,
-    1f32,
-];
+pub static mut colorLtGrey: crate::src::qcommon::q_shared::vec4_t = [0.75, 0.75, 0.75, 1f32];
 #[no_mangle]
 
-pub static mut colorMdGrey: crate::src::qcommon::q_shared::vec4_t = [
-    0.5,
-    0.5,
-    0.5,
-    1f32,
-];
+pub static mut colorMdGrey: crate::src::qcommon::q_shared::vec4_t = [0.5, 0.5, 0.5, 1f32];
 #[no_mangle]
 
-pub static mut colorDkGrey: crate::src::qcommon::q_shared::vec4_t = [
-    0.25,
-    0.25,
-    0.25,
-    1f32,
-];
+pub static mut colorDkGrey: crate::src::qcommon::q_shared::vec4_t = [0.25, 0.25, 0.25, 1f32];
 #[no_mangle]
 
 pub static mut g_color_table: [crate::src::qcommon::q_shared::vec4_t; 8] = [
-    [
-        0f32,
-        0f32,
-        0f32,
-        1f32,
-    ],
-    [
-        1f32,
-        0f32,
-        0f32,
-        1f32,
-    ],
-    [
-        0f32,
-        1f32,
-        0f32,
-        1f32,
-    ],
-    [
-        1f32,
-        1f32,
-        0f32,
-        1f32,
-    ],
-    [
-        0f32,
-        0f32,
-        1f32,
-        1f32,
-    ],
-    [
-        0f32,
-        1f32,
-        1f32,
-        1f32,
-    ],
-    [
-        1f32,
-        0f32,
-        1f32,
-        1f32,
-    ],
-    [
-        1f32,
-        1f32,
-        1f32,
-        1f32,
-    ],
+    [0f32, 0f32, 0f32, 1f32],
+    [1f32, 0f32, 0f32, 1f32],
+    [0f32, 1f32, 0f32, 1f32],
+    [1f32, 1f32, 0f32, 1f32],
+    [0f32, 0f32, 1f32, 1f32],
+    [0f32, 1f32, 1f32, 1f32],
+    [1f32, 0f32, 1f32, 1f32],
+    [1f32, 1f32, 1f32, 1f32],
 ];
 #[no_mangle]
 
@@ -526,16 +405,13 @@ pub static mut bytedirs: [crate::src::qcommon::q_shared::vec3_t; 162] = [
 #[no_mangle]
 
 pub unsafe extern "C" fn Q_rand(mut seed: *mut i32) -> i32 {
-    *seed = (69069u32)
-        .wrapping_mul(*seed as u32)
-        .wrapping_add(1u32) as i32;
+    *seed = (69069u32).wrapping_mul(*seed as u32).wrapping_add(1u32) as i32;
     return *seed;
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn Q_random(mut seed: *mut i32) -> f32 {
-    return (Q_rand(seed) & 0xffff) as f32
-        / 65536f32;
+    return (Q_rand(seed) & 0xffff) as f32 / 65536f32;
 }
 #[no_mangle]
 
@@ -568,9 +444,7 @@ pub unsafe extern "C" fn ClampShort(mut i: i32) -> i16 {
 // this isn't a real cheap function to call!
 #[no_mangle]
 
-pub unsafe extern "C" fn DirToByte(
-    mut dir: *mut crate::src::qcommon::q_shared::vec_t,
-) -> i32 {
+pub unsafe extern "C" fn DirToByte(mut dir: *mut crate::src::qcommon::q_shared::vec_t) -> i32 {
     let mut i: i32 = 0;
     let mut best: i32 = 0;
     let mut d: f32 = 0.;
@@ -580,28 +454,22 @@ pub unsafe extern "C" fn DirToByte(
     }
     bestd = 0f32;
     best = 0;
-    i = 0;
-    while i < 162 {
-        d = *dir.offset(0)
-            * bytedirs[i as usize][0]
-            + *dir.offset(1)
-                * bytedirs[i as usize][1]
-            + *dir.offset(2)
-                * bytedirs[i as usize][2];
+
+    for i in 0..162 {
+        d = *dir.offset(0) * bytedirs[i as usize][0]
+            + *dir.offset(1) * bytedirs[i as usize][1]
+            + *dir.offset(2) * bytedirs[i as usize][2];
+
         if d > bestd {
             bestd = d;
             best = i
         }
-        i += 1
     }
     return best;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn ByteToDir(
-    mut b: i32,
-    mut dir: *mut crate::src::qcommon::q_shared::vec_t,
-) {
+pub unsafe extern "C" fn ByteToDir(mut b: i32, mut dir: *mut crate::src::qcommon::q_shared::vec_t) {
     if b < 0 || b >= 162 {
         *dir.offset(0) = vec3_origin[0];
         *dir.offset(1) = vec3_origin[1];
@@ -614,43 +482,27 @@ pub unsafe extern "C" fn ByteToDir(
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn ColorBytes3(
-    mut r: f32,
-    mut g: f32,
-    mut b: f32,
-) -> u32 {
+pub unsafe extern "C" fn ColorBytes3(mut r: f32, mut g: f32, mut b: f32) -> u32 {
     let mut i: u32 = 0;
-    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte)
-        .offset(0) =
+    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte).offset(0) =
         (r * 255f32) as crate::src::qcommon::q_shared::byte;
-    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte)
-        .offset(1) =
+    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte).offset(1) =
         (g * 255f32) as crate::src::qcommon::q_shared::byte;
-    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte)
-        .offset(2) =
+    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte).offset(2) =
         (b * 255f32) as crate::src::qcommon::q_shared::byte;
     return i;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn ColorBytes4(
-    mut r: f32,
-    mut g: f32,
-    mut b: f32,
-    mut a: f32,
-) -> u32 {
+pub unsafe extern "C" fn ColorBytes4(mut r: f32, mut g: f32, mut b: f32, mut a: f32) -> u32 {
     let mut i: u32 = 0;
-    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte)
-        .offset(0) =
+    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte).offset(0) =
         (r * 255f32) as crate::src::qcommon::q_shared::byte;
-    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte)
-        .offset(1) =
+    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte).offset(1) =
         (g * 255f32) as crate::src::qcommon::q_shared::byte;
-    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte)
-        .offset(2) =
+    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte).offset(2) =
         (b * 255f32) as crate::src::qcommon::q_shared::byte;
-    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte)
-        .offset(3) =
+    *(&mut i as *mut u32 as *mut crate::src::qcommon::q_shared::byte).offset(3) =
         (a * 255f32) as crate::src::qcommon::q_shared::byte;
     return i;
 }
@@ -699,18 +551,12 @@ pub unsafe extern "C" fn PlaneFromPoints(
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut d1: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut d2: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-    d1[0] =
-        *b.offset(0) - *a.offset(0);
-    d1[1] =
-        *b.offset(1) - *a.offset(1);
-    d1[2] =
-        *b.offset(2) - *a.offset(2);
-    d2[0] =
-        *c.offset(0) - *a.offset(0);
-    d2[1] =
-        *c.offset(1) - *a.offset(1);
-    d2[2] =
-        *c.offset(2) - *a.offset(2);
+    d1[0] = *b.offset(0) - *a.offset(0);
+    d1[1] = *b.offset(1) - *a.offset(1);
+    d1[2] = *b.offset(2) - *a.offset(2);
+    d2[0] = *c.offset(0) - *a.offset(0);
+    d2[1] = *c.offset(1) - *a.offset(1);
+    d2[2] = *c.offset(2) - *a.offset(2);
     CrossProduct(
         d2.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         d1.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -719,8 +565,7 @@ pub unsafe extern "C" fn PlaneFromPoints(
     if VectorNormalize(plane) == 0f32 {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    *plane.offset(3) = *a.offset(0)
-        * *plane.offset(0)
+    *plane.offset(3) = *a.offset(0) * *plane.offset(0)
         + *a.offset(1) * *plane.offset(1)
         + *a.offset(2) * *plane.offset(2);
     return crate::src::qcommon::q_shared::qtrue;
@@ -771,48 +616,32 @@ pub unsafe extern "C" fn RotatePointAroundVector(
     crate::stdlib::memcpy(
         im.as_mut_ptr() as *mut libc::c_void,
         m.as_mut_ptr() as *const libc::c_void,
-        
         ::std::mem::size_of::<[[f32; 3]; 3]>(),
     );
-    im[0][1] =
-        m[1][0];
-    im[0][2] =
-        m[2][0];
-    im[1][0] =
-        m[0][1];
-    im[1][2] =
-        m[2][1];
-    im[2][0] =
-        m[0][2];
-    im[2][1] =
-        m[1][2];
+    im[0][1] = m[1][0];
+    im[0][2] = m[2][0];
+    im[1][0] = m[0][1];
+    im[1][2] = m[2][1];
+    im[2][0] = m[0][2];
+    im[2][1] = m[1][2];
     crate::stdlib::memset(
         zrot.as_mut_ptr() as *mut libc::c_void,
         0,
-        
         ::std::mem::size_of::<[[f32; 3]; 3]>(),
     );
     zrot[2][2] = 1.0;
-    zrot[1][1] =
-        zrot[2][2];
-    zrot[0][0] =
-        zrot[1][1];
-    rad = (degrees as f64 * 3.14159265358979323846 / 180f64)
-        as f32;
-    zrot[0][0] =
-        crate::stdlib::cos(rad as f64) as f32;
-    zrot[0][1] =
-        crate::stdlib::sin(rad as f64) as f32;
-    zrot[1][0] =
-        -crate::stdlib::sin(rad as f64) as f32;
-    zrot[1][1] =
-        crate::stdlib::cos(rad as f64) as f32;
+    zrot[1][1] = zrot[2][2];
+    zrot[0][0] = zrot[1][1];
+    rad = (degrees as f64 * 3.14159265358979323846 / 180f64) as f32;
+    zrot[0][0] = crate::stdlib::cos(rad as f64) as f32;
+    zrot[0][1] = crate::stdlib::sin(rad as f64) as f32;
+    zrot[1][0] = -crate::stdlib::sin(rad as f64) as f32;
+    zrot[1][1] = crate::stdlib::cos(rad as f64) as f32;
     MatrixMultiply(m.as_mut_ptr(), zrot.as_mut_ptr(), tmpmat.as_mut_ptr());
     MatrixMultiply(tmpmat.as_mut_ptr(), im.as_mut_ptr(), rot.as_mut_ptr());
     i = 0;
     while i < 3 {
-        *dst.offset(i as isize) = rot[i as usize][0]
-            * *point.offset(0)
+        *dst.offset(i as isize) = rot[i as usize][0] * *point.offset(0)
             + rot[i as usize][1] * *point.offset(1)
             + rot[i as usize][2] * *point.offset(2);
         i += 1
@@ -832,32 +661,25 @@ pub unsafe extern "C" fn RotateAroundDirection(
     // create an arbitrary axis[1]
     PerpendicularVector(
         (*axis.offset(1)).as_mut_ptr(),
-        (*axis.offset(0)).as_mut_ptr()
-            as *const crate::src::qcommon::q_shared::vec_t,
+        (*axis.offset(0)).as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
     );
     // rotate it around axis[0] by yaw
     if yaw != 0. {
         let mut temp: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
-        temp[0] =
-            (*axis.offset(1))[0];
-        temp[1] =
-            (*axis.offset(1))[1];
-        temp[2] =
-            (*axis.offset(1))[2];
+        temp[0] = (*axis.offset(1))[0];
+        temp[1] = (*axis.offset(1))[1];
+        temp[2] = (*axis.offset(1))[2];
         RotatePointAroundVector(
             (*axis.offset(1isize)).as_mut_ptr(),
-            (*axis.offset(0isize)).as_mut_ptr()
-                as *const crate::src::qcommon::q_shared::vec_t,
+            (*axis.offset(0isize)).as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             temp.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             yaw,
         );
     }
     // cross to get axis[2]
     CrossProduct(
-        (*axis.offset(0)).as_mut_ptr()
-            as *const crate::src::qcommon::q_shared::vec_t,
-        (*axis.offset(1)).as_mut_ptr()
-            as *const crate::src::qcommon::q_shared::vec_t,
+        (*axis.offset(0)).as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
+        (*axis.offset(1)).as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         (*axis.offset(2)).as_mut_ptr(),
     );
 }
@@ -870,9 +692,7 @@ pub unsafe extern "C" fn vectoangles(
     let mut forward: f32 = 0.;
     let mut yaw: f32 = 0.;
     let mut pitch: f32 = 0.;
-    if *value1.offset(1) == 0f32
-        && *value1.offset(0) == 0f32
-    {
+    if *value1.offset(1) == 0f32 && *value1.offset(0) == 0f32 {
         yaw = 0f32;
         if *value1.offset(2) > 0f32 {
             pitch = 90f32
@@ -881,10 +701,8 @@ pub unsafe extern "C" fn vectoangles(
         }
     } else {
         if *value1.offset(0) != 0. {
-            yaw = (crate::stdlib::atan2(
-                *value1.offset(1) as f64,
-                *value1.offset(0) as f64,
-            ) * 180f64
+            yaw = (crate::stdlib::atan2(*value1.offset(1) as f64, *value1.offset(0) as f64)
+                * 180f64
                 / 3.14159265358979323846) as f32
         } else if *value1.offset(1) > 0f32 {
             yaw = 90f32
@@ -895,14 +713,9 @@ pub unsafe extern "C" fn vectoangles(
             yaw += 360f32
         }
         forward = crate::stdlib::sqrt(
-            (*value1.offset(0) * *value1.offset(0)
-                + *value1.offset(1)
-                    * *value1.offset(1)) as f64,
+            (*value1.offset(0) * *value1.offset(0) + *value1.offset(1) * *value1.offset(1)) as f64,
         ) as f32;
-        pitch = (crate::stdlib::atan2(
-            *value1.offset(2) as f64,
-            forward as f64,
-        ) * 180f64
+        pitch = (crate::stdlib::atan2(*value1.offset(2) as f64, forward as f64) * 180f64
             / 3.14159265358979323846) as f32;
         if pitch < 0f32 {
             pitch += 360f32
@@ -910,8 +723,7 @@ pub unsafe extern "C" fn vectoangles(
     }
     *angles.offset(0) = -pitch;
     *angles.offset(1) = yaw;
-    *angles.offset(2) =
-        0f32;
+    *angles.offset(2) = 0f32;
 }
 /*
 =================
@@ -932,34 +744,22 @@ pub unsafe extern "C" fn AnglesToAxis(
         right.as_mut_ptr(),
         (*axis.offset(2)).as_mut_ptr(),
     );
-    (*axis.offset(1))[0] =
-        vec3_origin[0] - right[0];
-    (*axis.offset(1))[1] =
-        vec3_origin[1] - right[1];
-    (*axis.offset(1))[2] =
-        vec3_origin[2] - right[2];
+    (*axis.offset(1))[0] = vec3_origin[0] - right[0];
+    (*axis.offset(1))[1] = vec3_origin[1] - right[1];
+    (*axis.offset(1))[2] = vec3_origin[2] - right[2];
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn AxisClear(mut axis: *mut crate::src::qcommon::q_shared::vec3_t) {
-    (*axis.offset(0))[0] =
-        1f32;
-    (*axis.offset(0))[1] =
-        0f32;
-    (*axis.offset(0))[2] =
-        0f32;
-    (*axis.offset(1))[0] =
-        0f32;
-    (*axis.offset(1))[1] =
-        1f32;
-    (*axis.offset(1))[2] =
-        0f32;
-    (*axis.offset(2))[0] =
-        0f32;
-    (*axis.offset(2))[1] =
-        0f32;
-    (*axis.offset(2))[2] =
-        1f32;
+    (*axis.offset(0))[0] = 1f32;
+    (*axis.offset(0))[1] = 0f32;
+    (*axis.offset(0))[2] = 0f32;
+    (*axis.offset(1))[0] = 0f32;
+    (*axis.offset(1))[1] = 1f32;
+    (*axis.offset(1))[2] = 0f32;
+    (*axis.offset(2))[0] = 0f32;
+    (*axis.offset(2))[1] = 0f32;
+    (*axis.offset(2))[2] = 1f32;
 }
 #[no_mangle]
 
@@ -967,24 +767,15 @@ pub unsafe extern "C" fn AxisCopy(
     mut in_0: *mut crate::src::qcommon::q_shared::vec3_t,
     mut out: *mut crate::src::qcommon::q_shared::vec3_t,
 ) {
-    (*out.offset(0))[0] =
-        (*in_0.offset(0))[0];
-    (*out.offset(0))[1] =
-        (*in_0.offset(0))[1];
-    (*out.offset(0))[2] =
-        (*in_0.offset(0))[2];
-    (*out.offset(1))[0] =
-        (*in_0.offset(1))[0];
-    (*out.offset(1))[1] =
-        (*in_0.offset(1))[1];
-    (*out.offset(1))[2] =
-        (*in_0.offset(1))[2];
-    (*out.offset(2))[0] =
-        (*in_0.offset(2))[0];
-    (*out.offset(2))[1] =
-        (*in_0.offset(2))[1];
-    (*out.offset(2))[2] =
-        (*in_0.offset(2))[2];
+    (*out.offset(0))[0] = (*in_0.offset(0))[0];
+    (*out.offset(0))[1] = (*in_0.offset(0))[1];
+    (*out.offset(0))[2] = (*in_0.offset(0))[2];
+    (*out.offset(1))[0] = (*in_0.offset(1))[0];
+    (*out.offset(1))[1] = (*in_0.offset(1))[1];
+    (*out.offset(1))[2] = (*in_0.offset(1))[2];
+    (*out.offset(2))[0] = (*in_0.offset(2))[0];
+    (*out.offset(2))[1] = (*in_0.offset(2))[1];
+    (*out.offset(2))[2] = (*in_0.offset(2))[2];
 }
 #[no_mangle]
 
@@ -996,8 +787,7 @@ pub unsafe extern "C" fn ProjectPointOnPlane(
     let mut d: f32 = 0.;
     let mut n: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut inv_denom: f32 = 0.;
-    inv_denom = *normal.offset(0)
-        * *normal.offset(0)
+    inv_denom = *normal.offset(0) * *normal.offset(0)
         + *normal.offset(1) * *normal.offset(1)
         + *normal.offset(2) * *normal.offset(2);
     // zero vectors get here
@@ -1009,12 +799,9 @@ pub unsafe extern "C" fn ProjectPointOnPlane(
     n[0] = *normal.offset(0) * inv_denom;
     n[1] = *normal.offset(1) * inv_denom;
     n[2] = *normal.offset(2) * inv_denom;
-    *dst.offset(0) =
-        *p.offset(0) - d * n[0];
-    *dst.offset(1) =
-        *p.offset(1) - d * n[1];
-    *dst.offset(2) =
-        *p.offset(2) - d * n[2];
+    *dst.offset(0) = *p.offset(0) - d * n[0];
+    *dst.offset(1) = *p.offset(1) - d * n[1];
+    *dst.offset(2) = *p.offset(2) - d * n[2];
 }
 /*
 ================
@@ -1040,12 +827,9 @@ pub unsafe extern "C" fn MakeNormalVectors(
     d = *right.offset(0) * *forward.offset(0)
         + *right.offset(1) * *forward.offset(1)
         + *right.offset(2) * *forward.offset(2);
-    *right.offset(0) =
-        *right.offset(0) + *forward.offset(0) * -d;
-    *right.offset(1) =
-        *right.offset(1) + *forward.offset(1) * -d;
-    *right.offset(2) =
-        *right.offset(2) + *forward.offset(2) * -d;
+    *right.offset(0) = *right.offset(0) + *forward.offset(0) * -d;
+    *right.offset(1) = *right.offset(1) + *forward.offset(1) * -d;
+    *right.offset(2) = *right.offset(2) + *forward.offset(2) * -d;
     VectorNormalize(right);
     CrossProduct(
         right as *const crate::src::qcommon::q_shared::vec_t,
@@ -1060,24 +844,15 @@ pub unsafe extern "C" fn VectorRotate(
     mut matrix: *mut crate::src::qcommon::q_shared::vec3_t,
     mut out: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    *out.offset(0) = *in_0.offset(0)
-        * (*matrix.offset(0))[0]
-        + *in_0.offset(1)
-            * (*matrix.offset(0))[1]
-        + *in_0.offset(2)
-            * (*matrix.offset(0))[2];
-    *out.offset(1) = *in_0.offset(0)
-        * (*matrix.offset(1))[0]
-        + *in_0.offset(1)
-            * (*matrix.offset(1))[1]
-        + *in_0.offset(2)
-            * (*matrix.offset(1))[2];
-    *out.offset(2) = *in_0.offset(0)
-        * (*matrix.offset(2))[0]
-        + *in_0.offset(1)
-            * (*matrix.offset(2))[1]
-        + *in_0.offset(2)
-            * (*matrix.offset(2))[2];
+    *out.offset(0) = *in_0.offset(0) * (*matrix.offset(0))[0]
+        + *in_0.offset(1) * (*matrix.offset(0))[1]
+        + *in_0.offset(2) * (*matrix.offset(0))[2];
+    *out.offset(1) = *in_0.offset(0) * (*matrix.offset(1))[0]
+        + *in_0.offset(1) * (*matrix.offset(1))[1]
+        + *in_0.offset(2) * (*matrix.offset(1))[2];
+    *out.offset(2) = *in_0.offset(0) * (*matrix.offset(2))[0]
+        + *in_0.offset(1) * (*matrix.offset(2))[1]
+        + *in_0.offset(2) * (*matrix.offset(2))[2];
 }
 //============================================================================
 /*
@@ -1117,11 +892,7 @@ LerpAngle
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn LerpAngle(
-    mut from: f32,
-    mut to: f32,
-    mut frac: f32,
-) -> f32 {
+pub unsafe extern "C" fn LerpAngle(mut from: f32, mut to: f32, mut frac: f32) -> f32 {
     let mut a: f32 = 0.;
     if to - from > 180f32 {
         to -= 360f32
@@ -1141,10 +912,7 @@ Always returns a value from -180 to 180
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn AngleSubtract(
-    mut a1: f32,
-    mut a2: f32,
-) -> f32 {
+pub unsafe extern "C" fn AngleSubtract(mut a1: f32, mut a2: f32) -> f32 {
     let mut a: f32 = 0.;
     a = a1 - a2;
     while a > 180f32 {
@@ -1162,26 +930,14 @@ pub unsafe extern "C" fn AnglesSubtract(
     mut v2: *mut crate::src::qcommon::q_shared::vec_t,
     mut v3: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    *v3.offset(0) = AngleSubtract(
-        *v1.offset(0),
-        *v2.offset(0),
-    );
-    *v3.offset(1) = AngleSubtract(
-        *v1.offset(1),
-        *v2.offset(1),
-    );
-    *v3.offset(2) = AngleSubtract(
-        *v1.offset(2),
-        *v2.offset(2),
-    );
+    *v3.offset(0) = AngleSubtract(*v1.offset(0), *v2.offset(0));
+    *v3.offset(1) = AngleSubtract(*v1.offset(1), *v2.offset(1));
+    *v3.offset(2) = AngleSubtract(*v1.offset(2), *v2.offset(2));
 }
 #[no_mangle]
 
 pub unsafe extern "C" fn AngleMod(mut a: f32) -> f32 {
-    a = (360.0 / 65536f64
-        * ((a as f64 * (65536f64 / 360.0))
-            as i32
-            & 65535) as f64) as f32;
+    a = (360.0 / 65536f64 * ((a as f64 * (65536f64 / 360.0)) as i32 & 65535) as f64) as f32;
     return a;
 }
 /*
@@ -1194,10 +950,7 @@ returns angle normalized to the range [0 <= angle < 360]
 #[no_mangle]
 
 pub unsafe extern "C" fn AngleNormalize360(mut angle: f32) -> f32 {
-    return (360.0 / 65536f64
-        * ((angle as f64 * (65536f64 / 360.0))
-            as i32
-            & 65535) as f64) as f32;
+    return (360.0 / 65536f64 * ((angle as f64 * (65536f64 / 360.0)) as i32 & 65535) as f64) as f32;
 }
 /*
 =================
@@ -1224,10 +977,7 @@ returns the normalized delta from angle1 to angle2
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn AngleDelta(
-    mut angle1: f32,
-    mut angle2: f32,
-) -> f32 {
+pub unsafe extern "C" fn AngleDelta(mut angle1: f32, mut angle2: f32) -> f32 {
     return AngleNormalize180(angle1 - angle2);
 }
 //============================================================
@@ -1243,12 +993,11 @@ pub unsafe extern "C" fn SetPlaneSignbits(mut out: *mut crate::src::qcommon::q_s
     let mut j: i32 = 0;
     // for fast box on planeside test
     bits = 0;
-    j = 0;
-    while j < 3 {
+
+    for j in 0..3 {
         if (*out).normal[j as usize] < 0f32 {
             bits |= (1) << j
         }
-        j += 1
     }
     (*out).signbits = bits as crate::src::qcommon::q_shared::byte;
 }
@@ -1289,8 +1038,7 @@ pub unsafe extern "C" fn BoxOnPlaneSide(
         while i < 3 {
             b = (*p).signbits as i32 >> i & 1;
             dist[b as usize] += (*p).normal[i as usize] * *emaxs.offset(i as isize);
-            dist[(b == 0) as i32 as usize] +=
-                (*p).normal[i as usize] * *emins.offset(i as isize);
+            dist[(b == 0) as i32 as usize] += (*p).normal[i as usize] * *emins.offset(i as isize);
             i += 1
         }
     }
@@ -1318,12 +1066,13 @@ pub unsafe extern "C" fn RadiusFromBounds(
     let mut corner: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut a: f32 = 0.;
     let mut b: f32 = 0.;
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         a = crate::stdlib::fabs(*mins.offset(i as isize) as f64) as f32;
+
         b = crate::stdlib::fabs(*maxs.offset(i as isize) as f64) as f32;
+
         corner[i as usize] = if a > b { a } else { b };
-        i += 1
     }
     return VectorLength(corner.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t);
 }
@@ -1398,16 +1147,11 @@ pub unsafe extern "C" fn BoundsIntersectSphere(
     mut radius: crate::src::qcommon::q_shared::vec_t,
 ) -> crate::src::qcommon::q_shared::qboolean {
     if *origin.offset(0) - radius > *maxs.offset(0)
-        || *origin.offset(0) + radius
-            < *mins.offset(0)
-        || *origin.offset(1) - radius
-            > *maxs.offset(1)
-        || *origin.offset(1) + radius
-            < *mins.offset(1)
-        || *origin.offset(2) - radius
-            > *maxs.offset(2)
-        || *origin.offset(2) + radius
-            < *mins.offset(2)
+        || *origin.offset(0) + radius < *mins.offset(0)
+        || *origin.offset(1) - radius > *maxs.offset(1)
+        || *origin.offset(1) + radius < *mins.offset(1)
+        || *origin.offset(2) - radius > *maxs.offset(2)
+        || *origin.offset(2) + radius < *mins.offset(2)
     {
         return crate::src::qcommon::q_shared::qfalse;
     }
@@ -1439,13 +1183,11 @@ pub unsafe extern "C" fn VectorNormalize(
     // NOTE: TTimo - Apple G4 altivec source uses double?
     let mut length: f32 = 0.;
     let mut ilength: f32 = 0.;
-    length = *v.offset(0) * *v.offset(0)
-        + *v.offset(1) * *v.offset(1)
-        + *v.offset(2) * *v.offset(2);
+    length =
+        *v.offset(0) * *v.offset(0) + *v.offset(1) * *v.offset(1) + *v.offset(2) * *v.offset(2);
     if length != 0. {
         /* writing it this way allows gcc to recognize that rsqrt can be used */
-        ilength = 1f32
-            / crate::stdlib::sqrt(length as f64) as f32;
+        ilength = 1f32 / crate::stdlib::sqrt(length as f64) as f32;
         /* sqrt(length) = length * (1 / sqrt(length)) */
         length *= ilength;
         let ref mut fresh6 = *v.offset(0);
@@ -1465,13 +1207,11 @@ pub unsafe extern "C" fn VectorNormalize2(
 ) -> crate::src::qcommon::q_shared::vec_t {
     let mut length: f32 = 0.;
     let mut ilength: f32 = 0.;
-    length = *v.offset(0) * *v.offset(0)
-        + *v.offset(1) * *v.offset(1)
-        + *v.offset(2) * *v.offset(2);
+    length =
+        *v.offset(0) * *v.offset(0) + *v.offset(1) * *v.offset(1) + *v.offset(2) * *v.offset(2);
     if length != 0. {
         /* writing it this way allows gcc to recognize that rsqrt can be used */
-        ilength = 1f32
-            / crate::stdlib::sqrt(length as f64) as f32;
+        ilength = 1f32 / crate::stdlib::sqrt(length as f64) as f32;
         /* sqrt(length) = length * (1 / sqrt(length)) */
         length *= ilength;
         *out.offset(0) = *v.offset(0) * ilength;
@@ -1494,12 +1234,9 @@ pub unsafe extern "C" fn _VectorMA(
     mut vecb: *const crate::src::qcommon::q_shared::vec_t,
     mut vecc: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    *vecc.offset(0) =
-        *veca.offset(0) + scale * *vecb.offset(0);
-    *vecc.offset(1) =
-        *veca.offset(1) + scale * *vecb.offset(1);
-    *vecc.offset(2) =
-        *veca.offset(2) + scale * *vecb.offset(2);
+    *vecc.offset(0) = *veca.offset(0) + scale * *vecb.offset(0);
+    *vecc.offset(1) = *veca.offset(1) + scale * *vecb.offset(1);
+    *vecc.offset(2) = *veca.offset(2) + scale * *vecb.offset(2);
 }
 #[no_mangle]
 
@@ -1518,12 +1255,9 @@ pub unsafe extern "C" fn _VectorSubtract(
     mut vecb: *const crate::src::qcommon::q_shared::vec_t,
     mut out: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    *out.offset(0) =
-        *veca.offset(0) - *vecb.offset(0);
-    *out.offset(1) =
-        *veca.offset(1) - *vecb.offset(1);
-    *out.offset(2) =
-        *veca.offset(2) - *vecb.offset(2);
+    *out.offset(0) = *veca.offset(0) - *vecb.offset(0);
+    *out.offset(1) = *veca.offset(1) - *vecb.offset(1);
+    *out.offset(2) = *veca.offset(2) - *vecb.offset(2);
 }
 #[no_mangle]
 
@@ -1532,12 +1266,9 @@ pub unsafe extern "C" fn _VectorAdd(
     mut vecb: *const crate::src::qcommon::q_shared::vec_t,
     mut out: *mut crate::src::qcommon::q_shared::vec_t,
 ) {
-    *out.offset(0) =
-        *veca.offset(0) + *vecb.offset(0);
-    *out.offset(1) =
-        *veca.offset(1) + *vecb.offset(1);
-    *out.offset(2) =
-        *veca.offset(2) + *vecb.offset(2);
+    *out.offset(0) = *veca.offset(0) + *vecb.offset(0);
+    *out.offset(1) = *veca.offset(1) + *vecb.offset(1);
+    *out.offset(2) = *veca.offset(2) + *vecb.offset(2);
 }
 #[no_mangle]
 
@@ -1615,69 +1346,33 @@ pub unsafe extern "C" fn MatrixMultiply(
     mut in2: *mut [f32; 3],
     mut out: *mut [f32; 3],
 ) {
-    (*out.offset(0))[0] = (*in1
-        .offset(0))[0]
-        * (*in2.offset(0))[0]
-        + (*in1.offset(0))[1]
-            * (*in2.offset(1))[0]
-        + (*in1.offset(0))[2]
-            * (*in2.offset(2))[0];
-    (*out.offset(0))[1] = (*in1
-        .offset(0))[0]
-        * (*in2.offset(0))[1]
-        + (*in1.offset(0))[1]
-            * (*in2.offset(1))[1]
-        + (*in1.offset(0))[2]
-            * (*in2.offset(2))[1];
-    (*out.offset(0))[2] = (*in1
-        .offset(0))[0]
-        * (*in2.offset(0))[2]
-        + (*in1.offset(0))[1]
-            * (*in2.offset(1))[2]
-        + (*in1.offset(0))[2]
-            * (*in2.offset(2))[2];
-    (*out.offset(1))[0] = (*in1
-        .offset(1))[0]
-        * (*in2.offset(0))[0]
-        + (*in1.offset(1))[1]
-            * (*in2.offset(1))[0]
-        + (*in1.offset(1))[2]
-            * (*in2.offset(2))[0];
-    (*out.offset(1))[1] = (*in1
-        .offset(1))[0]
-        * (*in2.offset(0))[1]
-        + (*in1.offset(1))[1]
-            * (*in2.offset(1))[1]
-        + (*in1.offset(1))[2]
-            * (*in2.offset(2))[1];
-    (*out.offset(1))[2] = (*in1
-        .offset(1))[0]
-        * (*in2.offset(0))[2]
-        + (*in1.offset(1))[1]
-            * (*in2.offset(1))[2]
-        + (*in1.offset(1))[2]
-            * (*in2.offset(2))[2];
-    (*out.offset(2))[0] = (*in1
-        .offset(2))[0]
-        * (*in2.offset(0))[0]
-        + (*in1.offset(2))[1]
-            * (*in2.offset(1))[0]
-        + (*in1.offset(2))[2]
-            * (*in2.offset(2))[0];
-    (*out.offset(2))[1] = (*in1
-        .offset(2))[0]
-        * (*in2.offset(0))[1]
-        + (*in1.offset(2))[1]
-            * (*in2.offset(1))[1]
-        + (*in1.offset(2))[2]
-            * (*in2.offset(2))[1];
-    (*out.offset(2))[2] = (*in1
-        .offset(2))[0]
-        * (*in2.offset(0))[2]
-        + (*in1.offset(2))[1]
-            * (*in2.offset(1))[2]
-        + (*in1.offset(2))[2]
-            * (*in2.offset(2))[2];
+    (*out.offset(0))[0] = (*in1.offset(0))[0] * (*in2.offset(0))[0]
+        + (*in1.offset(0))[1] * (*in2.offset(1))[0]
+        + (*in1.offset(0))[2] * (*in2.offset(2))[0];
+    (*out.offset(0))[1] = (*in1.offset(0))[0] * (*in2.offset(0))[1]
+        + (*in1.offset(0))[1] * (*in2.offset(1))[1]
+        + (*in1.offset(0))[2] * (*in2.offset(2))[1];
+    (*out.offset(0))[2] = (*in1.offset(0))[0] * (*in2.offset(0))[2]
+        + (*in1.offset(0))[1] * (*in2.offset(1))[2]
+        + (*in1.offset(0))[2] * (*in2.offset(2))[2];
+    (*out.offset(1))[0] = (*in1.offset(1))[0] * (*in2.offset(0))[0]
+        + (*in1.offset(1))[1] * (*in2.offset(1))[0]
+        + (*in1.offset(1))[2] * (*in2.offset(2))[0];
+    (*out.offset(1))[1] = (*in1.offset(1))[0] * (*in2.offset(0))[1]
+        + (*in1.offset(1))[1] * (*in2.offset(1))[1]
+        + (*in1.offset(1))[2] * (*in2.offset(2))[1];
+    (*out.offset(1))[2] = (*in1.offset(1))[0] * (*in2.offset(0))[2]
+        + (*in1.offset(1))[1] * (*in2.offset(1))[2]
+        + (*in1.offset(1))[2] * (*in2.offset(2))[2];
+    (*out.offset(2))[0] = (*in1.offset(2))[0] * (*in2.offset(0))[0]
+        + (*in1.offset(2))[1] * (*in2.offset(1))[0]
+        + (*in1.offset(2))[2] * (*in2.offset(2))[0];
+    (*out.offset(2))[1] = (*in1.offset(2))[0] * (*in2.offset(0))[1]
+        + (*in1.offset(2))[1] * (*in2.offset(1))[1]
+        + (*in1.offset(2))[2] * (*in2.offset(2))[1];
+    (*out.offset(2))[2] = (*in1.offset(2))[0] * (*in2.offset(0))[2]
+        + (*in1.offset(2))[1] * (*in2.offset(1))[2]
+        + (*in1.offset(2))[2] * (*in2.offset(2))[2];
 }
 #[no_mangle]
 
@@ -1695,19 +1390,13 @@ pub unsafe extern "C" fn AngleVectors(
     static mut cp: f32 = 0.;
     static mut cy: f32 = 0.;
     // static to help MS compiler fp bugs
-    angle = (*angles.offset(1) as f64
-        * (3.14159265358979323846 * 2f64
-            / 360f64)) as f32;
+    angle = (*angles.offset(1) as f64 * (3.14159265358979323846 * 2f64 / 360f64)) as f32;
     sy = crate::stdlib::sin(angle as f64) as f32;
     cy = crate::stdlib::cos(angle as f64) as f32;
-    angle = (*angles.offset(0) as f64
-        * (3.14159265358979323846 * 2f64
-            / 360f64)) as f32;
+    angle = (*angles.offset(0) as f64 * (3.14159265358979323846 * 2f64 / 360f64)) as f32;
     sp = crate::stdlib::sin(angle as f64) as f32;
     cp = crate::stdlib::cos(angle as f64) as f32;
-    angle = (*angles.offset(2) as f64
-        * (3.14159265358979323846 * 2f64
-            / 360f64)) as f32;
+    angle = (*angles.offset(2) as f64 * (3.14159265358979323846 * 2f64 / 360f64)) as f32;
     sr = crate::stdlib::sin(angle as f64) as f32;
     cr = crate::stdlib::cos(angle as f64) as f32;
     if !forward.is_null() {
@@ -1716,12 +1405,8 @@ pub unsafe extern "C" fn AngleVectors(
         *forward.offset(2) = -sp
     }
     if !right.is_null() {
-        *right.offset(0) =
-            -1f32 * sr * sp * cy
-                + -1f32 * cr * -sy;
-        *right.offset(1) =
-            -1f32 * sr * sp * sy
-                + -1f32 * cr * cy;
+        *right.offset(0) = -1f32 * sr * sp * cy + -1f32 * cr * -sy;
+        *right.offset(1) = -1f32 * sr * sp * sy + -1f32 * cr * cy;
         *right.offset(2) = -1f32 * sr * cp
     }
     if !up.is_null() {
@@ -1749,16 +1434,12 @@ pub unsafe extern "C" fn PerpendicularVector(
     	** find the smallest magnitude axially aligned vector
     	*/
     pos = 0;
-    i = 0;
-    while i < 3 {
-        if crate::stdlib::fabs(*src.offset(i as isize) as f64)
-            < minelem as f64
-        {
+
+    for i in 0..3 {
+        if crate::stdlib::fabs(*src.offset(i as isize) as f64) < minelem as f64 {
             pos = i;
-            minelem =
-                crate::stdlib::fabs(*src.offset(i as isize) as f64) as f32
+            minelem = crate::stdlib::fabs(*src.offset(i as isize) as f64) as f32
         }
-        i += 1
     }
     tempvec[2] = 0.0;
     tempvec[1] = tempvec[2];

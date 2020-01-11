@@ -255,17 +255,21 @@ pub mod NSQ_h {
         out = order >> 1;
         out = (out as i64 + (tmp2 as i64 * *coef.offset(0) as i64 >> 16))
             as crate::opus_types_h::opus_int32;
-        j = 2;
-        while j < order {
+
+        for j in (2..order).step_by(2 as usize) {
             tmp2 = *data1.offset((j - 1) as isize);
+
             *data1.offset((j - 1) as isize) = tmp1;
+
             out = (out as i64 + (tmp1 as i64 * *coef.offset((j - 1) as isize) as i64 >> 16))
                 as crate::opus_types_h::opus_int32;
+
             tmp1 = *data1.offset((j + 0) as isize);
+
             *data1.offset((j + 0) as isize) = tmp2;
+
             out = (out as i64 + (tmp2 as i64 * *coef.offset(j as isize) as i64 >> 16))
                 as crate::opus_types_h::opus_int32;
-            j += 2
         }
         *data1.offset((order - 1i32) as isize) = tmp1;
         out = (out as i64 + (tmp1 as i64 * *coef.offset((order - 1i32) as isize) as i64 >> 16))
@@ -537,18 +541,23 @@ pub unsafe extern "C" fn silk_NSQ_c(
         .as_mut_ptr()
         .offset((*psEncC).ltp_mem_length as isize)
         as *mut crate::opus_types_h::opus_int16;
-    k = 0;
-    while k < (*psEncC).nb_subfr {
+
+    for k in 0..(*psEncC).nb_subfr {
         A_Q12 = &*PredCoef_Q12.offset(((k >> 1 | 1 - LSF_interpolation_flag) * 16) as isize)
             as *const crate::opus_types_h::opus_int16;
+
         B_Q14 = &*LTPCoef_Q14.offset((k * 5) as isize) as *const crate::opus_types_h::opus_int16;
+
         AR_shp_Q13 = &*AR_Q13.offset((k * 24) as isize) as *const crate::opus_types_h::opus_int16;
-        /* Noise shape parameters */
+
         HarmShapeFIRPacked_Q14 = *HarmShapeGain_Q14.offset(k as isize) >> 2;
+
         HarmShapeFIRPacked_Q14 |= (((*HarmShapeGain_Q14.offset(k as isize) >> 1)
             as crate::opus_types_h::opus_uint32)
             << 16) as crate::opus_types_h::opus_int32;
+
         (*NSQ).rewhite_flag = 0;
+
         if (*psIndices).signalType as i32 == 2 {
             /* Voiced */
             lag = *pitchL.offset(k as isize);
@@ -575,6 +584,7 @@ pub unsafe extern "C" fn silk_NSQ_c(
                 (*NSQ).sLTP_buf_idx = (*psEncC).ltp_mem_length
             }
         }
+
         silk_nsq_scale_states(
             psEncC,
             NSQ,
@@ -588,6 +598,7 @@ pub unsafe extern "C" fn silk_NSQ_c(
             pitchL,
             (*psIndices).signalType as i32,
         );
+
         silk_noise_shape_quantizer(
             NSQ,
             (*psIndices).signalType as i32,
@@ -610,10 +621,12 @@ pub unsafe extern "C" fn silk_NSQ_c(
             (*psEncC).predictLPCOrder,
             (*psEncC).arch,
         );
+
         x16 = x16.offset((*psEncC).subfr_length as isize);
+
         pulses = pulses.offset((*psEncC).subfr_length as isize);
+
         pxq = pxq.offset((*psEncC).subfr_length as isize);
-        k += 1
     }
     /* Update lagPrev for next frame */
     (*NSQ).lagPrev = *pitchL.offset(((*psEncC).nb_subfr - 1i32) as isize);
@@ -705,16 +718,15 @@ unsafe extern "C" fn silk_noise_shape_quantizer(
     /* Set up short term AR state */
     psLPC_Q14 = &mut *(*NSQ).sLPC_Q14.as_mut_ptr().offset((16i32 - 1) as isize)
         as *mut crate::opus_types_h::opus_int32;
-    i = 0;
-    while i < length {
-        /* Generate dither */
+
+    for i in 0..length {
         (*NSQ).rand_seed = (907633515u32).wrapping_add(
             ((*NSQ).rand_seed as crate::opus_types_h::opus_uint32).wrapping_mul(196314165u32),
         ) as crate::opus_types_h::opus_int32;
-        /* Short-term prediction */
+
         LPC_pred_Q10 =
             silk_noise_shape_quantizer_short_prediction_c(psLPC_Q14, a_Q12, predictLPCOrder);
-        /* Long-term prediction */
+
         if signalType == 2 {
             /* Unrolled loop */
             /* Avoids introducing a bias because silk_SMLAWB() always rounds to -inf */
@@ -738,28 +750,32 @@ unsafe extern "C" fn silk_noise_shape_quantizer(
         } else {
             LTP_pred_Q13 = 0
         }
-        /* Noise shape feedback */
-        /* check that order is even */
+
         n_AR_Q12 = silk_NSQ_noise_shape_feedback_loop_c(
             &mut (*NSQ).sDiff_shp_Q14,
             (*NSQ).sAR2_Q14.as_mut_ptr(),
             AR_shp_Q13,
             shapingLPCOrder,
         );
+
         n_AR_Q12 = (n_AR_Q12 as i64
             + ((*NSQ).sLF_AR_shp_Q14 as i64 * Tilt_Q14 as crate::opus_types_h::opus_int16 as i64
                 >> 16)) as crate::opus_types_h::opus_int32;
+
         n_LF_Q12 = ((*NSQ).sLTP_shp_Q14[((*NSQ).sLTP_shp_buf_idx - 1i32) as usize] as i64
             * LF_shp_Q14 as crate::opus_types_h::opus_int16 as i64
             >> 16) as crate::opus_types_h::opus_int32;
+
         n_LF_Q12 = (n_LF_Q12 as i64
             + ((*NSQ).sLF_AR_shp_Q14 as i64 * (LF_shp_Q14 as i64 >> 16) >> 16))
             as crate::opus_types_h::opus_int32;
-        /* Combine prediction and noise shaping signals */
+
         tmp1 = ((LPC_pred_Q10 as crate::opus_types_h::opus_uint32) << 2)
             as crate::opus_types_h::opus_int32
-            - n_AR_Q12; /* Q12 */
-        tmp1 = tmp1 - n_LF_Q12; /* Q12 */
+            - n_AR_Q12;
+
+        tmp1 = tmp1 - n_LF_Q12;
+
         if lag > 0 {
             /* Symmetric, packed FIR coefficients */
             n_LTP_Q13 = ((*shp_lag_ptr.offset(0) + *shp_lag_ptr.offset(-2)) as i64
@@ -788,12 +804,14 @@ unsafe extern "C" fn silk_noise_shape_quantizer(
                 ((tmp1 >> 2 - 1) + 1) >> 1
             }
             /* Q10 */
-        } /* residual error Q10 */
+        }
+
         r_Q10 = *x_sc_Q10.offset(i as isize) - tmp1;
-        /* Flip sign depending on dither */
+
         if (*NSQ).rand_seed < 0 {
             r_Q10 = -r_Q10
         }
+
         r_Q10 = if -((31) << 10) > (30) << 10 {
             if r_Q10 > -((31) << 10) {
                 -((31) << 10)
@@ -809,9 +827,11 @@ unsafe extern "C" fn silk_noise_shape_quantizer(
         } else {
             r_Q10
         };
-        /* Find two quantization level candidates and measure their rate-distortion */
+
         q1_Q10 = r_Q10 - offset_Q10;
+
         q1_Q0 = q1_Q10 >> 10;
+
         if Lambda_Q10 > 2048 {
             /* For aggressive RDO, the bias becomes more than one pulse. */
             let mut rdo_offset: i32 = Lambda_Q10 / 2 - 512; /* Q1_Q0 < -1 */
@@ -825,6 +845,7 @@ unsafe extern "C" fn silk_noise_shape_quantizer(
                 q1_Q0 = 0
             }
         }
+
         if q1_Q0 > 0 {
             q1_Q10 = ((q1_Q0 as crate::opus_types_h::opus_uint32) << 10)
                 as crate::opus_types_h::opus_int32
@@ -860,36 +881,44 @@ unsafe extern "C" fn silk_noise_shape_quantizer(
             rd2_Q20 = -q2_Q10 as crate::opus_types_h::opus_int16 as crate::opus_types_h::opus_int32
                 * Lambda_Q10 as crate::opus_types_h::opus_int16 as crate::opus_types_h::opus_int32
         }
+
         rr_Q10 = r_Q10 - q1_Q10;
+
         rd1_Q20 = rd1_Q20
             + rr_Q10 as crate::opus_types_h::opus_int16 as crate::opus_types_h::opus_int32
                 * rr_Q10 as crate::opus_types_h::opus_int16 as crate::opus_types_h::opus_int32;
+
         rr_Q10 = r_Q10 - q2_Q10;
+
         rd2_Q20 = rd2_Q20
             + rr_Q10 as crate::opus_types_h::opus_int16 as crate::opus_types_h::opus_int32
                 * rr_Q10 as crate::opus_types_h::opus_int16 as crate::opus_types_h::opus_int32;
+
         if rd2_Q20 < rd1_Q20 {
             q1_Q10 = q2_Q10
         }
+
         *pulses.offset(i as isize) = if 10 == 1 {
             (q1_Q10 >> 1) + (q1_Q10 & 1)
         } else {
             ((q1_Q10 >> 10 - 1) + 1) >> 1
         } as i8;
-        /* Excitation */
+
         exc_Q14 =
             ((q1_Q10 as crate::opus_types_h::opus_uint32) << 4) as crate::opus_types_h::opus_int32;
+
         if (*NSQ).rand_seed < 0 {
             exc_Q14 = -exc_Q14
         }
-        /* Add predictions */
+
         LPC_exc_Q14 = exc_Q14
             + ((LTP_pred_Q13 as crate::opus_types_h::opus_uint32) << 1)
                 as crate::opus_types_h::opus_int32;
+
         xq_Q14 = LPC_exc_Q14
             + ((LPC_pred_Q10 as crate::opus_types_h::opus_uint32) << 4)
                 as crate::opus_types_h::opus_int32;
-        /* Scale XQ back to normal level before saving */
+
         *xq.offset(i as isize) = if (if 8 == 1 {
             ((xq_Q14 as i64 * Gain_Q10 as i64 >> 16) as crate::opus_types_h::opus_int32 >> 1)
                 + ((xq_Q14 as i64 * Gain_Q10 as i64 >> 16) as crate::opus_types_h::opus_int32 & 1)
@@ -918,29 +947,36 @@ unsafe extern "C" fn silk_noise_shape_quantizer(
                 + 1)
                 >> 1
         } as crate::opus_types_h::opus_int16;
-        /* Update states */
+
         psLPC_Q14 = psLPC_Q14.offset(1);
+
         *psLPC_Q14 = xq_Q14;
+
         (*NSQ).sDiff_shp_Q14 = xq_Q14
             - ((*x_sc_Q10.offset(i as isize) as crate::opus_types_h::opus_uint32) << 4)
                 as crate::opus_types_h::opus_int32;
+
         sLF_AR_shp_Q14 = (*NSQ).sDiff_shp_Q14
             - ((n_AR_Q12 as crate::opus_types_h::opus_uint32) << 2)
                 as crate::opus_types_h::opus_int32;
+
         (*NSQ).sLF_AR_shp_Q14 = sLF_AR_shp_Q14;
+
         (*NSQ).sLTP_shp_Q14[(*NSQ).sLTP_shp_buf_idx as usize] = sLF_AR_shp_Q14
             - ((n_LF_Q12 as crate::opus_types_h::opus_uint32) << 2)
                 as crate::opus_types_h::opus_int32;
+
         *sLTP_Q15.offset((*NSQ).sLTP_buf_idx as isize) =
             ((LPC_exc_Q14 as crate::opus_types_h::opus_uint32) << 1)
                 as crate::opus_types_h::opus_int32;
+
         (*NSQ).sLTP_shp_buf_idx += 1;
+
         (*NSQ).sLTP_buf_idx += 1;
-        /* Make dither dependent on quantized signal */
+
         (*NSQ).rand_seed = ((*NSQ).rand_seed as crate::opus_types_h::opus_uint32)
             .wrapping_add(*pulses.offset(i as isize) as crate::opus_types_h::opus_uint32)
             as crate::opus_types_h::opus_int32;
-        i += 1
     }
     /* Update LPC synth buffer */
     crate::stdlib::memcpy(

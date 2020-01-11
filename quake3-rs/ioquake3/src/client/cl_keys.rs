@@ -2398,10 +2398,9 @@ pub unsafe extern "C" fn Field_Paste(mut edit: *mut crate::qcommon_h::field_t) {
     }
     // send as if typed, so insert / overstrike works properly
     pasteLen = crate::stdlib::strlen(cbd) as i32;
-    i = 0;
-    while i < pasteLen {
+
+    for i in 0..pasteLen {
         Field_CharEvent(edit, *cbd.offset(i as isize) as i32);
-        i += 1
     }
     crate::src::qcommon::common::Z_Free(cbd as *mut libc::c_void);
 }
@@ -3102,13 +3101,13 @@ pub unsafe extern "C" fn Key_Bind_f() {
     }
     // copy the rest of the command line
     cmd[0] = 0; // start out with a null string
-    i = 2;
-    while i < c {
+
+    for i in 2..c {
         crate::stdlib::strcat(cmd.as_mut_ptr(), crate::src::qcommon::cmd::Cmd_Argv(i));
+
         if i != c - 1 {
             crate::stdlib::strcat(cmd.as_mut_ptr(), b" \x00" as *const u8 as *const i8);
         }
-        i += 1
     }
     Key_SetBinding(b, cmd.as_mut_ptr());
 }

@@ -439,19 +439,19 @@ pub unsafe extern "C" fn NumPlayersOnSameTeam(
     let mut num: i32 = 0;
     let mut buf: [i8; 1024] = [0; 1024];
     num = 0;
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
             32 + 256 + 256 + i,
             buf.as_mut_ptr(),
             1024,
         );
+
         if crate::stdlib::strlen(buf.as_mut_ptr()) != 0 {
             if crate::src::game::ai_dmq3::BotSameTeam(bs, i + 1) != 0 {
                 num += 1
             }
         }
-        i += 1
     }
     return num;
 }
@@ -749,18 +749,21 @@ pub unsafe extern "C" fn BotGPSToPosition(
     let mut j: i32 = 0;
     let mut num: i32 = 0;
     let mut sign: i32 = 0;
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         num = 0;
+
         while *buf.offset(j as isize) as i32 == ' ' as i32 {
             j += 1
         }
+
         if *buf.offset(j as isize) as i32 == '-' as i32 {
             j += 1;
             sign = -(1)
         } else {
             sign = 1
         }
+
         while *buf.offset(j as isize) != 0 {
             if *buf.offset(j as isize) as i32 >= '0' as i32
                 && *buf.offset(j as isize) as i32 <= '9' as i32
@@ -772,9 +775,10 @@ pub unsafe extern "C" fn BotGPSToPosition(
                 break;
             }
         }
+
         crate::src::game::ai_main::BotAI_Print(1, b"%d\n\x00" as *const u8 as *mut i8, sign * num);
+
         *position.offset(i as isize) = sign as f32 * num as f32;
-        i += 1
     }
     return crate::src::qcommon::q_shared::qtrue as i32;
 }

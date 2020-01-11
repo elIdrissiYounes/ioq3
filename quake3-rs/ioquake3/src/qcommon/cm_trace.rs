@@ -335,10 +335,8 @@ pub unsafe extern "C" fn TransposeMatrix(
     let mut j: i32 = 0;
     i = 0;
     while i < 3 {
-        j = 0;
-        while j < 3 {
+        for j in 0..3 {
             (*transpose.offset(i as isize))[j as usize] = (*matrix.offset(j as isize))[i as usize];
-            j += 1
         }
         i += 1
     }
@@ -679,13 +677,14 @@ pub unsafe extern "C" fn CM_TestCapsuleInCapsule(
     bottom[0] = (*tw).start[0] - (*tw).sphere.offset[0];
     bottom[1] = (*tw).start[1] - (*tw).sphere.offset[1];
     bottom[2] = (*tw).start[2] - (*tw).sphere.offset[2];
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         offset[i as usize] = ((mins[i as usize] + maxs[i as usize]) as f64 * 0.5)
             as crate::src::qcommon::q_shared::vec_t;
+
         symetricSize[0][i as usize] = mins[i as usize] - offset[i as usize];
+
         symetricSize[1][i as usize] = maxs[i as usize] - offset[i as usize];
-        i += 1
     }
     halfwidth = symetricSize[1][0];
     halfheight = symetricSize[1][2];
@@ -777,15 +776,18 @@ pub unsafe extern "C" fn CM_TestBoundingBoxInCapsule(
     // mins maxs of the capsule
     crate::src::qcommon::cm_load::CM_ModelBounds(model, mins.as_mut_ptr(), maxs.as_mut_ptr());
     // offset for capsule center
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         offset[i as usize] = ((mins[i as usize] + maxs[i as usize]) as f64 * 0.5)
             as crate::src::qcommon::q_shared::vec_t;
+
         size[0][i as usize] = mins[i as usize] - offset[i as usize];
+
         size[1][i as usize] = maxs[i as usize] - offset[i as usize];
+
         (*tw).start[i as usize] -= offset[i as usize];
+
         (*tw).end[i as usize] -= offset[i as usize];
-        i += 1
     }
     // replace the bounding box with the capsule
     (*tw).sphere.use_0 = crate::src::qcommon::q_shared::qtrue;
@@ -1491,13 +1493,14 @@ pub unsafe extern "C" fn CM_TraceCapsuleThroughCapsule(
     endbottom[1] = (*tw).end[1] - (*tw).sphere.offset[1];
     endbottom[2] = (*tw).end[2] - (*tw).sphere.offset[2];
     // calculate top and bottom of the capsule spheres to collide with
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         offset[i as usize] = ((mins[i as usize] + maxs[i as usize]) as f64 * 0.5)
             as crate::src::qcommon::q_shared::vec_t;
+
         symetricSize[0][i as usize] = mins[i as usize] - offset[i as usize];
+
         symetricSize[1][i as usize] = maxs[i as usize] - offset[i as usize];
-        i += 1
     }
     halfwidth = symetricSize[1][0];
     halfheight = symetricSize[1][2];
@@ -1573,15 +1576,18 @@ pub unsafe extern "C" fn CM_TraceBoundingBoxThroughCapsule(
     // mins maxs of the capsule
     crate::src::qcommon::cm_load::CM_ModelBounds(model, mins.as_mut_ptr(), maxs.as_mut_ptr());
     // offset for capsule center
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         offset[i as usize] = ((mins[i as usize] + maxs[i as usize]) as f64 * 0.5)
             as crate::src::qcommon::q_shared::vec_t;
+
         size[0][i as usize] = mins[i as usize] - offset[i as usize];
+
         size[1][i as usize] = maxs[i as usize] - offset[i as usize];
+
         (*tw).start[i as usize] -= offset[i as usize];
+
         (*tw).end[i as usize] -= offset[i as usize];
-        i += 1
     }
     // replace the bounding box with the capsule
     (*tw).sphere.use_0 = crate::src::qcommon::q_shared::qtrue;
@@ -2118,15 +2124,18 @@ pub unsafe extern "C" fn CM_TransformedBoxTrace(
     // adjust so that mins and maxs are always symetric, which
     // avoids some complications with plane expanding of rotated
     // bmodels
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         offset[i as usize] = ((*mins.offset(i as isize) + *maxs.offset(i as isize)) as f64 * 0.5)
             as crate::src::qcommon::q_shared::vec_t;
+
         symetricSize[0][i as usize] = *mins.offset(i as isize) - offset[i as usize];
+
         symetricSize[1][i as usize] = *maxs.offset(i as isize) - offset[i as usize];
+
         start_l[i as usize] = *start.offset(i as isize) + offset[i as usize];
+
         end_l[i as usize] = *end.offset(i as isize) + offset[i as usize];
-        i += 1
     }
     // subtract origin offset
     start_l[0] = start_l[0] - *origin.offset(0);

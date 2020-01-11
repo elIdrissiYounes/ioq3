@@ -328,8 +328,8 @@ pub unsafe extern "C" fn PM_SlideMove(
                         );
                     }
                     // see if there is a second plane that the new move enters
-                    j = 0;
-                    while j < numplanes {
+
+                    for j in 0..numplanes {
                         if !(j == i) {
                             if !((clipVelocity[0] * planes[j as usize][0]
                                 + clipVelocity[1] * planes[j as usize][1]
@@ -422,8 +422,6 @@ pub unsafe extern "C" fn PM_SlideMove(
                                 }
                             }
                         }
-                        j += 1
-                        // move doesn't interact with the plane
                     }
                     // if we have fixed all interactions, try another move
                     (*(*crate::src::game::bg_pmove::pm).ps).velocity[0] = clipVelocity[0];

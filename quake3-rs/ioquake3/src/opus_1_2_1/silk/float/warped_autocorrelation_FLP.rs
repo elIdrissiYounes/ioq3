@@ -108,11 +108,12 @@ pub unsafe extern "C" fn silk_warped_autocorrelation_FLP(
     ];
     /* Order must be even */
     /* Loop over samples */
-    n = 0;
-    while n < length {
+
+    for n in 0..length {
         tmp1 = *input.offset(n as isize) as f64;
-        /* Loop over allpass sections */
+
         i = 0;
+
         while i < order {
             /* Output of allpass section */
             tmp2 = state[i as usize] + warping as f64 * (state[(i + 1) as usize] - tmp1);
@@ -124,9 +125,10 @@ pub unsafe extern "C" fn silk_warped_autocorrelation_FLP(
             C[(i + 1) as usize] += state[0] * tmp2;
             i += 2
         }
+
         state[order as usize] = tmp1;
+
         C[order as usize] += state[0] * tmp1;
-        n += 1
     }
     /* Copy correlations in silk_float output format */
     i = 0;

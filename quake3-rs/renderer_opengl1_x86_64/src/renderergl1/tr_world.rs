@@ -280,9 +280,7 @@ unsafe extern "C" fn R_CullGrid(
     if (*crate::src::renderergl1::tr_init::r_nocurves).integer != 0 {
         return crate::src::qcommon::q_shared::qtrue;
     }
-    if crate::src::renderergl1::tr_main::tr.currentEntityNum
-        != ((1) << 10) - 1
-    {
+    if crate::src::renderergl1::tr_main::tr.currentEntityNum != ((1) << 10) - 1 {
         sphereCull = crate::src::renderergl1::tr_main::R_CullLocalPointAndRadius(
             (*cv).localOrigin.as_mut_ptr(),
             (*cv).meshRadius,
@@ -348,18 +346,16 @@ unsafe extern "C" fn R_CullSurface(
     if (*crate::src::renderergl1::tr_init::r_nocull).integer != 0 {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if  *surface ==  crate::tr_local_h::SF_GRID {
+    if *surface == crate::tr_local_h::SF_GRID {
         return R_CullGrid(surface as *mut crate::tr_local_h::srfGridMesh_t);
     }
-    if  *surface ==  crate::tr_local_h::SF_TRIANGLES {
+    if *surface == crate::tr_local_h::SF_TRIANGLES {
         return R_CullTriSurf(surface as *mut crate::tr_local_h::srfTriangles_t);
     }
-    if  *surface !=  crate::tr_local_h::SF_FACE {
+    if *surface != crate::tr_local_h::SF_FACE {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if  (*shader).cullType
-        ==  crate::tr_local_h::CT_TWO_SIDED
-    {
+    if (*shader).cullType == crate::tr_local_h::CT_TWO_SIDED {
         return crate::src::qcommon::q_shared::qfalse;
     }
     // face culling
@@ -367,18 +363,13 @@ unsafe extern "C" fn R_CullSurface(
         return crate::src::qcommon::q_shared::qfalse;
     }
     sface = surface as *mut crate::tr_local_h::srfSurfaceFace_t;
-    d = crate::src::renderergl1::tr_main::tr.or.viewOrigin[0]
-        * (*sface).plane.normal[0]
-        + crate::src::renderergl1::tr_main::tr.or.viewOrigin[1]
-            * (*sface).plane.normal[1]
-        + crate::src::renderergl1::tr_main::tr.or.viewOrigin[2]
-            * (*sface).plane.normal[2];
+    d = crate::src::renderergl1::tr_main::tr.or.viewOrigin[0] * (*sface).plane.normal[0]
+        + crate::src::renderergl1::tr_main::tr.or.viewOrigin[1] * (*sface).plane.normal[1]
+        + crate::src::renderergl1::tr_main::tr.or.viewOrigin[2] * (*sface).plane.normal[2];
     // don't cull exactly on the plane, because there are levels of rounding
     // through the BSP, ICD, and hardware that may cause pixel gaps if an
     // epsilon isn't allowed here
-    if  (*shader).cullType
-        ==  crate::tr_local_h::CT_FRONT_SIDED
-    {
+    if (*shader).cullType == crate::tr_local_h::CT_FRONT_SIDED {
         if d < (*sface).plane.dist - 8f32 {
             return crate::src::qcommon::q_shared::qtrue;
         }
@@ -395,26 +386,22 @@ unsafe extern "C" fn R_DlightFace(
     let mut d: f32 = 0.;
     let mut i: i32 = 0;
     let mut dl: *mut crate::tr_local_h::dlight_t = 0 as *mut crate::tr_local_h::dlight_t;
-    i = 0;
-    while i < crate::src::renderergl1::tr_main::tr.refdef.num_dlights {
+
+    for i in 0..crate::src::renderergl1::tr_main::tr.refdef.num_dlights {
         if !(dlightBits & (1) << i == 0) {
             dl = &mut *crate::src::renderergl1::tr_main::tr
                 .refdef
                 .dlights
                 .offset(i as isize) as *mut crate::tr_local_h::dlight_s;
-            d = (*dl).origin[0]
-                * (*face).plane.normal[0]
-                + (*dl).origin[1]
-                    * (*face).plane.normal[1]
-                + (*dl).origin[2]
-                    * (*face).plane.normal[2]
+            d = (*dl).origin[0] * (*face).plane.normal[0]
+                + (*dl).origin[1] * (*face).plane.normal[1]
+                + (*dl).origin[2] * (*face).plane.normal[2]
                 - (*face).plane.dist;
             if d < -(*dl).radius || d > (*dl).radius {
                 // dlight doesn't reach the plane
                 dlightBits &= !((1) << i)
             }
         }
-        i += 1
     }
     if dlightBits == 0 {
         crate::src::renderergl1::tr_main::tr
@@ -431,31 +418,24 @@ unsafe extern "C" fn R_DlightGrid(
 ) -> i32 {
     let mut i: i32 = 0;
     let mut dl: *mut crate::tr_local_h::dlight_t = 0 as *mut crate::tr_local_h::dlight_t;
-    i = 0;
-    while i < crate::src::renderergl1::tr_main::tr.refdef.num_dlights {
+
+    for i in 0..crate::src::renderergl1::tr_main::tr.refdef.num_dlights {
         if !(dlightBits & (1) << i == 0) {
             dl = &mut *crate::src::renderergl1::tr_main::tr
                 .refdef
                 .dlights
                 .offset(i as isize) as *mut crate::tr_local_h::dlight_s;
-            if (*dl).origin[0] - (*dl).radius
-                > (*grid).meshBounds[1][0]
-                || (*dl).origin[0] + (*dl).radius
-                    < (*grid).meshBounds[0][0]
-                || (*dl).origin[1] - (*dl).radius
-                    > (*grid).meshBounds[1][1]
-                || (*dl).origin[1] + (*dl).radius
-                    < (*grid).meshBounds[0][1]
-                || (*dl).origin[2] - (*dl).radius
-                    > (*grid).meshBounds[1][2]
-                || (*dl).origin[2] + (*dl).radius
-                    < (*grid).meshBounds[0][2]
+            if (*dl).origin[0] - (*dl).radius > (*grid).meshBounds[1][0]
+                || (*dl).origin[0] + (*dl).radius < (*grid).meshBounds[0][0]
+                || (*dl).origin[1] - (*dl).radius > (*grid).meshBounds[1][1]
+                || (*dl).origin[1] + (*dl).radius < (*grid).meshBounds[0][1]
+                || (*dl).origin[2] - (*dl).radius > (*grid).meshBounds[1][2]
+                || (*dl).origin[2] + (*dl).radius < (*grid).meshBounds[0][2]
             {
                 // dlight doesn't reach the bounds
                 dlightBits &= !((1) << i)
             }
         }
-        i += 1
     }
     if dlightBits == 0 {
         crate::src::renderergl1::tr_main::tr
@@ -488,21 +468,17 @@ unsafe extern "C" fn R_DlightSurface(
     mut surf: *mut crate::tr_local_h::msurface_t,
     mut dlightBits: i32,
 ) -> i32 {
-    if  *(*surf).data ==  crate::tr_local_h::SF_FACE {
+    if *(*surf).data == crate::tr_local_h::SF_FACE {
         dlightBits = R_DlightFace(
             (*surf).data as *mut crate::tr_local_h::srfSurfaceFace_t,
             dlightBits,
         )
-    } else if  *(*surf).data
-        ==  crate::tr_local_h::SF_GRID
-    {
+    } else if *(*surf).data == crate::tr_local_h::SF_GRID {
         dlightBits = R_DlightGrid(
             (*surf).data as *mut crate::tr_local_h::srfGridMesh_t,
             dlightBits,
         )
-    } else if  *(*surf).data
-        ==  crate::tr_local_h::SF_TRIANGLES
-    {
+    } else if *(*surf).data == crate::tr_local_h::SF_TRIANGLES {
         dlightBits = R_DlightTrisurf(
             (*surf).data as *mut crate::tr_local_h::srfTriangles_t,
             dlightBits,
@@ -712,31 +688,22 @@ unsafe extern "C" fn R_RecursiveWorldNode(
                         .dlights
                         .offset(i as isize)
                         as *mut crate::tr_local_h::dlight_s;
-                    dist = (*dl).origin[0]
-                        * (*(*node).plane).normal[0]
-                        + (*dl).origin[1]
-                            * (*(*node).plane).normal[1]
-                        + (*dl).origin[2]
-                            * (*(*node).plane).normal[2]
+                    dist = (*dl).origin[0] * (*(*node).plane).normal[0]
+                        + (*dl).origin[1] * (*(*node).plane).normal[1]
+                        + (*dl).origin[2] * (*(*node).plane).normal[2]
                         - (*(*node).plane).dist;
                     if dist > -(*dl).radius {
-                        newDlights[0] |=
-                            ((1i32) << i) as u32
+                        newDlights[0] |= ((1i32) << i) as u32
                     }
                     if dist < (*dl).radius {
-                        newDlights[1] |=
-                            ((1i32) << i) as u32
+                        newDlights[1] |= ((1i32) << i) as u32
                     }
                 }
                 i += 1
             }
         }
         // recurse down the children, front side first
-        R_RecursiveWorldNode(
-            (*node).children[0],
-            planeBits,
-            newDlights[0],
-        );
+        R_RecursiveWorldNode((*node).children[0], planeBits, newDlights[0]);
         // tail recurse
         node = (*node).children[1];
         dlightBits = newDlights[1]
@@ -748,47 +715,23 @@ unsafe extern "C" fn R_RecursiveWorldNode(
         0 as *mut *mut crate::tr_local_h::msurface_t;
     crate::src::renderergl1::tr_main::tr.pc.c_leafs += 1;
     // add to z buffer bounds
-    if (*node).mins[0]
-        < crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0]
-            [0]
-    {
-        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0]
-            [0] = (*node).mins[0]
+    if (*node).mins[0] < crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0][0] {
+        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0][0] = (*node).mins[0]
     }
-    if (*node).mins[1]
-        < crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0]
-            [1]
-    {
-        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0]
-            [1] = (*node).mins[1]
+    if (*node).mins[1] < crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0][1] {
+        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0][1] = (*node).mins[1]
     }
-    if (*node).mins[2]
-        < crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0]
-            [2]
-    {
-        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0]
-            [2] = (*node).mins[2]
+    if (*node).mins[2] < crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0][2] {
+        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0][2] = (*node).mins[2]
     }
-    if (*node).maxs[0]
-        > crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1]
-            [0]
-    {
-        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1]
-            [0] = (*node).maxs[0]
+    if (*node).maxs[0] > crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1][0] {
+        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1][0] = (*node).maxs[0]
     }
-    if (*node).maxs[1]
-        > crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1]
-            [1]
-    {
-        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1]
-            [1] = (*node).maxs[1]
+    if (*node).maxs[1] > crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1][1] {
+        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1][1] = (*node).maxs[1]
     }
-    if (*node).maxs[2]
-        > crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1]
-            [2]
-    {
-        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1]
-            [2] = (*node).maxs[2]
+    if (*node).maxs[2] > crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1][2] {
+        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1][2] = (*node).maxs[2]
     }
     // add the individual surfaces
     mark = (*node).firstmarksurface;
@@ -848,9 +791,7 @@ R_ClusterPVS
 ==============
 */
 
-unsafe extern "C" fn R_ClusterPVS(
-    mut cluster: i32,
-) -> *const crate::src::qcommon::q_shared::byte {
+unsafe extern "C" fn R_ClusterPVS(mut cluster: i32) -> *const crate::src::qcommon::q_shared::byte {
     if (*crate::src::renderergl1::tr_main::tr.world).vis.is_null()
         || cluster < 0
         || cluster >= (*crate::src::renderergl1::tr_main::tr.world).numClusters
@@ -880,10 +821,7 @@ pub unsafe extern "C" fn R_inPVS(
         .CM_ClusterPVS
         .expect("non-null function pointer")((*leaf).cluster);
     leaf = R_PointInLeaf(p2);
-    if *vis.offset(((*leaf).cluster >> 3) as isize) as i32
-        & (1) << ((*leaf).cluster & 7)
-        == 0
-    {
+    if *vis.offset(((*leaf).cluster >> 3) as isize) as i32 & (1) << ((*leaf).cluster & 7) == 0 {
         return crate::src::qcommon::q_shared::qfalse;
     }
     return crate::src::qcommon::q_shared::qtrue;
@@ -926,7 +864,7 @@ unsafe extern "C" fn R_MarkLeaves() {
     {
         return;
     }
-    if  (*crate::src::renderergl1::tr_init::r_showcluster).modified != 0
+    if (*crate::src::renderergl1::tr_init::r_showcluster).modified != 0
         || (*crate::src::renderergl1::tr_init::r_showcluster).integer != 0
     {
         (*crate::src::renderergl1::tr_init::r_showcluster).modified =
@@ -969,18 +907,12 @@ unsafe extern "C" fn R_MarkLeaves() {
     leaf = (*crate::src::renderergl1::tr_main::tr.world).nodes;
     while i < (*crate::src::renderergl1::tr_main::tr.world).numnodes {
         cluster = (*leaf).cluster;
-        if !(cluster < 0
-            || cluster >= (*crate::src::renderergl1::tr_main::tr.world).numClusters)
-        {
+        if !(cluster < 0 || cluster >= (*crate::src::renderergl1::tr_main::tr.world).numClusters) {
             // check general pvs
-            if !(*vis.offset((cluster >> 3) as isize) as i32
-                & (1) << (cluster & 7)
-                == 0)
-            {
+            if !(*vis.offset((cluster >> 3) as isize) as i32 & (1) << (cluster & 7) == 0) {
                 // check for door connection
                 if !(crate::src::renderergl1::tr_main::tr.refdef.areamask
-                    [((*leaf).area >> 3) as usize]
-                    as i32
+                    [((*leaf).area >> 3) as usize] as i32
                     & (1) << ((*leaf).area & 7)
                     != 0)
                 {
@@ -1352,18 +1284,15 @@ pub unsafe extern "C" fn R_AddWorldSurfaces() {
     if crate::src::renderergl1::tr_main::tr.refdef.rdflags & 0x1 != 0 {
         return;
     }
-    crate::src::renderergl1::tr_main::tr.currentEntityNum =
-        ((1) << 10) - 1;
+    crate::src::renderergl1::tr_main::tr.currentEntityNum = ((1) << 10) - 1;
     crate::src::renderergl1::tr_main::tr.shiftedEntityNum =
         crate::src::renderergl1::tr_main::tr.currentEntityNum << 7;
     // determine which leaves are in the PVS / areamask
     R_MarkLeaves();
     // clear out the visible min/max
     crate::src::qcommon::q_math::ClearBounds(
-        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0]
-            .as_mut_ptr(),
-        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1]
-            .as_mut_ptr(),
+        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[0].as_mut_ptr(),
+        crate::src::renderergl1::tr_main::tr.viewParms.visBounds[1].as_mut_ptr(),
     );
     // perform frustum culling and add all the potentially visible surfaces
     if crate::src::renderergl1::tr_main::tr.refdef.num_dlights > 32 {
@@ -1372,7 +1301,7 @@ pub unsafe extern "C" fn R_AddWorldSurfaces() {
     R_RecursiveWorldNode(
         (*crate::src::renderergl1::tr_main::tr.world).nodes,
         15,
-        ((1u64) << crate::src::renderergl1::tr_main::tr.refdef.num_dlights)
-            .wrapping_sub(1u64) as u32,
+        ((1u64) << crate::src::renderergl1::tr_main::tr.refdef.num_dlights).wrapping_sub(1u64)
+            as u32,
     );
 }

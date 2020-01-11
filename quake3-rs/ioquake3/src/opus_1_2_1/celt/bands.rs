@@ -89,16 +89,15 @@ pub mod rate_h {
         lo = 0;
         hi = *cache.offset(0) as i32;
         bits -= 1;
-        i = 0;
-        while i < 6 {
+
+        for i in 0..6 {
             let mut mid: i32 = lo + hi + 1 >> 1;
-            /* OPT: Make sure this is implemented with a conditional move */
+
             if *cache.offset(mid as isize) as i32 >= bits {
                 hi = mid
             } else {
                 lo = mid
             }
-            i += 1
         }
         if bits
             - (if lo == 0 {
@@ -152,11 +151,11 @@ pub mod pitch_h {
         let mut i: i32 = 0;
         let mut xy01: crate::arch_h::opus_val32 = 0f32;
         let mut xy02: crate::arch_h::opus_val32 = 0f32;
-        i = 0;
-        while i < N {
+
+        for i in 0..N {
             xy01 = xy01 + *x.offset(i as isize) * *y01.offset(i as isize);
+
             xy02 = xy02 + *x.offset(i as isize) * *y02.offset(i as isize);
-            i += 1
         }
         *xy1 = xy01;
         *xy2 = xy02;
@@ -172,10 +171,9 @@ pub mod pitch_h {
     ) -> crate::arch_h::opus_val32 {
         let mut i: i32 = 0;
         let mut xy: crate::arch_h::opus_val32 = 0f32;
-        i = 0;
-        while i < N {
+
+        for i in 0..N {
             xy = xy + *x.offset(i as isize) * *y.offset(i as isize);
-            i += 1
         }
         return xy;
     }
@@ -403,9 +401,9 @@ pub unsafe extern "C" fn compute_band_energies(
     N = (*m).shortMdctSize << LM;
     c = 0;
     loop {
-        i = 0;
-        while i < end {
+        for i in 0..end {
             let mut sum: crate::arch_h::opus_val32 = 0.;
+
             sum = 1e-27
                 + celt_inner_prod_c(
                     &*X.offset((c * N + ((*eBands.offset(i as isize) as i32) << LM)) as isize),
@@ -413,10 +411,9 @@ pub unsafe extern "C" fn compute_band_energies(
                     (*eBands.offset((i + 1) as isize) as i32 - *eBands.offset(i as isize) as i32)
                         << LM,
                 );
+
             *bandE.offset((i + c * (*m).nbEBands) as isize) =
                 crate::stdlib::sqrt(sum as f64) as f32;
-            i += 1
-            /*printf ("%f ", bandE[i+c*m->nbEBands]);*/
         }
         c += 1;
         if !(c < C) {
@@ -444,17 +441,16 @@ pub unsafe extern "C" fn normalise_bands(
     N = M * (*m).shortMdctSize;
     c = 0;
     loop {
-        i = 0;
-        while i < end {
+        for i in 0..end {
             let mut j: i32 = 0;
+
             let mut g: crate::arch_h::opus_val16 =
                 1.0 / (1e-27 + *bandE.offset((i + c * (*m).nbEBands) as isize));
-            j = M * *eBands.offset(i as isize) as i32;
-            while j < M * *eBands.offset((i + 1) as isize) as i32 {
+            for j in
+                M * *eBands.offset(i as isize) as i32..M * *eBands.offset((i + 1) as isize) as i32
+            {
                 *X.offset((j + c * N) as isize) = *freq.offset((j + c * N) as isize) * g;
-                j += 1
             }
-            i += 1
         }
         c += 1;
         if !(c < C) {
@@ -612,21 +608,19 @@ pub unsafe extern "C" fn anti_collapse(
             X = X_
                 .offset((c * size) as isize)
                 .offset(((*(*m).eBands.offset(i as isize) as i32) << LM) as isize);
-            k = 0;
-            while k < (1) << LM {
-                /* Detect collapse */
+
+            for k in 0..(1) << LM {
                 if *collapse_masks.offset((i * C + c) as isize) as i32 & (1) << k == 0 {
                     /* Fill with noise */
-                    j = 0;
-                    while j < N0 {
+
+                    for j in 0..N0 {
                         seed = celt_lcg_rand(seed);
+
                         *X.offset(((j << LM) + k) as isize) =
                             if seed & 0x8000u32 != 0 { r } else { -r };
-                        j += 1
                     }
                     renormalize = 1
                 }
-                k += 1
             }
             /* We just added some energy, so we need to renormalise */
             if renormalize != 0 {
@@ -792,34 +786,42 @@ pub unsafe extern "C" fn spreading_decision(
     }
     c = 0;
     loop {
-        i = 0;
-        while i < end {
+        for i in 0..end {
             let mut j: i32 = 0;
+
             let mut N: i32 = 0;
+
             let mut tmp: i32 = 0;
+
             let mut tcount: [i32; 3] = [0, 0, 0];
+
             let mut x: *const crate::arch_h::celt_norm = X
                 .offset((M * *eBands.offset(i as isize) as i32) as isize)
                 .offset((c * N0) as isize);
+
             N = M * (*eBands.offset((i + 1) as isize) as i32 - *eBands.offset(i as isize) as i32);
+
             if !(N <= 8) {
                 /* Compute rough CDF of |x[j]| */
-                j = 0; /* Q13 */
-                while j < N {
+                /* Q13 */
+                for j in 0..N {
                     let mut x2N: crate::arch_h::opus_val32 = 0.;
+
                     x2N = *x.offset(j as isize)
                         * *x.offset(j as isize)
                         * N as crate::arch_h::opus_val32;
+
                     if x2N < 0.25 {
                         tcount[0] += 1
                     }
+
                     if x2N < 0.0625 {
                         tcount[1] += 1
                     }
+
                     if x2N < 0.015625 {
                         tcount[2] += 1
                     }
-                    j += 1
                 }
                 /* Only include four last bands (8 kHz and up) */
                 if i > (*m).nbEBands - 4 {
@@ -834,7 +836,6 @@ pub unsafe extern "C" fn spreading_decision(
                 sum += tmp * 256;
                 nbBands += 1
             }
-            i += 1
         }
         c += 1;
         if !(c < C) {
@@ -997,15 +998,18 @@ pub unsafe extern "C" fn haar1(mut X: *mut crate::arch_h::celt_norm, mut N0: i32
     N0 >>= 1;
     i = 0;
     while i < stride {
-        j = 0;
-        while j < N0 {
+        for j in 0..N0 {
             let mut tmp1: crate::arch_h::opus_val32 = 0.;
+
             let mut tmp2: crate::arch_h::opus_val32 = 0.;
+
             tmp1 = 0.70710678 * *X.offset((stride * 2 * j + i) as isize);
+
             tmp2 = 0.70710678 * *X.offset((stride * (2 * j + 1) + i) as isize);
+
             *X.offset((stride * 2 * j + i) as isize) = tmp1 + tmp2;
+
             *X.offset((stride * (2 * j + 1) + i) as isize) = tmp1 - tmp2;
-            j += 1
         }
         i += 1
     }
@@ -2239,36 +2243,55 @@ pub unsafe extern "C" fn quant_all_bands(
     ctx.theta_round = 0;
     /* Avoid injecting noise in the first band on transients. */
     ctx.avoid_split_noise = (B > 1) as i32;
-    i = start;
-    while i < end {
+
+    for i in start..end {
         let mut tell: crate::opus_types_h::opus_int32 = 0;
+
         let mut b: i32 = 0;
+
         let mut N: i32 = 0;
+
         let mut curr_balance: crate::opus_types_h::opus_int32 = 0;
+
         let mut effective_lowband: i32 = -(1);
+
         let mut X: *mut crate::arch_h::celt_norm = 0 as *mut crate::arch_h::celt_norm;
+
         let mut Y: *mut crate::arch_h::celt_norm = 0 as *mut crate::arch_h::celt_norm;
+
         let mut tf_change: i32 = 0;
+
         let mut x_cm: u32 = 0;
+
         let mut y_cm: u32 = 0;
+
         let mut last: i32 = 0;
+
         ctx.i = i;
+
         last = (i == end - 1) as i32;
+
         X = X_.offset((M * *eBands.offset(i as isize) as i32) as isize);
+
         if !Y_.is_null() {
             Y = Y_.offset((M * *eBands.offset(i as isize) as i32) as isize)
         } else {
             Y = 0 as *mut crate::arch_h::celt_norm
         }
+
         N = M * *eBands.offset((i + 1) as isize) as i32 - M * *eBands.offset(i as isize) as i32;
+
         tell = crate::src::opus_1_2_1::celt::entcode::ec_tell_frac(ec)
             as crate::opus_types_h::opus_int32;
-        /* Compute how many bits we want to allocate to this band */
+
         if i != start {
             balance -= tell
         }
+
         remaining_bits = total_bits - tell - 1;
+
         ctx.remaining_bits = remaining_bits;
+
         if i <= codedBands - 1 {
             curr_balance = celt_sudiv(
                 balance,
@@ -2310,6 +2333,7 @@ pub unsafe extern "C" fn quant_all_bands(
         } else {
             b = 0
         }
+
         if resynth != 0
             && M * *eBands.offset(i as isize) as i32 - N
                 >= M * *eBands.offset(start as isize) as i32
@@ -2317,8 +2341,11 @@ pub unsafe extern "C" fn quant_all_bands(
         {
             lowband_offset = i
         }
+
         tf_change = *tf_res.offset(i as isize);
+
         ctx.tf_change = tf_change;
+
         if i >= (*m).effEBands {
             X = norm;
             if !Y_.is_null() {
@@ -2326,11 +2353,11 @@ pub unsafe extern "C" fn quant_all_bands(
             }
             lowband_scratch = 0 as *mut crate::arch_h::celt_norm
         }
+
         if last != 0 && theta_rdo == 0 {
             lowband_scratch = 0 as *mut crate::arch_h::celt_norm
         }
-        /* Get a conservative estimate of the collapse_mask's for the bands we're
-        going to be folding from. */
+
         if lowband_offset != 0 && (spread != 3 || B > 1 || tf_change < 0) {
             let mut fold_start: i32 = 0;
             let mut fold_end: i32 = 0;
@@ -2377,6 +2404,7 @@ pub unsafe extern "C" fn quant_all_bands(
             y_cm = (((1i32) << B) - 1) as u32;
             x_cm = y_cm
         }
+
         if dual_stereo != 0 && i == intensity {
             let mut j: i32 = 0;
             /* Switch off dual stereo to do intensity. */
@@ -2390,6 +2418,7 @@ pub unsafe extern "C" fn quant_all_bands(
                 }
             }
         }
+
         if dual_stereo != 0 {
             x_cm = quant_band(
                 &mut ctx,
@@ -2761,15 +2790,16 @@ pub unsafe extern "C" fn quant_all_bands(
             }
             y_cm = x_cm
         }
+
         *collapse_masks.offset((i * C + 0) as isize) = x_cm as u8;
+
         *collapse_masks.offset((i * C + C - 1) as isize) = y_cm as u8;
+
         balance += *pulses.offset(i as isize) + tell;
-        /* Update the folding position only as long as we have 1 bit/sample depth. */
+
         update_lowband = (b > N << 3) as i32;
-        /* We only need to avoid noise on a split for the first band. After that, we
-        have folding. */
+
         ctx.avoid_split_noise = 0;
-        i += 1
     }
     *seed = ctx.seed;
 }

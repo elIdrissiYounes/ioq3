@@ -133,14 +133,13 @@ pub unsafe extern "C" fn opus_head_parse(
         if head.coupled_count > head.stream_count {
             return -(133i32);
         }
-        ci = 0;
-        while ci < head.channel_count {
+
+        for ci in 0..head.channel_count {
             if *_data.offset((21 + ci) as isize) as i32 >= head.stream_count + head.coupled_count
                 && *_data.offset((21 + ci) as isize) as i32 != 255
             {
                 return -(133i32);
             }
-            ci += 1
         }
         if !_head.is_null() {
             crate::stdlib::memcpy(
@@ -344,22 +343,26 @@ unsafe extern "C" fn opus_tags_parse_impl(
         }
     }
     ncomments = count as i32;
-    ci = 0;
-    while ci < ncomments {
-        /*Check to make sure there's minimally sufficient data left in the packet.*/
+
+    for ci in 0..ncomments {
         if (ncomments - ci) as crate::stddef_h::size_t > len >> 2 {
             return -(133i32);
         }
+
         count = op_parse_uint32le(_data);
+
         _data = _data.offset(4);
+
         len = (len).wrapping_sub(4usize);
+
         if count as usize > len {
             return -(133i32);
         }
-        /*Check for overflow (the API limits this to an int).*/
+
         if count > 2147483647 {
             return -(129i32);
         }
+
         if !_tags.is_null() {
             let ref mut fresh3 = *(*_tags).user_comments.offset(ci as isize);
             *fresh3 = op_strdup_with_len(_data as *mut i8, count as crate::stddef_h::size_t);
@@ -373,9 +376,10 @@ unsafe extern "C" fn opus_tags_parse_impl(
             let ref mut fresh4 = *(*_tags).user_comments.offset((ci + 1) as isize);
             *fresh4 = 0 as *mut i8
         }
+
         _data = _data.offset(count as isize);
+
         len = (len).wrapping_sub(count as usize);
-        ci += 1
     }
     if len > 0 && *_data.offset(0) as i32 & 1 != 0 {
         if len > 2147483647u32 as usize {
@@ -452,21 +456,26 @@ unsafe extern "C" fn opus_tags_copy_impl(
     if (ret < 0) as i32 as isize != 0 {
         return ret;
     }
-    ci = 0;
-    while ci < ncomments {
+
+    for ci in 0..ncomments {
         let mut len: i32 = 0;
+
         len = *(*_src).comment_lengths.offset(ci as isize);
+
         let ref mut fresh6 = *(*_dst).user_comments.offset(ci as isize);
+
         *fresh6 = op_strdup_with_len(
             *(*_src).user_comments.offset(ci as isize),
             len as crate::stddef_h::size_t,
         );
+
         if (*(*_dst).user_comments.offset(ci as isize)).is_null() as i32 as isize != 0 {
             return -(129i32);
         }
+
         *(*_dst).comment_lengths.offset(ci as isize) = len;
+
         (*_dst).comments = ci + 1;
-        ci += 1
     }
     if !(*_src).comment_lengths.is_null() {
         let mut len_0: i32 = 0;
@@ -668,8 +677,8 @@ pub unsafe extern "C" fn opus_tags_query(
     ncomments = (*_tags).comments;
     user_comments = (*_tags).user_comments;
     found = 0;
-    ci = 0;
-    while ci < ncomments {
+
+    for ci in 0..ncomments {
         if opus_tagncompare(_tag, tag_len as i32, *user_comments.offset(ci as isize)) == 0 {
             /*We return a pointer to the data, not a copy.*/
             let fresh11 = found;
@@ -680,7 +689,6 @@ pub unsafe extern "C" fn opus_tags_query(
                     .offset(1isize);
             }
         }
-        ci += 1
     }
     /*Didn't find anything.*/
     return 0 as *const i8;
@@ -703,12 +711,11 @@ pub unsafe extern "C" fn opus_tags_query_count(
     ncomments = (*_tags).comments;
     user_comments = (*_tags).user_comments;
     found = 0;
-    ci = 0;
-    while ci < ncomments {
+
+    for ci in 0..ncomments {
         if opus_tagncompare(_tag, tag_len as i32, *user_comments.offset(ci as isize)) == 0 {
             found += 1
         }
-        ci += 1
     }
     return found;
 }
@@ -746,8 +753,8 @@ unsafe extern "C" fn opus_tags_get_gain(
     comments = (*_tags).user_comments;
     ncomments = (*_tags).comments;
     /*Look for the first valid tag with the name _tag_name and use that.*/
-    ci = 0;
-    while ci < ncomments {
+
+    for ci in 0..ncomments {
         if opus_tagncompare(_tag_name, _tag_len as i32, *comments.offset(ci as isize)) == 0 {
             let mut p: *mut i8 = 0 as *mut i8;
             let mut gain_q8: crate::opus_types_h::opus_int32 = 0;
@@ -777,7 +784,6 @@ unsafe extern "C" fn opus_tags_get_gain(
                 return 0i32;
             }
         }
-        ci += 1
     }
     return -(1);
 }
@@ -1041,12 +1047,15 @@ unsafe extern "C" fn opus_picture_tag_parse_impl(
         let mut value: crate::opus_types_h::opus_uint32 = 0;
         let mut j: i32 = 0;
         value = 0;
-        j = 0;
-        while j < 4 {
+
+        for j in 0..4 {
             let mut c: u32 = 0;
+
             let mut d: u32 = 0;
+
             c = *_tag.offset((4usize).wrapping_mul(i).wrapping_add(j as usize) as isize) as u8
                 as u32;
+
             if c == '+' as u32 {
                 d = 62
             } else if c == '/' as u32 {
@@ -1063,8 +1072,8 @@ unsafe extern "C" fn opus_picture_tag_parse_impl(
             } else {
                 return -(132i32);
             }
+
             value = value << 6 | d;
-            j += 1
         }
         *_buf.offset((3usize).wrapping_mul(i) as isize) = (value >> 16) as u8;
         if (3usize).wrapping_mul(i).wrapping_add(1usize) < _buf_sz {

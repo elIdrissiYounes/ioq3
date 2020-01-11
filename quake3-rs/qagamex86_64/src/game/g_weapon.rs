@@ -1076,10 +1076,9 @@ pub unsafe extern "C" fn weapon_railgun_fire(mut ent: *mut crate::g_local_h::gen
         }
     }
     // link back in any entities we unlinked
-    i = 0;
-    while i < unlinked {
+
+    for i in 0..unlinked {
         crate::src::game::g_syscalls::trap_LinkEntity(unlinkedEntities[i as usize]);
-        i += 1
     }
     // the final trace endpos will be the terminal point of the rail trail
     // snap the endpos to integers to save net bandwidth, but nudged towards the line

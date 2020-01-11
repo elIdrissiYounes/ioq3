@@ -138,14 +138,14 @@ pub unsafe extern "C" fn vorbis_synthesis(
         vb,
         (::std::mem::size_of::<*mut f32>()).wrapping_mul((*vi).channels as usize) as isize,
     ) as *mut *mut f32;
-    i = 0;
-    while i < (*vi).channels {
+
+    for i in 0..(*vi).channels {
         let ref mut fresh0 = *(*vb).pcm.offset(i as isize);
+
         *fresh0 = crate::src::libvorbis_1_3_6::lib::block::_vorbis_block_alloc(
             vb,
             ((*vb).pcmend as usize).wrapping_mul(::std::mem::size_of::<f32>()) as isize,
         ) as *mut f32;
-        i += 1
     }
     /* unpack_header enforces range checking */
     type_0 = (*ci).map_type[(*(*ci).mode_param[mode as usize]).mapping as usize];

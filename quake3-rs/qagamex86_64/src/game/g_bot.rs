@@ -435,8 +435,8 @@ G_GetArenaInfoByNumber
 
 pub unsafe extern "C" fn G_GetArenaInfoByMap(mut map: *const i8) -> *const i8 {
     let mut n: i32 = 0;
-    n = 0;
-    while n < g_numArenas {
+
+    for n in 0..g_numArenas {
         if crate::src::qcommon::q_shared::Q_stricmp(
             crate::src::qcommon::q_shared::Info_ValueForKey(
                 g_arenaInfos[n as usize],
@@ -447,7 +447,6 @@ pub unsafe extern "C" fn G_GetArenaInfoByMap(mut map: *const i8) -> *const i8 {
         {
             return g_arenaInfos[n as usize];
         }
-        n += 1
     }
     return 0 as *const i8;
 }
@@ -501,9 +500,10 @@ pub unsafe extern "C" fn G_CountBotPlayersByName(mut name: *const i8, mut team: 
     let mut num: i32 = 0;
     let mut cl: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
     num = 0;
-    i = 0;
-    while i < crate::src::game::g_main::g_maxclients.integer {
+
+    for i in 0..crate::src::game::g_main::g_maxclients.integer {
         cl = crate::src::game::g_main::level.clients.offset(i as isize);
+
         if !((*cl).pers.connected == crate::g_local_h::CON_DISCONNECTED) {
             if !(crate::src::game::g_main::g_entities[i as usize].r.svFlags & 0x8 == 0) {
                 if !(team >= 0 && (*cl).sess.sessionTeam != team as u32) {
@@ -518,7 +518,6 @@ pub unsafe extern "C" fn G_CountBotPlayersByName(mut name: *const i8, mut team: 
                 }
             }
         }
-        i += 1
     }
     return num;
 }
@@ -544,24 +543,27 @@ pub unsafe extern "C" fn G_SelectRandomBotInfo(mut team: i32) -> i32 {
     }
     num = 0;
     bestCount = 64;
-    n = 0;
-    while n < g_numBots {
+
+    for n in 0..g_numBots {
         value = crate::src::qcommon::q_shared::Info_ValueForKey(
             g_botInfos[n as usize],
             b"funname\x00" as *const u8 as *const i8,
         );
+
         if *value.offset(0) == 0 {
             value = crate::src::qcommon::q_shared::Info_ValueForKey(
                 g_botInfos[n as usize],
                 b"name\x00" as *const u8 as *const i8,
             )
         }
-        //
+
         count = G_CountBotPlayersByName(value, team);
+
         if count < bestCount {
             bestCount = count;
             num = 0
         }
+
         if count == bestCount {
             let fresh2 = num;
             num = num + 1;
@@ -570,7 +572,6 @@ pub unsafe extern "C" fn G_SelectRandomBotInfo(mut team: i32) -> i32 {
                 break;
             }
         }
-        n += 1
     }
     if num > 0 {
         num = ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32 * (num - 1) as f32) as i32;
@@ -616,9 +617,10 @@ G_RemoveRandomBot
 pub unsafe extern "C" fn G_RemoveRandomBot(mut team: i32) -> i32 {
     let mut i: i32 = 0;
     let mut cl: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
-    i = 0;
-    while i < crate::src::game::g_main::g_maxclients.integer {
+
+    for i in 0..crate::src::game::g_main::g_maxclients.integer {
         cl = crate::src::game::g_main::level.clients.offset(i as isize);
+
         if !((*cl).pers.connected != crate::g_local_h::CON_CONNECTED) {
             if !(crate::src::game::g_main::g_entities[i as usize].r.svFlags & 0x8 == 0) {
                 if !(team >= 0 && (*cl).sess.sessionTeam != team as u32) {
@@ -633,7 +635,6 @@ pub unsafe extern "C" fn G_RemoveRandomBot(mut team: i32) -> i32 {
                 }
             }
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qfalse as i32;
 }
@@ -649,9 +650,10 @@ pub unsafe extern "C" fn G_CountHumanPlayers(mut team: i32) -> i32 {
     let mut num: i32 = 0;
     let mut cl: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
     num = 0;
-    i = 0;
-    while i < crate::src::game::g_main::g_maxclients.integer {
+
+    for i in 0..crate::src::game::g_main::g_maxclients.integer {
         cl = crate::src::game::g_main::level.clients.offset(i as isize);
+
         if !((*cl).pers.connected != crate::g_local_h::CON_CONNECTED) {
             if !(crate::src::game::g_main::g_entities[i as usize].r.svFlags & 0x8 != 0) {
                 if !(team >= 0 && (*cl).sess.sessionTeam != team as u32) {
@@ -659,7 +661,6 @@ pub unsafe extern "C" fn G_CountHumanPlayers(mut team: i32) -> i32 {
                 }
             }
         }
-        i += 1
     }
     return num;
 }
@@ -677,9 +678,10 @@ pub unsafe extern "C" fn G_CountBotPlayers(mut team: i32) -> i32 {
     let mut num: i32 = 0;
     let mut cl: *mut crate::g_local_h::gclient_t = 0 as *mut crate::g_local_h::gclient_t;
     num = 0;
-    i = 0;
-    while i < crate::src::game::g_main::g_maxclients.integer {
+
+    for i in 0..crate::src::game::g_main::g_maxclients.integer {
         cl = crate::src::game::g_main::level.clients.offset(i as isize);
+
         if !((*cl).pers.connected == crate::g_local_h::CON_DISCONNECTED) {
             if !(crate::src::game::g_main::g_entities[i as usize].r.svFlags & 0x8 == 0) {
                 if !(team >= 0 && (*cl).sess.sessionTeam != team as u32) {
@@ -687,7 +689,6 @@ pub unsafe extern "C" fn G_CountBotPlayers(mut team: i32) -> i32 {
                 }
             }
         }
-        i += 1
     }
     return num;
 }
@@ -812,14 +813,13 @@ AddBotToSpawnQueue
 
 unsafe extern "C" fn AddBotToSpawnQueue(mut clientNum: i32, mut delay: i32) {
     let mut n: i32 = 0;
-    n = 0;
-    while n < 16 {
+
+    for n in 0..16 {
         if botSpawnQueue[n as usize].spawnTime == 0 {
             botSpawnQueue[n as usize].spawnTime = crate::src::game::g_main::level.time + delay;
             botSpawnQueue[n as usize].clientNum = clientNum;
             return;
         }
-        n += 1
     }
     crate::src::game::g_main::G_Printf(b"^3Unable to delay spawn\n\x00" as *const u8 as *const i8);
     crate::src::game::g_client::ClientBegin(clientNum);
@@ -1491,16 +1491,16 @@ G_GetBotInfoByName
 pub unsafe extern "C" fn G_GetBotInfoByName(mut name: *const i8) -> *mut i8 {
     let mut n: i32 = 0;
     let mut value: *mut i8 = 0 as *mut i8;
-    n = 0;
-    while n < g_numBots {
+
+    for n in 0..g_numBots {
         value = crate::src::qcommon::q_shared::Info_ValueForKey(
             g_botInfos[n as usize],
             b"name\x00" as *const u8 as *const i8,
         );
+
         if crate::src::qcommon::q_shared::Q_stricmp(value, name) == 0 {
             return g_botInfos[n as usize];
         }
-        n += 1
     }
     return 0 as *mut i8;
 }

@@ -1616,14 +1616,16 @@ ClientFromName
 pub unsafe extern "C" fn ClientFromName(mut name: *mut i8) -> i32 {
     let mut i: i32 = 0;
     let mut buf: [i8; 1024] = [0; 1024];
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
             32 + 256 + 256 + i,
             buf.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 1024]>() as i32,
         );
+
         crate::src::qcommon::q_shared::Q_CleanStr(buf.as_mut_ptr());
+
         if crate::src::qcommon::q_shared::Q_stricmp(
             crate::src::qcommon::q_shared::Info_ValueForKey(
                 buf.as_mut_ptr(),
@@ -1634,7 +1636,6 @@ pub unsafe extern "C" fn ClientFromName(mut name: *mut i8) -> i32 {
         {
             return i;
         }
-        i += 1
     }
     return -(1);
 }
@@ -1651,8 +1652,8 @@ pub unsafe extern "C" fn ClientOnSameTeamFromName(
 ) -> i32 {
     let mut i: i32 = 0;
     let mut buf: [i8; 1024] = [0; 1024];
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         if !(BotSameTeam(bs, i) == 0) {
             crate::src::game::g_syscalls::trap_GetConfigstring(
                 32 + 256 + 256 + i,
@@ -1671,7 +1672,6 @@ pub unsafe extern "C" fn ClientOnSameTeamFromName(
                 return i;
             }
         }
-        i += 1
     }
     return -(1);
 }
@@ -2897,13 +2897,17 @@ pub unsafe extern "C" fn BotRoamGoal(
         contents: 0,
         ent: 0,
     };
-    i = 0;
-    while i < 10 {
+
+    for i in 0..10 {
         //start at the bot origin
         bestorg[0] = (*bs).origin[0];
+
         bestorg[1] = (*bs).origin[1];
+
         bestorg[2] = (*bs).origin[2];
+
         rnd = (crate::stdlib::rand() & 0x7fff) as f32 / 32767f32;
+
         if rnd as f64 > 0.25 {
             //add a random value to the x-coordinate
             if (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64) < 0.5 {
@@ -2912,6 +2916,7 @@ pub unsafe extern "C" fn BotRoamGoal(
                 bestorg[0] += 800f32 * ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) + 100f32
             }
         }
+
         if (rnd as f64) < 0.75 {
             //add a random value to the y-coordinate
             if (((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32) as f64) < 0.5 {
@@ -2937,8 +2942,11 @@ pub unsafe extern "C" fn BotRoamGoal(
         );
         //direction and length towards the roam target
         dir[0] = trace.endpos[0] - (*bs).origin[0];
+
         dir[1] = trace.endpos[1] - (*bs).origin[1];
+
         dir[2] = trace.endpos[2] - (*bs).origin[2];
+
         len = crate::src::qcommon::q_math::VectorNormalize(dir.as_mut_ptr());
         //if the roam target is far away enough
         if len > 200f32 {
@@ -2977,7 +2985,6 @@ pub unsafe extern "C" fn BotRoamGoal(
                 }
             }
         }
-        i += 1
     }
     *goal.offset(0) = bestorg[0];
     *goal.offset(1) = bestorg[1];
@@ -3190,12 +3197,14 @@ pub unsafe extern "C" fn BotAttackMove(
             (*bs).attackstrafe_time = 0f32
         }
     }
-    //
-    i = 0;
-    while i < 2 {
+
+    for i in 0..2 {
         hordir[0] = forward[0];
+
         hordir[1] = forward[1];
+
         hordir[2] = 0f32;
+
         crate::src::qcommon::q_math::VectorNormalize(hordir.as_mut_ptr());
         //get the sideward vector
         CrossProduct(
@@ -3236,8 +3245,8 @@ pub unsafe extern "C" fn BotAttackMove(
         }
         //movement failed, flip the strafe direction
         (*bs).flags ^= 1;
+
         (*bs).attackstrafe_time = 0f32;
-        i += 1
     }
     //bot couldn't do any useful movement
     //	bs->attackchase_time = AAS_Time() + 6;
@@ -3294,12 +3303,15 @@ pub unsafe extern "C" fn InFieldOfVision(
     let mut i: i32 = 0;
     let mut diff: f32 = 0.;
     let mut angle: f32 = 0.;
-    i = 0;
-    while i < 2 {
+
+    for i in 0..2 {
         angle = crate::src::qcommon::q_math::AngleMod(*viewangles.offset(i as isize));
+
         *angles.offset(i as isize) =
             crate::src::qcommon::q_math::AngleMod(*angles.offset(i as isize));
+
         diff = *angles.offset(i as isize) - angle;
+
         if *angles.offset(i as isize) > angle {
             if diff as f64 > 180.0 {
                 diff = (diff as f64 - 360.0) as f32
@@ -3307,6 +3319,7 @@ pub unsafe extern "C" fn InFieldOfVision(
         } else if (diff as f64) < -180.0 {
             diff = (diff as f64 + 360.0) as f32
         }
+
         if diff > 0f32 {
             if diff as f64 > fov as f64 * 0.5 {
                 return crate::src::qcommon::q_shared::qfalse;
@@ -3314,7 +3327,6 @@ pub unsafe extern "C" fn InFieldOfVision(
         } else if (diff as f64) < -fov as f64 * 0.5 {
             return crate::src::qcommon::q_shared::qfalse;
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qtrue;
 }
@@ -3430,19 +3442,27 @@ pub unsafe extern "C" fn BotEntityVisible(
     inwater = pc & (8 | 16 | 32);
     //
     bestvis = 0f32;
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         //if the point is not in potential visible sight
         //if (!AAS_inPVS(eye, middle)) continue;
         //
         contents_mask = 1 | 0x10000;
+
         passent = viewer;
+
         hitent = ent;
+
         start[0] = *eye.offset(0);
+
         start[1] = *eye.offset(1);
+
         start[2] = *eye.offset(2);
+
         end[0] = middle[0];
+
         end[1] = middle[1];
+
         end[2] = middle[2];
         //if the entity is in water, lava or slime
         if crate::src::game::g_syscalls::trap_AAS_PointContents(middle.as_mut_ptr()) & (8 | 16 | 32)
@@ -3571,7 +3591,6 @@ pub unsafe extern "C" fn BotEntityVisible(
         } else if i == 1 {
             middle[2] += entinfo.maxs[2] - entinfo.mins[2]
         }
-        i += 1
     }
     return bestvis;
 }
@@ -3670,9 +3689,8 @@ pub unsafe extern "C" fn BotFindEnemy(
         cursquaredist = 0f32
     }
     let mut current_block_32: u64;
-    //
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         if !(i == (*bs).client) {
             //if it's the current enemy
             if !(i == curenemy) {
@@ -3870,7 +3888,6 @@ pub unsafe extern "C" fn BotFindEnemy(
                 }
             }
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qfalse as i32;
 }
@@ -3912,8 +3929,8 @@ pub unsafe extern "C" fn BotTeamFlagCarrierVisible(
         legsAnim: 0,
         torsoAnim: 0,
     };
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         if !(i == (*bs).client) {
             //
             crate::src::game::ai_main::BotEntityInfo(i, &mut entinfo);
@@ -3939,7 +3956,6 @@ pub unsafe extern "C" fn BotTeamFlagCarrierVisible(
                 }
             }
         }
-        i += 1
     }
     return -(1);
 }
@@ -3980,8 +3996,8 @@ pub unsafe extern "C" fn BotTeamFlagCarrier(
         legsAnim: 0,
         torsoAnim: 0,
     };
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         if !(i == (*bs).client) {
             //
             crate::src::game::ai_main::BotEntityInfo(i, &mut entinfo);
@@ -3997,7 +4013,6 @@ pub unsafe extern "C" fn BotTeamFlagCarrier(
                 }
             }
         }
-        i += 1
     }
     return -(1);
 }
@@ -4039,8 +4054,8 @@ pub unsafe extern "C" fn BotEnemyFlagCarrierVisible(
         legsAnim: 0,
         torsoAnim: 0,
     };
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         if !(i == (*bs).client) {
             //
             crate::src::game::ai_main::BotEntityInfo(i, &mut entinfo);
@@ -4066,7 +4081,6 @@ pub unsafe extern "C" fn BotEnemyFlagCarrierVisible(
                 }
             }
         }
-        i += 1
     }
     return -(1);
 }
@@ -5217,9 +5231,8 @@ pub unsafe extern "C" fn BotMapScripts(mut bs: *mut crate::src::game::ai_main::b
             }
         }
         shootbutton = crate::src::qcommon::q_shared::qfalse as i32;
-        //if an enemy is in the bounding box then shoot the button
-        i = 0;
-        while i < crate::src::game::g_main::level.maxclients {
+
+        for i in 0..crate::src::game::g_main::level.maxclients {
             if !(i == (*bs).client) {
                 //
                 crate::src::game::ai_main::BotEntityInfo(i, &mut entinfo);
@@ -5244,7 +5257,6 @@ pub unsafe extern "C" fn BotMapScripts(mut bs: *mut crate::src::game::ai_main::b
                     }
                 }
             }
-            i += 1
         }
         if shootbutton != 0 {
             (*bs).flags |= 32;
@@ -5941,16 +5953,14 @@ pub unsafe extern "C" fn BotPushOntoActivateGoalStack(
     let mut besttime: f32 = 0.;
     best = -(1);
     besttime = crate::src::game::ai_main::floattime + 9999f32;
-    //
-    i = 0;
-    while i < 8 {
+
+    for i in 0..8 {
         if (*bs).activategoalheap[i as usize].inuse == 0 {
             if (*bs).activategoalheap[i as usize].justused_time < besttime {
                 besttime = (*bs).activategoalheap[i as usize].justused_time;
                 best = i
             }
         }
-        i += 1
     }
     if best != -(1) {
         crate::stdlib::memcpy(
@@ -5999,13 +6009,12 @@ pub unsafe extern "C" fn BotEnableActivateGoalAreas(
     if (*activategoal).areasdisabled == (enable == 0) as i32 {
         return;
     }
-    i = 0;
-    while i < (*activategoal).numareas {
+
+    for i in 0..(*activategoal).numareas {
         crate::src::game::g_syscalls::trap_AAS_EnableRoutingArea(
             (*activategoal).areas[i as usize],
             enable,
         );
-        i += 1
     }
     (*activategoal).areasdisabled = (enable == 0) as i32;
 }
@@ -6032,8 +6041,8 @@ pub unsafe extern "C" fn BotIsGoingToActivateEntity(
         }
         a = (*a).next
     }
-    i = 0;
-    while i < 8 {
+
+    for i in 0..8 {
         if !((*bs).activategoalheap[i as usize].inuse != 0) {
             //
             if (*bs).activategoalheap[i as usize].goal.entitynum == entitynum {
@@ -6045,7 +6054,6 @@ pub unsafe extern "C" fn BotIsGoingToActivateEntity(
                 }
             }
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qfalse as i32;
 }

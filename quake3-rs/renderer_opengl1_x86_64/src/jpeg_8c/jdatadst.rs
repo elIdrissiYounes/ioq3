@@ -256,8 +256,7 @@ unsafe extern "C" fn init_destination(mut cinfo: crate::jpeglib_h::j_compress_pt
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        (4096usize)
-            .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JOCTET>()),
+        (4096usize).wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JOCTET>()),
     ) as *mut crate::jmorecfg_h::JOCTET;
     (*dest).pub_0.next_output_byte = (*dest).buffer;
     (*dest).pub_0.free_in_buffer = 4096;
@@ -320,9 +319,7 @@ unsafe extern "C" fn empty_mem_output_buffer(
     let mut nextbuffer: *mut crate::jmorecfg_h::JOCTET = 0 as *mut crate::jmorecfg_h::JOCTET;
     let mut dest: my_mem_dest_ptr = (*cinfo).dest as my_mem_dest_ptr;
     /* Try to allocate new buffer with double size */
-    nextsize = (*dest)
-        .bufsize
-        .wrapping_mul(2usize);
+    nextsize = (*dest).bufsize.wrapping_mul(2usize);
     nextbuffer = malloc(nextsize) as *mut crate::jmorecfg_h::JOCTET;
     if nextbuffer.is_null() {
         (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_OUT_OF_MEMORY as i32;
@@ -430,7 +427,6 @@ pub unsafe extern "C" fn jpeg_stdio_dest(
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
             0,
-            
             ::std::mem::size_of::<my_destination_mgr>(),
         ) as *mut crate::jpeglib_h::jpeg_destination_mgr
     }
@@ -489,7 +485,6 @@ pub unsafe extern "C" fn jpeg_mem_dest(
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
             0,
-            
             ::std::mem::size_of::<my_mem_destination_mgr>(),
         ) as *mut crate::jpeglib_h::jpeg_destination_mgr
     }
@@ -514,8 +509,7 @@ pub unsafe extern "C" fn jpeg_mem_dest(
         *outbuffer = malloc(4096) as *mut u8;
         (*dest).newbuffer = *outbuffer;
         if (*dest).newbuffer.is_null() {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_OUT_OF_MEMORY as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_OUT_OF_MEMORY as i32;
             (*(*cinfo).err).msg_parm.i[0] = 10;
             Some(
                 (*(*cinfo).err)

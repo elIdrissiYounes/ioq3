@@ -470,16 +470,14 @@ Find a free handle
 
 unsafe extern "C" fn S_AL_BufferFindFree() -> crate::src::qcommon::q_shared::sfxHandle_t {
     let mut i: i32 = 0;
-    i = 0;
-    while i < 4096 {
-        // Got one
+
+    for i in 0..4096 {
         if knownSfx[i as usize].filename[0] as i32 == '\u{0}' as i32 {
             if i >= numSfx {
                 numSfx = i + 1
             }
             return i;
         }
-        i += 1
     }
     // Shit...
     crate::src::qcommon::common::Com_Error(
@@ -615,8 +613,8 @@ unsafe extern "C" fn S_AL_BufferEvict() -> crate::src::qcommon::q_shared::qboole
     let mut i: i32 = 0;
     let mut oldestBuffer: i32 = -(1);
     let mut oldestTime: i32 = crate::src::sys::sys_unix::Sys_Milliseconds();
-    i = 0;
-    while i < numSfx {
+
+    for i in 0..numSfx {
         if !(knownSfx[i as usize].filename[0] == 0) {
             if !(knownSfx[i as usize].inMemory as u64 == 0) {
                 if knownSfx[i as usize].lastUsedTime < oldestTime {
@@ -625,7 +623,6 @@ unsafe extern "C" fn S_AL_BufferEvict() -> crate::src::qcommon::q_shared::qboole
                 }
             }
         }
-        i += 1
     }
     if oldestBuffer >= 0 {
         S_AL_BufferUnload(oldestBuffer);
@@ -848,10 +845,9 @@ unsafe extern "C" fn S_AL_BufferShutdown() {
     // Unlock the default sound effect
     knownSfx[default_sfx as usize].isLocked = crate::src::qcommon::q_shared::qfalse;
     // Free all used effects
-    i = 0;
-    while i < numSfx {
+
+    for i in 0..numSfx {
         S_AL_BufferUnload(i);
-        i += 1
     }
     // Clear the tables
     numSfx = 0;
@@ -1080,17 +1076,18 @@ unsafe extern "C" fn S_AL_SrcInit() -> crate::src::qcommon::q_shared::qboolean {
     }
     S_AL_ClearError(crate::src::qcommon::q_shared::qfalse);
     // Allocate as many sources as possible
-    i = 0;
-    while i < limit {
+
+    for i in 0..limit {
         crate::src::client::qal::qalGenSources.expect("non-null function pointer")(
             1,
             &mut (*srcList.as_mut_ptr().offset(i as isize)).alSource,
         );
+
         if crate::src::client::qal::qalGetError.expect("non-null function pointer")() != 0 {
             break;
         }
+
         srcCount += 1;
-        i += 1
     }
     // All done. Print this for informational purposes
     crate::src::qcommon::common::Com_Printf(
@@ -1113,27 +1110,30 @@ unsafe extern "C" fn S_AL_SrcShutdown() {
         return;
     }
     // Destroy all the sources
-    i = 0;
-    while i < srcCount {
+
+    for i in 0..srcCount {
         curSource = &mut *srcList.as_mut_ptr().offset(i as isize) as *mut src_t;
+
         if (*curSource).isLocked as u64 != 0 {
             crate::src::qcommon::common::Com_DPrintf(
                 b"^3WARNING: Source %d is locked\n\x00" as *const u8 as *const i8,
                 i,
             );
         }
+
         if (*curSource).entity > 0 {
             entityList[(*curSource).entity as usize].srcAllocated =
                 crate::src::qcommon::q_shared::qfalse
         }
+
         crate::src::client::qal::qalSourceStop.expect("non-null function pointer")(
             srcList[i as usize].alSource,
         );
+
         crate::src::client::qal::qalDeleteSources.expect("non-null function pointer")(
             1,
             &mut (*srcList.as_mut_ptr().offset(i as isize)).alSource,
         );
-        i += 1
     }
     crate::stdlib::memset(
         srcList.as_mut_ptr() as *mut libc::c_void,
@@ -1421,13 +1421,10 @@ unsafe extern "C" fn S_AL_SrcAlloc(
         crate::src::qcommon::q_shared::qtrue;
     let mut weakest_numloops: i32 = 0;
     let mut curSource: *mut src_t = 0 as *mut src_t;
-    i = 0;
-    while i < srcCount {
+
+    for i in 0..srcCount {
         curSource = &mut *srcList.as_mut_ptr().offset(i as isize) as *mut src_t;
-        // The channel system is not actually adhered to by baseq3, and not
-        // implemented in snd_dma.c, so while the following is strictly correct, it
-        // causes incorrect behaviour versus defacto baseq3
-        // If it's locked, we aren't even going to look at it
+
         if !((*curSource).isLocked as u64 != 0) {
             // Is it empty or not?
             if (*curSource).isActive as u64 == 0 {
@@ -1465,7 +1462,6 @@ unsafe extern "C" fn S_AL_SrcAlloc(
                 }
             }
         }
-        i += 1
     }
     if empty == -(1) {
         empty = weakest
@@ -2327,12 +2323,11 @@ unsafe extern "C" fn S_AL_RawSamples(
             ::std::mem::size_of::<[crate::al_h::ALuint; 20]>(),
         );
         // Reorder buffer array in order of oldest to newest
-        i = 0;
-        while i < streamNumBuffers[stream as usize] {
+
+        for i in 0..streamNumBuffers[stream as usize] {
             streamBuffers[stream as usize][i as usize] =
                 oldBuffers[((streamBufIndex[stream as usize] + i)
                     % streamNumBuffers[stream as usize]) as usize];
-            i += 1
         }
         // Add the new buffer to end
         streamBuffers[stream as usize][streamNumBuffers[stream as usize] as usize] = buffer;
@@ -2705,10 +2700,9 @@ unsafe extern "C" fn S_AL_StartBackgroundTrack(mut intro: *const i8, mut loop_0:
         return;
     }
     // Queue the musicBuffers up
-    i = 0;
-    while i < 4 {
+
+    for i in 0..4 {
         S_AL_MusicProcess(musicBuffers[i as usize]);
-        i += 1
     }
     crate::src::client::qal::qalSourceQueueBuffers.expect("non-null function pointer")(
         musicSource,
@@ -3186,14 +3180,17 @@ pub unsafe extern "C" fn S_AL_Init(
     if si.is_null() {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    i = 0;
-    while i < 64 * 2 + 1 {
+
+    for i in 0..64 * 2 + 1 {
         streamSourceHandles[i as usize] = -(1);
+
         streamPlaying[i as usize] = crate::src::qcommon::q_shared::qfalse;
+
         streamSources[i as usize] = 0;
+
         streamNumBuffers[i as usize] = 0;
+
         streamBufIndex[i as usize] = 0;
-        i += 1
     }
     // New console variables
     s_alPrecache = crate::src::qcommon::cvar::Cvar_Get(

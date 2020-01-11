@@ -117,12 +117,11 @@ pub unsafe extern "C" fn ogg_page_packets(mut og: *const crate::ogg_h::ogg_page)
     let mut i: i32 = 0;
     let mut n: i32 = *(*og).header.offset(26) as i32;
     let mut count: i32 = 0;
-    i = 0;
-    while i < n {
+
+    for i in 0..n {
         if (*(*og).header.offset((27 + i) as isize) as i32) < 255 {
             count += 1
         }
-        i += 1
     }
     return count;
 }
@@ -848,10 +847,9 @@ pub unsafe extern "C" fn ogg_sync_pageseek(
                 return 0isize;
             }
             /* count up body length in the segment table */
-            i = 0;
-            while i < *page.offset(26) as i32 {
+
+            for i in 0..*page.offset(26) as i32 {
                 (*oy).bodybytes += *page.offset((27 + i) as isize) as i32;
-                i += 1
             }
             (*oy).headerbytes = headerbytes;
             current_block = 12349973810996921269;

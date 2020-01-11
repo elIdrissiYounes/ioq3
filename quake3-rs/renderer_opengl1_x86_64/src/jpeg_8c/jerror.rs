@@ -338,15 +338,12 @@ pub static mut jpeg_std_message_table: [*const i8; 128] = [
     b"Bogus input colorspace\x00" as *const u8 as *const i8,
     b"Bogus JPEG colorspace\x00" as *const u8 as *const i8,
     b"Bogus marker length\x00" as *const u8 as *const i8,
-    b"Wrong JPEG library version: library is %d, caller expects %d\x00" as *const u8
-        as *const i8,
+    b"Wrong JPEG library version: library is %d, caller expects %d\x00" as *const u8 as *const i8,
     b"Sampling factors too large for interleaved scan\x00" as *const u8 as *const i8,
     b"Invalid memory pool code %d\x00" as *const u8 as *const i8,
     b"Unsupported JPEG data precision %d\x00" as *const u8 as *const i8,
-    b"Invalid progressive parameters Ss=%d Se=%d Ah=%d Al=%d\x00" as *const u8
-        as *const i8,
-    b"Invalid progressive parameters at scan script entry %d\x00" as *const u8
-        as *const i8,
+    b"Invalid progressive parameters Ss=%d Se=%d Ah=%d Al=%d\x00" as *const u8 as *const i8,
+    b"Invalid progressive parameters at scan script entry %d\x00" as *const u8 as *const i8,
     b"Bogus sampling factors\x00" as *const u8 as *const i8,
     b"Invalid scan script at entry %d\x00" as *const u8 as *const i8,
     b"Improper call to JPEG library in state %d\x00" as *const u8 as *const i8,
@@ -374,8 +371,7 @@ pub static mut jpeg_std_message_table: [*const i8; 128] = [
     b"Maximum supported image dimension is %u pixels\x00" as *const u8 as *const i8,
     b"Empty input file\x00" as *const u8 as *const i8,
     b"Premature end of input file\x00" as *const u8 as *const i8,
-    b"Cannot transcode due to multiple use of quantization table %d\x00" as *const u8
-        as *const i8,
+    b"Cannot transcode due to multiple use of quantization table %d\x00" as *const u8 as *const i8,
     b"Scan script does not transmit all data\x00" as *const u8 as *const i8,
     b"Invalid color quantization mode change\x00" as *const u8 as *const i8,
     b"Not implemented yet\x00" as *const u8 as *const i8,
@@ -398,8 +394,7 @@ pub static mut jpeg_std_message_table: [*const i8; 128] = [
     b"Failed to create temporary file %s\x00" as *const u8 as *const i8,
     b"Read failed on temporary file\x00" as *const u8 as *const i8,
     b"Seek failed on temporary file\x00" as *const u8 as *const i8,
-    b"Write failed on temporary file --- out of disk space?\x00" as *const u8
-        as *const i8,
+    b"Write failed on temporary file --- out of disk space?\x00" as *const u8 as *const i8,
     b"Application transferred too few scanlines\x00" as *const u8 as *const i8,
     b"Unsupported marker type 0x%02x\x00" as *const u8 as *const i8,
     b"Virtual array controller messed up\x00" as *const u8 as *const i8,
@@ -408,8 +403,7 @@ pub static mut jpeg_std_message_table: [*const i8; 128] = [
     b"Write to XMS failed\x00" as *const u8 as *const i8,
     b"Copyright (C) 2011, Thomas G. Lane, Guido Vollbeding\x00" as *const u8 as *const i8,
     b"8c  16-Jan-2011\x00" as *const u8 as *const i8,
-    b"Caution: quantization tables are too coarse for baseline JPEG\x00" as *const u8
-        as *const i8,
+    b"Caution: quantization tables are too coarse for baseline JPEG\x00" as *const u8 as *const i8,
     b"Adobe APP14 marker: version %d, flags 0x%04x 0x%04x, transform %d\x00" as *const u8
         as *const i8,
     b"Unknown APP0 marker (not JFIF), length %u\x00" as *const u8 as *const i8,
@@ -423,8 +417,7 @@ pub static mut jpeg_std_message_table: [*const i8; 128] = [
     b"End Of Image\x00" as *const u8 as *const i8,
     b"        %3d %3d %3d %3d %3d %3d %3d %3d\x00" as *const u8 as *const i8,
     b"JFIF APP0 marker: version %d.%02d, density %dx%d  %d\x00" as *const u8 as *const i8,
-    b"Warning: thumbnail image size does not match data length %u\x00" as *const u8
-        as *const i8,
+    b"Warning: thumbnail image size does not match data length %u\x00" as *const u8 as *const i8,
     b"JFIF extension marker: type 0x%02x, length %u\x00" as *const u8 as *const i8,
     b"    with %d x %d thumbnail image\x00" as *const u8 as *const i8,
     b"Miscellaneous marker 0x%02x, length %u\x00" as *const u8 as *const i8,
@@ -435,10 +428,8 @@ pub static mut jpeg_std_message_table: [*const i8; 128] = [
     b"Selected %d colors for quantization\x00" as *const u8 as *const i8,
     b"At marker 0x%02x, recovery action %d\x00" as *const u8 as *const i8,
     b"RST%d\x00" as *const u8 as *const i8,
-    b"Smoothing not supported with nonstandard sampling ratios\x00" as *const u8
-        as *const i8,
-    b"Start Of Frame 0x%02x: width=%u, height=%u, components=%d\x00" as *const u8
-        as *const i8,
+    b"Smoothing not supported with nonstandard sampling ratios\x00" as *const u8 as *const i8,
+    b"Start Of Frame 0x%02x: width=%u, height=%u, components=%d\x00" as *const u8 as *const i8,
     b"    Component %d: %dhx%dv q=%d\x00" as *const u8 as *const i8,
     b"Start of Image\x00" as *const u8 as *const i8,
     b"Start Of Scan: %d components\x00" as *const u8 as *const i8,
@@ -448,10 +439,8 @@ pub static mut jpeg_std_message_table: [*const i8; 128] = [
     b"Opened temporary file %s\x00" as *const u8 as *const i8,
     b"JFIF extension marker: JPEG-compressed thumbnail image, length %u\x00" as *const u8
         as *const i8,
-    b"JFIF extension marker: palette thumbnail image, length %u\x00" as *const u8
-        as *const i8,
-    b"JFIF extension marker: RGB thumbnail image, length %u\x00" as *const u8
-        as *const i8,
+    b"JFIF extension marker: palette thumbnail image, length %u\x00" as *const u8 as *const i8,
+    b"JFIF extension marker: RGB thumbnail image, length %u\x00" as *const u8 as *const i8,
     b"Unrecognized component IDs %d %d %d, assuming YCbCr\x00" as *const u8 as *const i8,
     b"Freed XMS handle %u\x00" as *const u8 as *const i8,
     b"Obtained XMS handle %u\x00" as *const u8 as *const i8,
@@ -459,14 +448,12 @@ pub static mut jpeg_std_message_table: [*const i8; 128] = [
     b"Corrupt JPEG data: bad arithmetic code\x00" as *const u8 as *const i8,
     b"Inconsistent progression sequence for component %d coefficient %d\x00" as *const u8
         as *const i8,
-    b"Corrupt JPEG data: %u extraneous bytes before marker 0x%02x\x00" as *const u8
-        as *const i8,
+    b"Corrupt JPEG data: %u extraneous bytes before marker 0x%02x\x00" as *const u8 as *const i8,
     b"Corrupt JPEG data: premature end of data segment\x00" as *const u8 as *const i8,
     b"Corrupt JPEG data: bad Huffman code\x00" as *const u8 as *const i8,
     b"Warning: unknown JFIF revision number %d.%02d\x00" as *const u8 as *const i8,
     b"Premature end of JPEG file\x00" as *const u8 as *const i8,
-    b"Corrupt JPEG data: found marker 0x%02x instead of RST%d\x00" as *const u8
-        as *const i8,
+    b"Corrupt JPEG data: found marker 0x%02x instead of RST%d\x00" as *const u8 as *const i8,
     b"Invalid SOS parameters for sequential JPEG\x00" as *const u8 as *const i8,
     b"Application transferred too many scanlines\x00" as *const u8 as *const i8,
     0 as *const i8,
@@ -538,19 +525,14 @@ unsafe extern "C" fn output_message(mut cinfo: crate::jpeglib_h::j_common_ptr) {
  * or change the policy about which messages to display.
  */
 
-unsafe extern "C" fn emit_message(
-    mut cinfo: crate::jpeglib_h::j_common_ptr,
-    mut msg_level: i32,
-) {
+unsafe extern "C" fn emit_message(mut cinfo: crate::jpeglib_h::j_common_ptr, mut msg_level: i32) {
     let mut err: *mut crate::jpeglib_h::jpeg_error_mgr = (*cinfo).err;
     if msg_level < 0 {
         /* It's a warning message.  Since corrupt files may generate many warnings,
          * the policy implemented here is to show only the first warning,
          * unless trace_level >= 3.
          */
-        if (*err).num_warnings == 0
-            || (*err).trace_level >= 3
-        {
+        if (*err).num_warnings == 0 || (*err).trace_level >= 3 {
             Some((*err).output_message.expect("non-null function pointer"))
                 .expect("non-null function pointer")(cinfo);
         }
@@ -673,15 +655,12 @@ pub unsafe extern "C" fn jpeg_std_error(
 ) -> *mut crate::jpeglib_h::jpeg_error_mgr {
     (*err).error_exit =
         Some(error_exit as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr) -> ()); /* default = no tracing */
-    (*err).emit_message = Some(
-        emit_message
-            as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: i32) -> (),
-    ); /* no warnings emitted yet */
+    (*err).emit_message =
+        Some(emit_message as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: i32) -> ()); /* no warnings emitted yet */
     (*err).output_message =
         Some(output_message as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr) -> ()); /* may be useful as a flag for "no error" */
     (*err).format_message = Some(
-        format_message
-            as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: *mut i8) -> (),
+        format_message as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: *mut i8) -> (),
     );
     (*err).reset_error_mgr =
         Some(reset_error_mgr as unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr) -> ());
@@ -690,8 +669,7 @@ pub unsafe extern "C" fn jpeg_std_error(
     (*err).msg_code = 0;
     /* Initialize message table pointers */
     (*err).jpeg_message_table = jpeg_std_message_table.as_ptr(); /* for safety */
-    (*err).last_jpeg_message =
-        crate::src::jpeg_8c::jerror::JMSG_LASTMSGCODE as i32 - 1;
+    (*err).last_jpeg_message = crate::src::jpeg_8c::jerror::JMSG_LASTMSGCODE as i32 - 1;
     (*err).addon_message_table = 0 as *const *const i8;
     (*err).first_addon_message = 0;
     (*err).last_addon_message = 0;

@@ -189,8 +189,8 @@ pub unsafe extern "C" fn BotNumActivePlayers() -> i32 {
     let mut num: i32 = 0;
     let mut buf: [i8; 1024] = [0; 1024];
     num = 0;
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
             32 + 256 + 256 + i,
             buf.as_mut_ptr(),
@@ -213,7 +213,6 @@ pub unsafe extern "C" fn BotNumActivePlayers() -> i32 {
                 num += 1
             }
         }
-        i += 1
     }
     return num;
 }
@@ -279,8 +278,8 @@ pub unsafe extern "C" fn BotIsFirstInRankings(
             entityEventSequence: 0,
         };
     score = (*bs).cur_ps.persistant[crate::bg_public_h::PERS_SCORE as usize];
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
             32 + 256 + 256 + i,
             buf.as_mut_ptr(),
@@ -307,7 +306,6 @@ pub unsafe extern "C" fn BotIsFirstInRankings(
                 }
             }
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qtrue as i32;
 }
@@ -373,8 +371,8 @@ pub unsafe extern "C" fn BotIsLastInRankings(
             entityEventSequence: 0,
         };
     score = (*bs).cur_ps.persistant[crate::bg_public_h::PERS_SCORE as usize];
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
             32 + 256 + 256 + i,
             buf.as_mut_ptr(),
@@ -401,7 +399,6 @@ pub unsafe extern "C" fn BotIsLastInRankings(
                 }
             }
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qtrue as i32;
 }
@@ -468,8 +465,8 @@ pub unsafe extern "C" fn BotFirstClientInRankings() -> *mut i8 {
         };
     bestscore = -(999999);
     bestclient = 0;
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
             32 + 256 + 256 + i,
             buf.as_mut_ptr(),
@@ -497,7 +494,6 @@ pub unsafe extern "C" fn BotFirstClientInRankings() -> *mut i8 {
                 }
             }
         }
-        i += 1
     }
     crate::src::game::ai_dmq3::EasyClientName(bestclient, name.as_mut_ptr(), 32);
     return name.as_mut_ptr();
@@ -565,8 +561,8 @@ pub unsafe extern "C" fn BotLastClientInRankings() -> *mut i8 {
         };
     worstscore = 999999;
     bestclient = 0;
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
             32 + 256 + 256 + i,
             buf.as_mut_ptr(),
@@ -594,7 +590,6 @@ pub unsafe extern "C" fn BotLastClientInRankings() -> *mut i8 {
                 }
             }
         }
-        i += 1
     }
     crate::src::game::ai_dmq3::EasyClientName(bestclient, name.as_mut_ptr(), 32);
     return name.as_mut_ptr();
@@ -777,8 +772,8 @@ pub unsafe extern "C" fn BotVisibleEnemies(
         legsAnim: 0,
         torsoAnim: 0,
     };
-    i = 0;
-    while i < 64 {
+
+    for i in 0..64 {
         if !(i == (*bs).client) {
             //
             crate::src::game::ai_main::BotEntityInfo(i, &mut entinfo);
@@ -810,7 +805,6 @@ pub unsafe extern "C" fn BotVisibleEnemies(
                 }
             }
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qfalse as i32;
 }

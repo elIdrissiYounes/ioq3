@@ -477,15 +477,16 @@ unsafe extern "C" fn UI_PositionEntityOnTag(
     (*entity).origin[0] = (*parent).origin[0];
     (*entity).origin[1] = (*parent).origin[1];
     (*entity).origin[2] = (*parent).origin[2];
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         (*entity).origin[0] =
             (*entity).origin[0] + (*parent).axis[i as usize][0] * lerped.origin[i as usize];
+
         (*entity).origin[1] =
             (*entity).origin[1] + (*parent).axis[i as usize][1] * lerped.origin[i as usize];
+
         (*entity).origin[2] =
             (*entity).origin[2] + (*parent).axis[i as usize][2] * lerped.origin[i as usize];
-        i += 1
     }
     // cast away const because of compiler problems
     crate::src::qcommon::q_math::MatrixMultiply(
@@ -529,15 +530,16 @@ unsafe extern "C" fn UI_PositionRotatedEntityOnTag(
     (*entity).origin[0] = (*parent).origin[0];
     (*entity).origin[1] = (*parent).origin[1];
     (*entity).origin[2] = (*parent).origin[2];
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         (*entity).origin[0] =
             (*entity).origin[0] + (*parent).axis[i as usize][0] * lerped.origin[i as usize];
+
         (*entity).origin[1] =
             (*entity).origin[1] + (*parent).axis[i as usize][1] * lerped.origin[i as usize];
+
         (*entity).origin[2] =
             (*entity).origin[2] + (*parent).axis[i as usize][2] * lerped.origin[i as usize];
-        i += 1
     }
     // cast away const because of compiler problems
     crate::src::qcommon::q_math::MatrixMultiply(

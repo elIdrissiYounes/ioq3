@@ -297,10 +297,9 @@ pub unsafe extern "C" fn celt_fir_c(
     }
     while i < N {
         let mut sum_0: crate::arch_h::opus_val32 = *x.offset(i as isize);
-        j = 0;
-        while j < ord {
+
+        for j in 0..ord {
             sum_0 = sum_0 + *rnum.offset(j as isize) * *x.offset((i + j - ord) as isize);
-            j += 1
         }
         *y.offset(i as isize) = sum_0;
         i += 1
@@ -373,10 +372,9 @@ pub unsafe extern "C" fn celt_iir(
     }
     while i < N {
         let mut sum_0: crate::arch_h::opus_val32 = *_x.offset(i as isize);
-        j = 0;
-        while j < ord {
+
+        for j in 0..ord {
             sum_0 -= *rden.offset(j as isize) * *y.offset((i + j) as isize);
-            j += 1
         }
         *y.offset((i + ord) as isize) = sum_0;
         *_y.offset(i as isize) = sum_0;
@@ -430,17 +428,20 @@ pub unsafe extern "C" fn _celt_autocorr(
     }
     shift = 0;
     crate::src::opus_1_2_1::celt::pitch::celt_pitch_xcorr_c(xptr, xptr, ac, fastN, lag + 1, arch);
-    k = 0;
-    while k <= lag {
+
+    for k in 0..=lag {
         i = k + fastN;
+
         d = 0f32;
+
         while i < n {
             d = d + *xptr.offset(i as isize) * *xptr.offset((i - k) as isize);
             i += 1
         }
+
         let ref mut fresh23 = *ac.offset(k as isize);
+
         *fresh23 += d;
-        k += 1
     }
     return shift;
 }

@@ -237,8 +237,8 @@ pub unsafe extern "C" fn vorbis_comment_query(
     let mut fulltag: *mut i8 = crate::stdlib::malloc((taglen + 1) as usize) as *mut i8;
     crate::stdlib::strcpy(fulltag, tag);
     crate::stdlib::strcat(fulltag, b"=\x00" as *const u8 as *const i8);
-    i = 0;
-    while i < (*vc).comments as isize {
+
+    for i in 0..(*vc).comments as isize {
         if tagcompare(*(*vc).user_comments.offset(i), fulltag, taglen) == 0 {
             if count == found {
                 /* We return a pointer to the data, not a copy */
@@ -248,7 +248,6 @@ pub unsafe extern "C" fn vorbis_comment_query(
                 found += 1
             }
         }
-        i += 1
     }
     crate::stdlib::free(fulltag as *mut libc::c_void);
     return 0 as *mut i8;
@@ -266,12 +265,11 @@ pub unsafe extern "C" fn vorbis_comment_query_count(
     let mut fulltag: *mut i8 = crate::stdlib::malloc((taglen + 1) as usize) as *mut i8;
     crate::stdlib::strcpy(fulltag, tag);
     crate::stdlib::strcat(fulltag, b"=\x00" as *const u8 as *const i8);
-    i = 0;
-    while i < (*vc).comments {
+
+    for i in 0..(*vc).comments {
         if tagcompare(*(*vc).user_comments.offset(i as isize), fulltag, taglen) == 0 {
             count += 1
         }
-        i += 1
     }
     crate::stdlib::free(fulltag as *mut libc::c_void);
     return count;
@@ -282,12 +280,10 @@ pub unsafe extern "C" fn vorbis_comment_clear(mut vc: *mut crate::codec_h::vorbi
     if !vc.is_null() {
         let mut i: isize = 0;
         if !(*vc).user_comments.is_null() {
-            i = 0;
-            while i < (*vc).comments as isize {
+            for i in 0..(*vc).comments as isize {
                 if !(*(*vc).user_comments.offset(i)).is_null() {
                     crate::stdlib::free(*(*vc).user_comments.offset(i) as *mut libc::c_void);
                 }
-                i += 1
             }
             crate::stdlib::free((*vc).user_comments as *mut libc::c_void);
         }

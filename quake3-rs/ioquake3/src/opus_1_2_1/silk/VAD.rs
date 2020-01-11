@@ -560,10 +560,12 @@ pub unsafe extern "C" fn silk_VAD_GetSA_Q8_c(
         /* Compute energy per sub-frame */
         /* initialize with summed energy of last subframe */
         Xnrg[b as usize] = (*psSilk_VAD).XnrgSubfr[b as usize];
-        s = 0;
-        while s < (1) << 2 {
+
+        for s in 0..(1) << 2 {
             sumSquared = 0;
+
             i = 0;
+
             while i < dec_subframe_length {
                 /* The energy will be less than dec_subframe_length * ( silk_int16_MIN / 8 ) ^ 2.            */
                 /* Therefore we can accumulate with no risk of overflow (unless dec_subframe_length > 128)  */
@@ -575,7 +577,7 @@ pub unsafe extern "C" fn silk_VAD_GetSA_Q8_c(
                             as crate::opus_types_h::opus_int32;
                 i += 1
             }
-            /* Add/saturate summed energy of current subframe */
+
             if s < ((1) << 2) - 1 {
                 Xnrg[b as usize] = if (Xnrg[b as usize] as crate::opus_types_h::opus_uint32)
                     .wrapping_add(sumSquared as crate::opus_types_h::opus_uint32)
@@ -598,8 +600,8 @@ pub unsafe extern "C" fn silk_VAD_GetSA_Q8_c(
                     (Xnrg[b as usize]) + (sumSquared >> 1)
                 }
             }
+
             dec_subframe_offset += dec_subframe_length;
-            s += 1
         }
         (*psSilk_VAD).XnrgSubfr[b as usize] = sumSquared;
         b += 1
@@ -827,11 +829,10 @@ unsafe extern "C" fn silk_VAD_GetNoiseLevels(
     } else {
         min_coef = 0
     }
-    k = 0;
-    while k < 4 {
-        /* Get old noise level estimate for current band */
+
+    for k in 0..4 {
         nl = (*psSilk_VAD).NL[k as usize];
-        /* Add bias */
+
         nrg = if (*pX.offset(k as isize) as crate::opus_types_h::opus_uint32).wrapping_add(
             (*psSilk_VAD).NoiseLevelBias[k as usize] as crate::opus_types_h::opus_uint32,
         ) & 0x80000000u32
@@ -841,9 +842,9 @@ unsafe extern "C" fn silk_VAD_GetNoiseLevels(
         } else {
             (*pX.offset(k as isize)) + (*psSilk_VAD).NoiseLevelBias[k as usize]
         };
-        /* Invert energies */
+
         inv_nrg = 0x7fffffff / nrg;
-        /* Less update when subband energy is high */
+
         if nrg > ((nl as crate::opus_types_h::opus_uint32) << 3) as crate::opus_types_h::opus_int32
         {
             coef = 1024 >> 3
@@ -854,21 +855,20 @@ unsafe extern "C" fn silk_VAD_GetNoiseLevels(
                 * ((1024i32) << 1) as crate::opus_types_h::opus_int16 as i64
                 >> 16) as crate::opus_types_h::opus_int32
         }
-        /* Initially faster smoothing */
+
         coef = silk_max_int(coef, min_coef);
-        /* Smooth inverse energies */
+
         (*psSilk_VAD).inv_NL[k as usize] = ((*psSilk_VAD).inv_NL[k as usize] as i64
             + ((inv_nrg - (*psSilk_VAD).inv_NL[k as usize]) as i64
                 * coef as crate::opus_types_h::opus_int16 as i64
                 >> 16))
             as crate::opus_types_h::opus_int32;
-        /* Compute noise level by inverting again */
+
         nl = 0x7fffffff / (*psSilk_VAD).inv_NL[k as usize];
-        /* Limit noise levels (guarantee 7 bits of head room) */
+
         nl = if nl < 0xffffff { nl } else { 0xffffff };
-        /* Store as part of state */
+
         (*psSilk_VAD).NL[k as usize] = nl;
-        k += 1
     }
     /* Increment frame counter */
     (*psSilk_VAD).counter += 1;

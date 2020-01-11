@@ -296,8 +296,8 @@ pub unsafe extern "C" fn G_SpawnString(
         *out = defaultString as *mut i8
         //		G_Error( "G_SpawnString() called while not spawning" );
     }
-    i = 0;
-    while i < crate::src::game::g_main::level.numSpawnVars {
+
+    for i in 0..crate::src::game::g_main::level.numSpawnVars {
         if crate::src::qcommon::q_shared::Q_stricmp(
             key,
             crate::src::game::g_main::level.spawnVars[i as usize][0],
@@ -306,7 +306,6 @@ pub unsafe extern "C" fn G_SpawnString(
             *out = crate::src::game::g_main::level.spawnVars[i as usize][1];
             return crate::src::qcommon::q_shared::qtrue;
         }
-        i += 1
     }
     *out = defaultString as *mut i8;
     return crate::src::qcommon::q_shared::qfalse;

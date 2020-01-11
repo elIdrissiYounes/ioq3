@@ -885,13 +885,15 @@ unsafe extern "C" fn SVC_BucketForAddress(
         }
         bucket = (*bucket).next
     }
-    i = 0;
-    while i < 16384 {
+
+    for i in 0..16384 {
         let mut interval: i32 = 0;
+
         bucket =
             &mut *buckets.as_mut_ptr().offset(i as isize) as *mut crate::server_h::leakyBucket_t;
+
         interval = now - (*bucket).lastTime;
-        // Reclaim expired buckets
+
         if (*bucket).lastTime > 0 && (interval > burst * period || interval < 0) {
             if !(*bucket).prev.is_null() {
                 (*(*bucket).prev).next = (*bucket).next
@@ -907,6 +909,7 @@ unsafe extern "C" fn SVC_BucketForAddress(
                 ::std::mem::size_of::<crate::server_h::leakyBucket_t>(),
             );
         }
+
         if (*bucket).type_0 == crate::qcommon_h::NA_BAD {
             (*bucket).type_0 = address.type_0;
             match address.type_0 {
@@ -938,7 +941,6 @@ unsafe extern "C" fn SVC_BucketForAddress(
             bucketHashes[hash as usize] = bucket;
             return bucket;
         }
-        i += 1
     }
     // Couldn't allocate a bucket for this address
     return 0 as *mut crate::server_h::leakyBucket_t;
@@ -1054,9 +1056,10 @@ unsafe extern "C" fn SVC_Status(mut from: crate::qcommon_h::netadr_t) {
     );
     status[0] = 0;
     statusLength = 0;
-    i = 0;
-    while i < (*sv_maxclients).integer {
+
+    for i in 0..(*sv_maxclients).integer {
         cl = &mut *svs.clients.offset(i as isize) as *mut crate::server_h::client_t;
+
         if (*cl).state >= crate::server_h::CS_CONNECTED {
             ps = crate::src::server::sv_game::SV_GameClientNum(i);
             crate::src::qcommon::q_shared::Com_sprintf(
@@ -1077,7 +1080,6 @@ unsafe extern "C" fn SVC_Status(mut from: crate::qcommon_h::netadr_t) {
             );
             statusLength += playerLength
         }
-        i += 1
     }
     crate::src::qcommon::net_chan::NET_OutOfBandPrint(
         crate::qcommon_h::NS_SERVER,
@@ -1140,8 +1142,8 @@ pub unsafe extern "C" fn SVC_Info(mut from: crate::qcommon_h::netadr_t) {
     // don't count privateclients
     humans = 0;
     count = humans;
-    i = (*sv_privateClients).integer;
-    while i < (*sv_maxclients).integer {
+
+    for i in (*sv_privateClients).integer..(*sv_maxclients).integer {
         if (*svs.clients.offset(i as isize)).state >= crate::server_h::CS_CONNECTED {
             count += 1;
             if (*svs.clients.offset(i as isize))
@@ -1153,7 +1155,6 @@ pub unsafe extern "C" fn SVC_Info(mut from: crate::qcommon_h::netadr_t) {
                 humans += 1
             }
         }
-        i += 1
     }
     infostring[0] = 0;
     // echo back the parameter to status. so servers can use it as a challenge
@@ -1572,15 +1573,14 @@ unsafe extern "C" fn SV_CalcPings() {
         } else {
             total = 0;
             count = 0;
-            j = 0;
-            while j < 32 {
+
+            for j in 0..32 {
                 if !((*cl).frames[j as usize].messageAcked <= 0) {
                     delta = (*cl).frames[j as usize].messageAcked
                         - (*cl).frames[j as usize].messageSent;
                     count += 1;
                     total += delta
                 }
-                j += 1
             }
             if count == 0 {
                 (*cl).ping = 999

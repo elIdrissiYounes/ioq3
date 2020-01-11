@@ -63,11 +63,10 @@ pub unsafe extern "C" fn silk_bwexpander_FLP(mut ar: *mut f32, d: i32, chirp: f3
 {
     let mut i: i32 = 0;
     let mut cfac: f32 = chirp;
-    i = 0;
-    while i < d - 1 {
+
+    for i in 0..d - 1 {
         *ar.offset(i as isize) *= cfac;
         cfac *= chirp;
-        i += 1
     }
     *ar.offset((d - 1i32) as isize) *= cfac;
 }

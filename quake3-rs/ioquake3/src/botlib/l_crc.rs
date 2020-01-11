@@ -80,14 +80,15 @@ pub unsafe extern "C" fn CRC_ProcessString(mut data: *mut u8, mut length: i32) -
     let mut i: i32 = 0;
     let mut ind: i32 = 0;
     CRC_Init(&mut crcvalue);
-    i = 0;
-    while i < length {
+
+    for i in 0..length {
         ind = crcvalue as i32 >> 8 ^ *data.offset(i as isize) as i32;
+
         if ind < 0 || ind > 256 {
             ind = 0
         }
+
         crcvalue = ((crcvalue as i32) << 8 ^ crctable[ind as usize] as i32) as u16;
-        i += 1
     }
     return CRC_Value(crcvalue);
 }

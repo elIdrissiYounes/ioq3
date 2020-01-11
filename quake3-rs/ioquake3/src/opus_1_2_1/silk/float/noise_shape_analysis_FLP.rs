@@ -192,14 +192,14 @@ unsafe extern "C" fn limit_coefs(mut coefs: *mut f32, mut limit: f32, mut order:
     while iter < 10 {
         /* Find maximum absolute value */
         maxabs = -1.0;
-        i = 0;
-        while i < order {
+
+        for i in 0..order {
             tmp = crate::stdlib::fabs(*coefs.offset(i as isize) as f64) as f32;
+
             if tmp > maxabs {
                 maxabs = tmp;
                 ind = i
             }
-            i += 1
         }
         if maxabs <= limit {
             /* Coefficients are within range - done */

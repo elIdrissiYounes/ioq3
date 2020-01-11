@@ -160,20 +160,23 @@ unsafe extern "C" fn ResampleSfx(
     samplefrac = 0;
     fracstep = (stepscale * 256f32 * channels as f32) as i32;
     chunk = (*sfx).soundData;
-    i = 0;
-    while i < outcount {
+
+    for i in 0..outcount {
         srcsample += samplefrac >> 8;
+
         samplefrac &= 255;
+
         samplefrac += fracstep;
-        j = 0;
-        while j < channels {
+        for j in 0..channels {
             if inwidth == 2 {
                 sample = *(data as *mut i16).offset((srcsample + j) as isize) as i32
             } else {
                 sample =
                     (((*data.offset((srcsample + j) as isize) as i32 - 128) as u32) << 8) as i32
             }
+
             part = i * channels + j & 1024 - 1;
+
             if part == 0 {
                 let mut newchunk: *mut crate::snd_local_h::sndBuffer =
                     0 as *mut crate::snd_local_h::sndBuffer;
@@ -185,10 +188,9 @@ unsafe extern "C" fn ResampleSfx(
                 }
                 chunk = newchunk
             }
+
             (*chunk).sndChunk[part as usize] = sample as i16;
-            j += 1
         }
-        i += 1
     }
     return outcount;
 }
@@ -221,22 +223,22 @@ unsafe extern "C" fn ResampleSfxRaw(
     srcsample = 0;
     samplefrac = 0;
     fracstep = (stepscale * 256f32 * channels as f32) as i32;
-    i = 0;
-    while i < outcount {
+
+    for i in 0..outcount {
         srcsample += samplefrac >> 8;
+
         samplefrac &= 255;
+
         samplefrac += fracstep;
-        j = 0;
-        while j < channels {
+        for j in 0..channels {
             if inwidth == 2 {
                 sample = *(data as *mut i16).offset((srcsample + j) as isize) as i32
             } else {
                 sample = (*data.offset((srcsample + j) as isize) as i32 - 128) << 8
             }
+
             *sfx.offset((i * channels + j) as isize) = sample as i16;
-            j += 1
         }
-        i += 1
     }
     return outcount;
 }

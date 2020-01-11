@@ -1118,11 +1118,12 @@ pub unsafe extern "C" fn opus_multistream_packet_pad(
     }
     amount = new_len - len;
     /* Seek to last stream */
-    s = 0;
-    while s < nb_streams - 1 {
+
+    for s in 0..nb_streams - 1 {
         if len <= 0 {
             return -(4i32);
         }
+
         count = crate::src::opus_1_2_1::src::opus::opus_packet_parse_impl(
             data,
             len,
@@ -1133,12 +1134,14 @@ pub unsafe extern "C" fn opus_multistream_packet_pad(
             0 as *mut i32,
             &mut packet_offset,
         );
+
         if count < 0 {
             return count;
         }
+
         data = data.offset(packet_offset as isize);
+
         len -= packet_offset;
-        s += 1
     }
     return opus_packet_pad(data, len, len + amount);
 }
@@ -1181,14 +1184,18 @@ pub unsafe extern "C" fn opus_multistream_packet_unpad(
     dst = data;
     dst_len = 0;
     /* Unpad all frames */
-    s = 0;
-    while s < nb_streams {
+
+    for s in 0..nb_streams {
         let mut ret: crate::opus_types_h::opus_int32 = 0;
+
         let mut self_delimited: i32 = (s != nb_streams - 1) as i32;
+
         if len <= 0 {
             return -(4i32);
         }
+
         opus_repacketizer_init(&mut rp);
+
         ret = crate::src::opus_1_2_1::src::opus::opus_packet_parse_impl(
             data,
             len,
@@ -1199,24 +1206,31 @@ pub unsafe extern "C" fn opus_multistream_packet_unpad(
             0 as *mut i32,
             &mut packet_offset,
         );
+
         if ret < 0 {
             return ret;
         }
+
         ret = opus_repacketizer_cat_impl(&mut rp, data, packet_offset, self_delimited);
+
         if ret < 0 {
             return ret;
         }
+
         ret =
             opus_repacketizer_out_range_impl(&mut rp, 0, rp.nb_frames, dst, len, self_delimited, 0);
+
         if ret < 0 {
             return ret;
         } else {
             dst_len += ret
         }
+
         dst = dst.offset(ret as isize);
+
         data = data.offset(packet_offset as isize);
+
         len -= packet_offset;
-        s += 1
     }
     return dst_len;
 }

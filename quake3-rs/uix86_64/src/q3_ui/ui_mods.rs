@@ -300,17 +300,19 @@ unsafe extern "C" fn UI_Mods_LoadMods() {
         ::std::mem::size_of::<[i8; 2048]>() as i32,
     );
     dirptr = dirlist.as_mut_ptr();
-    i = 0;
-    while i < numdirs {
+
+    for i in 0..numdirs {
         dirlen = crate::stdlib::strlen(dirptr).wrapping_add(1usize) as i32;
+
         descptr = dirptr.offset(dirlen as isize);
+
         UI_Mods_ParseInfos(dirptr, descptr);
+
         dirptr = dirptr.offset(
             (dirlen as usize)
                 .wrapping_add(crate::stdlib::strlen(descptr))
                 .wrapping_add(1usize) as isize,
         );
-        i += 1
     }
     crate::src::ui::ui_syscalls::trap_Print(crate::src::qcommon::q_shared::va(
         b"%i mods parsed\n\x00" as *const u8 as *mut i8,

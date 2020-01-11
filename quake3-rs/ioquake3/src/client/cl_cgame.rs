@@ -594,11 +594,10 @@ pub unsafe extern "C" fn CL_GetSnapshot(
         count = 256
     }
     (*snapshot).numEntities = count;
-    i = 0;
-    while i < count {
+
+    for i in 0..count {
         (*snapshot).entities[i as usize] = crate::src::client::cl_main::cl.parseEntities
             [((*clSnap).parseEntitiesNum + i & 32 * 256 - 1) as usize];
-        i += 1
     }
     // FIXME: configstring changes and server commands!!!
     return crate::src::qcommon::q_shared::qtrue;
@@ -673,8 +672,8 @@ pub unsafe extern "C" fn CL_ConfigstringModified() {
     );
     // leave the first 0 for uninitialized strings
     crate::src::client::cl_main::cl.gameState.dataCount = 1;
-    i = 0;
-    while i < 1024 {
+
+    for i in 0..1024 {
         if i == index {
             dup = s
         } else {
@@ -683,6 +682,7 @@ pub unsafe extern "C" fn CL_ConfigstringModified() {
                 .as_mut_ptr()
                 .offset(oldGs.stringOffsets[i as usize] as isize)
         }
+
         if !(*dup.offset(0) == 0) {
             len = crate::stdlib::strlen(dup) as i32;
             if len + 1 + crate::src::client::cl_main::cl.gameState.dataCount > 16000 {
@@ -706,8 +706,6 @@ pub unsafe extern "C" fn CL_ConfigstringModified() {
             );
             crate::src::client::cl_main::cl.gameState.dataCount += len + 1
         }
-        i += 1
-        // leave with the default empty string
     }
     if index == 1 {
         // parse serverId and other cvars
@@ -2292,12 +2290,13 @@ pub unsafe extern "C" fn CL_FirstSnapshot() {
             );
             return;
         }
-        i = 0;
-        while i < 64 {
+
+        for i in 0..64 {
             crate::src::client::cl_main::clc.opusDecoder[i as usize] =
                 crate::src::opus_1_2_1::src::opus_decoder::opus_decoder_create(
                     48000, 1, &mut error,
                 );
+
             if error != 0 {
                 crate::src::qcommon::common::Com_DPrintf(
                     b"VoIP: Error opus_decoder_create(%d) %d\n\x00" as *const u8 as *const i8,
@@ -2306,10 +2305,11 @@ pub unsafe extern "C" fn CL_FirstSnapshot() {
                 );
                 return;
             }
+
             crate::src::client::cl_main::clc.voipIgnore[i as usize] =
                 crate::src::qcommon::q_shared::qfalse;
+
             crate::src::client::cl_main::clc.voipGain[i as usize] = 1.0;
-            i += 1
         }
         crate::src::client::cl_main::clc.voipCodecInitialized =
             crate::src::qcommon::q_shared::qtrue;

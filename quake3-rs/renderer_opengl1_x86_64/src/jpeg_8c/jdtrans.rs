@@ -282,9 +282,7 @@ pub unsafe extern "C" fn jpeg_read_coefficients(
                 break;
             }
             /* Advance progress counter if appropriate */
-            if !(*cinfo).progress.is_null()
-                && (retcode == 3 || retcode == 1)
-            {
+            if !(*cinfo).progress.is_null() && (retcode == 3 || retcode == 1) {
                 (*(*cinfo).progress).pass_counter += 1;
                 if (*(*cinfo).progress).pass_counter >= (*(*cinfo).progress).pass_limit {
                     /* startup underestimated number of scans; ratchet up one scan */
@@ -375,8 +373,7 @@ unsafe extern "C" fn transdecode_master_selection(mut cinfo: crate::jpeglib_h::j
             nscans = 1
         }
         (*(*cinfo).progress).pass_counter = 0isize;
-        (*(*cinfo).progress).pass_limit =
-            (*cinfo).total_iMCU_rows as isize * nscans as isize;
+        (*(*cinfo).progress).pass_limit = (*cinfo).total_iMCU_rows as isize * nscans as isize;
         (*(*cinfo).progress).completed_passes = 0;
         (*(*cinfo).progress).total_passes = 1
     };

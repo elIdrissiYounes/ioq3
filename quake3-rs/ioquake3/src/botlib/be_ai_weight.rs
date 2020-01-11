@@ -253,15 +253,15 @@ pub unsafe extern "C" fn FreeWeightConfig2(
     mut config: *mut crate::src::botlib::be_ai_weight::weightconfig_t,
 ) {
     let mut i: i32 = 0; //end for
-    i = 0;
-    while i < (*config).numweights {
+
+    for i in 0..(*config).numweights {
         FreeFuzzySeperators_r((*config).weights[i as usize].firstseperator);
+
         if !(*config).weights[i as usize].name.is_null() {
             crate::src::botlib::l_memory::FreeMemory(
                 (*config).weights[i as usize].name as *mut libc::c_void,
             );
         }
-        i += 1
     }
     crate::src::botlib::l_memory::FreeMemory(config as *mut libc::c_void);
 }
@@ -536,10 +536,10 @@ pub unsafe extern "C" fn ReadWeightConfig(
     {
         avail = -(1); //end if
                       //end if
-        n = 0; //end for
-        while n < 128 {
+                      //end for
+        for n in 0..128 {
             config = weightFileList[n as usize];
-            //end if
+
             if config.is_null() {
                 //end if
                 if avail == -(1) {
@@ -549,8 +549,7 @@ pub unsafe extern "C" fn ReadWeightConfig(
                 //end if
                 //botimport.Print( PRT_MESSAGE, "retained %s\n", filename );
                 return config;
-            } //end if
-            n += 1
+            }
         }
         if avail == -(1) {
             crate::src::botlib::be_interface::botimport
@@ -737,13 +736,11 @@ pub unsafe extern "C" fn FindFuzzyWeight(
     mut name: *mut i8,
 ) -> i32 {
     let mut i: i32 = 0; //end if
-    i = 0;
-    while i < (*wc).numweights {
+
+    for i in 0..(*wc).numweights {
         if crate::stdlib::strcmp((*wc).weights[i as usize].name, name) == 0 {
             return i;
         }
-        i += 1
-        //end if
     }
     return -(1);
 }

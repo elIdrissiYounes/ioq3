@@ -443,18 +443,19 @@ unsafe extern "C" fn floor1_look(
         let mut lx: i32 = 0;
         let mut hx: i32 = (*look).n;
         let mut currentx: i32 = (*info).postlist[(i + 2) as usize];
-        j = 0;
-        while j < i + 2 {
+
+        for j in 0..i + 2 {
             let mut x: i32 = (*info).postlist[j as usize];
+
             if x > lx && x < currentx {
                 lo = j;
                 lx = x
             }
+
             if x < hx && x > currentx {
                 hi = j;
                 hx = x
             }
-            j += 1
         }
         (*look).loneighbor[i as usize] = lo;
         (*look).hineighbor[i as usize] = hi;
@@ -864,9 +865,10 @@ unsafe extern "C" fn accumulate_fit(
     if x1 >= n {
         x1 = n - 1
     }
-    i = x0 as isize;
-    while i <= x1 as isize {
+
+    for i in x0 as isize..=x1 as isize {
         let mut quantized: i32 = vorbis_dBquant(flr.offset(i));
+
         if quantized != 0 {
             if *mdct.offset(i) + (*info).twofitatten >= *flr.offset(i) {
                 xa = (xa as isize + i) as i32;
@@ -884,7 +886,6 @@ unsafe extern "C" fn accumulate_fit(
                 nb += 1
             }
         }
-        i += 1
     }
     (*a).xa = xa;
     (*a).ya = ya;
@@ -917,19 +918,24 @@ unsafe extern "C" fn fit_line(
     let mut i: i32 = 0;
     let mut x0: i32 = (*a.offset(0)).x0;
     let mut x1: i32 = (*a.offset((fits - 1i32) as isize)).x1;
-    i = 0;
-    while i < fits {
+
+    for i in 0..fits {
         let mut weight: f64 = (((*a.offset(i as isize)).bn + (*a.offset(i as isize)).an) as f32
             * (*info).twofitweight
             / ((*a.offset(i as isize)).an + 1i32) as f32) as f64
             + 1.0;
+
         xb += (*a.offset(i as isize)).xb as f64 + (*a.offset(i as isize)).xa as f64 * weight;
+
         yb += (*a.offset(i as isize)).yb as f64 + (*a.offset(i as isize)).ya as f64 * weight;
+
         x2b += (*a.offset(i as isize)).x2b as f64 + (*a.offset(i as isize)).x2a as f64 * weight;
+
         y2b += (*a.offset(i as isize)).y2b as f64 + (*a.offset(i as isize)).y2a as f64 * weight;
+
         xyb += (*a.offset(i as isize)).xyb as f64 + (*a.offset(i as isize)).xya as f64 * weight;
+
         bn += (*a.offset(i as isize)).bn as f64 + (*a.offset(i as isize)).an as f64 * weight;
-        i += 1
     }
     if *y0 >= 0 {
         xb += x0 as f64;
@@ -1617,11 +1623,13 @@ unsafe extern "C" fn floor1_inverse1(
                     break;
                 }
             }
-            k = 0;
-            while k < cdim {
+
+            for k in 0..cdim {
                 let mut book: i32 =
                     (*info).class_subbook[class as usize][(cval & csub - 1) as usize];
+
                 cval >>= csubbits;
+
                 if book >= 0 {
                     let ref mut fresh0 = *fit_value.offset((j + k) as isize);
                     *fresh0 = crate::src::libvorbis_1_3_6::lib::codebook::vorbis_book_decode(
@@ -1635,7 +1643,6 @@ unsafe extern "C" fn floor1_inverse1(
                 } else {
                     *fit_value.offset((j + k) as isize) = 0
                 }
-                k += 1
             }
             j += cdim;
             i += 1

@@ -218,11 +218,14 @@ unsafe extern "C" fn LPC_inverse_pred_gain_QA_c(
                 }),
             );
         rc_mult2 = silk_INVERSE32_varQ(rc_mult1_Q30, mult2Q + 30);
-        n = 0;
-        while n < k + 1 >> 1 {
+
+        for n in 0..k + 1 >> 1 {
             let mut tmp64: i64 = 0;
+
             tmp1 = *A_QA.offset(n as isize);
+
             tmp2 = *A_QA.offset((k - n - 1) as isize);
+
             tmp64 = if mult2Q == 1 {
                 ((if (tmp1 as crate::opus_types_h::opus_uint32).wrapping_sub(if 31 == 1 {
                     (tmp2 as i64 * rc_Q31 as i64 >> 1) + (tmp2 as i64 * rc_Q31 as i64 & 1)
@@ -388,11 +391,14 @@ unsafe extern "C" fn LPC_inverse_pred_gain_QA_c(
                     + 1)
                     >> 1
             };
+
             if tmp64 > 0x7fffffff || tmp64 < 0x80000000u32 as crate::opus_types_h::opus_int32 as i64
             {
                 return 0i32;
             }
+
             *A_QA.offset(n as isize) = tmp64 as crate::opus_types_h::opus_int32;
+
             tmp64 = if mult2Q == 1 {
                 ((if (tmp2 as crate::opus_types_h::opus_uint32).wrapping_sub(if 31 == 1 {
                     (tmp1 as i64 * rc_Q31 as i64 >> 1) + (tmp1 as i64 * rc_Q31 as i64 & 1)
@@ -558,12 +564,13 @@ unsafe extern "C" fn LPC_inverse_pred_gain_QA_c(
                     + 1)
                     >> 1
             };
+
             if tmp64 > 0x7fffffff || tmp64 < 0x80000000u32 as crate::opus_types_h::opus_int32 as i64
             {
                 return 0i32;
             }
+
             *A_QA.offset((k - n - 1) as isize) = tmp64 as crate::opus_types_h::opus_int32;
-            n += 1
         }
         k -= 1
     }
@@ -702,12 +709,12 @@ pub unsafe extern "C" fn silk_LPC_inverse_pred_gain_c(
     let mut Atmp_QA: [crate::opus_types_h::opus_int32; 24] = [0; 24];
     let mut DC_resp: crate::opus_types_h::opus_int32 = 0;
     /* Increase Q domain of the AR coefficients */
-    k = 0;
-    while k < order {
+
+    for k in 0..order {
         DC_resp += *A_Q12.offset(k as isize) as crate::opus_types_h::opus_int32;
+
         Atmp_QA[k as usize] = ((*A_Q12.offset(k as isize) as crate::opus_types_h::opus_uint32)
             << 24 - 12) as crate::opus_types_h::opus_int32;
-        k += 1
     }
     /* If the DC is unstable, we don't even need to do the full calculations */
     if DC_resp >= 4096 {

@@ -528,8 +528,8 @@ pub unsafe extern "C" fn LoadWeaponConfig(mut filename: *mut i8) -> *mut weaponc
     }
     crate::src::botlib::l_precomp::FreeSource(source);
     //fix up weapons
-    i = 0; //end for
-    while i < (*wc).numweapons {
+    //end for
+    for i in 0..(*wc).numweapons {
         if !((*(*wc).weaponinfo.offset(i as isize)).valid == 0) {
             if (*(*wc).weaponinfo.offset(i as isize)).name[0] == 0 {
                 crate::src::botlib::be_interface::botimport
@@ -593,8 +593,6 @@ pub unsafe extern "C" fn LoadWeaponConfig(mut filename: *mut i8) -> *mut weaponc
                 return 0 as *mut weaponconfig_t;
             }
         }
-        i += 1
-        //end if
     }
     if (*wc).numweapons == 0 {
         crate::src::botlib::be_interface::botimport
@@ -632,13 +630,12 @@ pub unsafe extern "C" fn WeaponWeightIndex(
     index = crate::src::botlib::l_memory::GetClearedMemory(
         (::std::mem::size_of::<i32>()).wrapping_mul((*wc).numweapons as usize),
     ) as *mut i32; //end for
-    i = 0;
-    while i < (*wc).numweapons {
+
+    for i in 0..(*wc).numweapons {
         *index.offset(i as isize) = crate::src::botlib::be_ai_weight::FindFuzzyWeight(
             wwc,
             (*(*wc).weaponinfo.offset(i as isize)).name.as_mut_ptr(),
         );
-        i += 1
     }
     return index;
 }
@@ -767,8 +764,8 @@ pub unsafe extern "C" fn BotChooseBestFightWeapon(
     } //end for
     bestweight = 0f32;
     bestweapon = 0;
-    i = 0;
-    while i < (*wc).numweapons {
+
+    for i in 0..(*wc).numweapons {
         if !((*(*wc).weaponinfo.offset(i as isize)).valid == 0) {
             index = *(*ws).weaponweightindex.offset(i as isize);
             if !(index < 0) {
@@ -783,8 +780,6 @@ pub unsafe extern "C" fn BotChooseBestFightWeapon(
                 }
             }
         }
-        i += 1
-        //end if
     }
     return bestweapon;
 }
@@ -811,8 +806,8 @@ pub unsafe extern "C" fn BotResetWeaponState(mut weaponstate: i32) {}
 
 pub unsafe extern "C" fn BotAllocWeaponState() -> i32 {
     let mut i: i32 = 0; //end for
-    i = 1;
-    while i <= 64 {
+
+    for i in 1..=64 {
         if botweaponstates[i as usize].is_null() {
             botweaponstates[i as usize] =
                 crate::src::botlib::l_memory::GetClearedMemory(::std::mem::size_of::<
@@ -820,8 +815,6 @@ pub unsafe extern "C" fn BotAllocWeaponState() -> i32 {
                 >()) as *mut bot_weaponstate_t;
             return i;
         }
-        i += 1
-        //end if
     }
     return 0;
 }

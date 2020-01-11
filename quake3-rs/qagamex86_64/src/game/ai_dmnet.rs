@@ -254,14 +254,13 @@ pub unsafe extern "C" fn BotDumpNodeSwitches(mut bs: *mut crate::src::game::ai_m
         crate::src::game::ai_main::floattime as f64,
         50i32,
     );
-    i = 0;
-    while i < numnodeswitches {
+
+    for i in 0..numnodeswitches {
         crate::src::game::ai_main::BotAI_Print(
             1,
             b"%s\x00" as *const u8 as *mut i8,
             nodeswitch[i as usize].as_mut_ptr(),
         );
-        i += 1
     }
     crate::src::game::ai_main::BotAI_Print(4, b"\x00" as *const u8 as *mut i8);
 }
@@ -2289,21 +2288,25 @@ pub unsafe extern "C" fn BotClearPath(
     {
         bestdist = 300f32;
         bestmine = -(1);
-        i = 0;
-        while i < (*bs).numproxmines {
+
+        for i in 0..(*bs).numproxmines {
             crate::src::game::ai_main::BotAI_GetEntityState(
                 (*bs).proxmines[i as usize],
                 &mut state,
             );
+
             dir[0] = state.pos.trBase[0] - (*bs).origin[0];
+
             dir[1] = state.pos.trBase[1] - (*bs).origin[1];
+
             dir[2] = state.pos.trBase[2] - (*bs).origin[2];
+
             dist = VectorLength(dir.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t);
+
             if dist < bestdist {
                 bestdist = dist;
                 bestmine = i
             }
-            i += 1
         }
         if bestmine != -(1) {
             //

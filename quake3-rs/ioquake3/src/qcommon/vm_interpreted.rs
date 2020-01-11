@@ -353,11 +353,10 @@ pub unsafe extern "C" fn VM_CallInterpreted(
     dataMask = (*vm).dataMask;
     programCounter = 0;
     programStack -= 8 + 4 * 13;
-    arg = 0;
-    while arg < 13 {
+
+    for arg in 0..13 {
         *(&mut *image.offset((programStack + 8 + arg * 4) as isize)
             as *mut crate::src::qcommon::q_shared::byte as *mut i32) = *args.offset(arg as isize);
-        arg += 1
     }
     *(&mut *image.offset((programStack + 4) as isize) as *mut crate::src::qcommon::q_shared::byte
         as *mut i32) = 0;

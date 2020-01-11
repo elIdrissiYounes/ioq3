@@ -100,13 +100,15 @@ pub unsafe extern "C" fn silk_schur_FLP(
         /* Save the output */
         *refl_coef.offset(k as isize) = rc_tmp as f32;
         /* Update correlations */
-        n = 0;
-        while n < order - k {
+
+        for n in 0..order - k {
             Ctmp1 = C[(n + k + 1) as usize][0];
+
             Ctmp2 = C[n as usize][1];
+
             C[(n + k + 1) as usize][0] = Ctmp1 + Ctmp2 * rc_tmp;
+
             C[n as usize][1] = Ctmp2 + Ctmp1 * rc_tmp;
-            n += 1
         }
         k += 1
     }

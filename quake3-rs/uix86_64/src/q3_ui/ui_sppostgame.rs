@@ -930,14 +930,14 @@ pub unsafe extern "C" fn UI_SPPostgameMenu_Cache() {
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
         b"menu/art/next_1\x00" as *const u8 as *const i8,
     );
-    n = 0;
-    while n < 6 {
+
+    for n in 0..6 {
         crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(ui_medalPicNames[n as usize]);
+
         crate::src::ui::ui_syscalls::trap_S_RegisterSound(
             ui_medalSounds[n as usize],
             crate::src::qcommon::q_shared::qfalse,
         );
-        n += 1
     }
     if buildscript as u64 != 0 {
         crate::src::ui::ui_syscalls::trap_S_RegisterSound(
@@ -1245,18 +1245,20 @@ pub unsafe extern "C" fn UI_SPPostgameMenu_f() {
     if postgameMenuInfo.numClients > 8 {
         postgameMenuInfo.numClients = 8
     }
-    n = 0;
-    while n < postgameMenuInfo.numClients {
+
+    for n in 0..postgameMenuInfo.numClients {
         postgameMenuInfo.clientNums[n as usize] =
             atoi(crate::src::q3_ui::ui_atoms::UI_Argv(8 + n * 3 + 1));
+
         postgameMenuInfo.ranks[n as usize] =
             atoi(crate::src::q3_ui::ui_atoms::UI_Argv(8 + n * 3 + 2));
+
         postgameMenuInfo.scores[n as usize] =
             atoi(crate::src::q3_ui::ui_atoms::UI_Argv(8 + n * 3 + 3));
+
         if postgameMenuInfo.clientNums[n as usize] == playerClientNum {
             playerGameRank = (postgameMenuInfo.ranks[n as usize] & !(0x4000)) + 1
         }
-        n += 1
     }
     crate::src::q3_ui::ui_gameinfo::UI_SetBestScore(postgameMenuInfo.level, playerGameRank);
     // process award stats and prepare presentation data

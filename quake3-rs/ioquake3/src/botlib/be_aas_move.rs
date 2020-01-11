@@ -564,12 +564,14 @@ pub unsafe extern "C" fn AAS_AgainstLadder(
     area = &mut *crate::src::botlib::be_aas_main::aasworld
         .areas
         .offset(areanum as isize) as *mut crate::aasfile_h::aas_area_t; //end for
-    i = 0;
-    while i < (*area).numfaces {
+
+    for i in 0..(*area).numfaces {
         facenum = *crate::src::botlib::be_aas_main::aasworld
             .faceindex
             .offset(((*area).firstface + i) as isize);
+
         side = (facenum < 0) as i32;
+
         face = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset((crate::stdlib::abs as unsafe extern "C" fn(_: i32) -> i32)(facenum) as isize)
@@ -601,7 +603,6 @@ pub unsafe extern "C" fn AAS_AgainstLadder(
                 }
             }
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qfalse as i32;
 }
@@ -1149,11 +1150,9 @@ pub unsafe extern "C" fn AAS_ClipToBBox(
         (*trace).planenum = 0;
         (*trace).area = 0;
         (*trace).lastarea = 0;
-        //trace endpos
-        j = 0;
-        while j < 3 {
+
+        for j in 0..3 {
             (*trace).endpos[j as usize] = *start.offset(j as isize) + dir[j as usize] * frac;
-            j += 1
         }
         return crate::src::qcommon::q_shared::qtrue as i32;
     }

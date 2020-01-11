@@ -587,8 +587,8 @@ pub unsafe extern "C" fn silk_encode_indices(
             8,
         );
         /* Codebook Indices */
-        k = 0;
-        while k < (*psEncC).nb_subfr {
+
+        for k in 0..(*psEncC).nb_subfr {
             crate::src::opus_1_2_1::celt::entenc::ec_enc_icdf(
                 psRangeEnc,
                 (*psIndices).LTPIndex[k as usize] as i32,
@@ -596,7 +596,6 @@ pub unsafe extern "C" fn silk_encode_indices(
                     [(*psIndices).PERIndex as usize],
                 8,
             );
-            k += 1
         }
         /* *********************/
         /* Encode LTP scaling */

@@ -502,10 +502,9 @@ unsafe extern "C" fn silk_PLC_energy(
     /* Find random noise component */
     /* Scale previous excitation signal */
     exc_buf_ptr = exc_buf;
-    k = 0;
-    while k < 2 {
-        i = 0;
-        while i < subfr_length {
+
+    for k in 0..2 {
+        for i in 0..subfr_length {
             *exc_buf_ptr.offset(i as isize) =
                 if (*exc_Q14.offset((i + (k + nb_subfr - 2) * subfr_length) as isize) as i64
                     * *prevGain_Q10.offset(k as isize) as i64
@@ -528,10 +527,9 @@ unsafe extern "C" fn silk_PLC_energy(
                         >> 16) as crate::opus_types_h::opus_int32)
                         >> 8
                 } as crate::opus_types_h::opus_int16;
-            i += 1
         }
+
         exc_buf_ptr = exc_buf_ptr.offset(subfr_length as isize);
-        k += 1
     }
     /* Find the subframe with lowest energy of the last two and use that as random noise generator */
     crate::src::opus_1_2_1::silk::sum_sqr_shift::silk_sum_sqr_shift(
@@ -726,12 +724,13 @@ unsafe extern "C" fn silk_PLC_conceal(
     /* **************************/
     /* LTP synthesis filtering */
     /* **************************/
-    k = 0;
-    while k < (*psDec).nb_subfr {
-        /* Set up pointer */
+
+    for k in 0..(*psDec).nb_subfr {
         pred_lag_ptr = &mut *sLTP_Q14.offset((sLTP_buf_idx - lag + 5 / 2) as isize)
             as *mut crate::opus_types_h::opus_int32;
+
         i = 0;
+
         while i < (*psDec).subfr_length {
             /* Unrolled loop */
             /* Avoids introducing a bias because silk_SMLAWB() always rounds to -inf */
@@ -765,8 +764,9 @@ unsafe extern "C" fn silk_PLC_conceal(
             sLTP_buf_idx += 1;
             i += 1
         }
-        /* Gradually reduce LTP gain */
+
         j = 0;
+
         while j < 5 {
             *B_Q14.offset(j as isize) = (harm_Gain_Q15 as crate::opus_types_h::opus_int16
                 as crate::opus_types_h::opus_int32
@@ -774,6 +774,7 @@ unsafe extern "C" fn silk_PLC_conceal(
                 >> 15) as crate::opus_types_h::opus_int16;
             j += 1
         }
+
         if (*psDec).indices.signalType as i32 != 0 {
             /* Gradually reduce excitation gain */
             rand_scale_Q14 = (rand_scale_Q14 as crate::opus_types_h::opus_int32
@@ -781,9 +782,10 @@ unsafe extern "C" fn silk_PLC_conceal(
                     as crate::opus_types_h::opus_int32
                 >> 15) as crate::opus_types_h::opus_int16
         }
-        /* Slowly increase pitch lag */
+
         (*psPLC).pitchL_Q8 = ((*psPLC).pitchL_Q8 as i64 + ((*psPLC).pitchL_Q8 as i64 * 655 >> 16))
             as crate::opus_types_h::opus_int32;
+
         (*psPLC).pitchL_Q8 = silk_min_32(
             (*psPLC).pitchL_Q8,
             (((18
@@ -792,12 +794,12 @@ unsafe extern "C" fn silk_PLC_conceal(
                 as crate::opus_types_h::opus_uint32)
                 << 8) as crate::opus_types_h::opus_int32,
         );
+
         lag = if 8 == 1 {
             ((*psPLC).pitchL_Q8 >> 1) + ((*psPLC).pitchL_Q8 & 1)
         } else {
             (((*psPLC).pitchL_Q8 >> 8 - 1) + 1) >> 1
         };
-        k += 1
     }
     /* **************************/
     /* LPC synthesis filtering */

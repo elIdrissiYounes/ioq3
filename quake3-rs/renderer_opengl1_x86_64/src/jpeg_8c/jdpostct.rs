@@ -219,7 +219,7 @@ unsafe extern "C" fn start_pass_dpost(
     mut pass_mode: crate::jpegint_h::J_BUF_MODE,
 ) {
     let mut post: my_post_ptr = (*cinfo).post as my_post_ptr;
-    match  pass_mode {
+    match pass_mode {
         0 => {
             if (*cinfo).quantize_colors != 0 {
                 /* Single-pass processing with color quantization. */
@@ -263,8 +263,7 @@ unsafe extern "C" fn start_pass_dpost(
         3 => {
             /* First pass of 2-pass quantization */
             if (*post).whole_image.is_null() {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -290,8 +289,7 @@ unsafe extern "C" fn start_pass_dpost(
         2 => {
             /* Second pass of 2-pass quantization */
             if (*post).whole_image.is_null() {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -316,8 +314,7 @@ unsafe extern "C" fn start_pass_dpost(
         }
         _ => {
             /* QUANT_2PASS_SUPPORTED */
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -382,7 +379,7 @@ unsafe extern "C" fn post_process_1pass(
         output_buf.offset(*out_row_ctr as isize),
         num_rows as i32,
     );
-    *out_row_ctr =  (((*out_row_ctr))).wrapping_add(num_rows);
+    *out_row_ctr = (*out_row_ctr).wrapping_add(num_rows);
 }
 /*
  * Process some data in the first pass of 2-pass quantization.
@@ -443,17 +440,14 @@ unsafe extern "C" fn post_process_prepass(
         .expect("non-null function pointer")(
             cinfo,
             (*post).buffer.offset(old_next_row as isize),
-            
             0 as crate::jpeglib_h::JSAMPARRAY,
             num_rows as i32,
         );
-        *out_row_ctr =  (((*out_row_ctr))).wrapping_add(num_rows)
+        *out_row_ctr = (*out_row_ctr).wrapping_add(num_rows)
     }
     /* Advance if we filled the strip. */
     if (*post).next_row >= (*post).strip_height {
-        (*post).starting_row =
-            
-            ((*post).starting_row).wrapping_add((*post).strip_height);
+        (*post).starting_row = ((*post).starting_row).wrapping_add((*post).strip_height);
         (*post).next_row = 0
     };
 }
@@ -511,13 +505,11 @@ unsafe extern "C" fn post_process_2pass(
         output_buf.offset(*out_row_ctr as isize),
         num_rows as i32,
     );
-    *out_row_ctr =  (((*out_row_ctr))).wrapping_add(num_rows);
+    *out_row_ctr = (*out_row_ctr).wrapping_add(num_rows);
     /* Advance if we filled the strip. */
-    (*post).next_row =  ((*post).next_row).wrapping_add(num_rows);
+    (*post).next_row = ((*post).next_row).wrapping_add(num_rows);
     if (*post).next_row >= (*post).strip_height {
-        (*post).starting_row =
-            
-            ((*post).starting_row).wrapping_add((*post).strip_height);
+        (*post).starting_row = ((*post).starting_row).wrapping_add((*post).strip_height);
         (*post).next_row = 0
     };
 }
@@ -559,7 +551,6 @@ pub unsafe extern "C" fn jinit_d_post_controller(
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<my_post_controller>(),
     ) as my_post_ptr; /* flag for no strip buffer */
     (*cinfo).post = post as *mut crate::jpegint_h::jpeg_d_post_controller;

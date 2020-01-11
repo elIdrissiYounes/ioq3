@@ -1115,11 +1115,12 @@ unsafe extern "C" fn SV_WriteBans() {
     if writeto != 0 {
         let mut writebuf: [i8; 128] = [0; 128];
         let mut curban: *mut crate::server_h::serverBan_t = 0 as *mut crate::server_h::serverBan_t;
-        index = 0;
-        while index < crate::src::server::sv_main::serverBansCount {
+
+        for index in 0..crate::src::server::sv_main::serverBansCount {
             curban = &mut *crate::src::server::sv_main::serverBans
                 .as_mut_ptr()
                 .offset(index as isize) as *mut crate::server_h::serverBan_t;
+
             crate::src::qcommon::q_shared::Com_sprintf(
                 writebuf.as_mut_ptr(),
                 ::std::mem::size_of::<[i8; 128]>() as i32,
@@ -1128,12 +1129,12 @@ unsafe extern "C" fn SV_WriteBans() {
                 crate::src::qcommon::net_ip::NET_AdrToString((*curban).ip),
                 (*curban).subnet,
             );
+
             crate::src::qcommon::files::FS_Write(
                 writebuf.as_mut_ptr() as *const libc::c_void,
                 crate::stdlib::strlen(writebuf.as_mut_ptr()) as i32,
                 writeto,
             );
-            index += 1
         }
         crate::src::qcommon::files::FS_FCloseFile(writeto);
     };

@@ -334,11 +334,11 @@ pub unsafe extern "C" fn CMod_LoadNodes(mut l: *mut crate::qfiles_h::lump_t) {
     i = 0;
     while i < count {
         (*out).plane = cm.planes.offset((*in_0).planeNum as isize);
-        j = 0;
-        while j < 2 {
+
+        for j in 0..2 {
             child = (*in_0).children[j as usize];
+
             (*out).children[j as usize] = child;
-            j += 1
         }
         i += 1;
         out = out.offset(1);
@@ -515,13 +515,13 @@ pub unsafe extern "C" fn CMod_LoadPlanes(mut l: *mut crate::qfiles_h::lump_t) {
     i = 0;
     while i < count {
         bits = 0;
-        j = 0;
-        while j < 3 {
+
+        for j in 0..3 {
             (*out).normal[j as usize] = (*in_0).normal[j as usize];
+
             if (*out).normal[j as usize] < 0f32 {
                 bits |= (1) << j
             }
-            j += 1
         }
         (*out).dist = (*in_0).dist;
         (*out).type_0 = if (*out).normal[0] as f64 == 1.0 {

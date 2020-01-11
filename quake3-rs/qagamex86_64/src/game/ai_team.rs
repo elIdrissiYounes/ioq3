@@ -207,8 +207,8 @@ pub unsafe extern "C" fn BotNumTeamMates(
     let mut numplayers: i32 = 0;
     let mut buf: [i8; 1024] = [0; 1024];
     numplayers = 0;
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
             32 + 256 + 256 + i,
             buf.as_mut_ptr(),
@@ -233,7 +233,6 @@ pub unsafe extern "C" fn BotNumTeamMates(
                 }
             }
         }
-        i += 1
     }
     return numplayers;
 }
@@ -352,8 +351,8 @@ pub unsafe extern "C" fn BotSortTeamMatesByBaseTravelTime(
         }
     }
     numteammates = 0;
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         crate::src::game::g_syscalls::trap_GetConfigstring(
             32 + 256 + 256 + i,
             buf.as_mut_ptr(),
@@ -400,7 +399,6 @@ pub unsafe extern "C" fn BotSortTeamMatesByBaseTravelTime(
                 }
             }
         }
-        i += 1
     }
     return numteammates;
 }
@@ -480,9 +478,10 @@ pub unsafe extern "C" fn BotSortTeamMatesByTaskPreference(
     numroamers = 0;
     numattackers = numroamers;
     numdefenders = numattackers;
-    i = 0;
-    while i < numteammates {
+
+    for i in 0..numteammates {
         preference = BotGetTeamMateTaskPreference(bs, *teammates.offset(i as isize));
+
         if preference & 1 != 0 {
             let fresh0 = numdefenders;
             numdefenders = numdefenders + 1;
@@ -496,7 +495,6 @@ pub unsafe extern "C" fn BotSortTeamMatesByTaskPreference(
             numroamers = numroamers + 1;
             roamers[fresh2 as usize] = *teammates.offset(i as isize)
         }
-        i += 1
     }
     numteammates = 0;
     //defenders at the front of the list
@@ -1831,8 +1829,8 @@ pub unsafe extern "C" fn FindHumanTeamLeader(
     mut bs: *mut crate::src::game::ai_main::bot_state_t,
 ) -> i32 {
     let mut i: i32 = 0;
-    i = 0;
-    while i < 64 {
+
+    for i in 0..64 {
         if crate::src::game::g_main::g_entities[i as usize].inuse as u64 != 0 {
             // if this player is not a bot
             if crate::src::game::g_main::g_entities[i as usize].r.svFlags & 0x8 == 0 {
@@ -1855,7 +1853,6 @@ pub unsafe extern "C" fn FindHumanTeamLeader(
                 }
             }
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qfalse as i32;
 }

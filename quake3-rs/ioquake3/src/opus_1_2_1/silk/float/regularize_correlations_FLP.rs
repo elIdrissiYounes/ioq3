@@ -37,10 +37,9 @@ pub unsafe extern "C" fn silk_regularize_correlations_FLP(
 /* I    Dimension of XX                             */
 {
     let mut i: i32 = 0;
-    i = 0;
-    while i < D {
+
+    for i in 0..D {
         *(&mut *XX.offset(0) as *mut f32).offset((i * D + i) as isize) += noise;
-        i += 1
     }
     *xx.offset(0) += noise;
 }

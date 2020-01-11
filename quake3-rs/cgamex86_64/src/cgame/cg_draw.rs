@@ -1101,10 +1101,9 @@ unsafe extern "C" fn CG_DrawFPS(mut y: f32) -> f32 {
     if index > 4 {
         // average multiple frames together to smooth changes out a bit
         total = 0;
-        i = 0;
-        while i < 4 {
+
+        for i in 0..4 {
             total += previousTimes[i as usize];
-            i += 1
         }
         if total == 0 {
             total = 1
@@ -1370,8 +1369,8 @@ unsafe extern "C" fn CG_DrawTeamOverlay(
             } else {
                 xx = x + w - 8
             }
-            j = 0;
-            while j <= crate::bg_public_h::PW_NUM_POWERUPS as i32 {
+
+            for j in 0..=crate::bg_public_h::PW_NUM_POWERUPS as i32 {
                 if (*ci).powerups & (1) << j != 0 {
                     item = crate::src::game::bg_misc::BG_FindItemForPowerup(
                         j as crate::bg_public_h::powerup_t,
@@ -1391,7 +1390,6 @@ unsafe extern "C" fn CG_DrawTeamOverlay(
                         }
                     }
                 }
-                j += 1
             }
             y += (16i32 / 2) as f32
         }
@@ -3031,8 +3029,8 @@ unsafe extern "C" fn CG_DrawWarmup() {
         // find the two active players
         ci1 = 0 as *mut crate::cg_local_h::clientInfo_t;
         ci2 = 0 as *mut crate::cg_local_h::clientInfo_t;
-        i = 0;
-        while i < crate::src::cgame::cg_main::cgs.maxclients {
+
+        for i in 0..crate::src::cgame::cg_main::cgs.maxclients {
             if crate::src::cgame::cg_main::cgs.clientinfo[i as usize].infoValid != 0
                 && crate::src::cgame::cg_main::cgs.clientinfo[i as usize].team
                     == crate::bg_public_h::TEAM_FREE
@@ -3051,7 +3049,6 @@ unsafe extern "C" fn CG_DrawWarmup() {
                         as *mut crate::cg_local_h::clientInfo_t
                 }
             }
-            i += 1
         }
         if !ci1.is_null() && !ci2.is_null() {
             s = crate::src::qcommon::q_shared::va(

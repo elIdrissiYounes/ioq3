@@ -196,13 +196,15 @@ pub unsafe extern "C" fn vorbis_lpc_predict(
         y = 0f32;
         o = i;
         p = m as isize;
-        j = 0;
-        while j < m as isize {
+
+        for j in 0..m as isize {
             let fresh4 = o;
+
             o = o + 1;
+
             p -= 1;
+
             y -= *work.offset(fresh4) * *coeff.offset(p);
-            j += 1
         }
         let ref mut fresh5 = *work.offset(o);
         *fresh5 = y;

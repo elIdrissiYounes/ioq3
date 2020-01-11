@@ -5732,11 +5732,10 @@ pub unsafe extern "C" fn opus_custom_mode_create(
     mut error: *mut i32,
 ) -> *mut crate::src::opus_1_2_1::celt::modes::OpusCustomMode {
     let mut i: i32 = 0;
-    i = 0;
-    while i < 1 {
+
+    for i in 0..1 {
         let mut j: i32 = 0;
-        j = 0;
-        while j < 4 {
+        for j in 0..4 {
             if Fs == (*static_mode_list[i as usize]).Fs
                 && frame_size << j
                     == (*static_mode_list[i as usize]).shortMdctSize
@@ -5748,9 +5747,7 @@ pub unsafe extern "C" fn opus_custom_mode_create(
                 return static_mode_list[i as usize]
                     as *mut crate::src::opus_1_2_1::celt::modes::OpusCustomMode;
             }
-            j += 1
         }
-        i += 1
     }
     /* CUSTOM_MODES_ONLY */
     if !error.is_null() {

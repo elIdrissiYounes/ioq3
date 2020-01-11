@@ -378,23 +378,27 @@ pub unsafe extern "C" fn silk_NLSF_VQ_weights_laroia(
     *pNLSFW_Q_OUT.offset(0) =
         silk_min_int(tmp1_int + tmp2_int, 0x7fff) as crate::opus_types_h::opus_int16;
     /* Main loop */
-    k = 1;
-    while k < D - 1 {
+
+    for k in (1..D - 1).step_by(2 as usize) {
         tmp1_int = silk_max_int(
             *pNLSF_Q15.offset((k + 1) as isize) as i32 - *pNLSF_Q15.offset(k as isize) as i32,
             1,
         );
+
         tmp1_int = ((1) << 15 + 2) / tmp1_int;
+
         *pNLSFW_Q_OUT.offset(k as isize) =
             silk_min_int(tmp1_int + tmp2_int, 0x7fff) as crate::opus_types_h::opus_int16;
+
         tmp2_int = silk_max_int(
             *pNLSF_Q15.offset((k + 2) as isize) as i32 - *pNLSF_Q15.offset((k + 1) as isize) as i32,
             1,
         );
+
         tmp2_int = ((1) << 15 + 2) / tmp2_int;
+
         *pNLSFW_Q_OUT.offset((k + 1) as isize) =
             silk_min_int(tmp1_int + tmp2_int, 0x7fff) as crate::opus_types_h::opus_int16;
-        k += 2
     }
     /* Last value */
     tmp1_int = silk_max_int(

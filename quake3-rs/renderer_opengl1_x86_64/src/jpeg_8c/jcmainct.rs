@@ -232,7 +232,7 @@ unsafe extern "C" fn start_pass_main(
     (*main_ptr).rowgroup_ctr = 0;
     (*main_ptr).suspended = 0;
     (*main_ptr).pass_mode = pass_mode;
-    match  pass_mode {
+    match pass_mode {
         0 => {
             (*main_ptr).pub_0.process_data = Some(
                 process_data_simple_main
@@ -245,8 +245,7 @@ unsafe extern "C" fn start_pass_main(
             )
         }
         _ => {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_BUFFER_MODE as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -369,7 +368,6 @@ pub unsafe extern "C" fn jinit_c_main_controller(
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<my_main_controller>(),
     ) as my_main_ptr;
     (*cinfo).main = main_ptr as *mut crate::jpegint_h::jpeg_c_main_controller;

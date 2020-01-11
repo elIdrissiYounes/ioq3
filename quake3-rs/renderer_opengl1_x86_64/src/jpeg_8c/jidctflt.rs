@@ -163,25 +163,17 @@ pub unsafe extern "C" fn jpeg_idct_float(
          * With typical images and quantization tables, half or more of the
          * column DCT calculations can be simplified this way.
          */
-        if *inptr.offset((8i32 * 1) as isize) as i32
-            == 0
-            && *inptr.offset((8i32 * 2) as isize) as i32
-                == 0
-            && *inptr.offset((8i32 * 3) as isize) as i32
-                == 0
-            && *inptr.offset((8i32 * 4) as isize) as i32
-                == 0
-            && *inptr.offset((8i32 * 5) as isize) as i32
-                == 0
-            && *inptr.offset((8i32 * 6) as isize) as i32
-                == 0
-            && *inptr.offset((8i32 * 7) as isize) as i32
-                == 0
+        if *inptr.offset((8i32 * 1) as isize) as i32 == 0
+            && *inptr.offset((8i32 * 2) as isize) as i32 == 0
+            && *inptr.offset((8i32 * 3) as isize) as i32 == 0
+            && *inptr.offset((8i32 * 4) as isize) as i32 == 0
+            && *inptr.offset((8i32 * 5) as isize) as i32 == 0
+            && *inptr.offset((8i32 * 6) as isize) as i32 == 0
+            && *inptr.offset((8i32 * 7) as isize) as i32 == 0
         {
             /* AC terms all zero */
             let mut dcval: f32 =
-                *inptr.offset((8i32 * 0) as isize) as f32
-                    * *quantptr.offset((8i32 * 0) as isize); /* advance pointers to next column */
+                *inptr.offset((8i32 * 0) as isize) as f32 * *quantptr.offset((8i32 * 0) as isize); /* advance pointers to next column */
             *wsptr.offset((8i32 * 0) as isize) = dcval;
             *wsptr.offset((8i32 * 1) as isize) = dcval;
             *wsptr.offset((8i32 * 2) as isize) = dcval;
@@ -195,14 +187,14 @@ pub unsafe extern "C" fn jpeg_idct_float(
             wsptr = wsptr.offset(1)
         } else {
             /* Even part */
-            tmp0 = *inptr.offset((8i32 * 0) as isize) as f32
-                * *quantptr.offset((8i32 * 0) as isize); /* phase 3 */
-            tmp1 = *inptr.offset((8i32 * 2) as isize) as f32
-                * *quantptr.offset((8i32 * 2) as isize); /* phases 5-3 */
-            tmp2 = *inptr.offset((8i32 * 4) as isize) as f32
-                * *quantptr.offset((8i32 * 4) as isize); /* 2*c4 */
-            tmp3 = *inptr.offset((8i32 * 6) as isize) as f32
-                * *quantptr.offset((8i32 * 6) as isize); /* phase 2 */
+            tmp0 =
+                *inptr.offset((8i32 * 0) as isize) as f32 * *quantptr.offset((8i32 * 0) as isize); /* phase 3 */
+            tmp1 =
+                *inptr.offset((8i32 * 2) as isize) as f32 * *quantptr.offset((8i32 * 2) as isize); /* phases 5-3 */
+            tmp2 =
+                *inptr.offset((8i32 * 4) as isize) as f32 * *quantptr.offset((8i32 * 4) as isize); /* 2*c4 */
+            tmp3 =
+                *inptr.offset((8i32 * 6) as isize) as f32 * *quantptr.offset((8i32 * 6) as isize); /* phase 2 */
             tmp10 = tmp0 + tmp2;
             tmp11 = tmp0 - tmp2;
             tmp13 = tmp1 + tmp3;
@@ -212,14 +204,14 @@ pub unsafe extern "C" fn jpeg_idct_float(
             tmp1 = tmp11 + tmp12;
             tmp2 = tmp11 - tmp12;
             /* Odd part */
-            tmp4 = *inptr.offset((8i32 * 1) as isize) as f32
-                * *quantptr.offset((8i32 * 1) as isize); /* phase 6 */
-            tmp5 = *inptr.offset((8i32 * 3) as isize) as f32
-                * *quantptr.offset((8i32 * 3) as isize); /* phase 5 */
-            tmp6 = *inptr.offset((8i32 * 5) as isize) as f32
-                * *quantptr.offset((8i32 * 5) as isize); /* 2*c4 */
-            tmp7 = *inptr.offset((8i32 * 7) as isize) as f32
-                * *quantptr.offset((8i32 * 7) as isize); /* 2*c2 */
+            tmp4 =
+                *inptr.offset((8i32 * 1) as isize) as f32 * *quantptr.offset((8i32 * 1) as isize); /* phase 6 */
+            tmp5 =
+                *inptr.offset((8i32 * 3) as isize) as f32 * *quantptr.offset((8i32 * 3) as isize); /* phase 5 */
+            tmp6 =
+                *inptr.offset((8i32 * 5) as isize) as f32 * *quantptr.offset((8i32 * 5) as isize); /* 2*c4 */
+            tmp7 =
+                *inptr.offset((8i32 * 7) as isize) as f32 * *quantptr.offset((8i32 * 7) as isize); /* 2*c2 */
             z13 = tmp6 + tmp5; /* 2*(c2-c6) */
             z10 = tmp6 - tmp5; /* 2*(c2+c6) */
             z11 = tmp4 + tmp7; /* phase 2 */
@@ -252,15 +244,11 @@ pub unsafe extern "C" fn jpeg_idct_float(
     while ctr < 8 {
         outptr = (*output_buf.offset(ctr as isize)).offset(output_col as isize);
         /* advance pointer to next row */
-        z5 = *wsptr.offset(0)
-            + (128f32 + 0.5);
+        z5 = *wsptr.offset(0) + (128f32 + 0.5);
         tmp10 = z5 + *wsptr.offset(4);
         tmp11 = z5 - *wsptr.offset(4);
         tmp13 = *wsptr.offset(2) + *wsptr.offset(6);
-        tmp12 = (*wsptr.offset(2)
-            - *wsptr.offset(6))
-            * 1.414213562
-            - tmp13;
+        tmp12 = (*wsptr.offset(2) - *wsptr.offset(6)) * 1.414213562 - tmp13;
         tmp0 = tmp10 + tmp13;
         tmp3 = tmp10 - tmp13;
         tmp1 = tmp11 + tmp12;
@@ -277,38 +265,14 @@ pub unsafe extern "C" fn jpeg_idct_float(
         tmp6 = tmp12 - tmp7;
         tmp5 = tmp11 - tmp6;
         tmp4 = tmp10 - tmp5;
-        *outptr.offset(0) = *range_limit.offset(
-            ((tmp0 + tmp7) as i32
-                & 255 * 4 + 3) as isize,
-        );
-        *outptr.offset(7) = *range_limit.offset(
-            ((tmp0 - tmp7) as i32
-                & 255 * 4 + 3) as isize,
-        );
-        *outptr.offset(1) = *range_limit.offset(
-            ((tmp1 + tmp6) as i32
-                & 255 * 4 + 3) as isize,
-        );
-        *outptr.offset(6) = *range_limit.offset(
-            ((tmp1 - tmp6) as i32
-                & 255 * 4 + 3) as isize,
-        );
-        *outptr.offset(2) = *range_limit.offset(
-            ((tmp2 + tmp5) as i32
-                & 255 * 4 + 3) as isize,
-        );
-        *outptr.offset(5) = *range_limit.offset(
-            ((tmp2 - tmp5) as i32
-                & 255 * 4 + 3) as isize,
-        );
-        *outptr.offset(3) = *range_limit.offset(
-            ((tmp3 + tmp4) as i32
-                & 255 * 4 + 3) as isize,
-        );
-        *outptr.offset(4) = *range_limit.offset(
-            ((tmp3 - tmp4) as i32
-                & 255 * 4 + 3) as isize,
-        );
+        *outptr.offset(0) = *range_limit.offset(((tmp0 + tmp7) as i32 & 255 * 4 + 3) as isize);
+        *outptr.offset(7) = *range_limit.offset(((tmp0 - tmp7) as i32 & 255 * 4 + 3) as isize);
+        *outptr.offset(1) = *range_limit.offset(((tmp1 + tmp6) as i32 & 255 * 4 + 3) as isize);
+        *outptr.offset(6) = *range_limit.offset(((tmp1 - tmp6) as i32 & 255 * 4 + 3) as isize);
+        *outptr.offset(2) = *range_limit.offset(((tmp2 + tmp5) as i32 & 255 * 4 + 3) as isize);
+        *outptr.offset(5) = *range_limit.offset(((tmp2 - tmp5) as i32 & 255 * 4 + 3) as isize);
+        *outptr.offset(3) = *range_limit.offset(((tmp3 + tmp4) as i32 & 255 * 4 + 3) as isize);
+        *outptr.offset(4) = *range_limit.offset(((tmp3 - tmp4) as i32 & 255 * 4 + 3) as isize);
         wsptr = wsptr.offset(8);
         ctr += 1
     }

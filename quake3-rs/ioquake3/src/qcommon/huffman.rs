@@ -571,13 +571,13 @@ pub unsafe extern "C" fn Huff_Compress(mut mbuf: *mut crate::qcommon_h::msg_t, m
     seq[0] = (size >> 8) as crate::src::qcommon::q_shared::byte;
     seq[1] = (size & 0xff) as crate::src::qcommon::q_shared::byte;
     bloc = 16;
-    i = 0;
-    while i < size {
+
+    for i in 0..size {
         ch = *buffer.offset(i as isize) as i32;
-        /* Do update */
-        Huff_transmit(&mut huff, ch, seq.as_mut_ptr(), size << 3); /* Transmit symbol */
-        Huff_addRef(&mut huff, ch as crate::src::qcommon::q_shared::byte); // next byte
-        i += 1
+
+        Huff_transmit(&mut huff, ch, seq.as_mut_ptr(), size << 3);
+
+        Huff_addRef(&mut huff, ch as crate::src::qcommon::q_shared::byte);
     }
     bloc += 8;
     (*mbuf).cursize = (bloc >> 3) + offset;

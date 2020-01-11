@@ -175,37 +175,46 @@ pub unsafe extern "C" fn RemoveColinearPoints(
     let mut nump: i32 = 0;
     let mut p: [crate::src::qcommon::q_shared::vec3_t; 64] = [[0.; 3]; 64];
     nump = 0;
-    i = 0;
-    while i < (*w).numpoints {
+
+    for i in 0..(*w).numpoints {
         j = (i + 1) % (*w).numpoints;
+
         k = (i + (*w).numpoints - 1) % (*w).numpoints;
+
         v1[0] = (*(*w).p.as_mut_ptr().offset(j as isize))[0]
             - (*(*w).p.as_mut_ptr().offset(i as isize))[0];
+
         v1[1] = (*(*w).p.as_mut_ptr().offset(j as isize))[1]
             - (*(*w).p.as_mut_ptr().offset(i as isize))[1];
+
         v1[2] = (*(*w).p.as_mut_ptr().offset(j as isize))[2]
             - (*(*w).p.as_mut_ptr().offset(i as isize))[2];
+
         v2[0] = (*(*w).p.as_mut_ptr().offset(i as isize))[0]
             - (*(*w).p.as_mut_ptr().offset(k as isize))[0];
+
         v2[1] = (*(*w).p.as_mut_ptr().offset(i as isize))[1]
             - (*(*w).p.as_mut_ptr().offset(k as isize))[1];
+
         v2[2] = (*(*w).p.as_mut_ptr().offset(i as isize))[2]
             - (*(*w).p.as_mut_ptr().offset(k as isize))[2];
+
         crate::src::qcommon::q_math::VectorNormalize2(
             v1.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             v1.as_mut_ptr(),
         );
+
         crate::src::qcommon::q_math::VectorNormalize2(
             v2.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             v2.as_mut_ptr(),
         );
+
         if ((v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2]) as f64) < 0.999 {
             p[nump as usize][0] = (*(*w).p.as_mut_ptr().offset(i as isize))[0];
             p[nump as usize][1] = (*(*w).p.as_mut_ptr().offset(i as isize))[1];
             p[nump as usize][2] = (*(*w).p.as_mut_ptr().offset(i as isize))[2];
             nump += 1
         }
-        i += 1
     }
     if nump == (*w).numpoints {
         return;
@@ -268,27 +277,33 @@ pub unsafe extern "C" fn WindingArea(
     let mut cross: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut total: crate::src::qcommon::q_shared::vec_t = 0.;
     total = 0f32;
-    i = 2;
-    while i < (*w).numpoints {
+
+    for i in 2..(*w).numpoints {
         d1[0] = (*(*w).p.as_mut_ptr().offset((i - 1) as isize))[0]
             - (*(*w).p.as_mut_ptr().offset(0))[0];
+
         d1[1] = (*(*w).p.as_mut_ptr().offset((i - 1) as isize))[1]
             - (*(*w).p.as_mut_ptr().offset(0))[1];
+
         d1[2] = (*(*w).p.as_mut_ptr().offset((i - 1) as isize))[2]
             - (*(*w).p.as_mut_ptr().offset(0))[2];
+
         d2[0] = (*(*w).p.as_mut_ptr().offset(i as isize))[0] - (*(*w).p.as_mut_ptr().offset(0))[0];
+
         d2[1] = (*(*w).p.as_mut_ptr().offset(i as isize))[1] - (*(*w).p.as_mut_ptr().offset(0))[1];
+
         d2[2] = (*(*w).p.as_mut_ptr().offset(i as isize))[2] - (*(*w).p.as_mut_ptr().offset(0))[2];
+
         CrossProduct(
             d1.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             d2.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             cross.as_mut_ptr(),
         );
+
         total = (total as f64
             + 0.5
                 * VectorLength(cross.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t)
                     as f64) as crate::src::qcommon::q_shared::vec_t;
-        i += 1
     }
     return total;
 }
@@ -319,16 +334,16 @@ pub unsafe extern "C" fn WindingBounds(
     *maxs.offset(0) = *fresh3;
     i = 0;
     while i < (*w).numpoints {
-        j = 0;
-        while j < 3 {
+        for j in 0..3 {
             v = (*(*w).p.as_mut_ptr().offset(i as isize))[j as usize];
+
             if v < *mins.offset(j as isize) {
                 *mins.offset(j as isize) = v
             }
+
             if v > *maxs.offset(j as isize) {
                 *maxs.offset(j as isize) = v
             }
-            j += 1
         }
         i += 1
     }
@@ -349,12 +364,13 @@ pub unsafe extern "C" fn WindingCenter(
     *center.offset(0) = crate::src::qcommon::q_math::vec3_origin[0];
     *center.offset(1) = crate::src::qcommon::q_math::vec3_origin[1];
     *center.offset(2) = crate::src::qcommon::q_math::vec3_origin[2];
-    i = 0;
-    while i < (*w).numpoints {
+
+    for i in 0..(*w).numpoints {
         *center.offset(0) = (*(*w).p.as_mut_ptr().offset(i as isize))[0] + *center.offset(0);
+
         *center.offset(1) = (*(*w).p.as_mut_ptr().offset(i as isize))[1] + *center.offset(1);
+
         *center.offset(2) = (*(*w).p.as_mut_ptr().offset(i as isize))[2] + *center.offset(2);
-        i += 1
     }
     scale = (1.0 / (*w).numpoints as f64) as f32;
     *center.offset(0) = *center.offset(0) * scale;
@@ -384,15 +400,15 @@ pub unsafe extern "C" fn BaseWindingForPlane(
     // find the major axis
     max = -65535f32;
     x = -(1);
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         v = crate::stdlib::fabs(*normal.offset(i as isize) as f64)
             as crate::src::qcommon::q_shared::vec_t;
+
         if v > max {
             x = i;
             max = v
         }
-        i += 1
     }
     if x == -(1) {
         crate::src::qcommon::common::Com_Error(
@@ -497,21 +513,22 @@ pub unsafe extern "C" fn ReverseWinding(
     let mut c: *mut crate::src::qcommon::cm_polylib::winding_t =
         0 as *mut crate::src::qcommon::cm_polylib::winding_t;
     c = AllocWinding((*w).numpoints);
-    i = 0;
-    while i < (*w).numpoints {
+
+    for i in 0..(*w).numpoints {
         (*(*c).p.as_mut_ptr().offset(i as isize))[0] = (*(*w)
             .p
             .as_mut_ptr()
             .offset(((*w).numpoints - 1 - i) as isize))[0];
+
         (*(*c).p.as_mut_ptr().offset(i as isize))[1] = (*(*w)
             .p
             .as_mut_ptr()
             .offset(((*w).numpoints - 1 - i) as isize))[1];
+
         (*(*c).p.as_mut_ptr().offset(i as isize))[2] = (*(*w)
             .p
             .as_mut_ptr()
             .offset(((*w).numpoints - 1 - i) as isize))[2];
-        i += 1
     }
     (*c).numpoints = (*w).numpoints;
     return c;
@@ -627,9 +644,8 @@ pub unsafe extern "C" fn ClipWindingEpsilon(
                     .offset(((i + 1) % (*in_0).numpoints) as isize))
                 .as_mut_ptr();
                 dot = dists[i as usize] / (dists[i as usize] - dists[(i + 1) as usize]);
-                j = 0;
-                while j < 3 {
-                    // avoid round off error when possible
+
+                for j in 0..3 {
                     if *normal.offset(j as isize) == 1f32 {
                         mid[j as usize] = dist
                     } else if *normal.offset(j as isize) == -1f32 {
@@ -638,7 +654,6 @@ pub unsafe extern "C" fn ClipWindingEpsilon(
                         mid[j as usize] = *p1.offset(j as isize)
                             + dot * (*p2.offset(j as isize) - *p1.offset(j as isize))
                     }
-                    j += 1
                 }
                 (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[0] = mid[0];
                 (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[1] = mid[1];
@@ -760,9 +775,8 @@ pub unsafe extern "C" fn ChopWindingInPlace(
                     .offset(((i + 1) % (*in_0).numpoints) as isize))
                 .as_mut_ptr();
                 dot = dists[i as usize] / (dists[i as usize] - dists[(i + 1) as usize]);
-                j = 0;
-                while j < 3 {
-                    // avoid round off error when possible
+
+                for j in 0..3 {
                     if *normal.offset(j as isize) == 1f32 {
                         mid[j as usize] = dist
                     } else if *normal.offset(j as isize) == -1f32 {
@@ -771,7 +785,6 @@ pub unsafe extern "C" fn ChopWindingInPlace(
                         mid[j as usize] = *p1.offset(j as isize)
                             + dot * (*p2.offset(j as isize) - *p1.offset(j as isize))
                     }
-                    j += 1
                 }
                 (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[0] = mid[0];
                 (*(*f).p.as_mut_ptr().offset((*f).numpoints as isize))[1] = mid[1];
@@ -947,12 +960,13 @@ pub unsafe extern "C" fn WindingOnPlaneSide(
     let mut d: crate::src::qcommon::q_shared::vec_t = 0.;
     front = crate::src::qcommon::q_shared::qfalse;
     back = crate::src::qcommon::q_shared::qfalse;
-    i = 0;
-    while i < (*w).numpoints {
+
+    for i in 0..(*w).numpoints {
         d = (*(*w).p.as_mut_ptr().offset(i as isize))[0] * *normal.offset(0)
             + (*(*w).p.as_mut_ptr().offset(i as isize))[1] * *normal.offset(1)
             + (*(*w).p.as_mut_ptr().offset(i as isize))[2] * *normal.offset(2)
             - dist;
+
         if d < -0.1 {
             if front as u64 != 0 {
                 return 3i32;
@@ -964,7 +978,6 @@ pub unsafe extern "C" fn WindingOnPlaneSide(
             }
             front = crate::src::qcommon::q_shared::qtrue
         }
-        i += 1
     }
     if back as u64 != 0 {
         return 1i32;
@@ -1039,11 +1052,12 @@ pub unsafe extern "C" fn AddWindingToConvexHull(
         (numHullPoints as usize)
             .wrapping_mul(::std::mem::size_of::<crate::src::qcommon::q_shared::vec3_t>()),
     );
-    i = 0;
-    while i < (*w).numpoints {
+
+    for i in 0..(*w).numpoints {
         p = (*(*w).p.as_mut_ptr().offset(i as isize)).as_mut_ptr();
-        // calculate hull side vectors
+
         j = 0;
+
         while j < numHullPoints {
             k = (j + 1) % numHullPoints;
             dir[0] = hullPoints[k as usize][0] - hullPoints[j as usize][0];
@@ -1060,8 +1074,11 @@ pub unsafe extern "C" fn AddWindingToConvexHull(
             );
             j += 1
         }
+
         outside = crate::src::qcommon::q_shared::qfalse;
+
         j = 0;
+
         while j < numHullPoints {
             dir[0] = *p.offset(0) - hullPoints[j as usize][0];
             dir[1] = *p.offset(1) - hullPoints[j as usize][1];
@@ -1079,7 +1096,7 @@ pub unsafe extern "C" fn AddWindingToConvexHull(
             }
             j += 1
         }
-        // if the point is effectively inside, do nothing
+
         if !(outside as u64 == 0) {
             // find the back side to front side transition
             j = 0;
@@ -1122,7 +1139,6 @@ pub unsafe extern "C" fn AddWindingToConvexHull(
                 );
             }
         }
-        i += 1
     }
     FreeWinding(*hull);
     w = AllocWinding(numHullPoints);

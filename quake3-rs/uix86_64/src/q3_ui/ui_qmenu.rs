@@ -1404,14 +1404,16 @@ pub unsafe extern "C" fn ScrollList_Key(
     if crate::src::qcommon::q_shared::Q_isupper(key) != 0 {
         key -= 'A' as i32 - 'a' as i32
     }
-    // iterate list items
-    i = 1;
-    while i <= (*l).numitems {
+
+    for i in 1..=(*l).numitems {
         j = ((*l).curvalue + i) % (*l).numitems;
+
         c = *(*(*l).itemnames.offset(j as isize)).offset(0) as i32;
+
         if crate::src::qcommon::q_shared::Q_isupper(c) != 0 {
             c -= 'A' as i32 - 'a' as i32
         }
+
         if c == key {
             // set current item, mimic windows listbox scroll behavior
             if j < (*l).top {
@@ -1434,7 +1436,6 @@ pub unsafe extern "C" fn ScrollList_Key(
             }
             return menu_buzz_sound;
         }
-        i += 1
     }
     return menu_buzz_sound;
 }
@@ -1463,11 +1464,12 @@ pub unsafe extern "C" fn ScrollList_Draw(mut l: *mut crate::ui_local_h::menulist
     while column < (*l).columns {
         y = (*l).generic.y;
         base = (*l).top + column * (*l).height;
-        i = base;
-        while i < base + (*l).height {
+
+        for i in base..base + (*l).height {
             if i >= (*l).numitems {
                 break;
             }
+
             if i == (*l).curvalue {
                 u = x - 2;
                 if (*l).generic.flags & 0x8u32 != 0 {
@@ -1490,9 +1492,11 @@ pub unsafe extern "C" fn ScrollList_Draw(mut l: *mut crate::ui_local_h::menulist
                 color = text_color_normal.as_mut_ptr();
                 style = 0 | 0x10
             }
+
             if (*l).generic.flags & 0x8u32 != 0 {
                 style |= 0x1
             }
+
             crate::src::q3_ui::ui_atoms::UI_DrawString(
                 x,
                 y,
@@ -1500,8 +1504,8 @@ pub unsafe extern "C" fn ScrollList_Draw(mut l: *mut crate::ui_local_h::menulist
                 style,
                 color,
             );
+
             y += 16;
-            i += 1
         }
         x += ((*l).width + (*l).separation) * 8;
         column += 1
@@ -1721,10 +1725,10 @@ pub unsafe extern "C" fn Menu_Draw(mut menu: *mut crate::ui_local_h::menuframewo
     let mut i: i32 = 0;
     let mut itemptr: *mut crate::ui_local_h::menucommon_s =
         0 as *mut crate::ui_local_h::menucommon_s;
-    // draw menu
-    i = 0;
-    while i < (*menu).nitems {
+
+    for i in 0..(*menu).nitems {
         itemptr = (*menu).items[i as usize] as *mut crate::ui_local_h::menucommon_s;
+
         if !((*itemptr).flags & 0x1000 != 0) {
             if (*itemptr).ownerdraw.is_some() {
                 // total subclassing, owner draws everything
@@ -1774,7 +1778,6 @@ pub unsafe extern "C" fn Menu_Draw(mut menu: *mut crate::ui_local_h::menuframewo
                 }
             }
         }
-        i += 1
     }
     itemptr = Menu_ItemAtCursor(menu) as *mut crate::ui_local_h::menucommon_s;
     if !itemptr.is_null() && (*itemptr).statusbar.is_some() {

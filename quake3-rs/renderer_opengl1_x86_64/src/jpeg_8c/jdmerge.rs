@@ -110,8 +110,7 @@ unsafe extern "C" fn build_ycc_rgb_table(mut cinfo: crate::jpeglib_h::j_decompre
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        ((255i32 + 1) as usize)
-            .wrapping_mul(::std::mem::size_of::<i32>()),
+        ((255i32 + 1) as usize).wrapping_mul(::std::mem::size_of::<i32>()),
     ) as *mut i32;
     (*upsample).Cb_b_tab = Some(
         (*(*cinfo).mem)
@@ -121,8 +120,7 @@ unsafe extern "C" fn build_ycc_rgb_table(mut cinfo: crate::jpeglib_h::j_decompre
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        ((255i32 + 1) as usize)
-            .wrapping_mul(::std::mem::size_of::<i32>()),
+        ((255i32 + 1) as usize).wrapping_mul(::std::mem::size_of::<i32>()),
     ) as *mut i32;
     (*upsample).Cr_g_tab = Some(
         (*(*cinfo).mem)
@@ -132,8 +130,7 @@ unsafe extern "C" fn build_ycc_rgb_table(mut cinfo: crate::jpeglib_h::j_decompre
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        ((255i32 + 1) as usize)
-            .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::INT32>()),
+        ((255i32 + 1) as usize).wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::INT32>()),
     ) as *mut crate::jmorecfg_h::INT32;
     (*upsample).Cb_g_tab = Some(
         (*(*cinfo).mem)
@@ -143,8 +140,7 @@ unsafe extern "C" fn build_ycc_rgb_table(mut cinfo: crate::jpeglib_h::j_decompre
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        ((255i32 + 1) as usize)
-            .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::INT32>()),
+        ((255i32 + 1) as usize).wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::INT32>()),
     ) as *mut crate::jmorecfg_h::INT32;
     i = 0;
     x = -128;
@@ -153,33 +149,22 @@ unsafe extern "C" fn build_ycc_rgb_table(mut cinfo: crate::jpeglib_h::j_decompre
         /* The Cb or Cr value we are thinking of is x = i - CENTERJSAMPLE */
         /* Cr=>R value is nearest int to 1.40200 * x */
         *(*upsample).Cr_r_tab.offset(i as isize) =
-            ((1.40200 * ((1isize) << 16) as f64 + 0.5)
-                as crate::jmorecfg_h::INT32
-                * x
-                + ((1)
-                    << 16 - 1)
+            ((1.40200 * ((1isize) << 16) as f64 + 0.5) as crate::jmorecfg_h::INT32 * x
+                + ((1) << 16 - 1)
                 >> 16) as i32;
         /* Cb=>B value is nearest int to 1.77200 * x */
         *(*upsample).Cb_b_tab.offset(i as isize) =
-            ((1.77200 * ((1isize) << 16) as f64 + 0.5)
-                as crate::jmorecfg_h::INT32
-                * x
-                + ((1)
-                    << 16 - 1)
+            ((1.77200 * ((1isize) << 16) as f64 + 0.5) as crate::jmorecfg_h::INT32 * x
+                + ((1) << 16 - 1)
                 >> 16) as i32;
         /* Cr=>G value is scaled-up -0.71414 * x */
         *(*upsample).Cr_g_tab.offset(i as isize) =
-            -((0.71414 * ((1isize) << 16) as f64 + 0.5)
-                as crate::jmorecfg_h::INT32)
-                * x;
+            -((0.71414 * ((1isize) << 16) as f64 + 0.5) as crate::jmorecfg_h::INT32) * x;
         /* Cb=>G value is scaled-up -0.34414 * x */
         /* We also add in ONE_HALF so that need not do it in inner loop */
         *(*upsample).Cb_g_tab.offset(i as isize) =
-            -((0.34414 * ((1isize) << 16) as f64 + 0.5)
-                as crate::jmorecfg_h::INT32)
-                * x
-                + ((1)
-                    << 16 - 1);
+            -((0.34414 * ((1isize) << 16) as f64 + 0.5) as crate::jmorecfg_h::INT32) * x
+                + ((1) << 16 - 1);
         i += 1;
         x += 1
     }
@@ -235,15 +220,14 @@ unsafe extern "C" fn merged_2v_upsample(
             num_rows = (*upsample).rows_to_go
         }
         /* And not more than what the client can accept: */
-        out_rows_avail =  (out_rows_avail).wrapping_sub(*out_row_ctr);
+        out_rows_avail = (out_rows_avail).wrapping_sub(*out_row_ctr);
         if num_rows > out_rows_avail {
             num_rows = out_rows_avail
         }
         /* Create output pointer array for upsampler. */
         work_ptrs[0] = *output_buf.offset(*out_row_ctr as isize);
         if num_rows > 1 {
-            work_ptrs[1] = *output_buf
-                .offset((*out_row_ctr).wrapping_add(1u32) as isize)
+            work_ptrs[1] = *output_buf.offset((*out_row_ctr).wrapping_add(1u32) as isize)
         } else {
             work_ptrs[1] = (*upsample).spare_row;
             (*upsample).spare_full = 1
@@ -258,8 +242,8 @@ unsafe extern "C" fn merged_2v_upsample(
         );
     }
     /* Adjust counts */
-    *out_row_ctr =  (((*out_row_ctr))).wrapping_add(num_rows);
-    (*upsample).rows_to_go =  ((*upsample).rows_to_go).wrapping_sub(num_rows);
+    *out_row_ctr = (*out_row_ctr).wrapping_add(num_rows);
+    (*upsample).rows_to_go = ((*upsample).rows_to_go).wrapping_sub(num_rows);
     /* When the buffer is emptied, declare this input row group consumed */
     if (*upsample).spare_full == 0 {
         *in_row_group_ctr = (*in_row_group_ctr).wrapping_add(1)
@@ -341,8 +325,7 @@ unsafe extern "C" fn h2v1_merged_upsample(
         inptr2 = inptr2.offset(1);
         cr = *fresh1 as i32;
         cred = *Crrtab.offset(cr as isize);
-        cgreen = (*Cbgtab.offset(cb as isize) + *Crgtab.offset(cr as isize) >> 16)
-            as i32;
+        cgreen = (*Cbgtab.offset(cb as isize) + *Crgtab.offset(cr as isize) >> 16) as i32;
         cblue = *Cbbtab.offset(cb as isize);
         /* Fetch 2 Y values and emit 2 pixels */
         let fresh2 = inptr0;
@@ -366,8 +349,7 @@ unsafe extern "C" fn h2v1_merged_upsample(
         cb = *inptr1 as i32;
         cr = *inptr2 as i32;
         cred = *Crrtab.offset(cr as isize);
-        cgreen = (*Cbgtab.offset(cb as isize) + *Crgtab.offset(cr as isize) >> 16)
-            as i32;
+        cgreen = (*Cbgtab.offset(cb as isize) + *Crgtab.offset(cr as isize) >> 16) as i32;
         cblue = *Cbbtab.offset(cb as isize);
         y = *inptr0 as i32;
         *outptr.offset(0) = *range_limit.offset((y + cred) as isize);
@@ -405,13 +387,9 @@ unsafe extern "C" fn h2v2_merged_upsample(
     let mut Cbbtab: *mut i32 = (*upsample).Cb_b_tab;
     let mut Crgtab: *mut crate::jmorecfg_h::INT32 = (*upsample).Cr_g_tab;
     let mut Cbgtab: *mut crate::jmorecfg_h::INT32 = (*upsample).Cb_g_tab;
-    inptr00 = *(*input_buf.offset(0))
-        .offset(in_row_group_ctr.wrapping_mul(2u32) as isize);
-    inptr01 = *(*input_buf.offset(0)).offset(
-        in_row_group_ctr
-            .wrapping_mul(2u32)
-            .wrapping_add(1u32) as isize,
-    );
+    inptr00 = *(*input_buf.offset(0)).offset(in_row_group_ctr.wrapping_mul(2u32) as isize);
+    inptr01 = *(*input_buf.offset(0))
+        .offset(in_row_group_ctr.wrapping_mul(2u32).wrapping_add(1u32) as isize);
     inptr1 = *(*input_buf.offset(1)).offset(in_row_group_ctr as isize);
     inptr2 = *(*input_buf.offset(2)).offset(in_row_group_ctr as isize);
     outptr0 = *output_buf.offset(0);
@@ -427,8 +405,7 @@ unsafe extern "C" fn h2v2_merged_upsample(
         inptr2 = inptr2.offset(1);
         cr = *fresh5 as i32;
         cred = *Crrtab.offset(cr as isize);
-        cgreen = (*Cbgtab.offset(cb as isize) + *Crgtab.offset(cr as isize) >> 16)
-            as i32;
+        cgreen = (*Cbgtab.offset(cb as isize) + *Crgtab.offset(cr as isize) >> 16) as i32;
         cblue = *Cbbtab.offset(cb as isize);
         /* Fetch 4 Y values and emit 4 pixels */
         let fresh6 = inptr00;
@@ -466,8 +443,7 @@ unsafe extern "C" fn h2v2_merged_upsample(
         cb = *inptr1 as i32;
         cr = *inptr2 as i32;
         cred = *Crrtab.offset(cr as isize);
-        cgreen = (*Cbgtab.offset(cb as isize) + *Crgtab.offset(cr as isize) >> 16)
-            as i32;
+        cgreen = (*Cbgtab.offset(cb as isize) + *Crgtab.offset(cr as isize) >> 16) as i32;
         cblue = *Cbbtab.offset(cb as isize);
         y = *inptr00 as i32;
         *outptr0.offset(0) = *range_limit.offset((y + cred) as isize);
@@ -517,7 +493,6 @@ pub unsafe extern "C" fn jinit_merged_upsampler(mut cinfo: crate::jpeglib_h::j_d
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<my_upsampler>(),
     ) as my_upsample_ptr;
     (*cinfo).upsample = upsample as *mut crate::jpegint_h::jpeg_upsampler;

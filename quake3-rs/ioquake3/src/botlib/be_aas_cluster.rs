@@ -727,9 +727,8 @@ pub unsafe extern "C" fn AAS_FindClusters() -> i32 {
         0 as *mut crate::aasfile_h::aas_cluster_t;
     AAS_RemoveClusterAreas();
     let mut current_block_16: u64;
-    //
-    i = 1; //end for
-    while i < crate::src::botlib::be_aas_main::aasworld.numareas {
+
+    for i in 1..crate::src::botlib::be_aas_main::aasworld.numareas {
         //if the area is already part of a cluster
         if !((*crate::src::botlib::be_aas_main::aasworld
             .areasettings
@@ -804,7 +803,6 @@ pub unsafe extern "C" fn AAS_FindClusters() -> i32 {
                 }
             }
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qtrue as i32;
 }
@@ -1161,12 +1159,11 @@ pub unsafe extern "C" fn AAS_ConnectedAreas(
         return crate::src::qcommon::q_shared::qtrue;
     }
     AAS_ConnectedAreas_r(areanums, numareas, connectedareas.as_mut_ptr(), 0);
-    i = 0;
-    while i < numareas {
+
+    for i in 0..numareas {
         if connectedareas[i as usize] == 0 {
             return crate::src::qcommon::q_shared::qfalse;
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qtrue;
 }
@@ -1203,13 +1200,14 @@ pub unsafe extern "C" fn AAS_GetAdjacentAreasWithLessPresenceTypes_r(
         .areasettings
         .offset(curareanum as isize))
     .presencetype;
-    i = 0;
-    while i < (*area).numfaces {
+
+    for i in 0..(*area).numfaces {
         facenum = crate::stdlib::abs(
             *crate::src::botlib::be_aas_main::aasworld
                 .faceindex
                 .offset(((*area).firstface + i) as isize),
         );
+
         face = &mut *crate::src::botlib::be_aas_main::aasworld
             .faces
             .offset(facenum as isize) as *mut crate::aasfile_h::aas_face_t;
@@ -1254,7 +1252,6 @@ pub unsafe extern "C" fn AAS_GetAdjacentAreasWithLessPresenceTypes_r(
                 }
             }
         }
-        i += 1
     }
     return numareas;
 }
@@ -1534,10 +1531,9 @@ pub unsafe extern "C" fn AAS_FindPossiblePortals() {
     let mut i: i32 = 0; //end for
     let mut numpossibleportals: i32 = 0;
     numpossibleportals = 0;
-    i = 1;
-    while i < crate::src::botlib::be_aas_main::aasworld.numareas {
+
+    for i in 1..crate::src::botlib::be_aas_main::aasworld.numareas {
         numpossibleportals += AAS_CheckAreaForPossiblePortals(i);
-        i += 1
     }
     botimport.Print.expect("non-null function pointer")(
         1,
@@ -1578,8 +1574,8 @@ pub unsafe extern "C" fn AAS_RemoveAllPortals() {
 pub unsafe extern "C" fn AAS_TestPortals() -> i32 {
     let mut i: i32 = 0; //end for
     let mut portal: *mut crate::aasfile_h::aas_portal_t = 0 as *mut crate::aasfile_h::aas_portal_t;
-    i = 1;
-    while i < crate::src::botlib::be_aas_main::aasworld.numportals {
+
+    for i in 1..crate::src::botlib::be_aas_main::aasworld.numportals {
         portal = &mut *crate::src::botlib::be_aas_main::aasworld
             .portals
             .offset(i as isize) as *mut crate::aasfile_h::aas_portal_t;
@@ -1595,6 +1591,7 @@ pub unsafe extern "C" fn AAS_TestPortals() -> i32 {
             );
             return crate::src::qcommon::q_shared::qfalse as i32;
         }
+
         if (*portal).backcluster == 0 {
             (*crate::src::botlib::be_aas_main::aasworld
                 .areasettings
@@ -1606,7 +1603,6 @@ pub unsafe extern "C" fn AAS_TestPortals() -> i32 {
             );
             return crate::src::qcommon::q_shared::qfalse as i32;
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qtrue as i32;
 }
@@ -1623,8 +1619,8 @@ pub unsafe extern "C" fn AAS_CountForcedClusterPortals() {
     let mut num: i32 = 0; //end for
     let mut i: i32 = 0;
     num = 0;
-    i = 1;
-    while i < crate::src::botlib::be_aas_main::aasworld.numareas {
+
+    for i in 1..crate::src::botlib::be_aas_main::aasworld.numareas {
         if (*crate::src::botlib::be_aas_main::aasworld
             .areasettings
             .offset(i as isize))
@@ -1638,8 +1634,6 @@ pub unsafe extern "C" fn AAS_CountForcedClusterPortals() {
             );
             num += 1
         }
-        i += 1
-        //end if
     }
     botimport.Print.expect("non-null function pointer")(
         1,

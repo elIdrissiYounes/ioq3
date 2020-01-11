@@ -393,8 +393,8 @@ pub unsafe extern "C" fn CG_ClearParticles() {
     i = 0;
     while !shaderAnimNames[i as usize].is_null() {
         let mut j: i32 = 0;
-        j = 0;
-        while j < shaderAnimCounts[i as usize] {
+
+        for j in 0..shaderAnimCounts[i as usize] {
             shaderAnims[i as usize][j as usize] =
                 crate::src::cgame::cg_syscalls::trap_R_RegisterShader(
                     crate::src::qcommon::q_shared::va(
@@ -403,7 +403,6 @@ pub unsafe extern "C" fn CG_ClearParticles() {
                         j + 1i32,
                     ),
                 );
-            j += 1
         }
         i += 1
     }
@@ -2217,22 +2216,29 @@ pub unsafe extern "C" fn ValidBloodPool(
         (*start.offset(1) as f64 + normal[1] as f64 * 0.5) as crate::src::qcommon::q_shared::vec_t;
     center_pos[2] =
         (*start.offset(2) as f64 + normal[2] as f64 * 0.5) as crate::src::qcommon::q_shared::vec_t;
-    x = -fwidth / 2;
-    while x < fwidth {
+
+    for x in (-fwidth / 2..fwidth).step_by(fwidth as usize) {
         x_pos[0] = center_pos[0] + right[0] * x as f32;
+
         x_pos[1] = center_pos[1] + right[1] * x as f32;
+
         x_pos[2] = center_pos[2] + right[2] * x as f32;
-        y = -fheight / 2;
-        while y < fheight {
+        for y in (-fheight / 2..fheight).step_by(fheight as usize) {
             this_pos[0] = x_pos[0] + up[0] * y as f32;
+
             this_pos[1] = x_pos[1] + up[1] * y as f32;
+
             this_pos[2] = x_pos[2] + up[2] * y as f32;
+
             end_pos[0] = (this_pos[0] as f64 + normal[0] as f64 * (-0.5 * 2f64))
                 as crate::src::qcommon::q_shared::vec_t;
+
             end_pos[1] = (this_pos[1] as f64 + normal[1] as f64 * (-0.5 * 2f64))
                 as crate::src::qcommon::q_shared::vec_t;
+
             end_pos[2] = (this_pos[2] as f64 + normal[2] as f64 * (-0.5 * 2f64))
                 as crate::src::qcommon::q_shared::vec_t;
+
             crate::src::cgame::cg_predict::CG_Trace(
                 &mut trace,
                 this_pos.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -2242,16 +2248,16 @@ pub unsafe extern "C" fn ValidBloodPool(
                 -(1),
                 1,
             );
+
             if trace.entityNum < ((1) << 10) - 2 {
                 // may only land on world
                 return crate::src::qcommon::q_shared::qfalse;
             }
+
             if !(trace.startsolid as u64 == 0 && trace.fraction < 1f32) {
                 return crate::src::qcommon::q_shared::qfalse;
             }
-            y += fheight
         }
-        x += fwidth
     }
     return crate::src::qcommon::q_shared::qtrue;
 }

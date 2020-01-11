@@ -279,11 +279,7 @@ pub unsafe extern "C" fn jpeg_start_compress(
      * or jpeg_write_raw_data.
      */
     (*cinfo).next_scanline = 0u32;
-    (*cinfo).global_state = if (*cinfo).raw_data_in != 0 {
-        102
-    } else {
-        101
-    };
+    (*cinfo).global_state = if (*cinfo).raw_data_in != 0 { 102 } else { 101 };
 }
 /*
  * Write some scanlines of data to the JPEG compressor.
@@ -326,8 +322,7 @@ pub unsafe extern "C" fn jpeg_write_scanlines(
                 .expect("non-null function pointer"),
         )
         .expect("non-null function pointer")(
-            cinfo as crate::jpeglib_h::j_common_ptr,
-            -(1i32),
+            cinfo as crate::jpeglib_h::j_common_ptr, -(1i32)
         );
     }
     /* Call progress monitor hook if present */
@@ -366,7 +361,7 @@ pub unsafe extern "C" fn jpeg_write_scanlines(
             .expect("non-null function pointer"),
     )
     .expect("non-null function pointer")(cinfo, scanlines, &mut row_ctr, num_lines);
-    (*cinfo).next_scanline =  ((*cinfo).next_scanline).wrapping_add(row_ctr);
+    (*cinfo).next_scanline = ((*cinfo).next_scanline).wrapping_add(row_ctr);
     return row_ctr;
 }
 /* Replaces jpeg_write_scanlines when writing raw downsampled data. */
@@ -399,10 +394,7 @@ pub unsafe extern "C" fn jpeg_write_raw_data(
                 .emit_message
                 .expect("non-null function pointer"),
         )
-        .expect("non-null function pointer")(
-            cinfo as crate::jpeglib_h::j_common_ptr,
-            -(1),
-        );
+        .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr, -(1));
         return 0u32;
     }
     /* Call progress monitor hook if present */
@@ -430,8 +422,7 @@ pub unsafe extern "C" fn jpeg_write_raw_data(
         .expect("non-null function pointer")(cinfo);
     }
     /* Verify that at least one iMCU row has been passed. */
-    lines_per_iMCU_row =
-        ((*cinfo).max_v_samp_factor * 8i32) as crate::jmorecfg_h::JDIMENSION;
+    lines_per_iMCU_row = ((*cinfo).max_v_samp_factor * 8i32) as crate::jmorecfg_h::JDIMENSION;
     if num_lines < lines_per_iMCU_row {
         (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BUFFER_SIZE as i32;
         Some(
@@ -454,8 +445,6 @@ pub unsafe extern "C" fn jpeg_write_raw_data(
         return 0u32;
     }
     /* OK, we processed one iMCU row. */
-    (*cinfo).next_scanline =
-        
-        ((*cinfo).next_scanline).wrapping_add(lines_per_iMCU_row);
+    (*cinfo).next_scanline = ((*cinfo).next_scanline).wrapping_add(lines_per_iMCU_row);
     return lines_per_iMCU_row;
 }

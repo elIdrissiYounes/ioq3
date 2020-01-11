@@ -603,25 +603,30 @@ pub unsafe extern "C" fn silk_decode_core(
     pxq = xq;
     sLTP_buf_idx = (*psDec).ltp_mem_length;
     /* Loop over subframes */
-    k = 0;
-    while k < (*psDec).nb_subfr {
+
+    for k in 0..(*psDec).nb_subfr {
         pres_Q14 = res_Q14;
+
         A_Q12 = (*psDecCtrl).PredCoef_Q12[(k >> 1) as usize].as_mut_ptr();
-        /* Preload LPC coeficients to array on stack. Gives small performance gain */
+
         crate::stdlib::memcpy(
             A_Q12_tmp.as_mut_ptr() as *mut libc::c_void,
             A_Q12 as *const libc::c_void,
             ((*psDec).LPC_order as usize)
                 .wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int16>()),
         );
+
         B_Q14 = &mut *(*psDecCtrl)
             .LTPCoef_Q14
             .as_mut_ptr()
             .offset((k * 5) as isize) as *mut crate::opus_types_h::opus_int16;
+
         signalType = (*psDec).indices.signalType as i32;
+
         Gain_Q10 = (*psDecCtrl).Gains_Q16[k as usize] >> 6;
+
         inv_gain_Q31 = silk_INVERSE32_varQ((*psDecCtrl).Gains_Q16[k as usize], 47);
-        /* Calculate gain adjustment factor */
+
         if (*psDecCtrl).Gains_Q16[k as usize] != (*psDec).prev_gain_Q16 {
             gain_adj_Q16 = silk_DIV32_varQ(
                 (*psDec).prev_gain_Q16,
@@ -639,9 +644,9 @@ pub unsafe extern "C" fn silk_decode_core(
         } else {
             gain_adj_Q16 = (1) << 16
         }
-        /* Save inv_gain */
+
         (*psDec).prev_gain_Q16 = (*psDecCtrl).Gains_Q16[k as usize];
-        /* Avoid abrupt transition from voiced PLC to unvoiced normal decoding */
+
         if (*psDec).lossCnt != 0
             && (*psDec).prevSignalType == 2
             && (*psDec).indices.signalType as i32 != 2
@@ -657,6 +662,7 @@ pub unsafe extern "C" fn silk_decode_core(
             signalType = 2;
             (*psDecCtrl).pitchL[k as usize] = (*psDec).lagPrev
         }
+
         if signalType == 2 {
             /* Voiced */
             lag = (*psDecCtrl).pitchL[k as usize];
@@ -716,8 +722,7 @@ pub unsafe extern "C" fn silk_decode_core(
                 }
             }
         }
-        /* Update LTP state when Gain changes */
-        /* Long-term prediction */
+
         if signalType == 2 {
             /* Set up pointer */
             pred_lag_ptr = &mut *sLTP_Q15.offset((sLTP_buf_idx - lag + 5 / 2) as isize)
@@ -757,7 +762,9 @@ pub unsafe extern "C" fn silk_decode_core(
         } else {
             pres_Q14 = pexc_Q14
         }
+
         i = 0;
+
         while i < (*psDec).subfr_length {
             /* Short-term prediction */
             /* Avoids introducing a bias because silk_SMLAWB() always rounds to -inf */
@@ -1003,18 +1010,17 @@ pub unsafe extern "C" fn silk_decode_core(
             } as crate::opus_types_h::opus_int16;
             i += 1
         }
-        /* Add prediction to LPC excitation */
-        /* Scale with gain */
-        /* Update LPC filter state */
+
         crate::stdlib::memcpy(
             sLPC_Q14 as *mut libc::c_void,
             &mut *sLPC_Q14.offset((*psDec).subfr_length as isize)
                 as *mut crate::opus_types_h::opus_int32 as *const libc::c_void,
             (16usize).wrapping_mul(::std::mem::size_of::<crate::opus_types_h::opus_int32>()),
         );
+
         pexc_Q14 = pexc_Q14.offset((*psDec).subfr_length as isize);
+
         pxq = pxq.offset((*psDec).subfr_length as isize);
-        k += 1
     }
     /* Save LPC state */
     crate::stdlib::memcpy(

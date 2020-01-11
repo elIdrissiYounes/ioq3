@@ -56,48 +56,60 @@ unsafe extern "C" fn silk_resampler_private_IIR_FIR_INTERPOL(
         0 as *mut crate::opus_types_h::opus_int16;
     let mut table_index: crate::opus_types_h::opus_int32 = 0;
     /* Interpolate upsampled signal and store in output array */
-    index_Q16 = 0;
-    while index_Q16 < max_index_Q16 {
+
+    for index_Q16 in (0..max_index_Q16).step_by(index_increment_Q16 as usize) {
         table_index = ((index_Q16 & 0xffff) as i64 * 12 >> 16) as crate::opus_types_h::opus_int32;
+
         buf_ptr =
             &mut *buf.offset((index_Q16 >> 16) as isize) as *mut crate::opus_types_h::opus_int16;
+
         res_Q15 = *buf_ptr.offset(0) as crate::opus_types_h::opus_int32
             * crate::src::opus_1_2_1::silk::resampler_rom::silk_resampler_frac_FIR_12
                 [table_index as usize][0] as crate::opus_types_h::opus_int32;
+
         res_Q15 = res_Q15
             + *buf_ptr.offset(1) as crate::opus_types_h::opus_int32
                 * crate::src::opus_1_2_1::silk::resampler_rom::silk_resampler_frac_FIR_12
                     [table_index as usize][1] as crate::opus_types_h::opus_int32;
+
         res_Q15 = res_Q15
             + *buf_ptr.offset(2) as crate::opus_types_h::opus_int32
                 * crate::src::opus_1_2_1::silk::resampler_rom::silk_resampler_frac_FIR_12
                     [table_index as usize][2] as crate::opus_types_h::opus_int32;
+
         res_Q15 = res_Q15
             + *buf_ptr.offset(3) as crate::opus_types_h::opus_int32
                 * crate::src::opus_1_2_1::silk::resampler_rom::silk_resampler_frac_FIR_12
                     [table_index as usize][3] as crate::opus_types_h::opus_int32;
+
         res_Q15 = res_Q15
             + *buf_ptr.offset(4) as crate::opus_types_h::opus_int32
                 * crate::src::opus_1_2_1::silk::resampler_rom::silk_resampler_frac_FIR_12
                     [(11 - table_index) as usize][3]
                     as crate::opus_types_h::opus_int32;
+
         res_Q15 = res_Q15
             + *buf_ptr.offset(5) as crate::opus_types_h::opus_int32
                 * crate::src::opus_1_2_1::silk::resampler_rom::silk_resampler_frac_FIR_12
                     [(11 - table_index) as usize][2]
                     as crate::opus_types_h::opus_int32;
+
         res_Q15 = res_Q15
             + *buf_ptr.offset(6) as crate::opus_types_h::opus_int32
                 * crate::src::opus_1_2_1::silk::resampler_rom::silk_resampler_frac_FIR_12
                     [(11 - table_index) as usize][1]
                     as crate::opus_types_h::opus_int32;
+
         res_Q15 = res_Q15
             + *buf_ptr.offset(7) as crate::opus_types_h::opus_int32
                 * crate::src::opus_1_2_1::silk::resampler_rom::silk_resampler_frac_FIR_12
                     [(11 - table_index) as usize][0]
                     as crate::opus_types_h::opus_int32;
+
         let fresh0 = out;
+
         out = out.offset(1);
+
         *fresh0 = if (if 15 == 1 {
             (res_Q15 >> 1) + (res_Q15 & 1)
         } else {
@@ -117,7 +129,6 @@ unsafe extern "C" fn silk_resampler_private_IIR_FIR_INTERPOL(
         } else {
             ((res_Q15 >> 15 - 1) + 1) >> 1
         } as crate::opus_types_h::opus_int16;
-        index_Q16 += index_increment_Q16
     }
     return out;
 }

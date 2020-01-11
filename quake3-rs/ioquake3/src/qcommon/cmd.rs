@@ -529,13 +529,13 @@ pub unsafe extern "C" fn Cmd_Args() -> *mut i8 {
     static mut cmd_args: [i8; 1024] = [0; 1024];
     let mut i: i32 = 0;
     cmd_args[0] = 0;
-    i = 1;
-    while i < cmd_argc {
+
+    for i in 1..cmd_argc {
         crate::stdlib::strcat(cmd_args.as_mut_ptr(), cmd_argv[i as usize]);
+
         if i != cmd_argc - 1 {
             crate::stdlib::strcat(cmd_args.as_mut_ptr(), b" \x00" as *const u8 as *const i8);
         }
-        i += 1
     }
     return cmd_args.as_mut_ptr();
 }
@@ -555,13 +555,13 @@ pub unsafe extern "C" fn Cmd_ArgsFrom(mut arg: i32) -> *mut i8 {
     if arg < 0 {
         arg = 0
     }
-    i = arg;
-    while i < cmd_argc {
+
+    for i in arg..cmd_argc {
         crate::stdlib::strcat(cmd_args.as_mut_ptr(), cmd_argv[i as usize]);
+
         if i != cmd_argc - 1 {
             crate::stdlib::strcat(cmd_args.as_mut_ptr(), b" \x00" as *const u8 as *const i8);
         }
-        i += 1
     }
     return cmd_args.as_mut_ptr();
 }

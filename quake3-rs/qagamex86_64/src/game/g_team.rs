@@ -1299,12 +1299,12 @@ pub unsafe extern "C" fn Team_TouchOurFlag(
     crate::src::game::g_combat::AddScore(other, (*ent).r.currentOrigin.as_mut_ptr(), 5);
     Team_CaptureFlagSound(ent, team);
     // Ok, let's do the player loop, hand out the bonuses
-    i = 0;
-    while i < crate::src::game::g_main::g_maxclients.integer {
+
+    for i in 0..crate::src::game::g_main::g_maxclients.integer {
         player = &mut *crate::src::game::g_main::g_entities
             .as_mut_ptr()
             .offset(i as isize) as *mut crate::g_local_h::gentity_t;
-        // also make sure we don't award assist bonuses to the flag carrier himself.
+
         if !((*player).inuse as u64 == 0 || player == other) {
             if (*(*player).client).sess.sessionTeam != (*cl).sess.sessionTeam {
                 (*(*player).client).pers.teamState.lasthurtcarrier = -5f32
@@ -1346,7 +1346,6 @@ pub unsafe extern "C" fn Team_TouchOurFlag(
                 }
             }
         }
-        i += 1
     }
     Team_ResetFlags();
     crate::src::game::g_main::CalculateRanks();

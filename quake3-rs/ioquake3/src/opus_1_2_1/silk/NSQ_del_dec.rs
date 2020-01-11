@@ -1084,10 +1084,8 @@ unsafe extern "C" fn silk_noise_shape_quantizer_del_dec(
     pred_lag_ptr = &mut *sLTP_Q15.offset(((*NSQ).sLTP_buf_idx - lag + 5i32 / 2) as isize)
         as *mut crate::opus_types_h::opus_int32;
     Gain_Q10 = Gain_Q16 >> 6;
-    i = 0;
-    while i < length {
-        /* Perform common calculations used in all states */
-        /* Long-term prediction */
+
+    for i in 0..length {
         if signalType == 2 {
             /* Unrolled loop */
             /* Avoids introducing a bias because silk_SMLAWB() always rounds to -inf */
@@ -1113,7 +1111,7 @@ unsafe extern "C" fn silk_noise_shape_quantizer_del_dec(
         } else {
             LTP_pred_Q14 = 0
         }
-        /* Long-term shaping */
+
         if lag > 0 {
             /* Symmetric, packed FIR coefficients */
             n_LTP_Q14 = ((*shp_lag_ptr.offset(0) + *shp_lag_ptr.offset(-2)) as i64
@@ -1129,7 +1127,9 @@ unsafe extern "C" fn silk_noise_shape_quantizer_del_dec(
         } else {
             n_LTP_Q14 = 0
         }
+
         k = 0;
+
         while k < nStatesDelayedDecision {
             /* Delayed decision state */
             psDD = &mut *psDelDec.offset(k as isize) as *mut NSQ_del_dec_struct;
@@ -1162,29 +1162,29 @@ unsafe extern "C" fn silk_noise_shape_quantizer_del_dec(
             n_AR_Q14 = shapingLPCOrder >> 1;
             n_AR_Q14 = (n_AR_Q14 as i64 + (tmp2 as i64 * *AR_shp_Q13.offset(0) as i64 >> 16))
                 as crate::opus_types_h::opus_int32;
-            j = 2;
-            while j < shapingLPCOrder {
-                /* Output of allpass section */
-                /* Loop over allpass sections */
-                /* Output of allpass section */
+
+            for j in (2..shapingLPCOrder).step_by(2 as usize) {
                 tmp2 = ((*psDD).sAR2_Q14[(j - 1) as usize] as i64
                     + (((*psDD).sAR2_Q14[(j + 0) as usize] - tmp1) as i64
                         * warping_Q16 as crate::opus_types_h::opus_int16 as i64
                         >> 16)) as crate::opus_types_h::opus_int32;
+
                 (*psDD).sAR2_Q14[(j - 1) as usize] = tmp1;
+
                 n_AR_Q14 = (n_AR_Q14 as i64
                     + (tmp1 as i64 * *AR_shp_Q13.offset((j - 1) as isize) as i64 >> 16))
                     as crate::opus_types_h::opus_int32;
-                /* Output of allpass section */
+
                 tmp1 = ((*psDD).sAR2_Q14[(j + 0) as usize] as i64
                     + (((*psDD).sAR2_Q14[(j + 1) as usize] - tmp2) as i64
                         * warping_Q16 as crate::opus_types_h::opus_int16 as i64
-                        >> 16)) as crate::opus_types_h::opus_int32; /* Q11 -> Q12 */
-                (*psDD).sAR2_Q14[(j + 0) as usize] = tmp2; /* Q12 */
+                        >> 16)) as crate::opus_types_h::opus_int32;
+
+                (*psDD).sAR2_Q14[(j + 0) as usize] = tmp2;
+
                 n_AR_Q14 = (n_AR_Q14 as i64
                     + (tmp2 as i64 * *AR_shp_Q13.offset(j as isize) as i64 >> 16))
-                    as crate::opus_types_h::opus_int32; /* Q12 -> Q14 */
-                j += 2
+                    as crate::opus_types_h::opus_int32;
             } /* Q12 */
             (*psDD).sAR2_Q14[(shapingLPCOrder - 1i32) as usize] = tmp1; /* Q12 */
             n_AR_Q14 = (n_AR_Q14 as i64
@@ -1360,23 +1360,21 @@ unsafe extern "C" fn silk_noise_shape_quantizer_del_dec(
             (*psSS.offset(1)).xq_Q14 = xq_Q14;
             k += 1
         }
+
         *smpl_buf_idx = (*smpl_buf_idx - 1) % 40;
+
         if *smpl_buf_idx < 0 {
             *smpl_buf_idx += 40
         }
+
         last_smple_idx = (*smpl_buf_idx + decisionDelay) % 40;
-        /* Update states for best quantization */
-        /* Quantized excitation */
-        /* Add predictions */
-        /* Update states */
-        /* Update states for second best quantization */
-        /* Quantized excitation */
-        /* Add predictions */
-        /* Update states */
-        /* Find winner */
+
         RDmin_Q10 = (*psSampleState.offset(0))[0].RD_Q10;
+
         Winner_ind = 0;
+
         k = 1;
+
         while k < nStatesDelayedDecision {
             if (*psSampleState.offset(k as isize))[0].RD_Q10 < RDmin_Q10 {
                 RDmin_Q10 = (*psSampleState.offset(k as isize))[0].RD_Q10;
@@ -1384,10 +1382,12 @@ unsafe extern "C" fn silk_noise_shape_quantizer_del_dec(
             }
             k += 1
         }
-        /* Increase RD values of expired states */
+
         Winner_rand_state =
             (*psDelDec.offset(Winner_ind as isize)).RandState[last_smple_idx as usize];
+
         k = 0;
+
         while k < nStatesDelayedDecision {
             if (*psDelDec.offset(k as isize)).RandState[last_smple_idx as usize]
                 != Winner_rand_state
@@ -1399,12 +1399,17 @@ unsafe extern "C" fn silk_noise_shape_quantizer_del_dec(
             }
             k += 1
         }
-        /* Find worst in first set and best in second set */
+
         RDmax_Q10 = (*psSampleState.offset(0))[0].RD_Q10;
+
         RDmin_Q10 = (*psSampleState.offset(0))[1].RD_Q10;
+
         RDmax_ind = 0;
+
         RDmin_ind = 0;
+
         k = 1;
+
         while k < nStatesDelayedDecision {
             /* find worst in first set */
             if (*psSampleState.offset(k as isize))[0].RD_Q10 > RDmax_Q10 {
@@ -1418,7 +1423,7 @@ unsafe extern "C" fn silk_noise_shape_quantizer_del_dec(
             }
             k += 1
         }
-        /* Replace a state if best from second set outperforms worst in first set */
+
         if RDmin_Q10 < RDmax_Q10 {
             crate::stdlib::memcpy(
                 (&mut *psDelDec.offset(RDmax_ind as isize) as *mut NSQ_del_dec_struct
@@ -1443,8 +1448,9 @@ unsafe extern "C" fn silk_noise_shape_quantizer_del_dec(
                 ::std::mem::size_of::<NSQ_sample_struct>(),
             );
         }
-        /* Write samples from winner to output and long-term filter states */
+
         psDD = &mut *psDelDec.offset(Winner_ind as isize) as *mut NSQ_del_dec_struct;
+
         if subfr > 0 || i >= decisionDelay {
             *pulses.offset((i - decisionDelay) as isize) = if 10 == 1 {
                 ((*psDD).Q_Q10[last_smple_idx as usize] >> 1)
@@ -1513,10 +1519,13 @@ unsafe extern "C" fn silk_noise_shape_quantizer_del_dec(
             *sLTP_Q15.offset(((*NSQ).sLTP_buf_idx - decisionDelay) as isize) =
                 (*psDD).Pred_Q15[last_smple_idx as usize]
         }
+
         (*NSQ).sLTP_shp_buf_idx += 1;
+
         (*NSQ).sLTP_buf_idx += 1;
-        /* Update states */
+
         k = 0;
+
         while k < nStatesDelayedDecision {
             psDD = &mut *psDelDec.offset(k as isize) as *mut NSQ_del_dec_struct;
             psSS = &mut *(*psSampleState.offset(k as isize)).as_mut_ptr().offset(0)
@@ -1541,8 +1550,8 @@ unsafe extern "C" fn silk_noise_shape_quantizer_del_dec(
             (*psDD).RD_Q10 = (*psSS).RD_Q10;
             k += 1
         }
+
         *delayedGain_Q10.offset(*smpl_buf_idx as isize) = Gain_Q10;
-        i += 1
     }
     /* Update LPC states */
     k = 0;
@@ -1644,30 +1653,36 @@ unsafe extern "C" fn silk_nsq_del_dec_scale_states(
                 i += 1
             }
         }
-        k = 0;
-        while k < nStatesDelayedDecision {
+
+        for k in 0..nStatesDelayedDecision {
             psDD = &mut *psDelDec.offset(k as isize) as *mut NSQ_del_dec_struct;
-            /* Scale scalar states */
+
             (*psDD).LF_AR_Q14 = (gain_adj_Q16 as i64 * (*psDD).LF_AR_Q14 as i64 >> 16)
                 as crate::opus_types_h::opus_int32;
+
             (*psDD).Diff_Q14 = (gain_adj_Q16 as i64 * (*psDD).Diff_Q14 as i64 >> 16)
                 as crate::opus_types_h::opus_int32;
-            /* Scale short-term prediction and shaping states */
+
             i = 0;
+
             while i < 16 {
                 (*psDD).sLPC_Q14[i as usize] =
                     (gain_adj_Q16 as i64 * (*psDD).sLPC_Q14[i as usize] as i64 >> 16)
                         as crate::opus_types_h::opus_int32;
                 i += 1
             }
+
             i = 0;
+
             while i < 24 {
                 (*psDD).sAR2_Q14[i as usize] =
                     (gain_adj_Q16 as i64 * (*psDD).sAR2_Q14[i as usize] as i64 >> 16)
                         as crate::opus_types_h::opus_int32;
                 i += 1
             }
+
             i = 0;
+
             while i < 40 {
                 (*psDD).Pred_Q15[i as usize] =
                     (gain_adj_Q16 as i64 * (*psDD).Pred_Q15[i as usize] as i64 >> 16)
@@ -1677,7 +1692,6 @@ unsafe extern "C" fn silk_nsq_del_dec_scale_states(
                         as crate::opus_types_h::opus_int32;
                 i += 1
             }
-            k += 1
         }
         /* Save inverse gain */
         (*NSQ).prev_gain_Q16 = *Gains_Q16.offset(subfr as isize)

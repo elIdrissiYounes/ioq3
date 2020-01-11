@@ -335,8 +335,8 @@ unsafe extern "C" fn S_PaintChannelFrom16_scalar(
             boff = ooff as i32;
             fdata[1] = 0f32;
             fdata[0] = fdata[1];
-            j = aoff;
-            while j < boff {
+
+            for j in (aoff..boff).step_by((*sc).soundChannels as usize) {
                 if j == 1024 {
                     chunk = (*chunk).next;
                     if chunk.is_null() {
@@ -345,6 +345,7 @@ unsafe extern "C" fn S_PaintChannelFrom16_scalar(
                     samples = (*chunk).sndChunk.as_mut_ptr();
                     ooff -= 1024f32
                 }
+
                 if (*sc).soundChannels == 2 {
                     fdata[0] += *samples.offset((j & 1024 - 1) as isize) as i32 as f32;
                     fdata[1] += *samples.offset((j + 1 & 1024 - 1) as isize) as i32 as f32
@@ -352,7 +353,6 @@ unsafe extern "C" fn S_PaintChannelFrom16_scalar(
                     fdata[0] += *samples.offset((j & 1024 - 1) as isize) as i32 as f32;
                     fdata[1] += *samples.offset((j & 1024 - 1) as isize) as i32 as f32
                 }
-                j += (*sc).soundChannels
             }
             fdiv = (256 * (boff - aoff) / (*sc).soundChannels) as f32;
             let ref mut fresh2 = (*samp.offset(i as isize)).left;
@@ -600,8 +600,8 @@ pub unsafe extern "C" fn S_PaintChannels(mut endtime: i32) {
             0,
             ::std::mem::size_of::<[crate::snd_local_h::portable_samplepair_t; 4096]>(),
         );
-        stream = 0;
-        while stream < 64 * 2 + 1 {
+
+        for stream in 0..64 * 2 + 1 {
             if crate::src::client::snd_dma::s_rawend[stream as usize]
                 >= crate::src::client::snd_dma::s_paintedtime
             {
@@ -623,7 +623,6 @@ pub unsafe extern "C" fn S_PaintChannels(mut endtime: i32) {
                     i += 1
                 }
             }
-            stream += 1
         }
         // paint in the channels.
         ch = crate::src::client::snd_dma::s_channels.as_mut_ptr();

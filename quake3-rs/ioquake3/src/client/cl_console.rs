@@ -624,10 +624,9 @@ Con_Clear_f
 
 pub unsafe extern "C" fn Con_Clear_f() {
     let mut i: i32 = 0;
-    i = 0;
-    while i < 32768 {
+
+    for i in 0..32768 {
         con.text[i as usize] = (('7' as i32 - '0' as i32 & 0x7) << 8 | ' ' as i32) as i16;
-        i += 1
     }
     Con_Bottom();
     // go to end
@@ -719,10 +718,9 @@ pub unsafe extern "C" fn Con_Dump_f() {
             .text
             .as_mut_ptr()
             .offset((l % con.totallines * con.linewidth) as isize);
-        i = 0;
-        while i < con.linewidth {
+
+        for i in 0..con.linewidth {
             *buffer.offset(i as isize) = (*line.offset(i as isize) as i32 & 0xff) as i8;
-            i += 1
         }
         x = con.linewidth - 1;
         while x >= 0 {
@@ -819,11 +817,9 @@ pub unsafe extern "C" fn Con_CheckResize() {
         }
         i = 0;
         while i < numlines {
-            j = 0;
-            while j < numchars {
+            for j in 0..numchars {
                 con.text[((con.totallines - 1 - i) * con.linewidth + j) as usize] = tbuf
                     [((con.current - i + oldtotallines) % oldtotallines * oldwidth + j) as usize];
-                j += 1
             }
             i += 1
         }
@@ -875,16 +871,16 @@ pub unsafe extern "C" fn Con_Init() {
     );
     crate::src::qcommon::common::Field_Clear(&mut crate::src::client::cl_keys::g_consoleField);
     crate::src::client::cl_keys::g_consoleField.widthInChars = g_console_field_width;
-    i = 0;
-    while i < 32 {
+
+    for i in 0..32 {
         crate::src::qcommon::common::Field_Clear(
             &mut *crate::src::client::cl_keys::historyEditLines
                 .as_mut_ptr()
                 .offset(i as isize),
         );
+
         crate::src::client::cl_keys::historyEditLines[i as usize].widthInChars =
             g_console_field_width;
-        i += 1
     }
     crate::src::client::cl_keys::CL_LoadConsoleHistory();
     crate::src::qcommon::cmd::Cmd_AddCommand(
@@ -1136,8 +1132,8 @@ pub unsafe extern "C" fn Con_DrawNotify() {
         crate::src::qcommon::q_math::g_color_table[currentColor as usize].as_mut_ptr(),
     );
     v = 0;
-    i = con.current - 4 + 1;
-    while i <= con.current {
+
+    for i in con.current - 4 + 1..=con.current {
         if !(i < 0) {
             time = con.times[(i % 4) as usize];
             if !(time == 0) {
@@ -1151,8 +1147,7 @@ pub unsafe extern "C" fn Con_DrawNotify() {
                         != crate::bg_public_h::PM_INTERMISSION as i32
                         && crate::src::client::cl_keys::Key_GetCatcher() & (0x2 | 0x8) != 0)
                     {
-                        x = 0;
-                        while x < con.linewidth {
+                        for x in 0..con.linewidth {
                             if !(*text.offset(x as isize) as i32 & 0xff == ' ' as i32) {
                                 if *text.offset(x as isize) as i32 >> 8 & 0x7 != currentColor {
                                     currentColor = *text.offset(x as isize) as i32 >> 8 & 0x7;
@@ -1173,14 +1168,12 @@ pub unsafe extern "C" fn Con_DrawNotify() {
                                     *text.offset(x as isize) as i32 & 0xffi32,
                                 );
                             }
-                            x += 1
                         }
                         v += 16
                     }
                 }
             }
         }
-        i += 1
     }
     crate::src::client::cl_main::re
         .SetColor

@@ -2621,11 +2621,11 @@ unsafe extern "C" fn SV_InitGameVM(mut restart: crate::src::qcommon::q_shared::q
     // a previous level
     // https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=522
     //   now done before GAME_INIT call
-    i = 0;
-    while i < (*crate::src::server::sv_main::sv_maxclients).integer {
+
+    for i in 0..(*crate::src::server::sv_main::sv_maxclients).integer {
         let ref mut fresh0 = (*crate::src::server::sv_main::svs.clients.offset(i as isize)).gentity;
+
         *fresh0 = 0 as *mut crate::g_public_h::sharedEntity_t;
-        i += 1
     }
     // use the current msec count for a random seed
     // init for this gamestate

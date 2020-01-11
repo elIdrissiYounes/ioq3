@@ -336,8 +336,7 @@ pub unsafe extern "C" fn R_AddPolygonSurfaces() {
     let mut i: i32 = 0;
     let mut sh: *mut crate::tr_local_h::shader_t = 0 as *mut crate::tr_local_h::shader_t;
     let mut poly: *mut crate::tr_local_h::srfPoly_t = 0 as *mut crate::tr_local_h::srfPoly_t;
-    crate::src::renderergl1::tr_main::tr.currentEntityNum =
-        ((1) << 10) - 1;
+    crate::src::renderergl1::tr_main::tr.currentEntityNum = ((1) << 10) - 1;
     crate::src::renderergl1::tr_main::tr.shiftedEntityNum =
         crate::src::renderergl1::tr_main::tr.currentEntityNum << 7;
     i = 0;
@@ -345,7 +344,6 @@ pub unsafe extern "C" fn R_AddPolygonSurfaces() {
     while i < crate::src::renderergl1::tr_main::tr.refdef.numPolys {
         sh = crate::src::renderergl1::tr_shader::R_GetShaderByHandle((*poly).hShader);
         crate::src::renderergl1::tr_main::R_AddDrawSurf(
-            
             poly as *mut crate::tr_local_h::surfaceType_t,
             sh,
             (*poly).fogIndex,
@@ -383,8 +381,7 @@ pub unsafe extern "C" fn RE_AddPolyToScene(
             .Printf
             .expect("non-null function pointer")(
             crate::src::qcommon::q_shared::PRINT_WARNING as i32,
-            b"WARNING: RE_AddPolyToScene: NULL poly shader\n\x00" as *const u8
-                as *const i8,
+            b"WARNING: RE_AddPolyToScene: NULL poly shader\n\x00" as *const u8 as *const i8,
         );
         return;
     }
@@ -422,21 +419,16 @@ pub unsafe extern "C" fn RE_AddPolyToScene(
             (*poly).verts as *mut libc::c_void,
             &*verts.offset((numVerts * j) as isize) as *const crate::tr_types_h::polyVert_t
                 as *const libc::c_void,
-            (numVerts as usize).wrapping_mul(::std::mem::size_of::<
-                crate::tr_types_h::polyVert_t,
-            >()),
+            (numVerts as usize)
+                .wrapping_mul(::std::mem::size_of::<crate::tr_types_h::polyVert_t>()),
         );
-        if  crate::src::renderergl1::tr_init::glConfig.hardwareType
-            ==  crate::tr_types_h::GLHW_RAGEPRO
+        if crate::src::renderergl1::tr_init::glConfig.hardwareType
+            == crate::tr_types_h::GLHW_RAGEPRO
         {
-            (*(*poly).verts).modulate[0] =
-                255;
-            (*(*poly).verts).modulate[1] =
-                255;
-            (*(*poly).verts).modulate[2] =
-                255;
-            (*(*poly).verts).modulate[3] =
-                255
+            (*(*poly).verts).modulate[0] = 255;
+            (*(*poly).verts).modulate[1] = 255;
+            (*(*poly).verts).modulate[2] = 255;
+            (*(*poly).verts).modulate[3] = 255
         }
         // done.
         r_numpolys += 1;
@@ -449,27 +441,20 @@ pub unsafe extern "C" fn RE_AddPolyToScene(
         } else {
             // see if it is in a fog volume
             // find which fog volume the poly is in
-            bounds[0][0] =
-                (*(*poly).verts.offset(0)).xyz[0];
-            bounds[0][1] =
-                (*(*poly).verts.offset(0)).xyz[1];
-            bounds[0][2] =
-                (*(*poly).verts.offset(0)).xyz[2];
-            bounds[1][0] =
-                (*(*poly).verts.offset(0)).xyz[0];
-            bounds[1][1] =
-                (*(*poly).verts.offset(0)).xyz[1];
-            bounds[1][2] =
-                (*(*poly).verts.offset(0)).xyz[2];
-            i = 1;
-            while i < (*poly).numVerts {
+            bounds[0][0] = (*(*poly).verts.offset(0)).xyz[0];
+            bounds[0][1] = (*(*poly).verts.offset(0)).xyz[1];
+            bounds[0][2] = (*(*poly).verts.offset(0)).xyz[2];
+            bounds[1][0] = (*(*poly).verts.offset(0)).xyz[0];
+            bounds[1][1] = (*(*poly).verts.offset(0)).xyz[1];
+            bounds[1][2] = (*(*poly).verts.offset(0)).xyz[2];
+
+            for i in 1..(*poly).numVerts {
                 crate::src::qcommon::q_math::AddPointToBounds(
                     (*(*poly).verts.offset(i as isize)).xyz.as_mut_ptr()
                         as *const crate::src::qcommon::q_shared::vec_t,
                     bounds[0].as_mut_ptr(),
                     bounds[1].as_mut_ptr(),
                 );
-                i += 1
             }
             fogIndex = 1;
             while fogIndex < (*crate::src::renderergl1::tr_main::tr.world).numfogs {
@@ -477,18 +462,12 @@ pub unsafe extern "C" fn RE_AddPolyToScene(
                     .fogs
                     .offset(fogIndex as isize)
                     as *mut crate::tr_local_h::fog_t;
-                if bounds[1][0]
-                    >= (*fog).bounds[0][0]
-                    && bounds[1][1]
-                        >= (*fog).bounds[0][1]
-                    && bounds[1][2]
-                        >= (*fog).bounds[0][2]
-                    && bounds[0][0]
-                        <= (*fog).bounds[1][0]
-                    && bounds[0][1]
-                        <= (*fog).bounds[1][1]
-                    && bounds[0][2]
-                        <= (*fog).bounds[1][2]
+                if bounds[1][0] >= (*fog).bounds[0][0]
+                    && bounds[1][1] >= (*fog).bounds[0][1]
+                    && bounds[1][2] >= (*fog).bounds[0][2]
+                    && bounds[0][0] <= (*fog).bounds[1][0]
+                    && bounds[0][1] <= (*fog).bounds[1][1]
+                    && bounds[0][2] <= (*fog).bounds[1][2]
                 {
                     break;
                 }
@@ -541,16 +520,12 @@ pub unsafe extern "C" fn RE_AddRefEntityToScene(mut ent: *const crate::tr_types_
         }
         return;
     }
-    if ((*ent).reType as i32) < 0
-        ||  (*ent).reType
-            >=  crate::tr_types_h::RT_MAX_REF_ENTITY_TYPE
-    {
+    if ((*ent).reType as i32) < 0 || (*ent).reType >= crate::tr_types_h::RT_MAX_REF_ENTITY_TYPE {
         crate::src::renderergl1::tr_main::ri
             .Error
             .expect("non-null function pointer")(
             crate::src::qcommon::q_shared::ERR_DROP as i32,
             b"RE_AddRefEntityToScene: bad reType %i\x00" as *const u8 as *const i8,
-            
             (*ent).reType,
         );
     }
@@ -586,10 +561,9 @@ pub unsafe extern "C" fn RE_AddDynamicLightToScene(
         return;
     }
     // these cards don't have the correct blend mode
-    if  crate::src::renderergl1::tr_init::glConfig.hardwareType
-        ==  crate::tr_types_h::GLHW_RIVA128
-        ||  crate::src::renderergl1::tr_init::glConfig.hardwareType
-            ==  crate::tr_types_h::GLHW_PERMEDIA2
+    if crate::src::renderergl1::tr_init::glConfig.hardwareType == crate::tr_types_h::GLHW_RIVA128
+        || crate::src::renderergl1::tr_init::glConfig.hardwareType
+            == crate::tr_types_h::GLHW_PERMEDIA2
     {
         return;
     }
@@ -1105,9 +1079,7 @@ pub unsafe extern "C" fn RE_RenderScene(mut fd: *const crate::tr_types_h::refdef
         return;
     }
     crate::src::sdl::sdl_glimp::GLimp_LogComment(
-        
-        b"====== RE_RenderScene =====\n\x00" as *const  u8
-            as *mut i8,
+        b"====== RE_RenderScene =====\n\x00" as *const u8 as *mut i8,
     );
     if (*crate::src::renderergl1::tr_init::r_norefresh).integer != 0 {
         return;
@@ -1115,9 +1087,7 @@ pub unsafe extern "C" fn RE_RenderScene(mut fd: *const crate::tr_types_h::refdef
     startTime = crate::src::renderergl1::tr_main::ri
         .Milliseconds
         .expect("non-null function pointer")();
-    if crate::src::renderergl1::tr_main::tr.world.is_null()
-        && (*fd).rdflags & 0x1 == 0
-    {
+    if crate::src::renderergl1::tr_main::tr.world.is_null() && (*fd).rdflags & 0x1 == 0 {
         crate::src::renderergl1::tr_main::ri
             .Error
             .expect("non-null function pointer")(
@@ -1131,7 +1101,6 @@ pub unsafe extern "C" fn RE_RenderScene(mut fd: *const crate::tr_types_h::refdef
             .text
             .as_mut_ptr() as *mut libc::c_void,
         (*fd).text.as_ptr() as *const libc::c_void,
-        
         ::std::mem::size_of::<[[i8; 32]; 8]>(),
     );
     crate::src::renderergl1::tr_main::tr.refdef.x = (*fd).x;
@@ -1140,39 +1109,18 @@ pub unsafe extern "C" fn RE_RenderScene(mut fd: *const crate::tr_types_h::refdef
     crate::src::renderergl1::tr_main::tr.refdef.height = (*fd).height;
     crate::src::renderergl1::tr_main::tr.refdef.fov_x = (*fd).fov_x;
     crate::src::renderergl1::tr_main::tr.refdef.fov_y = (*fd).fov_y;
-    crate::src::renderergl1::tr_main::tr.refdef.vieworg[0] =
-        (*fd).vieworg[0];
-    crate::src::renderergl1::tr_main::tr.refdef.vieworg[1] =
-        (*fd).vieworg[1];
-    crate::src::renderergl1::tr_main::tr.refdef.vieworg[2] =
-        (*fd).vieworg[2];
-    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[0]
-        [0] =
-        (*fd).viewaxis[0][0];
-    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[0]
-        [1] =
-        (*fd).viewaxis[0][1];
-    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[0]
-        [2] =
-        (*fd).viewaxis[0][2];
-    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[1]
-        [0] =
-        (*fd).viewaxis[1][0];
-    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[1]
-        [1] =
-        (*fd).viewaxis[1][1];
-    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[1]
-        [2] =
-        (*fd).viewaxis[1][2];
-    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[2]
-        [0] =
-        (*fd).viewaxis[2][0];
-    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[2]
-        [1] =
-        (*fd).viewaxis[2][1];
-    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[2]
-        [2] =
-        (*fd).viewaxis[2][2];
+    crate::src::renderergl1::tr_main::tr.refdef.vieworg[0] = (*fd).vieworg[0];
+    crate::src::renderergl1::tr_main::tr.refdef.vieworg[1] = (*fd).vieworg[1];
+    crate::src::renderergl1::tr_main::tr.refdef.vieworg[2] = (*fd).vieworg[2];
+    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[0][0] = (*fd).viewaxis[0][0];
+    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[0][1] = (*fd).viewaxis[0][1];
+    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[0][2] = (*fd).viewaxis[0][2];
+    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[1][0] = (*fd).viewaxis[1][0];
+    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[1][1] = (*fd).viewaxis[1][1];
+    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[1][2] = (*fd).viewaxis[1][2];
+    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[2][0] = (*fd).viewaxis[2][0];
+    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[2][1] = (*fd).viewaxis[2][1];
+    crate::src::renderergl1::tr_main::tr.refdef.viewaxis[2][2] = (*fd).viewaxis[2][2];
     crate::src::renderergl1::tr_main::tr.refdef.time = (*fd).time;
     crate::src::renderergl1::tr_main::tr.refdef.rdflags = (*fd).rdflags;
     // copy the areamask data over and note if it has changed, which
@@ -1184,21 +1132,20 @@ pub unsafe extern "C" fn RE_RenderScene(mut fd: *const crate::tr_types_h::refdef
         let mut i: i32 = 0;
         // compare the area bits
         areaDiff = 0;
-        i = 0;
-        while i < 32 / 4 {
+
+        for i in 0..32 / 4 {
             areaDiff |= *(crate::src::renderergl1::tr_main::tr
                 .refdef
                 .areamask
                 .as_mut_ptr() as *mut i32)
                 .offset(i as isize)
                 ^ *((*fd).areamask.as_ptr() as *mut i32).offset(i as isize);
+
             *(crate::src::renderergl1::tr_main::tr
                 .refdef
                 .areamask
                 .as_mut_ptr() as *mut i32)
-                .offset(i as isize) =
-                *((*fd).areamask.as_ptr() as *mut i32).offset(i as isize);
-            i += 1
+                .offset(i as isize) = *((*fd).areamask.as_ptr() as *mut i32).offset(i as isize);
         }
         if areaDiff != 0 {
             // a door just opened or something
@@ -1235,8 +1182,8 @@ pub unsafe extern "C" fn RE_RenderScene(mut fd: *const crate::tr_types_h::refdef
     // dlights if it needs to be disabled or if vertex lighting is enabled
     if (*crate::src::renderergl1::tr_init::r_dynamiclight).integer == 0
         || (*crate::src::renderergl1::tr_init::r_vertexLight).integer == 1
-        ||  crate::src::renderergl1::tr_init::glConfig.hardwareType
-            ==  crate::tr_types_h::GLHW_PERMEDIA2
+        || crate::src::renderergl1::tr_init::glConfig.hardwareType
+            == crate::tr_types_h::GLHW_PERMEDIA2
     {
         crate::src::renderergl1::tr_main::tr.refdef.num_dlights = 0
     }
@@ -1256,7 +1203,6 @@ pub unsafe extern "C" fn RE_RenderScene(mut fd: *const crate::tr_types_h::refdef
     crate::stdlib::memset(
         &mut parms as *mut crate::tr_local_h::viewParms_t as *mut libc::c_void,
         0,
-        
         ::std::mem::size_of::<crate::tr_local_h::viewParms_t>(),
     );
     parms.viewportX = crate::src::renderergl1::tr_main::tr.refdef.x;
@@ -1272,24 +1218,15 @@ pub unsafe extern "C" fn RE_RenderScene(mut fd: *const crate::tr_types_h::refdef
     parms.or.origin[0] = (*fd).vieworg[0];
     parms.or.origin[1] = (*fd).vieworg[1];
     parms.or.origin[2] = (*fd).vieworg[2];
-    parms.or.axis[0][0] =
-        (*fd).viewaxis[0][0];
-    parms.or.axis[0][1] =
-        (*fd).viewaxis[0][1];
-    parms.or.axis[0][2] =
-        (*fd).viewaxis[0][2];
-    parms.or.axis[1][0] =
-        (*fd).viewaxis[1][0];
-    parms.or.axis[1][1] =
-        (*fd).viewaxis[1][1];
-    parms.or.axis[1][2] =
-        (*fd).viewaxis[1][2];
-    parms.or.axis[2][0] =
-        (*fd).viewaxis[2][0];
-    parms.or.axis[2][1] =
-        (*fd).viewaxis[2][1];
-    parms.or.axis[2][2] =
-        (*fd).viewaxis[2][2];
+    parms.or.axis[0][0] = (*fd).viewaxis[0][0];
+    parms.or.axis[0][1] = (*fd).viewaxis[0][1];
+    parms.or.axis[0][2] = (*fd).viewaxis[0][2];
+    parms.or.axis[1][0] = (*fd).viewaxis[1][0];
+    parms.or.axis[1][1] = (*fd).viewaxis[1][1];
+    parms.or.axis[1][2] = (*fd).viewaxis[1][2];
+    parms.or.axis[2][0] = (*fd).viewaxis[2][0];
+    parms.or.axis[2][1] = (*fd).viewaxis[2][1];
+    parms.or.axis[2][2] = (*fd).viewaxis[2][2];
     parms.pvsOrigin[0] = (*fd).vieworg[0];
     parms.pvsOrigin[1] = (*fd).vieworg[1];
     parms.pvsOrigin[2] = (*fd).vieworg[2];

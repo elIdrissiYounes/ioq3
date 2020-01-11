@@ -158,12 +158,11 @@ pub unsafe extern "C" fn R_LoadPCX(
     //
     len = crate::src::renderergl1::tr_main::ri
         .FS_ReadFile
-        .expect("non-null function pointer")(filename as *mut i8, &mut raw.v)
-        as i32;
+        .expect("non-null function pointer")(filename as *mut i8, &mut raw.v) as i32;
     if raw.b.is_null() || len < 0 {
         return;
     }
-    if (len as u32 as usize) <  ::std::mem::size_of::<pcx_t>() {
+    if (len as u32 as usize) < ::std::mem::size_of::<pcx_t>() {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
@@ -252,10 +251,10 @@ pub unsafe extern "C" fn R_LoadPCX(
             .Free
             .expect("non-null function pointer")(pic8 as *mut libc::c_void);
     }
-    if  raw
+    if raw
         .b
         .wrapping_offset_from(pcx as *mut crate::src::qcommon::q_shared::byte)
-        >=  end.wrapping_offset_from(769i32 as *mut crate::src::qcommon::q_shared::byte)
+        >= end.wrapping_offset_from(769i32 as *mut crate::src::qcommon::q_shared::byte)
         || *end.offset(-769) as i32 != 0xc
     {
         crate::src::renderergl1::tr_main::ri
@@ -276,21 +275,16 @@ pub unsafe extern "C" fn R_LoadPCX(
     palette = end.offset(-(768));
     out = crate::src::renderergl1::tr_main::ri
         .Malloc
-        .expect("non-null function pointer")(
-        (4u32).wrapping_mul(size) as i32,
-    ) as *mut crate::src::qcommon::q_shared::byte;
+        .expect("non-null function pointer")((4u32).wrapping_mul(size) as i32)
+        as *mut crate::src::qcommon::q_shared::byte;
     pix = out;
     i = 0;
     while (i as u32) < size {
         let mut p: u8 = *pic8.offset(i as isize);
-        *pix.offset(0) =
-            *palette.offset((p as i32 * 3) as isize);
-        *pix.offset(1) =
-            *palette.offset((p as i32 * 3 + 1) as isize);
-        *pix.offset(2) =
-            *palette.offset((p as i32 * 3 + 2) as isize);
-        *pix.offset(3) =
-            255u8;
+        *pix.offset(0) = *palette.offset((p as i32 * 3) as isize);
+        *pix.offset(1) = *palette.offset((p as i32 * 3 + 1) as isize);
+        *pix.offset(2) = *palette.offset((p as i32 * 3 + 2) as isize);
+        *pix.offset(3) = 255u8;
         pix = pix.offset(4);
         i += 1
     }

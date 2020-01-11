@@ -345,8 +345,8 @@ unsafe extern "C" fn DriverInfo_MenuDraw() {
     );
     // double column
     y = 192 + 16;
-    i = 0;
-    while i < s_driverinfo.numstrings / 2 {
+
+    for i in 0..s_driverinfo.numstrings / 2 {
         crate::src::q3_ui::ui_atoms::UI_DrawString(
             320 - 4,
             y,
@@ -354,6 +354,7 @@ unsafe extern "C" fn DriverInfo_MenuDraw() {
             0x2 | 0x10,
             crate::src::q3_ui::ui_qmenu::text_color_normal.as_mut_ptr(),
         );
+
         crate::src::q3_ui::ui_atoms::UI_DrawString(
             320 + 4,
             y,
@@ -361,8 +362,8 @@ unsafe extern "C" fn DriverInfo_MenuDraw() {
             0 | 0x10,
             crate::src::q3_ui::ui_qmenu::text_color_normal.as_mut_ptr(),
         );
+
         y += 16;
-        i += 1
     }
     if s_driverinfo.numstrings & 1 != 0 {
         crate::src::q3_ui::ui_atoms::UI_DrawString(
@@ -470,15 +471,14 @@ unsafe extern "C" fn UI_DriverInfo_Menu() {
             eptr = eptr.offset(1)
         }
     }
-    // safety length strings for display
-    i = 0;
-    while i < s_driverinfo.numstrings {
+
+    for i in 0..s_driverinfo.numstrings {
         len = crate::stdlib::strlen(s_driverinfo.strings[i as usize]) as i32;
+
         if len > 32 {
             *s_driverinfo.strings[i as usize].offset((len - 1) as isize) = '>' as i8;
             *s_driverinfo.strings[i as usize].offset(len as isize) = '\u{0}' as i8
         }
-        i += 1
     }
     crate::src::q3_ui::ui_qmenu::Menu_AddItem(
         &mut s_driverinfo.menu,

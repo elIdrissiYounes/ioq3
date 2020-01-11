@@ -16,24 +16,31 @@ ASCII characters.*/
 
 pub unsafe extern "C" fn op_strncasecmp(mut _a: *const i8, mut _b: *const i8, mut _n: i32) -> i32 {
     let mut i: i32 = 0;
-    i = 0;
-    while i < _n {
+
+    for i in 0.._n {
         let mut a: i32 = 0;
+
         let mut b: i32 = 0;
+
         let mut d: i32 = 0;
+
         a = *_a.offset(i as isize) as i32;
+
         b = *_b.offset(i as isize) as i32;
+
         if a >= 'a' as i32 && a <= 'z' as i32 {
             a -= 'a' as i32 - 'A' as i32
         }
+
         if b >= 'a' as i32 && b <= 'z' as i32 {
             b -= 'a' as i32 - 'A' as i32
         }
+
         d = a - b;
+
         if d != 0 {
             return d;
         }
-        i += 1
     }
     return 0;
 }

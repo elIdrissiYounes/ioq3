@@ -456,8 +456,7 @@ pub unsafe extern "C" fn R_LoadJPG(
      */
     len = crate::src::renderergl1::tr_main::ri
         .FS_ReadFile
-        .expect("non-null function pointer")(filename as *mut i8, &mut fbuffer.v)
-        as i32;
+        .expect("non-null function pointer")(filename as *mut i8, &mut fbuffer.v) as i32;
     if fbuffer.b.is_null() || len < 0 {
         return;
     }
@@ -495,7 +494,6 @@ pub unsafe extern "C" fn R_LoadJPG(
     crate::src::jpeg_8c::jdapimin::jpeg_CreateDecompress(
         &mut cinfo,
         80,
-        
         ::std::mem::size_of::<crate::jpeglib_h::jpeg_decompress_struct>(),
     );
     /* Step 2: specify data source (eg, a file) */
@@ -576,11 +574,7 @@ pub unsafe extern "C" fn R_LoadJPG(
          */
         buf = out.offset(row_stride.wrapping_mul(cinfo.output_scanline) as isize);
         buffer = &mut buf;
-        crate::src::jpeg_8c::jdapistd::jpeg_read_scanlines(
-            &mut cinfo,
-            buffer,
-            1,
-        );
+        crate::src::jpeg_8c::jdapistd::jpeg_read_scanlines(&mut cinfo, buffer, 1);
     }
     buf = out;
     // Expand from RGB to RGBA
@@ -711,7 +705,6 @@ unsafe extern "C" fn jpegDest(
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
             0,
-            
             ::std::mem::size_of::<my_destination_mgr>(),
         ) as *mut crate::jpeglib_h::jpeg_destination_mgr
     }
@@ -879,7 +872,6 @@ pub unsafe extern "C" fn RE_SaveJPGToBuffer(
     crate::src::jpeg_8c::jcapimin::jpeg_CreateCompress(
         &mut cinfo,
         80,
-        
         ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>(),
     );
     /* Step 2: specify data destination (eg, a file) */
@@ -914,8 +906,7 @@ pub unsafe extern "C" fn RE_SaveJPGToBuffer(
                 .wrapping_mul(row_stride as u32)
                 .wrapping_sub(cinfo.next_scanline.wrapping_mul(row_stride as u32))
                 as isize,
-        )
-            as *mut crate::src::qcommon::q_shared::byte;
+        ) as *mut crate::src::qcommon::q_shared::byte;
         crate::src::jpeg_8c::jcapistd::jpeg_write_scanlines(
             &mut cinfo,
             row_pointer.as_mut_ptr(),
@@ -961,9 +952,7 @@ pub unsafe extern "C" fn RE_SaveJPG(
     crate::src::renderergl1::tr_main::ri
         .FS_WriteFile
         .expect("non-null function pointer")(
-        filename,
-        out as *const libc::c_void,
-        bufSize as i32,
+        filename, out as *const libc::c_void, bufSize as i32
     );
     crate::src::renderergl1::tr_main::ri
         .Hunk_FreeTempMemory

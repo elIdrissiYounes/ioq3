@@ -213,13 +213,14 @@ pub unsafe extern "C" fn Favorites_Add() {
         return;
     }
     best = 0;
-    i = 0;
-    while i < 16 {
+
+    for i in 0..16 {
         crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer(
             crate::src::qcommon::q_shared::va(b"server%d\x00" as *const u8 as *mut i8, i + 1i32),
             adrstr.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 128]>() as i32,
         );
+
         if crate::src::qcommon::q_shared::Q_stricmp(serverbuff.as_mut_ptr(), adrstr.as_mut_ptr())
             == 0
         {
@@ -230,7 +231,6 @@ pub unsafe extern "C" fn Favorites_Add() {
         if adrstr[0] == 0 && best == 0 {
             best = i + 1
         }
-        i += 1
     }
     if best != 0 {
         crate::src::ui::ui_syscalls::trap_Cvar_Set(

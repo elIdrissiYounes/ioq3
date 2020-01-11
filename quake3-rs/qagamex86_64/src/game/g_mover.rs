@@ -612,10 +612,8 @@ pub unsafe extern "C" fn G_TransposeMatrix(
     let mut j: i32 = 0;
     i = 0;
     while i < 3 {
-        j = 0;
-        while j < 3 {
+        for j in 0..3 {
             (*transpose.offset(i as isize))[j as usize] = (*matrix.offset(j as isize))[i as usize];
-            j += 1
         }
         i += 1
     }
@@ -971,13 +969,13 @@ pub unsafe extern "C" fn G_MoverPush(
     crate::src::game::g_syscalls::trap_LinkEntity(pusher);
     let mut current_block_46: u64;
     // see if any solid entities are inside the final position
-    e = 0;
-    while e < listedEntities {
+
+    for e in 0..listedEntities {
         check = &mut *crate::src::game::g_main::g_entities
             .as_mut_ptr()
             .offset(*entityList.as_mut_ptr().offset(e as isize) as isize)
             as *mut crate::g_local_h::gentity_t;
-        // only push items and players
+
         if !((*check).s.eType != crate::bg_public_h::ET_ITEM as i32
             && (*check).s.eType != crate::bg_public_h::ET_PLAYER as i32
             && (*check).physicsObject as u64 == 0)
@@ -1053,7 +1051,6 @@ pub unsafe extern "C" fn G_MoverPush(
                 }
             }
         }
-        e += 1
     }
     return crate::src::qcommon::q_shared::qtrue;
 }
@@ -1716,12 +1713,11 @@ pub unsafe extern "C" fn Think_SpawnNewDoorTrigger(mut ent: *mut crate::g_local_
     }
     // find the thinnest axis, which will be the one we expand
     best = 0;
-    i = 1;
-    while i < 3 {
+
+    for i in 1..3 {
         if maxs[i as usize] - mins[i as usize] < maxs[best as usize] - mins[best as usize] {
             best = i
         }
-        i += 1
     }
     maxs[best as usize] += 120f32;
     mins[best as usize] -= 120f32;

@@ -258,10 +258,9 @@ unsafe extern "C" fn AAS_ClusterAreaNum(mut cluster: i32, mut areanum: i32) -> i
 
 pub unsafe extern "C" fn AAS_InitTravelFlagFromType() {
     let mut i: i32 = 0; //end for
-    i = 0;
-    while i < 32 {
+
+    for i in 0..32 {
         crate::src::botlib::be_aas_main::aasworld.travelflagfortype[i as usize] = 0x1;
-        i += 1
     }
     crate::src::botlib::be_aas_main::aasworld.travelflagfortype[1] = 0x1;
     crate::src::botlib::be_aas_main::aasworld.travelflagfortype[2] = 0x2;
@@ -892,13 +891,15 @@ pub unsafe extern "C" fn AAS_CalculateAreaTravelTimes() {
             ((*settings).numreachableareas as usize).wrapping_mul(::std::mem::size_of::<*mut u16>())
                 as isize,
         );
-        l = 0;
-        while l < (*settings).numreachableareas {
+
+        for l in 0..(*settings).numreachableareas {
             let ref mut fresh5 = *(*crate::src::botlib::be_aas_main::aasworld
                 .areatraveltimes
                 .offset(i as isize))
             .offset(l as isize);
+
             *fresh5 = ptr as *mut u16;
+
             ptr = ptr.offset(
                 (((*revreach).numlinks as usize)
                     .wrapping_add(::std::mem::size_of::<isize>())
@@ -906,16 +907,16 @@ pub unsafe extern "C" fn AAS_CalculateAreaTravelTimes() {
                     & !(::std::mem::size_of::<isize>()).wrapping_sub(1usize))
                 .wrapping_mul(::std::mem::size_of::<u16>()) as isize,
             );
-            //settings of the area
-            //
-            //
-            //end for
+
             reach = &mut *crate::src::botlib::be_aas_main::aasworld
                 .reachability
                 .offset(((*settings).firstreachablearea + l) as isize)
                 as *mut crate::aasfile_h::aas_reachability_t;
+
             n = 0;
+
             revlink = (*revreach).first;
+
             while !revlink.is_null() {
                 end[0] = (*crate::src::botlib::be_aas_main::aasworld
                     .reachability
@@ -941,7 +942,6 @@ pub unsafe extern "C" fn AAS_CalculateAreaTravelTimes() {
                 revlink = (*revlink).next;
                 n += 1
             }
-            l += 1
         }
         i += 1
     }
@@ -983,10 +983,12 @@ pub unsafe extern "C" fn AAS_PortalMaxTravelTime(mut portalnum: i32) -> i32 {
         as *mut crate::aasfile_h::aas_areasettings_t;
     //
     maxt = 0; //end for
-    l = 0;
-    while l < (*settings).numreachableareas {
+
+    for l in 0..(*settings).numreachableareas {
         n = 0;
+
         revlink = (*revreach).first;
+
         while !revlink.is_null() {
             t = *(*(*crate::src::botlib::be_aas_main::aasworld
                 .areatraveltimes
@@ -1000,8 +1002,6 @@ pub unsafe extern "C" fn AAS_PortalMaxTravelTime(mut portalnum: i32) -> i32 {
             n += 1
             //end if
         }
-        l += 1
-        //end for
     }
     return maxt;
 }
@@ -1235,31 +1235,30 @@ pub unsafe extern "C" fn AAS_FreeAllClusterAreaCache() {
         return;
     }
     //free caches
-    i = 0; //end for
-    while i < crate::src::botlib::be_aas_main::aasworld.numclusters {
+    //end for
+    for i in 0..crate::src::botlib::be_aas_main::aasworld.numclusters {
         cluster = &mut *crate::src::botlib::be_aas_main::aasworld
             .clusters
             .offset(i as isize) as *mut crate::aasfile_h::aas_cluster_t;
-        j = 0;
-        while j < (*cluster).numareas {
-            //end for
+        for j in 0..(*cluster).numareas {
             cache = *(*crate::src::botlib::be_aas_main::aasworld
                 .clusterareacache
                 .offset(i as isize))
-            .offset(j as isize); //end for
+            .offset(j as isize);
+
             while !cache.is_null() {
                 nextcache = (*cache).next;
                 AAS_FreeRoutingCache(cache);
                 cache = nextcache
             }
+
             let ref mut fresh8 = *(*crate::src::botlib::be_aas_main::aasworld
                 .clusterareacache
                 .offset(i as isize))
             .offset(j as isize);
+
             *fresh8 = 0 as *mut crate::be_aas_def_h::aas_routingcache_t;
-            j += 1
         }
-        i += 1
     }
     //free the cluster cache array
     crate::src::botlib::l_memory::FreeMemory(
@@ -1351,21 +1350,23 @@ pub unsafe extern "C" fn AAS_FreeAllPortalCache() {
         return;
     }
     //free portal caches
-    i = 0; //end for
-    while i < crate::src::botlib::be_aas_main::aasworld.numareas {
+    //end for
+    for i in 0..crate::src::botlib::be_aas_main::aasworld.numareas {
         cache = *crate::src::botlib::be_aas_main::aasworld
             .portalcache
-            .offset(i as isize); //end for
+            .offset(i as isize);
+
         while !cache.is_null() {
             nextcache = (*cache).next;
             AAS_FreeRoutingCache(cache);
             cache = nextcache
         }
+
         let ref mut fresh10 = *crate::src::botlib::be_aas_main::aasworld
             .portalcache
             .offset(i as isize);
+
         *fresh10 = 0 as *mut crate::be_aas_def_h::aas_routingcache_t;
-        i += 1
     }
     crate::src::botlib::l_memory::FreeMemory(
         crate::src::botlib::be_aas_main::aasworld.portalcache as *mut libc::c_void,
@@ -1414,8 +1415,8 @@ pub unsafe extern "C" fn AAS_InitRoutingUpdate() {
     }
     //
     maxreachabilityareas = 0; //end for
-    i = 0;
-    while i < crate::src::botlib::be_aas_main::aasworld.numclusters {
+
+    for i in 0..crate::src::botlib::be_aas_main::aasworld.numclusters {
         if (*crate::src::botlib::be_aas_main::aasworld
             .clusters
             .offset(i as isize))
@@ -1427,8 +1428,6 @@ pub unsafe extern "C" fn AAS_InitRoutingUpdate() {
                 .offset(i as isize))
             .numreachabilityareas
         }
-        i += 1
-        //end if
     }
     //allocate memory for the routing update fields
     crate::src::botlib::be_aas_main::aasworld.areaupdate =
@@ -1475,8 +1474,8 @@ pub unsafe extern "C" fn AAS_CreateAllRoutingCache() {
         1,
         b"AAS_CreateAllRoutingCache\n\x00" as *const u8 as *mut i8,
     );
-    i = 1;
-    while i < crate::src::botlib::be_aas_main::aasworld.numareas {
+
+    for i in 1..crate::src::botlib::be_aas_main::aasworld.numareas {
         if !(crate::src::botlib::be_aas_reach::AAS_AreaReachability(i) == 0) {
             j = 1;
             while j < crate::src::botlib::be_aas_main::aasworld.numareas {
@@ -1512,8 +1511,6 @@ pub unsafe extern "C" fn AAS_CreateAllRoutingCache() {
                 //Log_Write("traveltime from %d to %d is %d", i, j, t);
             }
         }
-        i += 1
-        //end for
     }
     crate::src::botlib::be_aas_main::aasworld.initialized =
         crate::src::qcommon::q_shared::qfalse as i32;
@@ -2025,14 +2022,15 @@ pub unsafe extern "C" fn AAS_InitReachabilityAreas() {
             .reachabilityareas
             .offset(i as isize))
         .numareas = numareas;
-        j = 0;
-        while j < numareas {
+
+        for j in 0..numareas {
             let fresh15 = numreachareas;
+
             numreachareas = numreachareas + 1;
+
             *crate::src::botlib::be_aas_main::aasworld
                 .reachabilityareaindex
                 .offset(fresh15 as isize) = areas[j as usize];
-            j += 1
         }
         i += 1
     }
@@ -2931,13 +2929,12 @@ pub unsafe extern "C" fn AAS_AreaRouteToGoalArea(
         .clusters
         .offset(clusternum as isize) as *mut crate::aasfile_h::aas_cluster_t;
     //find the portal of the area cluster leading towards the goal area
-    i = 0; //end for
-    while i < (*cluster).numportals {
+    //end for
+    for i in 0..(*cluster).numportals {
         portalnum = *crate::src::botlib::be_aas_main::aasworld
             .portalindex
             .offset(((*cluster).firstportal + i) as isize);
-        //end if
-        //if the goal area isn't reachable from the portal
+
         if !(*(*portalcache)
             .traveltimes
             .as_mut_ptr()
@@ -3003,7 +3000,6 @@ pub unsafe extern "C" fn AAS_AreaRouteToGoalArea(
                 }
             }
         }
-        i += 1
     }
     if bestreachnum < 0 {
         return crate::src::qcommon::q_shared::qfalse as i32;
@@ -3257,8 +3253,8 @@ pub unsafe extern "C" fn AAS_PredictRoute(
             .reachabilityareas
             .offset(reachnum as isize)
             as *mut crate::be_aas_def_h::aas_reachabilityareas_t;
-        j = 0;
-        while j < (*reachareas).numareas + 1 {
+
+        for j in 0..(*reachareas).numareas + 1 {
             if j >= (*reachareas).numareas {
                 testareanum = (*reach).areanum
             } else {
@@ -3266,7 +3262,7 @@ pub unsafe extern "C" fn AAS_PredictRoute(
                     .reachabilityareaindex
                     .offset(((*reachareas).firstarea + j) as isize)
             }
-            //end if
+
             if stopevent & 4 != 0 {
                 if (*crate::src::botlib::be_aas_main::aasworld
                     .areasettings
@@ -3291,6 +3287,7 @@ pub unsafe extern "C" fn AAS_PredictRoute(
                 }
                 //end if
             }
+
             if stopevent & 8 != 0 {
                 if testareanum == stopareanum {
                     (*route).stopevent = 8;
@@ -3306,7 +3303,6 @@ pub unsafe extern "C" fn AAS_PredictRoute(
                 }
                 //end if
             }
-            j += 1
         }
         (*route).time += AAS_AreaTravelTime(areanum, origin, (*reach).start.as_mut_ptr()) as i32;
         (*route).time += (*reach).traveltime as i32;
@@ -3522,8 +3518,8 @@ pub unsafe extern "C" fn AAS_NextModelReachability(mut num: i32, mut modelnum: i
         num += 1
     }
     //
-    i = num; //end for
-    while i < crate::src::botlib::be_aas_main::aasworld.reachabilitysize {
+    //end for
+    for i in num..crate::src::botlib::be_aas_main::aasworld.reachabilitysize {
         if (*crate::src::botlib::be_aas_main::aasworld
             .reachability
             .offset(i as isize))
@@ -3556,8 +3552,6 @@ pub unsafe extern "C" fn AAS_NextModelReachability(mut num: i32, mut modelnum: i
                 return i;
             }
         }
-        i += 1 //end if
-               //end if
     }
     return 0;
 }
@@ -3597,14 +3591,16 @@ pub unsafe extern "C" fn AAS_RandomGoalArea(
     //
     n = (crate::src::botlib::be_aas_main::aasworld.numareas as f32
         * ((crate::stdlib::rand() & 0x7fff) as f32 / 32767f32)) as i32; //end for
-    i = 0; //end if
-    while i < crate::src::botlib::be_aas_main::aasworld.numareas {
+                                                                        //end if
+    for i in 0..crate::src::botlib::be_aas_main::aasworld.numareas {
         if n <= 0 {
             n = 1
         }
+
         if n >= crate::src::botlib::be_aas_main::aasworld.numareas {
             n = 1
         }
+
         if crate::src::botlib::be_aas_reach::AAS_AreaReachability(n) != 0 {
             t = AAS_AreaTravelTimeToGoalArea(
                 areanum,
@@ -3686,8 +3682,8 @@ pub unsafe extern "C" fn AAS_RandomGoalArea(
                 }
             }
         }
+
         n += 1;
-        i += 1
     }
     return crate::src::qcommon::q_shared::qfalse as i32;
 }

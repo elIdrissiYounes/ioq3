@@ -1075,8 +1075,8 @@ pub unsafe extern "C" fn Sys_IsLANAddress(
         }
     }
     // Now compare against the networks this computer is member of.
-    index = 0;
-    while index < numIP {
+
+    for index in 0..numIP {
         if localIP[index as usize].type_0 == adr.type_0 {
             if adr.type_0 == crate::qcommon_h::NA_IP {
                 compareip = &mut (*(&mut (*localIP.as_mut_ptr().offset(index as isize)).addr
@@ -1125,7 +1125,6 @@ pub unsafe extern "C" fn Sys_IsLANAddress(
                 return crate::src::qcommon::q_shared::qtrue;
             }
         }
-        index += 1
     }
     return crate::src::qcommon::q_shared::qfalse;
 }

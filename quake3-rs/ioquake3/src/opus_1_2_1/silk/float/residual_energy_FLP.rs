@@ -53,10 +53,9 @@ pub unsafe extern "C" fn silk_residual_energy_covar_FLP(
         i = 0;
         while i < D {
             tmp = 0.0;
-            j = i + 1;
-            while j < D {
+
+            for j in i + 1..D {
                 tmp += *wXX.offset((i + D * j) as isize) * *c.offset(j as isize);
-                j += 1
             }
             nrg += *c.offset(i as isize)
                 * (2.0 * tmp + *wXX.offset((i + D * i) as isize) * *c.offset(i as isize));

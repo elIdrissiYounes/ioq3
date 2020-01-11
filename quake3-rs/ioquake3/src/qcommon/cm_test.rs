@@ -350,14 +350,16 @@ pub unsafe extern "C" fn CM_PointContents(
             .offset(leafnum as isize) as *mut crate::cm_local_h::cLeaf_t
     }
     contents = 0;
-    k = 0;
-    while k < (*leaf).numLeafBrushes {
+
+    for k in 0..(*leaf).numLeafBrushes {
         brushnum = *crate::src::qcommon::cm_load::cm
             .leafbrushes
             .offset(((*leaf).firstLeafBrush + k) as isize);
+
         b = &mut *crate::src::qcommon::cm_load::cm
             .brushes
             .offset(brushnum as isize) as *mut crate::cm_local_h::cbrush_t;
+
         if !(CM_BoundsIntersectPoint(
             (*b).bounds[0].as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             (*b).bounds[1].as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -382,7 +384,6 @@ pub unsafe extern "C" fn CM_PointContents(
                 contents |= (*b).contents
             }
         }
-        k += 1
     }
     return contents;
 }

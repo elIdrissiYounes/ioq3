@@ -59,7 +59,6 @@ pub unsafe extern "C" fn Com_Printf(mut msg: *const i8, mut args: ...) {
     argptr = args.clone();
     crate::stdlib::vsnprintf(
         text.as_mut_ptr(),
-        
         ::std::mem::size_of::<[i8; 1024]>(),
         msg,
         argptr.as_va_list(),
@@ -74,17 +73,12 @@ pub unsafe extern "C" fn Com_Printf(mut msg: *const i8, mut args: ...) {
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn Com_Error(
-    mut level: i32,
-    mut error: *const i8,
-    mut args: ...
-) -> ! {
+pub unsafe extern "C" fn Com_Error(mut level: i32, mut error: *const i8, mut args: ...) -> ! {
     let mut argptr: ::std::ffi::VaListImpl;
     let mut text: [i8; 1024] = [0; 1024];
     argptr = args.clone();
     crate::stdlib::vsnprintf(
         text.as_mut_ptr(),
-        
         ::std::mem::size_of::<[i8; 1024]>(),
         error,
         argptr.as_va_list(),

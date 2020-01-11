@@ -287,14 +287,14 @@ unsafe extern "C" fn UpdateIPBans() {
         0, 0, 0, 0,
     ];
     *iplist_final.as_mut_ptr() = 0i8;
-    i = 0;
-    while i < numIPFilters {
+
+    for i in 0..numIPFilters {
         if !(ipFilters[i as usize].compare == 0xffffffff) {
             *(b.as_mut_ptr() as *mut u32) = ipFilters[i as usize].compare;
             *(m.as_mut_ptr() as *mut u32) = ipFilters[i as usize].mask;
             *ip.as_mut_ptr() = 0i8;
-            j = 0;
-            while j < 4 {
+
+            for j in 0..4 {
                 if m[j as usize] as i32 != 255 {
                     crate::src::qcommon::q_shared::Q_strcat(
                         ip.as_mut_ptr(),
@@ -311,6 +311,7 @@ unsafe extern "C" fn UpdateIPBans() {
                         ),
                     );
                 }
+
                 crate::src::qcommon::q_shared::Q_strcat(
                     ip.as_mut_ptr(),
                     ::std::mem::size_of::<[i8; 64]>() as i32,
@@ -320,7 +321,6 @@ unsafe extern "C" fn UpdateIPBans() {
                         b" \x00" as *const u8 as *const i8
                     },
                 );
-                j += 1
             }
             if crate::stdlib::strlen(iplist_final.as_mut_ptr())
                 .wrapping_add(crate::stdlib::strlen(ip.as_mut_ptr()))
@@ -338,7 +338,6 @@ unsafe extern "C" fn UpdateIPBans() {
                 break;
             }
         }
-        i += 1
     }
     crate::src::game::g_syscalls::trap_Cvar_Set(
         b"g_banIPs\x00" as *const u8 as *const i8,
@@ -500,15 +499,14 @@ pub unsafe extern "C" fn Svcmd_RemoveIP_f() {
     if StringToFilter(str.as_mut_ptr(), &mut f) as u64 == 0 {
         return;
     }
-    i = 0;
-    while i < numIPFilters {
+
+    for i in 0..numIPFilters {
         if ipFilters[i as usize].mask == f.mask && ipFilters[i as usize].compare == f.compare {
             ipFilters[i as usize].compare = 0xffffffff;
             crate::src::game::g_main::G_Printf(b"Removed.\n\x00" as *const u8 as *const i8);
             UpdateIPBans();
             return;
         }
-        i += 1
     }
     crate::src::game::g_main::G_Printf(
         b"Didn\'t find %s.\n\x00" as *const u8 as *const i8,
@@ -639,16 +637,16 @@ pub unsafe extern "C" fn ClientForString(mut s: *const i8) -> *mut crate::g_loca
         return cl;
     }
     // check for a name match
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         cl = &mut *crate::src::game::g_main::level.clients.offset(i as isize)
             as *mut crate::g_local_h::gclient_s;
+
         if !((*cl).pers.connected == crate::g_local_h::CON_DISCONNECTED) {
             if crate::src::qcommon::q_shared::Q_stricmp((*cl).pers.netname.as_mut_ptr(), s) == 0 {
                 return cl;
             }
         }
-        i += 1
     }
     crate::src::game::g_main::G_Printf(
         b"User %s is not on the server\n\x00" as *const u8 as *const i8,

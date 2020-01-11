@@ -89,19 +89,19 @@ pub mod mathops_h {
         let mut i: i32 = 0;
         let mut maxval: crate::arch_h::opus_val16 = 0f32;
         let mut minval: crate::arch_h::opus_val16 = 0f32;
-        i = 0;
-        while i < len {
+
+        for i in 0..len {
             maxval = if maxval > *x.offset(i as isize) {
                 maxval
             } else {
                 *x.offset(i as isize)
             };
+
             minval = if minval < *x.offset(i as isize) {
                 minval
             } else {
                 *x.offset(i as isize)
             };
-            i += 1
         }
         return if maxval > -minval { maxval } else { -minval };
     }
@@ -138,10 +138,9 @@ pub mod pitch_h {
     ) -> crate::arch_h::opus_val32 {
         let mut i: i32 = 0;
         let mut xy: crate::arch_h::opus_val32 = 0f32;
-        i = 0;
-        while i < N {
+
+        for i in 0..N {
             xy = xy + *x.offset(i as isize) * *y.offset(i as isize);
-            i += 1
         }
         return xy;
     }
@@ -445,16 +444,22 @@ unsafe extern "C" fn transient_analysis(
         forward_decay = 0.03125
     }
     len2 = len / 2;
-    c = 0;
-    while c < C {
+
+    for c in 0..C {
         let mut mean: crate::arch_h::opus_val32 = 0.;
+
         let mut unmask: crate::opus_types_h::opus_int32 = 0;
+
         let mut norm: crate::arch_h::opus_val32 = 0.;
+
         let mut maxE: crate::arch_h::opus_val16 = 0.;
+
         mem0 = 0f32;
+
         mem1 = 0f32;
-        /* High-pass filter: (1 - 2*z^-1 + z^-2) / (1 - z^-1 + .5*z^-2) */
+
         i = 0;
+
         while i < len {
             let mut x: crate::arch_h::opus_val32 = 0.;
             let mut y: crate::arch_h::opus_val32 = 0.;
@@ -466,18 +471,19 @@ unsafe extern "C" fn transient_analysis(
             i += 1
             /*printf("%f ", tmp[i]);*/
         }
-        /*printf("\n");*/
-        /* First few samples are bad because we don't propagate the memory */
+
         crate::stdlib::memset(
             tmp as *mut libc::c_void,
             0,
             (12usize).wrapping_mul(::std::mem::size_of::<crate::arch_h::opus_val16>()),
         );
+
         mean = 0f32;
+
         mem0 = 0f32;
-        /* Grouping by two to reduce complexity */
-        /* Forward pass to compute the post-echo threshold*/
+
         i = 0;
+
         while i < len2 {
             let mut x2: crate::arch_h::opus_val16 = *tmp.offset((2 * i) as isize)
                 * *tmp.offset((2 * i) as isize)
@@ -487,10 +493,13 @@ unsafe extern "C" fn transient_analysis(
             mem0 = *tmp.offset(i as isize);
             i += 1
         }
+
         mem0 = 0f32;
+
         maxE = 0f32;
-        /* Backward pass to compute the pre-echo threshold */
+
         i = len2 - 1;
+
         while i >= 0 {
             /* Backward masking: 13.9 dB/ms. */
             *tmp.offset(i as isize) = mem0 + 0.125 * (*tmp.offset(i as isize) - mem0);
@@ -498,19 +507,15 @@ unsafe extern "C" fn transient_analysis(
             maxE = if maxE > mem0 { maxE } else { mem0 };
             i -= 1
         }
-        /*for (i=0;i<len2;i++)printf("%f ", tmp[i]/mean);printf("\n");*/
-        /* Compute the ratio of the "frame energy" over the harmonic mean of the energy.
-        This essentially corresponds to a bitrate-normalized temporal noise-to-mask
-        ratio */
-        /* As a compromise with the old transient detector, frame energy is the
-        geometric mean of the energy and half the max */
+
         mean = crate::stdlib::sqrt((mean * maxE) as f64 * 0.5 * len2 as f64) as f32;
-        /* Inverse of the mean energy in Q15+6 */
+
         norm = len2 as f32 / (1e-15 + mean);
-        /* Compute harmonic mean discarding the unreliable boundaries
-        The data is smooth, so we only take 1/4th of the samples */
-        unmask = 0; /* Do not round to nearest */
+
+        unmask = 0;
+
         i = 12;
+
         while i < len2 - 5 {
             let mut id: i32 = 0;
             id = if 0f64
@@ -534,14 +539,13 @@ unsafe extern "C" fn transient_analysis(
             unmask += inv_table[id as usize] as i32;
             i += 4
         }
-        /*printf("%d\n", unmask);*/
-        /* Normalize, compensate for the 1/4th of the sample and the factor of 6 in the inverse table */
+
         unmask = 64 * unmask * 4 / (6 * (len2 - 17));
+
         if unmask > mask_metric {
             *tf_chan = c;
             mask_metric = unmask
         }
-        c += 1
     }
     is_transient = (mask_metric > 200) as i32;
     /* For low bitrates, define "weak transients" that need to be
@@ -692,9 +696,7 @@ unsafe extern "C" fn compute_mdcts(
     }
     c = 0;
     loop {
-        b = 0;
-        while b < B {
-            /* Interleaving the sub-frames while doing the MDCTs */
+        for b in 0..B {
             crate::src::opus_1_2_1::celt::mdct::clt_mdct_forward_c(
                 &(*mode).mdct,
                 in_0.offset((c * (B * N + overlap)) as isize)
@@ -706,7 +708,6 @@ unsafe extern "C" fn compute_mdcts(
                 B,
                 arch,
             );
-            b += 1
         }
         c += 1;
         if !(c < CC) {
@@ -830,10 +831,9 @@ unsafe extern "C" fn l1_metric(
     let mut i: i32 = 0;
     let mut L1: crate::arch_h::opus_val32 = 0.;
     L1 = 0f32;
-    i = 0;
-    while i < N {
+
+    for i in 0..N {
         L1 += crate::stdlib::fabs(*tmp.offset(i as isize) as f64) as f32;
-        i += 1
     }
     /* When in doubt, prefer good freq resolution */
     L1 = L1 + LM as f32 * bias * L1;
@@ -942,21 +942,24 @@ unsafe extern "C" fn tf_analysis(
                 best_level = -(1)
             }
         }
-        k = 0;
-        while k < LM + !(isTransient != 0 || narrow != 0) as i32 {
+
+        for k in 0..LM + !(isTransient != 0 || narrow != 0) as i32 {
             let mut B: i32 = 0;
+
             if isTransient != 0 {
                 B = LM - k - 1
             } else {
                 B = k + 1
             }
+
             crate::src::opus_1_2_1::celt::bands::haar1(tmp, N >> k, (1) << k);
+
             L1 = l1_metric(tmp, N, B, bias);
+
             if L1 < best_L1 {
                 best_L1 = L1;
                 best_level = k + 1
             }
-            k += 1
         }
         if isTransient != 0 {
             *metric.offset(i as isize) = 2 * best_level
@@ -984,11 +987,14 @@ unsafe extern "C" fn tf_analysis(
     /*printf("\n");*/
     /* Search for the optimal tf resolution, including tf_select */
     tf_select = 0;
-    sel = 0;
-    while sel < 2 {
+
+    for sel in 0..2 {
         cost0 = 0;
+
         cost1 = if isTransient != 0 { 0 } else { lambda };
+
         i = 1;
+
         while i < len {
             let mut curr0: i32 = 0;
             let mut curr1: i32 = 0;
@@ -1018,9 +1024,10 @@ unsafe extern "C" fn tf_analysis(
                 );
             i += 1
         }
+
         cost0 = if cost0 < cost1 { cost0 } else { cost1 };
+
         selcost[sel as usize] = cost0;
-        sel += 1
     }
     /* For now, we're conservative and only allow tf_select=1 for transients.
      * If tests confirm it's useful for non-transients, we could allow it. */
@@ -1311,27 +1318,34 @@ unsafe extern "C" fn stereo_analysis(
     let mut sumLR: crate::arch_h::opus_val32 = 1e-15;
     let mut sumMS: crate::arch_h::opus_val32 = 1e-15;
     /* Use the L1 norm to model the entropy of the L/R signal vs the M/S signal */
-    i = 0;
-    while i < 13 {
+
+    for i in 0..13 {
         let mut j: i32 = 0;
-        j = (*(*m).eBands.offset(i as isize) as i32) << LM;
-        while j < (*(*m).eBands.offset((i + 1) as isize) as i32) << LM {
+        for j in (*(*m).eBands.offset(i as isize) as i32) << LM
+            ..(*(*m).eBands.offset((i + 1) as isize) as i32) << LM
+        {
             let mut L: crate::arch_h::opus_val32 = 0.;
+
             let mut R: crate::arch_h::opus_val32 = 0.;
+
             let mut M: crate::arch_h::opus_val32 = 0.;
+
             let mut S: crate::arch_h::opus_val32 = 0.;
-            /* We cast to 32-bit first because of the -32768 case */
+
             L = *X.offset(j as isize);
+
             R = *X.offset((N0 + j) as isize);
+
             M = L + R;
+
             S = L - R;
+
             sumLR = sumLR
                 + (crate::stdlib::fabs(L as f64) as f32 + crate::stdlib::fabs(R as f64) as f32);
+
             sumMS = sumMS
                 + (crate::stdlib::fabs(M as f64) as f32 + crate::stdlib::fabs(S as f64) as f32);
-            j += 1
         }
-        i += 1
     }
     sumMS = 0.707107 * sumMS;
     thetas = 13;
@@ -3775,12 +3789,13 @@ pub unsafe extern "C" fn opus_custom_encoder_ctl(
                         .wrapping_offset_from(st as *mut i8)) as usize)
                     .wrapping_mul(::std::mem::size_of::<i8>()),
             );
-            i = 0;
-            while i < (*st).channels * (*(*st).mode).nbEBands {
+
+            for i in 0..(*st).channels * (*(*st).mode).nbEBands {
                 let ref mut fresh32 = *oldLogE2.offset(i as isize);
+
                 *fresh32 = -28.0f32;
+
                 *oldLogE.offset(i as isize) = *fresh32;
-                i += 1
             }
             (*st).vbr_offset = 0;
             (*st).delayedIntra = 1f32;

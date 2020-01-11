@@ -506,8 +506,8 @@ pub unsafe extern "C" fn AddRemap(
     mut timeOffset: f32,
 ) {
     let mut i: i32 = 0;
-    i = 0;
-    while i < remapCount {
+
+    for i in 0..remapCount {
         if crate::src::qcommon::q_shared::Q_stricmp(
             oldShader,
             remappedShaders[i as usize].oldShader.as_mut_ptr(),
@@ -521,7 +521,6 @@ pub unsafe extern "C" fn AddRemap(
             remappedShaders[i as usize].timeOffset = timeOffset;
             return;
         }
-        i += 1
     }
     if remapCount < 128 {
         crate::stdlib::strcpy(
@@ -543,8 +542,8 @@ pub unsafe extern "C" fn BuildShaderStateConfig() -> *const i8 {
     let mut out: [i8; 133] = [0; 133];
     let mut i: i32 = 0;
     crate::stdlib::memset(buff.as_mut_ptr() as *mut libc::c_void, 0, 1024);
-    i = 0;
-    while i < remapCount {
+
+    for i in 0..remapCount {
         crate::src::qcommon::q_shared::Com_sprintf(
             out.as_mut_ptr(),
             64 * 2 + 5,
@@ -553,12 +552,12 @@ pub unsafe extern "C" fn BuildShaderStateConfig() -> *const i8 {
             remappedShaders[i as usize].newShader.as_mut_ptr(),
             remappedShaders[i as usize].timeOffset as f64,
         );
+
         crate::src::qcommon::q_shared::Q_strcat(
             buff.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 4096]>() as i32,
             out.as_mut_ptr(),
         );
-        i += 1
     }
     return buff.as_mut_ptr();
 }
@@ -945,13 +944,13 @@ pub unsafe extern "C" fn G_Spawn() -> *mut crate::g_local_h::gentity_t {
     let mut force: i32 = 0;
     let mut e: *mut crate::g_local_h::gentity_t = 0 as *mut crate::g_local_h::gentity_t;
     e = 0 as *mut crate::g_local_h::gentity_t;
-    force = 0;
-    while force < 2 {
-        // if we go through all entities and can't find one to free,
-        // override the normal minimum times before use
+
+    for force in 0..2 {
         e = &mut *crate::src::game::g_main::g_entities.as_mut_ptr().offset(64)
             as *mut crate::g_local_h::gentity_t;
+
         i = 64;
+
         while i < crate::src::game::g_main::level.num_entities {
             if !((*e).inuse as u64 != 0) {
                 // the first couple seconds of server time can involve a lot of
@@ -968,10 +967,10 @@ pub unsafe extern "C" fn G_Spawn() -> *mut crate::g_local_h::gentity_t {
             i += 1;
             e = e.offset(1)
         }
+
         if crate::src::game::g_main::level.num_entities < ((1) << 10) - 2 {
             break;
         }
-        force += 1
     }
     if crate::src::game::g_main::level.num_entities == ((1) << 10) - 2 {
         i = 0;

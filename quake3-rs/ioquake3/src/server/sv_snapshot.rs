@@ -453,15 +453,16 @@ pub unsafe extern "C" fn SV_UpdateServerCommandsToClient(
 ) {
     let mut i: i32 = 0;
     // write any unacknowledged serverCommands
-    i = (*client).reliableAcknowledge + 1;
-    while i <= (*client).reliableSequence {
+
+    for i in (*client).reliableAcknowledge + 1..=(*client).reliableSequence {
         crate::src::qcommon::msg::MSG_WriteByte(msg, crate::qcommon_h::svc_serverCommand as i32);
+
         crate::src::qcommon::msg::MSG_WriteLong(msg, i);
+
         crate::src::qcommon::msg::MSG_WriteString(
             msg,
             (*client).reliableCommands[(i & 64 - 1) as usize].as_mut_ptr(),
         );
-        i += 1
     }
     (*client).reliableSent = (*client).reliableSequence;
 }

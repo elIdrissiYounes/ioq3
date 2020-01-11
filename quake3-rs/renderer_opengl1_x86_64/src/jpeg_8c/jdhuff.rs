@@ -273,280 +273,49 @@ pub struct bitread_working_state {
 }
 
 static mut jpeg_zigzag_order: [[i32; 8]; 8] = [
-    [
-        0,
-        1,
-        5,
-        6,
-        14,
-        15,
-        27,
-        28,
-    ],
-    [
-        2,
-        4,
-        7,
-        13,
-        16,
-        26,
-        29,
-        42,
-    ],
-    [
-        3,
-        8,
-        12,
-        17,
-        25,
-        30,
-        41,
-        43,
-    ],
-    [
-        9,
-        11,
-        18,
-        24,
-        31,
-        40,
-        44,
-        53,
-    ],
-    [
-        10,
-        19,
-        23,
-        32,
-        39,
-        45,
-        52,
-        54,
-    ],
-    [
-        20,
-        22,
-        33,
-        38,
-        46,
-        51,
-        55,
-        60,
-    ],
-    [
-        21,
-        34,
-        37,
-        47,
-        50,
-        56,
-        59,
-        61,
-    ],
-    [
-        35,
-        36,
-        48,
-        49,
-        57,
-        58,
-        62,
-        63,
-    ],
+    [0, 1, 5, 6, 14, 15, 27, 28],
+    [2, 4, 7, 13, 16, 26, 29, 42],
+    [3, 8, 12, 17, 25, 30, 41, 43],
+    [9, 11, 18, 24, 31, 40, 44, 53],
+    [10, 19, 23, 32, 39, 45, 52, 54],
+    [20, 22, 33, 38, 46, 51, 55, 60],
+    [21, 34, 37, 47, 50, 56, 59, 61],
+    [35, 36, 48, 49, 57, 58, 62, 63],
 ];
 
 static mut jpeg_zigzag_order7: [[i32; 7]; 7] = [
-    [
-        0,
-        1,
-        5,
-        6,
-        14,
-        15,
-        27,
-    ],
-    [
-        2,
-        4,
-        7,
-        13,
-        16,
-        26,
-        28,
-    ],
-    [
-        3,
-        8,
-        12,
-        17,
-        25,
-        29,
-        38,
-    ],
-    [
-        9,
-        11,
-        18,
-        24,
-        30,
-        37,
-        39,
-    ],
-    [
-        10,
-        19,
-        23,
-        31,
-        36,
-        40,
-        45,
-    ],
-    [
-        20,
-        22,
-        32,
-        35,
-        41,
-        44,
-        46,
-    ],
-    [
-        21,
-        33,
-        34,
-        42,
-        43,
-        47,
-        48,
-    ],
+    [0, 1, 5, 6, 14, 15, 27],
+    [2, 4, 7, 13, 16, 26, 28],
+    [3, 8, 12, 17, 25, 29, 38],
+    [9, 11, 18, 24, 30, 37, 39],
+    [10, 19, 23, 31, 36, 40, 45],
+    [20, 22, 32, 35, 41, 44, 46],
+    [21, 33, 34, 42, 43, 47, 48],
 ];
 
 static mut jpeg_zigzag_order6: [[i32; 6]; 6] = [
-    [
-        0,
-        1,
-        5,
-        6,
-        14,
-        15,
-    ],
-    [
-        2,
-        4,
-        7,
-        13,
-        16,
-        25,
-    ],
-    [
-        3,
-        8,
-        12,
-        17,
-        24,
-        26,
-    ],
-    [
-        9,
-        11,
-        18,
-        23,
-        27,
-        32,
-    ],
-    [
-        10,
-        19,
-        22,
-        28,
-        31,
-        33,
-    ],
-    [
-        20,
-        21,
-        29,
-        30,
-        34,
-        35,
-    ],
+    [0, 1, 5, 6, 14, 15],
+    [2, 4, 7, 13, 16, 25],
+    [3, 8, 12, 17, 24, 26],
+    [9, 11, 18, 23, 27, 32],
+    [10, 19, 22, 28, 31, 33],
+    [20, 21, 29, 30, 34, 35],
 ];
 
 static mut jpeg_zigzag_order5: [[i32; 5]; 5] = [
-    [
-        0,
-        1,
-        5,
-        6,
-        14,
-    ],
-    [
-        2,
-        4,
-        7,
-        13,
-        15,
-    ],
-    [
-        3,
-        8,
-        12,
-        16,
-        21,
-    ],
-    [
-        9,
-        11,
-        17,
-        20,
-        22,
-    ],
-    [
-        10,
-        18,
-        19,
-        23,
-        24,
-    ],
+    [0, 1, 5, 6, 14],
+    [2, 4, 7, 13, 15],
+    [3, 8, 12, 16, 21],
+    [9, 11, 17, 20, 22],
+    [10, 18, 19, 23, 24],
 ];
 
-static mut jpeg_zigzag_order4: [[i32; 4]; 4] = [
-    [
-        0,
-        1,
-        5,
-        6,
-    ],
-    [
-        2,
-        4,
-        7,
-        12,
-    ],
-    [
-        3,
-        8,
-        11,
-        13,
-    ],
-    [
-        9,
-        10,
-        14,
-        15,
-    ],
-];
+static mut jpeg_zigzag_order4: [[i32; 4]; 4] =
+    [[0, 1, 5, 6], [2, 4, 7, 12], [3, 8, 11, 13], [9, 10, 14, 15]];
 
-static mut jpeg_zigzag_order3: [[i32; 3]; 3] = [
-    [0, 1, 5],
-    [2, 4, 6],
-    [3, 7, 8],
-];
+static mut jpeg_zigzag_order3: [[i32; 3]; 3] = [[0, 1, 5], [2, 4, 6], [3, 7, 8]];
 
-static mut jpeg_zigzag_order2: [[i32; 2]; 2] = [
-    [0, 1],
-    [2, 3],
-];
+static mut jpeg_zigzag_order2: [[i32; 2]; 2] = [[0, 1], [2, 3]];
 /*
  * Compute the derived values for a Huffman table.
  * This routine also performs some validation checks on the table.
@@ -609,7 +378,6 @@ unsafe extern "C" fn jpeg_make_d_derived_tbl(
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
             1,
-            
             ::std::mem::size_of::<d_derived_tbl>(),
         ) as *mut d_derived_tbl
     } /* fill in back link */
@@ -622,8 +390,7 @@ unsafe extern "C" fn jpeg_make_d_derived_tbl(
         i = (*htbl).bits[l as usize] as i32;
         if i < 0 || p + i > 256 {
             /* protect against table overrun */
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_BAD_HUFF_TABLE as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_HUFF_TABLE as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -662,10 +429,8 @@ unsafe extern "C" fn jpeg_make_d_derived_tbl(
         /* code is now 1 more than the last code used for codelength si; but
          * it must still fit in si bits, since no code is allowed to be all ones.
          */
-        if code as crate::jmorecfg_h::INT32 >= (1) << si
-        {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_BAD_HUFF_TABLE as i32;
+        if code as crate::jmorecfg_h::INT32 >= (1) << si {
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_HUFF_TABLE as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -689,8 +454,7 @@ unsafe extern "C" fn jpeg_make_d_derived_tbl(
             (*dtbl).valoffset[l as usize] =
                 p as crate::jmorecfg_h::INT32 - huffcode[p as usize] as crate::jmorecfg_h::INT32;
             p += (*htbl).bits[l as usize] as i32;
-            (*dtbl).maxcode[l as usize] =
-                huffcode[(p - 1) as usize] as crate::jmorecfg_h::INT32
+            (*dtbl).maxcode[l as usize] = huffcode[(p - 1) as usize] as crate::jmorecfg_h::INT32
         /* maximum code of length l */
         } else {
             (*dtbl).maxcode[l as usize] = -1
@@ -708,7 +472,6 @@ unsafe extern "C" fn jpeg_make_d_derived_tbl(
     crate::stdlib::memset(
         (*dtbl).look_nbits.as_mut_ptr() as *mut libc::c_void,
         0,
-        
         ::std::mem::size_of::<[i32; 256]>(),
     );
     p = 0;
@@ -742,8 +505,7 @@ unsafe extern "C" fn jpeg_make_d_derived_tbl(
         while i < numsymbols {
             let mut sym: i32 = (*htbl).huffval[i as usize] as i32;
             if sym < 0 || sym > 15 {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_HUFF_TABLE as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_HUFF_TABLE as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -870,8 +632,7 @@ unsafe extern "C" fn jpeg_fill_bit_buffer(
                  * appears per data segment.
                  */
                 if (*((*cinfo).entropy as huff_entropy_ptr)).insufficient_data == 0 {
-                    (*(*cinfo).err).msg_code =
-                        crate::src::jpeg_8c::jerror::JWRN_HIT_MARKER as i32;
+                    (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JWRN_HIT_MARKER as i32;
                     Some(
                         (*(*cinfo).err)
                             .emit_message
@@ -884,7 +645,7 @@ unsafe extern "C" fn jpeg_fill_bit_buffer(
                     (*((*cinfo).entropy as huff_entropy_ptr)).insufficient_data = 1
                 }
                 /* Fill the buffer with zero bits */
-                get_buffer <<= ((( 32i32 - 7 - bits_left))) as isize;
+                get_buffer <<= (32i32 - 7 - bits_left) as isize;
                 bits_left = 32 - 7
             }
         }
@@ -903,21 +664,7 @@ unsafe extern "C" fn jpeg_fill_bit_buffer(
  */
 
 static mut bmask: [i32; 16] = [
-    0,
-    0x1,
-    0x3,
-    0x7,
-    0xf,
-    0x1f,
-    0x3f,
-    0x7f,
-    0xff,
-    0x1ff,
-    0x3ff,
-    0x7ff,
-    0xfff,
-    0x1fff,
-    0x3fff,
+    0, 0x1, 0x3, 0x7, 0xf, 0x1f, 0x3f, 0x7f, 0xff, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff, 0x3fff,
     0x7fff,
 ];
 /* AVOID_TABLES */
@@ -944,12 +691,11 @@ unsafe extern "C" fn jpeg_huff_decode(
         bits_left = (*state).bits_left
     }
     bits_left -= l;
-    code =
-        ((get_buffer >> bits_left) as i32 & bmask[l as usize]) as crate::jmorecfg_h::INT32;
+    code = ((get_buffer >> bits_left) as i32 & bmask[l as usize]) as crate::jmorecfg_h::INT32;
     /* Collect the rest of the Huffman code one bit at a time. */
     /* This is per Figure F.16 in the JPEG spec. */
     while code > (*htbl).maxcode[l as usize] {
-        code <<=  1isize;
+        code <<= 1isize;
         if bits_left < 1 {
             if jpeg_fill_bit_buffer(state, get_buffer, bits_left, 1) == 0 {
                 return -(1i32);
@@ -958,8 +704,7 @@ unsafe extern "C" fn jpeg_huff_decode(
             bits_left = (*state).bits_left
         }
         bits_left -= 1;
-        code |= ((get_buffer >> bits_left) as i32 & bmask[1])
-            as isize;
+        code |= ((get_buffer >> bits_left) as i32 & bmask[1]) as isize;
         l += 1
     }
     /* Unload the local registers */
@@ -967,8 +712,7 @@ unsafe extern "C" fn jpeg_huff_decode(
     (*state).bits_left = bits_left;
     /* With garbage input we may reach the sentinel value l = 17. */
     if l > 16 {
-        (*(*(*state).cinfo).err).msg_code =
-            crate::src::jpeg_8c::jerror::JWRN_HUFF_BAD_CODE as i32;
+        (*(*(*state).cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JWRN_HUFF_BAD_CODE as i32;
         Some(
             (*(*(*state).cinfo).err)
                 .emit_message
@@ -981,8 +725,7 @@ unsafe extern "C" fn jpeg_huff_decode(
         return 0i32;
         /* fake a zero as the safest result */
     }
-    return (*(*htbl).pub_0).huffval[(code + (*htbl).valoffset[l as usize]) as i32 as usize]
-        as i32;
+    return (*(*htbl).pub_0).huffval[(code + (*htbl).valoffset[l as usize]) as i32 as usize] as i32;
 }
 /*
  * Check for a restart marker & resynchronize decoder.
@@ -1012,10 +755,9 @@ unsafe extern "C" fn process_restart(
         return 0i32;
     }
     /* Re-initialize DC predictions to 0 */
-    ci = 0;
-    while ci < (*cinfo).comps_in_scan {
+
+    for ci in 0..(*cinfo).comps_in_scan {
         (*entropy).saved.last_dc_val[ci as usize] = 0;
-        ci += 1
     }
     /* Re-init EOB run count, too */
     (*entropy).saved.EOBRUN = 0;
@@ -1100,20 +842,24 @@ unsafe extern "C" fn decode_mcu_DC_first(
         bits_left = (*entropy).bitstate.bits_left;
         state = (*entropy).saved;
         /* Outer loop handles each block in the MCU */
-        blkn = 0;
-        while blkn < (*cinfo).blocks_in_MCU {
+
+        for blkn in 0..(*cinfo).blocks_in_MCU {
             block = *MCU_data.offset(blkn as isize);
+
             ci = (*cinfo).MCU_membership[blkn as usize];
+
             compptr = (*cinfo).cur_comp_info[ci as usize];
+
             tbl = (*entropy).derived_tbls[(*compptr).dc_tbl_no as usize];
+
             let mut current_block_32: u64;
-            /* Decode a single block's worth of coefficients */
-            /* Section F.2.2.1: decode the DC coefficient difference */
+
             let mut nb: i32 = 0;
+
             let mut look: i32 = 0;
+
             if bits_left < 8 {
-                if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 0) == 0
-                {
+                if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 0) == 0 {
                     return 0i32;
                 }
                 get_buffer = br_state.get_buffer;
@@ -1127,10 +873,10 @@ unsafe extern "C" fn decode_mcu_DC_first(
             } else {
                 current_block_32 = 5494826135382683477;
             }
+
             match current_block_32 {
                 5494826135382683477 => {
-                    look = (get_buffer >> bits_left - 8) as i32
-                        & bmask[8];
+                    look = (get_buffer >> bits_left - 8) as i32 & bmask[8];
                     nb = (*tbl).look_nbits[look as usize];
                     if nb != 0 {
                         bits_left -= nb;
@@ -1143,6 +889,7 @@ unsafe extern "C" fn decode_mcu_DC_first(
                 }
                 _ => {}
             }
+
             match current_block_32 {
                 18265024319667395811 => {
                     s = jpeg_huff_decode(&mut br_state, get_buffer, bits_left, tbl, nb);
@@ -1154,6 +901,7 @@ unsafe extern "C" fn decode_mcu_DC_first(
                 }
                 _ => {}
             }
+
             if s != 0 {
                 if bits_left < s {
                     if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, s) == 0 {
@@ -1170,12 +918,12 @@ unsafe extern "C" fn decode_mcu_DC_first(
                     r
                 }
             }
-            /* Convert DC difference to actual value, update last_dc_val */
+
             s += state.last_dc_val[ci as usize];
+
             state.last_dc_val[ci as usize] = s;
-            /* Scale and output the coefficient (assumes jpeg_natural_order[0]=0) */
+
             (*block)[0] = (s << Al) as crate::jmorecfg_h::JCOEF;
-            blkn += 1
         }
         /* Completed MCU, so update state */
         (*(*cinfo).src).next_input_byte = br_state.next_input_byte;
@@ -1255,9 +1003,7 @@ unsafe extern "C" fn decode_mcu_AC_first(
                 let mut nb: i32 = 0;
                 let mut look: i32 = 0;
                 if bits_left < 8 {
-                    if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 0)
-                        == 0
-                    {
+                    if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 0) == 0 {
                         return 0i32;
                     }
                     get_buffer = br_state.get_buffer;
@@ -1273,8 +1019,7 @@ unsafe extern "C" fn decode_mcu_AC_first(
                 }
                 match current_block_34 {
                     14136749492126903395 => {
-                        look = (get_buffer >> bits_left - 8) as i32
-                            & bmask[8];
+                        look = (get_buffer >> bits_left - 8) as i32 & bmask[8];
                         nb = (*tbl).look_nbits[look as usize];
                         if nb != 0 {
                             bits_left -= nb;
@@ -1397,10 +1142,10 @@ unsafe extern "C" fn decode_mcu_DC_refine(
     get_buffer = (*entropy).bitstate.get_buffer;
     bits_left = (*entropy).bitstate.bits_left;
     /* Outer loop handles each block in the MCU */
-    blkn = 0;
-    while blkn < (*cinfo).blocks_in_MCU {
+
+    for blkn in 0..(*cinfo).blocks_in_MCU {
         block = *MCU_data.offset(blkn as isize);
-        /* Note: since we use |=, repeating the assignment later is safe */
+
         if bits_left < 1 {
             if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 1) == 0 {
                 return 0i32;
@@ -1408,13 +1153,12 @@ unsafe extern "C" fn decode_mcu_DC_refine(
             get_buffer = br_state.get_buffer;
             bits_left = br_state.bits_left
         }
+
         bits_left -= 1;
+
         if (get_buffer >> bits_left) as i32 & bmask[1] != 0 {
-            (*block)[0] = ((*block)[0]
-                as i32
-                | p1) as crate::jmorecfg_h::JCOEF
+            (*block)[0] = ((*block)[0] as i32 | p1) as crate::jmorecfg_h::JCOEF
         }
-        blkn += 1
     }
     /* Encoded data is simply the next bit of the two's-complement DC value */
     /* Completed MCU, so update state */
@@ -1517,13 +1261,7 @@ unsafe extern "C" fn decode_mcu_AC_refine(
                     let mut nb: i32 = 0;
                     let mut look: i32 = 0;
                     if bits_left < 8 {
-                        if jpeg_fill_bit_buffer(
-                            &mut br_state,
-                            get_buffer,
-                            bits_left,
-                            0,
-                        ) == 0
-                        {
+                        if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 0) == 0 {
                             current_block = 6568878844838934825;
                             break;
                         }
@@ -1540,8 +1278,7 @@ unsafe extern "C" fn decode_mcu_AC_refine(
                     }
                     match current_block {
                         17184638872671510253 => {
-                            look = (get_buffer >> bits_left - 8) as i32
-                                & bmask[8];
+                            look = (get_buffer >> bits_left - 8) as i32 & bmask[8];
                             nb = (*tbl).look_nbits[look as usize];
                             if nb != 0 {
                                 bits_left -= nb;
@@ -1584,13 +1321,7 @@ unsafe extern "C" fn decode_mcu_AC_refine(
                             );
                         }
                         if bits_left < 1 {
-                            if jpeg_fill_bit_buffer(
-                                &mut br_state,
-                                get_buffer,
-                                bits_left,
-                                1,
-                            ) == 0
-                            {
+                            if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 1) == 0 {
                                 current_block = 6568878844838934825;
                                 break;
                             }
@@ -1598,10 +1329,7 @@ unsafe extern "C" fn decode_mcu_AC_refine(
                             bits_left = br_state.bits_left
                         }
                         bits_left -= 1;
-                        if (get_buffer >> bits_left) as i32
-                            & bmask[1]
-                            != 0
-                        {
+                        if (get_buffer >> bits_left) as i32 & bmask[1] != 0 {
                             /* newly nonzero coef is negative */
                             s = p1
                         } else {
@@ -1641,12 +1369,8 @@ unsafe extern "C" fn decode_mcu_AC_refine(
                             .offset(*natural_order.offset(k as isize) as isize);
                         if *thiscoef as i32 != 0 {
                             if bits_left < 1 {
-                                if jpeg_fill_bit_buffer(
-                                    &mut br_state,
-                                    get_buffer,
-                                    bits_left,
-                                    1,
-                                ) == 0
+                                if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 1)
+                                    == 0
                                 {
                                     current_block = 6568878844838934825;
                                     break 's_133;
@@ -1655,18 +1379,15 @@ unsafe extern "C" fn decode_mcu_AC_refine(
                                 bits_left = br_state.bits_left
                             }
                             bits_left -= 1;
-                            if (get_buffer >> bits_left) as i32
-                                & bmask[1]
-                                != 0
-                            {
+                            if (get_buffer >> bits_left) as i32 & bmask[1] != 0 {
                                 if *thiscoef as i32 & p1 == 0 {
                                     /* do nothing if already set it */
                                     if *thiscoef as i32 >= 0 {
-                                        *thiscoef = (*thiscoef as i32 + p1)
-                                            as crate::jmorecfg_h::JCOEF
+                                        *thiscoef =
+                                            (*thiscoef as i32 + p1) as crate::jmorecfg_h::JCOEF
                                     } else {
-                                        *thiscoef = (*thiscoef as i32 + m1)
-                                            as crate::jmorecfg_h::JCOEF
+                                        *thiscoef =
+                                            (*thiscoef as i32 + m1) as crate::jmorecfg_h::JCOEF
                                     }
                                 }
                             }
@@ -1702,8 +1423,7 @@ unsafe extern "C" fn decode_mcu_AC_refine(
                     /* Re-zero any output coefficients that we made newly nonzero */
                     while num_newnz > 0 {
                         num_newnz -= 1;
-                        (*block)[newnz_pos[num_newnz as usize] as usize] =
-                            0
+                        (*block)[newnz_pos[num_newnz as usize] as usize] = 0
                     }
                     return 0i32;
                 }
@@ -1720,12 +1440,8 @@ unsafe extern "C" fn decode_mcu_AC_refine(
                             .offset(*natural_order.offset(k as isize) as isize);
                         if *thiscoef as i32 != 0 {
                             if bits_left < 1 {
-                                if jpeg_fill_bit_buffer(
-                                    &mut br_state,
-                                    get_buffer,
-                                    bits_left,
-                                    1,
-                                ) == 0
+                                if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 1)
+                                    == 0
                                 {
                                     current_block = 6568878844838934825;
                                     continue;
@@ -1734,18 +1450,15 @@ unsafe extern "C" fn decode_mcu_AC_refine(
                                 bits_left = br_state.bits_left
                             }
                             bits_left -= 1;
-                            if (get_buffer >> bits_left) as i32
-                                & bmask[1]
-                                != 0
-                            {
+                            if (get_buffer >> bits_left) as i32 & bmask[1] != 0 {
                                 if *thiscoef as i32 & p1 == 0 {
                                     /* do nothing if already changed it */
                                     if *thiscoef as i32 >= 0 {
-                                        *thiscoef = (*thiscoef as i32 + p1)
-                                            as crate::jmorecfg_h::JCOEF
+                                        *thiscoef =
+                                            (*thiscoef as i32 + p1) as crate::jmorecfg_h::JCOEF
                                     } else {
-                                        *thiscoef = (*thiscoef as i32 + m1)
-                                            as crate::jmorecfg_h::JCOEF
+                                        *thiscoef =
+                                            (*thiscoef as i32 + m1) as crate::jmorecfg_h::JCOEF
                                     }
                                 }
                             }
@@ -1822,25 +1535,34 @@ unsafe extern "C" fn decode_mcu_sub(
         bits_left = (*entropy).bitstate.bits_left;
         state = (*entropy).saved;
         /* Outer loop handles each block in the MCU */
-        blkn = 0;
-        while blkn < (*cinfo).blocks_in_MCU {
+
+        for blkn in 0..(*cinfo).blocks_in_MCU {
             let mut current_block_136: u64;
+
             let mut block: crate::jpeglib_h::JBLOCKROW = *MCU_data.offset(blkn as isize);
+
             let mut htbl: *mut d_derived_tbl = 0 as *mut d_derived_tbl;
+
             let mut s: i32 = 0;
+
             let mut k: i32 = 0;
+
             let mut r: i32 = 0;
+
             let mut coef_limit: i32 = 0;
+
             let mut ci: i32 = 0;
-            /* Decode a single block's worth of coefficients */
-            /* Section F.2.2.1: decode the DC coefficient difference */
+
             htbl = (*entropy).dc_cur_tbls[blkn as usize];
+
             let mut current_block_31: u64;
+
             let mut nb: i32 = 0;
+
             let mut look: i32 = 0;
+
             if bits_left < 8 {
-                if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 0) == 0
-                {
+                if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 0) == 0 {
                     return 0i32;
                 }
                 get_buffer = br_state.get_buffer;
@@ -1854,10 +1576,10 @@ unsafe extern "C" fn decode_mcu_sub(
             } else {
                 current_block_31 = 11636175345244025579;
             }
+
             match current_block_31 {
                 11636175345244025579 => {
-                    look = (get_buffer >> bits_left - 8) as i32
-                        & bmask[8];
+                    look = (get_buffer >> bits_left - 8) as i32 & bmask[8];
                     nb = (*htbl).look_nbits[look as usize];
                     if nb != 0 {
                         bits_left -= nb;
@@ -1870,6 +1592,7 @@ unsafe extern "C" fn decode_mcu_sub(
                 }
                 _ => {}
             }
+
             match current_block_31 {
                 16828568275618539777 => {
                     s = jpeg_huff_decode(&mut br_state, get_buffer, bits_left, htbl, nb);
@@ -1881,9 +1604,13 @@ unsafe extern "C" fn decode_mcu_sub(
                 }
                 _ => {}
             }
+
             htbl = (*entropy).ac_cur_tbls[blkn as usize];
+
             k = 1;
+
             coef_limit = (*entropy).coef_limit[blkn as usize];
+
             if coef_limit != 0 {
                 /* Convert DC difference to actual value, update last_dc_val */
                 if s != 0 {
@@ -1919,13 +1646,7 @@ unsafe extern "C" fn decode_mcu_sub(
                     let mut nb_0: i32 = 0;
                     let mut look_0: i32 = 0;
                     if bits_left < 8 {
-                        if jpeg_fill_bit_buffer(
-                            &mut br_state,
-                            get_buffer,
-                            bits_left,
-                            0,
-                        ) == 0
-                        {
+                        if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 0) == 0 {
                             return 0i32;
                         }
                         get_buffer = br_state.get_buffer;
@@ -1941,8 +1662,7 @@ unsafe extern "C" fn decode_mcu_sub(
                     }
                     match current_block_69 {
                         15462640364611497761 => {
-                            look_0 = (get_buffer >> bits_left - 8) as i32
-                                & bmask[8];
+                            look_0 = (get_buffer >> bits_left - 8) as i32 & bmask[8];
                             nb_0 = (*htbl).look_nbits[look_0 as usize];
                             if nb_0 != 0 {
                                 bits_left -= nb_0;
@@ -2012,6 +1732,7 @@ unsafe extern "C" fn decode_mcu_sub(
                 }
                 current_block_136 = 5195798230510548452;
             }
+
             match current_block_136 {
                 5195798230510548452 => {
                     /* Section F.2.2.2: decode the AC coefficients */
@@ -2021,13 +1742,7 @@ unsafe extern "C" fn decode_mcu_sub(
                         let mut nb_1: i32 = 0;
                         let mut look_1: i32 = 0;
                         if bits_left < 8 {
-                            if jpeg_fill_bit_buffer(
-                                &mut br_state,
-                                get_buffer,
-                                bits_left,
-                                0,
-                            ) == 0
-                            {
+                            if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 0) == 0 {
                                 return 0i32;
                             }
                             get_buffer = br_state.get_buffer;
@@ -2043,9 +1758,7 @@ unsafe extern "C" fn decode_mcu_sub(
                         }
                         match current_block_117 {
                             12696043255897098083 => {
-                                look_1 = (get_buffer >> bits_left - 8)
-                                    as i32
-                                    & bmask[8];
+                                look_1 = (get_buffer >> bits_left - 8) as i32 & bmask[8];
                                 nb_1 = (*htbl).look_nbits[look_1 as usize];
                                 if nb_1 != 0 {
                                     bits_left -= nb_1;
@@ -2100,7 +1813,6 @@ unsafe extern "C" fn decode_mcu_sub(
                 }
                 _ => {}
             }
-            blkn += 1
         }
         /* Completed MCU, so update state */
         (*(*cinfo).src).next_input_byte = br_state.next_input_byte;
@@ -2157,25 +1869,34 @@ unsafe extern "C" fn decode_mcu(
         bits_left = (*entropy).bitstate.bits_left;
         state = (*entropy).saved;
         /* Outer loop handles each block in the MCU */
-        blkn = 0;
-        while blkn < (*cinfo).blocks_in_MCU {
+
+        for blkn in 0..(*cinfo).blocks_in_MCU {
             let mut current_block_134: u64;
+
             let mut block: crate::jpeglib_h::JBLOCKROW = *MCU_data.offset(blkn as isize);
+
             let mut htbl: *mut d_derived_tbl = 0 as *mut d_derived_tbl;
+
             let mut s: i32 = 0;
+
             let mut k: i32 = 0;
+
             let mut r: i32 = 0;
+
             let mut coef_limit: i32 = 0;
+
             let mut ci: i32 = 0;
-            /* Decode a single block's worth of coefficients */
-            /* Section F.2.2.1: decode the DC coefficient difference */
+
             htbl = (*entropy).dc_cur_tbls[blkn as usize];
+
             let mut current_block_29: u64;
+
             let mut nb: i32 = 0;
+
             let mut look: i32 = 0;
+
             if bits_left < 8 {
-                if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 0) == 0
-                {
+                if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 0) == 0 {
                     return 0i32;
                 }
                 get_buffer = br_state.get_buffer;
@@ -2189,10 +1910,10 @@ unsafe extern "C" fn decode_mcu(
             } else {
                 current_block_29 = 14359455889292382949;
             }
+
             match current_block_29 {
                 14359455889292382949 => {
-                    look = (get_buffer >> bits_left - 8) as i32
-                        & bmask[8];
+                    look = (get_buffer >> bits_left - 8) as i32 & bmask[8];
                     nb = (*htbl).look_nbits[look as usize];
                     if nb != 0 {
                         bits_left -= nb;
@@ -2205,6 +1926,7 @@ unsafe extern "C" fn decode_mcu(
                 }
                 _ => {}
             }
+
             match current_block_29 {
                 14455091952362324934 => {
                     s = jpeg_huff_decode(&mut br_state, get_buffer, bits_left, htbl, nb);
@@ -2216,9 +1938,13 @@ unsafe extern "C" fn decode_mcu(
                 }
                 _ => {}
             }
+
             htbl = (*entropy).ac_cur_tbls[blkn as usize];
+
             k = 1;
+
             coef_limit = (*entropy).coef_limit[blkn as usize];
+
             if coef_limit != 0 {
                 /* Convert DC difference to actual value, update last_dc_val */
                 if s != 0 {
@@ -2254,13 +1980,7 @@ unsafe extern "C" fn decode_mcu(
                     let mut nb_0: i32 = 0;
                     let mut look_0: i32 = 0;
                     if bits_left < 8 {
-                        if jpeg_fill_bit_buffer(
-                            &mut br_state,
-                            get_buffer,
-                            bits_left,
-                            0,
-                        ) == 0
-                        {
+                        if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 0) == 0 {
                             return 0i32;
                         }
                         get_buffer = br_state.get_buffer;
@@ -2276,8 +1996,7 @@ unsafe extern "C" fn decode_mcu(
                     }
                     match current_block_67 {
                         10853015579903106591 => {
-                            look_0 = (get_buffer >> bits_left - 8) as i32
-                                & bmask[8];
+                            look_0 = (get_buffer >> bits_left - 8) as i32 & bmask[8];
                             nb_0 = (*htbl).look_nbits[look_0 as usize];
                             if nb_0 != 0 {
                                 bits_left -= nb_0;
@@ -2348,6 +2067,7 @@ unsafe extern "C" fn decode_mcu(
                 }
                 current_block_134 = 10863493864285401582;
             }
+
             match current_block_134 {
                 10863493864285401582 => {
                     /* Section F.2.2.2: decode the AC coefficients */
@@ -2357,13 +2077,7 @@ unsafe extern "C" fn decode_mcu(
                         let mut nb_1: i32 = 0;
                         let mut look_1: i32 = 0;
                         if bits_left < 8 {
-                            if jpeg_fill_bit_buffer(
-                                &mut br_state,
-                                get_buffer,
-                                bits_left,
-                                0,
-                            ) == 0
-                            {
+                            if jpeg_fill_bit_buffer(&mut br_state, get_buffer, bits_left, 0) == 0 {
                                 return 0i32;
                             }
                             get_buffer = br_state.get_buffer;
@@ -2379,9 +2093,7 @@ unsafe extern "C" fn decode_mcu(
                         }
                         match current_block_115 {
                             9180031981464905198 => {
-                                look_1 = (get_buffer >> bits_left - 8)
-                                    as i32
-                                    & bmask[8];
+                                look_1 = (get_buffer >> bits_left - 8) as i32 & bmask[8];
                                 nb_1 = (*htbl).look_nbits[look_1 as usize];
                                 if nb_1 != 0 {
                                     bits_left -= nb_1;
@@ -2436,7 +2148,6 @@ unsafe extern "C" fn decode_mcu(
                 }
                 _ => {}
             }
-            blkn += 1
         }
         /* Completed MCU, so update state */
         (*(*cinfo).src).next_input_byte = br_state.next_input_byte;
@@ -2514,8 +2225,7 @@ unsafe extern "C" fn start_pass_huff_decoder(mut cinfo: crate::jpeglib_h::j_deco
              * overflows in the IDCT math.  But we won't crash.
              */
             {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_PROGRESSION as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_PROGRESSION as i32;
                 (*(*cinfo).err).msg_parm.i[0] = (*cinfo).Ss;
                 (*(*cinfo).err).msg_parm.i[1] = (*cinfo).Se;
                 (*(*cinfo).err).msg_parm.i[2] = (*cinfo).Ah;
@@ -2539,13 +2249,10 @@ unsafe extern "C" fn start_pass_huff_decoder(mut cinfo: crate::jpeglib_h::j_deco
         while ci < (*cinfo).comps_in_scan {
             let mut coefi: i32 = 0;
             let mut cindex: i32 = (*(*cinfo).cur_comp_info[ci as usize]).component_index;
-            let mut coef_bit_ptr: *mut i32 =
-                &mut *(*(*cinfo).coef_bits.offset(cindex as isize))
-                    .as_mut_ptr()
-                    .offset(0) as *mut i32;
-            if (*cinfo).Ss != 0
-                && *coef_bit_ptr.offset(0) < 0
-            {
+            let mut coef_bit_ptr: *mut i32 = &mut *(*(*cinfo).coef_bits.offset(cindex as isize))
+                .as_mut_ptr()
+                .offset(0) as *mut i32;
+            if (*cinfo).Ss != 0 && *coef_bit_ptr.offset(0) < 0 {
                 /* AC without prior DC scan */
                 (*(*cinfo).err).msg_code =
                     crate::src::jpeg_8c::jerror::JWRN_BOGUS_PROGRESSION as i32;
@@ -2561,14 +2268,14 @@ unsafe extern "C" fn start_pass_huff_decoder(mut cinfo: crate::jpeglib_h::j_deco
                     -(1i32),
                 );
             }
-            coefi = (*cinfo).Ss;
-            while coefi <= (*cinfo).Se {
-                let mut expected: i32 =
-                    if *coef_bit_ptr.offset(coefi as isize) < 0 {
-                        0
-                    } else {
-                        *coef_bit_ptr.offset(coefi as isize)
-                    };
+
+            for coefi in (*cinfo).Ss..=(*cinfo).Se {
+                let mut expected: i32 = if *coef_bit_ptr.offset(coefi as isize) < 0 {
+                    0
+                } else {
+                    *coef_bit_ptr.offset(coefi as isize)
+                };
+
                 if (*cinfo).Ah != expected {
                     (*(*cinfo).err).msg_code =
                         crate::src::jpeg_8c::jerror::JWRN_BOGUS_PROGRESSION as i32;
@@ -2584,8 +2291,8 @@ unsafe extern "C" fn start_pass_huff_decoder(mut cinfo: crate::jpeglib_h::j_deco
                         -(1i32),
                     );
                 }
+
                 *coef_bit_ptr.offset(coefi as isize) = (*cinfo).Al;
-                coefi += 1
             }
             ci += 1
         }
@@ -2669,19 +2376,16 @@ unsafe extern "C" fn start_pass_huff_decoder(mut cinfo: crate::jpeglib_h::j_deco
         if (*cinfo).Ss != 0
             || (*cinfo).Ah != 0
             || (*cinfo).Al != 0
-            || ((*cinfo).is_baseline != 0 || (*cinfo).Se < 64)
-                && (*cinfo).Se != (*cinfo).lim_Se
+            || ((*cinfo).is_baseline != 0 || (*cinfo).Se < 64) && (*cinfo).Se != (*cinfo).lim_Se
         {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JWRN_NOT_SEQUENTIAL as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JWRN_NOT_SEQUENTIAL as i32;
             Some(
                 (*(*cinfo).err)
                     .emit_message
                     .expect("non-null function pointer"),
             )
             .expect("non-null function pointer")(
-                cinfo as crate::jpeglib_h::j_common_ptr,
-                -(1i32),
+                cinfo as crate::jpeglib_h::j_common_ptr, -(1i32)
             );
         }
         /* Select MCU decoding routine */
@@ -2757,9 +2461,8 @@ unsafe extern "C" fn start_pass_huff_decoder(mut cinfo: crate::jpeglib_h::j_deco
                         if i <= 0 || i > 2 {
                             i = 2
                         }
-                        (*entropy).coef_limit[blkn as usize] = 1
-                            + jpeg_zigzag_order2[(ci - 1) as usize]
-                                [(i - 1) as usize]
+                        (*entropy).coef_limit[blkn as usize] =
+                            1 + jpeg_zigzag_order2[(ci - 1) as usize][(i - 1) as usize]
                     }
                     8 => {
                         if ci <= 0 || ci > 3 {
@@ -2768,9 +2471,8 @@ unsafe extern "C" fn start_pass_huff_decoder(mut cinfo: crate::jpeglib_h::j_deco
                         if i <= 0 || i > 3 {
                             i = 3
                         }
-                        (*entropy).coef_limit[blkn as usize] = 1
-                            + jpeg_zigzag_order3[(ci - 1) as usize]
-                                [(i - 1) as usize]
+                        (*entropy).coef_limit[blkn as usize] =
+                            1 + jpeg_zigzag_order3[(ci - 1) as usize][(i - 1) as usize]
                     }
                     15 => {
                         if ci <= 0 || ci > 4 {
@@ -2779,9 +2481,8 @@ unsafe extern "C" fn start_pass_huff_decoder(mut cinfo: crate::jpeglib_h::j_deco
                         if i <= 0 || i > 4 {
                             i = 4
                         }
-                        (*entropy).coef_limit[blkn as usize] = 1
-                            + jpeg_zigzag_order4[(ci - 1) as usize]
-                                [(i - 1) as usize]
+                        (*entropy).coef_limit[blkn as usize] =
+                            1 + jpeg_zigzag_order4[(ci - 1) as usize][(i - 1) as usize]
                     }
                     24 => {
                         if ci <= 0 || ci > 5 {
@@ -2790,9 +2491,8 @@ unsafe extern "C" fn start_pass_huff_decoder(mut cinfo: crate::jpeglib_h::j_deco
                         if i <= 0 || i > 5 {
                             i = 5
                         }
-                        (*entropy).coef_limit[blkn as usize] = 1
-                            + jpeg_zigzag_order5[(ci - 1) as usize]
-                                [(i - 1) as usize]
+                        (*entropy).coef_limit[blkn as usize] =
+                            1 + jpeg_zigzag_order5[(ci - 1) as usize][(i - 1) as usize]
                     }
                     35 => {
                         if ci <= 0 || ci > 6 {
@@ -2801,9 +2501,8 @@ unsafe extern "C" fn start_pass_huff_decoder(mut cinfo: crate::jpeglib_h::j_deco
                         if i <= 0 || i > 6 {
                             i = 6
                         }
-                        (*entropy).coef_limit[blkn as usize] = 1
-                            + jpeg_zigzag_order6[(ci - 1) as usize]
-                                [(i - 1) as usize]
+                        (*entropy).coef_limit[blkn as usize] =
+                            1 + jpeg_zigzag_order6[(ci - 1) as usize][(i - 1) as usize]
                     }
                     48 => {
                         if ci <= 0 || ci > 7 {
@@ -2812,9 +2511,8 @@ unsafe extern "C" fn start_pass_huff_decoder(mut cinfo: crate::jpeglib_h::j_deco
                         if i <= 0 || i > 7 {
                             i = 7
                         }
-                        (*entropy).coef_limit[blkn as usize] = 1
-                            + jpeg_zigzag_order7[(ci - 1) as usize]
-                                [(i - 1) as usize]
+                        (*entropy).coef_limit[blkn as usize] =
+                            1 + jpeg_zigzag_order7[(ci - 1) as usize][(i - 1) as usize]
                     }
                     _ => {
                         if ci <= 0 || ci > 8 {
@@ -2823,9 +2521,8 @@ unsafe extern "C" fn start_pass_huff_decoder(mut cinfo: crate::jpeglib_h::j_deco
                         if i <= 0 || i > 8 {
                             i = 8
                         }
-                        (*entropy).coef_limit[blkn as usize] = 1
-                            + jpeg_zigzag_order[(ci - 1) as usize]
-                                [(i - 1) as usize]
+                        (*entropy).coef_limit[blkn as usize] =
+                            1 + jpeg_zigzag_order[(ci - 1) as usize][(i - 1) as usize]
                     }
                 }
             } else {
@@ -2857,7 +2554,6 @@ pub unsafe extern "C" fn jinit_huff_decoder(mut cinfo: crate::jpeglib_h::j_decom
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<huff_entropy_decoder>(),
     ) as huff_entropy_ptr;
     (*cinfo).entropy = entropy as *mut crate::jpegint_h::jpeg_entropy_decoder;
@@ -2877,22 +2573,19 @@ pub unsafe extern "C" fn jinit_huff_decoder(mut cinfo: crate::jpeglib_h::j_decom
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
             1,
-            (((*cinfo).num_components * 64i32) as usize)
-                .wrapping_mul(::std::mem::size_of::<i32>()),
+            (((*cinfo).num_components * 64i32) as usize).wrapping_mul(::std::mem::size_of::<i32>()),
         ) as *mut [i32; 64];
-        coef_bit_ptr = &mut *(*(*cinfo).coef_bits.offset(0))
-            .as_mut_ptr()
-            .offset(0) as *mut i32;
-        ci = 0;
-        while ci < (*cinfo).num_components {
+        coef_bit_ptr = &mut *(*(*cinfo).coef_bits.offset(0)).as_mut_ptr().offset(0) as *mut i32;
+
+        for ci in 0..(*cinfo).num_components {
             i = 0;
+
             while i < 64 {
                 let fresh6 = coef_bit_ptr;
                 coef_bit_ptr = coef_bit_ptr.offset(1);
                 *fresh6 = -(1);
                 i += 1
             }
-            ci += 1
         }
         /* Mark derived tables unallocated */
         i = 0;

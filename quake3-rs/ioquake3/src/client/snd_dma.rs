@@ -1247,8 +1247,8 @@ pub unsafe extern "C" fn S_Base_ClearLoopingSounds(
     mut killall: crate::src::qcommon::q_shared::qboolean,
 ) {
     let mut i: i32 = 0;
-    i = 0;
-    while i < (1) << 10 {
+
+    for i in 0..(1) << 10 {
         if killall != 0
             || loopSounds[i as usize].kill == crate::src::qcommon::q_shared::qtrue
             || !loopSounds[i as usize].sfx.is_null()
@@ -1256,7 +1256,6 @@ pub unsafe extern "C" fn S_Base_ClearLoopingSounds(
         {
             S_Base_StopLoopingSound(i);
         }
-        i += 1
     }
     numLoopChannels = 0;
 }
@@ -1453,10 +1452,11 @@ pub unsafe extern "C" fn S_AddLoopSounds() {
                 // sphere
             }
             (*(*loop_0).sfx).lastTimeUsed = time;
-            j = i + 1;
-            while j < (1) << 10 {
+
+            for j in i + 1..(1) << 10 {
                 loop2 = &mut *loopSounds.as_mut_ptr().offset(j as isize)
                     as *mut crate::snd_local_h::loopSound_t;
+
                 if !((*loop2).active as u64 == 0
                     || (*loop2).doppler != 0
                     || (*loop2).sfx != (*loop_0).sfx)
@@ -1483,7 +1483,6 @@ pub unsafe extern "C" fn S_AddLoopSounds() {
                     left_total += left;
                     right_total += right
                 }
-                j += 1
             }
             if !(left_total == 0 && right_total == 0) {
                 // allocate a channel
@@ -2236,14 +2235,14 @@ pub unsafe extern "C" fn S_FreeOldestSound() {
     let mut nbuffer: *mut crate::snd_local_h::sndBuffer = 0 as *mut crate::snd_local_h::sndBuffer;
     oldest = crate::src::qcommon::common::Com_Milliseconds();
     used = 0;
-    i = 1;
-    while i < s_numSfx {
+
+    for i in 1..s_numSfx {
         sfx = &mut *s_knownSfx.as_mut_ptr().offset(i as isize) as *mut crate::snd_local_h::sfx_t;
+
         if (*sfx).inMemory != 0 && (*sfx).lastTimeUsed < oldest {
             used = i;
             oldest = (*sfx).lastTimeUsed
         }
-        i += 1
     }
     sfx = &mut *s_knownSfx.as_mut_ptr().offset(used as isize) as *mut crate::snd_local_h::sfx_t;
     crate::src::qcommon::common::Com_DPrintf(

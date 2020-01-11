@@ -236,14 +236,10 @@ pub unsafe extern "C" fn jpeg_CreateCompress(
         )
         .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr);
     }
-    if structsize
-        !=  ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>()
-    {
+    if structsize != ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>() {
         (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STRUCT_SIZE as i32;
         (*(*cinfo).err).msg_parm.i[0] =
-            
-            ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>()
-                as i32;
+            ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>() as i32;
         (*(*cinfo).err).msg_parm.i[1] = structsize as i32;
         Some(
             (*(*cinfo).err)
@@ -263,7 +259,6 @@ pub unsafe extern "C" fn jpeg_CreateCompress(
     crate::stdlib::memset(
         cinfo as *mut libc::c_void,
         0,
-        
         ::std::mem::size_of::<crate::jpeglib_h::jpeg_compress_struct>(),
     );
     (*cinfo).err = err;
@@ -369,8 +364,7 @@ pub unsafe extern "C" fn jpeg_finish_compress(mut cinfo: crate::jpeglib_h::j_com
     if (*cinfo).global_state == 101 || (*cinfo).global_state == 102 {
         /* Terminate first pass */
         if (*cinfo).next_scanline < (*cinfo).image_height {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_TOO_LITTLE_DATA as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_TOO_LITTLE_DATA as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit
@@ -427,13 +421,10 @@ pub unsafe extern "C" fn jpeg_finish_compress(mut cinfo: crate::jpeglib_h::j_com
                     .expect("non-null function pointer"),
             )
             .expect("non-null function pointer")(
-                cinfo,
-                
-                0 as crate::jpeglib_h::JSAMPIMAGE,
+                cinfo, 0 as crate::jpeglib_h::JSAMPIMAGE
             ) == 0
             {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_CANT_SUSPEND as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_CANT_SUSPEND as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit

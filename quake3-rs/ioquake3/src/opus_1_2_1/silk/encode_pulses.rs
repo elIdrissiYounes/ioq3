@@ -61,14 +61,15 @@ unsafe extern "C" fn combine_and_check(
 /* I    number of output values        */ {
     let mut k: i32 = 0;
     let mut sum: i32 = 0;
-    k = 0;
-    while k < len {
+
+    for k in 0..len {
         sum = *pulses_in.offset((2 * k) as isize) + *pulses_in.offset((2 * k + 1) as isize);
+
         if sum > max_pulses {
             return 1i32;
         }
+
         *pulses_comb.offset(k as isize) = sum;
-        k += 1
     }
     return 0;
 }

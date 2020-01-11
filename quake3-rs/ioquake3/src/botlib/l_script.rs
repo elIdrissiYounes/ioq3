@@ -1375,10 +1375,10 @@ pub unsafe extern "C" fn PS_ReadNumber(
             (*token).subtype |= 0x800
         }
     }
-    i = 0;
-    while i < 2 {
+
+    for i in 0..2 {
         c = *(*script).script_p;
-        //end if
+
         if (c as i32 == 'l' as i32 || c as i32 == 'L' as i32) && (*token).subtype & 0x2000 == 0 {
             //check for a LONG number
             (*script).script_p = (*script).script_p.offset(1); //end if
@@ -1389,7 +1389,6 @@ pub unsafe extern "C" fn PS_ReadNumber(
             (*script).script_p = (*script).script_p.offset(1);
             (*token).subtype |= 0x4000
         }
-        i += 1
     }
     (*token).string[len as usize] = '\u{0}' as i8;
     NumberValue(

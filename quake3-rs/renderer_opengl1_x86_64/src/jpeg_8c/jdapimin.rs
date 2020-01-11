@@ -245,14 +245,10 @@ pub unsafe extern "C" fn jpeg_CreateDecompress(
         )
         .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr);
     }
-    if structsize
-        !=  ::std::mem::size_of::<crate::jpeglib_h::jpeg_decompress_struct>()
-    {
+    if structsize != ::std::mem::size_of::<crate::jpeglib_h::jpeg_decompress_struct>() {
         (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_STRUCT_SIZE as i32;
         (*(*cinfo).err).msg_parm.i[0] =
-            
-            ::std::mem::size_of::<crate::jpeglib_h::jpeg_decompress_struct>()
-                as i32;
+            ::std::mem::size_of::<crate::jpeglib_h::jpeg_decompress_struct>() as i32;
         (*(*cinfo).err).msg_parm.i[1] = structsize as i32;
         Some(
             (*(*cinfo).err)
@@ -272,7 +268,6 @@ pub unsafe extern "C" fn jpeg_CreateDecompress(
     crate::stdlib::memset(
         cinfo as *mut libc::c_void,
         0,
-        
         ::std::mem::size_of::<crate::jpeglib_h::jpeg_decompress_struct>(),
     );
     (*cinfo).err = err;
@@ -363,8 +358,7 @@ unsafe extern "C" fn default_decompress_parms(mut cinfo: crate::jpeglib_h::j_dec
                     _ => {
                         (*(*cinfo).err).msg_code =
                             crate::src::jpeg_8c::jerror::JWRN_ADOBE_XFORM as i32; /* assume it's YCbCr */
-                        (*(*cinfo).err).msg_parm.i[0] =
-                            (*cinfo).Adobe_transform as i32;
+                        (*(*cinfo).err).msg_parm.i[0] = (*cinfo).Adobe_transform as i32;
                         Some(
                             (*(*cinfo).err)
                                 .emit_message
@@ -379,27 +373,19 @@ unsafe extern "C" fn default_decompress_parms(mut cinfo: crate::jpeglib_h::j_dec
                 }
             } else {
                 /* Saw no special markers, try to guess from the component IDs */
-                let mut cid0: i32 =
-                    (*(*cinfo).comp_info.offset(0)).component_id; /* assume JFIF w/out marker */
-                let mut cid1: i32 =
-                    (*(*cinfo).comp_info.offset(1)).component_id; /* ASCII 'R', 'G', 'B' */
-                let mut cid2: i32 =
-                    (*(*cinfo).comp_info.offset(2)).component_id;
-                if cid0 == 1 && cid1 == 2 && cid2 == 3
-                {
+                let mut cid0: i32 = (*(*cinfo).comp_info.offset(0)).component_id; /* assume JFIF w/out marker */
+                let mut cid1: i32 = (*(*cinfo).comp_info.offset(1)).component_id; /* ASCII 'R', 'G', 'B' */
+                let mut cid2: i32 = (*(*cinfo).comp_info.offset(2)).component_id;
+                if cid0 == 1 && cid1 == 2 && cid2 == 3 {
                     (*cinfo).jpeg_color_space = crate::jpeglib_h::JCS_YCbCr
-                } else if cid0 == 82
-                    && cid1 == 71
-                    && cid2 == 66
-                {
+                } else if cid0 == 82 && cid1 == 71 && cid2 == 66 {
                     (*cinfo).jpeg_color_space = crate::jpeglib_h::JCS_RGB
                 } else {
                     let mut _mp: *mut i32 = (*(*cinfo).err).msg_parm.i.as_mut_ptr();
                     *_mp.offset(0) = cid0;
                     *_mp.offset(1) = cid1;
                     *_mp.offset(2) = cid2;
-                    (*(*cinfo).err).msg_code =
-                        crate::src::jpeg_8c::jerror::JTRC_UNKNOWN_IDS as i32;
+                    (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JTRC_UNKNOWN_IDS as i32;
                     Some(
                         (*(*cinfo).err)
                             .emit_message
@@ -424,8 +410,7 @@ unsafe extern "C" fn default_decompress_parms(mut cinfo: crate::jpeglib_h::j_dec
                     _ => {
                         (*(*cinfo).err).msg_code =
                             crate::src::jpeg_8c::jerror::JWRN_ADOBE_XFORM as i32; /* assume it's YCCK */
-                        (*(*cinfo).err).msg_parm.i[0] =
-                            (*cinfo).Adobe_transform as i32;
+                        (*(*cinfo).err).msg_parm.i[0] = (*cinfo).Adobe_transform as i32;
                         Some(
                             (*(*cinfo).err)
                                 .emit_message
@@ -518,8 +503,7 @@ pub unsafe extern "C" fn jpeg_read_header(
         2 => {
             if require_image != 0 {
                 /* Complain if application wanted an image */
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_NO_IMAGE as i32;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_NO_IMAGE as i32;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -553,9 +537,7 @@ pub unsafe extern "C" fn jpeg_read_header(
  */
 #[no_mangle]
 
-pub unsafe extern "C" fn jpeg_consume_input(
-    mut cinfo: crate::jpeglib_h::j_decompress_ptr,
-) -> i32 {
+pub unsafe extern "C" fn jpeg_consume_input(mut cinfo: crate::jpeglib_h::j_decompress_ptr) -> i32 {
     let mut retcode: i32 = 0;
     let mut current_block_10: u64;
     /* NB: every possible DSTATE value should be listed in this switch */
@@ -745,8 +727,7 @@ pub unsafe extern "C" fn jpeg_finish_decompress(
     {
         /* Terminate final pass of non-buffered mode */
         if (*cinfo).output_scanline < (*cinfo).output_height {
-            (*(*cinfo).err).msg_code =
-                crate::src::jpeg_8c::jerror::JERR_TOO_LITTLE_DATA as i32;
+            (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_TOO_LITTLE_DATA as i32;
             Some(
                 (*(*cinfo).err)
                     .error_exit

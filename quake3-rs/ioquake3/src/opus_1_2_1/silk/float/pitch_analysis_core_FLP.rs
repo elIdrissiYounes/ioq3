@@ -982,18 +982,17 @@ unsafe extern "C" fn silk_P_Ana_calc_corr_st3(
             j += 1
         }
         delta = *Lag_range_ptr.offset((k * 2 + 0) as isize) as i32;
-        i = 0;
-        while i < nb_cbk_search {
-            /* Fill out the 3 dim array that stores the correlations for */
-            /* each code_book vector for each start lag */
+
+        for i in 0..nb_cbk_search {
             idx = *Lag_CB_ptr.offset((k * cbk_size + i) as isize) as i32 - delta;
+
             j = 0;
+
             while j < 5 {
                 (*cross_corr_st3.offset(k as isize))[i as usize][j as usize] =
                     scratch_mem[(idx + j) as usize];
                 j += 1
             }
-            i += 1
         }
         target_ptr = target_ptr.offset(sf_length as isize);
         k += 1
@@ -1096,11 +1095,10 @@ unsafe extern "C" fn silk_P_Ana_calc_energy_st3(
             /* Fill out the 3 dim array that stores the correlations for    */
             /* each code_book vector for each start lag                     */
             idx = *Lag_CB_ptr.offset((k * cbk_size + i) as isize) as i32 - delta;
-            j = 0;
-            while j < 5 {
+
+            for j in 0..5 {
                 (*energies_st3.offset(k as isize))[i as usize][j as usize] =
                     scratch_mem[(idx + j) as usize];
-                j += 1
             }
             i += 1
         }

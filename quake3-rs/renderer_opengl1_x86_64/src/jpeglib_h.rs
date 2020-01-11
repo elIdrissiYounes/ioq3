@@ -397,8 +397,7 @@ pub struct jpeg_memory_mgr {
             _: crate::jmorecfg_h::boolean,
         ) -> crate::jpeglib_h::JBLOCKARRAY,
     >,
-    pub free_pool:
-        Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: i32) -> ()>,
+    pub free_pool: Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: i32) -> ()>,
     pub self_destruct: Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr) -> ()>,
     pub max_memory_to_use: isize,
     pub max_alloc_chunk: isize,
@@ -954,8 +953,7 @@ pub type jvirt_sarray_ptr = *mut crate::jpeglib_h::jvirt_sarray_control;
 #[derive(Copy, Clone)]
 pub struct jpeg_error_mgr {
     pub error_exit: Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr) -> ()>,
-    pub emit_message:
-        Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: i32) -> ()>,
+    pub emit_message: Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: i32) -> ()>,
     pub output_message: Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr) -> ()>,
     pub format_message:
         Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_common_ptr, _: *mut i8) -> ()>,

@@ -510,8 +510,8 @@ pub unsafe extern "C" fn silk_decode_indices(
             crate::src::opus_1_2_1::silk::tables_LTP::silk_LTP_per_index_iCDF.as_ptr(),
             8,
         ) as i8;
-        k = 0;
-        while k < (*psDec).nb_subfr {
+
+        for k in 0..(*psDec).nb_subfr {
             (*psDec).indices.LTPIndex[k as usize] =
                 crate::src::opus_1_2_1::celt::entdec::ec_dec_icdf(
                     psRangeDec,
@@ -519,7 +519,6 @@ pub unsafe extern "C" fn silk_decode_indices(
                         [(*psDec).indices.PERIndex as usize],
                     8,
                 ) as i8;
-            k += 1
         }
         /* *********************/
         /* Decode LTP scaling */

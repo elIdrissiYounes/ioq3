@@ -446,16 +446,16 @@ pub unsafe extern "C" fn UI_GetArenaInfoByNumber(mut num: i32) -> *const i8 {
         ));
         return 0 as *const i8;
     }
-    n = 0;
-    while n < ui_numArenas {
+
+    for n in 0..ui_numArenas {
         value = crate::src::qcommon::q_shared::Info_ValueForKey(
             ui_arenaInfos[n as usize],
             b"num\x00" as *const u8 as *const i8,
         );
+
         if *value as i32 != 0 && atoi(value) == num {
             return ui_arenaInfos[n as usize];
         }
-        n += 1
     }
     return 0 as *const i8;
 }
@@ -468,8 +468,8 @@ UI_GetArenaInfoByNumber
 
 pub unsafe extern "C" fn UI_GetArenaInfoByMap(mut map: *const i8) -> *const i8 {
     let mut n: i32 = 0;
-    n = 0;
-    while n < ui_numArenas {
+
+    for n in 0..ui_numArenas {
         if crate::src::qcommon::q_shared::Q_stricmp(
             crate::src::qcommon::q_shared::Info_ValueForKey(
                 ui_arenaInfos[n as usize],
@@ -480,7 +480,6 @@ pub unsafe extern "C" fn UI_GetArenaInfoByMap(mut map: *const i8) -> *const i8 {
         {
             return ui_arenaInfos[n as usize];
         }
-        n += 1
     }
     return 0 as *const i8;
 }
@@ -493,8 +492,8 @@ UI_GetSpecialArenaInfo
 
 pub unsafe extern "C" fn UI_GetSpecialArenaInfo(mut tag: *const i8) -> *const i8 {
     let mut n: i32 = 0;
-    n = 0;
-    while n < ui_numArenas {
+
+    for n in 0..ui_numArenas {
         if crate::src::qcommon::q_shared::Q_stricmp(
             crate::src::qcommon::q_shared::Info_ValueForKey(
                 ui_arenaInfos[n as usize],
@@ -505,7 +504,6 @@ pub unsafe extern "C" fn UI_GetSpecialArenaInfo(mut tag: *const i8) -> *const i8
         {
             return ui_arenaInfos[n as usize];
         }
-        n += 1
     }
     return 0 as *const i8;
 }
@@ -641,16 +639,16 @@ UI_GetBotInfoByName
 pub unsafe extern "C" fn UI_GetBotInfoByName(mut name: *const i8) -> *mut i8 {
     let mut n: i32 = 0;
     let mut value: *mut i8 = 0 as *mut i8;
-    n = 0;
-    while n < ui_numBots {
+
+    for n in 0..ui_numBots {
         value = crate::src::qcommon::q_shared::Info_ValueForKey(
             ui_botInfos[n as usize],
             b"name\x00" as *const u8 as *const i8,
         );
+
         if crate::src::qcommon::q_shared::Q_stricmp(value, name) == 0 {
             return ui_botInfos[n as usize];
         }
-        n += 1
     }
     return 0 as *mut i8;
 }
@@ -681,30 +679,32 @@ pub unsafe extern "C" fn UI_GetBestScore(mut level: i32, mut score: *mut i32, mu
     }
     bestScore = 0;
     bestScoreSkill = 0;
-    n = 1;
-    while n <= 5 {
+
+    for n in 1..=5 {
         crate::src::ui::ui_syscalls::trap_Cvar_VariableStringBuffer(
             crate::src::qcommon::q_shared::va(b"g_spScores%i\x00" as *const u8 as *mut i8, n),
             scores.as_mut_ptr(),
             1024,
         );
+
         crate::src::qcommon::q_shared::Com_sprintf(
             arenaKey.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 16]>() as i32,
             b"l%i\x00" as *const u8 as *const i8,
             level,
         );
+
         skillScore = atoi(crate::src::qcommon::q_shared::Info_ValueForKey(
             scores.as_mut_ptr(),
             arenaKey.as_mut_ptr(),
         ));
+
         if !(skillScore < 1 || skillScore > 8) {
             if bestScore == 0 || skillScore <= bestScore {
                 bestScore = skillScore;
                 bestScoreSkill = n
             }
         }
-        n += 1
     }
     *score = bestScore;
     *skill = bestScoreSkill;
@@ -1107,31 +1107,28 @@ pub unsafe extern "C" fn UI_SPUnlock_f() {
         scores.as_mut_ptr(),
         1024,
     );
-    // update scores
-    level = 0;
-    while level < ui_numSinglePlayerArenas + ui_numSpecialSinglePlayerArenas {
+
+    for level in 0..ui_numSinglePlayerArenas + ui_numSpecialSinglePlayerArenas {
         crate::src::qcommon::q_shared::Com_sprintf(
             arenaKey.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 16]>() as i32,
             b"l%i\x00" as *const u8 as *const i8,
             level,
         );
+
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             scores.as_mut_ptr(),
             arenaKey.as_mut_ptr(),
             b"1\x00" as *const u8 as *const i8,
         );
-        level += 1
     }
     crate::src::ui::ui_syscalls::trap_Cvar_Set(
         b"g_spScores1\x00" as *const u8 as *const i8,
         scores.as_mut_ptr(),
     );
-    // unlock cinematics
-    tier = 1;
-    while tier <= 8 {
+
+    for tier in 1..=8 {
         UI_ShowTierVideo(tier);
-        tier += 1
     }
     crate::src::ui::ui_syscalls::trap_Print(
         b"All levels unlocked at skill level 1\n\x00" as *const u8 as *const i8,
@@ -1154,20 +1151,20 @@ pub unsafe extern "C" fn UI_SPUnlockMedals_f() {
         awardData.as_mut_ptr(),
         1024,
     );
-    n = 0;
-    while n < 6 {
+
+    for n in 0..6 {
         crate::src::qcommon::q_shared::Com_sprintf(
             key.as_mut_ptr(),
             ::std::mem::size_of::<[i8; 16]>() as i32,
             b"a%i\x00" as *const u8 as *const i8,
             n,
         );
+
         crate::src::qcommon::q_shared::Info_SetValueForKey(
             awardData.as_mut_ptr(),
             key.as_mut_ptr(),
             b"100\x00" as *const u8 as *const i8,
         );
-        n += 1
     }
     crate::src::ui::ui_syscalls::trap_Cvar_Set(
         b"g_spAwards\x00" as *const u8 as *const i8,

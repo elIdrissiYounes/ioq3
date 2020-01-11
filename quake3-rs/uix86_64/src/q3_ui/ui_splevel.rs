@@ -743,12 +743,13 @@ unsafe extern "C" fn UI_SPLevelMenu_SetMenuItems() {
         );
         levelMenuInfo.item_maps[0].generic.bottom += 18;
         levelMenuInfo.numMaps = 4;
-        n = 0;
-        while n < 4 {
+
+        for n in 0..4 {
             level = selectedArenaSet * 4 + n;
+
             arenaInfo = crate::src::q3_ui::ui_gameinfo::UI_GetArenaInfoByNumber(level);
+
             UI_SPLevelMenu_SetMenuArena(n, level, arenaInfo);
-            n += 1
         }
         if selectedArena != -(1) {
             levelMenuInfo.selectedArenaInfo =
@@ -1317,20 +1318,20 @@ pub unsafe extern "C" fn UI_SPLevelMenu_Cache() {
     crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
         b"menu/art/skirmish_1\x00" as *const u8 as *const i8,
     );
-    n = 0;
-    while n < 6 {
+
+    for n in 0..6 {
         crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
             *crate::src::q3_ui::ui_sppostgame::ui_medalPicNames
                 .as_mut_ptr()
                 .offset(n as isize),
         );
+
         levelMenuInfo.awardSounds[n as usize] = crate::src::ui::ui_syscalls::trap_S_RegisterSound(
             *crate::src::q3_ui::ui_sppostgame::ui_medalSounds
                 .as_mut_ptr()
                 .offset(n as isize),
             crate::src::qcommon::q_shared::qfalse,
         );
-        n += 1
     }
     levelMenuInfo.levelSelectedPic = crate::src::ui::ui_syscalls::trap_R_RegisterShaderNoMip(
         b"menu/art/maps_selected\x00" as *const u8 as *const i8,

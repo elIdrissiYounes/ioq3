@@ -322,16 +322,14 @@ pub static mut botmovestates: [*mut bot_movestate_t; 65] = [0 as *mut bot_movest
 
 pub unsafe extern "C" fn BotAllocMoveState() -> i32 {
     let mut i: i32 = 0; //end for
-    i = 1;
-    while i <= 64 {
+
+    for i in 1..=64 {
         if botmovestates[i as usize].is_null() {
             botmovestates[i as usize] = crate::src::botlib::l_memory::GetClearedMemory(
                 ::std::mem::size_of::<bot_movestate_t>(),
             ) as *mut bot_movestate_t;
             return i;
         }
-        i += 1
-        //end if
     }
     return 0;
 }
@@ -869,15 +867,15 @@ pub unsafe extern "C" fn BotOnMover(
         return crate::src::qcommon::q_shared::qfalse as i32;
     }
     //
-    i = 0; //end for
-    while i < 2 {
+    //end for
+    for i in 0..2 {
         if *origin.offset(i as isize) > modelorigin[i as usize] + maxs[i as usize] + 16f32 {
             return crate::src::qcommon::q_shared::qfalse as i32;
         }
+
         if *origin.offset(i as isize) < modelorigin[i as usize] + mins[i as usize] - 16f32 {
             return crate::src::qcommon::q_shared::qfalse as i32;
         }
-        i += 1
     }
     //
     org[0] = *origin.offset(0);
@@ -1272,16 +1270,17 @@ pub unsafe extern "C" fn BotAvoidSpots(
         _ => checkbetween = crate::src::qcommon::q_shared::qtrue as i32,
     }
     type_0 = 0;
-    i = 0;
-    while i < numavoidspots {
+
+    for i in 0..numavoidspots {
         squaredradius =
             (*avoidspots.offset(i as isize)).radius * (*avoidspots.offset(i as isize)).radius;
+
         squareddist = DistanceFromLineSquared(
             (*avoidspots.offset(i as isize)).origin.as_mut_ptr(),
             origin,
             (*reach).start.as_mut_ptr(),
         );
-        // if moving towards the avoid spot
+
         if squareddist < squaredradius
             && VectorDistanceSquared((*avoidspots.offset(i as isize)).origin.as_mut_ptr(), origin)
                 > squareddist
@@ -1319,10 +1318,10 @@ pub unsafe extern "C" fn BotAvoidSpots(
                 type_0 = (*avoidspots.offset(i as isize)).type_0
             }
         }
+
         if type_0 == 1 {
             return type_0;
         }
-        i += 1
     }
     return type_0;
 }
@@ -1895,24 +1894,31 @@ pub unsafe extern "C" fn BotGapDistance(
     }
     startz = trace.endpos[2] + 1f32;
     //
-    dist = 8; //end for
-    while dist <= 100 {
+    //end for
+    for dist in (8..=100).step_by(8 as usize) {
         start[0] = *origin.offset(0) + *hordir.offset(0) * dist as f32;
+
         start[1] = *origin.offset(1) + *hordir.offset(1) * dist as f32;
+
         start[2] = *origin.offset(2) + *hordir.offset(2) * dist as f32;
+
         start[2] = startz + 24f32;
+
         end[0] = start[0];
+
         end[1] = start[1];
+
         end[2] = start[2];
+
         end[2] -= 48f32 + (*sv_maxbarrier).value;
+
         trace = crate::src::botlib::be_aas_sample::AAS_TraceClientBBox(
             start.as_mut_ptr(),
             end.as_mut_ptr(),
             4,
             entnum,
         );
-        //end if
-        //if solid is found the bot can't walk any further and fall into a gap
+
         if trace.startsolid as u64 == 0 {
             //if it is a gap
             if trace.endpos[2] < startz - (*sv_maxstep).value - 8f32 {
@@ -1930,7 +1936,6 @@ pub unsafe extern "C" fn BotGapDistance(
                 startz = trace.endpos[2]
             }
         }
-        dist += 8
     }
     return 0f32;
 }
@@ -3062,11 +3067,11 @@ pub unsafe extern "C" fn BotAirControl(
     vel[0] = (*velocity.offset(0) as f64 * 0.1) as crate::src::qcommon::q_shared::vec_t;
     vel[1] = (*velocity.offset(1) as f64 * 0.1) as crate::src::qcommon::q_shared::vec_t;
     vel[2] = (*velocity.offset(2) as f64 * 0.1) as crate::src::qcommon::q_shared::vec_t;
-    i = 0;
-    while i < 50 {
+
+    for i in 0..50 {
         vel[2] = (vel[2] as f64 - (*sv_gravity).value as f64 * 0.01)
             as crate::src::qcommon::q_shared::vec_t;
-        //end else
+
         if vel[2] < 0f32 && org[2] + vel[2] < *goal.offset(2) {
             //if going down and next position would be below the goal
             vel[0] = vel[0] * ((*goal.offset(2) - org[2]) / vel[2]); //end if
@@ -3089,7 +3094,6 @@ pub unsafe extern "C" fn BotAirControl(
             org[1] = org[1] + vel[1];
             org[2] = org[2] + vel[2]
         }
-        i += 1
     }
     *dir.offset(0) = 0f32;
     *dir.offset(1) = 0f32;
@@ -5652,14 +5656,12 @@ pub unsafe extern "C" fn BotResetLastAvoidReach(mut movestate: i32) {
     }
     latesttime = 0f32;
     latest = 0;
-    i = 0;
-    while i < 1 {
+
+    for i in 0..1 {
         if (*ms).avoidreachtimes[i as usize] > latesttime {
             latesttime = (*ms).avoidreachtimes[i as usize];
             latest = i
         }
-        i += 1
-        //end if
     }
     if latesttime != 0. {
         (*ms).avoidreachtimes[latest as usize] = 0f32;

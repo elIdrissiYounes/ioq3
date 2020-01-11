@@ -679,7 +679,7 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
                 ); /* jidctint uses islow-style table */
                 method = crate::jpeglib_h::JDCT_ISLOW as i32
             }
-            2056 => match  (*cinfo).dct_method {
+            2056 => match (*cinfo).dct_method {
                 0 => {
                     method_ptr = Some(
                         crate::src::jpeg_8c::jidctint::jpeg_idct_islow
@@ -733,12 +733,9 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
                 }
             },
             _ => {
-                (*(*cinfo).err).msg_code =
-                    crate::src::jpeg_8c::jerror::JERR_BAD_DCTSIZE as i32;
-                (*(*cinfo).err).msg_parm.i[0] =
-                    (*compptr).DCT_h_scaled_size;
-                (*(*cinfo).err).msg_parm.i[1] =
-                    (*compptr).DCT_v_scaled_size;
+                (*(*cinfo).err).msg_code = crate::src::jpeg_8c::jerror::JERR_BAD_DCTSIZE as i32;
+                (*(*cinfo).err).msg_parm.i[0] = (*compptr).DCT_h_scaled_size;
+                (*(*cinfo).err).msg_parm.i[1] = (*compptr).DCT_v_scaled_size;
                 Some(
                     (*(*cinfo).err)
                         .error_exit
@@ -786,78 +783,20 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
                         let mut ifmtbl: *mut crate::jdct_h::IFAST_MULT_TYPE =
                             (*compptr).dct_table as *mut crate::jdct_h::IFAST_MULT_TYPE;
                         static mut aanscales: [crate::jmorecfg_h::INT16; 64] = [
-                            16384,
-                            22725,
-                            21407,
-                            19266,
-                            16384,
-                            12873,
-                            8867,
-                            4520,
-                            22725,
-                            31521,
-                            29692,
-                            26722,
-                            22725,
-                            17855,
-                            12299,
-                            6270,
-                            21407,
-                            29692,
-                            27969,
-                            25172,
-                            21407,
-                            16819,
-                            11585,
-                            5906,
-                            19266,
-                            26722,
-                            25172,
-                            22654,
-                            19266,
-                            15137,
-                            10426,
-                            5315,
-                            16384,
-                            22725,
-                            21407,
-                            19266,
-                            16384,
-                            12873,
-                            8867,
-                            4520,
-                            12873,
-                            17855,
-                            16819,
-                            15137,
-                            12873,
-                            10114,
-                            6967,
-                            3552,
-                            8867,
-                            12299,
-                            11585,
-                            10426,
-                            8867,
-                            6967,
-                            4799,
-                            2446,
-                            4520,
-                            6270,
-                            5906,
-                            5315,
-                            4520,
-                            3552,
-                            2446,
-                            1247,
+                            16384, 22725, 21407, 19266, 16384, 12873, 8867, 4520, 22725, 31521,
+                            29692, 26722, 22725, 17855, 12299, 6270, 21407, 29692, 27969, 25172,
+                            21407, 16819, 11585, 5906, 19266, 26722, 25172, 22654, 19266, 15137,
+                            10426, 5315, 16384, 22725, 21407, 19266, 16384, 12873, 8867, 4520,
+                            12873, 17855, 16819, 15137, 12873, 10114, 6967, 3552, 8867, 12299,
+                            11585, 10426, 8867, 6967, 4799, 2446, 4520, 6270, 5906, 5315, 4520,
+                            3552, 2446, 1247,
                         ];
                         i = 0;
                         while i < 64 {
                             *ifmtbl.offset(i as isize) = ((*qtbl).quantval[i as usize]
                                 as crate::jmorecfg_h::INT32
                                 * aanscales[i as usize] as crate::jmorecfg_h::INT32
-                                + ((1)
-                                    << 14 - 2 - 1)
+                                + ((1) << 14 - 2 - 1)
                                 >> 14 - 2)
                                 as crate::jdct_h::IFAST_MULT_TYPE;
                             i += 1
@@ -887,16 +826,14 @@ unsafe extern "C" fn start_pass(mut cinfo: crate::jpeglib_h::j_decompress_ptr) {
                         i = 0;
                         row = 0;
                         while row < 8 {
-                            col = 0;
-                            while col < 8 {
-                                *fmtbl.offset(i as isize) = ((*qtbl).quantval[i as usize]
-                                    as f64
+                            for col in 0..8 {
+                                *fmtbl.offset(i as isize) = ((*qtbl).quantval[i as usize] as f64
                                     * aanscalefactor[row as usize]
                                     * aanscalefactor[col as usize]
                                     * 0.125)
                                     as crate::jdct_h::FLOAT_MULT_TYPE;
+
                                 i += 1;
-                                col += 1
                             }
                             row += 1
                         }
@@ -939,7 +876,6 @@ pub unsafe extern "C" fn jinit_inverse_dct(mut cinfo: crate::jpeglib_h::j_decomp
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<my_idct_controller>(),
     ) as my_idct_ptr;
     (*cinfo).idct = idct as *mut crate::jpegint_h::jpeg_inverse_dct;
@@ -957,13 +893,11 @@ pub unsafe extern "C" fn jinit_inverse_dct(mut cinfo: crate::jpeglib_h::j_decomp
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
             1,
-            
             ::std::mem::size_of::<multiplier_table>(),
         );
         crate::stdlib::memset(
             (*compptr).dct_table,
             0,
-            
             ::std::mem::size_of::<multiplier_table>(),
         );
         /* Mark multiplier table not yet set up for any method */

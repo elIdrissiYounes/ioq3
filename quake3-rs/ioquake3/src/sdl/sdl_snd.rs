@@ -275,12 +275,11 @@ unsafe extern "C" fn SNDDMA_PrintAudiospec(
     let mut i: i32 = 0;
     let mut fmt: *mut i8 = 0 as *mut i8;
     crate::src::qcommon::common::Com_Printf(b"%s:\n\x00" as *const u8 as *const i8, str);
-    i = 0;
-    while i < formatToStringTableSize {
+
+    for i in 0..formatToStringTableSize {
         if (*spec).format as i32 == formatToStringTable[i as usize].enumFormat as i32 {
             fmt = formatToStringTable[i as usize].stringFormat
         }
-        i += 1
     }
     if !fmt.is_null() {
         crate::src::qcommon::common::Com_Printf(

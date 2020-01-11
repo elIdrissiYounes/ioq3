@@ -105,19 +105,22 @@ pub unsafe extern "C" fn mdct_init(
     let mut i_0: i32 = 0;
     let mut j: i32 = 0;
     let mut msb: i32 = (1) << log2n - 2;
-    i_0 = 0;
-    while i_0 < n / 8 {
+
+    for i_0 in 0..n / 8 {
         let mut acc: i32 = 0;
+
         j = 0;
+
         while msb >> j != 0 {
             if msb >> j & i_0 != 0 {
                 acc |= (1) << j
             }
             j += 1
         }
+
         *bitrev.offset((i_0 * 2) as isize) = (!acc & mask) - 1;
+
         *bitrev.offset((i_0 * 2 + 1) as isize) = acc;
-        i_0 += 1
     }
     (*lookup).scale = 4.0 / n as f32;
 }

@@ -226,9 +226,7 @@ pub mod q_shared_h {
     pub unsafe extern "C" fn VectorNormalizeFast(mut v: *mut crate::src::qcommon::q_shared::vec_t) {
         let mut ilength: f32 = 0.;
         ilength = crate::src::qcommon::q_math::Q_rsqrt(
-            *v.offset(0) * *v.offset(0)
-                + *v.offset(1) * *v.offset(1)
-                + *v.offset(2) * *v.offset(2),
+            *v.offset(0) * *v.offset(0) + *v.offset(1) * *v.offset(1) + *v.offset(2) * *v.offset(2),
         );
         let ref mut fresh0 = *v.offset(0);
         *fresh0 *= ilength;
@@ -244,15 +242,9 @@ pub mod q_shared_h {
         mut v2: *const crate::src::qcommon::q_shared::vec_t,
         mut cross: *mut crate::src::qcommon::q_shared::vec_t,
     ) {
-        *cross.offset(0) = *v1.offset(1)
-            * *v2.offset(2)
-            - *v1.offset(2) * *v2.offset(1);
-        *cross.offset(1) = *v1.offset(2)
-            * *v2.offset(0)
-            - *v1.offset(0) * *v2.offset(2);
-        *cross.offset(2) = *v1.offset(0)
-            * *v2.offset(1)
-            - *v1.offset(1) * *v2.offset(0);
+        *cross.offset(0) = *v1.offset(1) * *v2.offset(2) - *v1.offset(2) * *v2.offset(1);
+        *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
+        *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
 
     // __Q_SHARED_H
@@ -562,8 +554,7 @@ RB_CheckOverflow
 
 pub unsafe extern "C" fn RB_CheckOverflow(mut verts: i32, mut indexes: i32) {
     if crate::src::renderergl1::tr_shade::tess.numVertexes + verts < 1000
-        && crate::src::renderergl1::tr_shade::tess.numIndexes + indexes
-            < 6 * 1000
+        && crate::src::renderergl1::tr_shade::tess.numIndexes + indexes < 6 * 1000
     {
         return;
     }
@@ -613,8 +604,7 @@ pub unsafe extern "C" fn RB_AddQuadStampExt(
     let mut normal: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut ndx: i32 = 0;
     if crate::src::renderergl1::tr_shade::tess.numVertexes + 4 >= 1000
-        || crate::src::renderergl1::tr_shade::tess.numIndexes + 6
-            >= 6 * 1000
+        || crate::src::renderergl1::tr_shade::tess.numIndexes + 6 >= 6 * 1000
     {
         RB_CheckOverflow(4i32, 6i32);
     }
@@ -638,172 +628,111 @@ pub unsafe extern "C" fn RB_AddQuadStampExt(
     crate::src::renderergl1::tr_shade::tess.indexes
         [(crate::src::renderergl1::tr_shade::tess.numIndexes + 5) as usize] =
         (ndx + 2) as crate::tr_local_h::glIndex_t;
-    crate::src::renderergl1::tr_shade::tess.xyz[ndx as usize][0] = *origin
-        .offset(0)
-        + *left.offset(0)
-        + *up.offset(0);
-    crate::src::renderergl1::tr_shade::tess.xyz[ndx as usize][1] = *origin
-        .offset(1)
-        + *left.offset(1)
-        + *up.offset(1);
-    crate::src::renderergl1::tr_shade::tess.xyz[ndx as usize][2] = *origin
-        .offset(2)
-        + *left.offset(2)
-        + *up.offset(2);
-    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 1) as usize]
-        [0] = *origin.offset(0)
-        - *left.offset(0)
-        + *up.offset(0);
-    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 1) as usize]
-        [1] = *origin.offset(1)
-        - *left.offset(1)
-        + *up.offset(1);
-    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 1) as usize]
-        [2] = *origin.offset(2)
-        - *left.offset(2)
-        + *up.offset(2);
-    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 2) as usize]
-        [0] = *origin.offset(0)
-        - *left.offset(0)
-        - *up.offset(0);
-    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 2) as usize]
-        [1] = *origin.offset(1)
-        - *left.offset(1)
-        - *up.offset(1);
-    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 2) as usize]
-        [2] = *origin.offset(2)
-        - *left.offset(2)
-        - *up.offset(2);
-    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 3) as usize]
-        [0] = *origin.offset(0)
-        + *left.offset(0)
-        - *up.offset(0);
-    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 3) as usize]
-        [1] = *origin.offset(1)
-        + *left.offset(1)
-        - *up.offset(1);
-    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 3) as usize]
-        [2] = *origin.offset(2)
-        + *left.offset(2)
-        - *up.offset(2);
+    crate::src::renderergl1::tr_shade::tess.xyz[ndx as usize][0] =
+        *origin.offset(0) + *left.offset(0) + *up.offset(0);
+    crate::src::renderergl1::tr_shade::tess.xyz[ndx as usize][1] =
+        *origin.offset(1) + *left.offset(1) + *up.offset(1);
+    crate::src::renderergl1::tr_shade::tess.xyz[ndx as usize][2] =
+        *origin.offset(2) + *left.offset(2) + *up.offset(2);
+    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 1) as usize][0] =
+        *origin.offset(0) - *left.offset(0) + *up.offset(0);
+    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 1) as usize][1] =
+        *origin.offset(1) - *left.offset(1) + *up.offset(1);
+    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 1) as usize][2] =
+        *origin.offset(2) - *left.offset(2) + *up.offset(2);
+    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 2) as usize][0] =
+        *origin.offset(0) - *left.offset(0) - *up.offset(0);
+    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 2) as usize][1] =
+        *origin.offset(1) - *left.offset(1) - *up.offset(1);
+    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 2) as usize][2] =
+        *origin.offset(2) - *left.offset(2) - *up.offset(2);
+    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 3) as usize][0] =
+        *origin.offset(0) + *left.offset(0) - *up.offset(0);
+    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 3) as usize][1] =
+        *origin.offset(1) + *left.offset(1) - *up.offset(1);
+    crate::src::renderergl1::tr_shade::tess.xyz[(ndx + 3) as usize][2] =
+        *origin.offset(2) + *left.offset(2) - *up.offset(2);
     // constant normal all the way around
-    normal[0] = crate::src::qcommon::q_math::vec3_origin
-        [0]
+    normal[0] = crate::src::qcommon::q_math::vec3_origin[0]
         - crate::src::renderergl1::tr_backend::backEnd
             .viewParms
             .or
             .axis[0][0];
-    normal[1] = crate::src::qcommon::q_math::vec3_origin
-        [1]
+    normal[1] = crate::src::qcommon::q_math::vec3_origin[1]
         - crate::src::renderergl1::tr_backend::backEnd
             .viewParms
             .or
             .axis[0][1];
-    normal[2] = crate::src::qcommon::q_math::vec3_origin
-        [2]
+    normal[2] = crate::src::qcommon::q_math::vec3_origin[2]
         - crate::src::renderergl1::tr_backend::backEnd
             .viewParms
             .or
             .axis[0][2];
-    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 3) as usize]
-        [0] = normal[0];
-    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 2) as usize]
-        [0] = crate::src::renderergl1::tr_shade::tess.normal
-        [(ndx + 3) as usize][0];
-    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 1) as usize]
-        [0] = crate::src::renderergl1::tr_shade::tess.normal
-        [(ndx + 2) as usize][0];
+    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 3) as usize][0] = normal[0];
+    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 2) as usize][0] =
+        crate::src::renderergl1::tr_shade::tess.normal[(ndx + 3) as usize][0];
+    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 1) as usize][0] =
+        crate::src::renderergl1::tr_shade::tess.normal[(ndx + 2) as usize][0];
     crate::src::renderergl1::tr_shade::tess.normal[ndx as usize][0] =
-        crate::src::renderergl1::tr_shade::tess.normal[(ndx + 1) as usize]
-            [0];
-    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 3) as usize]
-        [1] = normal[1];
-    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 2) as usize]
-        [1] = crate::src::renderergl1::tr_shade::tess.normal
-        [(ndx + 3) as usize][1];
-    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 1) as usize]
-        [1] = crate::src::renderergl1::tr_shade::tess.normal
-        [(ndx + 2) as usize][1];
+        crate::src::renderergl1::tr_shade::tess.normal[(ndx + 1) as usize][0];
+    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 3) as usize][1] = normal[1];
+    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 2) as usize][1] =
+        crate::src::renderergl1::tr_shade::tess.normal[(ndx + 3) as usize][1];
+    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 1) as usize][1] =
+        crate::src::renderergl1::tr_shade::tess.normal[(ndx + 2) as usize][1];
     crate::src::renderergl1::tr_shade::tess.normal[ndx as usize][1] =
-        crate::src::renderergl1::tr_shade::tess.normal[(ndx + 1) as usize]
-            [1];
-    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 3) as usize]
-        [2] = normal[2];
-    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 2) as usize]
-        [2] = crate::src::renderergl1::tr_shade::tess.normal
-        [(ndx + 3) as usize][2];
-    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 1) as usize]
-        [2] = crate::src::renderergl1::tr_shade::tess.normal
-        [(ndx + 2) as usize][2];
+        crate::src::renderergl1::tr_shade::tess.normal[(ndx + 1) as usize][1];
+    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 3) as usize][2] = normal[2];
+    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 2) as usize][2] =
+        crate::src::renderergl1::tr_shade::tess.normal[(ndx + 3) as usize][2];
+    crate::src::renderergl1::tr_shade::tess.normal[(ndx + 1) as usize][2] =
+        crate::src::renderergl1::tr_shade::tess.normal[(ndx + 2) as usize][2];
     crate::src::renderergl1::tr_shade::tess.normal[ndx as usize][2] =
-        crate::src::renderergl1::tr_shade::tess.normal[(ndx + 1) as usize]
-            [2];
+        crate::src::renderergl1::tr_shade::tess.normal[(ndx + 1) as usize][2];
     // standard square texture coordinates
-    crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][1]
-        [0] = s1;
-    crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][0]
-        [0] = crate::src::renderergl1::tr_shade::tess.texCoords
-        [ndx as usize][1][0];
-    crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][1]
-        [1] = t1;
-    crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][0]
-        [1] = crate::src::renderergl1::tr_shade::tess.texCoords
-        [ndx as usize][1][1];
-    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 1) as usize]
-        [1][0] = s2;
-    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 1) as usize]
-        [0][0] =
-        crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 1) as usize]
-            [1][0];
-    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 1) as usize]
-        [1][1] = t1;
-    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 1) as usize]
-        [0][1] =
-        crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 1) as usize]
-            [1][1];
-    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 2) as usize]
-        [1][0] = s2;
-    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 2) as usize]
-        [0][0] =
-        crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 2) as usize]
-            [1][0];
-    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 2) as usize]
-        [1][1] = t2;
-    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 2) as usize]
-        [0][1] =
-        crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 2) as usize]
-            [1][1];
-    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 3) as usize]
-        [1][0] = s1;
-    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 3) as usize]
-        [0][0] =
-        crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 3) as usize]
-            [1][0];
-    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 3) as usize]
-        [1][1] = t2;
-    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 3) as usize]
-        [0][1] =
-        crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 3) as usize]
-            [1][1];
+    crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][1][0] = s1;
+    crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][0][0] =
+        crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][1][0];
+    crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][1][1] = t1;
+    crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][0][1] =
+        crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][1][1];
+    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 1) as usize][1][0] = s2;
+    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 1) as usize][0][0] =
+        crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 1) as usize][1][0];
+    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 1) as usize][1][1] = t1;
+    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 1) as usize][0][1] =
+        crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 1) as usize][1][1];
+    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 2) as usize][1][0] = s2;
+    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 2) as usize][0][0] =
+        crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 2) as usize][1][0];
+    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 2) as usize][1][1] = t2;
+    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 2) as usize][0][1] =
+        crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 2) as usize][1][1];
+    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 3) as usize][1][0] = s1;
+    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 3) as usize][0][0] =
+        crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 3) as usize][1][0];
+    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 3) as usize][1][1] = t2;
+    crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 3) as usize][0][1] =
+        crate::src::renderergl1::tr_shade::tess.texCoords[(ndx + 3) as usize][1][1];
     // constant color all the way around
     // should this be identity and let the shader specify from entity?
     let ref mut fresh3 = *(&mut *crate::src::renderergl1::tr_shade::tess
         .vertexColors
         .as_mut_ptr()
-        .offset((ndx + 3) as isize)
-        as *mut crate::tr_local_h::color4ub_t as *mut u32);
+        .offset((ndx + 3) as isize) as *mut crate::tr_local_h::color4ub_t
+        as *mut u32);
     *fresh3 = *(color as *mut u32);
     let ref mut fresh4 = *(&mut *crate::src::renderergl1::tr_shade::tess
         .vertexColors
         .as_mut_ptr()
-        .offset((ndx + 2) as isize)
-        as *mut crate::tr_local_h::color4ub_t as *mut u32);
+        .offset((ndx + 2) as isize) as *mut crate::tr_local_h::color4ub_t
+        as *mut u32);
     *fresh4 = *fresh3;
     let ref mut fresh5 = *(&mut *crate::src::renderergl1::tr_shade::tess
         .vertexColors
         .as_mut_ptr()
-        .offset((ndx + 1) as isize)
-        as *mut crate::tr_local_h::color4ub_t as *mut u32);
+        .offset((ndx + 1) as isize) as *mut crate::tr_local_h::color4ub_t
+        as *mut u32);
     *fresh5 = *fresh4;
     *(&mut *crate::src::renderergl1::tr_shade::tess
         .vertexColors
@@ -825,16 +754,7 @@ pub unsafe extern "C" fn RB_AddQuadStamp(
     mut up: *mut crate::src::qcommon::q_shared::vec_t,
     mut color: *mut crate::src::qcommon::q_shared::byte,
 ) {
-    RB_AddQuadStampExt(
-        origin,
-        left,
-        up,
-        color,
-        0f32,
-        0f32,
-        1f32,
-        1f32,
-    );
+    RB_AddQuadStampExt(origin, left, up, color, 0f32, 0f32, 1f32, 1f32);
 }
 /*
 ==============
@@ -968,15 +888,9 @@ unsafe extern "C" fn RB_SurfaceSprite() {
         .isMirror as u64
         != 0
     {
-        left[0] = crate::src::qcommon::q_math::vec3_origin
-            [0]
-            - left[0];
-        left[1] = crate::src::qcommon::q_math::vec3_origin
-            [1]
-            - left[1];
-        left[2] = crate::src::qcommon::q_math::vec3_origin
-            [2]
-            - left[2]
+        left[0] = crate::src::qcommon::q_math::vec3_origin[0] - left[0];
+        left[1] = crate::src::qcommon::q_math::vec3_origin[1] - left[1];
+        left[2] = crate::src::qcommon::q_math::vec3_origin[2] - left[2]
     }
     RB_AddQuadStamp(
         (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
@@ -1001,14 +915,9 @@ unsafe extern "C" fn RB_SurfacePolychain(mut p: *mut crate::tr_local_h::srfPoly_
     let mut i: i32 = 0;
     let mut numv: i32 = 0;
     if crate::src::renderergl1::tr_shade::tess.numVertexes + (*p).numVerts >= 1000
-        || crate::src::renderergl1::tr_shade::tess.numIndexes
-            + 3 * ((*p).numVerts - 2)
-            >= 6 * 1000
+        || crate::src::renderergl1::tr_shade::tess.numIndexes + 3 * ((*p).numVerts - 2) >= 6 * 1000
     {
-        RB_CheckOverflow(
-            (*p).numVerts,
-            3i32 * ((*p).numVerts - 2i32),
-        );
+        RB_CheckOverflow((*p).numVerts, 3i32 * ((*p).numVerts - 2i32));
     }
     // fan triangles into the tess array
     numv = crate::src::renderergl1::tr_shade::tess.numVertexes;
@@ -1020,17 +929,14 @@ unsafe extern "C" fn RB_SurfacePolychain(mut p: *mut crate::tr_local_h::srfPoly_
             (*(*p).verts.offset(i as isize)).xyz[1];
         crate::src::renderergl1::tr_shade::tess.xyz[numv as usize][2] =
             (*(*p).verts.offset(i as isize)).xyz[2];
-        crate::src::renderergl1::tr_shade::tess.texCoords[numv as usize]
-            [0][0] =
+        crate::src::renderergl1::tr_shade::tess.texCoords[numv as usize][0][0] =
             (*(*p).verts.offset(i as isize)).st[0];
-        crate::src::renderergl1::tr_shade::tess.texCoords[numv as usize]
-            [0][1] =
+        crate::src::renderergl1::tr_shade::tess.texCoords[numv as usize][0][1] =
             (*(*p).verts.offset(i as isize)).st[1];
         *(&mut *crate::src::renderergl1::tr_shade::tess
             .vertexColors
             .as_mut_ptr()
-            .offset(numv as isize) as *mut crate::tr_local_h::color4ub_t
-            as *mut i32) =
+            .offset(numv as isize) as *mut crate::tr_local_h::color4ub_t as *mut i32) =
             *((*(*p).verts.offset(i as isize)).modulate.as_mut_ptr() as *mut i32);
         numv += 1;
         i += 1
@@ -1074,31 +980,27 @@ unsafe extern "C" fn RB_SurfaceTriangles(mut srf: *mut crate::tr_local_h::srfTri
     dlightBits = (*srf).dlightBits;
     crate::src::renderergl1::tr_shade::tess.dlightBits |= dlightBits;
     if crate::src::renderergl1::tr_shade::tess.numVertexes + (*srf).numVerts >= 1000
-        || crate::src::renderergl1::tr_shade::tess.numIndexes + (*srf).numIndexes
-            >= 6 * 1000
+        || crate::src::renderergl1::tr_shade::tess.numIndexes + (*srf).numIndexes >= 6 * 1000
     {
         RB_CheckOverflow((*srf).numVerts, (*srf).numIndexes);
     }
     i = 0;
     while i < (*srf).numIndexes {
-        crate::src::renderergl1::tr_shade::tess.indexes[(crate::src::renderergl1::tr_shade::tess
-            .numIndexes
-            + i
-            + 0) as usize] = (crate::src::renderergl1::tr_shade::tess.numVertexes
-            + *(*srf).indexes.offset((i + 0) as isize))
-            as crate::tr_local_h::glIndex_t;
-        crate::src::renderergl1::tr_shade::tess.indexes[(crate::src::renderergl1::tr_shade::tess
-            .numIndexes
-            + i
-            + 1) as usize] = (crate::src::renderergl1::tr_shade::tess.numVertexes
-            + *(*srf).indexes.offset((i + 1) as isize))
-            as crate::tr_local_h::glIndex_t;
-        crate::src::renderergl1::tr_shade::tess.indexes[(crate::src::renderergl1::tr_shade::tess
-            .numIndexes
-            + i
-            + 2) as usize] = (crate::src::renderergl1::tr_shade::tess.numVertexes
-            + *(*srf).indexes.offset((i + 2) as isize))
-            as crate::tr_local_h::glIndex_t;
+        crate::src::renderergl1::tr_shade::tess.indexes
+            [(crate::src::renderergl1::tr_shade::tess.numIndexes + i + 0) as usize] =
+            (crate::src::renderergl1::tr_shade::tess.numVertexes
+                + *(*srf).indexes.offset((i + 0) as isize))
+                as crate::tr_local_h::glIndex_t;
+        crate::src::renderergl1::tr_shade::tess.indexes
+            [(crate::src::renderergl1::tr_shade::tess.numIndexes + i + 1) as usize] =
+            (crate::src::renderergl1::tr_shade::tess.numVertexes
+                + *(*srf).indexes.offset((i + 1) as isize))
+                as crate::tr_local_h::glIndex_t;
+        crate::src::renderergl1::tr_shade::tess.indexes
+            [(crate::src::renderergl1::tr_shade::tess.numIndexes + i + 2) as usize] =
+            (crate::src::renderergl1::tr_shade::tess.numVertexes
+                + *(*srf).indexes.offset((i + 2) as isize))
+                as crate::tr_local_h::glIndex_t;
         i += 3
     }
     crate::src::renderergl1::tr_shade::tess.numIndexes += (*srf).numIndexes;
@@ -1169,30 +1071,22 @@ unsafe extern "C" fn RB_SurfaceBeam() {
     origin[0] = (*e).origin[0];
     origin[1] = (*e).origin[1];
     origin[2] = (*e).origin[2];
-    direction[0] =
-        oldorigin[0] - origin[0];
+    direction[0] = oldorigin[0] - origin[0];
     normalized_direction[0] = direction[0];
-    direction[1] =
-        oldorigin[1] - origin[1];
+    direction[1] = oldorigin[1] - origin[1];
     normalized_direction[1] = direction[1];
-    direction[2] =
-        oldorigin[2] - origin[2];
+    direction[2] = oldorigin[2] - origin[2];
     normalized_direction[2] = direction[2];
-    if crate::src::qcommon::q_math::VectorNormalize(normalized_direction.as_mut_ptr())
-        == 0f32
-    {
+    if crate::src::qcommon::q_math::VectorNormalize(normalized_direction.as_mut_ptr()) == 0f32 {
         return;
     }
     crate::src::qcommon::q_math::PerpendicularVector(
         perpvec.as_mut_ptr(),
         normalized_direction.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
     );
-    perpvec[0] =
-        perpvec[0] * 4f32;
-    perpvec[1] =
-        perpvec[1] * 4f32;
-    perpvec[2] =
-        perpvec[2] * 4f32;
+    perpvec[0] = perpvec[0] * 4f32;
+    perpvec[1] = perpvec[1] * 4f32;
+    perpvec[2] = perpvec[2] * 4f32;
     i = 0;
     while i < 6 {
         crate::src::qcommon::q_math::RotatePointAroundVector(
@@ -1202,29 +1096,15 @@ unsafe extern "C" fn RB_SurfaceBeam() {
             (360.0 / 6f64 * i as f64) as f32,
         );
         //		VectorAdd( start_points[i], origin, start_points[i] );
-        end_points[i as usize][0] = start_points[i as usize]
-            [0]
-            + direction[0];
-        end_points[i as usize][1] = start_points[i as usize]
-            [1]
-            + direction[1];
-        end_points[i as usize][2] = start_points[i as usize]
-            [2]
-            + direction[2];
+        end_points[i as usize][0] = start_points[i as usize][0] + direction[0];
+        end_points[i as usize][1] = start_points[i as usize][1] + direction[1];
+        end_points[i as usize][2] = start_points[i as usize][2] + direction[2];
         i += 1
     }
     crate::src::renderergl1::tr_backend::GL_Bind(crate::src::renderergl1::tr_main::tr.whiteImage);
-    crate::src::renderergl1::tr_backend::GL_State(
-        (0x2i32 | 0x20) as usize,
-    );
-    crate::src::sdl::sdl_glimp::qglColor3f.expect("non-null function pointer")(
-        1f32,
-        0f32,
-        0f32,
-    );
-    crate::src::sdl::sdl_glimp::qglBegin.expect("non-null function pointer")(
-        0x5u32,
-    );
+    crate::src::renderergl1::tr_backend::GL_State((0x2i32 | 0x20) as usize);
+    crate::src::sdl::sdl_glimp::qglColor3f.expect("non-null function pointer")(1f32, 0f32, 0f32);
+    crate::src::sdl::sdl_glimp::qglBegin.expect("non-null function pointer")(0x5u32);
     i = 0;
     while i <= 6 {
         crate::src::sdl::sdl_glimp::qglVertex3fv.expect("non-null function pointer")(
@@ -1250,8 +1130,7 @@ unsafe extern "C" fn DoRailCore(
     let mut vbase: i32 = 0;
     let mut t: f32 = len / 256.0;
     if crate::src::renderergl1::tr_shade::tess.numVertexes + 4 >= 1000
-        || crate::src::renderergl1::tr_shade::tess.numIndexes + 6
-            >= 6 * 1000
+        || crate::src::renderergl1::tr_shade::tess.numIndexes + 6 >= 6 * 1000
     {
         RB_CheckOverflow(4i32, 6i32);
     }
@@ -1268,11 +1147,9 @@ unsafe extern "C" fn DoRailCore(
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][2] =
         *start.offset(2) + *up.offset(2) * spanWidth;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [0] = 0f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][0] = 0f32;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [1] = 0f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][1] = 0f32;
     crate::src::renderergl1::tr_shade::tess.vertexColors
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
         ((*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
@@ -1294,22 +1171,17 @@ unsafe extern "C" fn DoRailCore(
     crate::src::renderergl1::tr_shade::tess.numVertexes += 1;
     crate::src::renderergl1::tr_shade::tess.xyz
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
-        *start.offset(0)
-            + *up.offset(0) * spanWidth2;
+        *start.offset(0) + *up.offset(0) * spanWidth2;
     crate::src::renderergl1::tr_shade::tess.xyz
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][1] =
-        *start.offset(1)
-            + *up.offset(1) * spanWidth2;
+        *start.offset(1) + *up.offset(1) * spanWidth2;
     crate::src::renderergl1::tr_shade::tess.xyz
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][2] =
-        *start.offset(2)
-            + *up.offset(2) * spanWidth2;
+        *start.offset(2) + *up.offset(2) * spanWidth2;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [0] = 0f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][0] = 0f32;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [1] = 1f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][1] = 1f32;
     crate::src::renderergl1::tr_shade::tess.vertexColors
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
         (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
@@ -1336,11 +1208,9 @@ unsafe extern "C" fn DoRailCore(
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][2] =
         *end.offset(2) + *up.offset(2) * spanWidth;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [0] = t;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][0] = t;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [1] = 0f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][1] = 0f32;
     crate::src::renderergl1::tr_shade::tess.vertexColors
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
         (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
@@ -1367,11 +1237,9 @@ unsafe extern "C" fn DoRailCore(
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][2] =
         *end.offset(2) + *up.offset(2) * spanWidth2;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [0] = t;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][0] = t;
     crate::src::renderergl1::tr_shade::tess.texCoords
-        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0]
-        [1] = 1f32;
+        [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][1] = 1f32;
     crate::src::renderergl1::tr_shade::tess.vertexColors
         [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
         (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
@@ -1443,138 +1311,114 @@ unsafe extern "C" fn DoRailDiscs(
     scale = 0.25;
     i = 0;
     while i < 4 {
-        c = crate::stdlib::cos(
-            (45 + i * 90) as f64
-                * 3.14159265358979323846
-                / 180f64,
-        ) as f32;
-        s = crate::stdlib::sin(
-            (45 + i * 90) as f64
-                * 3.14159265358979323846
-                / 180f64,
-        ) as f32;
-        v[0] = (*right.offset(0) * c
-            + *up.offset(0) * s)
-            * scale
-            * spanWidth as f32;
-        v[1] = (*right.offset(1) * c
-            + *up.offset(1) * s)
-            * scale
-            * spanWidth as f32;
-        v[2] = (*right.offset(2) * c
-            + *up.offset(2) * s)
-            * scale
-            * spanWidth as f32;
-        pos[i as usize][0] =
-            *start.offset(0) + v[0];
-        pos[i as usize][1] =
-            *start.offset(1) + v[1];
-        pos[i as usize][2] =
-            *start.offset(2) + v[2];
+        c = crate::stdlib::cos((45 + i * 90) as f64 * 3.14159265358979323846 / 180f64) as f32;
+        s = crate::stdlib::sin((45 + i * 90) as f64 * 3.14159265358979323846 / 180f64) as f32;
+        v[0] = (*right.offset(0) * c + *up.offset(0) * s) * scale * spanWidth as f32;
+        v[1] = (*right.offset(1) * c + *up.offset(1) * s) * scale * spanWidth as f32;
+        v[2] = (*right.offset(2) * c + *up.offset(2) * s) * scale * spanWidth as f32;
+        pos[i as usize][0] = *start.offset(0) + v[0];
+        pos[i as usize][1] = *start.offset(1) + v[1];
+        pos[i as usize][2] = *start.offset(2) + v[2];
         if numSegs > 1 {
             // offset by 1 segment if we're doing a long distance shot
-            pos[i as usize][0] =
-                pos[i as usize][0] + *dir.offset(0);
-            pos[i as usize][1] =
-                pos[i as usize][1] + *dir.offset(1);
-            pos[i as usize][2] =
-                pos[i as usize][2] + *dir.offset(2)
+            pos[i as usize][0] = pos[i as usize][0] + *dir.offset(0);
+            pos[i as usize][1] = pos[i as usize][1] + *dir.offset(1);
+            pos[i as usize][2] = pos[i as usize][2] + *dir.offset(2)
         }
         i += 1
     }
     i = 0;
     while i < numSegs {
         let mut j: i32 = 0;
-        if crate::src::renderergl1::tr_shade::tess.numVertexes + 4
-            >= 1000
-            || crate::src::renderergl1::tr_shade::tess.numIndexes + 6
-                >= 6 * 1000
+        if crate::src::renderergl1::tr_shade::tess.numVertexes + 4 >= 1000
+            || crate::src::renderergl1::tr_shade::tess.numIndexes + 6 >= 6 * 1000
         {
             RB_CheckOverflow(4i32, 6i32);
         }
-        j = 0;
-        while j < 4 {
+
+        for j in 0..4 {
             crate::src::renderergl1::tr_shade::tess.xyz
-                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize]
-                [0] = pos[j as usize][0];
+                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
+                pos[j as usize][0];
+
             crate::src::renderergl1::tr_shade::tess.xyz
-                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize]
-                [1] = pos[j as usize][1];
+                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][1] =
+                pos[j as usize][1];
+
             crate::src::renderergl1::tr_shade::tess.xyz
-                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize]
-                [2] = pos[j as usize][2];
+                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][2] =
+                pos[j as usize][2];
+
             crate::src::renderergl1::tr_shade::tess.texCoords
-                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize]
-                [0][0] =
+                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][0] =
                 (j < 2) as i32 as crate::src::qcommon::q_shared::vec_t;
+
             crate::src::renderergl1::tr_shade::tess.texCoords
-                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize]
-                [0][1] =
-                (j != 0 && j != 3) as i32
-                    as crate::src::qcommon::q_shared::vec_t;
+                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0][1] =
+                (j != 0 && j != 3) as i32 as crate::src::qcommon::q_shared::vec_t;
+
             crate::src::renderergl1::tr_shade::tess.vertexColors
-                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize]
-                [0] = (*crate::src::renderergl1::tr_backend::backEnd
-                .currentEntity)
-                .e
-                .shaderRGBA[0];
+                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][0] =
+                (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
+                    .e
+                    .shaderRGBA[0];
+
             crate::src::renderergl1::tr_shade::tess.vertexColors
-                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize]
-                [1] = (*crate::src::renderergl1::tr_backend::backEnd
-                .currentEntity)
-                .e
-                .shaderRGBA[1];
+                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][1] =
+                (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
+                    .e
+                    .shaderRGBA[1];
+
             crate::src::renderergl1::tr_shade::tess.vertexColors
-                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize]
-                [2] = (*crate::src::renderergl1::tr_backend::backEnd
-                .currentEntity)
-                .e
-                .shaderRGBA[2];
+                [crate::src::renderergl1::tr_shade::tess.numVertexes as usize][2] =
+                (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
+                    .e
+                    .shaderRGBA[2];
+
             crate::src::renderergl1::tr_shade::tess.numVertexes += 1;
-            pos[j as usize][0] =
-                pos[j as usize][0] + *dir.offset(0);
-            pos[j as usize][1] =
-                pos[j as usize][1] + *dir.offset(1);
-            pos[j as usize][2] =
-                pos[j as usize][2] + *dir.offset(2);
-            j += 1
+
+            pos[j as usize][0] = pos[j as usize][0] + *dir.offset(0);
+
+            pos[j as usize][1] = pos[j as usize][1] + *dir.offset(1);
+
+            pos[j as usize][2] = pos[j as usize][2] + *dir.offset(2);
         }
         let fresh12 = crate::src::renderergl1::tr_shade::tess.numIndexes;
         crate::src::renderergl1::tr_shade::tess.numIndexes =
             crate::src::renderergl1::tr_shade::tess.numIndexes + 1;
         crate::src::renderergl1::tr_shade::tess.indexes[fresh12 as usize] =
-            (crate::src::renderergl1::tr_shade::tess.numVertexes - 4
-                + 0) as crate::tr_local_h::glIndex_t;
+            (crate::src::renderergl1::tr_shade::tess.numVertexes - 4 + 0)
+                as crate::tr_local_h::glIndex_t;
         let fresh13 = crate::src::renderergl1::tr_shade::tess.numIndexes;
         crate::src::renderergl1::tr_shade::tess.numIndexes =
             crate::src::renderergl1::tr_shade::tess.numIndexes + 1;
         crate::src::renderergl1::tr_shade::tess.indexes[fresh13 as usize] =
-            (crate::src::renderergl1::tr_shade::tess.numVertexes - 4
-                + 1) as crate::tr_local_h::glIndex_t;
+            (crate::src::renderergl1::tr_shade::tess.numVertexes - 4 + 1)
+                as crate::tr_local_h::glIndex_t;
         let fresh14 = crate::src::renderergl1::tr_shade::tess.numIndexes;
         crate::src::renderergl1::tr_shade::tess.numIndexes =
             crate::src::renderergl1::tr_shade::tess.numIndexes + 1;
         crate::src::renderergl1::tr_shade::tess.indexes[fresh14 as usize] =
-            (crate::src::renderergl1::tr_shade::tess.numVertexes - 4
-                + 3) as crate::tr_local_h::glIndex_t;
+            (crate::src::renderergl1::tr_shade::tess.numVertexes - 4 + 3)
+                as crate::tr_local_h::glIndex_t;
         let fresh15 = crate::src::renderergl1::tr_shade::tess.numIndexes;
         crate::src::renderergl1::tr_shade::tess.numIndexes =
             crate::src::renderergl1::tr_shade::tess.numIndexes + 1;
         crate::src::renderergl1::tr_shade::tess.indexes[fresh15 as usize] =
-            (crate::src::renderergl1::tr_shade::tess.numVertexes - 4
-                + 3) as crate::tr_local_h::glIndex_t;
+            (crate::src::renderergl1::tr_shade::tess.numVertexes - 4 + 3)
+                as crate::tr_local_h::glIndex_t;
         let fresh16 = crate::src::renderergl1::tr_shade::tess.numIndexes;
         crate::src::renderergl1::tr_shade::tess.numIndexes =
             crate::src::renderergl1::tr_shade::tess.numIndexes + 1;
         crate::src::renderergl1::tr_shade::tess.indexes[fresh16 as usize] =
-            (crate::src::renderergl1::tr_shade::tess.numVertexes - 4
-                + 1) as crate::tr_local_h::glIndex_t;
+            (crate::src::renderergl1::tr_shade::tess.numVertexes - 4 + 1)
+                as crate::tr_local_h::glIndex_t;
         let fresh17 = crate::src::renderergl1::tr_shade::tess.numIndexes;
         crate::src::renderergl1::tr_shade::tess.numIndexes =
             crate::src::renderergl1::tr_shade::tess.numIndexes + 1;
         crate::src::renderergl1::tr_shade::tess.indexes[fresh17 as usize] =
-            (crate::src::renderergl1::tr_shade::tess.numVertexes - 4
-                + 2) as crate::tr_local_h::glIndex_t;
+            (crate::src::renderergl1::tr_shade::tess.numVertexes - 4 + 2)
+                as crate::tr_local_h::glIndex_t;
         i += 1
     }
 }
@@ -1599,30 +1443,22 @@ unsafe extern "C" fn RB_SurfaceRailRings() {
     end[1] = (*e).origin[1];
     end[2] = (*e).origin[2];
     // compute variables
-    vec[0] =
-        end[0] - start[0];
-    vec[1] =
-        end[1] - start[1];
-    vec[2] =
-        end[2] - start[2];
+    vec[0] = end[0] - start[0];
+    vec[1] = end[1] - start[1];
+    vec[2] = end[2] - start[2];
     len = crate::src::qcommon::q_math::VectorNormalize(vec.as_mut_ptr()) as i32;
     crate::src::qcommon::q_math::MakeNormalVectors(
         vec.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
         right.as_mut_ptr(),
         up.as_mut_ptr(),
     );
-    numSegs = (len as f32
-        / (*crate::src::renderergl1::tr_init::r_railSegmentLength).value)
-        as i32;
+    numSegs = (len as f32 / (*crate::src::renderergl1::tr_init::r_railSegmentLength).value) as i32;
     if numSegs <= 0 {
         numSegs = 1
     }
-    vec[0] = vec[0]
-        * (*crate::src::renderergl1::tr_init::r_railSegmentLength).value;
-    vec[1] = vec[1]
-        * (*crate::src::renderergl1::tr_init::r_railSegmentLength).value;
-    vec[2] = vec[2]
-        * (*crate::src::renderergl1::tr_init::r_railSegmentLength).value;
+    vec[0] = vec[0] * (*crate::src::renderergl1::tr_init::r_railSegmentLength).value;
+    vec[1] = vec[1] * (*crate::src::renderergl1::tr_init::r_railSegmentLength).value;
+    vec[2] = vec[2] * (*crate::src::renderergl1::tr_init::r_railSegmentLength).value;
     DoRailDiscs(
         numSegs,
         start.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
@@ -1651,12 +1487,9 @@ unsafe extern "C" fn RB_SurfaceRailCore() {
     end[0] = (*e).origin[0];
     end[1] = (*e).origin[1];
     end[2] = (*e).origin[2];
-    vec[0] =
-        end[0] - start[0];
-    vec[1] =
-        end[1] - start[1];
-    vec[2] =
-        end[2] - start[2];
+    vec[0] = end[0] - start[0];
+    vec[1] = end[1] - start[1];
+    vec[2] = end[2] - start[2];
     len = crate::src::qcommon::q_math::VectorNormalize(vec.as_mut_ptr()) as i32;
     // compute side vector
     v1[0] = start[0]
@@ -1727,12 +1560,9 @@ unsafe extern "C" fn RB_SurfaceLightningBolt() {
     start[1] = (*e).origin[1];
     start[2] = (*e).origin[2];
     // compute variables
-    vec[0] =
-        end[0] - start[0];
-    vec[1] =
-        end[1] - start[1];
-    vec[2] =
-        end[2] - start[2];
+    vec[0] = end[0] - start[0];
+    vec[1] = end[1] - start[1];
+    vec[2] = end[2] - start[2];
     len = crate::src::qcommon::q_math::VectorNormalize(vec.as_mut_ptr()) as i32;
     // compute side vector
     v1[0] = start[0]
@@ -2286,8 +2116,7 @@ unsafe extern "C" fn LerpMeshVertexes_scalar(
                 * 4) as isize,
         );
     newNormals = newXyz.offset(3);
-    newXyzScale = (1.0 / 64f64
-        * (1.0 - backlerp as f64)) as f32;
+    newXyzScale = (1.0 / 64f64 * (1.0 - backlerp as f64)) as f32;
     newNormalScale = (1.0 - backlerp as f64) as f32;
     numVerts = (*surf).numVerts;
     if backlerp == 0f32 {
@@ -2296,38 +2125,23 @@ unsafe extern "C" fn LerpMeshVertexes_scalar(
         //
         vertNum = 0;
         while vertNum < numVerts {
-            *outXyz.offset(0) =
-                *newXyz.offset(0) as i32 as f32
-                    * newXyzScale;
-            *outXyz.offset(1) =
-                *newXyz.offset(1) as i32 as f32
-                    * newXyzScale;
-            *outXyz.offset(2) =
-                *newXyz.offset(2) as i32 as f32
-                    * newXyzScale;
-            lat = (*newNormals.offset(0) as i32 >> 8
-                & 0xff) as u32;
-            lng = (*newNormals.offset(0) as i32
-                & 0xff) as u32;
+            *outXyz.offset(0) = *newXyz.offset(0) as i32 as f32 * newXyzScale;
+            *outXyz.offset(1) = *newXyz.offset(1) as i32 as f32 * newXyzScale;
+            *outXyz.offset(2) = *newXyz.offset(2) as i32 as f32 * newXyzScale;
+            lat = (*newNormals.offset(0) as i32 >> 8 & 0xff) as u32;
+            lng = (*newNormals.offset(0) as i32 & 0xff) as u32;
             lat = lat.wrapping_mul((1024i32 / 256) as u32);
             lng = lng.wrapping_mul((1024i32 / 256) as u32);
             // decode X as cos( lat ) * sin( long )
             // decode Y as sin( lat ) * sin( long )
             // decode Z as cos( long )
-            *outNormal.offset(0) = crate::src::renderergl1::tr_main::tr
-                .sinTable[(lat
-                .wrapping_add((1024i32 / 4) as u32)
-                & (1024i32 - 1) as u32)
-                as usize]
+            *outNormal.offset(0) = crate::src::renderergl1::tr_main::tr.sinTable
+                [(lat.wrapping_add((1024i32 / 4) as u32) & (1024i32 - 1) as u32) as usize]
                 * crate::src::renderergl1::tr_main::tr.sinTable[lng as usize];
-            *outNormal.offset(1) = crate::src::renderergl1::tr_main::tr
-                .sinTable[lat as usize]
+            *outNormal.offset(1) = crate::src::renderergl1::tr_main::tr.sinTable[lat as usize]
                 * crate::src::renderergl1::tr_main::tr.sinTable[lng as usize];
-            *outNormal.offset(2) = crate::src::renderergl1::tr_main::tr
-                .sinTable[(lng
-                .wrapping_add((1024i32 / 4) as u32)
-                & (1024i32 - 1) as u32)
-                as usize];
+            *outNormal.offset(2) = crate::src::renderergl1::tr_main::tr.sinTable
+                [(lng.wrapping_add((1024i32 / 4) as u32) & (1024i32 - 1) as u32) as usize];
             vertNum += 1;
             newXyz = newXyz.offset(4);
             newNormals = newNormals.offset(4);
@@ -2348,78 +2162,47 @@ unsafe extern "C" fn LerpMeshVertexes_scalar(
                     * 4) as isize,
             );
         oldNormals = oldXyz.offset(3);
-        oldXyzScale = (1.0 / 64f64 * backlerp as f64)
-            as f32;
+        oldXyzScale = (1.0 / 64f64 * backlerp as f64) as f32;
         oldNormalScale = backlerp;
         vertNum = 0;
         while vertNum < numVerts {
             let mut uncompressedOldNormal: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
             let mut uncompressedNewNormal: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
             //			VectorNormalize (outNormal);
-            *outXyz.offset(0) =
-                *oldXyz.offset(0) as i32 as f32
-                    * oldXyzScale
-                    + *newXyz.offset(0) as i32 as f32
-                        * newXyzScale;
-            *outXyz.offset(1) =
-                *oldXyz.offset(1) as i32 as f32
-                    * oldXyzScale
-                    + *newXyz.offset(1) as i32 as f32
-                        * newXyzScale;
-            *outXyz.offset(2) =
-                *oldXyz.offset(2) as i32 as f32
-                    * oldXyzScale
-                    + *newXyz.offset(2) as i32 as f32
-                        * newXyzScale;
-            lat = (*newNormals.offset(0) as i32 >> 8
-                & 0xff) as u32;
-            lng = (*newNormals.offset(0) as i32
-                & 0xff) as u32;
+            *outXyz.offset(0) = *oldXyz.offset(0) as i32 as f32 * oldXyzScale
+                + *newXyz.offset(0) as i32 as f32 * newXyzScale;
+            *outXyz.offset(1) = *oldXyz.offset(1) as i32 as f32 * oldXyzScale
+                + *newXyz.offset(1) as i32 as f32 * newXyzScale;
+            *outXyz.offset(2) = *oldXyz.offset(2) as i32 as f32 * oldXyzScale
+                + *newXyz.offset(2) as i32 as f32 * newXyzScale;
+            lat = (*newNormals.offset(0) as i32 >> 8 & 0xff) as u32;
+            lng = (*newNormals.offset(0) as i32 & 0xff) as u32;
             lat = lat.wrapping_mul(4u32);
             lng = lng.wrapping_mul(4u32);
-            uncompressedNewNormal[0] = crate::src::renderergl1::tr_main::tr
-                .sinTable[(lat
-                .wrapping_add((1024i32 / 4) as u32)
-                & (1024i32 - 1) as u32)
-                as usize]
+            uncompressedNewNormal[0] = crate::src::renderergl1::tr_main::tr.sinTable
+                [(lat.wrapping_add((1024i32 / 4) as u32) & (1024i32 - 1) as u32) as usize]
                 * crate::src::renderergl1::tr_main::tr.sinTable[lng as usize];
-            uncompressedNewNormal[1] = crate::src::renderergl1::tr_main::tr
-                .sinTable[lat as usize]
+            uncompressedNewNormal[1] = crate::src::renderergl1::tr_main::tr.sinTable[lat as usize]
                 * crate::src::renderergl1::tr_main::tr.sinTable[lng as usize];
-            uncompressedNewNormal[2] = crate::src::renderergl1::tr_main::tr
-                .sinTable[(lng
-                .wrapping_add((1024i32 / 4) as u32)
-                & (1024i32 - 1) as u32)
-                as usize];
-            lat = (*oldNormals.offset(0) as i32 >> 8
-                & 0xff) as u32;
-            lng = (*oldNormals.offset(0) as i32
-                & 0xff) as u32;
+            uncompressedNewNormal[2] = crate::src::renderergl1::tr_main::tr.sinTable
+                [(lng.wrapping_add((1024i32 / 4) as u32) & (1024i32 - 1) as u32) as usize];
+            lat = (*oldNormals.offset(0) as i32 >> 8 & 0xff) as u32;
+            lng = (*oldNormals.offset(0) as i32 & 0xff) as u32;
             lat = lat.wrapping_mul(4u32);
             lng = lng.wrapping_mul(4u32);
-            uncompressedOldNormal[0] = crate::src::renderergl1::tr_main::tr
-                .sinTable[(lat
-                .wrapping_add((1024i32 / 4) as u32)
-                & (1024i32 - 1) as u32)
-                as usize]
+            uncompressedOldNormal[0] = crate::src::renderergl1::tr_main::tr.sinTable
+                [(lat.wrapping_add((1024i32 / 4) as u32) & (1024i32 - 1) as u32) as usize]
                 * crate::src::renderergl1::tr_main::tr.sinTable[lng as usize];
-            uncompressedOldNormal[1] = crate::src::renderergl1::tr_main::tr
-                .sinTable[lat as usize]
+            uncompressedOldNormal[1] = crate::src::renderergl1::tr_main::tr.sinTable[lat as usize]
                 * crate::src::renderergl1::tr_main::tr.sinTable[lng as usize];
-            uncompressedOldNormal[2] = crate::src::renderergl1::tr_main::tr
-                .sinTable[(lng
-                .wrapping_add((1024i32 / 4) as u32)
-                & (1024i32 - 1) as u32)
-                as usize];
-            *outNormal.offset(0) =
-                uncompressedOldNormal[0] * oldNormalScale
-                    + uncompressedNewNormal[0] * newNormalScale;
-            *outNormal.offset(1) =
-                uncompressedOldNormal[1] * oldNormalScale
-                    + uncompressedNewNormal[1] * newNormalScale;
-            *outNormal.offset(2) =
-                uncompressedOldNormal[2] * oldNormalScale
-                    + uncompressedNewNormal[2] * newNormalScale;
+            uncompressedOldNormal[2] = crate::src::renderergl1::tr_main::tr.sinTable
+                [(lng.wrapping_add((1024i32 / 4) as u32) & (1024i32 - 1) as u32) as usize];
+            *outNormal.offset(0) = uncompressedOldNormal[0] * oldNormalScale
+                + uncompressedNewNormal[0] * newNormalScale;
+            *outNormal.offset(1) = uncompressedOldNormal[1] * oldNormalScale
+                + uncompressedNewNormal[1] * newNormalScale;
+            *outNormal.offset(2) = uncompressedOldNormal[2] * oldNormalScale
+                + uncompressedNewNormal[2] * newNormalScale;
             vertNum += 1;
             oldXyz = oldXyz.offset(4);
             newXyz = newXyz.offset(4);
@@ -2474,16 +2257,11 @@ unsafe extern "C" fn RB_SurfaceMesh(mut surface: *mut crate::qfiles_h::md3Surfac
             .e
             .backlerp
     }
-    if crate::src::renderergl1::tr_shade::tess.numVertexes + (*surface).numVerts
-        >= 1000
-        || crate::src::renderergl1::tr_shade::tess.numIndexes
-            + (*surface).numTriangles * 3
+    if crate::src::renderergl1::tr_shade::tess.numVertexes + (*surface).numVerts >= 1000
+        || crate::src::renderergl1::tr_shade::tess.numIndexes + (*surface).numTriangles * 3
             >= 6 * 1000
     {
-        RB_CheckOverflow(
-            (*surface).numVerts,
-            (*surface).numTriangles * 3i32,
-        );
+        RB_CheckOverflow((*surface).numVerts, (*surface).numTriangles * 3i32);
     }
     LerpMeshVertexes(surface, backlerp);
     triangles = (surface as *mut crate::src::qcommon::q_shared::byte)
@@ -2503,11 +2281,9 @@ unsafe extern "C" fn RB_SurfaceMesh(mut surface: *mut crate::qfiles_h::md3Surfac
     numVerts = (*surface).numVerts;
     j = 0;
     while j < numVerts {
-        crate::src::renderergl1::tr_shade::tess.texCoords[(Doug + j) as usize]
-            [0][0] =
+        crate::src::renderergl1::tr_shade::tess.texCoords[(Doug + j) as usize][0][0] =
             *texCoords.offset((j * 2 + 0) as isize);
-        crate::src::renderergl1::tr_shade::tess.texCoords[(Doug + j) as usize]
-            [0][1] =
+        crate::src::renderergl1::tr_shade::tess.texCoords[(Doug + j) as usize][0][1] =
             *texCoords.offset((j * 2 + 1) as isize);
         j += 1
         // FIXME: fill in lightmapST for completeness?
@@ -2530,10 +2306,8 @@ unsafe extern "C" fn RB_SurfaceFace(mut surf: *mut crate::tr_local_h::srfSurface
     let mut Bob: i32 = 0;
     let mut numPoints: i32 = 0;
     let mut dlightBits: i32 = 0;
-    if crate::src::renderergl1::tr_shade::tess.numVertexes + (*surf).numPoints
-        >= 1000
-        || crate::src::renderergl1::tr_shade::tess.numIndexes + (*surf).numIndices
-            >= 6 * 1000
+    if crate::src::renderergl1::tr_shade::tess.numVertexes + (*surf).numPoints >= 1000
+        || crate::src::renderergl1::tr_shade::tess.numIndexes + (*surf).numIndices >= 6 * 1000
     {
         RB_CheckOverflow((*surf).numPoints, (*surf).numIndices);
     }
@@ -2547,8 +2321,7 @@ unsafe extern "C" fn RB_SurfaceFace(mut surf: *mut crate::tr_local_h::srfSurface
         .offset(crate::src::renderergl1::tr_shade::tess.numIndexes as isize);
     i = (*surf).numIndices - 1;
     while i >= 0 {
-        *tessIndexes.offset(i as isize) =
-            (*indices.offset(i as isize)).wrapping_add(Bob as u32);
+        *tessIndexes.offset(i as isize) = (*indices.offset(i as isize)).wrapping_add(Bob as u32);
         i -= 1
     }
     crate::src::renderergl1::tr_shade::tess.numIndexes += (*surf).numIndices;
@@ -2558,47 +2331,28 @@ unsafe extern "C" fn RB_SurfaceFace(mut surf: *mut crate::tr_local_h::srfSurface
         i = 0;
         ndx = crate::src::renderergl1::tr_shade::tess.numVertexes;
         while i < numPoints {
-            crate::src::renderergl1::tr_shade::tess.normal[ndx as usize]
-                [0] = *normal.offset(0);
-            crate::src::renderergl1::tr_shade::tess.normal[ndx as usize]
-                [1] = *normal.offset(1);
-            crate::src::renderergl1::tr_shade::tess.normal[ndx as usize]
-                [2] = *normal.offset(2);
+            crate::src::renderergl1::tr_shade::tess.normal[ndx as usize][0] = *normal.offset(0);
+            crate::src::renderergl1::tr_shade::tess.normal[ndx as usize][1] = *normal.offset(1);
+            crate::src::renderergl1::tr_shade::tess.normal[ndx as usize][2] = *normal.offset(2);
             i += 1;
             ndx += 1
         }
     }
     i = 0;
-    v = (*(*surf)
-        .points
-        .as_mut_ptr()
-        .offset(0))
-    .as_mut_ptr();
+    v = (*(*surf).points.as_mut_ptr().offset(0)).as_mut_ptr();
     ndx = crate::src::renderergl1::tr_shade::tess.numVertexes;
     while i < numPoints {
-        crate::src::renderergl1::tr_shade::tess.xyz[ndx as usize][0] =
-            *v.offset(0);
-        crate::src::renderergl1::tr_shade::tess.xyz[ndx as usize][1] =
-            *v.offset(1);
-        crate::src::renderergl1::tr_shade::tess.xyz[ndx as usize][2] =
-            *v.offset(2);
-        crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize]
-            [0][0] =
-            *v.offset(3);
-        crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize]
-            [0][1] =
-            *v.offset(4);
-        crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize]
-            [1][0] =
-            *v.offset(5);
-        crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize]
-            [1][1] =
-            *v.offset(6);
+        crate::src::renderergl1::tr_shade::tess.xyz[ndx as usize][0] = *v.offset(0);
+        crate::src::renderergl1::tr_shade::tess.xyz[ndx as usize][1] = *v.offset(1);
+        crate::src::renderergl1::tr_shade::tess.xyz[ndx as usize][2] = *v.offset(2);
+        crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][0][0] = *v.offset(3);
+        crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][0][1] = *v.offset(4);
+        crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][1][0] = *v.offset(5);
+        crate::src::renderergl1::tr_shade::tess.texCoords[ndx as usize][1][1] = *v.offset(6);
         *(&mut *crate::src::renderergl1::tr_shade::tess
             .vertexColors
             .as_mut_ptr()
-            .offset(ndx as isize) as *mut crate::tr_local_h::color4ub_t
-            as *mut u32) =
+            .offset(ndx as isize) as *mut crate::tr_local_h::color4ub_t as *mut u32) =
             *(&mut *v.offset(7) as *mut f32 as *mut u32);
         crate::src::renderergl1::tr_shade::tess.vertexDlightBits[ndx as usize] = dlightBits;
         i += 1;
@@ -2615,40 +2369,20 @@ unsafe extern "C" fn LodErrorForVolume(
     let mut world: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut d: f32 = 0.;
     // never let it go negative
-    if (*crate::src::renderergl1::tr_init::r_lodCurveError).value
-        < 0f32
-    {
+    if (*crate::src::renderergl1::tr_init::r_lodCurveError).value < 0f32 {
         return 0f32;
     }
-    world[0] = *local.offset(0)
-        * crate::src::renderergl1::tr_backend::backEnd.or.axis[0]
-            [0]
-        + *local.offset(1)
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[1]
-                [0]
-        + *local.offset(2)
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[2]
-                [0]
+    world[0] = *local.offset(0) * crate::src::renderergl1::tr_backend::backEnd.or.axis[0][0]
+        + *local.offset(1) * crate::src::renderergl1::tr_backend::backEnd.or.axis[1][0]
+        + *local.offset(2) * crate::src::renderergl1::tr_backend::backEnd.or.axis[2][0]
         + crate::src::renderergl1::tr_backend::backEnd.or.origin[0];
-    world[1] = *local.offset(0)
-        * crate::src::renderergl1::tr_backend::backEnd.or.axis[0]
-            [1]
-        + *local.offset(1)
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[1]
-                [1]
-        + *local.offset(2)
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[2]
-                [1]
+    world[1] = *local.offset(0) * crate::src::renderergl1::tr_backend::backEnd.or.axis[0][1]
+        + *local.offset(1) * crate::src::renderergl1::tr_backend::backEnd.or.axis[1][1]
+        + *local.offset(2) * crate::src::renderergl1::tr_backend::backEnd.or.axis[2][1]
         + crate::src::renderergl1::tr_backend::backEnd.or.origin[1];
-    world[2] = *local.offset(0)
-        * crate::src::renderergl1::tr_backend::backEnd.or.axis[0]
-            [2]
-        + *local.offset(1)
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[1]
-                [2]
-        + *local.offset(2)
-            * crate::src::renderergl1::tr_backend::backEnd.or.axis[2]
-                [2]
+    world[2] = *local.offset(0) * crate::src::renderergl1::tr_backend::backEnd.or.axis[0][2]
+        + *local.offset(1) * crate::src::renderergl1::tr_backend::backEnd.or.axis[1][2]
+        + *local.offset(2) * crate::src::renderergl1::tr_backend::backEnd.or.axis[2][2]
         + crate::src::renderergl1::tr_backend::backEnd.or.origin[2];
     world[0] = world[0]
         - crate::src::renderergl1::tr_backend::backEnd
@@ -2756,11 +2490,9 @@ unsafe extern "C" fn RB_SurfaceGrid(mut cv: *mut crate::tr_local_h::srfGridMesh_
         loop
         // see how many rows of both verts and indexes we can add without overflowing
         {
-            vrows = (1000 - crate::src::renderergl1::tr_shade::tess.numVertexes)
-                / lodWidth;
-            irows = (6 * 1000
-                - crate::src::renderergl1::tr_shade::tess.numIndexes)
-                / (lodWidth * 6);
+            vrows = (1000 - crate::src::renderergl1::tr_shade::tess.numVertexes) / lodWidth;
+            irows =
+                (6 * 1000 - crate::src::renderergl1::tr_shade::tess.numIndexes) / (lodWidth * 6);
             // if we don't have enough space for at least one strip, flush the buffer
             if !(vrows < 2 || irows < 1) {
                 break;
@@ -2781,9 +2513,8 @@ unsafe extern "C" fn RB_SurfaceGrid(mut cv: *mut crate::tr_local_h::srfGridMesh_
         numVertexes = crate::src::renderergl1::tr_shade::tess.numVertexes;
         xyz = crate::src::renderergl1::tr_shade::tess.xyz[numVertexes as usize].as_mut_ptr();
         normal = crate::src::renderergl1::tr_shade::tess.normal[numVertexes as usize].as_mut_ptr();
-        texCoords = crate::src::renderergl1::tr_shade::tess.texCoords[numVertexes as usize]
-            [0]
-            .as_mut_ptr();
+        texCoords =
+            crate::src::renderergl1::tr_shade::tess.texCoords[numVertexes as usize][0].as_mut_ptr();
         color = &mut *crate::src::renderergl1::tr_shade::tess
             .vertexColors
             .as_mut_ptr()
@@ -2808,17 +2539,12 @@ unsafe extern "C" fn RB_SurfaceGrid(mut cv: *mut crate::tr_local_h::srfGridMesh_
                 *xyz.offset(2) = (*dv).xyz[2];
                 *texCoords.offset(0) = (*dv).st[0];
                 *texCoords.offset(1) = (*dv).st[1];
-                *texCoords.offset(2) =
-                    (*dv).lightmap[0];
-                *texCoords.offset(3) =
-                    (*dv).lightmap[1];
+                *texCoords.offset(2) = (*dv).lightmap[0];
+                *texCoords.offset(3) = (*dv).lightmap[1];
                 if needsNormal as u64 != 0 {
-                    *normal.offset(0) =
-                        (*dv).normal[0];
-                    *normal.offset(1) =
-                        (*dv).normal[1];
-                    *normal.offset(2) =
-                        (*dv).normal[2]
+                    *normal.offset(0) = (*dv).normal[0];
+                    *normal.offset(1) = (*dv).normal[1];
+                    *normal.offset(2) = (*dv).normal[2]
                 }
                 *(color as *mut u32) = *((*dv).color.as_mut_ptr() as *mut u32);
                 let fresh19 = vDlightBits;
@@ -2854,16 +2580,16 @@ unsafe extern "C" fn RB_SurfaceGrid(mut cv: *mut crate::tr_local_h::srfGridMesh_
                 v4 = v3 + 1;
                 crate::src::renderergl1::tr_shade::tess.indexes[numIndexes as usize] =
                     v2 as crate::tr_local_h::glIndex_t;
-                crate::src::renderergl1::tr_shade::tess.indexes
-                    [(numIndexes + 1) as usize] = v3 as crate::tr_local_h::glIndex_t;
-                crate::src::renderergl1::tr_shade::tess.indexes
-                    [(numIndexes + 2) as usize] = v1 as crate::tr_local_h::glIndex_t;
-                crate::src::renderergl1::tr_shade::tess.indexes
-                    [(numIndexes + 3) as usize] = v1 as crate::tr_local_h::glIndex_t;
-                crate::src::renderergl1::tr_shade::tess.indexes
-                    [(numIndexes + 4) as usize] = v3 as crate::tr_local_h::glIndex_t;
-                crate::src::renderergl1::tr_shade::tess.indexes
-                    [(numIndexes + 5) as usize] = v4 as crate::tr_local_h::glIndex_t;
+                crate::src::renderergl1::tr_shade::tess.indexes[(numIndexes + 1) as usize] =
+                    v3 as crate::tr_local_h::glIndex_t;
+                crate::src::renderergl1::tr_shade::tess.indexes[(numIndexes + 2) as usize] =
+                    v1 as crate::tr_local_h::glIndex_t;
+                crate::src::renderergl1::tr_shade::tess.indexes[(numIndexes + 3) as usize] =
+                    v1 as crate::tr_local_h::glIndex_t;
+                crate::src::renderergl1::tr_shade::tess.indexes[(numIndexes + 4) as usize] =
+                    v3 as crate::tr_local_h::glIndex_t;
+                crate::src::renderergl1::tr_shade::tess.indexes[(numIndexes + 5) as usize] =
+                    v4 as crate::tr_local_h::glIndex_t;
                 numIndexes += 6;
                 j += 1
             }
@@ -2892,61 +2618,19 @@ Draws x/y/z lines from the origin for orientation debugging
 unsafe extern "C" fn RB_SurfaceAxis() {
     crate::src::renderergl1::tr_backend::GL_Bind(crate::src::renderergl1::tr_main::tr.whiteImage);
     crate::src::renderergl1::tr_backend::GL_State(0x100);
-    crate::src::sdl::sdl_glimp::qglLineWidth.expect("non-null function pointer")(
-        3f32,
-    );
-    crate::src::sdl::sdl_glimp::qglBegin.expect("non-null function pointer")(
-        0x1u32,
-    );
-    crate::src::sdl::sdl_glimp::qglColor3f.expect("non-null function pointer")(
-        1f32,
-        0f32,
-        0f32,
-    );
-    crate::src::sdl::sdl_glimp::qglVertex3f.expect("non-null function pointer")(
-        0f32,
-        0f32,
-        0f32,
-    );
-    crate::src::sdl::sdl_glimp::qglVertex3f.expect("non-null function pointer")(
-        16f32,
-        0f32,
-        0f32,
-    );
-    crate::src::sdl::sdl_glimp::qglColor3f.expect("non-null function pointer")(
-        0f32,
-        1f32,
-        0f32,
-    );
-    crate::src::sdl::sdl_glimp::qglVertex3f.expect("non-null function pointer")(
-        0f32,
-        0f32,
-        0f32,
-    );
-    crate::src::sdl::sdl_glimp::qglVertex3f.expect("non-null function pointer")(
-        0f32,
-        16f32,
-        0f32,
-    );
-    crate::src::sdl::sdl_glimp::qglColor3f.expect("non-null function pointer")(
-        0f32,
-        0f32,
-        1f32,
-    );
-    crate::src::sdl::sdl_glimp::qglVertex3f.expect("non-null function pointer")(
-        0f32,
-        0f32,
-        0f32,
-    );
-    crate::src::sdl::sdl_glimp::qglVertex3f.expect("non-null function pointer")(
-        0f32,
-        0f32,
-        16f32,
-    );
+    crate::src::sdl::sdl_glimp::qglLineWidth.expect("non-null function pointer")(3f32);
+    crate::src::sdl::sdl_glimp::qglBegin.expect("non-null function pointer")(0x1u32);
+    crate::src::sdl::sdl_glimp::qglColor3f.expect("non-null function pointer")(1f32, 0f32, 0f32);
+    crate::src::sdl::sdl_glimp::qglVertex3f.expect("non-null function pointer")(0f32, 0f32, 0f32);
+    crate::src::sdl::sdl_glimp::qglVertex3f.expect("non-null function pointer")(16f32, 0f32, 0f32);
+    crate::src::sdl::sdl_glimp::qglColor3f.expect("non-null function pointer")(0f32, 1f32, 0f32);
+    crate::src::sdl::sdl_glimp::qglVertex3f.expect("non-null function pointer")(0f32, 0f32, 0f32);
+    crate::src::sdl::sdl_glimp::qglVertex3f.expect("non-null function pointer")(0f32, 16f32, 0f32);
+    crate::src::sdl::sdl_glimp::qglColor3f.expect("non-null function pointer")(0f32, 0f32, 1f32);
+    crate::src::sdl::sdl_glimp::qglVertex3f.expect("non-null function pointer")(0f32, 0f32, 0f32);
+    crate::src::sdl::sdl_glimp::qglVertex3f.expect("non-null function pointer")(0f32, 0f32, 16f32);
     crate::src::sdl::sdl_glimp::qglEnd.expect("non-null function pointer")();
-    crate::src::sdl::sdl_glimp::qglLineWidth.expect("non-null function pointer")(
-        1f32,
-    );
+    crate::src::sdl::sdl_glimp::qglLineWidth.expect("non-null function pointer")(1f32);
 }
 //===========================================================================
 /*
@@ -2958,7 +2642,7 @@ Entities that have a single procedurally generated surface
 */
 
 unsafe extern "C" fn RB_SurfaceEntity(mut surfType: *mut crate::tr_local_h::surfaceType_t) {
-    match  (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
+    match (*crate::src::renderergl1::tr_backend::backEnd.currentEntity)
         .e
         .reType
     {

@@ -199,9 +199,7 @@ pub mod q_shared_h {
     pub unsafe extern "C" fn VectorNormalizeFast(mut v: *mut crate::src::qcommon::q_shared::vec_t) {
         let mut ilength: f32 = 0.;
         ilength = crate::src::qcommon::q_math::Q_rsqrt(
-            *v.offset(0) * *v.offset(0)
-                + *v.offset(1) * *v.offset(1)
-                + *v.offset(2) * *v.offset(2),
+            *v.offset(0) * *v.offset(0) + *v.offset(1) * *v.offset(1) + *v.offset(2) * *v.offset(2),
         );
         let ref mut fresh0 = *v.offset(0);
         *fresh0 *= ilength;
@@ -224,15 +222,9 @@ pub mod q_shared_h {
         mut v2: *const crate::src::qcommon::q_shared::vec_t,
         mut cross: *mut crate::src::qcommon::q_shared::vec_t,
     ) {
-        *cross.offset(0) = *v1.offset(1)
-            * *v2.offset(2)
-            - *v1.offset(2) * *v2.offset(1);
-        *cross.offset(1) = *v1.offset(2)
-            * *v2.offset(0)
-            - *v1.offset(0) * *v2.offset(2);
-        *cross.offset(2) = *v1.offset(0)
-            * *v2.offset(1)
-            - *v1.offset(1) * *v2.offset(0);
+        *cross.offset(0) = *v1.offset(1) * *v2.offset(2) - *v1.offset(2) * *v2.offset(1);
+        *cross.offset(1) = *v1.offset(2) * *v2.offset(0) - *v1.offset(0) * *v2.offset(2);
+        *cross.offset(2) = *v1.offset(0) * *v2.offset(1) - *v1.offset(1) * *v2.offset(0);
     }
 
     // __Q_SHARED_H
@@ -442,144 +434,14 @@ unsafe extern "C" fn R_ChopPolyBehindPlane(
     mut epsilon: crate::src::qcommon::q_shared::vec_t,
 ) {
     let mut dists: [f32; 68] = [
-        0f32,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
-        0.,
+        0f32, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+        0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+        0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
     ];
     let mut sides: [i32; 68] = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
     ];
     let mut counts: [i32; 3] = [0; 3];
     let mut dot: f32 = 0.;
@@ -600,12 +462,9 @@ unsafe extern "C" fn R_ChopPolyBehindPlane(
     // determine sides for each point
     i = 0;
     while i < numInPoints {
-        dot = (*inPoints.offset(i as isize))[0]
-            * *normal.offset(0)
-            + (*inPoints.offset(i as isize))[1]
-                * *normal.offset(1)
-            + (*inPoints.offset(i as isize))[2]
-                * *normal.offset(2);
+        dot = (*inPoints.offset(i as isize))[0] * *normal.offset(0)
+            + (*inPoints.offset(i as isize))[1] * *normal.offset(1)
+            + (*inPoints.offset(i as isize))[2] * *normal.offset(2);
         dot -= dist;
         dists[i as usize] = dot;
         if dot > epsilon {
@@ -629,9 +488,8 @@ unsafe extern "C" fn R_ChopPolyBehindPlane(
         crate::stdlib::memcpy(
             outPoints as *mut libc::c_void,
             inPoints as *const libc::c_void,
-            (numInPoints as usize).wrapping_mul(::std::mem::size_of::<
-                crate::src::qcommon::q_shared::vec3_t,
-            >()),
+            (numInPoints as usize)
+                .wrapping_mul(::std::mem::size_of::<crate::src::qcommon::q_shared::vec3_t>()),
         );
         return;
     }
@@ -652,12 +510,9 @@ unsafe extern "C" fn R_ChopPolyBehindPlane(
                 *numOutPoints += 1;
                 clip = (*outPoints.offset(*numOutPoints as isize)).as_mut_ptr()
             }
-            if !(sides[(i + 1) as usize] == 2
-                || sides[(i + 1) as usize] == sides[i as usize])
-            {
+            if !(sides[(i + 1) as usize] == 2 || sides[(i + 1) as usize] == sides[i as usize]) {
                 // generate a split point
-                p2 = (*inPoints.offset(((i + 1) % numInPoints) as isize))
-                    .as_mut_ptr();
+                p2 = (*inPoints.offset(((i + 1) % numInPoints) as isize)).as_mut_ptr();
                 d = dists[i as usize] - dists[(i + 1) as usize];
                 if d == 0f32 {
                     dot = 0f32
@@ -665,11 +520,10 @@ unsafe extern "C" fn R_ChopPolyBehindPlane(
                     dot = dists[i as usize] / d
                 }
                 // clip xyz
-                j = 0;
-                while j < 3 {
+
+                for j in 0..3 {
                     *clip.offset(j as isize) = *p1.offset(j as isize)
                         + dot * (*p2.offset(j as isize) - *p1.offset(j as isize));
-                    j += 1
                 }
                 *numOutPoints += 1
             }
@@ -739,9 +593,7 @@ pub unsafe extern "C" fn R_BoxSurfaces_r(
             || (*(*surf).shader).contentFlags & 64 != 0
         {
             (*surf).viewCount = crate::src::renderergl1::tr_main::tr.viewCount
-        } else if  *(*surf).data
-            ==  crate::tr_local_h::SF_FACE
-        {
+        } else if *(*surf).data == crate::tr_local_h::SF_FACE {
             // extra check for surfaces to avoid list overflows
             // the face plane should go through the box
             s = crate::src::qcommon::q_math::BoxOnPlaneSide(
@@ -762,17 +614,14 @@ pub unsafe extern "C" fn R_BoxSurfaces_r(
                 + (*((*surf).data as *mut crate::tr_local_h::srfSurfaceFace_t))
                     .plane
                     .normal[2]
-                    * *dir.offset(2))
-                as f64
+                    * *dir.offset(2)) as f64
                 > -0.5
             {
                 // don't add faces that make sharp angles with the projection direction
                 (*surf).viewCount = crate::src::renderergl1::tr_main::tr.viewCount
             }
-        } else if  *(*surf).data
-            !=  crate::tr_local_h::SF_GRID
-            &&  *(*surf).data
-                !=  crate::tr_local_h::SF_TRIANGLES
+        } else if *(*surf).data != crate::tr_local_h::SF_GRID
+            && *(*surf).data != crate::tr_local_h::SF_TRIANGLES
         {
             (*surf).viewCount = crate::src::renderergl1::tr_main::tr.viewCount
         }
@@ -816,8 +665,8 @@ pub unsafe extern "C" fn R_AddMarkFragments(
         0 as *mut crate::src::qcommon::q_shared::markFragment_t;
     // chop the surface by all the bounding planes of the to be projected polygon
     pingPong = 0;
-    i = 0;
-    while i < numPlanes {
+
+    for i in 0..numPlanes {
         R_ChopPolyBehindPlane(
             numClipPoints,
             (*clipPoints.offset(pingPong as isize)).as_mut_ptr(),
@@ -827,11 +676,12 @@ pub unsafe extern "C" fn R_AddMarkFragments(
             *dists.offset(i as isize),
             0.5,
         );
+
         pingPong ^= 1;
+
         if numClipPoints == 0 {
             break;
         }
-        i += 1
     }
     // completely clipped away?
     if numClipPoints == 0 {
@@ -860,9 +710,8 @@ pub unsafe extern "C" fn R_AddMarkFragments(
     crate::stdlib::memcpy(
         pointBuffer.offset((*returnedPoints * 3i32) as isize) as *mut libc::c_void,
         (*clipPoints.offset(pingPong as isize)).as_mut_ptr() as *const libc::c_void,
-        (numClipPoints as usize).wrapping_mul(::std::mem::size_of::<
-            crate::src::qcommon::q_shared::vec3_t,
-        >()),
+        (numClipPoints as usize)
+            .wrapping_mul(::std::mem::size_of::<crate::src::qcommon::q_shared::vec3_t>()),
     );
     *returnedPoints += numClipPoints;
     *returnedFragments += 1;
@@ -1306,24 +1155,18 @@ pub unsafe extern "C" fn R_MarkFragments(
             mins.as_mut_ptr(),
             maxs.as_mut_ptr(),
         );
-        temp[0] = (*points.offset(i as isize))[0]
-            + *projection.offset(0);
-        temp[1] = (*points.offset(i as isize))[1]
-            + *projection.offset(1);
-        temp[2] = (*points.offset(i as isize))[2]
-            + *projection.offset(2);
+        temp[0] = (*points.offset(i as isize))[0] + *projection.offset(0);
+        temp[1] = (*points.offset(i as isize))[1] + *projection.offset(1);
+        temp[2] = (*points.offset(i as isize))[2] + *projection.offset(2);
         crate::src::qcommon::q_math::AddPointToBounds(
             temp.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             mins.as_mut_ptr(),
             maxs.as_mut_ptr(),
         );
         // make sure we get all the leafs (also the one(s) in front of the hit surface)
-        temp[0] = (*points.offset(i as isize))[0]
-            + projectionDir[0] * -20f32;
-        temp[1] = (*points.offset(i as isize))[1]
-            + projectionDir[1] * -20f32;
-        temp[2] = (*points.offset(i as isize))[2]
-            + projectionDir[2] * -20f32;
+        temp[0] = (*points.offset(i as isize))[0] + projectionDir[0] * -20f32;
+        temp[1] = (*points.offset(i as isize))[1] + projectionDir[1] * -20f32;
+        temp[2] = (*points.offset(i as isize))[2] + projectionDir[2] * -20f32;
         crate::src::qcommon::q_math::AddPointToBounds(
             temp.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             mins.as_mut_ptr(),
@@ -1337,69 +1180,45 @@ pub unsafe extern "C" fn R_MarkFragments(
     // create the bounding planes for the to be projected polygon
     i = 0;
     while i < numPoints {
-        v1[0] = (*points
-            .offset(((i + 1) % numPoints) as isize))[0]
-            - (*points.offset(i as isize))[0];
-        v1[1] = (*points
-            .offset(((i + 1) % numPoints) as isize))[1]
-            - (*points.offset(i as isize))[1];
-        v1[2] = (*points
-            .offset(((i + 1) % numPoints) as isize))[2]
-            - (*points.offset(i as isize))[2];
-        v2[0] = (*points.offset(i as isize))[0]
-            + *projection.offset(0);
-        v2[1] = (*points.offset(i as isize))[1]
-            + *projection.offset(1);
-        v2[2] = (*points.offset(i as isize))[2]
-            + *projection.offset(2);
-        v2[0] =
-            (*points.offset(i as isize))[0] - v2[0];
-        v2[1] =
-            (*points.offset(i as isize))[1] - v2[1];
-        v2[2] =
-            (*points.offset(i as isize))[2] - v2[2];
+        v1[0] =
+            (*points.offset(((i + 1) % numPoints) as isize))[0] - (*points.offset(i as isize))[0];
+        v1[1] =
+            (*points.offset(((i + 1) % numPoints) as isize))[1] - (*points.offset(i as isize))[1];
+        v1[2] =
+            (*points.offset(((i + 1) % numPoints) as isize))[2] - (*points.offset(i as isize))[2];
+        v2[0] = (*points.offset(i as isize))[0] + *projection.offset(0);
+        v2[1] = (*points.offset(i as isize))[1] + *projection.offset(1);
+        v2[2] = (*points.offset(i as isize))[2] + *projection.offset(2);
+        v2[0] = (*points.offset(i as isize))[0] - v2[0];
+        v2[1] = (*points.offset(i as isize))[1] - v2[1];
+        v2[2] = (*points.offset(i as isize))[2] - v2[2];
         CrossProduct(
             v1.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             v2.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
             normals[i as usize].as_mut_ptr(),
         );
         VectorNormalizeFast(normals[i as usize].as_mut_ptr());
-        dists[i as usize] = normals[i as usize][0]
-            * (*points.offset(i as isize))[0]
-            + normals[i as usize][1]
-                * (*points.offset(i as isize))[1]
-            + normals[i as usize][2]
-                * (*points.offset(i as isize))[2];
+        dists[i as usize] = normals[i as usize][0] * (*points.offset(i as isize))[0]
+            + normals[i as usize][1] * (*points.offset(i as isize))[1]
+            + normals[i as usize][2] * (*points.offset(i as isize))[2];
         i += 1
     }
     // add near and far clipping planes for projection
-    normals[numPoints as usize][0] =
-        projectionDir[0];
-    normals[numPoints as usize][1] =
-        projectionDir[1];
-    normals[numPoints as usize][2] =
-        projectionDir[2];
-    dists[numPoints as usize] = normals[numPoints as usize][0]
-        * (*points.offset(0))[0]
-        + normals[numPoints as usize][1]
-            * (*points.offset(0))[1]
-        + normals[numPoints as usize][2]
-            * (*points.offset(0))[2]
+    normals[numPoints as usize][0] = projectionDir[0];
+    normals[numPoints as usize][1] = projectionDir[1];
+    normals[numPoints as usize][2] = projectionDir[2];
+    dists[numPoints as usize] = normals[numPoints as usize][0] * (*points.offset(0))[0]
+        + normals[numPoints as usize][1] * (*points.offset(0))[1]
+        + normals[numPoints as usize][2] * (*points.offset(0))[2]
         - 32f32;
-    normals[(numPoints + 1i32) as usize][0] =
-        projectionDir[0];
-    normals[(numPoints + 1i32) as usize][1] =
-        projectionDir[1];
-    normals[(numPoints + 1i32) as usize][2] =
-        projectionDir[2];
+    normals[(numPoints + 1i32) as usize][0] = projectionDir[0];
+    normals[(numPoints + 1i32) as usize][1] = projectionDir[1];
+    normals[(numPoints + 1i32) as usize][2] = projectionDir[2];
     VectorInverse(normals[(numPoints + 1i32) as usize].as_mut_ptr());
-    dists[(numPoints + 1i32) as usize] = normals
-        [(numPoints + 1i32) as usize][0]
+    dists[(numPoints + 1i32) as usize] = normals[(numPoints + 1i32) as usize][0]
         * (*points.offset(0))[0]
-        + normals[(numPoints + 1i32) as usize][1]
-            * (*points.offset(0))[1]
-        + normals[(numPoints + 1i32) as usize][2]
-            * (*points.offset(0))[2]
+        + normals[(numPoints + 1i32) as usize][1] * (*points.offset(0))[1]
+        + normals[(numPoints + 1i32) as usize][2] * (*points.offset(0))[2]
         - 20f32;
     numPlanes = numPoints + 2;
     numsurfaces = 0;
@@ -1418,150 +1237,81 @@ pub unsafe extern "C" fn R_MarkFragments(
     returnedFragments = 0;
     i = 0;
     while i < numsurfaces {
-        if  *surfaces[i as usize]
-            ==  crate::tr_local_h::SF_GRID
-        {
+        if *surfaces[i as usize] == crate::tr_local_h::SF_GRID {
             cv = surfaces[i as usize] as *mut crate::tr_local_h::srfGridMesh_t;
             m = 0;
             while m < (*cv).height - 1 {
-                n = 0;
-                while n < (*cv).width - 1 {
-                    // We triangulate the grid and chop all triangles within
-                    // the bounding planes of the to be projected polygon.
-                    // LOD is not taken into account, not such a big deal though.
-                    //
-                    // It's probably much nicer to chop the grid itself and deal
-                    // with this grid as a normal SF_GRID surface so LOD will
-                    // be applied. However the LOD of that chopped grid must
-                    // be synced with the LOD of the original curve.
-                    // One way to do this; the chopped grid shares vertices with
-                    // the original curve. When LOD is applied to the original
-                    // curve the unused vertices are flagged. Now the chopped curve
-                    // should skip the flagged vertices. This still leaves the
-                    // problems with the vertices at the chopped grid edges.
-                    //
-                    // To avoid issues when LOD applied to "hollow curves" (like
-                    // the ones around many jump pads) we now just add a 2 unit
-                    // offset to the triangle vertices.
-                    // The offset is added in the vertex normal vector direction
-                    // so all triangles will still fit together.
-                    // The 2 unit offset should avoid pretty much all LOD problems.
+                for n in 0..(*cv).width - 1 {
                     numClipPoints = 3;
+
                     dv = (*cv)
                         .verts
                         .as_mut_ptr()
                         .offset((m * (*cv).width) as isize)
                         .offset(n as isize);
-                    clipPoints[0][0]
-                        [0] =
-                        (*dv.offset(0)).xyz[0];
-                    clipPoints[0][0]
-                        [1] =
-                        (*dv.offset(0)).xyz[1];
-                    clipPoints[0][0]
-                        [2] =
-                        (*dv.offset(0)).xyz[2];
-                    clipPoints[0][0]
-                        [0] = clipPoints[0]
-                        [0][0]
-                        + (*dv.offset(0)).normal[0]
-                            * 0f32;
-                    clipPoints[0][0]
-                        [1] = clipPoints[0]
-                        [0][1]
-                        + (*dv.offset(0)).normal[1]
-                            * 0f32;
-                    clipPoints[0][0]
-                        [2] = clipPoints[0]
-                        [0][2]
-                        + (*dv.offset(0)).normal[2]
-                            * 0f32;
-                    clipPoints[0][1]
-                        [0] =
-                        (*dv.offset((*cv).width as isize)).xyz[0];
-                    clipPoints[0][1]
-                        [1] =
-                        (*dv.offset((*cv).width as isize)).xyz[1];
-                    clipPoints[0][1]
-                        [2] =
-                        (*dv.offset((*cv).width as isize)).xyz[2];
-                    clipPoints[0][1]
-                        [0] = clipPoints[0]
-                        [1][0]
-                        + (*dv.offset((*cv).width as isize)).normal[0]
-                            * 0f32;
-                    clipPoints[0][1]
-                        [1] = clipPoints[0]
-                        [1][1]
-                        + (*dv.offset((*cv).width as isize)).normal[1]
-                            * 0f32;
-                    clipPoints[0][1]
-                        [2] = clipPoints[0]
-                        [1][2]
-                        + (*dv.offset((*cv).width as isize)).normal[2]
-                            * 0f32;
-                    clipPoints[0][2]
-                        [0] =
-                        (*dv.offset(1)).xyz[0];
-                    clipPoints[0][2]
-                        [1] =
-                        (*dv.offset(1)).xyz[1];
-                    clipPoints[0][2]
-                        [2] =
-                        (*dv.offset(1)).xyz[2];
-                    clipPoints[0][2]
-                        [0] = clipPoints[0]
-                        [2][0]
-                        + (*dv.offset(1)).normal[0]
-                            * 0f32;
-                    clipPoints[0][2]
-                        [1] = clipPoints[0]
-                        [2][1]
-                        + (*dv.offset(1)).normal[1]
-                            * 0f32;
-                    clipPoints[0][2]
-                        [2] = clipPoints[0]
-                        [2][2]
-                        + (*dv.offset(1)).normal[2]
-                            * 0f32;
-                    // check the normal of this triangle
-                    v1[0] = clipPoints[0]
-                        [0][0]
-                        - clipPoints[0][1]
-                            [0];
-                    v1[1] = clipPoints[0]
-                        [0][1]
-                        - clipPoints[0][1]
-                            [1];
-                    v1[2] = clipPoints[0]
-                        [0][2]
-                        - clipPoints[0][1]
-                            [2];
-                    v2[0] = clipPoints[0]
-                        [2][0]
-                        - clipPoints[0][1]
-                            [0];
-                    v2[1] = clipPoints[0]
-                        [2][1]
-                        - clipPoints[0][1]
-                            [1];
-                    v2[2] = clipPoints[0]
-                        [2][2]
-                        - clipPoints[0][1]
-                            [2];
+
+                    clipPoints[0][0][0] = (*dv.offset(0)).xyz[0];
+
+                    clipPoints[0][0][1] = (*dv.offset(0)).xyz[1];
+
+                    clipPoints[0][0][2] = (*dv.offset(0)).xyz[2];
+
+                    clipPoints[0][0][0] = clipPoints[0][0][0] + (*dv.offset(0)).normal[0] * 0f32;
+
+                    clipPoints[0][0][1] = clipPoints[0][0][1] + (*dv.offset(0)).normal[1] * 0f32;
+
+                    clipPoints[0][0][2] = clipPoints[0][0][2] + (*dv.offset(0)).normal[2] * 0f32;
+
+                    clipPoints[0][1][0] = (*dv.offset((*cv).width as isize)).xyz[0];
+
+                    clipPoints[0][1][1] = (*dv.offset((*cv).width as isize)).xyz[1];
+
+                    clipPoints[0][1][2] = (*dv.offset((*cv).width as isize)).xyz[2];
+
+                    clipPoints[0][1][0] =
+                        clipPoints[0][1][0] + (*dv.offset((*cv).width as isize)).normal[0] * 0f32;
+
+                    clipPoints[0][1][1] =
+                        clipPoints[0][1][1] + (*dv.offset((*cv).width as isize)).normal[1] * 0f32;
+
+                    clipPoints[0][1][2] =
+                        clipPoints[0][1][2] + (*dv.offset((*cv).width as isize)).normal[2] * 0f32;
+
+                    clipPoints[0][2][0] = (*dv.offset(1)).xyz[0];
+
+                    clipPoints[0][2][1] = (*dv.offset(1)).xyz[1];
+
+                    clipPoints[0][2][2] = (*dv.offset(1)).xyz[2];
+
+                    clipPoints[0][2][0] = clipPoints[0][2][0] + (*dv.offset(1)).normal[0] * 0f32;
+
+                    clipPoints[0][2][1] = clipPoints[0][2][1] + (*dv.offset(1)).normal[1] * 0f32;
+
+                    clipPoints[0][2][2] = clipPoints[0][2][2] + (*dv.offset(1)).normal[2] * 0f32;
+
+                    v1[0] = clipPoints[0][0][0] - clipPoints[0][1][0];
+
+                    v1[1] = clipPoints[0][0][1] - clipPoints[0][1][1];
+
+                    v1[2] = clipPoints[0][0][2] - clipPoints[0][1][2];
+
+                    v2[0] = clipPoints[0][2][0] - clipPoints[0][1][0];
+
+                    v2[1] = clipPoints[0][2][1] - clipPoints[0][1][1];
+
+                    v2[2] = clipPoints[0][2][2] - clipPoints[0][1][2];
+
                     CrossProduct(
                         v1.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                         v2.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                         normal.as_mut_ptr(),
                     );
+
                     VectorNormalizeFast(normal.as_mut_ptr());
-                    if ((normal[0]
-                        * projectionDir[0]
-                        + normal[1]
-                            * projectionDir[1]
-                        + normal[2]
-                            * projectionDir[2])
-                        as f64)
+
+                    if ((normal[0] * projectionDir[0]
+                        + normal[1] * projectionDir[1]
+                        + normal[2] * projectionDir[2]) as f64)
                         < -0.1
                     {
                         // add the fragments of this triangle
@@ -1585,122 +1335,72 @@ pub unsafe extern "C" fn R_MarkFragments(
                             // not enough space for more fragments
                         }
                     }
-                    clipPoints[0][0]
-                        [0] =
-                        (*dv.offset(1)).xyz[0];
-                    clipPoints[0][0]
-                        [1] =
-                        (*dv.offset(1)).xyz[1];
-                    clipPoints[0][0]
-                        [2] =
-                        (*dv.offset(1)).xyz[2];
-                    clipPoints[0][0]
-                        [0] = clipPoints[0]
-                        [0][0]
-                        + (*dv.offset(1)).normal[0]
-                            * 0f32;
-                    clipPoints[0][0]
-                        [1] = clipPoints[0]
-                        [0][1]
-                        + (*dv.offset(1)).normal[1]
-                            * 0f32;
-                    clipPoints[0][0]
-                        [2] = clipPoints[0]
-                        [0][2]
-                        + (*dv.offset(1)).normal[2]
-                            * 0f32;
-                    clipPoints[0][1]
-                        [0] =
-                        (*dv.offset((*cv).width as isize)).xyz[0];
-                    clipPoints[0][1]
-                        [1] =
-                        (*dv.offset((*cv).width as isize)).xyz[1];
-                    clipPoints[0][1]
-                        [2] =
-                        (*dv.offset((*cv).width as isize)).xyz[2];
-                    clipPoints[0][1]
-                        [0] = clipPoints[0]
-                        [1][0]
-                        + (*dv.offset((*cv).width as isize)).normal[0]
-                            * 0f32;
-                    clipPoints[0][1]
-                        [1] = clipPoints[0]
-                        [1][1]
-                        + (*dv.offset((*cv).width as isize)).normal[1]
-                            * 0f32;
-                    clipPoints[0][1]
-                        [2] = clipPoints[0]
-                        [1][2]
-                        + (*dv.offset((*cv).width as isize)).normal[2]
-                            * 0f32;
-                    clipPoints[0][2]
-                        [0] = (*dv
-                        .offset(((*cv).width + 1) as isize))
-                    .xyz[0];
-                    clipPoints[0][2]
-                        [1] = (*dv
-                        .offset(((*cv).width + 1) as isize))
-                    .xyz[1];
-                    clipPoints[0][2]
-                        [2] = (*dv
-                        .offset(((*cv).width + 1) as isize))
-                    .xyz[2];
-                    clipPoints[0][2]
-                        [0] = clipPoints[0]
-                        [2][0]
-                        + (*dv.offset(((*cv).width + 1) as isize)).normal
-                            [0]
-                            * 0f32;
-                    clipPoints[0][2]
-                        [1] = clipPoints[0]
-                        [2][1]
-                        + (*dv.offset(((*cv).width + 1) as isize)).normal
-                            [1]
-                            * 0f32;
-                    clipPoints[0][2]
-                        [2] = clipPoints[0]
-                        [2][2]
-                        + (*dv.offset(((*cv).width + 1) as isize)).normal
-                            [2]
-                            * 0f32;
-                    // check the normal of this triangle
-                    v1[0] = clipPoints[0]
-                        [0][0]
-                        - clipPoints[0][1]
-                            [0];
-                    v1[1] = clipPoints[0]
-                        [0][1]
-                        - clipPoints[0][1]
-                            [1];
-                    v1[2] = clipPoints[0]
-                        [0][2]
-                        - clipPoints[0][1]
-                            [2];
-                    v2[0] = clipPoints[0]
-                        [2][0]
-                        - clipPoints[0][1]
-                            [0];
-                    v2[1] = clipPoints[0]
-                        [2][1]
-                        - clipPoints[0][1]
-                            [1];
-                    v2[2] = clipPoints[0]
-                        [2][2]
-                        - clipPoints[0][1]
-                            [2];
+
+                    clipPoints[0][0][0] = (*dv.offset(1)).xyz[0];
+
+                    clipPoints[0][0][1] = (*dv.offset(1)).xyz[1];
+
+                    clipPoints[0][0][2] = (*dv.offset(1)).xyz[2];
+
+                    clipPoints[0][0][0] = clipPoints[0][0][0] + (*dv.offset(1)).normal[0] * 0f32;
+
+                    clipPoints[0][0][1] = clipPoints[0][0][1] + (*dv.offset(1)).normal[1] * 0f32;
+
+                    clipPoints[0][0][2] = clipPoints[0][0][2] + (*dv.offset(1)).normal[2] * 0f32;
+
+                    clipPoints[0][1][0] = (*dv.offset((*cv).width as isize)).xyz[0];
+
+                    clipPoints[0][1][1] = (*dv.offset((*cv).width as isize)).xyz[1];
+
+                    clipPoints[0][1][2] = (*dv.offset((*cv).width as isize)).xyz[2];
+
+                    clipPoints[0][1][0] =
+                        clipPoints[0][1][0] + (*dv.offset((*cv).width as isize)).normal[0] * 0f32;
+
+                    clipPoints[0][1][1] =
+                        clipPoints[0][1][1] + (*dv.offset((*cv).width as isize)).normal[1] * 0f32;
+
+                    clipPoints[0][1][2] =
+                        clipPoints[0][1][2] + (*dv.offset((*cv).width as isize)).normal[2] * 0f32;
+
+                    clipPoints[0][2][0] = (*dv.offset(((*cv).width + 1) as isize)).xyz[0];
+
+                    clipPoints[0][2][1] = (*dv.offset(((*cv).width + 1) as isize)).xyz[1];
+
+                    clipPoints[0][2][2] = (*dv.offset(((*cv).width + 1) as isize)).xyz[2];
+
+                    clipPoints[0][2][0] = clipPoints[0][2][0]
+                        + (*dv.offset(((*cv).width + 1) as isize)).normal[0] * 0f32;
+
+                    clipPoints[0][2][1] = clipPoints[0][2][1]
+                        + (*dv.offset(((*cv).width + 1) as isize)).normal[1] * 0f32;
+
+                    clipPoints[0][2][2] = clipPoints[0][2][2]
+                        + (*dv.offset(((*cv).width + 1) as isize)).normal[2] * 0f32;
+
+                    v1[0] = clipPoints[0][0][0] - clipPoints[0][1][0];
+
+                    v1[1] = clipPoints[0][0][1] - clipPoints[0][1][1];
+
+                    v1[2] = clipPoints[0][0][2] - clipPoints[0][1][2];
+
+                    v2[0] = clipPoints[0][2][0] - clipPoints[0][1][0];
+
+                    v2[1] = clipPoints[0][2][1] - clipPoints[0][1][1];
+
+                    v2[2] = clipPoints[0][2][2] - clipPoints[0][1][2];
+
                     CrossProduct(
                         v1.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                         v2.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t,
                         normal.as_mut_ptr(),
                     );
+
                     VectorNormalizeFast(normal.as_mut_ptr());
-                    if ((normal[0]
-                        * projectionDir[0]
-                        + normal[1]
-                            * projectionDir[1]
-                        + normal[2]
-                            * projectionDir[2])
-                        as f64)
+
+                    if ((normal[0] * projectionDir[0]
+                        + normal[1] * projectionDir[1]
+                        + normal[2] * projectionDir[2]) as f64)
                         < -0.05
                     {
                         // add the fragments of this triangle
@@ -1724,53 +1424,34 @@ pub unsafe extern "C" fn R_MarkFragments(
                             // not enough space for more fragments
                         }
                     }
-                    n += 1
                 }
                 m += 1
             }
-        } else if  *surfaces[i as usize]
-            ==  crate::tr_local_h::SF_FACE
-        {
+        } else if *surfaces[i as usize] == crate::tr_local_h::SF_FACE {
             let mut surf: *mut crate::tr_local_h::srfSurfaceFace_t =
                 surfaces[i as usize] as *mut crate::tr_local_h::srfSurfaceFace_t;
             // check the normal of this face
-            if !(((*surf).plane.normal[0]
-                * projectionDir[0]
-                + (*surf).plane.normal[1]
-                    * projectionDir[1]
-                + (*surf).plane.normal[2]
-                    * projectionDir[2]) as f64
+            if !(((*surf).plane.normal[0] * projectionDir[0]
+                + (*surf).plane.normal[1] * projectionDir[1]
+                + (*surf).plane.normal[2] * projectionDir[2]) as f64
                 > -0.5)
             {
                 indexes = (surf as *mut crate::src::qcommon::q_shared::byte)
-                    .offset((*surf).ofsIndices as isize)
-                    as *mut i32;
+                    .offset((*surf).ofsIndices as isize) as *mut i32;
                 k = 0;
                 while k < (*surf).numIndices {
                     j = 0;
                     while j < 3 {
-                        v = (&mut *(*(*surf)
-                            .points
+                        v = (&mut *(*(*surf).points.as_mut_ptr().offset(0))
                             .as_mut_ptr()
-                            .offset(0))
-                        .as_mut_ptr()
-                        .offset(0)
-                            as *mut f32)
-                            .offset(
-                                (8i32 * *indexes.offset((k + j) as isize)) as isize,
-                            );
-                        clipPoints[0][j as usize]
-                            [0] = *v.offset(0)
-                            + (*surf).plane.normal[0]
-                                * 0f32;
-                        clipPoints[0][j as usize]
-                            [1] = *v.offset(1)
-                            + (*surf).plane.normal[1]
-                                * 0f32;
-                        clipPoints[0][j as usize]
-                            [2] = *v.offset(2)
-                            + (*surf).plane.normal[2]
-                                * 0f32;
+                            .offset(0) as *mut f32)
+                            .offset((8i32 * *indexes.offset((k + j) as isize)) as isize);
+                        clipPoints[0][j as usize][0] =
+                            *v.offset(0) + (*surf).plane.normal[0] * 0f32;
+                        clipPoints[0][j as usize][1] =
+                            *v.offset(1) + (*surf).plane.normal[1] * 0f32;
+                        clipPoints[0][j as usize][2] =
+                            *v.offset(2) + (*surf).plane.normal[2] * 0f32;
                         j += 1
                     }
                     // add the fragments of this face
@@ -1796,8 +1477,7 @@ pub unsafe extern "C" fn R_MarkFragments(
                     k += 3
                 }
             }
-        } else if  *surfaces[i as usize]
-            ==  crate::tr_local_h::SF_TRIANGLES
+        } else if *surfaces[i as usize] == crate::tr_local_h::SF_TRIANGLES
             && (*crate::src::renderergl1::tr_init::r_marksOnTriangleMeshes).integer != 0
         {
             let mut surf_0: *mut crate::tr_local_h::srfTriangles_t =
@@ -1811,27 +1491,24 @@ pub unsafe extern "C" fn R_MarkFragments(
                         .offset(*(*surf_0).indexes.offset((k + j) as isize) as isize))
                     .xyz
                     .as_mut_ptr();
-                    clipPoints[0][j as usize][0] =
-                        *v.offset(0)
-                            + (*(*surf_0)
-                                .verts
-                                .offset(*(*surf_0).indexes.offset((k + j) as isize) as isize))
-                            .normal[0]
-                                * 0f32;
-                    clipPoints[0][j as usize][1] =
-                        *v.offset(1)
-                            + (*(*surf_0)
-                                .verts
-                                .offset(*(*surf_0).indexes.offset((k + j) as isize) as isize))
-                            .normal[1]
-                                * 0f32;
-                    clipPoints[0][j as usize][2] =
-                        *v.offset(2)
-                            + (*(*surf_0)
-                                .verts
-                                .offset(*(*surf_0).indexes.offset((k + j) as isize) as isize))
-                            .normal[2]
-                                * 0f32;
+                    clipPoints[0][j as usize][0] = *v.offset(0)
+                        + (*(*surf_0)
+                            .verts
+                            .offset(*(*surf_0).indexes.offset((k + j) as isize) as isize))
+                        .normal[0]
+                            * 0f32;
+                    clipPoints[0][j as usize][1] = *v.offset(1)
+                        + (*(*surf_0)
+                            .verts
+                            .offset(*(*surf_0).indexes.offset((k + j) as isize) as isize))
+                        .normal[1]
+                            * 0f32;
+                    clipPoints[0][j as usize][2] = *v.offset(2)
+                        + (*(*surf_0)
+                            .verts
+                            .offset(*(*surf_0).indexes.offset((k + j) as isize) as isize))
+                        .normal[2]
+                            * 0f32;
                     j += 1
                 }
                 // add the fragments of this face

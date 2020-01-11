@@ -440,507 +440,406 @@ pub static mut glState: crate::tr_local_h::glstate_t = crate::tr_local_h::glstat
 #[no_mangle]
 
 pub static mut com_altivec: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_flareSize: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_flareFade: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_flareCoeff: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_railWidth: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_railCoreWidth: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_railSegmentLength: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_ignoreFastPath: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_verbose: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_ignore: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_displayRefresh: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_detailTextures: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_znear: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_zproj: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_stereoSeparation: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_skipBackEnd: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_stereoEnabled: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_anaglyphMode: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_greyscale: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_ignorehwgamma: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_measureOverdraw: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_inGameVideo: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_fastsky: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_drawSun: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_dynamiclight: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_dlightBacks: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_lodbias: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_lodscale: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_norefresh: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_drawentities: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_drawworld: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_speeds: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_fullbright: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_novis: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_nocull: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_facePlaneCull: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_showcluster: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_nocurves: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_allowExtensions: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_ext_compressed_textures: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_ext_multitexture: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_ext_compiled_vertex_array: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_ext_texture_env_add: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_ext_texture_filter_anisotropic: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_ext_max_anisotropy: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_ignoreGLErrors: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_logFile: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_stencilbits: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_depthbits: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_colorbits: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_primitives: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_texturebits: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_ext_multisample: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_drawBuffer: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_lightmap: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_vertexLight: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_uiFullScreen: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_shadows: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_flares: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_mode: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_nobind: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_singleShader: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_roundImagesDown: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_colorMipLevels: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_picmip: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_showtris: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_showsky: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_shownormals: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_finish: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_clear: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_swapInterval: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_textureMode: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_offsetFactor: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_offsetUnits: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_gamma: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_intensity: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_lockpvs: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_noportals: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_portalOnly: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_subdivisions: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_lodCurveError: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_fullscreen: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_noborder: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_customwidth: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_customheight: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_customPixelAspect: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_overBrightBits: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_mapOverBrightBits: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_debugSurface: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_simpleMipMaps: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_showImages: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_ambientScale: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_directedScale: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_debugLight: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_debugSort: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_printShaders: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_saveFontData: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_marksOnTriangleMeshes: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_aviMotionJpegQuality: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_screenshotJpegQuality: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_maxpolys: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
@@ -948,7 +847,6 @@ pub static mut max_polys: i32 = 0;
 #[no_mangle]
 
 pub static mut r_maxpolyverts: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
@@ -978,8 +876,7 @@ unsafe extern "C" fn InitOpenGL() {
         crate::src::sdl::sdl_glimp::GLimp_Init(crate::src::qcommon::q_shared::qtrue);
         // OpenGL driver constants
         crate::src::sdl::sdl_glimp::qglGetIntegerv.expect("non-null function pointer")(
-            0xd33u32,
-            &mut temp,
+            0xd33u32, &mut temp,
         );
         glConfig.maxTextureSize = temp;
         // stubbed or broken drivers may have reported 0...
@@ -1000,8 +897,7 @@ GL_CheckErrors
 pub unsafe extern "C" fn GL_CheckErrors() {
     let mut err: i32 = 0;
     let mut s: [i8; 64] = [0; 64];
-    err = crate::src::sdl::sdl_glimp::qglGetError.expect("non-null function pointer")()
-        as i32;
+    err = crate::src::sdl::sdl_glimp::qglGetError.expect("non-null function pointer")() as i32;
     if err == 0 {
         return;
     }
@@ -1048,7 +944,6 @@ pub unsafe extern "C" fn GL_CheckErrors() {
         _ => {
             crate::src::qcommon::q_shared::Com_sprintf(
                 s.as_mut_ptr(),
-                
                 ::std::mem::size_of::<[i8; 64]>() as i32,
                 b"%i\x00" as *const u8 as *const i8,
                 err,
@@ -1272,8 +1167,8 @@ unsafe extern "C" fn R_ModeList_f() {
         crate::src::qcommon::q_shared::PRINT_ALL as i32,
         b"\n\x00" as *const u8 as *const i8,
     );
-    i = 0;
-    while i < s_numVidModes {
+
+    for i in 0..s_numVidModes {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
@@ -1281,7 +1176,6 @@ unsafe extern "C" fn R_ModeList_f() {
             b"%s\n\x00" as *const u8 as *const i8,
             r_vidModes[i as usize].description,
         );
-        i += 1
     }
     crate::src::renderergl1::tr_main::ri
         .Printf
@@ -1356,12 +1250,10 @@ pub unsafe extern "C" fn RB_ReadPixels(
             .wrapping_add(packAlign as usize)
             .wrapping_sub(1usize) as i32,
     ) as *mut crate::src::qcommon::q_shared::byte;
-    bufstart = ((((buffer as usize).wrapping_add(*offset)
-        as crate::stdlib::intptr_t
+    bufstart = ((buffer as usize).wrapping_add(*offset) as crate::stdlib::intptr_t
         + packAlign as isize
         - 1
-        & !(packAlign - 1) as isize)))
-        as *mut crate::src::qcommon::q_shared::byte;
+        & !(packAlign - 1) as isize) as *mut crate::src::qcommon::q_shared::byte;
     crate::src::sdl::sdl_glimp::qglReadPixels.expect("non-null function pointer")(
         x,
         y,
@@ -1371,7 +1263,7 @@ pub unsafe extern "C" fn RB_ReadPixels(
         0x1401,
         bufstart as *mut libc::c_void,
     );
-    *offset =  bufstart.wrapping_offset_from(buffer) as crate::stddef_h::size_t;
+    *offset = bufstart.wrapping_offset_from(buffer) as crate::stddef_h::size_t;
     *padlen = padwidth - linelen;
     return buffer;
 }
@@ -1407,26 +1299,14 @@ pub unsafe extern "C" fn RB_TakeScreenshot(
     let mut offset: crate::stddef_h::size_t = 18;
     let mut memcount: crate::stddef_h::size_t = 0;
     allbuf = RB_ReadPixels(x, y, width, height, &mut offset, &mut padlen);
-    buffer = allbuf
-        .offset(offset as isize)
-        .offset(-(18));
-    crate::stdlib::memset(
-        buffer as *mut libc::c_void,
-        0,
-        18,
-    );
-    *buffer.offset(2) =
-        2u8;
-    *buffer.offset(12) =
-        (width & 255i32) as crate::src::qcommon::q_shared::byte;
-    *buffer.offset(13) =
-        (width >> 8) as crate::src::qcommon::q_shared::byte;
-    *buffer.offset(14) =
-        (height & 255i32) as crate::src::qcommon::q_shared::byte;
-    *buffer.offset(15) =
-        (height >> 8) as crate::src::qcommon::q_shared::byte;
-    *buffer.offset(16) =
-        24u8;
+    buffer = allbuf.offset(offset as isize).offset(-(18));
+    crate::stdlib::memset(buffer as *mut libc::c_void, 0, 18);
+    *buffer.offset(2) = 2u8;
+    *buffer.offset(12) = (width & 255i32) as crate::src::qcommon::q_shared::byte;
+    *buffer.offset(13) = (width >> 8) as crate::src::qcommon::q_shared::byte;
+    *buffer.offset(14) = (height & 255i32) as crate::src::qcommon::q_shared::byte;
+    *buffer.offset(15) = (height >> 8) as crate::src::qcommon::q_shared::byte;
+    *buffer.offset(16) = 24u8;
     // swap rgb to bgr and remove padding from line endings
     linelen = width * 3;
     destptr = allbuf.offset(offset as isize);
@@ -1561,8 +1441,7 @@ pub unsafe extern "C" fn R_TakeScreenshot(
         0 as *mut crate::tr_local_h::screenshotCommand_t;
     cmd = crate::src::renderergl1::tr_cmds::R_GetCommandBuffer(::std::mem::size_of::<
         crate::tr_local_h::screenshotCommand_t,
-    >()
-        as i32) as *mut crate::tr_local_h::screenshotCommand_t;
+    >() as i32) as *mut crate::tr_local_h::screenshotCommand_t;
     if cmd.is_null() {
         return;
     }
@@ -1574,7 +1453,6 @@ pub unsafe extern "C" fn R_TakeScreenshot(
     crate::src::qcommon::q_shared::Q_strncpyz(
         fileName.as_mut_ptr(),
         name,
-        
         ::std::mem::size_of::<[i8; 4096]>() as i32,
     );
     (*cmd).fileName = fileName.as_mut_ptr();
@@ -1587,10 +1465,7 @@ R_ScreenshotFilename
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn R_ScreenshotFilename(
-    mut lastNumber: i32,
-    mut fileName: *mut i8,
-) {
+pub unsafe extern "C" fn R_ScreenshotFilename(mut lastNumber: i32, mut fileName: *mut i8) {
     let mut a: i32 = 0;
     let mut b: i32 = 0;
     let mut c: i32 = 0;
@@ -1627,10 +1502,7 @@ R_ScreenshotFilename
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn R_ScreenshotFilenameJPEG(
-    mut lastNumber: i32,
-    mut fileName: *mut i8,
-) {
+pub unsafe extern "C" fn R_ScreenshotFilenameJPEG(mut lastNumber: i32, mut fileName: *mut i8) {
     let mut a: i32 = 0;
     let mut b: i32 = 0;
     let mut c: i32 = 0;
@@ -1695,7 +1567,6 @@ pub unsafe extern "C" fn R_LevelShot() {
     let mut yy: i32 = 0;
     crate::src::qcommon::q_shared::Com_sprintf(
         checkname.as_mut_ptr(),
-        
         ::std::mem::size_of::<[i8; 4096]>() as i32,
         b"levelshots/%s.tga\x00" as *const u8 as *const i8,
         (*crate::src::renderergl1::tr_main::tr.world)
@@ -1713,66 +1584,50 @@ pub unsafe extern "C" fn R_LevelShot() {
     source = allsource.offset(offset as isize);
     buffer = crate::src::renderergl1::tr_main::ri
         .Hunk_AllocateTempMemory
-        .expect("non-null function pointer")(
-        128 * 128 * 3 + 18,
-    ) as *mut crate::src::qcommon::q_shared::byte;
-    crate::stdlib::memset(
-        buffer as *mut libc::c_void,
-        0,
-        18,
-    );
-    *buffer.offset(2) =
-        2u8;
-    *buffer.offset(12) =
-        128u8;
-    *buffer.offset(14) =
-        128u8;
-    *buffer.offset(16) =
-        24u8;
+        .expect("non-null function pointer")(128 * 128 * 3 + 18)
+        as *mut crate::src::qcommon::q_shared::byte;
+    crate::stdlib::memset(buffer as *mut libc::c_void, 0, 18);
+    *buffer.offset(2) = 2u8;
+    *buffer.offset(12) = 128u8;
+    *buffer.offset(14) = 128u8;
+    *buffer.offset(16) = 24u8;
     // resample from source
     xScale = glConfig.vidWidth as f32 / 512.0;
     yScale = glConfig.vidHeight as f32 / 384.0;
-    y = 0;
-    while y < 128 {
-        x = 0;
-        while x < 128 {
+
+    for y in 0..128 {
+        for x in 0..128 {
             b = 0;
+
             g = b;
+
             r = g;
-            yy = 0;
-            while yy < 3 {
-                xx = 0;
-                while xx < 4 {
+            for yy in 0..3 {
+                for xx in 0..4 {
                     src = source
                         .offset(
                             ((3 * glConfig.vidWidth + padlen)
-                                * ((y * 3 + yy) as f32 * yScale)
-                                    as i32) as isize,
+                                * ((y * 3 + yy) as f32 * yScale) as i32)
+                                as isize,
                         )
-                        .offset(
-                            (3
-                                * ((x * 4 + xx) as f32 * xScale)
-                                    as i32) as isize,
-                        );
+                        .offset((3 * ((x * 4 + xx) as f32 * xScale) as i32) as isize);
+
                     r += *src.offset(0) as i32;
+
                     g += *src.offset(1) as i32;
+
                     b += *src.offset(2) as i32;
-                    xx += 1
                 }
-                yy += 1
             }
-            dst = buffer
-                .offset(18)
-                .offset((3 * (y * 128 + x)) as isize);
-            *dst.offset(0) =
-                (b / 12) as crate::src::qcommon::q_shared::byte;
-            *dst.offset(1) =
-                (g / 12) as crate::src::qcommon::q_shared::byte;
-            *dst.offset(2) =
-                (r / 12) as crate::src::qcommon::q_shared::byte;
-            x += 1
+
+            dst = buffer.offset(18).offset((3 * (y * 128 + x)) as isize);
+
+            *dst.offset(0) = (b / 12) as crate::src::qcommon::q_shared::byte;
+
+            *dst.offset(1) = (g / 12) as crate::src::qcommon::q_shared::byte;
+
+            *dst.offset(2) = (r / 12) as crate::src::qcommon::q_shared::byte;
         }
-        y += 1
     }
     // gamma correct
     if glConfig.deviceSupportsGamma as u64 != 0 {
@@ -2032,15 +1887,10 @@ pub unsafe extern "C" fn RB_TakeVideoFrameCmd(
         & !(packAlign - 1) as usize) as i32;
     padlen = (padwidth as usize).wrapping_sub(linelen) as i32;
     // AVI line padding
-    avipadwidth = (linelen
-        .wrapping_add(4usize)
-        .wrapping_sub(1usize)
-        & !(4i32 - 1) as usize) as i32;
+    avipadwidth = (linelen.wrapping_add(4usize).wrapping_sub(1usize) & !(4i32 - 1) as usize) as i32;
     avipadlen = (avipadwidth as usize).wrapping_sub(linelen) as i32;
-    cBuf = ((((*cmd).captureBuffer as crate::stdlib::intptr_t + packAlign as isize
-        - 1
-        & !(packAlign - 1) as isize)))
-        as *mut crate::src::qcommon::q_shared::byte;
+    cBuf = ((*cmd).captureBuffer as crate::stdlib::intptr_t + packAlign as isize - 1
+        & !(packAlign - 1) as isize) as *mut crate::src::qcommon::q_shared::byte;
     crate::src::sdl::sdl_glimp::qglReadPixels.expect("non-null function pointer")(
         0,
         0,
@@ -2067,9 +1917,7 @@ pub unsafe extern "C" fn RB_TakeVideoFrameCmd(
         );
         crate::src::renderergl1::tr_main::ri
             .CL_WriteAVIVideoFrame
-            .expect("non-null function pointer")(
-            (*cmd).encodeBuffer, memcount as i32
-        );
+            .expect("non-null function pointer")((*cmd).encodeBuffer, memcount as i32);
     } else {
         let mut lineend: *mut crate::src::qcommon::q_shared::byte =
             0 as *mut crate::src::qcommon::q_shared::byte;
@@ -2120,17 +1968,10 @@ pub unsafe extern "C" fn RB_TakeVideoFrameCmd(
 #[no_mangle]
 
 pub unsafe extern "C" fn GL_SetDefaultState() {
-    crate::src::sdl::sdl_glimp::qglClearDepth.expect("non-null function pointer")(
-        1f64,
-    );
-    crate::src::sdl::sdl_glimp::qglCullFace.expect("non-null function pointer")(
-        0x404u32,
-    );
+    crate::src::sdl::sdl_glimp::qglClearDepth.expect("non-null function pointer")(1f64);
+    crate::src::sdl::sdl_glimp::qglCullFace.expect("non-null function pointer")(0x404u32);
     crate::src::sdl::sdl_glimp::qglColor4f.expect("non-null function pointer")(
-        1f32,
-        1f32,
-        1f32,
-        1f32,
+        1f32, 1f32, 1f32, 1f32,
     );
     // initialize downstream texture unit if we're running
     // in a multitexture environment
@@ -2138,50 +1979,29 @@ pub unsafe extern "C" fn GL_SetDefaultState() {
         crate::src::renderergl1::tr_backend::GL_SelectTexture(1);
         crate::src::renderergl1::tr_image::GL_TextureMode((*r_textureMode).string);
         crate::src::renderergl1::tr_backend::GL_TexEnv(0x2100);
-        crate::src::sdl::sdl_glimp::qglDisable.expect("non-null function pointer")(
-            0xde1u32,
-        );
+        crate::src::sdl::sdl_glimp::qglDisable.expect("non-null function pointer")(0xde1u32);
         crate::src::renderergl1::tr_backend::GL_SelectTexture(0i32);
     }
-    crate::src::sdl::sdl_glimp::qglEnable.expect("non-null function pointer")(
-        0xde1u32,
-    );
+    crate::src::sdl::sdl_glimp::qglEnable.expect("non-null function pointer")(0xde1u32);
     crate::src::renderergl1::tr_image::GL_TextureMode((*r_textureMode).string);
     crate::src::renderergl1::tr_backend::GL_TexEnv(0x2100);
-    crate::src::sdl::sdl_glimp::qglShadeModel.expect("non-null function pointer")(
-        0x1d01u32,
-    );
-    crate::src::sdl::sdl_glimp::qglDepthFunc.expect("non-null function pointer")(
-        0x203u32,
-    );
+    crate::src::sdl::sdl_glimp::qglShadeModel.expect("non-null function pointer")(0x1d01u32);
+    crate::src::sdl::sdl_glimp::qglDepthFunc.expect("non-null function pointer")(0x203u32);
     // the vertex array is always enabled, but the color and texture
     // arrays are enabled and disabled around the compiled vertex array call
-    crate::src::sdl::sdl_glimp::qglEnableClientState.expect("non-null function pointer")(
-        0x8074u32,
-    );
+    crate::src::sdl::sdl_glimp::qglEnableClientState.expect("non-null function pointer")(0x8074u32);
     //
     // make sure our GL state vector is set correctly
     //
     glState.glStateBits = (0x10000i32 | 0x100) as usize;
     crate::src::sdl::sdl_glimp::qglPolygonMode.expect("non-null function pointer")(
-        0x408u32,
-        0x1b02,
+        0x408u32, 0x1b02,
     );
-    crate::src::sdl::sdl_glimp::qglDepthMask.expect("non-null function pointer")(
-        1u8,
-    );
-    crate::src::sdl::sdl_glimp::qglDisable.expect("non-null function pointer")(
-        0xb71u32,
-    );
-    crate::src::sdl::sdl_glimp::qglEnable.expect("non-null function pointer")(
-        0xc11u32,
-    );
-    crate::src::sdl::sdl_glimp::qglDisable.expect("non-null function pointer")(
-        0xb44u32,
-    );
-    crate::src::sdl::sdl_glimp::qglDisable.expect("non-null function pointer")(
-        0xbe2u32,
-    );
+    crate::src::sdl::sdl_glimp::qglDepthMask.expect("non-null function pointer")(1u8);
+    crate::src::sdl::sdl_glimp::qglDisable.expect("non-null function pointer")(0xb71u32);
+    crate::src::sdl::sdl_glimp::qglEnable.expect("non-null function pointer")(0xc11u32);
+    crate::src::sdl::sdl_glimp::qglDisable.expect("non-null function pointer")(0xb44u32);
+    crate::src::sdl::sdl_glimp::qglDisable.expect("non-null function pointer")(0xbe2u32);
 }
 /*
 ================
@@ -2201,7 +2021,6 @@ pub unsafe extern "C" fn R_PrintLongString(mut string: *const i8) {
         crate::src::qcommon::q_shared::Q_strncpyz(
             buffer.as_mut_ptr(),
             p,
-            
             ::std::mem::size_of::<[i8; 1024]>() as i32,
         );
         crate::src::renderergl1::tr_main::ri
@@ -2305,8 +2124,7 @@ unsafe extern "C" fn GfxInfo_f() {
         .Printf
         .expect("non-null function pointer")(
         crate::src::qcommon::q_shared::PRINT_ALL as i32,
-        b"\nPIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n\x00" as *const u8
-            as *const i8,
+        b"\nPIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n\x00" as *const u8 as *const i8,
         glConfig.colorBits,
         glConfig.depthBits,
         glConfig.stencilBits,
@@ -2397,8 +2215,7 @@ unsafe extern "C" fn GfxInfo_f() {
             .Printf
             .expect("non-null function pointer")(
             crate::src::qcommon::q_shared::PRINT_ALL as i32,
-            b"multiple glColor4ubv + glTexCoord2fv + glVertex3fv\n\x00" as *const u8
-                as *const i8,
+            b"multiple glColor4ubv + glTexCoord2fv + glVertex3fv\n\x00" as *const u8 as *const i8,
         );
     }
     crate::src::renderergl1::tr_main::ri
@@ -2427,38 +2244,30 @@ unsafe extern "C" fn GfxInfo_f() {
         .expect("non-null function pointer")(
         crate::src::qcommon::q_shared::PRINT_ALL as i32,
         b"multitexture: %s\n\x00" as *const u8 as *const i8,
-        enablestrings
-            [crate::src::sdl::sdl_glimp::qglActiveTextureARB.is_some() as i32 as usize],
+        enablestrings[crate::src::sdl::sdl_glimp::qglActiveTextureARB.is_some() as i32 as usize],
     );
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
         crate::src::qcommon::q_shared::PRINT_ALL as i32,
         b"compiled vertex arrays: %s\n\x00" as *const u8 as *const i8,
-        enablestrings
-            [crate::src::sdl::sdl_glimp::qglLockArraysEXT.is_some() as i32 as usize],
+        enablestrings[crate::src::sdl::sdl_glimp::qglLockArraysEXT.is_some() as i32 as usize],
     );
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
         crate::src::qcommon::q_shared::PRINT_ALL as i32,
         b"texenv add: %s\n\x00" as *const u8 as *const i8,
-        enablestrings[(glConfig.textureEnvAddAvailable
-            != 0u32) as i32 as usize],
+        enablestrings[(glConfig.textureEnvAddAvailable != 0u32) as i32 as usize],
     );
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
         crate::src::qcommon::q_shared::PRINT_ALL as i32,
         b"compressed textures: %s\n\x00" as *const u8 as *const i8,
-        enablestrings[(glConfig.textureCompression
-            !=  crate::tr_types_h::TC_NONE)
-            as i32 as usize],
+        enablestrings[(glConfig.textureCompression != crate::tr_types_h::TC_NONE) as i32 as usize],
     );
-    if (*r_vertexLight).integer != 0
-        ||  glConfig.hardwareType
-            ==  crate::tr_types_h::GLHW_PERMEDIA2
-    {
+    if (*r_vertexLight).integer != 0 || glConfig.hardwareType == crate::tr_types_h::GLHW_PERMEDIA2 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
@@ -2466,9 +2275,7 @@ unsafe extern "C" fn GfxInfo_f() {
             b"HACK: using vertex lightmap approximation\n\x00" as *const u8 as *const i8,
         );
     }
-    if  glConfig.hardwareType
-        ==  crate::tr_types_h::GLHW_RAGEPRO
-    {
+    if glConfig.hardwareType == crate::tr_types_h::GLHW_RAGEPRO {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
@@ -2476,9 +2283,7 @@ unsafe extern "C" fn GfxInfo_f() {
             b"HACK: ragePro approximations\n\x00" as *const u8 as *const i8,
         );
     }
-    if  glConfig.hardwareType
-        ==  crate::tr_types_h::GLHW_RIVA128
-    {
+    if glConfig.hardwareType == crate::tr_types_h::GLHW_RIVA128 {
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
@@ -3259,22 +3064,14 @@ pub unsafe extern "C" fn R_Register() {
         .Cvar_Get
         .expect("non-null function pointer")(
         b"r_maxpolys\x00" as *const u8 as *const i8,
-        crate::src::qcommon::q_shared::va(
-            
-            b"%d\x00" as *const  u8 as *mut i8,
-            600i32,
-        ),
+        crate::src::qcommon::q_shared::va(b"%d\x00" as *const u8 as *mut i8, 600i32),
         0,
     );
     r_maxpolyverts = crate::src::renderergl1::tr_main::ri
         .Cvar_Get
         .expect("non-null function pointer")(
         b"r_maxpolyverts\x00" as *const u8 as *const i8,
-        crate::src::qcommon::q_shared::va(
-            
-            b"%d\x00" as *const  u8 as *mut i8,
-            3000i32,
-        ),
+        crate::src::qcommon::q_shared::va(b"%d\x00" as *const u8 as *mut i8, 3000i32),
         0,
     );
     // make sure all the commands added here are also
@@ -3357,40 +3154,32 @@ pub unsafe extern "C" fn R_Init() {
         &mut crate::src::renderergl1::tr_main::tr as *mut crate::tr_local_h::trGlobals_t
             as *mut libc::c_void,
         0,
-        
         ::std::mem::size_of::<crate::tr_local_h::trGlobals_t>(),
     );
     crate::stdlib::memset(
         &mut crate::src::renderergl1::tr_backend::backEnd as *mut crate::tr_local_h::backEndState_t
             as *mut libc::c_void,
         0,
-        
         ::std::mem::size_of::<crate::tr_local_h::backEndState_t>(),
     );
     crate::stdlib::memset(
         &mut crate::src::renderergl1::tr_shade::tess as *mut crate::tr_local_h::shaderCommands_t
             as *mut libc::c_void,
         0,
-        
         ::std::mem::size_of::<crate::tr_local_h::shaderCommands_t>(),
     );
-    if  ::std::mem::size_of::<crate::tr_types_h::glconfig_t>()
-        != 11332
-    {
+    if ::std::mem::size_of::<crate::tr_types_h::glconfig_t>() != 11332 {
         crate::src::renderergl1::tr_main::ri
             .Error
             .expect("non-null function pointer")(
             crate::src::qcommon::q_shared::ERR_FATAL as i32,
             b"Mod ABI incompatible: sizeof(glconfig_t) == %u != 11332\x00" as *const u8
                 as *const i8,
-            
             ::std::mem::size_of::<crate::tr_types_h::glconfig_t>() as u32,
         );
     }
     //	Swap_Init();
-    if crate::src::renderergl1::tr_shade::tess.xyz.as_mut_ptr() as crate::stdlib::intptr_t
-        & 15
-        != 0
+    if crate::src::renderergl1::tr_shade::tess.xyz.as_mut_ptr() as crate::stdlib::intptr_t & 15 != 0
     {
         crate::src::renderergl1::tr_main::ri
             .Printf
@@ -3404,46 +3193,37 @@ pub unsafe extern "C" fn R_Init() {
             .constantColor255
             .as_mut_ptr() as *mut libc::c_void,
         255,
-        
         ::std::mem::size_of::<[crate::tr_local_h::color4ub_t; 1000]>(),
     );
     //
     // init function tables
     //
-    i = 0;
-    while i < 1024 {
+
+    for i in 0..1024 {
         crate::src::renderergl1::tr_main::tr.sinTable[i as usize] = crate::stdlib::sin(
-            (i as f32 * 360.0
-                / (1024i32 - 1) as f32)
-                as f64
-                * 3.14159265358979323846
-                / 180f64,
+            (i as f32 * 360.0 / (1024i32 - 1) as f32) as f64 * 3.14159265358979323846 / 180f64,
         ) as f32;
+
         crate::src::renderergl1::tr_main::tr.squareTable[i as usize] =
-            if i < 1024 / 2 {
-                1.0
-            } else {
-                -1.0
-            };
-        crate::src::renderergl1::tr_main::tr.sawToothTable[i as usize] =
-            i as f32 / 1024f32;
+            if i < 1024 / 2 { 1.0 } else { -1.0 };
+
+        crate::src::renderergl1::tr_main::tr.sawToothTable[i as usize] = i as f32 / 1024f32;
+
         crate::src::renderergl1::tr_main::tr.inverseSawToothTable[i as usize] =
             1.0 - crate::src::renderergl1::tr_main::tr.sawToothTable[i as usize];
+
         if i < 1024 / 2 {
             if i < 1024 / 4 {
                 crate::src::renderergl1::tr_main::tr.triangleTable[i as usize] =
                     i as f32 / (1024i32 / 4) as f32
             } else {
                 crate::src::renderergl1::tr_main::tr.triangleTable[i as usize] = 1.0
-                    - crate::src::renderergl1::tr_main::tr.triangleTable
-                        [(i - 1024 / 4) as usize]
+                    - crate::src::renderergl1::tr_main::tr.triangleTable[(i - 1024 / 4) as usize]
             }
         } else {
             crate::src::renderergl1::tr_main::tr.triangleTable[i as usize] =
-                -crate::src::renderergl1::tr_main::tr.triangleTable
-                    [(i - 1024 / 2) as usize]
+                -crate::src::renderergl1::tr_main::tr.triangleTable[(i - 1024 / 2) as usize]
         }
-        i += 1
     }
     crate::src::renderergl1::tr_image::R_InitFogTable();
     crate::src::renderercommon::tr_noise::R_NoiseInit();
@@ -3477,8 +3257,8 @@ pub unsafe extern "C" fn R_Init() {
     (*crate::src::renderergl1::tr_backend::backEndData).polyVerts = (ptr as *mut i8)
         .offset(::std::mem::size_of::<crate::tr_local_h::backEndData_t>() as isize)
         .offset(
-            (::std::mem::size_of::<crate::tr_local_h::srfPoly_t>())
-                .wrapping_mul(max_polys as usize) as isize,
+            (::std::mem::size_of::<crate::tr_local_h::srfPoly_t>()).wrapping_mul(max_polys as usize)
+                as isize,
         )
         as *mut crate::tr_types_h::polyVert_t;
     crate::src::renderergl1::tr_scene::R_InitNextFrame();
@@ -3488,8 +3268,7 @@ pub unsafe extern "C" fn R_Init() {
     crate::src::renderergl1::tr_image::R_InitSkins();
     crate::src::renderergl1::tr_model::R_ModelInit();
     crate::src::renderercommon::tr_font::R_InitFreeType();
-    err = crate::src::sdl::sdl_glimp::qglGetError.expect("non-null function pointer")()
-        as i32;
+    err = crate::src::sdl::sdl_glimp::qglGetError.expect("non-null function pointer")() as i32;
     if err != 0 {
         crate::src::renderergl1::tr_main::ri
             .Printf
@@ -3839,52 +3618,35 @@ pub unsafe extern "C" fn RE_Shutdown(mut destroyWindow: crate::src::qcommon::q_s
         .expect("non-null function pointer")(
         crate::src::qcommon::q_shared::PRINT_ALL as i32,
         b"RE_Shutdown( %i )\n\x00" as *const u8 as *const i8,
-        
         destroyWindow,
     );
     crate::src::renderergl1::tr_main::ri
         .Cmd_RemoveCommand
-        .expect("non-null function pointer")(
-        b"imagelist\x00" as *const u8 as *const i8
-    );
+        .expect("non-null function pointer")(b"imagelist\x00" as *const u8 as *const i8);
     crate::src::renderergl1::tr_main::ri
         .Cmd_RemoveCommand
-        .expect("non-null function pointer")(
-        b"shaderlist\x00" as *const u8 as *const i8
-    );
+        .expect("non-null function pointer")(b"shaderlist\x00" as *const u8 as *const i8);
     crate::src::renderergl1::tr_main::ri
         .Cmd_RemoveCommand
-        .expect("non-null function pointer")(
-        b"skinlist\x00" as *const u8 as *const i8
-    );
+        .expect("non-null function pointer")(b"skinlist\x00" as *const u8 as *const i8);
     crate::src::renderergl1::tr_main::ri
         .Cmd_RemoveCommand
-        .expect("non-null function pointer")(
-        b"modellist\x00" as *const u8 as *const i8
-    );
+        .expect("non-null function pointer")(b"modellist\x00" as *const u8 as *const i8);
     crate::src::renderergl1::tr_main::ri
         .Cmd_RemoveCommand
-        .expect("non-null function pointer")(
-        b"modelist\x00" as *const u8 as *const i8
-    );
+        .expect("non-null function pointer")(b"modelist\x00" as *const u8 as *const i8);
     crate::src::renderergl1::tr_main::ri
         .Cmd_RemoveCommand
-        .expect("non-null function pointer")(
-        b"screenshot\x00" as *const u8 as *const i8
-    );
+        .expect("non-null function pointer")(b"screenshot\x00" as *const u8 as *const i8);
     crate::src::renderergl1::tr_main::ri
         .Cmd_RemoveCommand
-        .expect("non-null function pointer")(
-        b"screenshotJPEG\x00" as *const u8 as *const i8,
-    );
+        .expect("non-null function pointer")(b"screenshotJPEG\x00" as *const u8 as *const i8);
     crate::src::renderergl1::tr_main::ri
         .Cmd_RemoveCommand
         .expect("non-null function pointer")(b"gfxinfo\x00" as *const u8 as *const i8);
     crate::src::renderergl1::tr_main::ri
         .Cmd_RemoveCommand
-        .expect("non-null function pointer")(
-        b"minimize\x00" as *const u8 as *const i8
-    );
+        .expect("non-null function pointer")(b"minimize\x00" as *const u8 as *const i8);
     if crate::src::renderergl1::tr_main::tr.registered as u64 != 0 {
         crate::src::renderergl1::tr_cmds::R_IssuePendingRenderCommands();
         crate::src::renderergl1::tr_image::R_DeleteTextures();
@@ -3896,7 +3658,6 @@ pub unsafe extern "C" fn RE_Shutdown(mut destroyWindow: crate::src::qcommon::q_s
         crate::stdlib::memset(
             &mut glConfig as *mut crate::tr_types_h::glconfig_t as *mut libc::c_void,
             0,
-            
             ::std::mem::size_of::<crate::tr_types_h::glconfig_t>(),
         );
         textureFilterAnisotropic = crate::src::qcommon::q_shared::qfalse;
@@ -3905,7 +3666,6 @@ pub unsafe extern "C" fn RE_Shutdown(mut destroyWindow: crate::src::qcommon::q_s
         crate::stdlib::memset(
             &mut glState as *mut crate::tr_local_h::glstate_t as *mut libc::c_void,
             0i32,
-            
             ::std::mem::size_of::<crate::tr_local_h::glstate_t>(),
         );
     }
@@ -3978,7 +3738,6 @@ pub unsafe extern "C" fn GetRefAPI(
     crate::stdlib::memset(
         &mut re as *mut crate::tr_public_h::refexport_t as *mut libc::c_void,
         0,
-        
         ::std::mem::size_of::<crate::tr_public_h::refexport_t>(),
     );
     if apiVersion != 8 {
@@ -3986,8 +3745,7 @@ pub unsafe extern "C" fn GetRefAPI(
             .Printf
             .expect("non-null function pointer")(
             crate::src::qcommon::q_shared::PRINT_ALL as i32,
-            b"Mismatched REF_API_VERSION: expected %i, got %i\n\x00" as *const u8
-                as *const i8,
+            b"Mismatched REF_API_VERSION: expected %i, got %i\n\x00" as *const u8 as *const i8,
             8i32,
             apiVersion,
         );
@@ -4002,27 +3760,19 @@ pub unsafe extern "C" fn GetRefAPI(
     );
     re.RegisterModel = Some(
         crate::src::renderergl1::tr_model::RE_RegisterModel
-            as unsafe extern "C" fn(
-                _: *const i8,
-            ) -> crate::src::qcommon::q_shared::qhandle_t,
+            as unsafe extern "C" fn(_: *const i8) -> crate::src::qcommon::q_shared::qhandle_t,
     );
     re.RegisterSkin = Some(
         crate::src::renderergl1::tr_image::RE_RegisterSkin
-            as unsafe extern "C" fn(
-                _: *const i8,
-            ) -> crate::src::qcommon::q_shared::qhandle_t,
+            as unsafe extern "C" fn(_: *const i8) -> crate::src::qcommon::q_shared::qhandle_t,
     );
     re.RegisterShader = Some(
         crate::src::renderergl1::tr_shader::RE_RegisterShader
-            as unsafe extern "C" fn(
-                _: *const i8,
-            ) -> crate::src::qcommon::q_shared::qhandle_t,
+            as unsafe extern "C" fn(_: *const i8) -> crate::src::qcommon::q_shared::qhandle_t,
     );
     re.RegisterShaderNoMip = Some(
         crate::src::renderergl1::tr_shader::RE_RegisterShaderNoMip
-            as unsafe extern "C" fn(
-                _: *const i8,
-            ) -> crate::src::qcommon::q_shared::qhandle_t,
+            as unsafe extern "C" fn(_: *const i8) -> crate::src::qcommon::q_shared::qhandle_t,
     );
     re.LoadWorld = Some(
         crate::src::renderergl1::tr_bsp::RE_LoadWorldMap
@@ -4121,8 +3871,7 @@ pub unsafe extern "C" fn GetRefAPI(
             as unsafe extern "C" fn(_: *const crate::tr_types_h::refdef_t) -> (),
     );
     re.SetColor = Some(
-        crate::src::renderergl1::tr_cmds::RE_SetColor
-            as unsafe extern "C" fn(_: *const f32) -> (),
+        crate::src::renderergl1::tr_cmds::RE_SetColor as unsafe extern "C" fn(_: *const f32) -> (),
     );
     re.DrawStretchPic = Some(
         crate::src::renderergl1::tr_cmds::RE_StretchPic
@@ -4174,18 +3923,11 @@ pub unsafe extern "C" fn GetRefAPI(
     );
     re.RemapShader = Some(
         crate::src::renderergl1::tr_shader::R_RemapShader
-            as unsafe extern "C" fn(
-                _: *const i8,
-                _: *const i8,
-                _: *const i8,
-            ) -> (),
+            as unsafe extern "C" fn(_: *const i8, _: *const i8, _: *const i8) -> (),
     );
     re.GetEntityToken = Some(
         crate::src::renderergl1::tr_bsp::R_GetEntityToken
-            as unsafe extern "C" fn(
-                _: *mut i8,
-                _: i32,
-            ) -> crate::src::qcommon::q_shared::qboolean,
+            as unsafe extern "C" fn(_: *mut i8, _: i32) -> crate::src::qcommon::q_shared::qboolean,
     );
     re.inPVS = Some(
         crate::src::renderergl1::tr_world::R_inPVS
@@ -4208,8 +3950,7 @@ pub unsafe extern "C" fn GetRefAPI(
 }
 unsafe extern "C" fn run_static_initializers() {
     s_numVidModes = (::std::mem::size_of::<[vidmode_t; 12]>())
-        .wrapping_div(::std::mem::size_of::<vidmode_t>())
-        as i32
+        .wrapping_div(::std::mem::size_of::<vidmode_t>()) as i32
 }
 #[used]
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]

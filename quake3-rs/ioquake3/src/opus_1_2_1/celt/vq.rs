@@ -72,10 +72,9 @@ pub mod pitch_h {
     ) -> crate::arch_h::opus_val32 {
         let mut i: i32 = 0;
         let mut xy: crate::arch_h::opus_val32 = 0f32;
-        i = 0;
-        while i < N {
+
+        for i in 0..N {
             xy = xy + *x.offset(i as isize) * *y.offset(i as isize);
-            i += 1
         }
         return xy;
     }
@@ -378,30 +377,34 @@ pub unsafe extern "C" fn op_pvq_search_c(
         *iy.offset(0) += pulsesLeft;
         pulsesLeft = 0
     }
-    i = 0;
-    while i < pulsesLeft {
+
+    for i in 0..pulsesLeft {
         let mut Rxy: crate::arch_h::opus_val16 = 0.;
+
         let mut Ryy: crate::arch_h::opus_val16 = 0.;
+
         let mut best_id: i32 = 0;
+
         let mut best_num: crate::arch_h::opus_val32 = 0.;
+
         let mut best_den: crate::arch_h::opus_val16 = 0.;
+
         best_id = 0;
-        /* The squared magnitude term gets added anyway, so we might as well
-        add it outside the loop */
+
         yy = yy + 1f32;
-        /* Calculations for position 0 are out of the loop, in part to reduce
-        mispredicted branches (since the if condition is usually false)
-        in the loop. */
-        /* Temporary sums of the new pulse(s) */
+
         Rxy = xy + *X.offset(0);
-        /* We're multiplying y[j] by two so we don't have to do it here */
+
         Ryy = yy + *y.offset(0);
-        /* Approximate score: we maximise Rxy/sqrt(Ryy) (we're guaranteed that
-        Rxy is positive because the sign is pre-computed) */
+
         Rxy = Rxy * Rxy;
+
         best_den = Ryy;
+
         best_num = Rxy;
+
         j = 1;
+
         loop {
             /* Temporary sums of the new pulse(s) */
             Rxy = xy + *X.offset(j as isize);
@@ -426,17 +429,18 @@ pub unsafe extern "C" fn op_pvq_search_c(
                 break;
             }
         }
-        /* Updating the sums of the new pulse(s) */
+
         xy = xy + *X.offset(best_id as isize);
-        /* We're multiplying y[j] by two so we don't have to do it here */
+
         yy = yy + *y.offset(best_id as isize);
-        /* Only now that we've made the final choice, update y/iy */
-        /* Multiplying y[j] by 2 so we don't have to do it everywhere else */
+
         let ref mut fresh5 = *y.offset(best_id as isize);
+
         *fresh5 += 2f32;
+
         let ref mut fresh6 = *iy.offset(best_id as isize);
+
         *fresh6 += 1;
-        i += 1
     }
     /* Put the original sign back */
     j = 0;

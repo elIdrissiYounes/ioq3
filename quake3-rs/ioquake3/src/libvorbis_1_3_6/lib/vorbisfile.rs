@@ -1195,10 +1195,9 @@ unsafe extern "C" fn _fetch_and_process_packet(
                             0 as *mut *mut *mut f32,
                         ) << hs;
                         granulepos -= samples as isize;
-                        i = 0;
-                        while i < link {
+
+                        for i in 0..link {
                             granulepos += *(*vf).pcmlengths.offset((i * 2 + 1) as isize);
-                            i += 1
                         }
                         (*vf).pcm_offset = granulepos
                     }
@@ -1462,15 +1461,15 @@ pub unsafe extern "C" fn ov_clear(
         crate::src::libogg_1_3_3::src::framing::ogg_stream_clear(&mut (*vf).os);
         if !(*vf).vi.is_null() && (*vf).links != 0 {
             let mut i: i32 = 0;
-            i = 0;
-            while i < (*vf).links {
+
+            for i in 0..(*vf).links {
                 crate::src::libvorbis_1_3_6::lib::info::vorbis_info_clear(
                     (*vf).vi.offset(i as isize),
                 );
+
                 crate::src::libvorbis_1_3_6::lib::info::vorbis_comment_clear(
                     (*vf).vc.offset(i as isize),
                 );
-                i += 1
             }
             crate::stdlib::free((*vf).vi as *mut libc::c_void);
             crate::stdlib::free((*vf).vc as *mut libc::c_void);
@@ -1642,8 +1641,8 @@ pub unsafe extern "C" fn ov_halfrate(
             ov_pcm_seek(vf, pos);
         }
     }
-    i = 0;
-    while i < (*vf).links {
+
+    for i in 0..(*vf).links {
         if crate::src::libvorbis_1_3_6::lib::synthesis::vorbis_synthesis_halfrate(
             (*vf).vi.offset(i as isize),
             flag,
@@ -1654,7 +1653,6 @@ pub unsafe extern "C" fn ov_halfrate(
             }
             return -(131i32);
         }
-        i += 1
     }
     return 0;
 }
@@ -1816,12 +1814,11 @@ pub unsafe extern "C" fn ov_bitrate(
         let mut bits: crate::config_types_h::ogg_int64_t = 0;
         let mut i_0: i32 = 0;
         let mut br: f32 = 0.;
-        i_0 = 0;
-        while i_0 < (*vf).links {
+
+        for i_0 in 0..(*vf).links {
             bits += (*(*vf).offsets.offset((i_0 + 1) as isize)
                 - *(*vf).dataoffsets.offset(i_0 as isize))
                 * 8;
-            i_0 += 1
         }
         /* This once read: return(rint(bits/ov_time_total(vf,-1)));
          * gcc 3.x on x86 miscompiled this at optimisation level 2 and above,
@@ -1918,10 +1915,9 @@ pub unsafe extern "C" fn ov_raw_total(
     if i < 0 {
         let mut acc: crate::config_types_h::ogg_int64_t = 0;
         let mut i_0: i32 = 0;
-        i_0 = 0;
-        while i_0 < (*vf).links {
+
+        for i_0 in 0..(*vf).links {
             acc += ov_raw_total(vf, i_0);
-            i_0 += 1
         }
         return acc;
     } else {
@@ -1948,10 +1944,9 @@ pub unsafe extern "C" fn ov_pcm_total(
     if i < 0 {
         let mut acc: crate::config_types_h::ogg_int64_t = 0;
         let mut i_0: i32 = 0;
-        i_0 = 0;
-        while i_0 < (*vf).links {
+
+        for i_0 in 0..(*vf).links {
             acc += ov_pcm_total(vf, i_0);
-            i_0 += 1
         }
         return acc;
     } else {
@@ -1978,10 +1973,9 @@ pub unsafe extern "C" fn ov_time_total(
     if i < 0 {
         let mut acc: f64 = 0f64;
         let mut i_0: i32 = 0;
-        i_0 = 0;
-        while i_0 < (*vf).links {
+
+        for i_0 in 0..(*vf).links {
             acc += ov_time_total(vf, i_0);
-            i_0 += 1
         }
         return acc;
     } else {
@@ -2138,10 +2132,9 @@ pub unsafe extern "C" fn ov_raw_seek(
                             if granulepos < 0 {
                                 granulepos = 0
                             }
-                            i = 0;
-                            while i < link {
+
+                            for i in 0..link {
                                 granulepos += *(*vf).pcmlengths.offset((i * 2 + 1) as isize);
-                                i += 1
                             }
                             (*vf).pcm_offset = granulepos - accblock as isize;
                             if (*vf).pcm_offset < 0isize {
@@ -3519,13 +3512,14 @@ pub unsafe extern "C" fn ov_crosslap(
     n2 = crate::src::libvorbis_1_3_6::lib::info::vorbis_info_blocksize(vi2, 0) >> 1 + hs2;
     w1 = vorbis_window(&mut (*vf1).vd, 0);
     w2 = vorbis_window(&mut (*vf2).vd, 0);
-    i = 0;
-    while i < (*vi1).channels {
+
+    for i in 0..(*vi1).channels {
         let mut fresh9 =
             ::std::vec::from_elem(0, (::std::mem::size_of::<f32>()).wrapping_mul(n1 as usize));
+
         let ref mut fresh10 = *lappcm.offset(i as isize);
+
         *fresh10 = fresh9.as_mut_ptr() as *mut f32;
-        i += 1
     }
     _ov_getlap(vf1, vi1, &mut (*vf1).vd, lappcm, n1);
     /* have a lapping buffer from vf1; now to splice it into the lapping
@@ -3589,13 +3583,14 @@ unsafe extern "C" fn _ov_64_seek_lap(
         (::std::mem::size_of::<*mut f32>()).wrapping_mul(ch1 as usize),
     );
     lappcm = fresh11.as_mut_ptr() as *mut *mut f32;
-    i = 0;
-    while i < ch1 {
+
+    for i in 0..ch1 {
         let mut fresh12 =
             ::std::vec::from_elem(0, (::std::mem::size_of::<f32>()).wrapping_mul(n1 as usize));
+
         let ref mut fresh13 = *lappcm.offset(i as isize);
+
         *fresh13 = fresh12.as_mut_ptr() as *mut f32;
-        i += 1
     }
     _ov_getlap(vf, vi, &mut (*vf).vd, lappcm, n1);
     /* have lapping data; seek and prime the buffer */
@@ -3716,13 +3711,14 @@ unsafe extern "C" fn _ov_d_seek_lap(
         (::std::mem::size_of::<*mut f32>()).wrapping_mul(ch1 as usize),
     );
     lappcm = fresh14.as_mut_ptr() as *mut *mut f32;
-    i = 0;
-    while i < ch1 {
+
+    for i in 0..ch1 {
         let mut fresh15 =
             ::std::vec::from_elem(0, (::std::mem::size_of::<f32>()).wrapping_mul(n1 as usize));
+
         let ref mut fresh16 = *lappcm.offset(i as isize);
+
         *fresh16 = fresh15.as_mut_ptr() as *mut f32;
-        i += 1
     }
     _ov_getlap(vf, vi, &mut (*vf).vd, lappcm, n1);
     /* have lapping data; seek and prime the buffer */

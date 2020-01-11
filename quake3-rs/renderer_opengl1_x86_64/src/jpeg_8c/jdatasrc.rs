@@ -265,12 +265,7 @@ unsafe extern "C" fn fill_input_buffer(
 ) -> crate::jmorecfg_h::boolean {
     let mut src: my_src_ptr = (*cinfo).src as my_src_ptr;
     let mut nbytes: crate::stddef_h::size_t = 0;
-    nbytes = crate::stdlib::fread(
-        (*src).buffer as *mut libc::c_void,
-        1,
-        4096,
-        (*src).infile,
-    );
+    nbytes = crate::stdlib::fread((*src).buffer as *mut libc::c_void, 1, 4096, (*src).infile);
     if nbytes <= 0 {
         if (*src).start_of_file != 0 {
             /* Treat empty input file as fatal error */
@@ -290,15 +285,10 @@ unsafe extern "C" fn fill_input_buffer(
                 .emit_message
                 .expect("non-null function pointer"),
         )
-        .expect("non-null function pointer")(
-            cinfo as crate::jpeglib_h::j_common_ptr,
-            -(1),
-        );
+        .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr, -(1));
         /* Insert a fake EOI marker */
-        *(*src).buffer.offset(0) =
-            0xffu8;
-        *(*src).buffer.offset(1) =
-            0xd9u8;
+        *(*src).buffer.offset(0) = 0xffu8;
+        *(*src).buffer.offset(1) = 0xd9u8;
         nbytes = 2
     }
     (*src).pub_0.next_input_byte = (*src).buffer;
@@ -321,10 +311,7 @@ unsafe extern "C" fn fill_mem_input_buffer(
             .emit_message
             .expect("non-null function pointer"),
     )
-    .expect("non-null function pointer")(
-        cinfo as crate::jpeglib_h::j_common_ptr,
-        -(1),
-    );
+    .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr, -(1));
     /* Insert a fake EOI marker */
     mybuffer[0] = 0xff;
     mybuffer[1] = 0xd9;
@@ -362,11 +349,9 @@ unsafe extern "C" fn skip_input_data(
              * so suspension need not be handled.
              */
         }
-        (*src).next_input_byte = (*src)
-            .next_input_byte
-            .offset(num_bytes);
-        (*src).bytes_in_buffer =  ((*src).bytes_in_buffer)
-            .wrapping_sub(num_bytes as crate::stddef_h::size_t)
+        (*src).next_input_byte = (*src).next_input_byte.offset(num_bytes);
+        (*src).bytes_in_buffer =
+            ((*src).bytes_in_buffer).wrapping_sub(num_bytes as crate::stddef_h::size_t)
     };
 }
 /*
@@ -417,7 +402,6 @@ pub unsafe extern "C" fn jpeg_stdio_src(
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
             0,
-            
             ::std::mem::size_of::<my_source_mgr>(),
         ) as *mut crate::jpeglib_h::jpeg_source_mgr; /* use default method */
         src = (*cinfo).src as my_src_ptr; /* forces fill_input_buffer on first read */
@@ -429,8 +413,7 @@ pub unsafe extern "C" fn jpeg_stdio_src(
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
             0,
-            (4096usize)
-                .wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JOCTET>()),
+            (4096usize).wrapping_mul(::std::mem::size_of::<crate::jmorecfg_h::JOCTET>()),
         ) as *mut crate::jmorecfg_h::JOCTET
     }
     src = (*cinfo).src as my_src_ptr;
@@ -497,7 +480,6 @@ pub unsafe extern "C" fn jpeg_mem_src(
         .expect("non-null function pointer")(
             cinfo as crate::jpeglib_h::j_common_ptr,
             0,
-            
             ::std::mem::size_of::<crate::jpeglib_h::jpeg_source_mgr>(),
         ) as *mut crate::jpeglib_h::jpeg_source_mgr
     } /* use default method */
@@ -524,5 +506,5 @@ pub unsafe extern "C" fn jpeg_mem_src(
     (*src).term_source =
         Some(term_source as unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> ());
     (*src).bytes_in_buffer = insize;
-    (*src).next_input_byte =  inbuffer;
+    (*src).next_input_byte = inbuffer;
 }

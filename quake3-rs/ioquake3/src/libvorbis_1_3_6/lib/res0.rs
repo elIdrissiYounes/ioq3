@@ -541,11 +541,11 @@ unsafe extern "C" fn _encodepart(
     let mut bits: i32 = 0;
     let mut dim: i32 = (*book).dim as i32;
     let mut step: i32 = n / dim;
-    i = 0;
-    while i < step {
+
+    for i in 0..step {
         let mut entry: i32 = local_book_besterror(book, vec.offset((i * dim) as isize));
+
         bits += crate::src::libvorbis_1_3_6::lib::codebook::vorbis_book_encode(book, entry, opb);
-        i += 1
     }
     return bits;
 }
@@ -592,11 +592,14 @@ unsafe extern "C" fn _01class(
     i = 0;
     while i < partvals as isize {
         let mut offset: i32 = (i * samples_per_partition as isize + (*info).begin) as i32;
-        j = 0;
-        while j < ch as isize {
+
+        for j in 0..ch as isize {
             let mut max: i32 = 0;
+
             let mut ent: i32 = 0;
+
             k = 0;
+
             while k < samples_per_partition as isize {
                 if crate::stdlib::abs(*(*in_0.offset(j)).offset(offset as isize + k)) > max {
                     max = crate::stdlib::abs(*(*in_0.offset(j)).offset(offset as isize + k))
@@ -604,8 +607,11 @@ unsafe extern "C" fn _01class(
                 ent += crate::stdlib::abs(*(*in_0.offset(j)).offset(offset as isize + k));
                 k += 1
             }
+
             ent = (ent as f32 * scale) as i32;
+
             k = 0;
+
             while k < (possible_partitions - 1) as isize {
                 if max <= (*info).classmetric1[k as usize]
                     && ((*info).classmetric2[k as usize] < 0
@@ -615,8 +621,8 @@ unsafe extern "C" fn _01class(
                 }
                 k += 1
             }
+
             *(*partword.offset(j)).offset(i) = k;
-            j += 1
         }
         i += 1
     }
@@ -668,12 +674,11 @@ unsafe extern "C" fn _2class(
             if crate::stdlib::abs(*(*in_0.offset(0)).offset(l)) > magmax {
                 magmax = crate::stdlib::abs(*(*in_0.offset(0)).offset(l))
             }
-            k = 1;
-            while k < ch as isize {
+
+            for k in 1..ch as isize {
                 if crate::stdlib::abs(*(*in_0.offset(k)).offset(l)) > angmax {
                     angmax = crate::stdlib::abs(*(*in_0.offset(k)).offset(l))
                 }
-                k += 1
             }
             l += 1;
             j += ch as isize
@@ -737,9 +742,10 @@ unsafe extern "C" fn _01forward(
     words for a partition per channel until we've written all the
     residual words for that partition word.  Then write the next
     partition channel words... */
-    s = 0;
-    while s < (*look).stages as isize {
+
+    for s in 0..(*look).stages as isize {
         i = 0;
+
         while i < partvals as isize {
             /* first we encode a partition codeword for each channel */
             if s == 0 {
@@ -800,7 +806,6 @@ unsafe extern "C" fn _01forward(
                 i += 1
             }
         }
-        s += 1
     }
     return 0;
 }
@@ -931,15 +936,14 @@ pub unsafe extern "C" fn res0_inverse(
 ) -> i32 {
     let mut i: i32 = 0;
     let mut used: i32 = 0;
-    i = 0;
-    while i < ch {
+
+    for i in 0..ch {
         if *nonzero.offset(i as isize) != 0 {
             let fresh11 = used;
             used = used + 1;
             let ref mut fresh12 = *in_0.offset(fresh11 as isize);
             *fresh12 = *in_0.offset(i as isize)
         }
-        i += 1
     }
     if used != 0 {
         return _01inverse(
@@ -975,15 +979,14 @@ pub unsafe extern "C" fn res1_forward(
 ) -> i32 {
     let mut i: i32 = 0;
     let mut used: i32 = 0;
-    i = 0;
-    while i < ch {
+
+    for i in 0..ch {
         if *nonzero.offset(i as isize) != 0 {
             let fresh13 = used;
             used = used + 1;
             let ref mut fresh14 = *in_0.offset(fresh13 as isize);
             *fresh14 = *in_0.offset(i as isize)
         }
-        i += 1
     }
     if used != 0 {
         return _01forward(
@@ -1017,15 +1020,14 @@ pub unsafe extern "C" fn res1_class(
 ) -> *mut *mut isize {
     let mut i: i32 = 0;
     let mut used: i32 = 0;
-    i = 0;
-    while i < ch {
+
+    for i in 0..ch {
         if *nonzero.offset(i as isize) != 0 {
             let fresh15 = used;
             used = used + 1;
             let ref mut fresh16 = *in_0.offset(fresh15 as isize);
             *fresh16 = *in_0.offset(i as isize)
         }
-        i += 1
     }
     if used != 0 {
         return _01class(vb, vl, in_0, used);
@@ -1044,15 +1046,14 @@ pub unsafe extern "C" fn res1_inverse(
 ) -> i32 {
     let mut i: i32 = 0;
     let mut used: i32 = 0;
-    i = 0;
-    while i < ch {
+
+    for i in 0..ch {
         if *nonzero.offset(i as isize) != 0 {
             let fresh17 = used;
             used = used + 1;
             let ref mut fresh18 = *in_0.offset(fresh17 as isize);
             *fresh18 = *in_0.offset(i as isize)
         }
-        i += 1
     }
     if used != 0 {
         return _01inverse(
@@ -1085,12 +1086,11 @@ pub unsafe extern "C" fn res2_class(
 ) -> *mut *mut isize {
     let mut i: i32 = 0;
     let mut used: i32 = 0;
-    i = 0;
-    while i < ch {
+
+    for i in 0..ch {
         if *nonzero.offset(i as isize) != 0 {
             used += 1
         }
-        i += 1
     }
     if used != 0 {
         return _2class(vb, vl, in_0, ch);
@@ -1124,20 +1124,23 @@ pub unsafe extern "C" fn res2_forward(
         vb,
         ((ch as isize * n) as usize).wrapping_mul(::std::mem::size_of::<i32>()) as isize,
     ) as *mut i32;
-    i = 0;
-    while i < ch as isize {
+
+    for i in 0..ch as isize {
         let mut pcm: *mut i32 = *in_0.offset(i);
+
         if *nonzero.offset(i) != 0 {
             used += 1
         }
+
         j = 0;
+
         k = i;
+
         while j < n {
             *work.offset(k) = *pcm.offset(j);
             j += 1;
             k += ch as isize
         }
-        i += 1
     }
     if used != 0 {
         return _01forward(

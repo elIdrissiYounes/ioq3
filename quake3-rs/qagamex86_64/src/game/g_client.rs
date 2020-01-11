@@ -537,17 +537,16 @@ pub unsafe extern "C" fn SpotWouldTelefrag(
         touch.as_mut_ptr(),
         (1) << 10,
     );
-    i = 0;
-    while i < num {
+
+    for i in 0..num {
         hit = &mut *crate::src::game::g_main::g_entities
             .as_mut_ptr()
             .offset(*touch.as_mut_ptr().offset(i as isize) as isize)
             as *mut crate::g_local_h::gentity_t;
-        //if ( hit->client && hit->client->ps.stats[STAT_HEALTH] > 0 ) {
+
         if !(*hit).client.is_null() {
             return crate::src::qcommon::q_shared::qtrue;
         }
-        i += 1
     }
     return crate::src::qcommon::q_shared::qfalse;
 }
@@ -1026,13 +1025,14 @@ pub unsafe extern "C" fn SetClientViewAngle(
 ) {
     let mut i: i32 = 0;
     // set the delta angle
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         let mut cmdAngle: i32 = 0;
+
         cmdAngle = (*angle.offset(i as isize) * 65536f32 / 360f32) as i32 & 65535;
+
         (*(*ent).client).ps.delta_angles[i as usize] =
             cmdAngle - (*(*ent).client).pers.cmd.angles[i as usize];
-        i += 1
     }
     (*ent).s.angles[0] = *angle.offset(0);
     (*ent).s.angles[1] = *angle.offset(1);
@@ -1067,8 +1067,8 @@ pub unsafe extern "C" fn TeamCount(
 ) -> i32 {
     let mut i: i32 = 0;
     let mut count: i32 = 0;
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         if !(i == ignoreClientNum) {
             if !((*crate::src::game::g_main::level.clients.offset(i as isize))
                 .pers
@@ -1084,7 +1084,6 @@ pub unsafe extern "C" fn TeamCount(
                 }
             }
         }
-        i += 1
     }
     return count;
 }
@@ -1099,8 +1098,8 @@ Returns the client number of the team leader
 
 pub unsafe extern "C" fn TeamLeader(mut team: i32) -> i32 {
     let mut i: i32 = 0;
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         if !((*crate::src::game::g_main::level.clients.offset(i as isize))
             .pers
             .connected
@@ -1120,7 +1119,6 @@ pub unsafe extern "C" fn TeamLeader(mut team: i32) -> i32 {
                 }
             }
         }
-        i += 1
     }
     return -(1);
 }
@@ -2239,8 +2237,8 @@ pub unsafe extern "C" fn ClientDisconnect(mut clientNum: i32) {
         return;
     }
     // stop any following clients
-    i = 0;
-    while i < crate::src::game::g_main::level.maxclients {
+
+    for i in 0..crate::src::game::g_main::level.maxclients {
         if (*crate::src::game::g_main::level.clients.offset(i as isize))
             .sess
             .sessionTeam
@@ -2260,7 +2258,6 @@ pub unsafe extern "C" fn ClientDisconnect(mut clientNum: i32) {
                     .offset(i as isize),
             );
         }
-        i += 1
     }
     // send effect if they were completely connected
     if (*(*ent).client).pers.connected == crate::g_local_h::CON_CONNECTED

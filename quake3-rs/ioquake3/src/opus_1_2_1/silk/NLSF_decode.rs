@@ -364,14 +364,15 @@ pub unsafe extern "C" fn silk_NLSF_decode(
         .CB1_Wght_Q9
         .offset((*NLSFIndices.offset(0) as i32 * (*psNLSF_CB).order as i32) as isize)
         as *const crate::opus_types_h::opus_int16;
-    i = 0;
-    while i < (*psNLSF_CB).order as i32 {
+
+    for i in 0..(*psNLSF_CB).order as i32 {
         NLSF_Q15_tmp = ((res_Q10[i as usize] as crate::opus_types_h::opus_uint32) << 14)
             as crate::opus_types_h::opus_int32
             / *pCB_Wght_Q9.offset(i as isize) as i32
             + ((*pCB_element.offset(i as isize) as crate::opus_types_h::opus_int16
                 as crate::opus_types_h::opus_uint32)
                 << 7) as crate::opus_types_h::opus_int32;
+
         *pNLSF_Q15.offset(i as isize) = if 0 > 32767 {
             if NLSF_Q15_tmp > 0 {
                 0
@@ -387,7 +388,6 @@ pub unsafe extern "C" fn silk_NLSF_decode(
         } else {
             NLSF_Q15_tmp
         } as crate::opus_types_h::opus_int16;
-        i += 1
     }
     /* NLSF stabilization */
     crate::src::opus_1_2_1::silk::NLSF_stabilize::silk_NLSF_stabilize(

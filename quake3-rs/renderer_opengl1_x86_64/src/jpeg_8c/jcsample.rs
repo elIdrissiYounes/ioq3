@@ -335,8 +335,7 @@ unsafe extern "C" fn sep_downsample(
     while ci < (*cinfo).num_components {
         in_ptr = (*input_buf.offset(ci as isize)).offset(in_row_index as isize);
         out_ptr = (*output_buf.offset(ci as isize)).offset(
-            out_row_group_index
-                .wrapping_mul((*downsample).rowgroup_height[ci as usize] as u32)
+            out_row_group_index.wrapping_mul((*downsample).rowgroup_height[ci as usize] as u32)
                 as isize,
         );
         Some(
@@ -400,24 +399,23 @@ unsafe extern "C" fn int_downsample(
         outcol_h = 0;
         while outcol < output_cols {
             outvalue = 0;
-            v = 0;
-            while v < v_expand {
+
+            for v in 0..v_expand {
                 inptr = (*input_data.offset((inrow + v) as isize)).offset(outcol_h as isize);
-                h = 0;
-                while h < h_expand {
+                for h in 0..h_expand {
                     let fresh1 = inptr;
+
                     inptr = inptr.offset(1);
+
                     outvalue += *fresh1 as i32 as crate::jmorecfg_h::INT32;
-                    h += 1
                 }
-                v += 1
             }
             let fresh2 = outptr;
             outptr = outptr.offset(1);
-            *fresh2 = ((outvalue + numpix2 as isize) / numpix as isize)
-                as crate::jmorecfg_h::JSAMPLE;
+            *fresh2 =
+                ((outvalue + numpix2 as isize) / numpix as isize) as crate::jmorecfg_h::JSAMPLE;
             outcol = outcol.wrapping_add(1);
-            outcol_h =  (outcol_h).wrapping_add(h_expand as u32)
+            outcol_h = (outcol_h).wrapping_add(h_expand as u32)
         }
         inrow += v_expand;
         outrow += 1
@@ -499,10 +497,8 @@ unsafe extern "C" fn h2v1_downsample(
         while outcol < output_cols {
             let fresh3 = outptr;
             outptr = outptr.offset(1);
-            *fresh3 = (*inptr as i32
-                + *inptr.offset(1) as i32
-                + bias
-                >> 1) as crate::jmorecfg_h::JSAMPLE;
+            *fresh3 =
+                (*inptr as i32 + *inptr.offset(1) as i32 + bias >> 1) as crate::jmorecfg_h::JSAMPLE;
             bias ^= 1;
             inptr = inptr.offset(2);
             outcol = outcol.wrapping_add(1)
@@ -617,8 +613,7 @@ unsafe extern "C" fn h2v2_smooth_downsample(
      * factors are scaled by 2^16 = 65536.
      * Also recall that SF = smoothing_factor / 1024.
      */
-    memberscale = (16384i32 - (*cinfo).smoothing_factor * 80)
-        as crate::jmorecfg_h::INT32; /* scaled (1-5*SF)/4 */
+    memberscale = (16384i32 - (*cinfo).smoothing_factor * 80) as crate::jmorecfg_h::INT32; /* scaled (1-5*SF)/4 */
     neighscale = ((*cinfo).smoothing_factor * 16i32) as crate::jmorecfg_h::INT32; /* scaled SF/4 */
     outrow = 0;
     inrow = outrow;
@@ -629,11 +624,9 @@ unsafe extern "C" fn h2v2_smooth_downsample(
         above_ptr = *input_data.offset((inrow - 1) as isize);
         below_ptr = *input_data.offset((inrow + 2) as isize);
         /* Special case for first column: pretend column -1 is same as column 0 */
-        membersum = (*inptr0 as i32
-            + *inptr0.offset(1) as i32
-            + *inptr1 as i32
-            + *inptr1.offset(1) as i32)
-            as crate::jmorecfg_h::INT32;
+        membersum =
+            (*inptr0 as i32 + *inptr0.offset(1) as i32 + *inptr1 as i32 + *inptr1.offset(1) as i32)
+                as crate::jmorecfg_h::INT32;
         neighsum = (*above_ptr as i32
             + *above_ptr.offset(1) as i32
             + *below_ptr as i32
@@ -641,19 +634,16 @@ unsafe extern "C" fn h2v2_smooth_downsample(
             + *inptr0 as i32
             + *inptr0.offset(2) as i32
             + *inptr1 as i32
-            + *inptr1.offset(2) as i32)
-            as crate::jmorecfg_h::INT32;
+            + *inptr1.offset(2) as i32) as crate::jmorecfg_h::INT32;
         neighsum += neighsum;
         neighsum += (*above_ptr as i32
             + *above_ptr.offset(2) as i32
             + *below_ptr as i32
-            + *below_ptr.offset(2) as i32)
-            as isize;
+            + *below_ptr.offset(2) as i32) as isize;
         membersum = membersum * memberscale + neighsum * neighscale;
         let fresh5 = outptr;
         outptr = outptr.offset(1);
-        *fresh5 = (membersum + 32768i32 as isize >> 16)
-            as crate::jmorecfg_h::JSAMPLE;
+        *fresh5 = (membersum + 32768i32 as isize >> 16) as crate::jmorecfg_h::JSAMPLE;
         inptr0 = inptr0.offset(2);
         inptr1 = inptr1.offset(2);
         above_ptr = above_ptr.offset(2);
@@ -664,8 +654,7 @@ unsafe extern "C" fn h2v2_smooth_downsample(
             membersum = (*inptr0 as i32
                 + *inptr0.offset(1) as i32
                 + *inptr1 as i32
-                + *inptr1.offset(1) as i32)
-                as crate::jmorecfg_h::INT32;
+                + *inptr1.offset(1) as i32) as crate::jmorecfg_h::INT32;
             /* sum of edge-neighbor pixels */
             neighsum = (*above_ptr as i32
                 + *above_ptr.offset(1) as i32
@@ -674,23 +663,20 @@ unsafe extern "C" fn h2v2_smooth_downsample(
                 + *inptr0.offset(-1) as i32
                 + *inptr0.offset(2) as i32
                 + *inptr1.offset(-1) as i32
-                + *inptr1.offset(2) as i32)
-                as crate::jmorecfg_h::INT32;
+                + *inptr1.offset(2) as i32) as crate::jmorecfg_h::INT32;
             /* The edge-neighbors count twice as much as corner-neighbors */
             neighsum += neighsum;
             /* Add in the corner-neighbors */
             neighsum += (*above_ptr.offset(-1) as i32
                 + *above_ptr.offset(2) as i32
                 + *below_ptr.offset(-1) as i32
-                + *below_ptr.offset(2) as i32)
-                as isize;
+                + *below_ptr.offset(2) as i32) as isize;
             /* form final output scaled up by 2^16 */
             membersum = membersum * memberscale + neighsum * neighscale;
             /* round, descale and output it */
             let fresh6 = outptr;
             outptr = outptr.offset(1);
-            *fresh6 = (membersum + 32768i32 as isize >> 16)
-                as crate::jmorecfg_h::JSAMPLE;
+            *fresh6 = (membersum + 32768i32 as isize >> 16) as crate::jmorecfg_h::JSAMPLE;
             inptr0 = inptr0.offset(2);
             inptr1 = inptr1.offset(2);
             above_ptr = above_ptr.offset(2);
@@ -698,11 +684,9 @@ unsafe extern "C" fn h2v2_smooth_downsample(
             colctr = colctr.wrapping_sub(1)
         }
         /* Special case for last column */
-        membersum = (*inptr0 as i32
-            + *inptr0.offset(1) as i32
-            + *inptr1 as i32
-            + *inptr1.offset(1) as i32)
-            as crate::jmorecfg_h::INT32;
+        membersum =
+            (*inptr0 as i32 + *inptr0.offset(1) as i32 + *inptr1 as i32 + *inptr1.offset(1) as i32)
+                as crate::jmorecfg_h::INT32;
         neighsum = (*above_ptr as i32
             + *above_ptr.offset(1) as i32
             + *below_ptr as i32
@@ -710,17 +694,14 @@ unsafe extern "C" fn h2v2_smooth_downsample(
             + *inptr0.offset(-1) as i32
             + *inptr0.offset(1) as i32
             + *inptr1.offset(-1) as i32
-            + *inptr1.offset(1) as i32)
-            as crate::jmorecfg_h::INT32;
+            + *inptr1.offset(1) as i32) as crate::jmorecfg_h::INT32;
         neighsum += neighsum;
         neighsum += (*above_ptr.offset(-1) as i32
             + *above_ptr.offset(1) as i32
             + *below_ptr.offset(-1) as i32
-            + *below_ptr.offset(1) as i32)
-            as isize;
+            + *below_ptr.offset(1) as i32) as isize;
         membersum = membersum * memberscale + neighsum * neighscale;
-        *outptr = (membersum + 32768i32 as isize >> 16)
-            as crate::jmorecfg_h::JSAMPLE;
+        *outptr = (membersum + 32768i32 as isize >> 16) as crate::jmorecfg_h::JSAMPLE;
         inrow += 2;
         outrow += 1
     }
@@ -768,8 +749,7 @@ unsafe extern "C" fn fullsize_smooth_downsample(
      * to use integer arithmetic, these factors are multiplied by 2^16 = 65536.
      * Also recall that SF = smoothing_factor / 1024.
      */
-    memberscale =
-        65536 as isize - (*cinfo).smoothing_factor as isize * 512; /* scaled 1-8*SF */
+    memberscale = 65536 as isize - (*cinfo).smoothing_factor as isize * 512; /* scaled 1-8*SF */
     neighscale = ((*cinfo).smoothing_factor * 64i32) as crate::jmorecfg_h::INT32; /* scaled SF */
     inrow = 0;
     while inrow < (*cinfo).max_v_samp_factor {
@@ -787,14 +767,11 @@ unsafe extern "C" fn fullsize_smooth_downsample(
         inptr = inptr.offset(1);
         membersum = *fresh9 as i32 as crate::jmorecfg_h::INT32;
         nextcolsum = *above_ptr as i32 + *below_ptr as i32 + *inptr as i32;
-        neighsum = colsum as isize
-            + (colsum as isize - membersum)
-            + nextcolsum as isize;
+        neighsum = colsum as isize + (colsum as isize - membersum) + nextcolsum as isize;
         membersum = membersum * memberscale + neighsum * neighscale;
         let fresh10 = outptr;
         outptr = outptr.offset(1);
-        *fresh10 = (membersum + 32768i32 as isize >> 16)
-            as crate::jmorecfg_h::JSAMPLE;
+        *fresh10 = (membersum + 32768i32 as isize >> 16) as crate::jmorecfg_h::JSAMPLE;
         lastcolsum = colsum;
         colsum = nextcolsum;
         colctr = output_cols.wrapping_sub(2u32);
@@ -804,28 +781,21 @@ unsafe extern "C" fn fullsize_smooth_downsample(
             membersum = *fresh11 as i32 as crate::jmorecfg_h::INT32;
             above_ptr = above_ptr.offset(1);
             below_ptr = below_ptr.offset(1);
-            nextcolsum =
-                *above_ptr as i32 + *below_ptr as i32 + *inptr as i32;
-            neighsum = lastcolsum as isize
-                + (colsum as isize - membersum)
-                + nextcolsum as isize;
+            nextcolsum = *above_ptr as i32 + *below_ptr as i32 + *inptr as i32;
+            neighsum = lastcolsum as isize + (colsum as isize - membersum) + nextcolsum as isize;
             membersum = membersum * memberscale + neighsum * neighscale;
             let fresh12 = outptr;
             outptr = outptr.offset(1);
-            *fresh12 = (membersum + 32768i32 as isize >> 16)
-                as crate::jmorecfg_h::JSAMPLE;
+            *fresh12 = (membersum + 32768i32 as isize >> 16) as crate::jmorecfg_h::JSAMPLE;
             lastcolsum = colsum;
             colsum = nextcolsum;
             colctr = colctr.wrapping_sub(1)
         }
         /* Special case for last column */
         membersum = *inptr as i32 as crate::jmorecfg_h::INT32;
-        neighsum = lastcolsum as isize
-            + (colsum as isize - membersum)
-            + colsum as isize;
+        neighsum = lastcolsum as isize + (colsum as isize - membersum) + colsum as isize;
         membersum = membersum * memberscale + neighsum * neighscale;
-        *outptr = (membersum + 32768i32 as isize >> 16)
-            as crate::jmorecfg_h::JSAMPLE;
+        *outptr = (membersum + 32768i32 as isize >> 16) as crate::jmorecfg_h::JSAMPLE;
         inrow += 1
     }
 }
@@ -854,7 +824,6 @@ pub unsafe extern "C" fn jinit_downsampler(mut cinfo: crate::jpeglib_h::j_compre
     .expect("non-null function pointer")(
         cinfo as crate::jpeglib_h::j_common_ptr,
         1,
-        
         ::std::mem::size_of::<my_downsampler>(),
     ) as my_downsample_ptr;
     (*cinfo).downsample = downsample as *mut crate::jpegint_h::jpeg_downsampler;
@@ -929,9 +898,7 @@ pub unsafe extern "C" fn jinit_downsampler(mut cinfo: crate::jpeglib_h::j_compre
                         _: crate::jpeglib_h::JSAMPARRAY,
                     ) -> (),
             )
-        } else if h_in_group == h_out_group * 2
-            && v_in_group == v_out_group * 2
-        {
+        } else if h_in_group == h_out_group * 2 && v_in_group == v_out_group * 2 {
             if (*cinfo).smoothing_factor != 0 {
                 (*downsample).methods[ci as usize] = Some(
                     h2v2_smooth_downsample
@@ -954,9 +921,7 @@ pub unsafe extern "C" fn jinit_downsampler(mut cinfo: crate::jpeglib_h::j_compre
                         ) -> (),
                 )
             }
-        } else if h_in_group % h_out_group == 0
-            && v_in_group % v_out_group == 0
-        {
+        } else if h_in_group % h_out_group == 0 && v_in_group % v_out_group == 0 {
             smoothok = 0;
             (*downsample).methods[ci as usize] = Some(
                 int_downsample
@@ -993,9 +958,6 @@ pub unsafe extern "C" fn jinit_downsampler(mut cinfo: crate::jpeglib_h::j_compre
                 .emit_message
                 .expect("non-null function pointer"),
         )
-        .expect("non-null function pointer")(
-            cinfo as crate::jpeglib_h::j_common_ptr,
-            0i32,
-        );
+        .expect("non-null function pointer")(cinfo as crate::jpeglib_h::j_common_ptr, 0i32);
     };
 }

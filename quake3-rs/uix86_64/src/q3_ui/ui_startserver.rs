@@ -716,18 +716,19 @@ unsafe extern "C" fn StartServer_GametypeEvent(mut ptr: *mut libc::c_void, mut e
     {
         matchbits |= (1) << crate::bg_public_h::GT_SINGLE_PLAYER as i32
     }
-    i = 0;
-    while i < count {
+
+    for i in 0..count {
         info = crate::src::q3_ui::ui_gameinfo::UI_GetArenaInfoByNumber(i);
+
         gamebits = GametypeBits(crate::src::qcommon::q_shared::Info_ValueForKey(
             info,
             b"type\x00" as *const u8 as *const i8,
         ));
+
         if !(gamebits & matchbits == 0) {
             s_startserver.maplist[s_startserver.nummaps as usize] = i;
             s_startserver.nummaps += 1
         }
-        i += 1
     }
     s_startserver.maxpages = (s_startserver.nummaps + 4 - 1) / 4;
     s_startserver.page = 0;
@@ -1688,8 +1689,8 @@ unsafe extern "C" fn BotAlreadySelected(
     mut checkName: *const i8,
 ) -> crate::src::qcommon::q_shared::qboolean {
     let mut n: i32 = 0;
-    n = 1;
-    while n < 12 {
+
+    for n in 1..12 {
         if !(s_serveroptions.playerType[n as usize].curvalue != 1) {
             if !(s_serveroptions.gametype >= crate::bg_public_h::GT_TEAM as i32
                 && s_serveroptions.playerTeam[n as usize].curvalue
@@ -1704,7 +1705,6 @@ unsafe extern "C" fn BotAlreadySelected(
                 }
             }
         }
-        n += 1
     }
     return crate::src::qcommon::q_shared::qfalse;
 }
@@ -2231,14 +2231,12 @@ unsafe extern "C" fn ServerOptions_InitBotNames() {
         );
         count += 1
     }
-    // set the rest of the bot slots to "---"
-    n = count;
-    while n < 12 {
+
+    for n in count..12 {
         crate::stdlib::strcpy(
             s_serveroptions.playerNameBuffers[n as usize].as_mut_ptr(),
             b"--------\x00" as *const u8 as *const i8,
         );
-        n += 1
     }
     // pad up to #8 as open slots
     while count < 8 {
@@ -3130,11 +3128,9 @@ unsafe extern "C" fn UI_BotSelectMenu_BuildList() {
     if botSelectInfo.numBots % (4 * 4) != 0 {
         botSelectInfo.numpages += 1
     }
-    // initialize the array
-    n = 0;
-    while n < botSelectInfo.numBots {
+
+    for n in 0..botSelectInfo.numBots {
         botSelectInfo.sortedBotNums[n as usize] = n;
-        n += 1
     }
     // now sort it
     crate::stdlib::qsort(

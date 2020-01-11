@@ -38,14 +38,13 @@ pub unsafe extern "C" fn validate_layout(
     if max_channel > 255 {
         return 0i32;
     }
-    i = 0;
-    while i < (*layout).nb_channels {
+
+    for i in 0..(*layout).nb_channels {
         if (*layout).mapping[i as usize] as i32 >= max_channel
             && (*layout).mapping[i as usize] as i32 != 255
         {
             return 0i32;
         }
-        i += 1
     }
     return 1;
 }
@@ -57,12 +56,11 @@ pub unsafe extern "C" fn get_left_channel(
     mut prev: i32,
 ) -> i32 {
     let mut i: i32 = 0;
-    i = if prev < 0 { 0 } else { (prev) + 1 };
-    while i < (*layout).nb_channels {
+
+    for i in if prev < 0 { 0 } else { (prev) + 1 }..(*layout).nb_channels {
         if (*layout).mapping[i as usize] as i32 == stream_id * 2 {
             return i;
         }
-        i += 1
     }
     return -(1);
 }
@@ -74,12 +72,11 @@ pub unsafe extern "C" fn get_right_channel(
     mut prev: i32,
 ) -> i32 {
     let mut i: i32 = 0;
-    i = if prev < 0 { 0 } else { (prev) + 1 };
-    while i < (*layout).nb_channels {
+
+    for i in if prev < 0 { 0 } else { (prev) + 1 }..(*layout).nb_channels {
         if (*layout).mapping[i as usize] as i32 == stream_id * 2 + 1 {
             return i;
         }
-        i += 1
     }
     return -(1);
 }
@@ -91,12 +88,11 @@ pub unsafe extern "C" fn get_mono_channel(
     mut prev: i32,
 ) -> i32 {
     let mut i: i32 = 0;
-    i = if prev < 0 { 0 } else { (prev) + 1 };
-    while i < (*layout).nb_channels {
+
+    for i in if prev < 0 { 0 } else { (prev) + 1 }..(*layout).nb_channels {
         if (*layout).mapping[i as usize] as i32 == stream_id + (*layout).nb_coupled_streams {
             return i;
         }
-        i += 1
     }
     return -(1);
 }

@@ -325,33 +325,45 @@ unsafe extern "C" fn silk_resampler_down2_hp(
     let mut X: crate::arch_h::opus_val32 = 0.;
     let mut hp_ener: crate::arch_h::opus_val64 = 0f32;
     /* Internal variables and state are in Q10 format */
-    k = 0;
-    while k < len2 {
-        /* Convert to Q10 */
+
+    for k in 0..len2 {
         in32 = *in_0.offset((2 * k) as isize);
-        /* All-pass section for even input sample */
+
         Y = in32 - *S.offset(0);
+
         X = 0.6074371 * Y;
+
         out32 = *S.offset(0) + X;
+
         *S.offset(0) = in32 + X;
+
         out32_hp = out32;
-        /* Convert to Q10 */
+
         in32 = *in_0.offset((2 * k + 1) as isize);
-        /* All-pass section for odd input sample, and add to output of previous section */
+
         Y = in32 - *S.offset(1);
+
         X = 0.15063 * Y;
+
         out32 = out32 + *S.offset(1);
+
         out32 = out32 + X;
+
         *S.offset(1) = in32 + X;
+
         Y = -in32 - *S.offset(2);
+
         X = 0.15063 * Y;
+
         out32_hp = out32_hp + *S.offset(2);
+
         out32_hp = out32_hp + X;
+
         *S.offset(2) = -in32 + X;
+
         hp_ener += out32_hp * out32_hp;
-        /* Add, convert back to int16 and store to output */
+
         *out.offset(k as isize) = 0.5 * out32;
-        k += 1
     }
     return hp_ener;
 }
@@ -1044,21 +1056,22 @@ unsafe extern "C" fn tonality_analysis(
     while i < 8 {
         let mut j: i32 = 0;
         let mut mindist: f32 = 1e15;
-        j = 0;
-        while j < 8 {
+
+        for j in 0..8 {
             let mut k: i32 = 0;
+
             let mut dist: f32 = 0f32;
-            k = 0;
-            while k < 18 {
+            for k in 0..18 {
                 let mut tmp: f32 = 0.;
+
                 tmp = (*tonal).logE[i as usize][k as usize] - (*tonal).logE[j as usize][k as usize];
+
                 dist += tmp * tmp;
-                k += 1
             }
+
             if j != i {
                 mindist = if mindist < dist { mindist } else { dist }
             }
-            j += 1
         }
         spec_variability += mindist;
         i += 1

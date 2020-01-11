@@ -606,11 +606,12 @@ unsafe extern "C" fn SV_IsBanned(
             return crate::src::qcommon::q_shared::qfalse;
         }
     }
-    index = 0;
-    while index < crate::src::server::sv_main::serverBansCount {
+
+    for index in 0..crate::src::server::sv_main::serverBansCount {
         curban = &mut *crate::src::server::sv_main::serverBans
             .as_mut_ptr()
             .offset(index as isize) as *mut crate::server_h::serverBan_t;
+
         if (*curban).isexception == isexception {
             if crate::src::qcommon::net_ip::NET_CompareBaseAdrMask(
                 (*curban).ip,
@@ -622,7 +623,6 @@ unsafe extern "C" fn SV_IsBanned(
                 return crate::src::qcommon::q_shared::qtrue;
             }
         }
-        index += 1
     }
     return crate::src::qcommon::q_shared::qfalse;
 }
@@ -1947,10 +1947,11 @@ pub unsafe extern "C" fn SV_SendQueuedMessages() -> i32 {
     let mut retval: i32 = -(1);
     let mut nextFragT: i32 = 0;
     let mut cl: *mut crate::server_h::client_t = 0 as *mut crate::server_h::client_t;
-    i = 0;
-    while i < (*crate::src::server::sv_main::sv_maxclients).integer {
+
+    for i in 0..(*crate::src::server::sv_main::sv_maxclients).integer {
         cl = &mut *crate::src::server::sv_main::svs.clients.offset(i as isize)
             as *mut crate::server_h::client_t;
+
         if (*cl).state as u64 != 0 {
             nextFragT = crate::src::server::sv_main::SV_RateMsec(cl);
             if nextFragT == 0 {
@@ -1960,7 +1961,6 @@ pub unsafe extern "C" fn SV_SendQueuedMessages() -> i32 {
                 retval = nextFragT
             }
         }
-        i += 1
     }
     return retval;
 }
@@ -1989,10 +1989,11 @@ pub unsafe extern "C" fn SV_SendDownloadMessages() -> i32 {
         bit: 0,
     };
     let mut msgBuffer: [crate::src::qcommon::q_shared::byte; 16384] = [0; 16384];
-    i = 0;
-    while i < (*crate::src::server::sv_main::sv_maxclients).integer {
+
+    for i in 0..(*crate::src::server::sv_main::sv_maxclients).integer {
         cl = &mut *crate::src::server::sv_main::svs.clients.offset(i as isize)
             as *mut crate::server_h::client_t;
+
         if (*cl).state != 0 && *(*cl).downloadName.as_mut_ptr() as i32 != 0 {
             crate::src::qcommon::msg::MSG_Init(
                 &mut msg,
@@ -2007,7 +2008,6 @@ pub unsafe extern "C" fn SV_SendDownloadMessages() -> i32 {
                 numDLs += retval
             }
         }
-        i += 1
     }
     return numDLs;
 }

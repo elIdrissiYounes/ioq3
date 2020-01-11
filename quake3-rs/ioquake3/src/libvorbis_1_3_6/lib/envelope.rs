@@ -168,21 +168,24 @@ pub unsafe extern "C" fn _ve_envelope_init(
     (*e).band[5].end = 8;
     (*e).band[6].begin = 22;
     (*e).band[6].end = 8;
-    j = 0;
-    while j < 7 {
+
+    for j in 0..7 {
         n = (*e).band[j as usize].end;
+
         (*e).band[j as usize].window =
             crate::stdlib::malloc((n as usize).wrapping_mul(::std::mem::size_of::<f32>()))
                 as *mut f32;
+
         i = 0;
+
         while i < n {
             *(*e).band[j as usize].window.offset(i as isize) =
                 crate::stdlib::sin((i as f64 + 0.5) / n as f64 * 3.14159265358979323846) as f32;
             (*e).band[j as usize].total += *(*e).band[j as usize].window.offset(i as isize);
             i += 1
         }
+
         (*e).band[j as usize].total = (1.0 / (*e).band[j as usize].total as f64) as f32;
-        j += 1
     }
     (*e).filter = crate::stdlib::calloc(
         (7 * ch) as usize,
@@ -198,10 +201,9 @@ pub unsafe extern "C" fn _ve_envelope_clear(
 ) {
     let mut i: i32 = 0;
     crate::src::libvorbis_1_3_6::lib::mdct::mdct_clear(&mut (*e).mdct);
-    i = 0;
-    while i < 7 {
+
+    for i in 0..7 {
         crate::stdlib::free((*e).band[i as usize].window as *mut libc::c_void);
-        i += 1
     }
     crate::stdlib::free((*e).mdct_win as *mut libc::c_void);
     crate::stdlib::free((*e).filter as *mut libc::c_void);
@@ -303,42 +305,58 @@ unsafe extern "C" fn _ve_amp(
     }
     /*_analysis_output_always("spread",seq2++,vec,n/4,0,0,0);*/
     /* perform preecho/postecho triggering by band */
-    j = 0;
-    while j < 7 {
+
+    for j in 0..7 {
         let mut acc: f32 = 0f32;
+
         let mut valmax: f32 = 0.;
+
         let mut valmin: f32 = 0.;
-        /* accumulate amplitude */
+
         i = 0;
+
         while i < (*bands.offset(j)).end as isize {
             acc += *vec.offset(i + (*bands.offset(j)).begin as isize)
                 * *(*bands.offset(j)).window.offset(i);
             i += 1
         }
+
         acc *= (*bands.offset(j)).total;
-        /* convert amplitude to delta */
+
         let mut p: i32 = 0;
+
         let mut this: i32 = (*filters.offset(j)).ampptr;
+
         let mut postmax: f32 = 0.;
+
         let mut postmin: f32 = 0.;
+
         let mut premax: f32 = -99999.0;
+
         let mut premin: f32 = 99999.0;
+
         p = this;
+
         p -= 1;
+
         if p < 0 {
             p += 16 + 2 - 1
         }
+
         postmax = if acc < (*filters.offset(j)).ampbuf[p as usize] {
             (*filters.offset(j)).ampbuf[p as usize]
         } else {
             acc
         };
+
         postmin = if acc > (*filters.offset(j)).ampbuf[p as usize] {
             (*filters.offset(j)).ampbuf[p as usize]
         } else {
             acc
         };
+
         i = 0;
+
         while i < stretch as isize {
             p -= 1;
             if p < 0 {
@@ -356,24 +374,29 @@ unsafe extern "C" fn _ve_amp(
             };
             i += 1
         }
+
         valmin = postmin - premin;
+
         valmax = postmax - premax;
-        /*filters[j].markers[pos]=valmax;*/
+
         (*filters.offset(j)).ampbuf[this as usize] = acc;
+
         let ref mut fresh1 = (*filters.offset(j)).ampptr;
+
         *fresh1 += 1;
+
         if (*filters.offset(j)).ampptr >= 16 + 2 - 1 {
             (*filters.offset(j)).ampptr = 0
         }
-        /* look at min/max, decide trigger */
+
         if valmax > (*gi).preecho_thresh[j as usize] + penalty {
             ret |= 1;
             ret |= 4
         }
+
         if valmin < (*gi).postecho_thresh[j as usize] - penalty {
             ret |= 2
         }
-        j += 1
     }
     return ret;
 }
@@ -411,9 +434,10 @@ pub unsafe extern "C" fn _ve_envelope_search(
         if (*ve).stretch > 12 * 2 {
             (*ve).stretch = 12 * 2
         }
-        i = 0;
-        while i < (*ve).ch as isize {
+
+        for i in 0..(*ve).ch as isize {
             let mut pcm: *mut f32 = (*(*v).pcm.offset(i)).offset((*ve).searchstep as isize * j);
+
             ret |= _ve_amp(
                 ve,
                 gi,
@@ -421,7 +445,6 @@ pub unsafe extern "C" fn _ve_envelope_search(
                 (*ve).band.as_mut_ptr(),
                 (*ve).filter.offset(i * 7),
             );
-            i += 1
         }
         *(*ve).mark.offset(j + 2) = 0;
         if ret & 1 != 0 {
@@ -490,12 +513,11 @@ pub unsafe extern "C" fn _ve_envelope_mark(mut v: *mut crate::codec_h::vorbis_ds
     let mut first: isize = beginW / (*ve).searchstep as isize;
     let mut last: isize = endW / (*ve).searchstep as isize;
     let mut i: isize = 0;
-    i = first;
-    while i < last {
+
+    for i in first..last {
         if *(*ve).mark.offset(i) != 0 {
             return 1i32;
         }
-        i += 1
     }
     return 0;
 }

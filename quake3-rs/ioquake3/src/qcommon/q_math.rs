@@ -454,16 +454,16 @@ pub unsafe extern "C" fn DirToByte(mut dir: *mut crate::src::qcommon::q_shared::
     }
     bestd = 0f32;
     best = 0;
-    i = 0;
-    while i < 162 {
+
+    for i in 0..162 {
         d = *dir.offset(0) * bytedirs[i as usize][0]
             + *dir.offset(1) * bytedirs[i as usize][1]
             + *dir.offset(2) * bytedirs[i as usize][2];
+
         if d > bestd {
             bestd = d;
             best = i
         }
-        i += 1
     }
     return best;
 }
@@ -993,12 +993,11 @@ pub unsafe extern "C" fn SetPlaneSignbits(mut out: *mut crate::src::qcommon::q_s
     let mut j: i32 = 0;
     // for fast box on planeside test
     bits = 0;
-    j = 0;
-    while j < 3 {
+
+    for j in 0..3 {
         if (*out).normal[j as usize] < 0f32 {
             bits |= (1) << j
         }
-        j += 1
     }
     (*out).signbits = bits as crate::src::qcommon::q_shared::byte;
 }
@@ -1067,12 +1066,13 @@ pub unsafe extern "C" fn RadiusFromBounds(
     let mut corner: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
     let mut a: f32 = 0.;
     let mut b: f32 = 0.;
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         a = crate::stdlib::fabs(*mins.offset(i as isize) as f64) as f32;
+
         b = crate::stdlib::fabs(*maxs.offset(i as isize) as f64) as f32;
+
         corner[i as usize] = if a > b { a } else { b };
-        i += 1
     }
     return VectorLength(corner.as_mut_ptr() as *const crate::src::qcommon::q_shared::vec_t);
 }
@@ -1434,13 +1434,12 @@ pub unsafe extern "C" fn PerpendicularVector(
     	** find the smallest magnitude axially aligned vector
     	*/
     pos = 0;
-    i = 0;
-    while i < 3 {
+
+    for i in 0..3 {
         if crate::stdlib::fabs(*src.offset(i as isize) as f64) < minelem as f64 {
             pos = i;
             minelem = crate::stdlib::fabs(*src.offset(i as isize) as f64) as f32
         }
-        i += 1
     }
     tempvec[2] = 0.0;
     tempvec[1] = tempvec[2];

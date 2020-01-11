@@ -571,10 +571,12 @@ unsafe extern "C" fn UI_TeamArenaExists() -> crate::src::qcommon::q_shared::qboo
         ::std::mem::size_of::<[i8; 2048]>() as i32,
     );
     dirptr = dirlist.as_mut_ptr();
-    i = 0;
-    while i < numdirs {
+
+    for i in 0..numdirs {
         dirlen = crate::stdlib::strlen(dirptr).wrapping_add(1usize) as i32;
+
         descptr = dirptr.offset(dirlen as isize);
+
         if crate::src::qcommon::q_shared::Q_stricmp(
             dirptr,
             b"missionpack\x00" as *const u8 as *const i8,
@@ -582,12 +584,12 @@ unsafe extern "C" fn UI_TeamArenaExists() -> crate::src::qcommon::q_shared::qboo
         {
             return crate::src::qcommon::q_shared::qtrue;
         }
+
         dirptr = dirptr.offset(
             (dirlen as usize)
                 .wrapping_add(crate::stdlib::strlen(descptr))
                 .wrapping_add(1usize) as isize,
         );
-        i += 1
     }
     return crate::src::qcommon::q_shared::qfalse;
 }

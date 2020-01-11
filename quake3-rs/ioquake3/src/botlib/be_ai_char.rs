@@ -139,8 +139,8 @@ pub unsafe extern "C" fn BotDumpCharacter(mut ch: *mut bot_character_t) {
         (*ch).skill as f64,
     );
     crate::src::botlib::l_log::Log_Write(b"{\n\x00" as *const u8 as *mut i8);
-    i = 0;
-    while i < 80 {
+
+    for i in 0..80 {
         match (*(*ch).c.as_mut_ptr().offset(i as isize)).type_0 as i32 {
             1 => {
                 crate::src::botlib::l_log::Log_Write(
@@ -165,8 +165,6 @@ pub unsafe extern "C" fn BotDumpCharacter(mut ch: *mut bot_character_t) {
             }
             _ => {}
         }
-        i += 1
-        //end case
     }
     crate::src::botlib::l_log::Log_Write(b"}\n\x00" as *const u8 as *mut i8);
 }
@@ -523,8 +521,8 @@ pub unsafe extern "C" fn BotLoadCharacterFromFile(
 
 pub unsafe extern "C" fn BotFindCachedCharacter(mut charfile: *mut i8, mut skill: f32) -> i32 {
     let mut handle: i32 = 0; //end for
-    handle = 1;
-    while handle <= 64 {
+
+    for handle in 1..=64 {
         if !botcharacters[handle as usize].is_null() {
             if crate::stdlib::strcmp(
                 (*botcharacters[handle as usize]).filename.as_mut_ptr(),
@@ -538,8 +536,6 @@ pub unsafe extern "C" fn BotFindCachedCharacter(mut charfile: *mut i8, mut skill
                 return handle;
             }
         }
-        handle += 1
-        //end if
     }
     return 0;
 }
@@ -801,9 +797,8 @@ pub unsafe extern "C" fn BotInterpolateCharacters(
     crate::stdlib::strcpy((*out).filename.as_mut_ptr(), (*ch1).filename.as_mut_ptr());
     botcharacters[handle as usize] = out;
     scale = (desiredskill - (*ch1).skill) / ((*ch2).skill - (*ch1).skill);
-    i = 0;
-    while i < 80 {
-        //
+
+    for i in 0..80 {
         if (*(*ch1).c.as_mut_ptr().offset(i as isize)).type_0 as i32 == 2
             && (*(*ch2).c.as_mut_ptr().offset(i as isize)).type_0 as i32 == 2
         {
@@ -829,8 +824,6 @@ pub unsafe extern "C" fn BotInterpolateCharacters(
                 (*(*ch1).c.as_mut_ptr().offset(i as isize)).value.string,
             );
         }
-        i += 1
-        //end else if
     }
     return handle;
 }

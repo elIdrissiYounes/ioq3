@@ -7,20 +7,11 @@ static mut s_noise_table: [f32; 256] = [0.; 256];
 
 static mut s_noise_perm: [i32; 256] = [0; 256];
 
-unsafe extern "C" fn GetNoiseValue(
-    mut x: i32,
-    mut y: i32,
-    mut z: i32,
-    mut t: i32,
-) -> f32 {
-    let mut index: i32 = s_noise_perm[(x + s_noise_perm[(y + s_noise_perm[(z + s_noise_perm
-        [(t & 256i32 - 1) as usize]
-        & 256 - 1)
-        as usize]
-        & 256 - 1)
-        as usize]
-        & 256 - 1)
-        as usize];
+unsafe extern "C" fn GetNoiseValue(mut x: i32, mut y: i32, mut z: i32, mut t: i32) -> f32 {
+    let mut index: i32 = s_noise_perm[(x + s_noise_perm[(y + s_noise_perm
+        [(z + s_noise_perm[(t & 256i32 - 1) as usize] & 256 - 1) as usize]
+        & 256 - 1) as usize]
+        & 256 - 1) as usize];
     return s_noise_table[index as usize];
 }
 #[no_mangle]
@@ -29,14 +20,10 @@ pub unsafe extern "C" fn R_NoiseInit() {
     let mut i: i32 = 0;
     i = 0;
     while i < 256 {
-        s_noise_table[i as usize] = ((crate::stdlib::rand() as f32
-            / 2147483647f32)
-            as f64
-            * 2.0
-            - 1.0) as f32;
+        s_noise_table[i as usize] =
+            ((crate::stdlib::rand() as f32 / 2147483647f32) as f64 * 2.0 - 1.0) as f32;
         s_noise_perm[i as usize] =
-            (crate::stdlib::rand() as f32 / 2147483647f32
-                * 255f32) as u8 as i32;
+            (crate::stdlib::rand() as f32 / 2147483647f32 * 255f32) as u8 as i32;
         i += 1
     }
 }
@@ -95,12 +82,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // these control use of specific extensions
 #[no_mangle]
 
-pub unsafe extern "C" fn R_NoiseGet4f(
-    mut x: f32,
-    mut y: f32,
-    mut z: f32,
-    mut t: f64,
-) -> f32 {
+pub unsafe extern "C" fn R_NoiseGet4f(mut x: f32, mut y: f32, mut z: f32, mut t: f64) -> f32 {
     let mut i: i32 = 0;
     let mut ix: i32 = 0;
     let mut iy: i32 = 0;
@@ -124,40 +106,32 @@ pub unsafe extern "C" fn R_NoiseGet4f(
     fz = z - iz as f32;
     it = crate::stdlib::floor(t) as i32;
     ft = (t - it as f64) as f32;
-    i = 0;
-    while i < 2 {
+
+    for i in 0..2 {
         front[0] = GetNoiseValue(ix, iy, iz, it + i);
+
         front[1] = GetNoiseValue(ix + 1, iy, iz, it + i);
+
         front[2] = GetNoiseValue(ix, iy + 1, iz, it + i);
-        front[3] =
-            GetNoiseValue(ix + 1, iy + 1, iz, it + i);
+
+        front[3] = GetNoiseValue(ix + 1, iy + 1, iz, it + i);
+
         back[0] = GetNoiseValue(ix, iy, iz + 1, it + i);
-        back[1] =
-            GetNoiseValue(ix + 1, iy, iz + 1, it + i);
-        back[2] =
-            GetNoiseValue(ix, iy + 1, iz + 1, it + i);
-        back[3] = GetNoiseValue(
-            ix + 1,
-            iy + 1,
-            iz + 1,
-            it + i,
-        );
-        fvalue = (front[0] * (1.0 - fx)
-            + front[1] * fx)
-            * (1.0 - fy)
-            + (front[2] * (1.0 - fx)
-                + front[3] * fx)
-                * fy;
-        bvalue = (back[0] * (1.0 - fx)
-            + back[1] * fx)
-            * (1.0 - fy)
-            + (back[2] * (1.0 - fx)
-                + back[3] * fx)
-                * fy;
+
+        back[1] = GetNoiseValue(ix + 1, iy, iz + 1, it + i);
+
+        back[2] = GetNoiseValue(ix, iy + 1, iz + 1, it + i);
+
+        back[3] = GetNoiseValue(ix + 1, iy + 1, iz + 1, it + i);
+
+        fvalue = (front[0] * (1.0 - fx) + front[1] * fx) * (1.0 - fy)
+            + (front[2] * (1.0 - fx) + front[3] * fx) * fy;
+
+        bvalue = (back[0] * (1.0 - fx) + back[1] * fx) * (1.0 - fy)
+            + (back[2] * (1.0 - fx) + back[3] * fx) * fy;
+
         value[i as usize] = fvalue * (1.0 - fz) + bvalue * fz;
-        i += 1
     }
-    finalvalue =
-        value[0] * (1.0 - ft) + value[1] * ft;
+    finalvalue = value[0] * (1.0 - ft) + value[1] * ft;
     return finalvalue;
 }

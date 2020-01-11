@@ -583,34 +583,26 @@ pub const RSERR_UNKNOWN: rserr_t = 3;
 pub const RSERR_OK: rserr_t = 0;
 #[no_mangle]
 
-pub static mut SDL_window: *mut crate::stdlib::SDL_Window =
-    
-    0 as *mut crate::stdlib::SDL_Window;
+pub static mut SDL_window: *mut crate::stdlib::SDL_Window = 0 as *mut crate::stdlib::SDL_Window;
 
-static mut SDL_glContext: crate::stdlib::SDL_GLContext =
-    
-    0 as *mut libc::c_void;
+static mut SDL_glContext: crate::stdlib::SDL_GLContext = 0 as *mut libc::c_void;
 #[no_mangle]
 
 pub static mut r_allowSoftwareGL: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 // Don't abort out if a hardware visual can't be obtained
 #[no_mangle]
 
 pub static mut r_allowResize: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 // make window resizable
 #[no_mangle]
 
 pub static mut r_centerWindow: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
 pub static mut r_sdlDriver: *mut crate::src::qcommon::q_shared::cvar_t =
-    
     0 as *mut crate::src::qcommon::q_shared::cvar_t;
 #[no_mangle]
 
@@ -1176,12 +1168,12 @@ unsafe extern "C" fn GLimp_CompareModes(
     let mut aspectB: f32 = (*modeB).w as f32 / (*modeB).h as f32;
     let mut areaA: i32 = (*modeA).w * (*modeA).h;
     let mut areaB: i32 = (*modeB).w * (*modeB).h;
-    let mut aspectDiffA: f32 = crate::stdlib::fabs(
-        (aspectA - crate::src::renderergl1::tr_init::displayAspect) as f64,
-    ) as f32;
-    let mut aspectDiffB: f32 = crate::stdlib::fabs(
-        (aspectB - crate::src::renderergl1::tr_init::displayAspect) as f64,
-    ) as f32;
+    let mut aspectDiffA: f32 =
+        crate::stdlib::fabs((aspectA - crate::src::renderergl1::tr_init::displayAspect) as f64)
+            as f32;
+    let mut aspectDiffB: f32 =
+        crate::stdlib::fabs((aspectB - crate::src::renderergl1::tr_init::displayAspect) as f64)
+            as f32;
     let mut aspectDiffsDiff: f32 = aspectDiffA - aspectDiffB;
     if aspectDiffsDiff > ASPECT_EPSILON {
         return 1i32;
@@ -1201,1030 +1193,41 @@ unsafe extern "C" fn GLimp_DetectAvailableModes() {
     let mut i: i32 = 0;
     let mut j: i32 = 0;
     let mut buf: [i8; 1024] = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0,
     ];
     let mut numSDLModes: i32 = 0;
     let mut modes: *mut crate::stdlib::SDL_Rect = 0 as *mut crate::stdlib::SDL_Rect;
@@ -2249,8 +1252,7 @@ unsafe extern "C" fn GLimp_DetectAvailableModes() {
         return;
     }
     numSDLModes = crate::stdlib::SDL_GetNumDisplayModes(display);
-    if crate::stdlib::SDL_GetWindowDisplayMode(SDL_window, &mut windowMode) < 0
-        || numSDLModes <= 0
+    if crate::stdlib::SDL_GetWindowDisplayMode(SDL_window, &mut windowMode) < 0 || numSDLModes <= 0
     {
         crate::src::renderergl1::tr_main::ri
             .Printf
@@ -2264,7 +1266,6 @@ unsafe extern "C" fn GLimp_DetectAvailableModes() {
     }
     modes = crate::stdlib::SDL_calloc(
         numSDLModes as crate::stddef_h::size_t,
-        
         ::std::mem::size_of::<crate::stdlib::SDL_Rect>(),
     ) as *mut crate::stdlib::SDL_Rect;
     if modes.is_null() {
@@ -2320,33 +1321,26 @@ unsafe extern "C" fn GLimp_DetectAvailableModes() {
         crate::stdlib::qsort(
             modes as *mut libc::c_void,
             numModes as crate::stddef_h::size_t,
-            
             ::std::mem::size_of::<crate::stdlib::SDL_Rect>(),
             Some(
                 GLimp_CompareModes
-                    as unsafe extern "C" fn(
-                        _: *const libc::c_void,
-                        _: *const libc::c_void,
-                    ) -> i32,
+                    as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> i32,
             ),
         );
     }
     i = 0;
     while i < numModes {
         let mut newModeString: *const i8 = crate::src::qcommon::q_shared::va(
-            
-            b"%ux%u \x00" as *const  u8 as *mut i8,
+            b"%ux%u \x00" as *const u8 as *mut i8,
             (*modes.offset(i as isize)).w,
             (*modes.offset(i as isize)).h,
         );
         if crate::stdlib::strlen(newModeString)
-            < (::std::mem::size_of::<[i8; 1024]>() as i32
-                as usize)
+            < (::std::mem::size_of::<[i8; 1024]>() as i32 as usize)
                 .wrapping_sub(crate::stdlib::strlen(buf.as_mut_ptr()))
         {
             crate::src::qcommon::q_shared::Q_strcat(
                 buf.as_mut_ptr(),
-                
                 ::std::mem::size_of::<[i8; 1024]>() as i32,
                 newModeString,
             );
@@ -2395,9 +1389,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
     let mut version: *const i8 = 0 as *const i8;
     // OpenGL 1.0 and OpenGL ES 1.0
     qglGetString = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::GetStringproc>>(
-        crate::stdlib::SDL_GL_GetProcAddress(
-            b"glGetString\x00" as *const u8 as *const i8,
-        ),
+        crate::stdlib::SDL_GL_GetProcAddress(b"glGetString\x00" as *const u8 as *const i8),
     ); // ES, ES-CM, or ES-CL
     if qglGetString.is_none() {
         crate::src::renderergl1::tr_main::ri
@@ -2415,9 +1407,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             b"glGetString is NULL\x00" as *const u8 as *const i8,
         );
     }
-    version = qglGetString.expect("non-null function pointer")(
-        0x1f02u32,
-    ) as *const i8;
+    version = qglGetString.expect("non-null function pointer")(0x1f02u32) as *const i8;
     if version.is_null() {
         crate::src::renderergl1::tr_subs::Com_Error(
             crate::src::qcommon::q_shared::ERR_FATAL as i32,
@@ -2456,9 +1446,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
         );
     }
     if fixedFunction as u64 != 0 {
-        if qglMajorVersion > 1
-            || qglMajorVersion == 1 && qglMinorVersion >= 2
-        {
+        if qglMajorVersion > 1 || qglMajorVersion == 1 && qglMinorVersion >= 2 {
             qglBindTexture = ::std::mem::transmute::<
                 *mut libc::c_void,
                 Option<crate::qgl_h::BindTextureproc>,
@@ -2508,9 +1496,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
                 success = crate::src::qcommon::q_shared::qfalse
             }
             qglClear = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Clearproc>>(
-                crate::stdlib::SDL_GL_GetProcAddress(
-                    b"glClear\x00" as *const u8 as *const i8,
-                ),
+                crate::stdlib::SDL_GL_GetProcAddress(b"glClear\x00" as *const u8 as *const i8),
             );
             if qglClear.is_none() {
                 crate::src::renderergl1::tr_main::ri
@@ -2683,9 +1669,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
                 success = crate::src::qcommon::q_shared::qfalse
             }
             qglEnable = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Enableproc>>(
-                crate::stdlib::SDL_GL_GetProcAddress(
-                    b"glEnable\x00" as *const u8 as *const i8,
-                ),
+                crate::stdlib::SDL_GL_GetProcAddress(b"glEnable\x00" as *const u8 as *const i8),
             );
             if qglEnable.is_none() {
                 crate::src::renderergl1::tr_main::ri
@@ -2698,9 +1682,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
                 success = crate::src::qcommon::q_shared::qfalse
             }
             qglFinish = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Finishproc>>(
-                crate::stdlib::SDL_GL_GetProcAddress(
-                    b"glFinish\x00" as *const u8 as *const i8,
-                ),
+                crate::stdlib::SDL_GL_GetProcAddress(b"glFinish\x00" as *const u8 as *const i8),
             );
             if qglFinish.is_none() {
                 crate::src::renderergl1::tr_main::ri
@@ -2713,9 +1695,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
                 success = crate::src::qcommon::q_shared::qfalse
             }
             qglFlush = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Flushproc>>(
-                crate::stdlib::SDL_GL_GetProcAddress(
-                    b"glFlush\x00" as *const u8 as *const i8,
-                ),
+                crate::stdlib::SDL_GL_GetProcAddress(b"glFlush\x00" as *const u8 as *const i8),
             );
             if qglFlush.is_none() {
                 crate::src::renderergl1::tr_main::ri
@@ -3320,9 +2300,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
                 success = crate::src::qcommon::q_shared::qfalse
             }
             qglBegin = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Beginproc>>(
-                crate::stdlib::SDL_GL_GetProcAddress(
-                    b"glBegin\x00" as *const u8 as *const i8,
-                ),
+                crate::stdlib::SDL_GL_GetProcAddress(b"glBegin\x00" as *const u8 as *const i8),
             );
             if qglBegin.is_none() {
                 crate::src::renderergl1::tr_main::ri
@@ -3383,9 +2361,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
                 success = crate::src::qcommon::q_shared::qfalse
             }
             qglEnd = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Endproc>>(
-                crate::stdlib::SDL_GL_GetProcAddress(
-                    b"glEnd\x00" as *const u8 as *const i8,
-                ),
+                crate::stdlib::SDL_GL_GetProcAddress(b"glEnd\x00" as *const u8 as *const i8),
             );
             if qglEnd.is_none() {
                 crate::src::renderergl1::tr_main::ri
@@ -3414,9 +2390,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
                 success = crate::src::qcommon::q_shared::qfalse
             }
             qglOrtho = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Orthoproc>>(
-                crate::stdlib::SDL_GL_GetProcAddress(
-                    b"glOrtho\x00" as *const u8 as *const i8,
-                ),
+                crate::stdlib::SDL_GL_GetProcAddress(b"glOrtho\x00" as *const u8 as *const i8),
             );
             if qglOrtho.is_none() {
                 crate::src::renderergl1::tr_main::ri
@@ -3559,9 +2533,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
                 success = crate::src::qcommon::q_shared::qfalse
             }
             qglClear = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Clearproc>>(
-                crate::stdlib::SDL_GL_GetProcAddress(
-                    b"glClear\x00" as *const u8 as *const i8,
-                ),
+                crate::stdlib::SDL_GL_GetProcAddress(b"glClear\x00" as *const u8 as *const i8),
             );
             if qglClear.is_none() {
                 crate::src::renderergl1::tr_main::ri
@@ -3734,9 +2706,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
                 success = crate::src::qcommon::q_shared::qfalse
             }
             qglEnable = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Enableproc>>(
-                crate::stdlib::SDL_GL_GetProcAddress(
-                    b"glEnable\x00" as *const u8 as *const i8,
-                ),
+                crate::stdlib::SDL_GL_GetProcAddress(b"glEnable\x00" as *const u8 as *const i8),
             );
             if qglEnable.is_none() {
                 crate::src::renderergl1::tr_main::ri
@@ -3749,9 +2719,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
                 success = crate::src::qcommon::q_shared::qfalse
             }
             qglFinish = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Finishproc>>(
-                crate::stdlib::SDL_GL_GetProcAddress(
-                    b"glFinish\x00" as *const u8 as *const i8,
-                ),
+                crate::stdlib::SDL_GL_GetProcAddress(b"glFinish\x00" as *const u8 as *const i8),
             );
             if qglFinish.is_none() {
                 crate::src::renderergl1::tr_main::ri
@@ -3764,9 +2732,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
                 success = crate::src::qcommon::q_shared::qfalse
             }
             qglFlush = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Flushproc>>(
-                crate::stdlib::SDL_GL_GetProcAddress(
-                    b"glFlush\x00" as *const u8 as *const i8,
-                ),
+                crate::stdlib::SDL_GL_GetProcAddress(b"glFlush\x00" as *const u8 as *const i8),
             );
             if qglFlush.is_none() {
                 crate::src::renderergl1::tr_main::ri
@@ -4355,9 +3321,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
                 success = crate::src::qcommon::q_shared::qfalse
             }
             qglOrthof = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Orthofproc>>(
-                crate::stdlib::SDL_GL_GetProcAddress(
-                    b"glOrthof\x00" as *const u8 as *const i8,
-                ),
+                crate::stdlib::SDL_GL_GetProcAddress(b"glOrthof\x00" as *const u8 as *const i8),
             );
             if qglOrthof.is_none() {
                 crate::src::renderergl1::tr_main::ri
@@ -4383,9 +3347,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
                 version,
             );
         }
-    } else if qglMajorVersion > 2
-        || qglMajorVersion == 2 && qglMinorVersion >= 0
-    {
+    } else if qglMajorVersion > 2 || qglMajorVersion == 2 && qglMinorVersion >= 0 {
         qglBindTexture = ::std::mem::transmute::<
             *mut libc::c_void,
             Option<crate::qgl_h::BindTextureproc>,
@@ -4402,12 +3364,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglBlendFunc = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::BlendFuncproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glBlendFunc\x00" as *const u8 as *const i8,
-        ));
+        qglBlendFunc =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::BlendFuncproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glBlendFunc\x00" as *const u8 as *const i8),
+            );
         if qglBlendFunc.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4418,12 +3378,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglClearColor = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::ClearColorproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glClearColor\x00" as *const u8 as *const i8,
-        ));
+        qglClearColor =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::ClearColorproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glClearColor\x00" as *const u8 as *const i8),
+            );
         if qglClearColor.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4435,9 +3393,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglClear = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Clearproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glClear\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glClear\x00" as *const u8 as *const i8),
         );
         if qglClear.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -4465,12 +3421,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglColorMask = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::ColorMaskproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glColorMask\x00" as *const u8 as *const i8,
-        ));
+        qglColorMask =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::ColorMaskproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glColorMask\x00" as *const u8 as *const i8),
+            );
         if qglColorMask.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4498,9 +3452,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglCullFace = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::CullFaceproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glCullFace\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glCullFace\x00" as *const u8 as *const i8),
         );
         if qglCullFace.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -4528,12 +3480,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglDepthFunc = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::DepthFuncproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glDepthFunc\x00" as *const u8 as *const i8,
-        ));
+        qglDepthFunc =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::DepthFuncproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glDepthFunc\x00" as *const u8 as *const i8),
+            );
         if qglDepthFunc.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4544,12 +3494,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglDepthMask = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::DepthMaskproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glDepthMask\x00" as *const u8 as *const i8,
-        ));
+        qglDepthMask =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::DepthMaskproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glDepthMask\x00" as *const u8 as *const i8),
+            );
         if qglDepthMask.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4561,9 +3509,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglDisable = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Disableproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glDisable\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glDisable\x00" as *const u8 as *const i8),
         );
         if qglDisable.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -4575,12 +3521,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglDrawArrays = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::DrawArraysproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glDrawArrays\x00" as *const u8 as *const i8,
-        ));
+        qglDrawArrays =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::DrawArraysproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glDrawArrays\x00" as *const u8 as *const i8),
+            );
         if qglDrawArrays.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4608,9 +3552,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglEnable = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Enableproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glEnable\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glEnable\x00" as *const u8 as *const i8),
         );
         if qglEnable.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -4623,9 +3565,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglFinish = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Finishproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glFinish\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glFinish\x00" as *const u8 as *const i8),
         );
         if qglFinish.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -4638,9 +3578,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglFlush = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Flushproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glFlush\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glFlush\x00" as *const u8 as *const i8),
         );
         if qglFlush.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -4685,9 +3623,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglGetError = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::GetErrorproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glGetError\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glGetError\x00" as *const u8 as *const i8),
         );
         if qglGetError.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -4715,12 +3651,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglGetString = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::GetStringproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glGetString\x00" as *const u8 as *const i8,
-        ));
+        qglGetString =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::GetStringproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glGetString\x00" as *const u8 as *const i8),
+            );
         if qglGetString.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4731,12 +3665,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglLineWidth = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::LineWidthproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glLineWidth\x00" as *const u8 as *const i8,
-        ));
+        qglLineWidth =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::LineWidthproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glLineWidth\x00" as *const u8 as *const i8),
+            );
         if qglLineWidth.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4763,12 +3695,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglReadPixels = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::ReadPixelsproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glReadPixels\x00" as *const u8 as *const i8,
-        ));
+        qglReadPixels =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::ReadPixelsproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glReadPixels\x00" as *const u8 as *const i8),
+            );
         if qglReadPixels.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4780,9 +3710,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglScissor = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Scissorproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glScissor\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glScissor\x00" as *const u8 as *const i8),
         );
         if qglScissor.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -4826,12 +3754,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglStencilOp = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::StencilOpproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glStencilOp\x00" as *const u8 as *const i8,
-        ));
+        qglStencilOp =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::StencilOpproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glStencilOp\x00" as *const u8 as *const i8),
+            );
         if qglStencilOp.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4842,12 +3768,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglTexImage2D = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::TexImage2Dproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glTexImage2D\x00" as *const u8 as *const i8,
-        ));
+        qglTexImage2D =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::TexImage2Dproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glTexImage2D\x00" as *const u8 as *const i8),
+            );
         if qglTexImage2D.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4906,12 +3830,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglTranslatef = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Translatefproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glTranslatef\x00" as *const u8 as *const i8,
-        ));
+        qglTranslatef =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Translatefproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glTranslatef\x00" as *const u8 as *const i8),
+            );
         if qglTranslatef.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4923,9 +3845,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglViewport = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Viewportproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glViewport\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glViewport\x00" as *const u8 as *const i8),
         );
         if qglViewport.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -4937,12 +3857,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglClearDepth = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::ClearDepthproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glClearDepth\x00" as *const u8 as *const i8,
-        ));
+        qglClearDepth =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::ClearDepthproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glClearDepth\x00" as *const u8 as *const i8),
+            );
         if qglClearDepth.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4953,12 +3871,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglDepthRange = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::DepthRangeproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glDepthRange\x00" as *const u8 as *const i8,
-        ));
+        qglDepthRange =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::DepthRangeproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glDepthRange\x00" as *const u8 as *const i8),
+            );
         if qglDepthRange.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -4969,12 +3885,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglDrawBuffer = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::DrawBufferproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glDrawBuffer\x00" as *const u8 as *const i8,
-        ));
+        qglDrawBuffer =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::DrawBufferproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glDrawBuffer\x00" as *const u8 as *const i8),
+            );
         if qglDrawBuffer.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5049,12 +3963,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglBindBuffer = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::BindBufferproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glBindBuffer\x00" as *const u8 as *const i8,
-        ));
+        qglBindBuffer =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::BindBufferproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glBindBuffer\x00" as *const u8 as *const i8),
+            );
         if qglBindBuffer.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5081,12 +3993,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglGenBuffers = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::GenBuffersproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glGenBuffers\x00" as *const u8 as *const i8,
-        ));
+        qglGenBuffers =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::GenBuffersproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glGenBuffers\x00" as *const u8 as *const i8),
+            );
         if qglGenBuffers.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5097,12 +4007,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglBufferData = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::BufferDataproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glBufferData\x00" as *const u8 as *const i8,
-        ));
+        qglBufferData =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::BufferDataproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glBufferData\x00" as *const u8 as *const i8),
+            );
         if qglBufferData.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5433,12 +4341,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUseProgram = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::UseProgramproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUseProgram\x00" as *const u8 as *const i8,
-        ));
+        qglUseProgram =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::UseProgramproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUseProgram\x00" as *const u8 as *const i8),
+            );
         if qglUseProgram.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5449,12 +4355,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUniform1f = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Uniform1fproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUniform1f\x00" as *const u8 as *const i8,
-        ));
+        qglUniform1f =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Uniform1fproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUniform1f\x00" as *const u8 as *const i8),
+            );
         if qglUniform1f.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5465,12 +4369,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUniform2f = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Uniform2fproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUniform2f\x00" as *const u8 as *const i8,
-        ));
+        qglUniform2f =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Uniform2fproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUniform2f\x00" as *const u8 as *const i8),
+            );
         if qglUniform2f.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5481,12 +4383,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUniform3f = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Uniform3fproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUniform3f\x00" as *const u8 as *const i8,
-        ));
+        qglUniform3f =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Uniform3fproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUniform3f\x00" as *const u8 as *const i8),
+            );
         if qglUniform3f.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5497,12 +4397,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUniform4f = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Uniform4fproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUniform4f\x00" as *const u8 as *const i8,
-        ));
+        qglUniform4f =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Uniform4fproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUniform4f\x00" as *const u8 as *const i8),
+            );
         if qglUniform4f.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5513,12 +4411,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUniform1i = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Uniform1iproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUniform1i\x00" as *const u8 as *const i8,
-        ));
+        qglUniform1i =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Uniform1iproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUniform1i\x00" as *const u8 as *const i8),
+            );
         if qglUniform1i.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5529,12 +4425,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUniform1fv = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Uniform1fvproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUniform1fv\x00" as *const u8 as *const i8,
-        ));
+        qglUniform1fv =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Uniform1fvproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUniform1fv\x00" as *const u8 as *const i8),
+            );
         if qglUniform1fv.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5593,9 +4487,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-    } else if qglesMajorVersion > 2
-        || qglesMajorVersion == 2 && qglesMinorVersion >= 0
-    {
+    } else if qglesMajorVersion > 2 || qglesMajorVersion == 2 && qglesMinorVersion >= 0 {
         qglBindTexture = ::std::mem::transmute::<
             *mut libc::c_void,
             Option<crate::qgl_h::BindTextureproc>,
@@ -5612,12 +4504,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglBlendFunc = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::BlendFuncproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glBlendFunc\x00" as *const u8 as *const i8,
-        ));
+        qglBlendFunc =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::BlendFuncproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glBlendFunc\x00" as *const u8 as *const i8),
+            );
         if qglBlendFunc.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5628,12 +4518,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglClearColor = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::ClearColorproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glClearColor\x00" as *const u8 as *const i8,
-        ));
+        qglClearColor =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::ClearColorproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glClearColor\x00" as *const u8 as *const i8),
+            );
         if qglClearColor.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5645,9 +4533,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglClear = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Clearproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glClear\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glClear\x00" as *const u8 as *const i8),
         );
         if qglClear.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -5675,12 +4561,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglColorMask = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::ColorMaskproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glColorMask\x00" as *const u8 as *const i8,
-        ));
+        qglColorMask =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::ColorMaskproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glColorMask\x00" as *const u8 as *const i8),
+            );
         if qglColorMask.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5708,9 +4592,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglCullFace = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::CullFaceproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glCullFace\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glCullFace\x00" as *const u8 as *const i8),
         );
         if qglCullFace.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -5738,12 +4620,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglDepthFunc = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::DepthFuncproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glDepthFunc\x00" as *const u8 as *const i8,
-        ));
+        qglDepthFunc =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::DepthFuncproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glDepthFunc\x00" as *const u8 as *const i8),
+            );
         if qglDepthFunc.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5754,12 +4634,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglDepthMask = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::DepthMaskproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glDepthMask\x00" as *const u8 as *const i8,
-        ));
+        qglDepthMask =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::DepthMaskproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glDepthMask\x00" as *const u8 as *const i8),
+            );
         if qglDepthMask.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5771,9 +4649,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglDisable = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Disableproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glDisable\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glDisable\x00" as *const u8 as *const i8),
         );
         if qglDisable.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -5785,12 +4661,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglDrawArrays = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::DrawArraysproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glDrawArrays\x00" as *const u8 as *const i8,
-        ));
+        qglDrawArrays =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::DrawArraysproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glDrawArrays\x00" as *const u8 as *const i8),
+            );
         if qglDrawArrays.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5818,9 +4692,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglEnable = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Enableproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glEnable\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glEnable\x00" as *const u8 as *const i8),
         );
         if qglEnable.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -5833,9 +4705,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglFinish = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Finishproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glFinish\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glFinish\x00" as *const u8 as *const i8),
         );
         if qglFinish.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -5848,9 +4718,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglFlush = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Flushproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glFlush\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glFlush\x00" as *const u8 as *const i8),
         );
         if qglFlush.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -5895,9 +4763,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglGetError = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::GetErrorproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glGetError\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glGetError\x00" as *const u8 as *const i8),
         );
         if qglGetError.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -5925,12 +4791,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglGetString = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::GetStringproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glGetString\x00" as *const u8 as *const i8,
-        ));
+        qglGetString =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::GetStringproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glGetString\x00" as *const u8 as *const i8),
+            );
         if qglGetString.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5941,12 +4805,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglLineWidth = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::LineWidthproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glLineWidth\x00" as *const u8 as *const i8,
-        ));
+        qglLineWidth =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::LineWidthproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glLineWidth\x00" as *const u8 as *const i8),
+            );
         if qglLineWidth.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5973,12 +4835,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglReadPixels = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::ReadPixelsproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glReadPixels\x00" as *const u8 as *const i8,
-        ));
+        qglReadPixels =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::ReadPixelsproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glReadPixels\x00" as *const u8 as *const i8),
+            );
         if qglReadPixels.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -5990,9 +4850,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglScissor = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Scissorproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glScissor\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glScissor\x00" as *const u8 as *const i8),
         );
         if qglScissor.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -6036,12 +4894,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglStencilOp = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::StencilOpproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glStencilOp\x00" as *const u8 as *const i8,
-        ));
+        qglStencilOp =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::StencilOpproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glStencilOp\x00" as *const u8 as *const i8),
+            );
         if qglStencilOp.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -6052,12 +4908,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglTexImage2D = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::TexImage2Dproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glTexImage2D\x00" as *const u8 as *const i8,
-        ));
+        qglTexImage2D =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::TexImage2Dproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glTexImage2D\x00" as *const u8 as *const i8),
+            );
         if qglTexImage2D.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -6116,12 +4970,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglTranslatef = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Translatefproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glTranslatef\x00" as *const u8 as *const i8,
-        ));
+        qglTranslatef =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Translatefproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glTranslatef\x00" as *const u8 as *const i8),
+            );
         if qglTranslatef.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -6133,9 +4985,7 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             success = crate::src::qcommon::q_shared::qfalse
         }
         qglViewport = ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Viewportproc>>(
-            crate::stdlib::SDL_GL_GetProcAddress(
-                b"glViewport\x00" as *const u8 as *const i8,
-            ),
+            crate::stdlib::SDL_GL_GetProcAddress(b"glViewport\x00" as *const u8 as *const i8),
         );
         if qglViewport.is_none() {
             crate::src::renderergl1::tr_main::ri
@@ -6227,12 +5077,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglBindBuffer = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::BindBufferproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glBindBuffer\x00" as *const u8 as *const i8,
-        ));
+        qglBindBuffer =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::BindBufferproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glBindBuffer\x00" as *const u8 as *const i8),
+            );
         if qglBindBuffer.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -6259,12 +5107,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglGenBuffers = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::GenBuffersproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glGenBuffers\x00" as *const u8 as *const i8,
-        ));
+        qglGenBuffers =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::GenBuffersproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glGenBuffers\x00" as *const u8 as *const i8),
+            );
         if qglGenBuffers.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -6275,12 +5121,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglBufferData = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::BufferDataproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glBufferData\x00" as *const u8 as *const i8,
-        ));
+        qglBufferData =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::BufferDataproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glBufferData\x00" as *const u8 as *const i8),
+            );
         if qglBufferData.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -6611,12 +5455,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUseProgram = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::UseProgramproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUseProgram\x00" as *const u8 as *const i8,
-        ));
+        qglUseProgram =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::UseProgramproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUseProgram\x00" as *const u8 as *const i8),
+            );
         if qglUseProgram.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -6627,12 +5469,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUniform1f = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Uniform1fproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUniform1f\x00" as *const u8 as *const i8,
-        ));
+        qglUniform1f =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Uniform1fproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUniform1f\x00" as *const u8 as *const i8),
+            );
         if qglUniform1f.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -6643,12 +5483,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUniform2f = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Uniform2fproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUniform2f\x00" as *const u8 as *const i8,
-        ));
+        qglUniform2f =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Uniform2fproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUniform2f\x00" as *const u8 as *const i8),
+            );
         if qglUniform2f.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -6659,12 +5497,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUniform3f = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Uniform3fproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUniform3f\x00" as *const u8 as *const i8,
-        ));
+        qglUniform3f =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Uniform3fproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUniform3f\x00" as *const u8 as *const i8),
+            );
         if qglUniform3f.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -6675,12 +5511,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUniform4f = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Uniform4fproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUniform4f\x00" as *const u8 as *const i8,
-        ));
+        qglUniform4f =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Uniform4fproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUniform4f\x00" as *const u8 as *const i8),
+            );
         if qglUniform4f.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -6691,12 +5525,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUniform1i = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Uniform1iproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUniform1i\x00" as *const u8 as *const i8,
-        ));
+        qglUniform1i =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Uniform1iproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUniform1i\x00" as *const u8 as *const i8),
+            );
         if qglUniform1i.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -6707,12 +5539,10 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
             );
             success = crate::src::qcommon::q_shared::qfalse
         }
-        qglUniform1fv = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::Uniform1fvproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glUniform1fv\x00" as *const u8 as *const i8,
-        ));
+        qglUniform1fv =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::Uniform1fvproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glUniform1fv\x00" as *const u8 as *const i8),
+            );
         if qglUniform1fv.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -6787,15 +5617,12 @@ unsafe extern "C" fn GLimp_GetProcAddresses(
     }
     if qglMajorVersion > 3
         || qglMajorVersion == 3 && qglMinorVersion >= 0
-        || (qglesMajorVersion > 3
-            || qglesMajorVersion == 3 && qglesMinorVersion >= 0)
+        || (qglesMajorVersion > 3 || qglesMajorVersion == 3 && qglesMinorVersion >= 0)
     {
-        qglGetStringi = ::std::mem::transmute::<
-            *mut libc::c_void,
-            Option<crate::qgl_h::GetStringiproc>,
-        >(crate::stdlib::SDL_GL_GetProcAddress(
-            b"glGetStringi\x00" as *const u8 as *const i8,
-        ));
+        qglGetStringi =
+            ::std::mem::transmute::<*mut libc::c_void, Option<crate::qgl_h::GetStringiproc>>(
+                crate::stdlib::SDL_GL_GetProcAddress(b"glGetStringi\x00" as *const u8 as *const i8),
+            );
         if qglGetStringi.is_none() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -7011,10 +5838,8 @@ unsafe extern "C" fn GLimp_SetMode(
         driverdata: 0 as *mut libc::c_void,
     };
     let mut display: i32 = 0;
-    let mut x: i32 =
-        (0x1fff0000u32 | 0) as i32;
-    let mut y: i32 =
-        (0x1fff0000u32 | 0) as i32;
+    let mut x: i32 = (0x1fff0000u32 | 0) as i32;
+    let mut y: i32 = (0x1fff0000u32 | 0) as i32;
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
@@ -7022,15 +5847,13 @@ unsafe extern "C" fn GLimp_SetMode(
         b"Initializing OpenGL display\n\x00" as *const u8 as *const i8,
     );
     if (*r_allowResize).integer != 0 {
-        flags |=  crate::stdlib::SDL_WINDOW_RESIZABLE
+        flags |= crate::stdlib::SDL_WINDOW_RESIZABLE
     }
     icon = crate::stdlib::SDL_CreateRGBSurfaceFrom(
         CLIENT_WINDOW_ICON.pixel_data.as_ptr() as *mut libc::c_void,
         CLIENT_WINDOW_ICON.width as i32,
         CLIENT_WINDOW_ICON.height as i32,
-        CLIENT_WINDOW_ICON
-            .bytes_per_pixel
-            .wrapping_mul(8u32) as i32,
+        CLIENT_WINDOW_ICON.bytes_per_pixel.wrapping_mul(8u32) as i32,
         CLIENT_WINDOW_ICON
             .bytes_per_pixel
             .wrapping_mul(CLIENT_WINDOW_ICON.width) as i32,
@@ -7052,9 +5875,7 @@ unsafe extern "C" fn GLimp_SetMode(
             );
         }
     }
-    if display >= 0
-        && crate::stdlib::SDL_GetDesktopDisplayMode(display, &mut desktopMode) == 0
-    {
+    if display >= 0 && crate::stdlib::SDL_GetDesktopDisplayMode(display, &mut desktopMode) == 0 {
         crate::src::renderergl1::tr_init::displayAspect =
             desktopMode.w as f32 / desktopMode.h as f32;
         crate::src::renderergl1::tr_main::ri
@@ -7068,15 +5889,13 @@ unsafe extern "C" fn GLimp_SetMode(
         crate::stdlib::memset(
             &mut desktopMode as *mut crate::stdlib::SDL_DisplayMode as *mut libc::c_void,
             0,
-            
             ::std::mem::size_of::<crate::stdlib::SDL_DisplayMode>(),
         );
         crate::src::renderergl1::tr_main::ri
             .Printf
             .expect("non-null function pointer")(
             crate::src::qcommon::q_shared::PRINT_ALL as i32,
-            b"Cannot determine display aspect, assuming 1.333\n\x00" as *const u8
-                as *const i8,
+            b"Cannot determine display aspect, assuming 1.333\n\x00" as *const u8 as *const i8,
         );
     }
     crate::src::renderergl1::tr_main::ri
@@ -7131,10 +5950,8 @@ unsafe extern "C" fn GLimp_SetMode(
     );
     // Center window
     if (*r_centerWindow).integer != 0 && fullscreen as u64 == 0 {
-        x = desktopMode.w / 2
-            - crate::src::renderergl1::tr_init::glConfig.vidWidth / 2;
-        y = desktopMode.h / 2
-            - crate::src::renderergl1::tr_init::glConfig.vidHeight / 2
+        x = desktopMode.w / 2 - crate::src::renderergl1::tr_init::glConfig.vidWidth / 2;
+        y = desktopMode.h / 2 - crate::src::renderergl1::tr_init::glConfig.vidHeight / 2
     }
     // Destroy existing state if it exists
     if !SDL_glContext.is_null() {
@@ -7148,8 +5965,7 @@ unsafe extern "C" fn GLimp_SetMode(
             .Printf
             .expect("non-null function pointer")(
             crate::src::qcommon::q_shared::PRINT_DEVELOPER as i32,
-            b"Existing window at %dx%d before being destroyed\n\x00" as *const u8
-                as *const i8,
+            b"Existing window at %dx%d before being destroyed\n\x00" as *const u8 as *const i8,
             x,
             y,
         );
@@ -7157,12 +5973,12 @@ unsafe extern "C" fn GLimp_SetMode(
         SDL_window = 0 as *mut crate::stdlib::SDL_Window
     }
     if fullscreen as u64 != 0 {
-        flags |=  crate::stdlib::SDL_WINDOW_FULLSCREEN;
+        flags |= crate::stdlib::SDL_WINDOW_FULLSCREEN;
         crate::src::renderergl1::tr_init::glConfig.isFullscreen =
             crate::src::qcommon::q_shared::qtrue
     } else {
         if noborder as u64 != 0 {
-            flags |=  crate::stdlib::SDL_WINDOW_BORDERLESS
+            flags |= crate::stdlib::SDL_WINDOW_BORDERLESS
         }
         crate::src::renderergl1::tr_init::glConfig.isFullscreen =
             crate::src::qcommon::q_shared::qfalse
@@ -7179,16 +5995,16 @@ unsafe extern "C" fn GLimp_SetMode(
     stencilBits = (*crate::src::renderergl1::tr_init::r_stencilbits).value as i32;
     samples = (*crate::src::renderergl1::tr_init::r_ext_multisample).value as i32;
     let mut current_block_184: u64;
-    i = 0;
-    while i < 16 {
+
+    for i in 0..16 {
         let mut testColorBits: i32 = 0;
+
         let mut testDepthBits: i32 = 0;
+
         let mut testStencilBits: i32 = 0;
+
         let mut realColorBits: [i32; 3] = [0; 3];
-        // 0 - default
-        // 1 - minus colorBits
-        // 2 - minus depthBits
-        // 3 - minus stencil
+
         if i % 4 == 0 && i != 0 {
             let mut current_block_75: u64;
             // one pass, reduce
@@ -7225,15 +6041,20 @@ unsafe extern "C" fn GLimp_SetMode(
                 _ => {}
             }
         }
+
         testColorBits = colorBits;
+
         testDepthBits = depthBits;
+
         testStencilBits = stencilBits;
+
         if i % 4 == 3 {
             // reduce colorBits
             if testColorBits == 24 {
                 testColorBits = 16
             }
         }
+
         if i % 4 == 2 {
             // reduce depthBits
             if testDepthBits == 24 {
@@ -7242,6 +6063,7 @@ unsafe extern "C" fn GLimp_SetMode(
                 testDepthBits = 8
             }
         }
+
         if i % 4 == 1 {
             // reduce stencilBits
             if testStencilBits == 24 {
@@ -7252,26 +6074,30 @@ unsafe extern "C" fn GLimp_SetMode(
                 testStencilBits = 0
             }
         }
+
         if testColorBits == 24 {
             perChannelColorBits = 8
         } else {
             perChannelColorBits = 4
         }
-        /* Fix for SGIs grabbing too many bits of color */
+
         crate::stdlib::SDL_GL_SetAttribute(crate::stdlib::SDL_GL_RED_SIZE, perChannelColorBits);
+
         crate::stdlib::SDL_GL_SetAttribute(crate::stdlib::SDL_GL_GREEN_SIZE, perChannelColorBits);
+
         crate::stdlib::SDL_GL_SetAttribute(crate::stdlib::SDL_GL_BLUE_SIZE, perChannelColorBits);
+
         crate::stdlib::SDL_GL_SetAttribute(crate::stdlib::SDL_GL_DEPTH_SIZE, testDepthBits);
+
         crate::stdlib::SDL_GL_SetAttribute(crate::stdlib::SDL_GL_STENCIL_SIZE, testStencilBits);
+
         crate::stdlib::SDL_GL_SetAttribute(
             crate::stdlib::SDL_GL_MULTISAMPLEBUFFERS,
-            if samples != 0 {
-                1
-            } else {
-                0
-            },
+            if samples != 0 { 1 } else { 0 },
         );
+
         crate::stdlib::SDL_GL_SetAttribute(crate::stdlib::SDL_GL_MULTISAMPLESAMPLES, samples);
+
         if (*crate::src::renderergl1::tr_init::r_stereoEnabled).integer != 0 {
             crate::src::renderergl1::tr_init::glConfig.stereoEnabled =
                 crate::src::qcommon::q_shared::qtrue;
@@ -7281,8 +6107,9 @@ unsafe extern "C" fn GLimp_SetMode(
                 crate::src::qcommon::q_shared::qfalse;
             crate::stdlib::SDL_GL_SetAttribute(crate::stdlib::SDL_GL_STEREO, 0i32);
         }
+
         crate::stdlib::SDL_GL_SetAttribute(crate::stdlib::SDL_GL_DOUBLEBUFFER, 1);
-        // if multisampling is enabled on X11, this causes create window to fail.
+
         SDL_window = crate::stdlib::SDL_CreateWindow(
             b"ioquake3\x00" as *const u8 as *const i8,
             x,
@@ -7291,6 +6118,7 @@ unsafe extern "C" fn GLimp_SetMode(
             crate::src::renderergl1::tr_init::glConfig.vidHeight,
             flags,
         );
+
         if SDL_window.is_null() {
             crate::src::renderergl1::tr_main::ri
                 .Printf
@@ -7310,11 +6138,11 @@ unsafe extern "C" fn GLimp_SetMode(
                 };
                 match testColorBits {
                     16 => {
-                        mode_0.format =  crate::stdlib::SDL_PIXELFORMAT_RGB565;
+                        mode_0.format = crate::stdlib::SDL_PIXELFORMAT_RGB565;
                         current_block_184 = 1425453989644512380;
                     }
                     24 => {
-                        mode_0.format =  crate::stdlib::SDL_PIXELFORMAT_RGB24;
+                        mode_0.format = crate::stdlib::SDL_PIXELFORMAT_RGB24;
                         current_block_184 = 1425453989644512380;
                     }
                     _ => {
@@ -7343,9 +6171,7 @@ unsafe extern "C" fn GLimp_SetMode(
                         mode_0.refresh_rate =
                             crate::src::renderergl1::tr_init::glConfig.displayFrequency;
                         mode_0.driverdata = 0 as *mut libc::c_void;
-                        if crate::stdlib::SDL_SetWindowDisplayMode(SDL_window, &mut mode_0)
-                            < 0
-                        {
+                        if crate::stdlib::SDL_SetWindowDisplayMode(SDL_window, &mut mode_0) < 0 {
                             crate::src::renderergl1::tr_main::ri
                                 .Printf
                                 .expect("non-null function pointer")(
@@ -7408,16 +6234,14 @@ unsafe extern "C" fn GLimp_SetMode(
                                 .Printf
                                 .expect("non-null function pointer")(
                                 crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                                b"SDL_GL_CreateContext failed: %s\n\x00" as *const u8
-                                    as *const i8,
+                                b"SDL_GL_CreateContext failed: %s\n\x00" as *const u8 as *const i8,
                                 crate::stdlib::SDL_GetError(),
                             );
                             crate::src::renderergl1::tr_main::ri
                                 .Printf
                                 .expect("non-null function pointer")(
                                 crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                                b"Reverting to default context\n\x00" as *const u8
-                                    as *const i8,
+                                b"Reverting to default context\n\x00" as *const u8 as *const i8,
                             );
                             crate::stdlib::SDL_GL_SetAttribute(
                                 crate::stdlib::SDL_GL_CONTEXT_PROFILE_MASK,
@@ -7437,13 +6261,12 @@ unsafe extern "C" fn GLimp_SetMode(
                                 .Printf
                                 .expect("non-null function pointer")(
                                 crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                                b"SDL_GL_CreateContext succeeded.\n\x00" as *const u8
-                                    as *const i8,
+                                b"SDL_GL_CreateContext succeeded.\n\x00" as *const u8 as *const i8,
                             );
                             if GLimp_GetProcAddresses(fixedFunction) as u64 != 0 {
-                                renderer = qglGetString.expect("non-null function pointer")(
-                                    0x1f01u32,
-                                ) as *const i8
+                                renderer =
+                                    qglGetString.expect("non-null function pointer")(0x1f01u32)
+                                        as *const i8
                             } else {
                                 crate::src::renderergl1::tr_main::ri.Printf.expect("non-null function pointer")(crate::src::qcommon::q_shared::PRINT_ALL
                                                                                   as
@@ -7463,8 +6286,7 @@ unsafe extern "C" fn GLimp_SetMode(
                                 .is_null()
                                     || !crate::stdlib::strstr(
                                         renderer,
-                                        b"Software Rasterizer\x00" as *const u8
-                                            as *const i8,
+                                        b"Software Rasterizer\x00" as *const u8 as *const i8,
                                     )
                                     .is_null())
                             {
@@ -7505,8 +6327,7 @@ unsafe extern "C" fn GLimp_SetMode(
                                 .Printf
                                 .expect("non-null function pointer")(
                                 crate::src::qcommon::q_shared::PRINT_DEVELOPER as i32,
-                                b"SDL_GL_CreateContext failed: %s\n\x00" as *const u8
-                                    as *const i8,
+                                b"SDL_GL_CreateContext failed: %s\n\x00" as *const u8 as *const i8,
                                 crate::stdlib::SDL_GetError(),
                             );
                             crate::stdlib::SDL_DestroyWindow(SDL_window);
@@ -7517,8 +6338,7 @@ unsafe extern "C" fn GLimp_SetMode(
                                 .Printf
                                 .expect("non-null function pointer")(
                                 crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                                b"GLimp_GetProcAddresses() failed\n\x00" as *const u8
-                                    as *const i8,
+                                b"GLimp_GetProcAddresses() failed\n\x00" as *const u8 as *const i8,
                             );
                             GLimp_ClearProcAddresses();
                             crate::stdlib::SDL_GL_DeleteContext(SDL_glContext);
@@ -7536,14 +6356,9 @@ unsafe extern "C" fn GLimp_SetMode(
                         5597585068398118923 => {}
                         _ => {
                             qglClearColor.expect("non-null function pointer")(
-                                0f32,
-                                0f32,
-                                0f32,
-                                1f32,
+                                0f32, 0f32, 0f32, 1f32,
                             );
-                            qglClear.expect("non-null function pointer")(
-                                0x4000u32,
-                            );
+                            qglClear.expect("non-null function pointer")(0x4000u32);
                             crate::stdlib::SDL_GL_SwapWindow(SDL_window);
                             if crate::stdlib::SDL_GL_SetSwapInterval(
                                 (*crate::src::renderergl1::tr_init::r_swapInterval).integer,
@@ -7578,17 +6393,14 @@ unsafe extern "C" fn GLimp_SetMode(
                                 crate::stdlib::SDL_GL_STENCIL_SIZE,
                                 &mut crate::src::renderergl1::tr_init::glConfig.stencilBits,
                             );
-                            crate::src::renderergl1::tr_init::glConfig.colorBits = realColorBits
-                                [0]
-                                + realColorBits[1]
-                                + realColorBits[2];
+                            crate::src::renderergl1::tr_init::glConfig.colorBits =
+                                realColorBits[0] + realColorBits[1] + realColorBits[2];
                             crate::src::renderergl1::tr_main::ri
                                 .Printf
                                 .expect("non-null function pointer")(
                                 crate::src::qcommon::q_shared::PRINT_ALL as i32,
                                 b"Using %d color bits, %d depth, %d stencil display.\n\x00"
-                                    as *const u8
-                                    as *const i8,
+                                    as *const u8 as *const i8,
                                 crate::src::renderergl1::tr_init::glConfig.colorBits,
                                 crate::src::renderergl1::tr_init::glConfig.depthBits,
                                 crate::src::renderergl1::tr_init::glConfig.stencilBits,
@@ -7599,7 +6411,6 @@ unsafe extern "C" fn GLimp_SetMode(
                 }
             }
         }
-        i += 1
     }
     crate::stdlib::SDL_FreeSurface(icon);
     if SDL_window.is_null() {
@@ -7612,9 +6423,7 @@ unsafe extern "C" fn GLimp_SetMode(
         return RSERR_INVALID_MODE as i32;
     }
     GLimp_DetectAvailableModes();
-    glstring = qglGetString.expect("non-null function pointer")(
-        0x1f01u32,
-    ) as *mut i8;
+    glstring = qglGetString.expect("non-null function pointer")(0x1f01u32) as *mut i8;
     crate::src::renderergl1::tr_main::ri
         .Printf
         .expect("non-null function pointer")(
@@ -7664,11 +6473,11 @@ unsafe extern "C" fn GLimp_StartDriverAndSetMode(
             driverName,
         );
     }
-    if  fullscreen != 0
+    if fullscreen != 0
         && crate::src::renderergl1::tr_main::ri
             .Cvar_VariableIntegerValue
             .expect("non-null function pointer")(
-            b"in_nograb\x00" as *const u8 as *const i8,
+            b"in_nograb\x00" as *const u8 as *const i8
         ) != 0
     {
         crate::src::renderergl1::tr_main::ri
@@ -7688,14 +6497,13 @@ unsafe extern "C" fn GLimp_StartDriverAndSetMode(
         fullscreen = crate::src::qcommon::q_shared::qfalse
     }
     err = GLimp_SetMode(mode, fullscreen, noborder, gl3Core) as rserr_t;
-    match  err {
+    match err {
         1 => {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
                 crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                b"...WARNING: fullscreen unavailable in this mode\n\x00" as *const u8
-                    as *const i8,
+                b"...WARNING: fullscreen unavailable in this mode\n\x00" as *const u8 as *const i8,
             );
             return crate::src::qcommon::q_shared::qfalse;
         }
@@ -7704,8 +6512,7 @@ unsafe extern "C" fn GLimp_StartDriverAndSetMode(
                 .Printf
                 .expect("non-null function pointer")(
                 crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                b"...WARNING: could not set the given mode (%d)\n\x00" as *const u8
-                    as *const i8,
+                b"...WARNING: could not set the given mode (%d)\n\x00" as *const u8 as *const i8,
                 mode,
             );
             return crate::src::qcommon::q_shared::qfalse;
@@ -7740,14 +6547,12 @@ unsafe extern "C" fn GLimp_InitExtensions(
     );
     crate::src::renderergl1::tr_init::glConfig.textureCompression = crate::tr_types_h::TC_NONE;
     // GL_EXT_texture_compression_s3tc
-    if  crate::stdlib::SDL_GL_ExtensionSupported(
+    if crate::stdlib::SDL_GL_ExtensionSupported(
         b"GL_ARB_texture_compression\x00" as *const u8 as *const i8,
-    )
-        != 0
-        &&  crate::stdlib::SDL_GL_ExtensionSupported(
+    ) != 0
+        && crate::stdlib::SDL_GL_ExtensionSupported(
             b"GL_EXT_texture_compression_s3tc\x00" as *const u8 as *const i8,
-        )
-            != 0
+        ) != 0
     {
         if (*crate::src::renderergl1::tr_init::r_ext_compressed_textures).value != 0. {
             crate::src::renderergl1::tr_init::glConfig.textureCompression =
@@ -7756,16 +6561,14 @@ unsafe extern "C" fn GLimp_InitExtensions(
                 .Printf
                 .expect("non-null function pointer")(
                 crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                b"...using GL_EXT_texture_compression_s3tc\n\x00" as *const u8
-                    as *const i8,
+                b"...using GL_EXT_texture_compression_s3tc\n\x00" as *const u8 as *const i8,
             );
         } else {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
                 crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                b"...ignoring GL_EXT_texture_compression_s3tc\n\x00" as *const u8
-                    as *const i8,
+                b"...ignoring GL_EXT_texture_compression_s3tc\n\x00" as *const u8 as *const i8,
             );
         }
     } else {
@@ -7773,17 +6576,13 @@ unsafe extern "C" fn GLimp_InitExtensions(
             .Printf
             .expect("non-null function pointer")(
             crate::src::qcommon::q_shared::PRINT_ALL as i32,
-            b"...GL_EXT_texture_compression_s3tc not found\n\x00" as *const u8
-                as *const i8,
+            b"...GL_EXT_texture_compression_s3tc not found\n\x00" as *const u8 as *const i8,
         );
     }
     // GL_S3_s3tc ... legacy extension before GL_EXT_texture_compression_s3tc.
-    if  crate::src::renderergl1::tr_init::glConfig.textureCompression
-        ==  crate::tr_types_h::TC_NONE
-    {
-        if crate::stdlib::SDL_GL_ExtensionSupported(
-            b"GL_S3_s3tc\x00" as *const u8 as *const i8,
-        ) as u64
+    if crate::src::renderergl1::tr_init::glConfig.textureCompression == crate::tr_types_h::TC_NONE {
+        if crate::stdlib::SDL_GL_ExtensionSupported(b"GL_S3_s3tc\x00" as *const u8 as *const i8)
+            as u64
             != 0
         {
             if (*crate::src::renderergl1::tr_init::r_ext_compressed_textures).value != 0. {
@@ -7885,19 +6684,14 @@ unsafe extern "C" fn GLimp_InitExtensions(
                 ));
                 if qglActiveTextureARB.is_some() {
                     let mut glint: crate::stdlib::GLint = 0;
-                    qglGetIntegerv.expect("non-null function pointer")(
-                        0x84e2u32,
-                        &mut glint,
-                    );
+                    qglGetIntegerv.expect("non-null function pointer")(0x84e2u32, &mut glint);
                     crate::src::renderergl1::tr_init::glConfig.numTextureUnits = glint;
-                    if crate::src::renderergl1::tr_init::glConfig.numTextureUnits > 1
-                    {
+                    if crate::src::renderergl1::tr_init::glConfig.numTextureUnits > 1 {
                         crate::src::renderergl1::tr_main::ri
                             .Printf
                             .expect("non-null function pointer")(
                             crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                            b"...using GL_ARB_multitexture\n\x00" as *const u8
-                                as *const i8,
+                            b"...using GL_ARB_multitexture\n\x00" as *const u8 as *const i8,
                         );
                     } else {
                         qglMultiTexCoord2fARB = None;
@@ -7939,8 +6733,7 @@ unsafe extern "C" fn GLimp_InitExtensions(
                     .Printf
                     .expect("non-null function pointer")(
                     crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                    b"...using GL_EXT_compiled_vertex_array\n\x00" as *const u8
-                        as *const i8,
+                    b"...using GL_EXT_compiled_vertex_array\n\x00" as *const u8 as *const i8,
                 );
                 qglLockArraysEXT = ::std::mem::transmute::<
                     *mut libc::c_void,
@@ -7972,8 +6765,7 @@ unsafe extern "C" fn GLimp_InitExtensions(
                     .Printf
                     .expect("non-null function pointer")(
                     crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                    b"...ignoring GL_EXT_compiled_vertex_array\n\x00" as *const u8
-                        as *const i8,
+                    b"...ignoring GL_EXT_compiled_vertex_array\n\x00" as *const u8 as *const i8,
                 );
             }
         } else {
@@ -7981,8 +6773,7 @@ unsafe extern "C" fn GLimp_InitExtensions(
                 .Printf
                 .expect("non-null function pointer")(
                 crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                b"...GL_EXT_compiled_vertex_array not found\n\x00" as *const u8
-                    as *const i8,
+                b"...GL_EXT_compiled_vertex_array not found\n\x00" as *const u8 as *const i8,
             );
         }
     }
@@ -7996,9 +6787,7 @@ unsafe extern "C" fn GLimp_InitExtensions(
         if (*crate::src::renderergl1::tr_init::r_ext_texture_filter_anisotropic).integer != 0 {
             qglGetIntegerv.expect("non-null function pointer")(
                 0x84ffu32,
-                
-                &mut crate::src::renderergl1::tr_init::maxAnisotropy
-                    as *mut  i32,
+                &mut crate::src::renderergl1::tr_init::maxAnisotropy as *mut i32,
             );
             if crate::src::renderergl1::tr_init::maxAnisotropy <= 0 {
                 crate::src::renderergl1::tr_main::ri
@@ -8026,8 +6815,7 @@ unsafe extern "C" fn GLimp_InitExtensions(
                 .Printf
                 .expect("non-null function pointer")(
                 crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                b"...ignoring GL_EXT_texture_filter_anisotropic\n\x00" as *const u8
-                    as *const i8,
+                b"...ignoring GL_EXT_texture_filter_anisotropic\n\x00" as *const u8 as *const i8,
             );
         }
     } else {
@@ -8035,8 +6823,7 @@ unsafe extern "C" fn GLimp_InitExtensions(
             .Printf
             .expect("non-null function pointer")(
             crate::src::qcommon::q_shared::PRINT_ALL as i32,
-            b"...GL_EXT_texture_filter_anisotropic not found\n\x00" as *const u8
-                as *const i8,
+            b"...GL_EXT_texture_filter_anisotropic not found\n\x00" as *const u8 as *const i8,
         );
     };
 }
@@ -8090,18 +6877,14 @@ pub unsafe extern "C" fn GLimp_Init(mut fixedFunction: crate::src::qcommon::q_sh
     if crate::src::renderergl1::tr_main::ri
         .Cvar_VariableIntegerValue
         .expect("non-null function pointer")(
-        b"com_abnormalExit\x00" as *const u8 as *const i8,
+        b"com_abnormalExit\x00" as *const u8 as *const i8
     ) != 0
     {
         crate::src::renderergl1::tr_main::ri
             .Cvar_Set
             .expect("non-null function pointer")(
             b"r_mode\x00" as *const u8 as *const i8,
-            crate::src::qcommon::q_shared::va(
-                
-                b"%d\x00" as *const  u8 as *mut i8,
-                3i32,
-            ),
+            crate::src::qcommon::q_shared::va(b"%d\x00" as *const u8 as *mut i8, 3i32),
         );
         crate::src::renderergl1::tr_main::ri
             .Cvar_Set
@@ -8195,27 +6978,22 @@ pub unsafe extern "C" fn GLimp_Init(mut fixedFunction: crate::src::qcommon::q_sh
     crate::src::renderergl1::tr_init::glConfig.hardwareType = crate::tr_types_h::GLHW_GENERIC;
     // Only using SDL_SetWindowBrightness to determine if hardware gamma is supported
     crate::src::renderergl1::tr_init::glConfig.deviceSupportsGamma =
-        ((((*crate::src::renderergl1::tr_init::r_ignorehwgamma).integer == 0
-            && crate::stdlib::SDL_SetWindowBrightness(SDL_window, 1.0) >= 0))) as crate::src::qcommon::q_shared::qboolean;
+        ((*crate::src::renderergl1::tr_init::r_ignorehwgamma).integer == 0
+            && crate::stdlib::SDL_SetWindowBrightness(SDL_window, 1.0) >= 0)
+            as crate::src::qcommon::q_shared::qboolean;
     // get our config strings
     crate::src::qcommon::q_shared::Q_strncpyz(
         crate::src::renderergl1::tr_init::glConfig
             .vendor_string
             .as_mut_ptr(),
-        qglGetString.expect("non-null function pointer")(
-            0x1f00u32,
-        ) as *mut i8,
-        
+        qglGetString.expect("non-null function pointer")(0x1f00u32) as *mut i8,
         ::std::mem::size_of::<[i8; 1024]>() as i32,
     );
     crate::src::qcommon::q_shared::Q_strncpyz(
         crate::src::renderergl1::tr_init::glConfig
             .renderer_string
             .as_mut_ptr(),
-        qglGetString.expect("non-null function pointer")(
-            0x1f01u32,
-        ) as *mut i8,
-        
+        qglGetString.expect("non-null function pointer")(0x1f01u32) as *mut i8,
         ::std::mem::size_of::<[i8; 1024]>() as i32,
     );
     if *crate::src::renderergl1::tr_init::glConfig
@@ -8241,10 +7019,7 @@ pub unsafe extern "C" fn GLimp_Init(mut fixedFunction: crate::src::qcommon::q_sh
         crate::src::renderergl1::tr_init::glConfig
             .version_string
             .as_mut_ptr(),
-        qglGetString.expect("non-null function pointer")(
-            0x1f02u32,
-        ) as *mut i8,
-        
+        qglGetString.expect("non-null function pointer")(0x1f02u32) as *mut i8,
         ::std::mem::size_of::<[i8; 1024]>() as i32,
     );
     // manually create extension list if using OpenGL 3
@@ -8254,10 +7029,7 @@ pub unsafe extern "C" fn GLimp_Init(mut fixedFunction: crate::src::qcommon::q_sh
         let mut extensionLength: i32 = 0;
         let mut listLength: i32 = 0;
         let mut extension: *const i8 = 0 as *const i8;
-        qglGetIntegerv.expect("non-null function pointer")(
-            0x821du32,
-            &mut numExtensions,
-        );
+        qglGetIntegerv.expect("non-null function pointer")(0x821du32, &mut numExtensions);
         listLength = 0;
         i = 0;
         while i < numExtensions {
@@ -8266,9 +7038,7 @@ pub unsafe extern "C" fn GLimp_Init(mut fixedFunction: crate::src::qcommon::q_sh
                 i as crate::stdlib::GLuint,
             ) as *mut i8;
             extensionLength = crate::stdlib::strlen(extension) as i32;
-            if (listLength + extensionLength + 1) as usize
-                >=  ::std::mem::size_of::<[i8; 8192]>()
-            {
+            if (listLength + extensionLength + 1) as usize >= ::std::mem::size_of::<[i8; 8192]>() {
                 break;
             }
             if i > 0 {
@@ -8276,7 +7046,6 @@ pub unsafe extern "C" fn GLimp_Init(mut fixedFunction: crate::src::qcommon::q_sh
                     crate::src::renderergl1::tr_init::glConfig
                         .extensions_string
                         .as_mut_ptr(),
-                    
                     ::std::mem::size_of::<[i8; 8192]>() as i32,
                     b" \x00" as *const u8 as *const i8,
                 );
@@ -8286,7 +7055,6 @@ pub unsafe extern "C" fn GLimp_Init(mut fixedFunction: crate::src::qcommon::q_sh
                 crate::src::renderergl1::tr_init::glConfig
                     .extensions_string
                     .as_mut_ptr(),
-                
                 ::std::mem::size_of::<[i8; 8192]>() as i32,
                 extension,
             );
@@ -8298,10 +7066,7 @@ pub unsafe extern "C" fn GLimp_Init(mut fixedFunction: crate::src::qcommon::q_sh
             crate::src::renderergl1::tr_init::glConfig
                 .extensions_string
                 .as_mut_ptr(),
-            qglGetString.expect("non-null function pointer")(
-                0x1f03u32,
-            ) as *mut i8,
-            
+            qglGetString.expect("non-null function pointer")(0x1f03u32) as *mut i8,
             ::std::mem::size_of::<[i8; 8192]>() as i32,
         );
     }
@@ -8413,21 +7178,20 @@ pub unsafe extern "C" fn GLimp_EndFrame() {
             crate::src::qcommon::q_shared::qfalse;
         // Find out the current state
         fullscreen = (crate::stdlib::SDL_GetWindowFlags(SDL_window)
-            &  crate::stdlib::SDL_WINDOW_FULLSCREEN
+            & crate::stdlib::SDL_WINDOW_FULLSCREEN
             != 0) as i32;
         if (*crate::src::renderergl1::tr_init::r_fullscreen).integer != 0
             && crate::src::renderergl1::tr_main::ri
                 .Cvar_VariableIntegerValue
                 .expect("non-null function pointer")(
-                b"in_nograb\x00" as *const u8 as *const i8,
+                b"in_nograb\x00" as *const u8 as *const i8
             ) != 0
         {
             crate::src::renderergl1::tr_main::ri
                 .Printf
                 .expect("non-null function pointer")(
                 crate::src::qcommon::q_shared::PRINT_ALL as i32,
-                b"Fullscreen not allowed with in_nograb 1\n\x00" as *const u8
-                    as *const i8,
+                b"Fullscreen not allowed with in_nograb 1\n\x00" as *const u8 as *const i8,
             );
             crate::src::renderergl1::tr_main::ri
                 .Cvar_Set
@@ -8439,16 +7203,13 @@ pub unsafe extern "C" fn GLimp_EndFrame() {
                 crate::src::qcommon::q_shared::qfalse
         }
         // Is the state we want different from the current state?
-        needToToggle = (((((*crate::src::renderergl1::tr_init::r_fullscreen).integer != 0)
-            as i32
-            != fullscreen)))
-            as crate::src::qcommon::q_shared::qboolean;
+        needToToggle = (((*crate::src::renderergl1::tr_init::r_fullscreen).integer != 0) as i32
+            != fullscreen) as crate::src::qcommon::q_shared::qboolean;
         if needToToggle as u64 != 0 {
-            sdlToggled = (((crate::stdlib::SDL_SetWindowFullscreen(
+            sdlToggled = (crate::stdlib::SDL_SetWindowFullscreen(
                 SDL_window,
                 (*crate::src::renderergl1::tr_init::r_fullscreen).integer as crate::stdlib::Uint32,
-            ) >= 0)))
-                as crate::src::qcommon::q_shared::qboolean;
+            ) >= 0) as crate::src::qcommon::q_shared::qboolean;
             // SDL_WM_ToggleFullScreen didn't work, so do it the slow way
             if sdlToggled as u64 == 0 {
                 crate::src::renderergl1::tr_main::ri

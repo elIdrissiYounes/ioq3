@@ -90,13 +90,15 @@ pub unsafe extern "C" fn silk_k2a_FLP(
     k = 0;
     while k < order {
         rck = *rc.offset(k as isize);
-        n = 0;
-        while n < k + 1 >> 1 {
+
+        for n in 0..k + 1 >> 1 {
             tmp1 = *A.offset(n as isize);
+
             tmp2 = *A.offset((k - n - 1) as isize);
+
             *A.offset(n as isize) = tmp1 + tmp2 * rck;
+
             *A.offset((k - n - 1) as isize) = tmp2 + tmp1 * rck;
-            n += 1
         }
         *A.offset(k as isize) = -rck;
         k += 1

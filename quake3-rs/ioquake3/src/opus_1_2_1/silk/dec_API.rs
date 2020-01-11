@@ -136,12 +136,11 @@ pub unsafe extern "C" fn silk_InitDecoder(mut decState: *mut libc::c_void) -> i3
         as *mut silk_decoder))
         .channel_state
         .as_mut_ptr();
-    n = 0;
-    while n < 2 {
+
+    for n in 0..2 {
         ret = crate::src::opus_1_2_1::silk::init_decoder::silk_init_decoder(
             &mut *channel_state.offset(n as isize),
         );
-        n += 1
     }
     crate::stdlib::memset(
         &mut (*(decState as *mut silk_decoder)).sStereo as *mut crate::structs_h::stereo_dec_state

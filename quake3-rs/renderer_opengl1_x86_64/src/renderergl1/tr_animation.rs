@@ -291,11 +291,11 @@ unsafe extern "C" fn R_MDRCullModel(
     let mut newFrame: *mut crate::qfiles_h::mdrFrame_t = 0 as *mut crate::qfiles_h::mdrFrame_t;
     let mut i: i32 = 0;
     let mut frameSize: i32 = 0;
-    frameSize =  &mut *(*(0 as *mut crate::qfiles_h::mdrFrame_t))
+    frameSize = &mut *(*(0 as *mut crate::qfiles_h::mdrFrame_t))
         .bones
         .as_mut_ptr()
-        .offset((*header).numBones as isize)
-        as  *mut crate::qfiles_h::mdrBone_t as i32;
+        .offset((*header).numBones as isize) as *mut crate::qfiles_h::mdrBone_t
+        as i32;
     // compute frame pointers
     newFrame = (header as *mut crate::src::qcommon::q_shared::byte)
         .offset((*header).ofsFrames as isize)
@@ -366,25 +366,21 @@ unsafe extern "C" fn R_MDRCullModel(
         }
     }
     // calculate a bounding box in the current coordinate system
-    i = 0;
-    while i < 3 {
-        bounds[0][i as usize] = if (*oldFrame).bounds
-            [0][i as usize]
-            < (*newFrame).bounds[0][i as usize]
-        {
-            (*oldFrame).bounds[0][i as usize]
-        } else {
-            (*newFrame).bounds[0][i as usize]
-        };
-        bounds[1][i as usize] = if (*oldFrame).bounds
-            [1][i as usize]
-            > (*newFrame).bounds[1][i as usize]
-        {
-            (*oldFrame).bounds[1][i as usize]
-        } else {
-            (*newFrame).bounds[1][i as usize]
-        };
-        i += 1
+
+    for i in 0..3 {
+        bounds[0][i as usize] =
+            if (*oldFrame).bounds[0][i as usize] < (*newFrame).bounds[0][i as usize] {
+                (*oldFrame).bounds[0][i as usize]
+            } else {
+                (*newFrame).bounds[0][i as usize]
+            };
+
+        bounds[1][i as usize] =
+            if (*oldFrame).bounds[1][i as usize] > (*newFrame).bounds[1][i as usize] {
+                (*oldFrame).bounds[1][i as usize]
+            } else {
+                (*newFrame).bounds[1][i as usize]
+            };
     }
     match crate::src::renderergl1::tr_main::R_CullLocalBox(bounds.as_mut_ptr()) {
         0 => {
@@ -422,45 +418,40 @@ pub unsafe extern "C" fn R_MDRComputeFogNum(
     if crate::src::renderergl1::tr_main::tr.refdef.rdflags & 0x1 != 0 {
         return 0i32;
     }
-    frameSize =  &mut *(*(0 as *mut crate::qfiles_h::mdrFrame_t))
+    frameSize = &mut *(*(0 as *mut crate::qfiles_h::mdrFrame_t))
         .bones
         .as_mut_ptr()
-        .offset((*header).numBones as isize)
-        as  *mut crate::qfiles_h::mdrBone_t as i32;
+        .offset((*header).numBones as isize) as *mut crate::qfiles_h::mdrBone_t
+        as i32;
     // FIXME: non-normalized axis issues
     mdrFrame = (header as *mut crate::src::qcommon::q_shared::byte)
         .offset((*header).ofsFrames as isize)
         .offset((frameSize * (*ent).e.frame) as isize)
         as *mut crate::qfiles_h::mdrFrame_t;
-    localOrigin[0] = (*ent).e.origin[0]
-        + (*mdrFrame).localOrigin[0];
-    localOrigin[1] = (*ent).e.origin[1]
-        + (*mdrFrame).localOrigin[1];
-    localOrigin[2] = (*ent).e.origin[2]
-        + (*mdrFrame).localOrigin[2];
-    i = 1;
-    while i < (*crate::src::renderergl1::tr_main::tr.world).numfogs {
+    localOrigin[0] = (*ent).e.origin[0] + (*mdrFrame).localOrigin[0];
+    localOrigin[1] = (*ent).e.origin[1] + (*mdrFrame).localOrigin[1];
+    localOrigin[2] = (*ent).e.origin[2] + (*mdrFrame).localOrigin[2];
+
+    for i in 1..(*crate::src::renderergl1::tr_main::tr.world).numfogs {
         fog = &mut *(*crate::src::renderergl1::tr_main::tr.world)
             .fogs
             .offset(i as isize) as *mut crate::tr_local_h::fog_t;
+
         j = 0;
+
         while j < 3 {
-            if localOrigin[j as usize] - (*mdrFrame).radius
-                >= (*fog).bounds[1][j as usize]
-            {
+            if localOrigin[j as usize] - (*mdrFrame).radius >= (*fog).bounds[1][j as usize] {
                 break;
             }
-            if localOrigin[j as usize] + (*mdrFrame).radius
-                <= (*fog).bounds[0][j as usize]
-            {
+            if localOrigin[j as usize] + (*mdrFrame).radius <= (*fog).bounds[0][j as usize] {
                 break;
             }
             j += 1
         }
+
         if j == 3 {
             return i;
         }
-        i += 1
     }
     return 0;
 }
@@ -487,8 +478,9 @@ pub unsafe extern "C" fn R_MDRAddAnimSurfaces(mut ent: *mut crate::tr_local_h::t
         crate::src::qcommon::q_shared::qfalse;
     header = (*crate::src::renderergl1::tr_main::tr.currentModel).modelData
         as *mut crate::qfiles_h::mdrHeader_t;
-    personalModel = ((((*ent).e.renderfx & 0x2 != 0
-        && crate::src::renderergl1::tr_main::tr.viewParms.isPortal as u64 == 0))) as crate::src::qcommon::q_shared::qboolean;
+    personalModel = ((*ent).e.renderfx & 0x2 != 0
+        && crate::src::renderergl1::tr_main::tr.viewParms.isPortal as u64 == 0)
+        as crate::src::qcommon::q_shared::qboolean;
     if (*ent).e.renderfx & 0x200 != 0 {
         (*ent).e.frame %= (*header).numFrames;
         (*ent).e.oldframe %= (*header).numFrames
@@ -545,9 +537,7 @@ pub unsafe extern "C" fn R_MDRAddAnimSurfaces(mut ent: *mut crate::tr_local_h::t
         i += 1
     }
     // set up lighting
-    if personalModel as u64 == 0
-        || (*crate::src::renderergl1::tr_init::r_shadows).integer > 1
-    {
+    if personalModel as u64 == 0 || (*crate::src::renderergl1::tr_init::r_shadows).integer > 1 {
         crate::src::renderergl1::tr_light::R_SetupEntityLighting(
             &mut crate::src::renderergl1::tr_main::tr.refdef,
             ent,
@@ -593,7 +583,6 @@ pub unsafe extern "C" fn R_MDRAddAnimSurfaces(mut ent: *mut crate::tr_local_h::t
             && (*shader).sort == crate::tr_local_h::SS_OPAQUE as i32 as f32
         {
             crate::src::renderergl1::tr_main::R_AddDrawSurf(
-                
                 surface as *mut crate::tr_local_h::surfaceType_t,
                 crate::src::renderergl1::tr_main::tr.shadowShader,
                 0i32,
@@ -607,7 +596,6 @@ pub unsafe extern "C" fn R_MDRAddAnimSurfaces(mut ent: *mut crate::tr_local_h::t
             && (*shader).sort == crate::tr_local_h::SS_OPAQUE as i32 as f32
         {
             crate::src::renderergl1::tr_main::R_AddDrawSurf(
-                
                 surface as *mut crate::tr_local_h::surfaceType_t,
                 crate::src::renderergl1::tr_main::tr.projectionShadowShader,
                 0i32,
@@ -616,7 +604,6 @@ pub unsafe extern "C" fn R_MDRAddAnimSurfaces(mut ent: *mut crate::tr_local_h::t
         }
         if personalModel as u64 == 0 {
             crate::src::renderergl1::tr_main::R_AddDrawSurf(
-                
                 surface as *mut crate::tr_local_h::surfaceType_t,
                 shader,
                 fogNum,
@@ -683,11 +670,11 @@ pub unsafe extern "C" fn RB_MDRSurfaceAnim(mut surface: *mut crate::qfiles_h::md
     }
     header = (surface as *mut crate::src::qcommon::q_shared::byte)
         .offset((*surface).ofsHeader as isize) as *mut crate::qfiles_h::mdrHeader_t;
-    frameSize =  &mut *(*(0 as *mut crate::qfiles_h::mdrFrame_t))
+    frameSize = &mut *(*(0 as *mut crate::qfiles_h::mdrFrame_t))
         .bones
         .as_mut_ptr()
-        .offset((*header).numBones as isize)
-        as  *mut crate::qfiles_h::mdrBone_t as i32;
+        .offset((*header).numBones as isize) as *mut crate::qfiles_h::mdrBone_t
+        as i32;
     frame = (header as *mut crate::src::qcommon::q_shared::byte)
         .offset((*header).ofsFrames as isize)
         .offset(
@@ -704,10 +691,8 @@ pub unsafe extern "C" fn RB_MDRSurfaceAnim(mut surface: *mut crate::qfiles_h::md
                 .oldframe
                 * frameSize) as isize,
         ) as *mut crate::qfiles_h::mdrFrame_t;
-    if crate::src::renderergl1::tr_shade::tess.numVertexes + (*surface).numVerts
-        >= 1000
-        || crate::src::renderergl1::tr_shade::tess.numIndexes
-            + (*surface).numTriangles * 3
+    if crate::src::renderergl1::tr_shade::tess.numVertexes + (*surface).numVerts >= 1000
+        || crate::src::renderergl1::tr_shade::tess.numIndexes + (*surface).numTriangles * 3
             >= 6 * 1000
     {
         crate::src::renderergl1::tr_surface::RB_CheckOverflow(
@@ -740,8 +725,7 @@ pub unsafe extern "C" fn RB_MDRSurfaceAnim(mut surface: *mut crate::qfiles_h::md
         while i < (*header).numBones * 12 {
             *(bonePtr as *mut f32).offset(i as isize) = frontlerp
                 * *((*frame).bones.as_mut_ptr() as *mut f32).offset(i as isize)
-                + backlerp
-                    * *((*oldFrame).bones.as_mut_ptr() as *mut f32).offset(i as isize);
+                + backlerp * *((*oldFrame).bones.as_mut_ptr() as *mut f32).offset(i as isize);
             i += 1
         }
     }
@@ -756,12 +740,10 @@ pub unsafe extern "C" fn RB_MDRSurfaceAnim(mut surface: *mut crate::qfiles_h::md
         let mut tempVert: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
         let mut tempNormal: crate::src::qcommon::q_shared::vec3_t = [0.; 3];
         let mut w: *mut crate::qfiles_h::mdrWeight_t = 0 as *mut crate::qfiles_h::mdrWeight_t;
-        tempVert[2] =
-            0f32;
+        tempVert[2] = 0f32;
         tempVert[1] = tempVert[2];
         tempVert[0] = tempVert[1];
-        tempNormal[2] =
-            0f32;
+        tempNormal[2] = 0f32;
         tempNormal[1] = tempNormal[2];
         tempNormal[0] = tempNormal[1];
         w = (*v).weights.as_mut_ptr();
@@ -769,70 +751,47 @@ pub unsafe extern "C" fn RB_MDRSurfaceAnim(mut surface: *mut crate::qfiles_h::md
         while k < (*v).numWeights {
             bone = bonePtr.offset((*w).boneIndex as isize);
             tempVert[0] += (*w).boneWeight
-                * ((*bone).matrix[0][0]
-                    * (*w).offset[0]
-                    + (*bone).matrix[0][1]
-                        * (*w).offset[1]
-                    + (*bone).matrix[0][2]
-                        * (*w).offset[2]
+                * ((*bone).matrix[0][0] * (*w).offset[0]
+                    + (*bone).matrix[0][1] * (*w).offset[1]
+                    + (*bone).matrix[0][2] * (*w).offset[2]
                     + (*bone).matrix[0][3]);
             tempVert[1] += (*w).boneWeight
-                * ((*bone).matrix[1][0]
-                    * (*w).offset[0]
-                    + (*bone).matrix[1][1]
-                        * (*w).offset[1]
-                    + (*bone).matrix[1][2]
-                        * (*w).offset[2]
+                * ((*bone).matrix[1][0] * (*w).offset[0]
+                    + (*bone).matrix[1][1] * (*w).offset[1]
+                    + (*bone).matrix[1][2] * (*w).offset[2]
                     + (*bone).matrix[1][3]);
             tempVert[2] += (*w).boneWeight
-                * ((*bone).matrix[2][0]
-                    * (*w).offset[0]
-                    + (*bone).matrix[2][1]
-                        * (*w).offset[1]
-                    + (*bone).matrix[2][2]
-                        * (*w).offset[2]
+                * ((*bone).matrix[2][0] * (*w).offset[0]
+                    + (*bone).matrix[2][1] * (*w).offset[1]
+                    + (*bone).matrix[2][2] * (*w).offset[2]
                     + (*bone).matrix[2][3]);
             tempNormal[0] += (*w).boneWeight
-                * ((*bone).matrix[0][0]
-                    * (*v).normal[0]
-                    + (*bone).matrix[0][1]
-                        * (*v).normal[1]
-                    + (*bone).matrix[0][2]
-                        * (*v).normal[2]);
+                * ((*bone).matrix[0][0] * (*v).normal[0]
+                    + (*bone).matrix[0][1] * (*v).normal[1]
+                    + (*bone).matrix[0][2] * (*v).normal[2]);
             tempNormal[1] += (*w).boneWeight
-                * ((*bone).matrix[1][0]
-                    * (*v).normal[0]
-                    + (*bone).matrix[1][1]
-                        * (*v).normal[1]
-                    + (*bone).matrix[1][2]
-                        * (*v).normal[2]);
+                * ((*bone).matrix[1][0] * (*v).normal[0]
+                    + (*bone).matrix[1][1] * (*v).normal[1]
+                    + (*bone).matrix[1][2] * (*v).normal[2]);
             tempNormal[2] += (*w).boneWeight
-                * ((*bone).matrix[2][0]
-                    * (*v).normal[0]
-                    + (*bone).matrix[2][1]
-                        * (*v).normal[1]
-                    + (*bone).matrix[2][2]
-                        * (*v).normal[2]);
+                * ((*bone).matrix[2][0] * (*v).normal[0]
+                    + (*bone).matrix[2][1] * (*v).normal[1]
+                    + (*bone).matrix[2][2] * (*v).normal[2]);
             k += 1;
             w = w.offset(1)
         }
-        crate::src::renderergl1::tr_shade::tess.xyz[(baseVertex + j) as usize]
-            [0] = tempVert[0];
-        crate::src::renderergl1::tr_shade::tess.xyz[(baseVertex + j) as usize]
-            [1] = tempVert[1];
-        crate::src::renderergl1::tr_shade::tess.xyz[(baseVertex + j) as usize]
-            [2] = tempVert[2];
-        crate::src::renderergl1::tr_shade::tess.normal[(baseVertex + j) as usize]
-            [0] = tempNormal[0];
-        crate::src::renderergl1::tr_shade::tess.normal[(baseVertex + j) as usize]
-            [1] = tempNormal[1];
-        crate::src::renderergl1::tr_shade::tess.normal[(baseVertex + j) as usize]
-            [2] = tempNormal[2];
-        crate::src::renderergl1::tr_shade::tess.texCoords[(baseVertex + j) as usize]
-            [0][0] =
+        crate::src::renderergl1::tr_shade::tess.xyz[(baseVertex + j) as usize][0] = tempVert[0];
+        crate::src::renderergl1::tr_shade::tess.xyz[(baseVertex + j) as usize][1] = tempVert[1];
+        crate::src::renderergl1::tr_shade::tess.xyz[(baseVertex + j) as usize][2] = tempVert[2];
+        crate::src::renderergl1::tr_shade::tess.normal[(baseVertex + j) as usize][0] =
+            tempNormal[0];
+        crate::src::renderergl1::tr_shade::tess.normal[(baseVertex + j) as usize][1] =
+            tempNormal[1];
+        crate::src::renderergl1::tr_shade::tess.normal[(baseVertex + j) as usize][2] =
+            tempNormal[2];
+        crate::src::renderergl1::tr_shade::tess.texCoords[(baseVertex + j) as usize][0][0] =
             (*v).texCoords[0];
-        crate::src::renderergl1::tr_shade::tess.texCoords[(baseVertex + j) as usize]
-            [0][1] =
+        crate::src::renderergl1::tr_shade::tess.texCoords[(baseVertex + j) as usize][0][1] =
             (*v).texCoords[1];
         v = &mut *(*v).weights.as_mut_ptr().offset((*v).numWeights as isize)
             as *mut crate::qfiles_h::mdrWeight_t as *mut crate::qfiles_h::mdrVertex_t;
@@ -1236,75 +1195,42 @@ UNCOMPRESSING BONES
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn MC_UnCompress(
-    mut mat: *mut [f32; 4],
-    mut comp: *const u8,
-) {
+pub unsafe extern "C" fn MC_UnCompress(mut mat: *mut [f32; 4], mut comp: *const u8) {
     let mut val: i32 = 0;
     val = *(comp as *mut u16).offset(0) as i32;
     val -= (1) << 16 - 1;
-    (*mat.offset(0))[3] =
-        val as f32 * (1.0 / 64f32);
+    (*mat.offset(0))[3] = val as f32 * (1.0 / 64f32);
     val = *(comp as *mut u16).offset(1) as i32;
     val -= (1) << 16 - 1;
-    (*mat.offset(1))[3] =
-        val as f32 * (1.0 / 64f32);
+    (*mat.offset(1))[3] = val as f32 * (1.0 / 64f32);
     val = *(comp as *mut u16).offset(2) as i32;
     val -= (1) << 16 - 1;
-    (*mat.offset(2))[3] =
-        val as f32 * (1.0 / 64f32);
+    (*mat.offset(2))[3] = val as f32 * (1.0 / 64f32);
     val = *(comp as *mut u16).offset(3) as i32;
     val -= (1) << 16 - 1;
-    (*mat.offset(0))[0] = val as f32
-        * (1.0
-            / (((1i32) << 16 - 1) - 2)
-                as f32);
+    (*mat.offset(0))[0] = val as f32 * (1.0 / (((1i32) << 16 - 1) - 2) as f32);
     val = *(comp as *mut u16).offset(4) as i32;
     val -= (1) << 16 - 1;
-    (*mat.offset(0))[1] = val as f32
-        * (1.0
-            / (((1i32) << 16 - 1) - 2)
-                as f32);
+    (*mat.offset(0))[1] = val as f32 * (1.0 / (((1i32) << 16 - 1) - 2) as f32);
     val = *(comp as *mut u16).offset(5) as i32;
     val -= (1) << 16 - 1;
-    (*mat.offset(0))[2] = val as f32
-        * (1.0
-            / (((1i32) << 16 - 1) - 2)
-                as f32);
+    (*mat.offset(0))[2] = val as f32 * (1.0 / (((1i32) << 16 - 1) - 2) as f32);
     val = *(comp as *mut u16).offset(6) as i32;
     val -= (1) << 16 - 1;
-    (*mat.offset(1))[0] = val as f32
-        * (1.0
-            / (((1i32) << 16 - 1) - 2)
-                as f32);
+    (*mat.offset(1))[0] = val as f32 * (1.0 / (((1i32) << 16 - 1) - 2) as f32);
     val = *(comp as *mut u16).offset(7) as i32;
     val -= (1) << 16 - 1;
-    (*mat.offset(1))[1] = val as f32
-        * (1.0
-            / (((1i32) << 16 - 1) - 2)
-                as f32);
+    (*mat.offset(1))[1] = val as f32 * (1.0 / (((1i32) << 16 - 1) - 2) as f32);
     val = *(comp as *mut u16).offset(8) as i32;
     val -= (1) << 16 - 1;
-    (*mat.offset(1))[2] = val as f32
-        * (1.0
-            / (((1i32) << 16 - 1) - 2)
-                as f32);
+    (*mat.offset(1))[2] = val as f32 * (1.0 / (((1i32) << 16 - 1) - 2) as f32);
     val = *(comp as *mut u16).offset(9) as i32;
     val -= (1) << 16 - 1;
-    (*mat.offset(2))[0] = val as f32
-        * (1.0
-            / (((1i32) << 16 - 1) - 2)
-                as f32);
+    (*mat.offset(2))[0] = val as f32 * (1.0 / (((1i32) << 16 - 1) - 2) as f32);
     val = *(comp as *mut u16).offset(10) as i32;
     val -= (1) << 16 - 1;
-    (*mat.offset(2))[1] = val as f32
-        * (1.0
-            / (((1i32) << 16 - 1) - 2)
-                as f32);
+    (*mat.offset(2))[1] = val as f32 * (1.0 / (((1i32) << 16 - 1) - 2) as f32);
     val = *(comp as *mut u16).offset(11) as i32;
     val -= (1) << 16 - 1;
-    (*mat.offset(2))[2] = val as f32
-        * (1.0
-            / (((1i32) << 16 - 1) - 2)
-                as f32);
+    (*mat.offset(2))[2] = val as f32 * (1.0 / (((1i32) << 16 - 1) - 2) as f32);
 }

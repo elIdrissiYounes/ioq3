@@ -191,7 +191,7 @@ pub mod stdlib_float_h {
     #[inline]
 
     pub unsafe extern "C" fn atof(mut __nptr: *const i8) -> f64 {
-        return crate::stdlib::strtod(__nptr,  0 as *mut *mut i8);
+        return crate::stdlib::strtod(__nptr, 0 as *mut *mut i8);
     }
     use crate::stdlib::strtod;
 }
@@ -276,9 +276,8 @@ pub unsafe extern "C" fn Q_IsColorString(
     if (*p.offset(1) as i32) < 0 {
         return crate::src::qcommon::q_shared::qfalse;
     }
-    if *(*crate::stdlib::__ctype_b_loc())
-        .offset(*p.offset(1) as i32 as isize) as i32
-        &  crate::stdlib::_ISalnum as u16 as i32
+    if *(*crate::stdlib::__ctype_b_loc()).offset(*p.offset(1) as i32 as isize) as i32
+        & crate::stdlib::_ISalnum as u16 as i32
         == 0
     {
         return crate::src::qcommon::q_shared::qfalse;
@@ -287,11 +286,7 @@ pub unsafe extern "C" fn Q_IsColorString(
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn Com_Clamp(
-    mut min: f32,
-    mut max: f32,
-    mut value: f32,
-) -> f32 {
+pub unsafe extern "C" fn Com_Clamp(mut min: f32, mut max: f32, mut value: f32) -> f32 {
     if value < min {
         return min;
     }
@@ -355,16 +350,14 @@ pub unsafe extern "C" fn COM_StripExtension(
         slash = crate::stdlib::strrchr(in_0, '/' as i32);
         (slash.is_null()) || slash < dot
     } {
-        destsize = if (destsize as isize)
-            <  dot.wrapping_offset_from(in_0) + 1
-        {
+        destsize = if (destsize as isize) < dot.wrapping_offset_from(in_0) + 1 {
             destsize as isize
         } else {
             (dot.wrapping_offset_from(in_0)) + 1
         } as i32
     }
     if in_0 == out as *const i8 && destsize > 1 {
-        *out.offset((destsize - 1i32) as isize) =  '\u{0}' as i8
+        *out.offset((destsize - 1i32) as isize) = '\u{0}' as i8
     } else {
         Q_strncpyz(out, in_0, destsize);
     };
@@ -476,8 +469,7 @@ pub unsafe extern "C" fn ShortSwap(mut l: i16) -> i16 {
     let mut b1: crate::src::qcommon::q_shared::byte = 0;
     let mut b2: crate::src::qcommon::q_shared::byte = 0;
     b1 = (l as i32 & 255) as crate::src::qcommon::q_shared::byte;
-    b2 = (l as i32 >> 8 & 255)
-        as crate::src::qcommon::q_shared::byte;
+    b2 = (l as i32 >> 8 & 255) as crate::src::qcommon::q_shared::byte;
     return (((b1 as i32) << 8) + b2 as i32) as i16;
 }
 #[no_mangle]
@@ -496,10 +488,7 @@ pub unsafe extern "C" fn LongSwap(mut l: i32) -> i32 {
     b2 = (l >> 8 & 255i32) as crate::src::qcommon::q_shared::byte;
     b3 = (l >> 16 & 255i32) as crate::src::qcommon::q_shared::byte;
     b4 = (l >> 24 & 255i32) as crate::src::qcommon::q_shared::byte;
-    return ((b1 as i32) << 24)
-        + ((b2 as i32) << 16)
-        + ((b3 as i32) << 8)
-        + b4 as i32;
+    return ((b1 as i32) << 24) + ((b2 as i32) << 16) + ((b3 as i32) << 8) + b4 as i32;
 }
 #[no_mangle]
 
@@ -644,7 +633,6 @@ pub unsafe extern "C" fn COM_BeginParseSession(mut name: *const i8) {
     com_tokenline = 0;
     Com_sprintf(
         com_parsename.as_mut_ptr(),
-        
         ::std::mem::size_of::<[i8; 1024]>() as i32,
         b"%s\x00" as *const u8 as *const i8,
         name,
@@ -671,7 +659,6 @@ pub unsafe extern "C" fn COM_ParseError(mut format: *mut i8, mut args: ...) {
     argptr = args.clone();
     crate::stdlib::vsnprintf(
         string.as_mut_ptr(),
-        
         ::std::mem::size_of::<[i8; 4096]>(),
         format,
         argptr.as_va_list(),
@@ -691,7 +678,6 @@ pub unsafe extern "C" fn COM_ParseWarning(mut format: *mut i8, mut args: ...) {
     argptr = args.clone();
     crate::stdlib::vsnprintf(
         string.as_mut_ptr(),
-        
         ::std::mem::size_of::<[i8; 4096]>(),
         format,
         argptr.as_va_list(),
@@ -756,19 +742,14 @@ pub unsafe extern "C" fn COM_Compress(mut data_p: *mut i8) -> i32 {
                 break;
             }
             // skip double slash comments
-            if c == '/' as i32
-                && *in_0.offset(1) as i32 == '/' as i32
-            {
+            if c == '/' as i32 && *in_0.offset(1) as i32 == '/' as i32 {
                 while *in_0 as i32 != 0 && *in_0 as i32 != '\n' as i32 {
                     in_0 = in_0.offset(1)
                 }
             // skip /* */ comments
-            } else if c == '/' as i32
-                && *in_0.offset(1) as i32 == '*' as i32
-            {
+            } else if c == '/' as i32 && *in_0.offset(1) as i32 == '*' as i32 {
                 while *in_0 as i32 != 0
-                    && (*in_0 as i32 != '*' as i32
-                        || *in_0.offset(1) as i32 != '/' as i32)
+                    && (*in_0 as i32 != '*' as i32 || *in_0.offset(1) as i32 != '/' as i32)
                 {
                     in_0 = in_0.offset(1)
                 }
@@ -789,14 +770,14 @@ pub unsafe extern "C" fn COM_Compress(mut data_p: *mut i8) -> i32 {
                 if newline as u64 != 0 {
                     let fresh0 = out;
                     out = out.offset(1);
-                    *fresh0 =  '\n' as i8;
+                    *fresh0 = '\n' as i8;
                     newline = crate::src::qcommon::q_shared::qfalse;
                     whitespace = crate::src::qcommon::q_shared::qfalse
                 }
                 if whitespace as u64 != 0 {
                     let fresh1 = out;
                     out = out.offset(1);
-                    *fresh1 =  ' ' as i8;
+                    *fresh1 = ' ' as i8;
                     whitespace = crate::src::qcommon::q_shared::qfalse
                 }
                 // copy quoted strings unmolested
@@ -830,7 +811,7 @@ pub unsafe extern "C" fn COM_Compress(mut data_p: *mut i8) -> i32 {
         }
         *out = 0
     }
-    return  out.wrapping_offset_from(data_p) as i32;
+    return out.wrapping_offset_from(data_p) as i32;
 }
 #[no_mangle]
 
@@ -859,7 +840,7 @@ pub unsafe extern "C" fn COM_ParseExt(
             *data_p = 0 as *mut i8;
             return com_token.as_mut_ptr();
         }
-        if  hasNewLines != 0 && allowLineBreaks as u64 == 0 {
+        if hasNewLines != 0 && allowLineBreaks as u64 == 0 {
             *data_p = data;
             return com_token.as_mut_ptr();
         }
@@ -872,15 +853,12 @@ pub unsafe extern "C" fn COM_ParseExt(
             }
         } else {
             // skip /* */ comments
-            if !(c == '/' as i32
-                && *data.offset(1) as i32 == '*' as i32)
-            {
+            if !(c == '/' as i32 && *data.offset(1) as i32 == '*' as i32) {
                 break;
             }
             data = data.offset(2);
             while *data as i32 != 0
-                && (*data as i32 != '*' as i32
-                    || *data.offset(1) as i32 != '/' as i32)
+                && (*data as i32 != '*' as i32 || *data.offset(1) as i32 != '/' as i32)
             {
                 if *data as i32 == '\n' as i32 {
                     com_lines += 1
@@ -939,10 +917,7 @@ COM_MatchToken
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn COM_MatchToken(
-    mut buf_p: *mut *mut i8,
-    mut match_0: *mut i8,
-) {
+pub unsafe extern "C" fn COM_MatchToken(mut buf_p: *mut *mut i8, mut match_0: *mut i8) {
     let mut token: *mut i8 = 0 as *mut i8;
     token = COM_Parse(buf_p);
     if crate::stdlib::strcmp(token, match_0) != 0 {
@@ -983,7 +958,7 @@ pub unsafe extern "C" fn SkipBracedSection(
             break;
         }
     }
-    return (((depth == 0))) as crate::src::qcommon::q_shared::qboolean;
+    return (depth == 0) as crate::src::qcommon::q_shared::qboolean;
 }
 /*
 =================
@@ -1016,29 +991,17 @@ pub unsafe extern "C" fn SkipRestOfLine(mut data: *mut *mut i8) {
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn Parse1DMatrix(
-    mut buf_p: *mut *mut i8,
-    mut x: i32,
-    mut m: *mut f32,
-) {
+pub unsafe extern "C" fn Parse1DMatrix(mut buf_p: *mut *mut i8, mut x: i32, mut m: *mut f32) {
     let mut token: *mut i8 = 0 as *mut i8;
     let mut i: i32 = 0;
-    COM_MatchToken(
-        buf_p,
-        
-        b"(\x00" as *const  u8 as *mut i8,
-    );
-    i = 0;
-    while i < x {
+    COM_MatchToken(buf_p, b"(\x00" as *const u8 as *mut i8);
+
+    for i in 0..x {
         token = COM_Parse(buf_p);
+
         *m.offset(i as isize) = atof(token) as f32;
-        i += 1
     }
-    COM_MatchToken(
-        buf_p,
-        
-        b")\x00" as *const  u8 as *mut i8,
-    );
+    COM_MatchToken(buf_p, b")\x00" as *const u8 as *mut i8);
 }
 #[no_mangle]
 
@@ -1049,21 +1012,12 @@ pub unsafe extern "C" fn Parse2DMatrix(
     mut m: *mut f32,
 ) {
     let mut i: i32 = 0;
-    COM_MatchToken(
-        buf_p,
-        
-        b"(\x00" as *const  u8 as *mut i8,
-    );
-    i = 0;
-    while i < y {
+    COM_MatchToken(buf_p, b"(\x00" as *const u8 as *mut i8);
+
+    for i in 0..y {
         Parse1DMatrix(buf_p, x, m.offset((i * x) as isize));
-        i += 1
     }
-    COM_MatchToken(
-        buf_p,
-        
-        b")\x00" as *const  u8 as *mut i8,
-    );
+    COM_MatchToken(buf_p, b")\x00" as *const u8 as *mut i8);
 }
 #[no_mangle]
 
@@ -1075,21 +1029,12 @@ pub unsafe extern "C" fn Parse3DMatrix(
     mut m: *mut f32,
 ) {
     let mut i: i32 = 0;
-    COM_MatchToken(
-        buf_p,
-        
-        b"(\x00" as *const  u8 as *mut i8,
-    );
-    i = 0;
-    while i < z {
+    COM_MatchToken(buf_p, b"(\x00" as *const u8 as *mut i8);
+
+    for i in 0..z {
         Parse2DMatrix(buf_p, y, x, m.offset((i * x * y) as isize));
-        i += 1
     }
-    COM_MatchToken(
-        buf_p,
-        
-        b")\x00" as *const  u8 as *mut i8,
-    );
+    COM_MatchToken(buf_p, b")\x00" as *const u8 as *mut i8);
 }
 /*
 ===================
@@ -1110,15 +1055,15 @@ pub unsafe extern "C" fn Com_HexStrToInt(mut str: *const i8) -> i32 {
         let mut i: i32 = 0;
         let mut n: i32 = 0;
         let mut len: i32 = crate::stdlib::strlen(str) as i32;
-        i = 2;
-        while i < len {
+
+        for i in 2..len {
             let mut digit: i8 = 0;
+
             n *= 16;
+
             digit = ({
                 let mut __res: i32 = 0;
-                if  ::std::mem::size_of::<i8>()
-                    > 1
-                {
+                if ::std::mem::size_of::<i8>() > 1 {
                     if 0 != 0 {
                         let mut __c: i32 = *str.offset(i as isize) as i32;
                         __res = if __c < -(128) || __c > 255 {
@@ -1135,6 +1080,7 @@ pub unsafe extern "C" fn Com_HexStrToInt(mut str: *const i8) -> i32 {
                 }
                 __res
             }) as i8;
+
             if digit as i32 >= '0' as i32 && digit as i32 <= '9' as i32 {
                 digit = (digit as i32 - '0' as i32) as i8
             } else if digit as i32 >= 'a' as i32 && digit as i32 <= 'f' as i32 {
@@ -1142,8 +1088,8 @@ pub unsafe extern "C" fn Com_HexStrToInt(mut str: *const i8) -> i32 {
             } else {
                 return -(1i32);
             }
+
             n += digit as i32;
-            i += 1
         }
         return n;
     }
@@ -1190,25 +1136,19 @@ pub unsafe extern "C" fn Q_isalpha(mut c: i32) -> i32 {
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn Q_isanumber(
-    mut s: *const i8,
-) -> crate::src::qcommon::q_shared::qboolean {
+pub unsafe extern "C" fn Q_isanumber(mut s: *const i8) -> crate::src::qcommon::q_shared::qboolean {
     let mut p: *mut i8 = 0 as *mut i8;
     let mut d: f64 = 0.;
     if *s as i32 == '\u{0}' as i32 {
         return crate::src::qcommon::q_shared::qfalse;
     }
     d = crate::stdlib::strtod(s, &mut p);
-    return (((*p as i32 == '\u{0}' as i32)))
-        as crate::src::qcommon::q_shared::qboolean;
+    return (*p as i32 == '\u{0}' as i32) as crate::src::qcommon::q_shared::qboolean;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn Q_isintegral(
-    mut f: f32,
-) -> crate::src::qcommon::q_shared::qboolean {
-    return (((f as i32 as f32 == f)))
-        as crate::src::qcommon::q_shared::qboolean;
+pub unsafe extern "C" fn Q_isintegral(mut f: f32) -> crate::src::qcommon::q_shared::qboolean {
+    return (f as i32 as f32 == f) as crate::src::qcommon::q_shared::qboolean;
 }
 /*
 =============
@@ -1219,11 +1159,7 @@ Safe strncpy that ensures a trailing zero
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Q_strncpyz(
-    mut dest: *mut i8,
-    mut src: *const i8,
-    mut destsize: i32,
-) {
+pub unsafe extern "C" fn Q_strncpyz(mut dest: *mut i8, mut src: *const i8, mut destsize: i32) {
     if dest.is_null() {
         crate::src::renderergl1::tr_subs::Com_Error(
             crate::src::qcommon::q_shared::ERR_FATAL as i32,
@@ -1247,11 +1183,7 @@ pub unsafe extern "C" fn Q_strncpyz(
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn Q_stricmpn(
-    mut s1: *const i8,
-    mut s2: *const i8,
-    mut n: i32,
-) -> i32 {
+pub unsafe extern "C" fn Q_stricmpn(mut s1: *const i8, mut s2: *const i8, mut n: i32) -> i32 {
     let mut c1: i32 = 0;
     let mut c2: i32 = 0;
     if s1.is_null() {
@@ -1286,11 +1218,7 @@ pub unsafe extern "C" fn Q_stricmpn(
                 c2 -= 'a' as i32 - 'A' as i32
             }
             if c1 != c2 {
-                return if c1 < c2 {
-                    -(1i32)
-                } else {
-                    1i32
-                };
+                return if c1 < c2 { -(1i32) } else { 1i32 };
             }
         }
         if !(c1 != 0) {
@@ -1302,11 +1230,7 @@ pub unsafe extern "C" fn Q_stricmpn(
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn Q_strncmp(
-    mut s1: *const i8,
-    mut s2: *const i8,
-    mut n: i32,
-) -> i32 {
+pub unsafe extern "C" fn Q_strncmp(mut s1: *const i8, mut s2: *const i8, mut n: i32) -> i32 {
     let mut c1: i32 = 0;
     let mut c2: i32 = 0;
     loop {
@@ -1323,11 +1247,7 @@ pub unsafe extern "C" fn Q_strncmp(
             // strings are equal until end point
         }
         if c1 != c2 {
-            return if c1 < c2 {
-                -(1i32)
-            } else {
-                1i32
-            };
+            return if c1 < c2 { -(1i32) } else { 1i32 };
         }
         if !(c1 != 0) {
             break;
@@ -1338,10 +1258,7 @@ pub unsafe extern "C" fn Q_strncmp(
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn Q_stricmp(
-    mut s1: *const i8,
-    mut s2: *const i8,
-) -> i32 {
+pub unsafe extern "C" fn Q_stricmp(mut s1: *const i8, mut s2: *const i8) -> i32 {
     return if !s1.is_null() && !s2.is_null() {
         Q_stricmpn(s1, s2, 99999)
     } else {
@@ -1356,9 +1273,7 @@ pub unsafe extern "C" fn Q_strlwr(mut s1: *mut i8) -> *mut i8 {
     while *s != 0 {
         *s = ({
             let mut __res: i32 = 0;
-            if  ::std::mem::size_of::<i8>()
-                > 1
-            {
+            if ::std::mem::size_of::<i8>() > 1 {
                 if 0 != 0 {
                     let mut __c: i32 = *s as i32;
                     __res = if __c < -(128) || __c > 255 {
@@ -1386,9 +1301,7 @@ pub unsafe extern "C" fn Q_strupr(mut s1: *mut i8) -> *mut i8 {
     while *s != 0 {
         *s = ({
             let mut __res: i32 = 0;
-            if  ::std::mem::size_of::<i8>()
-                > 1
-            {
+            if ::std::mem::size_of::<i8>() > 1 {
                 if 0 != 0 {
                     let mut __c: i32 = *s as i32;
                     __res = if __c < -(128) || __c > 255 {
@@ -1411,11 +1324,7 @@ pub unsafe extern "C" fn Q_strupr(mut s1: *mut i8) -> *mut i8 {
 // never goes past bounds or leaves without a terminating 0
 #[no_mangle]
 
-pub unsafe extern "C" fn Q_strcat(
-    mut dest: *mut i8,
-    mut size: i32,
-    mut src: *const i8,
-) {
+pub unsafe extern "C" fn Q_strcat(mut dest: *mut i8, mut size: i32, mut src: *const i8) {
     let mut l1: i32 = 0;
     l1 = crate::stdlib::strlen(dest) as i32;
     if l1 >= size {
@@ -1431,10 +1340,7 @@ pub unsafe extern "C" fn Q_strcat(
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Q_stristr(
-    mut s: *const i8,
-    mut find: *const i8,
-) -> *const i8 {
+pub unsafe extern "C" fn Q_stristr(mut s: *const i8, mut find: *const i8) -> *const i8 {
     let mut c: i8 = 0;
     let mut sc: i8 = 0;
     let mut len: crate::stddef_h::size_t = 0;
@@ -1511,15 +1417,12 @@ pub unsafe extern "C" fn Q_CleanStr(mut string: *mut i8) -> *mut i8 {
         }
         s = s.offset(1)
     }
-    *d =  '\u{0}' as i8;
+    *d = '\u{0}' as i8;
     return string;
 }
 #[no_mangle]
 
-pub unsafe extern "C" fn Q_CountChar(
-    mut string: *const i8,
-    mut tocount: i8,
-) -> i32 {
+pub unsafe extern "C" fn Q_CountChar(mut string: *const i8, mut tocount: i8) -> i32 {
     let mut count: i32 = 0;
     count = 0;
     while *string != 0 {
@@ -1572,7 +1475,6 @@ pub unsafe extern "C" fn va(mut format: *mut i8, mut args: ...) -> *mut i8 {
     argptr = args.clone();
     crate::stdlib::vsnprintf(
         buf,
-        
         ::std::mem::size_of::<[i8; 32000]>(),
         format,
         argptr.as_va_list(),
@@ -1588,24 +1490,13 @@ Assumes buffer is atleast TRUNCATE_LENGTH big
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Com_TruncateLongString(
-    mut buffer: *mut i8,
-    mut s: *const i8,
-) {
+pub unsafe extern "C" fn Com_TruncateLongString(mut buffer: *mut i8, mut s: *const i8) {
     let mut length: i32 = crate::stdlib::strlen(s) as i32;
     if length <= 64 {
         Q_strncpyz(buffer, s, 64i32);
     } else {
-        Q_strncpyz(
-            buffer,
-            s,
-            64 / 2 - 3,
-        );
-        Q_strcat(
-            buffer,
-            64,
-            b" ... \x00" as *const u8 as *const i8,
-        );
+        Q_strncpyz(buffer, s, 64 / 2 - 3);
+        Q_strcat(buffer, 64, b" ... \x00" as *const u8 as *const i8);
         Q_strcat(
             buffer,
             64i32,
@@ -1633,17 +1524,14 @@ FIXME: overflow check?
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Info_ValueForKey(
-    mut s: *const i8,
-    mut key: *const i8,
-) -> *mut i8 {
+pub unsafe extern "C" fn Info_ValueForKey(mut s: *const i8, mut key: *const i8) -> *mut i8 {
     let mut pkey: [i8; 8192] = [0; 8192]; // use two buffers so compares
     static mut value: [[i8; 8192]; 2] = [[0; 8192]; 2];
     // work without stomping on each other
     static mut valueindex: i32 = 0;
     let mut o: *mut i8 = 0 as *mut i8;
     if s.is_null() || key.is_null() {
-        return  b"\x00" as *const  u8 as *mut i8;
+        return b"\x00" as *const u8 as *mut i8;
     }
     if crate::stdlib::strlen(s) >= 8192 {
         crate::src::renderergl1::tr_subs::Com_Error(
@@ -1659,7 +1547,7 @@ pub unsafe extern "C" fn Info_ValueForKey(
         o = pkey.as_mut_ptr();
         while *s as i32 != '\\' as i32 {
             if *s == 0 {
-                return  b"\x00" as *const  u8 as *mut i8;
+                return b"\x00" as *const u8 as *mut i8;
             }
             let fresh16 = s;
             s = s.offset(1);
@@ -1686,7 +1574,7 @@ pub unsafe extern "C" fn Info_ValueForKey(
         }
         s = s.offset(1)
     }
-    return  b"\x00" as *const  u8 as *mut i8;
+    return b"\x00" as *const u8 as *mut i8;
 }
 /*
 ===================
@@ -1807,10 +1695,7 @@ Info_RemoveKey_Big
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Info_RemoveKey_Big(
-    mut s: *mut i8,
-    mut key: *const i8,
-) {
+pub unsafe extern "C" fn Info_RemoveKey_Big(mut s: *mut i8, mut key: *const i8) {
     let mut start: *mut i8 = 0 as *mut i8; // remove this part
     let mut pkey: [i8; 8192] = [0; 8192];
     let mut value: [i8; 8192] = [0; 8192];
@@ -1931,14 +1816,12 @@ pub unsafe extern "C" fn Info_SetValueForKey(
     }
     Com_sprintf(
         newi.as_mut_ptr(),
-        
         ::std::mem::size_of::<[i8; 1024]>() as i32,
         b"\\%s\\%s\x00" as *const u8 as *const i8,
         key,
         value,
     );
-    if crate::stdlib::strlen(newi.as_mut_ptr()).wrapping_add(crate::stdlib::strlen(s))
-        >= 1024usize
+    if crate::stdlib::strlen(newi.as_mut_ptr()).wrapping_add(crate::stdlib::strlen(s)) >= 1024usize
     {
         crate::src::renderergl1::tr_subs::Com_Printf(
             b"Info string length exceeded\n\x00" as *const u8 as *const i8,
@@ -2019,14 +1902,12 @@ pub unsafe extern "C" fn Info_SetValueForKey_Big(
     }
     Com_sprintf(
         newi.as_mut_ptr(),
-        
         ::std::mem::size_of::<[i8; 8192]>() as i32,
         b"\\%s\\%s\x00" as *const u8 as *const i8,
         key,
         value,
     );
-    if crate::stdlib::strlen(newi.as_mut_ptr()).wrapping_add(crate::stdlib::strlen(s))
-        >= 8192usize
+    if crate::stdlib::strlen(newi.as_mut_ptr()).wrapping_add(crate::stdlib::strlen(s)) >= 8192usize
     {
         crate::src::renderergl1::tr_subs::Com_Printf(
             b"BIG Info string length exceeded\n\x00" as *const u8 as *const i8,
@@ -2063,10 +1944,7 @@ Com_SkipCharset
 */
 #[no_mangle]
 
-pub unsafe extern "C" fn Com_SkipCharset(
-    mut s: *mut i8,
-    mut sep: *mut i8,
-) -> *mut i8 {
+pub unsafe extern "C" fn Com_SkipCharset(mut s: *mut i8, mut sep: *mut i8) -> *mut i8 {
     let mut p: *mut i8 = s;
     while !p.is_null() {
         if !(Com_CharIsOneOfCharset(*p, sep) as u64 != 0) {

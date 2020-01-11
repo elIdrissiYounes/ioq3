@@ -438,28 +438,31 @@ pub unsafe extern "C" fn silk_NLSF_encode(
     );
     tempIndices2 = fresh3.as_mut_ptr() as *mut i8;
     /* Loop over survivors */
-    s = 0;
-    while s < nSurvivors {
+
+    for s in 0..nSurvivors {
         ind1 = *tempIndices1.offset(s as isize);
-        /* Residual after first stage */
+
         pCB_element = &*(*psNLSF_CB)
             .CB1_NLSF_Q8
             .offset((ind1 * (*psNLSF_CB).order as i32) as isize) as *const u8;
+
         pCB_Wght_Q9 = &*(*psNLSF_CB)
             .CB1_Wght_Q9
             .offset((ind1 * (*psNLSF_CB).order as i32) as isize)
             as *const crate::opus_types_h::opus_int16;
-        i = 0;
-        while i < (*psNLSF_CB).order as i32 {
+        for i in 0..(*psNLSF_CB).order as i32 {
             NLSF_tmp_Q15[i as usize] =
                 ((*pCB_element.offset(i as isize) as i32) << 7) as crate::opus_types_h::opus_int16;
+
             W_tmp_Q9 = *pCB_Wght_Q9.offset(i as isize) as crate::opus_types_h::opus_int32;
+
             res_Q10[i as usize] = ((*pNLSF_Q15.offset(i as isize) as i32
                 - NLSF_tmp_Q15[i as usize] as i32)
                 as crate::opus_types_h::opus_int16
                 as crate::opus_types_h::opus_int32
                 * W_tmp_Q9 as crate::opus_types_h::opus_int16 as crate::opus_types_h::opus_int32
                 >> 14) as crate::opus_types_h::opus_int16;
+
             W_adj_Q5[i as usize] = silk_DIV32_varQ(
                 *pW_Q2.offset(i as isize) as crate::opus_types_h::opus_int32,
                 W_tmp_Q9 as crate::opus_types_h::opus_int16 as crate::opus_types_h::opus_int32
@@ -467,16 +470,15 @@ pub unsafe extern "C" fn silk_NLSF_encode(
                         as crate::opus_types_h::opus_int32,
                 21,
             ) as crate::opus_types_h::opus_int16;
-            i += 1
         }
-        /* Unpack entropy table indices and predictor for current CB1 index */
+
         crate::src::opus_1_2_1::silk::NLSF_unpack::silk_NLSF_unpack(
             ec_ix.as_mut_ptr(),
             pred_Q8.as_mut_ptr(),
             psNLSF_CB,
             ind1,
         );
-        /* Trellis quantizer */
+
         *RD_Q25.offset(s as isize) =
             crate::src::opus_1_2_1::silk::NLSF_del_dec_quant::silk_NLSF_del_dec_quant(
                 &mut *tempIndices2.offset((s * 16) as isize),
@@ -490,23 +492,25 @@ pub unsafe extern "C" fn silk_NLSF_encode(
                 NLSF_mu_Q20,
                 (*psNLSF_CB).order,
             );
-        /* Add rate for first stage */
+
         iCDF_ptr = &*(*psNLSF_CB)
             .CB1_iCDF
             .offset(((signalType >> 1) * (*psNLSF_CB).nVectors as i32) as isize)
             as *const u8;
+
         if ind1 == 0 {
             prob_Q8 = 256 - *iCDF_ptr.offset(ind1 as isize) as i32
         } else {
             prob_Q8 = *iCDF_ptr.offset((ind1 - 1) as isize) as i32
                 - *iCDF_ptr.offset(ind1 as isize) as i32
         }
+
         bits_q7 = ((8) << 7) - crate::src::opus_1_2_1::silk::lin2log::silk_lin2log(prob_Q8);
+
         *RD_Q25.offset(s as isize) = *RD_Q25.offset(s as isize)
             + bits_q7 as crate::opus_types_h::opus_int16 as crate::opus_types_h::opus_int32
                 * (NLSF_mu_Q20 >> 2) as crate::opus_types_h::opus_int16
                     as crate::opus_types_h::opus_int32;
-        s += 1
     }
     /* Find the lowest rate-distortion error */
     crate::src::opus_1_2_1::silk::sort::silk_insertion_sort_increasing(

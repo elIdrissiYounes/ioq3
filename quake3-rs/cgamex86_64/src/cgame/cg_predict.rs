@@ -600,10 +600,12 @@ pub unsafe extern "C" fn CG_PointContents(
     let mut cmodel: crate::src::qcommon::q_shared::clipHandle_t = 0;
     let mut contents: i32 = 0;
     contents = crate::src::cgame::cg_syscalls::trap_CM_PointContents(point, 0);
-    i = 0;
-    while i < cg_numSolidEntities {
+
+    for i in 0..cg_numSolidEntities {
         cent = cg_solidEntities[i as usize];
+
         ent = &mut (*cent).currentState;
+
         if !((*ent).number == passEntityNum) {
             if !((*ent).solid != 0xffffff) {
                 cmodel = crate::src::cgame::cg_syscalls::trap_CM_InlineModel((*ent).modelindex);
@@ -619,8 +621,6 @@ pub unsafe extern "C" fn CG_PointContents(
                 }
             }
         }
-        // special value for bmodel
-        i += 1
     }
     return contents;
 }
@@ -822,10 +822,12 @@ unsafe extern "C" fn CG_TouchTriggerPrediction() {
     {
         return;
     }
-    i = 0;
-    while i < cg_numTriggerEntities {
+
+    for i in 0..cg_numTriggerEntities {
         cent = cg_triggerEntities[i as usize];
+
         ent = &mut (*cent).currentState;
+
         if (*ent).eType == crate::bg_public_h::ET_ITEM as i32 && spectator as u64 == 0 {
             CG_TouchItem(cent);
         } else if !((*ent).solid != 0xffffff) {
@@ -861,7 +863,6 @@ unsafe extern "C" fn CG_TouchTriggerPrediction() {
                 }
             }
         }
-        i += 1
     }
     // if we didn't touch a jump pad this pmove frame
     if crate::src::cgame::cg_main::cg

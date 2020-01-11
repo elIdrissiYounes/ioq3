@@ -29,8 +29,7 @@ pub struct jpeg_d_main_controller {
 #[derive(Copy, Clone)]
 pub struct jpeg_d_coef_controller {
     pub start_input_pass: Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> ()>,
-    pub consume_data:
-        Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> i32>,
+    pub consume_data: Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> i32>,
     pub start_output_pass:
         Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> ()>,
     pub decompress_data: Option<
@@ -65,8 +64,7 @@ pub struct jpeg_d_post_controller {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct jpeg_input_controller {
-    pub consume_input:
-        Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> i32>,
+    pub consume_input: Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> i32>,
     pub reset_input_controller:
         Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> ()>,
     pub start_input_pass: Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> ()>,
@@ -80,8 +78,7 @@ pub struct jpeg_input_controller {
 pub struct jpeg_marker_reader {
     pub reset_marker_reader:
         Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> ()>,
-    pub read_markers:
-        Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> i32>,
+    pub read_markers: Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_decompress_ptr) -> i32>,
     pub read_restart_marker: crate::jpeglib_h::jpeg_marker_parser_method,
     pub saw_SOI: crate::jmorecfg_h::boolean,
     pub saw_SOF: crate::jmorecfg_h::boolean,
@@ -237,13 +234,8 @@ pub struct jpeg_marker_writer {
     pub write_scan_header: Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_compress_ptr) -> ()>,
     pub write_file_trailer: Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_compress_ptr) -> ()>,
     pub write_tables_only: Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_compress_ptr) -> ()>,
-    pub write_marker_header: Option<
-        unsafe extern "C" fn(
-            _: crate::jpeglib_h::j_compress_ptr,
-            _: i32,
-            _: u32,
-        ) -> (),
-    >,
+    pub write_marker_header:
+        Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_compress_ptr, _: i32, _: u32) -> ()>,
     pub write_marker_byte:
         Option<unsafe extern "C" fn(_: crate::jpeglib_h::j_compress_ptr, _: i32) -> ()>,
 }

@@ -1130,13 +1130,13 @@ pub unsafe extern "C" fn CL_CmdButtons(mut cmd: *mut crate::src::qcommon::q_shar
     // send a button bit even if the key was pressed and released in
     // less than a frame
     //
-    i = 0;
-    while i < 15 {
+
+    for i in 0..15 {
         if in_buttons[i as usize].active != 0 || in_buttons[i as usize].wasPressed != 0 {
             (*cmd).buttons |= (1) << i
         }
+
         in_buttons[i as usize].wasPressed = crate::src::qcommon::q_shared::qfalse;
-        i += 1
     }
     if crate::src::client::cl_keys::Key_GetCatcher() != 0 {
         (*cmd).buttons |= 2

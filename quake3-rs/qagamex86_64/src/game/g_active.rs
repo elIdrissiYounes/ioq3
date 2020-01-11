@@ -601,12 +601,13 @@ pub unsafe extern "C" fn G_TouchTriggers(mut ent: *mut crate::g_local_h::gentity
     maxs[1] = (*(*ent).client).ps.origin[1] + (*ent).r.maxs[1];
     maxs[2] = (*(*ent).client).ps.origin[2] + (*ent).r.maxs[2];
     let mut current_block_19: u64;
-    i = 0;
-    while i < num {
+
+    for i in 0..num {
         hit = &mut *crate::src::game::g_main::g_entities
             .as_mut_ptr()
             .offset(*touch.as_mut_ptr().offset(i as isize) as isize)
             as *mut crate::g_local_h::gentity_t;
+
         if !((*hit).touch.is_none() && (*ent).touch.is_none()) {
             if !((*hit).r.contents & 0x40000000 == 0) {
                 // ignore most entities if a spectator
@@ -684,7 +685,6 @@ pub unsafe extern "C" fn G_TouchTriggers(mut ent: *mut crate::g_local_h::gentity
                 }
             }
         }
-        i += 1
     }
     // if we didn't touch a jump pad this pmove frame
     if (*(*ent).client).ps.jumppad_frame != (*(*ent).client).ps.pmove_framecount {
@@ -1448,12 +1448,11 @@ pub unsafe extern "C" fn ClientEndFrame(mut ent: *mut crate::g_local_h::gentity_
         return;
     }
     // turn off any expired powerups
-    i = 0;
-    while i < 16 {
+
+    for i in 0..16 {
         if (*(*ent).client).ps.powerups[i as usize] < crate::src::game::g_main::level.time {
             (*(*ent).client).ps.powerups[i as usize] = 0
         }
-        i += 1
     }
     // save network bandwidth
     //

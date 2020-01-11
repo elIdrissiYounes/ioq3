@@ -1575,15 +1575,18 @@ unsafe extern "C" fn op_predict_link_start(
         return -1i64;
     }
     bisect = _end_searched;
-    sri = 0;
-    while sri < _nsr {
+
+    for sri in 0.._nsr {
         let mut gp1: crate::config_types_h::ogg_int64_t = 0;
+
         let mut gp2_min: crate::config_types_h::ogg_int64_t = 0;
+
         let mut serialno1: crate::config_types_h::ogg_uint32_t = 0;
+
         let mut offset1: i64 = 0;
-        /*If the granule position is negative, either it's invalid or we'd cause
-        overflow.*/
+
         gp1 = (*_sr.offset(sri as isize)).gp;
+
         if !(gp1 < 0) {
             /*We require some minimum distance between granule positions to make an
              estimate.
@@ -1634,8 +1637,6 @@ unsafe extern "C" fn op_predict_link_start(
                 }
             }
         }
-        /*No granule position would satisfy us.*/
-        sri += 1
     }
     return if bisect >= _end_searched { -1 } else { bisect };
 }
@@ -4679,13 +4680,13 @@ unsafe extern "C" fn op_stereo_filter(
                 let mut ci: i32 = 0;
                 r = 0f32;
                 l = r;
-                ci = 0;
-                while ci < _nchannels {
+
+                for ci in 0.._nchannels {
                     l += OP_STEREO_DOWNMIX[(_nchannels - 3i32) as usize][ci as usize][0]
                         * *_src.offset((_nchannels * i + ci) as isize);
+
                     r += OP_STEREO_DOWNMIX[(_nchannels - 3i32) as usize][ci as usize][1]
                         * *_src.offset((_nchannels * i + ci) as isize);
-                    ci += 1
                 }
                 *dst.offset((2 * i + 0) as isize) = l;
                 *dst.offset((2 * i + 1) as isize) = r;
